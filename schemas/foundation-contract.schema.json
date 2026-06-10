@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/foundation-contract.schema.json",
+  "title": "PBE Foundation Contract",
+  "type": "object",
+  "required": ["schemaVersion", "mayCreate", "mustNot"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "mayCreate": { "type": "array", "items": { "type": "string" } },
+    "mustNot": { "type": "array", "items": { "type": "string" } },
+    "validationRules": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}
+

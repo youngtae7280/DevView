@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "state": "IDLE",
+  "enabled": true,
+  "profile": "full",
+  "completedSteps": [],
+  "currentGate": null,
+  "nextStep": "start",
+  "deterministicSteps": [
+    "rpd",
+    "wpd",
+    "vd",
+    "dependency_impact_audit",
+    "plan_execution",
+    "coverage_audit",
+    "ux_audit",
+    "generate_acep",
+    "run_acep"
+  ],
+  "humanGates": [
+    "ui_ux_confirm",
+    "implementation_scope",
+    "architecture_runway",
+    "review_result",
+    "next_slice_decision"
+  ],
+  "lastUserAction": null,
+  "lastFailure": null,
+  "downstreamOnApprove": {
+    "WAITING_UI_UX_CONFIRM": [
+      "wpd",
+      "vd",
+      "dependency_impact_audit",
+      "implementation_scope"
+    ],
+    "WAITING_IMPLEMENTATION_SCOPE": [
+      "architecture_runway",
+      "plan_execution",
+      "coverage_audit",
+      "ux_audit",
+      "generate_acep",
+      "run_acep",
+      "review_result"
+    ],
+    "WAITING_ARCHITECTURE_RUNWAY_CONFIRM": [
+      "plan_execution",
+      "coverage_audit",
+      "ux_audit",
+      "generate_acep",
+      "run_acep",
+      "review_result"
+    ],
+    "WAITING_REVIEW_RESULT": [
+      "next_slice_decision"
+    ],
+    "WAITING_NEXT_SLICE_DECISION": [
+      "complete",
+      "implementation_scope"
+    ]
+  },
+  "downstreamOnRevision": {
+    "WAITING_UI_UX_CONFIRM": [
+      "ui_ux_confirm",
+      "wpd",
+      "vd",
+      "dependency_impact_audit",
+      "implementation_scope"
+    ],
+    "WAITING_IMPLEMENTATION_SCOPE": [
+      "implementation_scope",
+      "architecture_runway",
+      "plan_execution",
+      "coverage_audit",
+      "ux_audit",
+      "generate_acep",
+      "run_acep",
+      "review_result"
+    ],
+    "WAITING_ARCHITECTURE_RUNWAY_CONFIRM": [
+      "architecture_runway",
+      "plan_execution",
+      "coverage_audit",
+      "ux_audit",
+      "generate_acep",
+      "run_acep",
+      "review_result"
+    ],
+    "WAITING_REVIEW_RESULT": [
+      "collect_feedback",
+      "create_revision_pack",
+      "run_revision",
+      "review_result"
+    ]
+  }
+}

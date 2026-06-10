@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/traceability-matrix.schema.json",
+  "title": "Traceability Matrix",
+  "type": "object",
+  "required": ["schemaVersion", "items"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "requirementNodeId",
+          "requirementTitle",
+          "linkedTaskIds",
+          "linkedVerificationIds",
+          "evidenceRequired",
+          "coverageStatus"
+        ],
+        "properties": {
+          "requirementNodeId": { "type": "string", "minLength": 1 },
+          "requirementTitle": { "type": "string" },
+          "linkedTaskIds": { "type": "array", "items": { "type": "string" } },
+          "linkedVerificationIds": { "type": "array", "items": { "type": "string" } },
+          "uiUxIds": { "type": "array", "items": { "type": "string" } },
+          "evidenceRequired": { "type": "array", "items": { "type": "string" } },
+          "coverageStatus": {
+            "type": "string",
+            "enum": ["pending", "covered", "deferred", "out_of_scope", "blocked"]
+          },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

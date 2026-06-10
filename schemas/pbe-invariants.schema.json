@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/pbe-invariants.schema.json",
+  "title": "PBE Invariants",
+  "type": "object",
+  "required": ["schemaVersion", "invariants"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "statement", "severity"],
+        "properties": {
+          "id": { "type": "string" },
+          "statement": { "type": "string" },
+          "severity": { "type": "string", "enum": ["warning", "failure", "stop"] }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
+

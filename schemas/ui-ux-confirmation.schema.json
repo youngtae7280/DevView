@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/ui-ux-confirmation.schema.json",
+  "title": "UI/UX Confirmation",
+  "type": "object",
+  "required": ["schemaVersion", "items"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "requirementIds": { "type": "array", "items": { "type": "string" } },
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_required",
+              "preview_needed",
+              "preview_generated",
+              "revision_requested",
+              "confirmed",
+              "deferred",
+              "out_of_scope",
+              "blocked"
+            ]
+          },
+          "confirmedDirection": { "type": "array", "items": { "type": "string" } },
+          "nonScope": { "type": "array", "items": { "type": "string" } },
+          "confirmedBy": { "type": "string" },
+          "confirmedAt": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/work-graph.schema.json",
+  "title": "WPD Work Graph",
+  "type": "object",
+  "required": ["id", "nodes", "edges", "summary"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "id": { "type": "string" },
+    "generatedFrom": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "moduleBoundaryCheck": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "enum": ["not_started", "complete", "blocked"] },
+        "summary": { "type": "string" },
+        "boundaryFindings": { "type": "array", "items": { "$ref": "#/$defs/moduleBoundaryFinding" } },
+        "sharedFoundations": { "type": "array", "items": { "$ref": "#/$defs/sharedFoundation" } },
+        "featureCandidates": { "type": "array", "items": { "type": "string" } },
+        "integrationPoints": { "type": "array", "items": { "$ref": "#/$defs/integrationPoint" } },
+        "parallelizationRisks": { "type": "array" },
+        "boundaryBlockers": { "type": "array" }
+      },
+      "additionalProperties": true
+    },
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/workGraphNode" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/workGraphEdge" }
+    },
+    "boundaryFindings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/moduleBoundaryFinding" }
+    },
+    "sharedFoundations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/sharedFoundation" }
+    },
+    "featureCandidates": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "integrationPoints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/integrationPoint" }
+    },
+    "parallelizationRisks": {
+      "type": "array"
+    },
+    "boundaryBlockers": {
+      "type": "array"
+    },
+    "summary": { "type": "string" }
+  },
+  "$defs": {
+    "riskLevel": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "moduleBoundaryFinding": {
+      "type": "object",
+      "required": [
+        "id",
+        "requirementNodeIds",
+        "title",
+        "findingType",
+        "description",
+        "riskLevel",
+        "recommendedAction",
+        "blocksParallelization"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "requirementNodeIds": { "type": "array", "items": { "type": "string" } },
+        "title": { "type": "string" },
+        "findingType": {
+          "type": "string",
+          "enum": [
+            "shared_foundation",
+            "overlapping_responsibility",
+            "unclear_ownership",
+            "integration_needed",
+            "parallelization_risk",
+            "sequential_required"
+          ]
+        },
+        "description": { "type": "string" },
+        "riskLevel": { "$ref": "#/$defs/riskLevel" },
+        "recommendedAction": { "type": "string" },
+        "blocksParallelization": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "sharedFoundation": {
+      "type": "object",
+      "required": ["id", "title", "reason", "relatedRequirementNodeIds", "expectedOutputs", "mustCompleteBefore"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "reason": { "type": "string" },
+        "relatedRequirementNodeIds": { "type": "array", "items": { "type": "string" } },
+        "expectedOutputs": { "type": "array", "items": { "type": "string" } },
+        "mustCompleteBefore": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "integrationPoint": {
+      "type": "object",
+      "required": ["id", "title", "relatedRequirementNodeIds", "description", "requiredAfterTasks", "validationNeeded"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "relatedRequirementNodeIds": { "type": "array", "items": { "type": "string" } },
+        "relatedWorkTaskIds": { "type": "array", "items": { "type": "string" } },
+        "description": { "type": "string" },
+        "requiredAfterTasks": { "type": "array", "items": { "type": "string" } },
+        "validationNeeded": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "workGraphNode": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "type",
+        "scopeClass",
+        "relatedRequirementNodeIds",
+        "expectedFiles",
+        "expectedSharedFiles",
+        "forbiddenFiles",
+        "unknownFileTouchRisk",
+        "affectedDomains",
+        "expectedOutputs",
+        "riskLevel",
+        "canRunInParallel"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["foundation", "feature", "ui", "api", "domain", "integration", "verification", "documentation", "review"]
+        },
+        "scopeClass": {
+          "type": "string",
+          "enum": ["selected", "foundation", "deferred", "blocked", "out_of_scope"]
+        },
+        "relatedRequirementNodeIds": { "type": "array", "items": { "type": "string" } },
+        "expectedFiles": { "type": "array", "items": { "type": "string" } },
+        "expectedSharedFiles": { "type": "array", "items": { "type": "string" } },
+        "forbiddenFiles": { "type": "array", "items": { "type": "string" } },
+        "unknownFileTouchRisk": {
+          "type": "string",
+          "enum": ["none", "low", "medium", "high"]
+        },
+        "affectedDomains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "domain-model",
+              "api-contract",
+              "ui-state",
+              "routing",
+              "shared-component",
+              "sdk-adapter",
+              "validation",
+              "config",
+              "test-fixture",
+              "documentation"
+            ]
+          }
+        },
+        "expectedOutputs": { "type": "array", "items": { "type": "string" } },
+        "riskLevel": { "$ref": "#/$defs/riskLevel" },
+        "canRunInParallel": { "type": "boolean" },
+        "parallelizationReason": { "type": "string" },
+        "mustRunSequentiallyReason": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "workGraphEdge": {
+      "type": "object",
+      "required": ["from", "to", "type", "reason"],
+      "properties": {
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["depends_on", "integrates_into", "validates", "documents", "blocks_parallelization"]
+        },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

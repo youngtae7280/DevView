@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/ui-ux-preview.schema.json",
+  "title": "UI/UX Preview",
+  "type": "object",
+  "required": ["schemaVersion", "items"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "previewLevel", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "requirementIds": { "type": "array", "items": { "type": "string" } },
+          "previewLevel": {
+            "type": "string",
+            "enum": ["text_wireframe", "markdown_mockup", "prototype"]
+          },
+          "title": { "type": "string" },
+          "purpose": { "type": "string" },
+          "primaryUser": { "type": "string" },
+          "flow": { "type": "array", "items": { "type": "string" } },
+          "requiredStates": { "type": "array", "items": { "type": "string" } },
+          "wireframe": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_required",
+              "preview_needed",
+              "preview_generated",
+              "revision_requested",
+              "confirmed",
+              "deferred",
+              "out_of_scope",
+              "blocked"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

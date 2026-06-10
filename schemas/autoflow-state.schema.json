@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/autoflow-state.schema.json",
+  "title": "PBE Autoflow State",
+  "type": "object",
+  "required": ["schemaVersion", "state", "enabled", "profile", "completedSteps", "deterministicSteps", "humanGates"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "enabled": { "type": "boolean" },
+    "profile": {
+      "type": "string",
+      "enum": ["bypass", "lite", "full"]
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "IDLE",
+        "STARTED",
+        "RPD_DONE",
+        "WAITING_UI_UX_CONFIRM",
+        "UI_UX_APPROVED",
+        "WPD_DONE",
+        "VD_DONE",
+        "DEPENDENCY_IMPACT_AUDITED",
+        "WAITING_IMPLEMENTATION_SCOPE",
+        "SCOPE_SELECTED",
+        "WAITING_ARCHITECTURE_RUNWAY_CONFIRM",
+        "ARCHITECTURE_RUNWAY_APPROVED",
+        "PLAN_EXECUTED",
+        "COVERAGE_AUDITED",
+        "UX_AUDITED",
+        "ACEP_GENERATED",
+        "ACEP_RUN_DONE",
+        "WAITING_REVIEW_RESULT",
+        "PARTIAL_IMPLEMENTATION_DONE",
+        "WAITING_NEXT_SLICE_DECISION",
+        "SLICE_ACCEPTED",
+        "COMPLETED",
+        "BLOCKED",
+        "STOPPED"
+      ]
+    },
+    "completedSteps": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "currentGate": {
+      "type": ["string", "null"],
+      "enum": [
+        "ui_ux_confirm",
+        "implementation_scope",
+        "architecture_runway",
+        "review_result",
+        "next_slice_decision",
+        null
+      ]
+    },
+    "nextStep": { "type": ["string", "null"] },
+    "deterministicSteps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "rpd",
+          "wpd",
+          "vd",
+          "dependency_impact_audit",
+          "plan_execution",
+          "coverage_audit",
+          "ux_audit",
+          "generate_acep",
+          "run_acep"
+        ]
+      }
+    },
+    "humanGates": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ui_ux_confirm",
+          "implementation_scope",
+          "architecture_runway",
+          "review_result",
+          "next_slice_decision"
+        ]
+      }
+    },
+    "lastUserAction": {
+      "type": ["string", "null"],
+      "enum": [
+        "approve",
+        "revise",
+        "ask",
+        "status",
+        "continue",
+        "stop",
+        "select_scope",
+        "select_full_scope",
+        "mark_deferred",
+        "mark_foundation",
+        "ask_dependency_impact",
+        "start_next_slice",
+        "complete_current_slice",
+        "complete_project",
+        null
+      ]
+    },
+    "lastFailure": {
+      "type": ["object", "null"],
+      "properties": {
+        "failedStep": { "type": "string" },
+        "reason": { "type": "string" },
+        "downstreamSteps": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "downstreamOnApprove": { "type": "object" },
+    "downstreamOnRevision": { "type": "object" }
+  },
+  "additionalProperties": true
+}

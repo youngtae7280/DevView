@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/verification-design.schema.json",
+  "title": "Verification Design",
+  "type": "object",
+  "required": ["schemaVersion", "verificationItems"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "generatedFrom": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "verificationItems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": { "type": "string" },
+          "workDesignId": { "type": "string" },
+          "taskId": { "type": "string" },
+          "requirementNodeId": { "type": "string" },
+          "requirementIds": { "type": "array", "items": { "type": "string" } },
+          "title": { "type": "string" },
+          "acceptanceCriteria": { "type": "array", "items": { "type": "string" } },
+          "validationCommands": { "type": "array", "items": { "type": "string" } },
+          "manualChecks": { "type": "array", "items": { "type": "string" } },
+          "uiUxIds": { "type": "array", "items": { "type": "string" } },
+          "uiUxEvidenceRequired": { "type": "array", "items": { "type": "string" } },
+          "regressionRisks": { "type": "array", "items": { "type": "string" } },
+          "evidenceToCapture": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    },
+    "acceptancePlan": { "type": "object" }
+  },
+  "additionalProperties": true
+}

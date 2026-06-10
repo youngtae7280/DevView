@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/pbe-state.schema.json",
+  "title": "PBE State",
+  "type": "object",
+  "required": ["schemaVersion", "stage", "mode", "artifacts"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "projectId": { "type": "string" },
+    "stage": {
+      "type": "string",
+      "enum": ["start", "rpd", "wpd", "vd", "execution_planning", "acep_ready", "acep_running", "complete", "blocked"]
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["rpd_tree_walk", "wpd_generation", "vd_generation", "execution_planning", "acep_generation", "acep_execution"]
+    },
+    "currentNodeId": { "type": ["string", "null"] },
+    "deliveryStatus": {
+      "type": "string",
+      "enum": [
+        "implemented",
+        "verified",
+        "submitted_for_review",
+        "revision_requested",
+        "revision_in_progress",
+        "revision_verified",
+        "accepted"
+      ]
+    },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" },
+    "artifacts": { "type": "object" }
+    ,
+    "autoflow": { "$ref": "autoflow-state.schema.json" }
+  },
+  "additionalProperties": true
+}

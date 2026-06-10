@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/feedback-items.schema.json",
+  "title": "Feedback Items",
+  "type": "object",
+  "required": ["schemaVersion", "items"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "rawFeedback", "summary", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "bug",
+              "missing_requirement",
+              "misinterpreted_requirement",
+              "ux_mismatch",
+              "visual_mismatch",
+              "scope_gap",
+              "performance_issue",
+              "content_copy_issue",
+              "accessibility_issue",
+              "other"
+            ]
+          },
+          "rawFeedback": { "type": "string" },
+          "summary": { "type": "string" },
+          "affectedRequirementIds": { "type": "array", "items": { "type": "string" } },
+          "affectedTaskIds": { "type": "array", "items": { "type": "string" } },
+          "affectedUiUxIds": { "type": "array", "items": { "type": "string" } },
+          "affectedVerificationIds": { "type": "array", "items": { "type": "string" } },
+          "mappingExplanation": { "type": "string" },
+          "severity": { "type": "string", "enum": ["low", "medium", "high", "blocker"] },
+          "needsClarification": { "type": "boolean" },
+          "clarificationQuestions": { "type": "array", "items": { "type": "string" } },
+          "desiredOutcome": { "type": "string" },
+          "status": { "type": "string", "enum": ["open", "clarifying", "packed", "resolved", "deferred"] }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

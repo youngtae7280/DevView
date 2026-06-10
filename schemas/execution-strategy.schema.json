@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/execution-strategy.schema.json",
+  "title": "PBE Execution Strategy",
+  "type": "object",
+  "required": ["schemaVersion", "executionStrategy", "phases", "parallelGroups"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "executionStrategy": { "type": "string", "enum": ["staged_parallel", "sequential"] },
+    "parallelPolicy": {
+      "type": "object",
+      "properties": {
+        "default": { "type": "string", "enum": ["sequential"] },
+        "maxInitialParallelGroupSize": { "type": "integer", "minimum": 1 },
+        "maxMatureParallelGroupSize": { "type": "integer", "minimum": 1 },
+        "moreThanMaxRequiresHumanApproval": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "generatedFrom": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "modeDefinitions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/modeDefinition" }
+    },
+    "phases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/phase" }
+    },
+    "parallelGroups": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/parallelGroup" }
+    },
+    "integrationTasks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/integrationTask" }
+    },
+    "parallelizationRules": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "parallelizationForbidden": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "singleSessionFallback": { "type": "string" },
+    "stopConditions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "executionMode": {
+      "type": "string",
+      "enum": ["sequential", "parallel_group", "integration", "review_only"]
+    },
+    "modeDefinition": {
+      "type": "object",
+      "required": ["mode", "description"],
+      "properties": {
+        "mode": { "$ref": "#/$defs/executionMode" },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "phase": {
+      "type": "object",
+      "required": ["id", "title", "mode"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "mode": { "type": "string", "enum": ["sequential", "parallel", "review_only"] },
+        "tasks": { "type": "array", "items": { "type": "string" } },
+        "parallelGroups": { "type": "array", "items": { "$ref": "#/$defs/parallelGroup" } },
+        "exitCriteria": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "parallelGroup": {
+      "type": "object",
+      "required": [
+        "id",
+        "tasks",
+        "integrationTask",
+        "integrationEvidenceRequired",
+        "groupCannotCompleteWithoutIntegrationPass",
+        "conflictRisk",
+        "requiredCompletedBeforeStart"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "integrationTask": { "type": "string" },
+        "integrationEvidenceRequired": { "type": "boolean" },
+        "groupCannotCompleteWithoutIntegrationPass": { "type": "boolean" },
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_started",
+            "running",
+            "integration_pending",
+            "integration_passed",
+            "integration_failed",
+            "downgraded_to_sequential",
+            "blocked"
+          ]
+        },
+        "conflictRisk": { "type": "string", "enum": ["low", "medium", "high"] },
+        "requiredCompletedBeforeStart": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "forbiddenChanges": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "integrationTask": {
+      "type": "object",
+      "required": ["id", "parallelGroupId", "tasksIntegrated", "validationNeeded"],
+      "properties": {
+        "id": { "type": "string" },
+        "parallelGroupId": { "type": "string" },
+        "tasksIntegrated": { "type": "array", "items": { "type": "string" } },
+        "validationNeeded": { "type": "array", "items": { "type": "string" } },
+        "evidenceRequired": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

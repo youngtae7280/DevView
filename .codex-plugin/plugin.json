@@ -1,0 +1,33 @@
+{
+  "name": "project-blueprint-engine",
+  "version": "0.1.0",
+  "description": "A Codex plugin that turns requirements into an autoflowing, traceable staged execution, review, feedback, and revision contract.",
+  "author": {
+    "name": "Local developer"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Project Blueprint Engine",
+    "shortDescription": "Plan, execute, review, and revise Codex work with traceability.",
+    "longDescription": "Project Blueprint Engine runs inside Codex as a skill workflow. It stores planning artifacts in .pbe/, starts an Autoflow from one start command, walks requirements with RPD Tree Walk, stops for UI/UX confirmation before UI implementation, converts requirements into a WPD WorkGraph with an internal Module Boundary Check, plans staged parallel execution with integration tasks, runs coverage and UX audits, creates and runs an Autonomous Codex Execution Pack, stops for final result review, maps user feedback to affected artifacts, and creates bounded revision packs.",
+    "developerName": "Local developer",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write",
+      "Interactive",
+      "Planning",
+      "Code generation guidance",
+      "Autoflow orchestration",
+      "Traceability",
+      "Evidence tracking",
+      "Staged parallel execution planning",
+      "User review workflow",
+      "Revision planning"
+    ],
+    "defaultPrompt": [
+      "@project-blueprint-engine start"
+    ],
+    "brandColor": "#2563EB"
+  }
+}

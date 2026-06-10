@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "executionStrategy": "staged_parallel",
+  "parallelPolicy": {
+    "default": "sequential",
+    "maxInitialParallelGroupSize": 2,
+    "maxMatureParallelGroupSize": 3,
+    "moreThanMaxRequiresHumanApproval": true
+  },
+  "generatedFrom": [
+    ".pbe/blueprint/work-graph.json",
+    ".pbe/blueprint/verification-design.json",
+    ".pbe/blueprint/traceability-matrix.json",
+    ".pbe/blueprint/ui-ux-confirmation.md",
+    ".pbe/blueprint/source-of-truth-matrix.md",
+    ".pbe/blueprint/foundation-contract.md",
+    ".pbe/blueprint/parallel-safety-contract.md"
+  ],
+  "modeDefinitions": [
+    {
+      "mode": "sequential",
+      "description": "Run in order because the task defines shared contracts or must wait for previous work."
+    },
+    {
+      "mode": "parallel_group",
+      "description": "May run in a declared parallel group after dependencies are complete."
+    },
+    {
+      "mode": "integration",
+      "description": "Integrates and validates all work from one parallel group."
+    },
+    {
+      "mode": "review_only",
+      "description": "Performs audit, evidence, final coverage, or review work without implementation."
+    }
+  ],
+  "phases": [
+    {
+      "id": "PHASE-001",
+      "title": "Foundation",
+      "mode": "sequential",
+      "tasks": ["TASK-001"],
+      "exitCriteria": ["Shared contracts are complete before feature work starts."]
+    },
+    {
+      "id": "PHASE-002",
+      "title": "Independent feature implementation",
+      "mode": "parallel",
+      "parallelGroups": [
+        {
+          "id": "PG-001",
+          "tasks": ["TASK-010", "TASK-011"],
+          "integrationTask": "TASK-020",
+          "integrationEvidenceRequired": true,
+          "groupCannotCompleteWithoutIntegrationPass": true,
+          "status": "not_started",
+          "conflictRisk": "low",
+          "requiredCompletedBeforeStart": ["TASK-001"],
+          "forbiddenChanges": [
+            "shared type/schema changes",
+            "package or build configuration changes",
+            "auth, permission, migration, payment, deployment, billing, or secret changes",
+            "same file ownership conflicts"
+          ]
+        }
+      ],
+      "exitCriteria": ["All parallel group tasks and their integration task are complete."]
+    },
+    {
+      "id": "PHASE-003",
+      "title": "Integration and validation",
+      "mode": "sequential",
+      "tasks": ["TASK-020"],
+      "exitCriteria": ["Integration validation passes or records a stop condition."]
+    },
+    {
+      "id": "PHASE-004",
+      "title": "Final validation and review",
+      "mode": "sequential",
+      "tasks": ["TASK-030"],
+      "exitCriteria": ["Final coverage and result review are ready."]
+    }
+  ],
+  "parallelGroups": [
+    {
+      "id": "PG-001",
+      "tasks": ["TASK-010", "TASK-011"],
+      "integrationTask": "TASK-020",
+      "integrationEvidenceRequired": true,
+      "groupCannotCompleteWithoutIntegrationPass": true,
+      "status": "not_started",
+      "conflictRisk": "low",
+      "requiredCompletedBeforeStart": ["TASK-001"],
+      "forbiddenChanges": [
+        "shared type/schema changes",
+        "package or build configuration changes",
+        "auth, permission, migration, payment, deployment, billing, or secret changes",
+        "same file ownership conflicts"
+      ]
+    }
+  ],
+  "integrationTasks": [
+    {
+      "id": "TASK-020",
+      "parallelGroupId": "PG-001",
+      "tasksIntegrated": ["TASK-010", "TASK-011"],
+      "validationNeeded": ["focused integration validation", "traceability update"],
+      "evidenceRequired": ["conflict check notes", "validation output", "coverage update"]
+    }
+  ],
+  "parallelizationRules": [
+    "Dependencies must be complete before group start.",
+    "Expected files must not overlap inside the group.",
+    "Unknown file-touch risk must be none or low.",
+    "Shared contracts must be completed as foundation work.",
+    "Every parallel group must have an integration task.",
+    "Every parallel group must require integration evidence and integration pass."
+  ],
+  "parallelizationForbidden": [
+    "database schema changes",
+    "migrations",
+    "auth or permission changes",
+    "payment logic changes",
+    "shared type or schema changes",
+    "package or build configuration changes",
+    "same file ownership conflicts",
+    "unknown write set",
+    "medium or high unknown file-touch risk"
+  ],
+  "singleSessionFallback": "If actual parallel execution is unavailable, run group tasks sequentially and then run the integration task.",
+  "stopConditions": [
+    "work_graph_missing",
+    "module_boundary_check_missing",
+    "parallel_group_missing_integration_task",
+    "parallel_group_forbidden_shared_change",
+    "parallel_group_same_file_conflict",
+    "final_validation_unavailable"
+  ]
+}

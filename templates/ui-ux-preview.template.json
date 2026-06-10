@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "SCREEN-001",
+      "requirementIds": ["REQ-001"],
+      "previewLevel": "markdown_mockup",
+      "title": "Primary screen",
+      "purpose": "Explain the screen purpose before implementation.",
+      "primaryUser": "Primary user",
+      "flow": ["Open screen", "Enter data", "Submit", "Review result"],
+      "requiredStates": ["empty", "loading", "success", "validation_error", "server_error"],
+      "wireframe": "Describe the layout or include a Markdown mockup.",
+      "status": "preview_generated"
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "autonomyLevel": "autonomous_until_stop",
+  "deliveryStatus": "submitted_for_review",
+  "executionStrategy": "staged_parallel",
+  "parallelPolicy": {
+    "default": "sequential",
+    "maxInitialParallelGroupSize": 2,
+    "maxMatureParallelGroupSize": 3,
+    "moreThanMaxRequiresHumanApproval": true
+  },
+  "sourceBlueprintFiles": [
+    ".pbe/blueprint/requirement-tree.json",
+    ".pbe/blueprint/ui-ux-confirmation.md",
+    ".pbe/blueprint/work-design.json",
+    ".pbe/blueprint/work-graph.json",
+    ".pbe/blueprint/work-roadmap.md",
+    ".pbe/blueprint/verification-design.json",
+    ".pbe/blueprint/verification-plan.md",
+    ".pbe/blueprint/traceability-matrix.json",
+    ".pbe/blueprint/execution-strategy.json",
+    ".pbe/blueprint/execution-strategy.md",
+    ".pbe/blueprint/source-of-truth-matrix.md",
+    ".pbe/blueprint/pbe-invariants.md",
+    ".pbe/blueprint/foundation-contract.md",
+    ".pbe/blueprint/parallel-safety-contract.md"
+  ],
+  "contractFiles": {
+    "traceabilityMatrix": ".pbe/codex-execution-pack/04-traceability-matrix.json",
+    "uiUxSpec": ".pbe/codex-execution-pack/05-ui-ux-spec.json",
+    "uiUxPreview": ".pbe/codex-execution-pack/06-ui-ux-preview.md",
+    "uiUxConfirmation": ".pbe/codex-execution-pack/07-ui-ux-confirmation.md",
+    "operatingLoop": ".pbe/codex-execution-pack/10-codex-operating-loop.md",
+    "uiUxEvidenceChecklist": ".pbe/codex-execution-pack/15-ui-ux-evidence-checklist.md",
+    "finalCoverageCheck": ".pbe/codex-execution-pack/16-final-coverage-check.md",
+    "finalReportTemplate": ".pbe/codex-execution-pack/17-final-report-template.md",
+    "executionStrategy": ".pbe/codex-execution-pack/18-execution-strategy.md",
+    "sourceOfTruthMatrix": ".pbe/codex-execution-pack/19-source-of-truth-matrix.md",
+    "foundationContract": ".pbe/codex-execution-pack/20-foundation-contract.md",
+    "parallelSafetyContract": ".pbe/codex-execution-pack/21-parallel-safety-contract.md"
+  },
+  "operatingLoop": ".pbe/codex-execution-pack/10-codex-operating-loop.md",
+  "phases": [
+    {
+      "id": "PHASE-001",
+      "title": "Foundation",
+      "mode": "sequential",
+      "tasks": ["TASK-001"]
+    },
+    {
+      "id": "PHASE-002",
+      "title": "Independent feature implementation",
+      "mode": "parallel",
+      "parallelGroups": [
+        {
+          "id": "PG-001",
+          "tasks": ["TASK-010", "TASK-011"],
+          "integrationTask": "TASK-020",
+          "integrationEvidenceRequired": true,
+          "groupCannotCompleteWithoutIntegrationPass": true,
+          "status": "not_started",
+          "conflictRisk": "low",
+          "requiredCompletedBeforeStart": ["TASK-001"],
+          "forbiddenChanges": [
+            "shared type/schema changes",
+            "package or build configuration changes",
+            "auth, permission, migration, payment, deployment, billing, or secret changes",
+            "same file ownership conflicts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHASE-003",
+      "title": "Integration and validation",
+      "mode": "sequential",
+      "tasks": ["TASK-020"]
+    },
+    {
+      "id": "PHASE-004",
+      "title": "Final validation and review",
+      "mode": "sequential",
+      "tasks": ["TASK-030"]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "file": "11-task-cards/task-001.md",
+      "taskCard": ".pbe/codex-execution-pack/11-task-cards/task-001.md",
+      "title": "Implement first work unit",
+      "dependsOn": [],
+      "phase": "PHASE-001",
+      "executionMode": "sequential",
+      "scopeClass": "foundation",
+      "workGraphNodeIds": ["WG-FOUND-001"],
+      "parallelGroup": null,
+      "canRunInParallelWith": [],
+      "mustRunAfter": [],
+      "mustRunBefore": ["TASK-010", "TASK-011"],
+      "conflictRisk": "medium",
+      "expectedFiles": ["src/domain/device-status.ts"],
+      "expectedSharedFiles": [],
+      "forbiddenFiles": [],
+      "forbiddenChanges": [
+        "deployment, billing, secrets, or destructive data changes"
+      ],
+      "integrationRequired": false,
+      "integrationTask": null,
+      "dependencyResolved": true,
+      "writeSetKnown": true,
+      "rollbackPathAvailable": true,
+      "nodeId": "REQ-001",
+      "requirementIds": ["REQ-001"],
+      "verificationIds": ["TEST-001-1"],
+      "uiUxIds": [],
+      "evidenceRequired": [
+        "changed files",
+        "test file path",
+        "test command output",
+        "validation summary"
+      ],
+      "focusedValidation": []
+    },
+    {
+      "id": "TASK-020",
+      "file": "11-task-cards/task-020.md",
+      "taskCard": ".pbe/codex-execution-pack/11-task-cards/task-020.md",
+      "title": "Integrate PG-001 results",
+      "dependsOn": ["TASK-010", "TASK-011"],
+      "phase": "PHASE-003",
+      "executionMode": "integration",
+      "scopeClass": "selected",
+      "workGraphNodeIds": ["WG-INT-001"],
+      "parallelGroup": "PG-001",
+      "canRunInParallelWith": [],
+      "mustRunAfter": ["TASK-010", "TASK-011"],
+      "mustRunBefore": ["TASK-030"],
+      "conflictRisk": "medium",
+      "expectedFiles": ["src/features/integration.ts"],
+      "expectedSharedFiles": [],
+      "forbiddenFiles": [],
+      "forbiddenChanges": [
+        "new shared schema/type changes outside the group contract",
+        "package or build configuration changes",
+        "auth, permission, migration, payment, deployment, billing, or secret changes"
+      ],
+      "integrationRequired": true,
+      "integrationTask": "TASK-020",
+      "dependencyResolved": true,
+      "writeSetKnown": true,
+      "rollbackPathAvailable": true,
+      "nodeId": "REQ-001",
+      "requirementIds": ["REQ-001"],
+      "verificationIds": ["TEST-INT-001"],
+      "uiUxIds": [],
+      "evidenceRequired": [
+        "conflict check notes",
+        "shared contract check notes",
+        "focused integration validation output",
+        "traceability update"
+      ],
+      "focusedValidation": []
+    }
+  ],
+  "validation": {
+    "commandsFile": ".pbe/codex-execution-pack/12-validation-commands.md",
+    "completionCriteriaFile": ".pbe/codex-execution-pack/13-completion-criteria.md",
+    "finalCoverageCheckFile": ".pbe/codex-execution-pack/16-final-coverage-check.md"
+  },
+  "review": {
+    "resultReviewFolder": ".pbe/review/",
+    "acceptedStatusPolicy": "user_only",
+    "codexFinalStatus": "submitted_for_review"
+  },
+  "stopConditions": [
+    "credentials_or_secrets_required",
+    "deployment_or_billing_required",
+    "destructive_migration_required",
+    "out_of_scope_work_required",
+    "same_validation_failure_repeated_three_times",
+    "traceability_gap_blocks_completion",
+    "ui_evidence_gap_blocks_completion",
+    "ui_ux_confirmation_missing",
+    "user_feedback_scope_unclear",
+    "work_graph_missing",
+    "module_boundary_check_missing",
+    "parallel_group_missing_integration_task",
+    "parallel_group_forbidden_shared_change",
+    "parallel_group_same_file_conflict"
+  ],
+  "finalReportTemplate": ".pbe/codex-execution-pack/17-final-report-template.md"
+}

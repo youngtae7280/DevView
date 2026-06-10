@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/revision-manifest.schema.json",
+  "title": "Revision Manifest",
+  "type": "object",
+  "required": ["schemaVersion", "revisionId", "sourceFeedbackItems", "tasks"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "revisionId": { "type": "string" },
+    "sourceFeedbackItems": { "type": "array", "items": { "type": "string" } },
+    "status": {
+      "type": "string",
+      "enum": ["revision_requested", "revision_in_progress", "revision_verified", "submitted_for_review", "blocked"]
+    },
+    "affectedRequirementIds": { "type": "array", "items": { "type": "string" } },
+    "affectedTaskIds": { "type": "array", "items": { "type": "string" } },
+    "affectedUiUxIds": { "type": "array", "items": { "type": "string" } },
+    "affectedVerificationIds": { "type": "array", "items": { "type": "string" } },
+    "nonScope": { "type": "array", "items": { "type": "string" } },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "file", "feedbackItemIds", "evidenceRequired"],
+        "properties": {
+          "id": { "type": "string" },
+          "file": { "type": "string" },
+          "title": { "type": "string" },
+          "feedbackItemIds": { "type": "array", "items": { "type": "string" } },
+          "affectedRequirementIds": { "type": "array", "items": { "type": "string" } },
+          "affectedTaskIds": { "type": "array", "items": { "type": "string" } },
+          "affectedUiUxIds": { "type": "array", "items": { "type": "string" } },
+          "affectedVerificationIds": { "type": "array", "items": { "type": "string" } },
+          "evidenceRequired": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    },
+    "regressionChecks": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/ui-ux-spec.schema.json",
+  "title": "UI/UX Spec",
+  "type": "object",
+  "required": ["schemaVersion", "screens"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "screens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "purpose",
+          "primaryUser",
+          "primaryFlow",
+          "requiredElements",
+          "requiredStates",
+          "evidenceRequired"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string" },
+          "purpose": { "type": "string" },
+          "primaryUser": { "type": "string" },
+          "primaryFlow": { "type": "array", "items": { "type": "string" } },
+          "requiredElements": { "type": "array", "items": { "type": "string" } },
+          "requiredStates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "empty",
+                "loading",
+                "success",
+                "validation_error",
+                "server_error",
+                "permission_denied",
+                "not_found",
+                "offline"
+              ]
+            }
+          },
+          "uxRules": { "type": "array", "items": { "type": "string" } },
+          "accessibility": { "type": "array", "items": { "type": "string" } },
+          "responsivePriority": { "type": "string" },
+          "evidenceRequired": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

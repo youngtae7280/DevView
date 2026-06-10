@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/requirement-tree.schema.json",
+  "title": "Requirement Tree",
+  "type": "object",
+  "required": ["schemaVersion", "rootNodeId", "nodes"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "rootNodeId": { "type": "string" },
+    "traversal": { "type": "string", "enum": ["breadth_first"] },
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/node" }
+    }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": ["id", "title", "status", "children"],
+      "properties": {
+        "id": { "type": "string" },
+        "parentId": { "type": ["string", "null"] },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending_interview",
+            "interviewing",
+            "ready_to_decompose",
+            "ready_to_confirm",
+            "decomposed",
+            "confirmed",
+            "deferred",
+            "out_of_scope",
+            "blocked"
+          ]
+        },
+        "depth": { "type": "integer", "minimum": 0 },
+        "children": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "facts": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "openQuestions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "decisions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "scope": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "nonScope": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "uxIntent": { "type": "string" },
+        "primaryUser": { "type": "string" },
+        "primaryFlow": { "type": "array", "items": { "type": "string" } },
+        "screenStates": { "type": "array", "items": { "type": "string" } },
+        "responsivePriority": { "type": "string" },
+        "accessibilityNotes": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "FB-001",
+      "type": "ux_mismatch",
+      "rawFeedback": "The screen feels too complicated.",
+      "summary": "Simplify the default screen and move secondary inputs into an advanced section.",
+      "affectedRequirementIds": ["REQ-001"],
+      "affectedTaskIds": ["TASK-001"],
+      "affectedUiUxIds": ["SCREEN-001"],
+      "affectedVerificationIds": ["TEST-001-UX"],
+      "severity": "medium",
+      "needsClarification": false,
+      "clarificationQuestions": [],
+      "desiredOutcome": "Show only essential fields by default.",
+      "status": "open"
+    }
+  ]
+}

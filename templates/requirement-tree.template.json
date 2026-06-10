@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "rootNodeId": "req-root",
+  "traversal": "breadth_first",
+  "nodes": [
+    {
+      "id": "req-root",
+      "parentId": null,
+      "title": "Project request",
+      "summary": "Initial project request to refine through RPD Tree Walk.",
+      "status": "pending_interview",
+      "depth": 0,
+      "children": [],
+      "facts": [],
+      "openQuestions": [],
+      "decisions": [],
+      "scope": [],
+      "nonScope": [],
+      "uxIntent": "",
+      "primaryUser": "",
+      "primaryFlow": [],
+      "screenStates": [],
+      "responsivePriority": "",
+      "accessibilityNotes": []
+    }
+  ]
+}

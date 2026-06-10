@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/final-coverage-check.schema.json",
+  "title": "Final Coverage Check",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "requirementCoverage",
+    "taskCoverage",
+    "verificationCoverage",
+    "uiUxCoverage",
+    "traceabilityIssues",
+    "finalDecision"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "requirementCoverage": { "$ref": "#/$defs/coverageCount" },
+    "taskCoverage": { "$ref": "#/$defs/coverageCount" },
+    "verificationCoverage": { "$ref": "#/$defs/coverageCount" },
+    "uiUxCoverage": {
+      "type": "object",
+      "properties": {
+        "screensRequired": { "type": "integer", "minimum": 0 },
+        "screensImplemented": { "type": "integer", "minimum": 0 },
+        "statesRequired": { "type": "integer", "minimum": 0 },
+        "statesCovered": { "type": "integer", "minimum": 0 },
+        "missingStates": { "type": "array", "items": { "type": "string" } },
+        "evidenceProvided": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "traceabilityIssues": {
+      "type": "object",
+      "properties": {
+        "requirementsWithoutTasks": { "type": "array", "items": { "type": "string" } },
+        "tasksWithoutVerification": { "type": "array", "items": { "type": "string" } },
+        "verificationWithoutEvidence": { "type": "array", "items": { "type": "string" } },
+        "uiScreensWithoutEvidence": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "finalDecision": {
+      "type": "string",
+      "enum": ["complete", "continue_working", "blocked"]
+    }
+  },
+  "$defs": {
+    "coverageCount": {
+      "type": "object",
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "completed": { "type": "integer", "minimum": 0 },
+        "deferred": { "type": "integer", "minimum": 0 },
+        "outOfScope": { "type": "integer", "minimum": 0 },
+        "missing": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

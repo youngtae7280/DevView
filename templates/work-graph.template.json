@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "id": "WG-001",
+  "generatedFrom": [
+    ".pbe/blueprint/requirement-tree.json",
+    ".pbe/blueprint/work-design.json",
+    ".pbe/blueprint/ui-ux-confirmation.md"
+  ],
+  "moduleBoundaryCheck": {
+    "status": "complete",
+    "summary": "WPD converted RPD requirement boundaries into module-aware work boundaries.",
+    "boundaryFindings": [
+      {
+        "id": "MBF-001",
+        "requirementNodeIds": ["REQ-001"],
+        "title": "Shared foundation required",
+        "findingType": "shared_foundation",
+        "description": "Common contract work must be completed before independent feature tasks.",
+        "riskLevel": "medium",
+        "recommendedAction": "Plan a sequential foundation task before feature work.",
+        "blocksParallelization": true
+      }
+    ],
+    "sharedFoundations": [
+      {
+        "id": "FOUND-001",
+        "title": "Shared domain contract",
+        "reason": "Multiple work nodes depend on this contract.",
+        "relatedRequirementNodeIds": ["REQ-001"],
+        "expectedOutputs": ["domain type", "validation helper", "API contract"],
+        "mustCompleteBefore": ["TASK-010", "TASK-011"]
+      }
+    ],
+    "featureCandidates": ["WG-FEATURE-001", "WG-FEATURE-002"],
+    "integrationPoints": [
+      {
+        "id": "INT-001",
+        "title": "Integrate feature group",
+        "relatedRequirementNodeIds": ["REQ-001"],
+        "relatedWorkTaskIds": ["TASK-010", "TASK-011"],
+        "description": "Combine parallel feature results and validate shared contracts.",
+        "requiredAfterTasks": ["TASK-010", "TASK-011"],
+        "validationNeeded": ["focused validation", "broader regression validation"]
+      }
+    ],
+    "parallelizationRisks": [],
+    "boundaryBlockers": []
+  },
+  "nodes": [
+    {
+      "id": "WG-FOUND-001",
+      "title": "Define shared foundation",
+      "type": "foundation",
+      "scopeClass": "foundation",
+      "relatedRequirementNodeIds": ["REQ-001"],
+      "expectedFiles": ["src/domain/device-status.ts"],
+      "expectedSharedFiles": ["src/domain/device-status.ts"],
+      "forbiddenFiles": [],
+      "unknownFileTouchRisk": "low",
+      "affectedDomains": ["domain-model", "validation"],
+      "expectedOutputs": ["shared domain type or contract"],
+      "riskLevel": "medium",
+      "canRunInParallel": false,
+      "mustRunSequentiallyReason": "This node changes shared contracts."
+    },
+    {
+      "id": "WG-FEATURE-001",
+      "title": "Implement independent feature A",
+      "type": "feature",
+      "scopeClass": "selected",
+      "relatedRequirementNodeIds": ["REQ-001"],
+      "expectedFiles": ["src/features/feature-a/*"],
+      "expectedSharedFiles": [],
+      "forbiddenFiles": ["package.json", "build config"],
+      "unknownFileTouchRisk": "low",
+      "affectedDomains": ["ui-state"],
+      "expectedOutputs": ["feature A behavior"],
+      "riskLevel": "low",
+      "canRunInParallel": true,
+      "parallelizationReason": "Expected files do not overlap after foundation work completes."
+    },
+    {
+      "id": "WG-FEATURE-002",
+      "title": "Implement independent feature B",
+      "type": "feature",
+      "scopeClass": "selected",
+      "relatedRequirementNodeIds": ["REQ-002"],
+      "expectedFiles": ["src/features/feature-b/*"],
+      "expectedSharedFiles": [],
+      "forbiddenFiles": ["package.json", "build config"],
+      "unknownFileTouchRisk": "low",
+      "affectedDomains": ["ui-state"],
+      "expectedOutputs": ["feature B behavior"],
+      "riskLevel": "low",
+      "canRunInParallel": true,
+      "parallelizationReason": "Expected files do not overlap after foundation work completes."
+    },
+    {
+      "id": "WG-INT-001",
+      "title": "Integrate feature group",
+      "type": "integration",
+      "scopeClass": "selected",
+      "relatedRequirementNodeIds": ["REQ-001", "REQ-002"],
+      "expectedFiles": ["src/features/integration.ts"],
+      "expectedSharedFiles": ["src/features/integration.ts"],
+      "forbiddenFiles": [],
+      "unknownFileTouchRisk": "medium",
+      "affectedDomains": ["routing", "validation"],
+      "expectedOutputs": ["integrated behavior", "evidence update"],
+      "riskLevel": "medium",
+      "canRunInParallel": false,
+      "mustRunSequentiallyReason": "Integration must run after all tasks in the group complete."
+    }
+  ],
+  "edges": [
+    {
+      "from": "WG-FOUND-001",
+      "to": "WG-FEATURE-001",
+      "type": "depends_on",
+      "reason": "Feature A depends on shared foundation."
+    },
+    {
+      "from": "WG-FOUND-001",
+      "to": "WG-FEATURE-002",
+      "type": "depends_on",
+      "reason": "Feature B depends on shared foundation."
+    },
+    {
+      "from": "WG-FEATURE-001",
+      "to": "WG-INT-001",
+      "type": "integrates_into",
+      "reason": "Feature A must be integrated."
+    },
+    {
+      "from": "WG-FEATURE-002",
+      "to": "WG-INT-001",
+      "type": "integrates_into",
+      "reason": "Feature B must be integrated."
+    }
+  ],
+  "boundaryFindings": [],
+  "sharedFoundations": [],
+  "featureCandidates": ["WG-FEATURE-001", "WG-FEATURE-002"],
+  "integrationPoints": [],
+  "parallelizationRisks": [],
+  "boundaryBlockers": [],
+  "summary": "The WorkGraph is module-aware and is ready for execution planning."
+}

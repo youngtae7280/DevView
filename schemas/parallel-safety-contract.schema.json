@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/parallel-safety-contract.schema.json",
+  "title": "PBE Parallel Safety Contract",
+  "type": "object",
+  "required": ["schemaVersion", "defaultPolicy", "required"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "defaultPolicy": { "type": "string", "enum": ["sequential"] },
+    "required": { "type": "array", "items": { "type": "string" } },
+    "unknownPolicy": { "type": "string" },
+    "parallelPolicy": {
+      "type": "object",
+      "properties": {
+        "default": { "type": "string", "enum": ["sequential"] },
+        "maxInitialParallelGroupSize": { "type": "integer", "minimum": 1 },
+        "maxMatureParallelGroupSize": { "type": "integer", "minimum": 1 },
+        "moreThanMaxRequiresHumanApproval": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

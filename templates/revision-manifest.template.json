@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "revisionId": "rev-001",
+  "sourceFeedbackItems": ["FB-001"],
+  "status": "revision_in_progress",
+  "affectedRequirementIds": ["REQ-001"],
+  "affectedTaskIds": ["TASK-001"],
+  "affectedUiUxIds": ["SCREEN-001"],
+  "affectedVerificationIds": ["TEST-001-UX"],
+  "nonScope": [
+    "Do not change behavior outside the affected items unless the user approves scope expansion."
+  ],
+  "tasks": [
+    {
+      "id": "REV-TASK-001",
+      "file": "06-revision-task-cards/revision-task-001.md",
+      "title": "Apply bounded feedback change",
+      "feedbackItemIds": ["FB-001"],
+      "affectedRequirementIds": ["REQ-001"],
+      "affectedTaskIds": ["TASK-001"],
+      "affectedUiUxIds": ["SCREEN-001"],
+      "affectedVerificationIds": ["TEST-001-UX"],
+      "evidenceRequired": [
+        "changed files",
+        "focused validation output",
+        "regression check output"
+      ]
+    }
+  ],
+  "regressionChecks": ["Run checks that protect unaffected behavior."]
+}

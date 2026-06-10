@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/work-design.schema.json",
+  "title": "Work Design",
+  "type": "object",
+  "required": ["schemaVersion", "workUnits"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "generatedFrom": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "workUnits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "goal"],
+        "properties": {
+          "id": { "type": "string" },
+          "requirementNodeId": { "type": "string" },
+          "requirementIds": { "type": "array", "items": { "type": "string" } },
+          "workGraphNodeId": { "type": "string" },
+          "scopeClass": {
+            "type": "string",
+            "enum": ["selected", "foundation", "deferred", "blocked", "out_of_scope"]
+          },
+          "title": { "type": "string" },
+          "goal": { "type": "string" },
+          "taskCandidateId": { "type": "string" },
+          "uiUxCandidateIds": { "type": "array", "items": { "type": "string" } },
+          "approvedUiUxDirection": { "type": "array", "items": { "type": "string" } },
+          "uiUxNonScope": { "type": "array", "items": { "type": "string" } },
+          "uiUxImplementationNotes": { "type": "array", "items": { "type": "string" } },
+          "scope": { "type": "array", "items": { "type": "string" } },
+          "nonScope": { "type": "array", "items": { "type": "string" } },
+          "implementationNotes": { "type": "array", "items": { "type": "string" } },
+          "dependencies": { "type": "array", "items": { "type": "string" } },
+          "risks": { "type": "array", "items": { "type": "string" } },
+          "doneCriteria": { "type": "array", "items": { "type": "string" } },
+          "validationHints": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    },
+    "moduleBoundaryCheck": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "enum": ["not_started", "complete", "blocked"] },
+        "summary": { "type": "string" },
+        "boundaryFindings": { "type": "array" },
+        "sharedFoundations": { "type": "array" },
+        "featureCandidates": { "type": "array" },
+        "integrationPoints": { "type": "array" },
+        "parallelizationRisks": { "type": "array" },
+        "boundaryBlockers": { "type": "array" }
+      },
+      "additionalProperties": true
+    },
+    "workGraph": { "$ref": "work-graph.schema.json" },
+    "roadmap": { "type": "object" }
+  },
+  "additionalProperties": true
+}

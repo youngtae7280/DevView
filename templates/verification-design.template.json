@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": [
+    ".pbe/blueprint/requirement-tree.json",
+    ".pbe/blueprint/work-design.json",
+    ".pbe/blueprint/work-roadmap.md"
+  ],
+  "verificationItems": [
+    {
+      "id": "verify-001",
+      "workDesignId": "work-001",
+      "taskId": "TASK-001",
+      "requirementNodeId": "req-root",
+      "requirementIds": ["req-root"],
+      "title": "Verify confirmed requirement",
+      "acceptanceCriteria": [],
+      "validationCommands": [],
+      "manualChecks": [],
+      "uiUxIds": [],
+      "uiUxEvidenceRequired": [],
+      "regressionRisks": [],
+      "evidenceToCapture": []
+    }
+  ],
+  "acceptancePlan": {
+    "summary": "",
+    "requiredEvidence": [],
+    "stopConditions": []
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": [
+    ".pbe/blueprint/requirement-tree.json",
+    ".pbe/blueprint/rpd-summary.md",
+    ".pbe/blueprint/ui-ux-confirmation.md"
+  ],
+  "moduleBoundaryCheck": {
+    "status": "complete",
+    "summary": "Requirement boundaries were converted into module-aware coding boundaries before task planning.",
+    "boundaryFindings": [
+      {
+        "id": "MBF-001",
+        "requirementNodeIds": ["req-root"],
+        "title": "Shared foundation required",
+        "findingType": "shared_foundation",
+        "description": "Shared domain types or contracts must be completed before feature work.",
+        "riskLevel": "medium",
+        "recommendedAction": "Create a foundation WorkGraph node and make feature nodes depend on it.",
+        "blocksParallelization": true
+      }
+    ],
+    "sharedFoundations": [
+      {
+        "id": "FOUND-001",
+        "title": "Shared foundation",
+        "reason": "Multiple requirements depend on common types, validation, or contracts.",
+        "relatedRequirementNodeIds": ["req-root"],
+        "expectedOutputs": ["shared type, schema, validation helper, or contract"],
+        "mustCompleteBefore": ["WG-FEATURE-001"]
+      }
+    ],
+    "featureCandidates": ["WG-FEATURE-001"],
+    "integrationPoints": [
+      {
+        "id": "INT-001",
+        "title": "Integrate feature results",
+        "relatedRequirementNodeIds": ["req-root"],
+        "relatedWorkTaskIds": ["TASK-001"],
+        "description": "Integrate outputs from independent feature work.",
+        "requiredAfterTasks": ["TASK-001"],
+        "validationNeeded": ["focused validation", "traceability update"]
+      }
+    ],
+    "parallelizationRisks": [],
+    "boundaryBlockers": []
+  },
+  "workGraph": {
+    "id": "WG-001",
+    "nodes": [
+      {
+        "id": "WG-FOUND-001",
+        "title": "Define shared foundation",
+        "type": "foundation",
+        "scopeClass": "foundation",
+        "relatedRequirementNodeIds": ["req-root"],
+        "expectedFiles": ["src/domain/shared-foundation.ts"],
+        "expectedSharedFiles": ["src/domain/shared-foundation.ts"],
+        "forbiddenFiles": [],
+        "unknownFileTouchRisk": "low",
+        "affectedDomains": ["domain-model", "validation"],
+        "expectedOutputs": ["shared contract or reusable helper"],
+        "riskLevel": "medium",
+        "canRunInParallel": false,
+        "mustRunSequentiallyReason": "Foundation work defines shared contracts used by feature tasks."
+      },
+      {
+        "id": "WG-FEATURE-001",
+        "title": "Implement confirmed feature",
+        "type": "feature",
+        "scopeClass": "selected",
+        "relatedRequirementNodeIds": ["req-root"],
+        "expectedFiles": ["src/features/confirmed-feature.ts"],
+        "expectedSharedFiles": [],
+        "forbiddenFiles": ["package.json", "build config"],
+        "unknownFileTouchRisk": "low",
+        "affectedDomains": ["ui-state"],
+        "expectedOutputs": ["working feature behavior"],
+        "riskLevel": "low",
+        "canRunInParallel": true,
+        "parallelizationReason": "Feature work is isolated after foundation tasks complete."
+      },
+      {
+        "id": "WG-INT-001",
+        "title": "Integrate feature outputs",
+        "type": "integration",
+        "scopeClass": "selected",
+        "relatedRequirementNodeIds": ["req-root"],
+        "expectedFiles": ["src/features/integration.ts"],
+        "expectedSharedFiles": ["src/features/integration.ts"],
+        "forbiddenFiles": [],
+        "unknownFileTouchRisk": "medium",
+        "affectedDomains": ["routing", "validation"],
+        "expectedOutputs": ["integrated behavior and updated evidence"],
+        "riskLevel": "medium",
+        "canRunInParallel": false,
+        "mustRunSequentiallyReason": "Integration must run after all related parallel work completes."
+      }
+    ],
+    "edges": [
+      {
+        "from": "WG-FOUND-001",
+        "to": "WG-FEATURE-001",
+        "type": "depends_on",
+        "reason": "Feature depends on shared foundation."
+      },
+      {
+        "from": "WG-FEATURE-001",
+        "to": "WG-INT-001",
+        "type": "integrates_into",
+        "reason": "Feature output must be integrated and validated."
+      }
+    ],
+    "boundaryFindings": [],
+    "sharedFoundations": [],
+    "featureCandidates": ["WG-FEATURE-001"],
+    "integrationPoints": [],
+    "parallelizationRisks": [],
+    "boundaryBlockers": [],
+    "summary": "WorkGraph converts requirement intent into module-aware coding work."
+  },
+  "workUnits": [
+    {
+      "id": "work-001",
+      "requirementNodeId": "req-root",
+      "requirementIds": ["req-root"],
+      "workGraphNodeId": "WG-FEATURE-001",
+      "scopeClass": "selected",
+      "title": "Implement confirmed requirement",
+      "goal": "Turn the confirmed requirement into working code.",
+      "taskCandidateId": "TASK-001",
+      "uiUxCandidateIds": [],
+      "approvedUiUxDirection": [],
+      "uiUxNonScope": [],
+      "uiUxImplementationNotes": [],
+      "scope": [],
+      "nonScope": [],
+      "implementationNotes": [],
+      "dependencies": [],
+      "risks": [],
+      "doneCriteria": [],
+      "validationHints": []
+    }
+  ],
+  "roadmap": {
+    "phases": [
+      {
+        "id": "PHASE-001",
+        "title": "Foundation",
+        "mode": "sequential",
+        "workGraphNodeIds": ["WG-FOUND-001"]
+      },
+      {
+        "id": "PHASE-002",
+        "title": "Feature implementation",
+        "mode": "parallel_candidate",
+        "workGraphNodeIds": ["WG-FEATURE-001"]
+      },
+      {
+        "id": "PHASE-003",
+        "title": "Integration and validation",
+        "mode": "sequential",
+        "workGraphNodeIds": ["WG-INT-001"]
+      }
+    ]
+  }
+}
