@@ -8,6 +8,8 @@ PBE is a Codex Plugin workflow. Do not revive the deprecated GUI/API-provider/Sa
 
 PBE is optimized for safe, reviewable, staged project construction, not for speed.
 
+After future PBE plugin changes, run the relevant validation, commit the finished work, and push to `origin/main` unless the user explicitly asks not to push.
+
 ## Important Files
 
 - `.pbe/blueprint/pbe-state.json`
