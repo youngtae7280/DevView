@@ -1,20 +1,35 @@
 ---
 name: pbe-run-acep
-description: Execute an ACEP contract by following task cards, evidence rules, traceability, UI/UX checks, and final coverage gates.
+description: Execute the selected PBE Cycle Contract and Node Execution Contracts, enforce tree scope, run selected tests, attach evidence, and create Change Nodes for discoveries outside the contract.
 ---
 
 # PBE Run ACEP
 
 Use this skill to execute an existing Autonomous Codex Execution Pack.
 
-ACEP execution is contract execution, not only task execution. Codex must keep requirement, task, verification, UI/UX, evidence, and coverage links intact.
+ACEP execution is contract execution, not only task execution. Codex must keep Product, Project, Work, Test, requirement, task, verification, UI/UX, evidence, and coverage links intact.
 
-ACEP Runner is deterministic in Autoflow. Run it automatically after ACEP
-generation succeeds, then stop at the Review Result gate.
+In PBE v2, ACEP Runner executes only the selected Cycle Contract and its Node Execution Contracts. It must not execute excluded, deferred, blocked, or out-of-scope nodes unless the user changes scope through an approved gate.
+
+ACEP Runner is deterministic in Autoflow. Run it automatically after ACEP generation succeeds, then stop at the Review Result gate.
 
 Run ACEP only for selected scope and required foundation scope. Deferred and out-of-scope items are protected scope and must not be implemented unless the user changes the implementation scope through a gate.
 
 ## Inputs
+
+Prefer v2 cycle-native inputs:
+
+```text
+.pbe/execution/cycle-tree.json
+.pbe/execution/cycle-contract.md
+.pbe/evidence/evidence-tree.json
+.pbe/control/change-tree.json
+.pbe/control/impact-tree.json
+.pbe/codex-execution-pack/22-cycle-contract.md
+.pbe/codex-execution-pack/11-node-execution-contracts/
+```
+
+Also read ACEP compatibility inputs:
 
 ```text
 .pbe/codex-execution-pack/00-readme.md
@@ -35,63 +50,91 @@ Run ACEP only for selected scope and required foundation scope. Deferred and out
 
 ## Required Actions
 
-1. Read `00-readme.md`.
-2. Read `execution-manifest.json`.
-3. Read `04-traceability-matrix.json`.
-4. Read `05-ui-ux-spec.json`.
-5. Read `18-execution-strategy.md` when present.
-6. Confirm task order, phases, parallel groups, and integration tasks from the manifest.
-7. Follow `10-codex-operating-loop.md`.
-8. Execute phases in manifest order.
-9. Execute sequential phases task by task in order.
-10. Execute parallel phases by `parallelGroups`.
-11. If actual parallel execution is not available, execute tasks inside each parallel group sequentially while preserving the declared dependencies and integration step.
-12. Do not execute a group's integration task until all group tasks are complete.
-13. Do not move to the next phase until the integration task passes required validation or records a stop condition.
-14. Execute selected and foundation tasks only.
-15. Treat deferred and out-of-scope task requests as stop conditions unless scope was approved.
-16. Respect scope, non-scope, and Execution Strategy in every task card.
-17. Track evidence after every task.
-18. Run focused validation after each task when feasible.
-19. If UI changed, update or complete UI/UX evidence checklist notes.
-20. Fix failures and revalidate.
-21. Run broader validation at phase or pack completion.
-22. Complete `16-final-coverage-check.md`.
-23. Check `13-completion-criteria.md`.
-24. Write the final report using `17-final-report-template.md` only when technical completion criteria are satisfied.
-25. Do not mark the result `accepted`.
-26. End as `submitted_for_review` and run or recommend `pbe-review-result`.
-27. Update `pbe-state.json.autoflow.state` to `ACEP_RUN_DONE`.
-28. Add `run_acep` to `autoflow.completedSteps`.
-29. Set `autoflow.nextStep` to `review_result`.
-30. Continue automatically to Result Review gate.
+1. Read `.pbe/execution/cycle-tree.json` and `.pbe/execution/cycle-contract.md` when present.
+2. Read `.pbe/codex-execution-pack/22-cycle-contract.md` when present.
+3. Read `00-readme.md`.
+4. Read `execution-manifest.json`.
+5. Read `04-traceability-matrix.json`.
+6. Read `05-ui-ux-spec.json`.
+7. Read `18-execution-strategy.md` when present.
+8. Confirm active cycle ID, included nodes, excluded nodes, task order, phases, parallel groups, and integration tasks from the manifest.
+9. Follow `10-codex-operating-loop.md`.
+10. Execute phases in manifest order.
+11. Execute sequential phases task by task in order.
+12. Execute parallel phases by `parallelGroups`.
+13. If actual parallel execution is not available, execute tasks inside each parallel group sequentially while preserving the declared dependencies and integration step.
+14. Do not execute a group's integration task until all group tasks are complete.
+15. Do not move to the next phase until the integration task passes required validation or records a stop condition.
+16. Execute selected and foundation tasks only.
+17. Execute only included Work nodes and included Test nodes unless a broader regression check is explicitly included in the Cycle Contract.
+18. Treat deferred, excluded, blocked, and out-of-scope task requests as stop conditions unless scope was approved.
+19. Respect scope, non-scope, Cycle Contract, Node Execution Contract, and Execution Strategy in every task.
+20. Track evidence after every task.
+21. Attach or update evidence in `.pbe/evidence/evidence-tree.json` when evidence can be represented.
+22. Run focused validation after each task when feasible.
+23. If UI changed, update or complete UI/UX evidence checklist notes.
+24. Fix failures and revalidate.
+25. Run broader validation at phase or pack completion.
+26. Complete `16-final-coverage-check.md`.
+27. Check `13-completion-criteria.md`.
+28. Write the final report using `17-final-report-template.md` only when technical completion criteria are satisfied.
+29. Do not mark the result `accepted` or `accepted_done`.
+30. End as `submitted_for_review` and run or recommend `pbe-review-result`.
+31. Update `pbe-state.json.autoflow.state` to `ACEP_RUN_DONE`.
+32. Add `run_acep` to `autoflow.completedSteps`.
+33. Set `autoflow.nextStep` to `review_result`.
+34. Continue automatically to Result Review gate.
 
 ## Per-Task Loop
 
 For each task:
 
 1. Read the task card.
-2. Inspect its `## Execution Strategy` section.
-3. Inspect linked requirement IDs.
-4. Inspect linked verification IDs.
-5. Inspect linked UI/UX IDs if any.
-6. Inspect approved UI/UX direction and non-scope for UI tasks.
-7. Confirm the task is being run in the correct phase and mode.
-8. Confirm the task is selected or foundation scope.
-9. If the task is foundation scope, ensure it does not implement deferred feature behavior.
-10. If the task is in a parallel group, verify it does not require forbidden changes before starting.
-11. Implement the smallest coherent change.
-12. Add or update tests.
-13. Run focused validation.
-14. Capture evidence:
-   - changed files
-   - test files
-   - command output
-   - validation summary
-   - UI manual verification note if UI changed
-   - screenshot path if available
-13. Update traceability or coverage notes.
-14. Move to the next task only when task acceptance criteria and evidence requirements are satisfied.
+2. Read the linked Node Execution Contract when present.
+3. Inspect its `## Cycle Scope` and `## Execution Strategy` sections.
+4. Inspect linked Product, Project, Work, and Test node IDs.
+5. Inspect linked requirement IDs.
+6. Inspect linked verification IDs.
+7. Inspect linked UI/UX IDs if any.
+8. Inspect approved UI/UX direction and non-scope for UI tasks.
+9. Confirm the task is inside the active Cycle Slice.
+10. Confirm the task is being run in the correct phase and mode.
+11. Confirm the task is selected or foundation scope.
+12. If the task is foundation scope, ensure it does not implement deferred feature behavior.
+13. If the task is in a parallel group, verify it does not require forbidden changes before starting.
+14. Implement the smallest coherent change.
+15. Add or update tests.
+16. Run focused validation.
+17. Capture evidence:
+    - changed files
+    - test files
+    - command output
+    - validation summary
+    - UI manual verification note if UI changed
+    - screenshot path if available
+18. Update traceability, evidence, or coverage notes.
+19. Move to the next task only when task acceptance criteria and evidence requirements are satisfied.
+
+## Scope Enforcement
+
+Allowed:
+
+- implementation details inside included Work nodes
+- included Test nodes and explicitly required regression checks
+- selected and foundation files named by the task card or NEC
+
+Requires Change Node:
+
+- new product behavior
+- new UI flow
+- API contract change not included in the Cycle Contract
+- permission/security change
+- acceptance criterion change
+- verification strategy change
+- changes to excluded/deferred/blocked/out-of-scope nodes
+- implementation that makes previously verified evidence stale
+
+When a Change Node is required, record or request it in `.pbe/control/change-tree.json`, set Autoflow to `BLOCKED` if approval is required, and do not silently continue.
 
 ## Phase And Parallel Group Rules
 
@@ -113,6 +156,12 @@ For a parallel phase:
 6. Run the `integrationTask`.
 7. Stop if the integration task cannot resolve conflicts safely.
 
+## Partial Testing
+
+Selected Test nodes may pass, fail, be manual_required, skipped, deferred, or blocked. Product nodes receive only partial satisfaction when Test coverage is partial.
+
+Do not mark Product branches `accepted_done`. Only the user may close Product branches through review/acceptance.
+
 ## No-Question Rule
 
 Do not ask the user during ACEP execution unless a stop condition is reached.
@@ -126,6 +175,7 @@ Stop when work requires:
 - destructive migration
 - out-of-scope behavior
 - deferred-scope implementation
+- excluded Cycle Slice node changes
 - foundation work expanding into deferred feature behavior
 - a decision that changes product intent
 - a repeated validation failure after three attempts
@@ -133,6 +183,7 @@ Stop when work requires:
 - unresolved traceability gap that blocks completion
 - missing UI/UX evidence for a required UI screen or state
 - implementation would conflict with confirmed UI/UX direction
+- missing Cycle Contract or missing Node Execution Contract for a selected Work node
 - a parallel group task requires shared schema, shared type, build config, auth, permission, migration, package configuration, deployment, billing, secret handling, or another forbidden change
 - two tasks in the same parallel group need to modify the same file
 - a parallel group has no integration task
@@ -142,14 +193,16 @@ Stop when work requires:
 
 Before final completion:
 
-1. Read the traceability matrix.
-2. Read the UI/UX evidence checklist.
-3. Complete the final coverage check.
-4. Verify there are no requirements without tasks.
-5. Verify there are no tasks without verification or explicit explanation.
-6. Verify there are no verification items without evidence or not-runnable explanation.
-7. Verify no required UI state is missing without explanation.
-8. Verify no unresolved stop condition remains.
+1. Read the active Cycle Contract.
+2. Read the traceability matrix.
+3. Read the UI/UX evidence checklist.
+4. Complete the final coverage check.
+5. Verify included Product nodes have linked Work nodes or explicit explanation.
+6. Verify included Work nodes have Test nodes or explicit not-runnable explanation.
+7. Verify there are no verification items without evidence or not-runnable explanation.
+8. Verify no required UI state is missing without explanation.
+9. Verify no unresolved stop condition remains.
+10. Verify excluded nodes were not changed.
 
 If coverage issues remain, continue working or record a stop condition. Do not write the final report first.
 
@@ -177,6 +230,7 @@ Codex must not set:
 
 ```text
 accepted
+accepted_done
 ```
 
 Only the user can accept the result. If the user is dissatisfied, continue with `pbe-collect-feedback`, `pbe-create-revision-pack`, and `pbe-run-revision`.
@@ -189,12 +243,15 @@ The state card must say that ACEP execution ended as `submitted_for_review` and 
 
 Include:
 
+- active cycle ID
+- included Work/Test nodes executed
+- excluded/deferred/out-of-scope nodes protected
 - tasks completed
 - selected/foundation tasks completed
-- deferred/out-of-scope items protected
 - files changed
 - validations run
 - skipped validations and reasons
+- evidence tree update result
 - traceability matrix result
 - UI/UX evidence result
 - final coverage check result

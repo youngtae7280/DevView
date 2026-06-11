@@ -9,11 +9,29 @@ Describe the specific implementation goal.
 Mode:
 sequential
 
+Active Cycle:
+CYCLE-001
+
 Scope Class:
 selected
 
 WorkGraph Node IDs:
 - WG-001
+
+Product Tree Node IDs:
+- PT-001
+
+Project Tree Node IDs:
+- PJ-001
+
+Work Tree Node IDs:
+- WT-001
+
+Test Tree Node IDs:
+- TT-001
+
+Node Execution Contract:
+- `.pbe/codex-execution-pack/11-node-execution-contracts/nec-task-001.md`
 
 Parallel Group:
 none
@@ -50,6 +68,40 @@ no
 
 Integration Task:
 none
+
+## Cycle Scope
+
+Included in active cycle:
+yes
+
+Explicitly excluded nodes that must not be touched:
+- none
+
+Changes requiring a Change Node:
+- product behavior not listed in this task
+- UI flow or state not approved in the UI/UX contract
+- API, permission, verification, or acceptance changes outside this task
+- changes to deferred, blocked, or out-of-scope nodes
+
+## Node Execution Contract
+
+Read the linked Node Execution Contract before editing files. If it conflicts with this task card, stop and report the mismatch instead of guessing.
+
+## Product Tree Links
+
+- PT-001
+
+## Project Tree Links
+
+- PJ-001
+
+## Work Tree Links
+
+- WT-001
+
+## Test Tree Links
+
+- TT-001
 
 ## Requirement Links
 

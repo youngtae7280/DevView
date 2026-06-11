@@ -18,6 +18,9 @@
 ## Explicit Non-Scope
 {{nonScope}}
 
+## Explicitly Excluded Nodes
+{{excludedNodes}}
+
 ## Implementation Instructions
 {{implementationInstructions}}
 
@@ -32,6 +35,9 @@
 
 ## Evidence Required
 {{evidenceRequired}}
+
+## Rollback Plan
+{{rollbackPlan}}
 
 ## Close Criteria
 {{closeCriteria}}

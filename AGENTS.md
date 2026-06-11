@@ -239,15 +239,17 @@ moreThanMaxRequiresHumanApproval = true
 
 When executing ACEP:
 
-1. Read `.pbe/codex-execution-pack/18-execution-strategy.md`.
-2. Follow `execution-manifest.json` phases.
-3. Run foundation tasks before feature tasks.
-4. Only tasks explicitly assigned to a parallel group may run in parallel.
-5. Do not parallelize unknown write sets.
-6. Do not parallelize shared schemas, shared types, build config, auth, permissions, migrations, package configuration, or same-file changes.
-7. Every parallel group must have an integration task.
-8. Every parallel group must require integration evidence and integration pass.
-9. If actual parallel execution is unavailable, execute parallel-capable tasks sequentially and still run the integration task.
+1. Read `.pbe/execution/cycle-tree.json`, `.pbe/execution/cycle-contract.md`, and `.pbe/codex-execution-pack/22-cycle-contract.md` when present.
+2. Read `.pbe/codex-execution-pack/18-execution-strategy.md`.
+3. Follow `execution-manifest.json` phases.
+4. Run foundation tasks before feature tasks.
+5. Execute only included Work/Test nodes from the active Cycle Slice.
+6. Only tasks explicitly assigned to a parallel group may run in parallel.
+7. Do not parallelize unknown write sets.
+8. Do not parallelize shared schemas, shared types, build config, auth, permissions, migrations, package configuration, or same-file changes.
+9. Every parallel group must have an integration task.
+10. Every parallel group must require integration evidence and integration pass.
+11. If actual parallel execution is unavailable, execute parallel-capable tasks sequentially and still run the integration task.
 
 ## Cycle Execution
 
@@ -270,12 +272,14 @@ When running ACEP:
 3. Read `.pbe/codex-execution-pack/04-traceability-matrix.json`.
 4. Read `.pbe/codex-execution-pack/05-ui-ux-spec.json`.
 5. Follow `.pbe/codex-execution-pack/10-codex-operating-loop.md`.
-6. Execute selected and foundation scope only.
-7. Do not implement deferred or out-of-scope behavior.
-8. Run validation commands listed in `.pbe/codex-execution-pack/12-validation-commands.md`.
-9. Complete `.pbe/codex-execution-pack/15-ui-ux-evidence-checklist.md` for UI work.
-10. Complete `.pbe/codex-execution-pack/16-final-coverage-check.md` before final report.
-11. End as `submitted_for_review`, not `accepted`.
+6. Read `.pbe/codex-execution-pack/22-cycle-contract.md` and linked Node Execution Contracts when present.
+7. Execute selected and foundation scope only.
+8. Do not implement deferred, excluded, blocked, or out-of-scope behavior.
+9. Create or request a Change Node for product/scope/UX/risk/acceptance/verification drift.
+10. Run validation commands listed in `.pbe/codex-execution-pack/12-validation-commands.md`.
+11. Complete `.pbe/codex-execution-pack/15-ui-ux-evidence-checklist.md` for UI work.
+12. Complete `.pbe/codex-execution-pack/16-final-coverage-check.md` before final report.
+13. End as `submitted_for_review`, not `accepted`.
 
 ## Result Review And Revision
 

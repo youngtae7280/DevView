@@ -1,18 +1,32 @@
 ---
 name: pbe-generate-acep
-description: Generate an execution-contract ACEP with traceability, UI/UX, evidence, and final coverage requirements.
+description: Generate Cycle Contract and Node Execution Contracts from selected tree nodes, preserving traceability, UI/UX, verification, evidence, parallel safety, and change rules.
 ---
 
 # PBE Generate ACEP
 
 Use this skill to generate `.pbe/codex-execution-pack/` from completed blueprint artifacts.
 
-ACEP is not only a task-card bundle. It is a Codex execution contract that links requirements, tasks, verification, UI/UX expectations, evidence, and final coverage checks.
+ACEP is not only a task-card bundle. It is a Codex execution contract that links Product, Project, Work, Test, Cycle, traceability, UI/UX expectations, evidence, and final coverage checks.
 
-ACEP generation is deterministic in Autoflow. Run it automatically after
-Coverage Audit and UX Audit pass.
+In PBE v2, ACEP generation packages the selected Cycle Slice. It does not package the whole product unless the user selected the whole product as the active cycle.
+
+ACEP generation is deterministic in Autoflow. Run it automatically after Coverage Audit and UX Audit pass.
 
 ## Inputs
+
+Prefer v2 tree and cycle files when present:
+
+```text
+.pbe/tree/product-tree.json
+.pbe/tree/project-tree.json
+.pbe/tree/work-tree.json
+.pbe/tree/test-tree.json
+.pbe/execution/cycle-tree.json
+.pbe/execution/cycle-contract.md
+```
+
+Also read compatibility, audit, and strategy files:
 
 ```text
 .pbe/blueprint/requirement-tree.json
@@ -42,7 +56,7 @@ Coverage Audit and UX Audit pass.
 
 ## Required Files
 
-Create or update:
+Create or update the existing ACEP files:
 
 ```text
 00-readme.md
@@ -59,7 +73,6 @@ Create or update:
 09-verification-plan.md
 10-codex-operating-loop.md
 11-task-cards/task-001.md
-11-task-cards/task-002.md
 12-validation-commands.md
 13-completion-criteria.md
 14-failure-recovery.md
@@ -73,28 +86,41 @@ Create or update:
 execution-manifest.json
 ```
 
-Create as many task cards as the roadmap requires. Do not create fake work just to fill a count.
+Also create or update v2 cycle-native contract files:
+
+```text
+22-cycle-contract.md
+23-change-rules.md
+11-node-execution-contracts/
+```
+
+Create as many task cards and Node Execution Contracts as the active Cycle Slice requires. Do not create fake work just to fill a count.
 
 ## Execution Contract Rules
 
 Enforce these rules when generating ACEP:
 
+- No lower-tree node without an upper-tree source.
 - No requirement without task.
+- No Work node without Test node or explicit not-runnable reason.
+- No Test node without evidence requirement.
 - No task without verification.
 - No verification without evidence.
 - No UI screen without state coverage.
 - No final completion without coverage check.
 - No UI implementation without UI/UX confirmation.
-- No accepted status from Codex.
+- No accepted or accepted_done status from Codex.
 - No parallel execution plan without WPD WorkGraph.
 - No parallel group without an integration task.
-- No RPD requirement node copied directly into a Codex coding task.
+- No RPD/Product Tree requirement node copied directly into a Codex coding task.
 - No forbidden shared-risk task inside a parallel group.
-- No deferred requirement implemented by the current ACEP.
+- No deferred or out-of-scope node implemented by the current ACEP.
 - No foundation task that implements deferred feature behavior.
 - No slice completion recorded as whole-project completion.
+- No silent Product Tree edits during execution.
+- Any product/scope/UX/risk/acceptance/verification change must become a Change Node.
 
-If an item is deferred or out of scope, record the reason explicitly in the traceability matrix and final coverage check.
+If an item is deferred or out of scope, record the reason explicitly in the traceability matrix, Cycle Contract, and final coverage check.
 
 ## Scope Contract
 
@@ -106,7 +132,59 @@ ACEP must separate:
 - Blocked Scope: stop condition.
 - Out-of-Scope: forbidden unless the user changes scope.
 
-Only selected and foundation scope can become current ACEP implementation tasks.
+Only selected and foundation scope inside the active Cycle Slice can become current ACEP implementation tasks.
+
+## Cycle Contract
+
+`22-cycle-contract.md` must mirror `.pbe/execution/cycle-contract.md` and include:
+
+- cycle ID and goal
+- included Product, Project, Work, and Test node IDs
+- explicitly excluded node IDs
+- selected/foundation/deferred/blocked/out-of-scope split
+- allowed local changes
+- forbidden changes
+- changes requiring Change Nodes
+- required evidence
+- validation and close criteria
+- rollback plan
+- parallel safety summary
+
+`execution-manifest.json` must include an `activeCycle` object or equivalent fields with:
+
+- `cycleId`
+- `cycleTree`
+- `cycleContract`
+- `includedProductNodeIds`
+- `includedProjectNodeIds`
+- `includedWorkNodeIds`
+- `includedTestNodeIds`
+- `explicitlyExcludedNodeIds`
+
+## Node Execution Contracts
+
+For every selected or foundation Work node included in the active cycle, create one Node Execution Contract under:
+
+```text
+11-node-execution-contracts/
+```
+
+Each Node Execution Contract must include:
+
+- Product Tree links
+- Project Tree links
+- Work Tree links
+- Test Tree links
+- Evidence required
+- included scope
+- explicit non-scope
+- allowed local changes
+- changes requiring Change Node
+- validation commands
+- rollback path
+- close criteria
+
+Task cards may remain as user-friendly compatibility views, but they must reference the corresponding Node Execution Contract.
 
 ## Traceability Matrix
 
@@ -120,14 +198,14 @@ Generate both:
 Each item links:
 
 ```text
-Requirement Node -> Work Task -> Verification Item -> Evidence Required -> Coverage Status
+Product/Requirement Node -> Project Node -> Work Node/Task -> Test/Verification Item -> Evidence Required -> Coverage Status
 ```
 
 Before final completion, Codex must inspect the traceability matrix and must not complete if:
 
-- any requirement has no linked task
-- any task has no linked verification
-- any verification item has no required evidence
+- any selected Product node has no linked Work node
+- any included Work node has no linked Test node or explicit not-runnable reason
+- any included Test node has no required evidence
 - any traceability item remains pending without explanation
 
 ## UI/UX Spec
@@ -143,6 +221,7 @@ For every required screen or UI flow, include:
 
 - screen name
 - screen purpose
+- linked Product/Work/Test nodes
 - primary user
 - primary flow
 - required UI elements
@@ -157,6 +236,12 @@ For every required screen or UI flow, include:
 Every task card must include:
 
 ```text
+## Cycle Scope
+## Node Execution Contract
+## Product Tree Links
+## Project Tree Links
+## Work Tree Links
+## Test Tree Links
 ## Requirement Links
 ## WorkGraph Links
 ## Verification Links
@@ -173,123 +258,6 @@ UI task cards must also include:
 ## UI/UX Evidence Required
 ## UI/UX Confirmation Reference
 ```
-
-## Verification Plan
-
-`09-verification-plan.md` must separate:
-
-1. Automated Tests
-2. Manual Checks
-3. UI/UX Evidence Checks
-4. Regression Checks
-5. Acceptance Checks
-6. Not Runnable / Environment-limited Checks
-
-Every verification item must identify its linked requirement and task.
-
-## Completion And Final Report
-
-`13-completion-criteria.md` must require:
-
-- task completion or explicit deferral/out_of_scope reason
-- requirement coverage
-- task-to-verification coverage
-- evidence for every verification item
-- validation pass or not-runnable explanation
-- UI/UX evidence for required screens and states
-- completed Final Coverage Check
-- Result Review Pack creation
-- delivery status `submitted_for_review`
-- no unresolved stop condition
-- user acceptance as a separate post-review decision
-
-`17-final-report-template.md` must include requirement, task, verification, UI/UX confirmation, approved UI/UX implemented, traceability, evidence, files changed, deviations, known issues, delivery status, user review, revision history, stop conditions, and remaining manual review sections.
-
-## Manifest Rules
-
-`execution-manifest.json` must include:
-
-- `autonomyLevel`
-- `sourceBlueprintFiles`
-- `contractFiles`
-- ordered `tasks`
-- validation strategy
-- stop conditions
-- final report path
-
-Every task must include:
-
-- `id`
-- `file` or `taskCard`
-- `title`
-- `phase`
-- `requirementIds`
-- `verificationIds` or `verificationExplanation`
-- `uiUxIds`
-- `evidenceRequired`
-- focused validation
-- execution mode
-- parallel group, when applicable
-- conflict risk
-- expected files
-- expected shared files
-- forbidden files
-- dependencyResolved, writeSetKnown, rollbackPathAvailable when in a parallel group
-- forbidden changes
-- integration task, when applicable
-
-Before generating ACEP, run or satisfy:
-
-- `pbe-coverage-audit`
-- `pbe-ux-audit`
-- `pbe-plan-execution`
-
-Do not generate ACEP if either audit has blocking issues.
-
-## Autoflow
-
-When ACEP generation succeeds:
-
-- Set `pbe-state.json.autoflow.state` to `ACEP_GENERATED`.
-- Add `generate_acep` to `autoflow.completedSteps`.
-- Set `autoflow.nextStep` to `run_acep`.
-- Continue automatically to ACEP Runner.
-
-When ACEP generation fails:
-
-- Set `autoflow.state` to `BLOCKED`.
-- Record `autoflow.lastFailure.failedStep` as `generate_acep`.
-- Do not continue to ACEP Runner.
-- Show the Autoflow failure guidance.
-
-## Execution Strategy
-
-ACEP generation must include:
-
-```text
-18-execution-strategy.md
-execution-manifest.json phases
-parallelGroups
-integrationTask for every parallel group
-integrationEvidenceRequired
-groupCannotCompleteWithoutIntegrationPass
-Task Card Execution Strategy sections
-```
-
-Before generating ACEP, verify:
-
-1. WPD WorkGraph exists in `work-graph.json` or `work-design.json`.
-2. WPD Module Boundary Check was performed.
-3. `pbe-plan-execution` produced `execution-strategy.json` and `execution-strategy.md`.
-4. Every parallel group has an integration task.
-5. Every parallel group requires integration evidence and integration pass before completion.
-6. Forbidden shared-risk work is not placed in a parallel group.
-7. Parallel group size follows policy or has human approval.
-8. Final validation and review phases exist.
-
-If any condition fails, report blocking issues instead of generating ACEP.
-
-## Task Cards
 
 Every task card must include:
 
@@ -324,6 +292,113 @@ Integration task cards must also include:
 ## Remaining Risks
 ```
 
+## Verification Plan
+
+`09-verification-plan.md` must separate:
+
+1. Automated Tests
+2. Manual Checks
+3. UI/UX Evidence Checks
+4. Regression Checks
+5. Acceptance Checks
+6. Not Runnable / Environment-limited Checks
+
+Every verification item must identify its linked Product, Work, task, and Test node when available.
+
+## Completion And Final Report
+
+`13-completion-criteria.md` must require:
+
+- active Cycle Slice completion or explicit deferral/out_of_scope reason
+- Product node coverage for included nodes
+- Work node to Test node coverage
+- evidence for every included Test node
+- validation pass or not-runnable explanation
+- UI/UX evidence for required screens and states
+- completed Final Coverage Check
+- Result Review Pack creation
+- delivery status `submitted_for_review`
+- no unresolved stop condition
+- user acceptance as a separate post-review decision
+
+`17-final-report-template.md` must include cycle ID, included/excluded nodes, requirement, task, verification, UI/UX confirmation, approved UI/UX implemented, traceability, evidence, files changed, deviations, known issues, delivery status, user review, revision history, stop conditions, and remaining manual review sections.
+
+## Manifest Rules
+
+`execution-manifest.json` must include:
+
+- `autonomyLevel`
+- `activeCycle`
+- `sourceBlueprintFiles`
+- `contractFiles`
+- ordered `tasks`
+- validation strategy
+- stop conditions
+- final report path
+
+Every task must include:
+
+- `id`
+- `file` or `taskCard`
+- `nodeExecutionContract`
+- `title`
+- `phase`
+- `productNodeIds`
+- `projectNodeIds`
+- `workTreeNodeIds`
+- `testTreeNodeIds`
+- `requirementIds`
+- `verificationIds` or `verificationExplanation`
+- `uiUxIds`
+- `evidenceRequired`
+- focused validation
+- execution mode
+- parallel group, when applicable
+- conflict risk
+- expected files
+- expected shared files
+- forbidden files
+- dependencyResolved, writeSetKnown, rollbackPathAvailable when in a parallel group
+- forbidden changes
+- integration task, when applicable
+
+Before generating ACEP, run or satisfy:
+
+- `pbe-coverage-audit`
+- `pbe-ux-audit`
+- `pbe-plan-execution`
+
+Do not generate ACEP if either audit has blocking issues.
+
+## Execution Strategy
+
+ACEP generation must include:
+
+```text
+18-execution-strategy.md
+execution-manifest.json phases
+parallelGroups
+integrationTask for every parallel group
+integrationEvidenceRequired
+groupCannotCompleteWithoutIntegrationPass
+Task Card Execution Strategy sections
+```
+
+Before generating ACEP, verify:
+
+1. Product, Work, Test Trees exist when v2 mode is active.
+2. `.pbe/execution/cycle-tree.json` and `.pbe/execution/cycle-contract.md` exist.
+3. WPD WorkGraph exists in `work-graph.json` or `work-design.json`.
+4. WPD Module Boundary Check was performed.
+5. `pbe-plan-execution` produced `execution-strategy.json` and `execution-strategy.md`.
+6. Every parallel group has an integration task.
+7. Every parallel group requires integration evidence and integration pass before completion.
+8. Forbidden shared-risk work is not placed in a parallel group.
+9. Parallel group size follows policy or has human approval.
+10. Final validation and review phases exist.
+
+If any condition fails, report blocking issues instead of generating ACEP.
+
 ## Autonomy
 
 Default autonomy level:
@@ -332,7 +407,7 @@ Default autonomy level:
 autonomous_until_stop
 ```
 
-Codex should continue through the task cards without asking the user unless a stop condition is reached.
+Codex should continue through the active cycle task cards without asking the user unless a stop condition is reached.
 
 ## Stop Conditions
 
@@ -342,6 +417,7 @@ Stop and ask the user when work requires:
 - deployment, billing, or external infrastructure changes
 - destructive migrations or irreversible data changes
 - out-of-scope implementation
+- deferred-scope implementation
 - legal, medical, financial, or security-sensitive decisions outside the repo context
 - the same validation failure repeating three times
 - missing requirements that make the task impossible to complete safely
@@ -349,9 +425,26 @@ Stop and ask the user when work requires:
 - missing UI/UX confirmation for UI tasks
 - missing WorkGraph or Module Boundary Check
 - missing execution strategy from `pbe-plan-execution`
+- missing Cycle Tree or Cycle Contract
 - parallel group without an integration task
 - parallel group task requiring forbidden shared changes
 - parallel group tasks likely to modify the same file
+
+## Autoflow
+
+When ACEP generation succeeds:
+
+- Set `pbe-state.json.autoflow.state` to `ACEP_GENERATED`.
+- Add `generate_acep` to `autoflow.completedSteps`.
+- Set `autoflow.nextStep` to `run_acep`.
+- Continue automatically to ACEP Runner.
+
+When ACEP generation fails:
+
+- Set `autoflow.state` to `BLOCKED`.
+- Record `autoflow.lastFailure.failedStep` as `generate_acep`.
+- Do not continue to ACEP Runner.
+- Show the Autoflow failure guidance.
 
 ## Completion Report
 
@@ -361,10 +454,14 @@ The state card must say whether ACEP generation succeeded and PBE is continuing 
 
 Include:
 
+- active cycle ID
+- included/excluded node counts
 - number of generated task cards
+- number of generated Node Execution Contracts
 - traceability item count
 - UI/UX screen count
 - execution manifest path
+- cycle contract path
 - execution strategy path
 - parallel group and integration task summary
 - selected/foundation/deferred/out-of-scope scope summary

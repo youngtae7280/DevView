@@ -27,6 +27,9 @@
 ## Required Evidence
 {{requiredEvidence}}
 
+## Parallel Safety
+{{parallelSafety}}
+
 ## Close Criteria
 {{closeCriteria}}
 

@@ -7,7 +7,23 @@
     "maxMatureParallelGroupSize": 3,
     "moreThanMaxRequiresHumanApproval": true
   },
+  "activeCycle": {
+    "cycleId": "CYCLE-001",
+    "cycleTree": ".pbe/execution/cycle-tree.json",
+    "cycleContract": ".pbe/execution/cycle-contract.md",
+    "includedProductNodeIds": [],
+    "includedProjectNodeIds": [],
+    "includedWorkNodeIds": [],
+    "includedTestNodeIds": [],
+    "explicitlyExcludedNodeIds": []
+  },
   "generatedFrom": [
+    ".pbe/tree/product-tree.json",
+    ".pbe/tree/project-tree.json",
+    ".pbe/tree/work-tree.json",
+    ".pbe/tree/test-tree.json",
+    ".pbe/execution/cycle-tree.json",
+    ".pbe/execution/cycle-contract.md",
     ".pbe/blueprint/work-graph.json",
     ".pbe/blueprint/verification-design.json",
     ".pbe/blueprint/traceability-matrix.json",
@@ -109,6 +125,9 @@
     }
   ],
   "parallelizationRules": [
+    "Only active Cycle Slice nodes may become execution tasks.",
+    "Excluded, deferred, blocked, and out-of-scope nodes are protected scope.",
+    "Touching protected scope requires a Change Node or a new approved cycle.",
     "Dependencies must be complete before group start.",
     "Expected files must not overlap inside the group.",
     "Unknown file-touch risk must be none or low.",
