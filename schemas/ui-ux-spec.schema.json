@@ -24,6 +24,23 @@
           "id": { "type": "string", "minLength": 1 },
           "name": { "type": "string" },
           "purpose": { "type": "string" },
+          "productNodeIds": { "type": "array", "items": { "type": "string" } },
+          "workNodeIds": { "type": "array", "items": { "type": "string" } },
+          "testNodeIds": { "type": "array", "items": { "type": "string" } },
+          "evidenceNodeIds": { "type": "array", "items": { "type": "string" } },
+          "cycleIds": { "type": "array", "items": { "type": "string" } },
+          "impactState": {
+            "type": "string",
+            "enum": [
+              "none",
+              "pending",
+              "stale_evidence",
+              "invalidated",
+              "reopened",
+              "blocked"
+            ]
+          },
+          "reopened": { "type": "boolean" },
           "primaryUser": { "type": "string" },
           "primaryFlow": { "type": "array", "items": { "type": "string" } },
           "requiredElements": { "type": "array", "items": { "type": "string" } },

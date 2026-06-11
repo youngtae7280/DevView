@@ -162,6 +162,11 @@ function validateTreeLinks(data) {
   const cycleIds = collectCycleIds(data.cycle)
   const changeIds = collectChangeIds(data.change)
   const evidenceIds = collectEvidenceIds(data.evidence)
+  const productMap = collectNodeMap(data.product)
+  const workMap = collectNodeMap(data.work)
+  const testMap = collectNodeMap(data.test)
+  const evidenceMap = collectEvidenceMap(data.evidence)
+  const impactsByAffected = collectImpactsByAffected(data.impact)
   const knownNodeIds = new Set([
     ...productIds,
     ...projectIds,
@@ -181,7 +186,19 @@ function validateTreeLinks(data) {
   validateChangeTree(data.change, knownNodeIds)
   validateImpactTree(data.impact, { knownNodeIds, changeIds })
   validateEvidenceTree(data.evidence, knownNodeIds)
-  validateAcceptanceTree(data.acceptance, { productIds, evidenceIds })
+  validateCycleClosure(data.cycle, { workMap, testMap, evidenceMap })
+  validateAcceptanceTree(data.acceptance, {
+    productIds,
+    productMap,
+    evidenceIds,
+    evidenceMap,
+    impactsByAffected,
+  })
+  validateProductClosure(data.product, {
+    acceptanceTree: data.acceptance,
+    evidenceMap,
+    impactsByAffected,
+  })
 
   for (const node of data.project?.nodes || []) {
     validateKnownIds(node.derivedFromProductNodeIds, productIds, `project ${node.id}`, 'product source')
@@ -259,6 +276,60 @@ function validateCycleTree(cycleTree, refs) {
   }
 }
 
+function validateCycleClosure(cycleTree, refs) {
+  if (!cycleTree) {
+    return
+  }
+  const closureStatuses = new Set(['submitted_for_review', 'accepted'])
+  const executableStatuses = new Set(['selected', 'approved', 'running', 'submitted_for_review', 'accepted'])
+  const incompleteTestStatuses = new Set(['planned', 'runnable', 'failed', 'blocked', 'stale', 'invalidated'])
+
+  for (const cycle of cycleTree.cycles || []) {
+    const includedWorkIds = cycle.includedWorkNodeIds || []
+    const includedTestIds = cycle.includedTestNodeIds || []
+
+    if (executableStatuses.has(cycle.status)) {
+      if (!hasAny(includedWorkIds)) {
+        errors.push(`cycle ${cycle.id} is ${cycle.status} but has no included Work Tree nodes`)
+      }
+      if (!hasAny(includedTestIds)) {
+        errors.push(`cycle ${cycle.id} is ${cycle.status} but has no included Test Tree nodes`)
+      }
+    }
+
+    for (const workId of includedWorkIds) {
+      if (!refs.workMap.has(workId)) {
+        continue
+      }
+      const testsForWork = includedTestIds
+        .map((testId) => refs.testMap.get(testId))
+        .filter((test) => test?.verifiesWorkNodeIds?.includes(workId))
+      if (testsForWork.length === 0) {
+        errors.push(`cycle ${cycle.id} included work ${workId} lacks included Test Tree coverage`)
+      }
+    }
+
+    if (!closureStatuses.has(cycle.status)) {
+      continue
+    }
+
+    for (const testId of includedTestIds) {
+      const test = refs.testMap.get(testId)
+      if (!test) {
+        continue
+      }
+      if (incompleteTestStatuses.has(test.status)) {
+        errors.push(`cycle ${cycle.id} is ${cycle.status} but included test ${testId} is ${test.status}`)
+      }
+      const attachedEvidence = evidenceForNode(refs.evidenceMap, testId)
+        .filter((evidence) => ['attached', 'replaced'].includes(evidence.status))
+      if (attachedEvidence.length === 0) {
+        errors.push(`cycle ${cycle.id} is ${cycle.status} but included test ${testId} lacks attached Evidence Tree evidence`)
+      }
+    }
+  }
+}
+
 function validateDecisionQueue(queue, knownNodeIds) {
   if (!queue) {
     return
@@ -309,6 +380,63 @@ function validateAcceptanceTree(acceptanceTree, refs) {
       }
       if (!hasAny(branch.evidenceNodeIds)) {
         errors.push(`acceptance branch ${branch.productNodeId} is accepted_done but lacks evidenceNodeIds`)
+      }
+      const product = refs.productMap.get(branch.productNodeId)
+      if (product?.status === 'reopened') {
+        errors.push(`acceptance branch ${branch.productNodeId} is accepted_done but product node is reopened`)
+      }
+      const blockingImpacts = (refs.impactsByAffected.get(branch.productNodeId) || [])
+        .filter((impact) => impact.impactType !== 'none')
+      if (blockingImpacts.length > 0) {
+        errors.push(`acceptance branch ${branch.productNodeId} is accepted_done but has unresolved impact entries`)
+      }
+      for (const evidenceId of branch.evidenceNodeIds || []) {
+        const evidence = refs.evidenceMap.get(evidenceId)
+        if (!evidence) {
+          errors.push(`acceptance branch ${branch.productNodeId} references missing evidence node: ${evidenceId}`)
+          continue
+        }
+        if (!['attached', 'replaced'].includes(evidence.status)) {
+          errors.push(`acceptance branch ${branch.productNodeId} uses non-current evidence ${evidenceId} with status ${evidence.status}`)
+        }
+      }
+    }
+  }
+}
+
+function validateProductClosure(productTree, refs) {
+  if (!productTree) {
+    return
+  }
+  const acceptedBranches = new Map(
+    (refs.acceptanceTree?.branches || [])
+      .filter((branch) => branch.status === 'accepted_done')
+      .map((branch) => [branch.productNodeId, branch]),
+  )
+
+  for (const node of productTree.nodes || []) {
+    if (node.status === 'accepted_done') {
+      const branch = acceptedBranches.get(node.id)
+      if (!branch) {
+        errors.push(`product ${node.id} is accepted_done but lacks accepted Acceptance Tree branch`)
+      }
+      const blockingImpacts = (refs.impactsByAffected.get(node.id) || [])
+        .filter((impact) => impact.impactType !== 'none')
+      if (blockingImpacts.length > 0) {
+        errors.push(`product ${node.id} is accepted_done but has unresolved impact entries`)
+      }
+    }
+
+    if (node.status === 'reopened') {
+      const branch = acceptedBranches.get(node.id)
+      if (branch) {
+        errors.push(`product ${node.id} is reopened but Acceptance Tree branch remains accepted_done`)
+      }
+    }
+
+    for (const evidence of evidenceForNode(refs.evidenceMap, node.id)) {
+      if (node.status === 'accepted_done' && !['attached', 'replaced'].includes(evidence.status)) {
+        errors.push(`product ${node.id} is accepted_done but evidence ${evidence.id} is ${evidence.status}`)
       }
     }
   }
@@ -367,6 +495,10 @@ function collectNodeIds(tree) {
   return new Set((tree?.nodes || []).map((node) => node.id).filter(Boolean))
 }
 
+function collectNodeMap(tree) {
+  return new Map((tree?.nodes || []).filter((node) => node.id).map((node) => [node.id, node]))
+}
+
 function collectCycleIds(cycleTree) {
   return new Set((cycleTree?.cycles || []).map((cycle) => cycle.id).filter(Boolean))
 }
@@ -377,6 +509,28 @@ function collectChangeIds(changeTree) {
 
 function collectEvidenceIds(evidenceTree) {
   return new Set((evidenceTree?.evidence || []).map((evidence) => evidence.id).filter(Boolean))
+}
+
+function collectEvidenceMap(evidenceTree) {
+  return new Map((evidenceTree?.evidence || []).filter((evidence) => evidence.id).map((evidence) => [evidence.id, evidence]))
+}
+
+function collectImpactsByAffected(impactTree) {
+  const grouped = new Map()
+  for (const impact of impactTree?.impacts || []) {
+    if (!impact.affectedNodeId) {
+      continue
+    }
+    if (!grouped.has(impact.affectedNodeId)) {
+      grouped.set(impact.affectedNodeId, [])
+    }
+    grouped.get(impact.affectedNodeId).push(impact)
+  }
+  return grouped
+}
+
+function evidenceForNode(evidenceMap, nodeId) {
+  return [...evidenceMap.values()].filter((evidence) => evidence.provesNodeIds?.includes(nodeId))
 }
 
 function hasAny(value) {

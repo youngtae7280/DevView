@@ -68,6 +68,31 @@
 - Verification without evidence:
 - UI items without evidence:
 
+## Tree Closure Result
+
+- Active cycle:
+- Included Product nodes:
+- Included Work nodes:
+- Included Test nodes:
+- Missing Product -> Work/Test links:
+- Missing Work -> Test links:
+- Missing Test -> Evidence links:
+
+## Change And Impact Result
+
+- Open impact nodes:
+- Reopened nodes:
+- Stale evidence:
+- Invalidated evidence:
+- Scope affected by revision:
+
+## Acceptance Guard
+
+- Delivery status:
+- Accepted by user:
+- Accepted branches with open impact:
+- Accepted branches with stale evidence:
+
 ## Parallel And Integration Result
 
 - Parallel groups executed:

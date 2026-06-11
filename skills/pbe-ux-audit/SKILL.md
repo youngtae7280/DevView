@@ -1,22 +1,37 @@
 ---
 name: pbe-ux-audit
-description: Audit UI/UX preview, confirmation, WPD/VD linkage, task-card UI sections, states, and evidence requirements.
+description: Audit Product-linked UI/UX preview, confirmation, Work/Test linkage, task-card UI sections, UI states, evidence, impact, and reopened UI scope.
 ---
 
 # PBE UX Audit
 
 Use this skill after UI/UX confirmation, before ACEP generation, and before final completion when UI is involved.
 
-UX Audit is deterministic in Autoflow. Run it automatically after Coverage
-Audit succeeds.
+UX Audit is deterministic in Autoflow. Run it automatically after Coverage Audit succeeds.
 
 ## Purpose
 
-Ensure UI/UX work is confirmed before implementation and remains traceable through WPD, VD, ACEP, evidence, and review.
+Ensure UI/UX work is confirmed before implementation and remains traceable through Product, Work, Test, ACEP, evidence, impact, review, and revision.
 
 UX Audit applies to selected UI work and required foundation UI contracts. Deferred UI flows must be documented but must not be implemented by the current ACEP unless the implementation scope is changed and approved.
 
+In PBE v2, UI/UX audit starts from Product Tree UI nodes and closes only through Test/Evidence coverage.
+
 ## Inputs
+
+Prefer v2 files when present:
+
+```text
+.pbe/tree/product-tree.json
+.pbe/tree/work-tree.json
+.pbe/tree/test-tree.json
+.pbe/execution/cycle-tree.json
+.pbe/control/impact-tree.json
+.pbe/control/acceptance-tree.json
+.pbe/evidence/evidence-tree.json
+```
+
+Also read compatibility and ACEP files:
 
 ```text
 .pbe/blueprint/ui-ux-preview.json
@@ -30,6 +45,7 @@ UX Audit applies to selected UI work and required foundation UI contracts. Defer
 .pbe/codex-execution-pack/05-ui-ux-spec.json
 .pbe/codex-execution-pack/15-ui-ux-evidence-checklist.md
 .pbe/codex-execution-pack/11-task-cards/
+.pbe/codex-execution-pack/11-node-execution-contracts/
 ```
 
 Read paths only when they exist.
@@ -42,22 +58,37 @@ Read paths only when they exist.
 
 ## Audit Rules
 
-Check:
+Check UI/UX confirmation:
 
-1. Every selected UI-required screen or flow has a preview.
+1. Every selected UI-required Product node, screen, or flow has a preview.
 2. Every selected required preview is `confirmed`.
 3. Deferred UI previews are recorded as deferred and not implemented.
 4. Out-of-scope UI items are recorded as forbidden changes.
 5. No UI item is treated as confirmed without user confirmation.
-6. Confirmed UX rules are reflected in WPD.
-7. Confirmed UX rules are converted into VD verification checks.
+6. Confirmed UX rules are reflected in WPD/Work Tree.
+7. Confirmed UX rules are converted into VD/Test Tree verification checks.
 8. Foundation UI contracts are named without implementing deferred UI behavior.
-9. UI task cards include Approved UI/UX Direction.
-10. UI task cards include UI/UX Non-Scope.
-11. UI task cards include UI/UX Evidence Required.
-12. Required selected UI states are not missing.
-13. Evidence checklist exists for selected UI work.
-14. Parallel integration tasks include UI/UX consistency checks when any group task changes UI.
+
+Check task and contract coverage:
+
+1. UI task cards include Approved UI/UX Direction.
+2. UI task cards include UI/UX Non-Scope.
+3. UI task cards include UI/UX Evidence Required.
+4. Node Execution Contracts for UI work link Product, Work, Test, and Evidence nodes.
+5. Required selected UI states are not missing.
+6. Evidence checklist exists for selected UI work.
+7. Parallel integration tasks include UI/UX consistency checks when any group task changes UI.
+
+Check v2 UI closure:
+
+1. Product Tree nodes of type `ui_surface` or `ui_state` have linked Work nodes or explicit deferral/out-of-scope reason.
+2. UI Work nodes have Test Tree nodes of type `ui_state_test`, `component_test`, `manual_check`, or relevant acceptance/regression checks.
+3. UI Test nodes have required evidence.
+4. Evidence Tree contains attached or replaced screenshot/manual_note/test_output evidence for required UI states when the cycle is submitted for review.
+5. Stale UI evidence blocks branch acceptance.
+6. Impact Tree entries for UI nodes with `reopened`, `invalidated`, `requires_retest`, `requires_new_evidence`, or `requiredAction: human_decision` block completion until handled.
+7. Accepted UI branches must not have reopened Product nodes or stale evidence.
+8. Deferred or out-of-scope UI nodes are not included in the active Cycle Slice.
 
 If gaps exist, report them as blocking issues before ACEP generation or final completion.
 
@@ -86,10 +117,14 @@ The state card must say whether the audit passed and PBE is continuing automatic
 Include:
 
 - screens/flows audited
+- Product UI node coverage
 - confirmation status summary
 - selected/deferred/foundation UI split
 - missing states
-- missing evidence
+- missing Work/Test links
+- missing or stale evidence
+- Impact/Reopen UI issues
+- Acceptance Tree UI guard result
 - blocking issues
 - pass/fail result
 - next automatic step when passed: Generate ACEP

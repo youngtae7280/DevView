@@ -43,6 +43,59 @@ describe('PBE v2 tree validator', () => {
     expect(result.status).toBe(1)
     expect(result.output).toContain('references missing product source')
   })
+
+  it('rejects submitted cycles that include work without test coverage', () => {
+    const workspace = createTreeValidatorWorkspace()
+    writeProductTree(workspace)
+    writeWorkTree(workspace, 'PT-1')
+    writeCycleTree(workspace, {
+      status: 'submitted_for_review',
+      includedWorkNodeIds: ['WT-1'],
+      includedTestNodeIds: [],
+    })
+
+    const result = runTreeValidator(workspace)
+
+    expect(result.status).toBe(1)
+    expect(result.output).toContain('has no included Test Tree nodes')
+    expect(result.output).toContain('included work WT-1 lacks included Test Tree coverage')
+  })
+
+  it('rejects submitted cycles whose included tests lack attached evidence', () => {
+    const workspace = createTreeValidatorWorkspace()
+    writeProductTree(workspace)
+    writeWorkTree(workspace, 'PT-1')
+    writeTestTree(workspace, 'PT-1', 'WT-1', 'passed')
+    writeCycleTree(workspace, {
+      status: 'submitted_for_review',
+      includedWorkNodeIds: ['WT-1'],
+      includedTestNodeIds: ['TT-1'],
+    })
+
+    const result = runTreeValidator(workspace)
+
+    expect(result.status).toBe(1)
+    expect(result.output).toContain('included test TT-1 lacks attached Evidence Tree evidence')
+  })
+
+  it('rejects accepted branches that use stale evidence', () => {
+    const workspace = createTreeValidatorWorkspace()
+    writeProductTree(workspace)
+    writeEvidenceTree(workspace, [
+      {
+        id: 'EV-1',
+        type: 'test_output',
+        status: 'stale_evidence',
+        provesNodeIds: ['PT-1'],
+      },
+    ])
+    writeAcceptanceTree(workspace, 'PT-1', 'EV-1')
+
+    const result = runTreeValidator(workspace)
+
+    expect(result.status).toBe(1)
+    expect(result.output).toContain('uses non-current evidence EV-1 with status stale_evidence')
+  })
 })
 
 function createTreeValidatorWorkspace() {
@@ -135,6 +188,98 @@ function writeWorkTree(workspace: string, productNodeId: string) {
       },
     ],
     edges: [],
+  })
+}
+
+function writeTestTree(workspace: string, productNodeId: string, workNodeId: string, status: string) {
+  writeJson(join(workspace, '.pbe', 'tree', 'test-tree.json'), {
+    version: '0.2.0-tree-control',
+    rootNodeId: 'TT-ROOT',
+    nodes: [
+      {
+        id: 'TT-ROOT',
+        type: 'acceptance_check',
+        title: 'Test root',
+        status: 'planned',
+        verifiesProductNodeIds: [],
+        verifiesProjectNodeIds: [],
+        verifiesWorkNodeIds: [],
+        evidenceRequired: [],
+      },
+      {
+        id: 'TT-1',
+        type: 'unit_test',
+        title: 'Verify capability',
+        status,
+        verifiesProductNodeIds: [productNodeId],
+        verifiesProjectNodeIds: [],
+        verifiesWorkNodeIds: [workNodeId],
+        validationCommands: ['npm test'],
+        manualChecks: [],
+        passCriteria: ['Capability is verified'],
+        evidenceRequired: ['test output'],
+      },
+    ],
+  })
+}
+
+function writeCycleTree(
+  workspace: string,
+  options: {
+    status: string
+    includedWorkNodeIds: string[]
+    includedTestNodeIds: string[]
+  },
+) {
+  writeJson(join(workspace, '.pbe', 'execution', 'cycle-tree.json'), {
+    version: '0.2.0-tree-control',
+    activeCycleId: 'CYCLE-1',
+    cycles: [
+      {
+        id: 'CYCLE-1',
+        goal: 'Implement capability',
+        status: options.status,
+        includedProductNodeIds: ['PT-1'],
+        includedProjectNodeIds: [],
+        includedWorkNodeIds: options.includedWorkNodeIds,
+        includedTestNodeIds: options.includedTestNodeIds,
+        explicitlyExcludedNodeIds: [],
+        requiresChangeNode: [],
+        requiredEvidence: ['test output'],
+        closeCriteria: ['Included work and tests are complete'],
+      },
+    ],
+  })
+}
+
+function writeEvidenceTree(
+  workspace: string,
+  evidence: Array<{
+    id: string
+    type: string
+    status: string
+    provesNodeIds: string[]
+  }>,
+) {
+  writeJson(join(workspace, '.pbe', 'evidence', 'evidence-tree.json'), {
+    version: '0.2.0-tree-control',
+    evidence,
+  })
+}
+
+function writeAcceptanceTree(workspace: string, productNodeId: string, evidenceNodeId: string) {
+  writeJson(join(workspace, '.pbe', 'control', 'acceptance-tree.json'), {
+    version: '0.2.0-tree-control',
+    branches: [
+      {
+        productNodeId,
+        status: 'accepted_done',
+        cycleIds: ['CYCLE-1'],
+        evidenceNodeIds: [evidenceNodeId],
+        userAcceptedAt: '2026-06-11T00:00:00.000Z',
+        notes: 'User accepted the branch.',
+      },
+    ],
   })
 }
 

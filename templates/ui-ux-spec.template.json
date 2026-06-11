@@ -5,6 +5,13 @@
       "id": "SCREEN-001",
       "name": "Primary screen",
       "purpose": "Explain why this screen exists.",
+      "productNodeIds": ["PT-UI-001"],
+      "workNodeIds": ["WT-UI-001"],
+      "testNodeIds": ["TT-UI-001"],
+      "evidenceNodeIds": ["EV-UI-001"],
+      "cycleIds": ["CYCLE-001"],
+      "impactState": "none",
+      "reopened": false,
       "primaryUser": "Primary user",
       "primaryFlow": [
         "Open screen",

@@ -2,6 +2,15 @@
 
 ## Screen: SCREEN-001
 
+### Tree Links
+
+- Product node IDs:
+- Work node IDs:
+- Test node IDs:
+- Evidence node IDs:
+- Active cycle ID:
+- Change/impact state:
+
 ### Required States
 
 - [ ] Empty state implemented
@@ -16,6 +25,9 @@
 - [ ] Test or manual verification note provided
 - [ ] Screenshot path provided if available
 - [ ] Accessibility notes checked
+- [ ] Evidence Tree node is attached or replaced
+- [ ] No stale, invalidated, or reopened UI evidence remains for submitted scope
+- [ ] Related Product/Work/Test nodes are not reopened by an unresolved Impact Tree entry
 
 ### Manual Verification Notes
 
