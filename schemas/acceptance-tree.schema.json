@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/acceptance-tree.schema.json",
+  "title": "PBE Acceptance Tree",
+  "type": "object",
+  "required": ["version", "branches"],
+  "properties": {
+    "version": { "type": "string" },
+    "branches": { "type": "array", "items": { "$ref": "#/$defs/branch" } }
+  },
+  "$defs": {
+    "branch": {
+      "type": "object",
+      "required": ["productNodeId", "status", "evidenceNodeIds"],
+      "properties": {
+        "productNodeId": { "type": "string" },
+        "status": { "enum": ["not_started", "partial_satisfied", "satisfied", "submitted_for_review", "accepted_done", "reopened", "blocked"] },
+        "cycleIds": { "type": "array", "items": { "type": "string" } },
+        "evidenceNodeIds": { "type": "array", "items": { "type": "string" } },
+        "userAcceptedAt": { "type": ["string", "null"] },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

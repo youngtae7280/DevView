@@ -6,6 +6,38 @@ PBE stores all target-repo state under `.pbe/`.
 completed steps, the active human gate, the next automatic step, and the last
 failure.
 
+## Tree-Control Folders
+
+The v2 tree-control layout is additive. Existing `.pbe/blueprint/*` files remain
+compatibility aliases or human-readable views while tree-native artifacts are
+introduced.
+
+```text
+.pbe/
+  tree/
+    product-tree.json
+    project-tree.json
+    work-tree.json
+    test-tree.json
+
+  execution/
+    cycle-tree.json
+    cycle-contract.md
+    node-execution-contracts/
+
+  control/
+    decision-queue.json
+    change-tree.json
+    impact-tree.json
+    acceptance-tree.json
+
+  evidence/
+    evidence-tree.json
+    screenshots/
+    test-results/
+    logs/
+```
+
 ## Blueprint Folder
 
 ```text
@@ -120,6 +152,16 @@ Plugin-local schemas live in `schemas/`:
 - `pbe-invariants.schema.json`
 - `foundation-contract.schema.json`
 - `parallel-safety-contract.schema.json`
+- `product-tree.schema.json`
+- `project-tree.schema.json`
+- `work-tree.schema.json`
+- `test-tree.schema.json`
+- `cycle-tree.schema.json`
+- `decision-queue.schema.json`
+- `change-tree.schema.json`
+- `impact-tree.schema.json`
+- `evidence-tree.schema.json`
+- `acceptance-tree.schema.json`
 - `requirement-tree.schema.json`
 - `ui-ux-preview.schema.json`
 - `ui-ux-confirmation.schema.json`

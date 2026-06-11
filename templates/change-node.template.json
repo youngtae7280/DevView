@@ -1,0 +1,9 @@
+{
+  "id": "CH-000",
+  "type": "missing_requirement",
+  "status": "proposed",
+  "reason": "",
+  "affectedNodeIds": [],
+  "treeMutation": {},
+  "decisionId": null
+}

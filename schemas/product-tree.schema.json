@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/product-tree.schema.json",
+  "title": "PBE Product Tree",
+  "type": "object",
+  "required": ["version", "rootNodeId", "nodes"],
+  "properties": {
+    "version": { "type": "string" },
+    "rootNodeId": { "type": "string" },
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "assumptions": { "type": "array", "items": { "type": "object" } },
+    "decisionQueueRef": { "type": "string" }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": ["id", "type", "title", "status", "children"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["goal", "user", "outcome", "capability", "behavior", "ui_surface", "ui_state", "data", "constraint", "non_goal", "risk", "acceptance", "assumption", "decision"] },
+        "title": { "type": "string" },
+        "status": { "enum": ["draft", "assumed", "auto_derived", "needs_human_decision", "proposed", "accepted", "covered", "partial_satisfied", "satisfied", "accepted_done", "deferred", "out_of_scope", "blocked", "changed", "reopened"] },
+        "parent": { "type": ["string", "null"] },
+        "children": { "type": "array", "items": { "type": "string" } },
+        "source": { "type": "object" },
+        "why": { "type": "string" },
+        "scopeClass": { "enum": ["selected", "foundation", "deferred", "blocked", "out_of_scope"] },
+        "acceptance": { "type": "array", "items": { "type": "string" } },
+        "ux": { "type": "object" },
+        "derivedTo": { "type": "array", "items": { "type": "string" } },
+        "evidence": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

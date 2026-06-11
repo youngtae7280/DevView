@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/cycle-tree.schema.json",
+  "title": "PBE Cycle Tree",
+  "type": "object",
+  "required": ["version", "cycles"],
+  "properties": {
+    "version": { "type": "string" },
+    "activeCycleId": { "type": ["string", "null"] },
+    "cycles": { "type": "array", "items": { "$ref": "#/$defs/cycle" } }
+  },
+  "$defs": {
+    "cycle": {
+      "type": "object",
+      "required": ["id", "status", "includedProductNodeIds", "includedWorkNodeIds", "includedTestNodeIds", "explicitlyExcludedNodeIds"],
+      "properties": {
+        "id": { "type": "string" },
+        "goal": { "type": "string" },
+        "status": { "enum": ["draft", "selected", "approved", "running", "submitted_for_review", "accepted", "blocked", "reopened"] },
+        "includedProductNodeIds": { "type": "array", "items": { "type": "string" } },
+        "includedProjectNodeIds": { "type": "array", "items": { "type": "string" } },
+        "includedWorkNodeIds": { "type": "array", "items": { "type": "string" } },
+        "includedTestNodeIds": { "type": "array", "items": { "type": "string" } },
+        "explicitlyExcludedNodeIds": { "type": "array", "items": { "type": "string" } },
+        "requiresChangeNode": { "type": "array", "items": { "type": "string" } },
+        "requiredEvidence": { "type": "array", "items": { "type": "string" } },
+        "closeCriteria": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

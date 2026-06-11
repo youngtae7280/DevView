@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/decision-queue.schema.json",
+  "title": "PBE Decision Queue",
+  "type": "object",
+  "required": ["version", "decisions"],
+  "properties": {
+    "version": { "type": "string" },
+    "decisions": { "type": "array", "items": { "$ref": "#/$defs/decision" } }
+  },
+  "$defs": {
+    "decision": {
+      "type": "object",
+      "required": ["id", "status", "targetNodeId", "reason", "question", "blockingLevel"],
+      "properties": {
+        "id": { "type": "string" },
+        "status": { "enum": ["open", "answered", "deferred", "cancelled"] },
+        "targetNodeId": { "type": "string" },
+        "reason": { "type": "string" },
+        "question": { "type": "string" },
+        "options": { "type": "array", "items": { "type": "object" } },
+        "recommendedDefault": { "type": "string" },
+        "treeEffects": { "type": "array", "items": { "type": "object" } },
+        "blockingLevel": { "enum": ["advisory", "gate", "blocking"] }
+      }
+    }
+  }
+}

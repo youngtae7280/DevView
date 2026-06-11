@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "WT-ROOT",
+  "nodes": [
+    {
+      "id": "WT-ROOT",
+      "type": "foundation_task",
+      "title": "Work root",
+      "status": "ready",
+      "derivedFromProductNodeIds": [],
+      "derivedFromProjectNodeIds": [],
+      "scopeClass": "foundation",
+      "expectedFiles": [],
+      "expectedSharedFiles": [],
+      "forbiddenFiles": [],
+      "unknownFileTouchRisk": false,
+      "dependencies": [],
+      "doneCriteria": [],
+      "validationHints": []
+    }
+  ],
+  "edges": []
+}

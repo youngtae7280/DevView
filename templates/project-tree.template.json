@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "PJ-ROOT",
+  "nodes": [
+    {
+      "id": "PJ-ROOT",
+      "type": "module",
+      "title": "Project module root",
+      "status": "planned",
+      "parent": null,
+      "children": [],
+      "derivedFromProductNodeIds": [],
+      "responsibility": "Root container for module and boundary derivation.",
+      "boundaries": [],
+      "risks": []
+    }
+  ]
+}

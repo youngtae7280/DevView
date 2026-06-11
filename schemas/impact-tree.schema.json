@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/impact-tree.schema.json",
+  "title": "PBE Impact Tree",
+  "type": "object",
+  "required": ["version", "impacts"],
+  "properties": {
+    "version": { "type": "string" },
+    "impacts": { "type": "array", "items": { "$ref": "#/$defs/impact" } }
+  },
+  "$defs": {
+    "impact": {
+      "type": "object",
+      "required": ["id", "changeId", "affectedNodeId", "impactType", "requiredAction"],
+      "properties": {
+        "id": { "type": "string" },
+        "changeId": { "type": "string" },
+        "affectedNodeId": { "type": "string" },
+        "impactType": { "enum": ["none", "stale", "invalidated", "reopened", "obsolete", "requires_retest", "requires_new_evidence"] },
+        "requiredAction": { "enum": ["preserve", "defer", "fork", "reopen", "retest", "replace_evidence", "human_decision"] },
+        "reason": { "type": "string" }
+      }
+    }
+  }
+}

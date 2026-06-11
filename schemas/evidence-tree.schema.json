@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/evidence-tree.schema.json",
+  "title": "PBE Evidence Tree",
+  "type": "object",
+  "required": ["version", "evidence"],
+  "properties": {
+    "version": { "type": "string" },
+    "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "required": ["id", "type", "status", "provesNodeIds"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["test_output", "screenshot", "manual_note", "log", "diff_summary", "review_note", "not_runnable_explanation"] },
+        "status": { "enum": ["required", "attached", "stale_evidence", "replaced", "not_available"] },
+        "path": { "type": "string" },
+        "provesNodeIds": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string" }
+      }
+    }
+  }
+}

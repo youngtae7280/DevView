@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/project-tree.schema.json",
+  "title": "PBE Project Tree",
+  "type": "object",
+  "required": ["version", "rootNodeId", "nodes"],
+  "properties": {
+    "version": { "type": "string" },
+    "rootNodeId": { "type": "string" },
+    "nodes": { "type": "array", "items": { "$ref": "#/$defs/node" } }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": ["id", "type", "title", "status", "derivedFromProductNodeIds", "children"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["module", "surface", "service", "contract", "data_boundary", "integration_boundary", "foundation"] },
+        "title": { "type": "string" },
+        "status": { "enum": ["derived", "planned", "active", "integrated", "module_verified", "deferred", "blocked", "out_of_scope", "reopened"] },
+        "parent": { "type": ["string", "null"] },
+        "children": { "type": "array", "items": { "type": "string" } },
+        "derivedFromProductNodeIds": { "type": "array", "items": { "type": "string" } },
+        "responsibility": { "type": "string" },
+        "boundaries": { "type": "array", "items": { "type": "string" } },
+        "risks": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

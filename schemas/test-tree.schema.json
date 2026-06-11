@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/test-tree.schema.json",
+  "title": "PBE Test Tree",
+  "type": "object",
+  "required": ["version", "rootNodeId", "nodes"],
+  "properties": {
+    "version": { "type": "string" },
+    "rootNodeId": { "type": "string" },
+    "nodes": { "type": "array", "items": { "$ref": "#/$defs/node" } }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": ["id", "type", "title", "status", "verifiesProductNodeIds", "verifiesWorkNodeIds", "evidenceRequired"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["unit_test", "integration_test", "component_test", "ui_state_test", "manual_check", "regression_check", "acceptance_check"] },
+        "title": { "type": "string" },
+        "status": { "enum": ["planned", "runnable", "passed", "failed", "skipped", "deferred", "manual_required", "not_applicable", "blocked", "stale", "invalidated"] },
+        "verifiesProductNodeIds": { "type": "array", "items": { "type": "string" } },
+        "verifiesProjectNodeIds": { "type": "array", "items": { "type": "string" } },
+        "verifiesWorkNodeIds": { "type": "array", "items": { "type": "string" } },
+        "validationCommands": { "type": "array", "items": { "type": "string" } },
+        "manualChecks": { "type": "array", "items": { "type": "string" } },
+        "passCriteria": { "type": "array", "items": { "type": "string" } },
+        "evidenceRequired": { "type": "array", "items": { "type": "string" } },
+        "partialCompletionEffect": { "type": "string" }
+      }
+    }
+  }
+}

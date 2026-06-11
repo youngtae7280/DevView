@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "PT-ROOT",
+  "nodes": [
+    {
+      "id": "PT-ROOT",
+      "type": "goal",
+      "title": "Product goal",
+      "status": "draft",
+      "parent": null,
+      "children": [],
+      "source": {},
+      "why": "",
+      "scopeClass": "selected",
+      "acceptance": [],
+      "derivedTo": [],
+      "evidence": []
+    }
+  ],
+  "assumptions": [],
+  "decisionQueueRef": ".pbe/control/decision-queue.json"
+}

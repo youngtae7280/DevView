@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "TT-ROOT",
+  "nodes": [
+    {
+      "id": "TT-ROOT",
+      "type": "acceptance_check",
+      "title": "Test root",
+      "status": "planned",
+      "verifiesProductNodeIds": [],
+      "verifiesProjectNodeIds": [],
+      "verifiesWorkNodeIds": [],
+      "validationCommands": [],
+      "manualChecks": [],
+      "passCriteria": [],
+      "evidenceRequired": [],
+      "partialCompletionEffect": "No product branch can become accepted_done from the root placeholder alone."
+    }
+  ]
+}
