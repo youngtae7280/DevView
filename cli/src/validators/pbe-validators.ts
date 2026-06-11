@@ -269,6 +269,8 @@ export async function validateTraceability(root: string): Promise<ValidationIssu
   const cycle = await readJsonIfExists(root, 'cycleTree')
 
   const productNodes = nodesOf(product)
+  const productIds = new Set(productNodes.map((node) => stringValue(node.id)).filter(Boolean))
+  const acceptanceCriteriaIds = collectAcceptanceCriteriaIds(product)
   const activeProductIds = new Set(productNodes.filter(isExecutableProductNode).map((node) => stringValue(node.id)).filter(Boolean))
   const inactiveProductIds = new Set(productNodes
     .filter((node) => ['deferred', 'out_of_scope'].includes(stringValue(node.scopeClass)) || ['deferred', 'out_of_scope'].includes(stringValue(node.status)))
@@ -276,6 +278,7 @@ export async function validateTraceability(root: string): Promise<ValidationIssu
     .filter(Boolean))
 
   const workNodes = nodesOf(work)
+  const workIds = new Set(workNodes.map((node) => stringValue(node.id)).filter(Boolean))
   const nonRootWork = workNodes.filter((node) => stringValue(node.id) !== stringValue(work?.rootNodeId))
   for (const productId of activeProductIds) {
     const hasWork = nonRootWork.some((node) => arrayStrings(node.derivedFromProductNodeIds).includes(productId))
@@ -307,6 +310,9 @@ export async function validateTraceability(root: string): Promise<ValidationIssu
       }))
     }
     for (const productId of sourceIds) {
+      if (!productIds.has(productId)) {
+        issues.push(missingLinkIssue('Traceability', 'WORK_WITHOUT_PRODUCT', defaultArtifacts.workTree, workId, 'Product', productId))
+      }
       if (inactiveProductIds.has(productId)) {
         issues.push(scopeLeakIssue('Traceability', 'DEFERRED_SCOPE_LEAK', defaultArtifacts.workTree, workId, productId))
       }
@@ -314,31 +320,62 @@ export async function validateTraceability(root: string): Promise<ValidationIssu
   }
 
   const testNodes = nodesOf(test).filter((node) => stringValue(node.id) !== stringValue(test?.rootNodeId))
+  const testIds = new Set(nodesOf(test).map((node) => stringValue(node.id)).filter(Boolean))
   for (const testNode of testNodes) {
+    const testId = stringValue(testNode.id)
     if (arrayStrings(testNode.verifiesWorkNodeIds).length === 0 && arrayStrings(testNode.verifiesAcceptanceCriteriaIds).length === 0 && arrayStrings(testNode.verifiesProductNodeIds).length === 0) {
       issues.push(issue({
         validator: 'Traceability',
         code: 'TEST_WITHOUT_WORK_OR_AC',
         severity: 'error',
         file: defaultArtifacts.testTree,
-        nodeId: stringValue(testNode.id),
+        nodeId: testId,
         message: `Test node ${String(testNode.id)} does not verify Product, Work, or Acceptance Criteria nodes.`,
         suggestedFix: 'Link this Test node to the Work or acceptance criteria it verifies.',
       }))
     }
+    for (const productId of arrayStrings(testNode.verifiesProductNodeIds)) {
+      if (!productIds.has(productId)) {
+        issues.push(missingLinkIssue('Traceability', 'TEST_WITHOUT_WORK_OR_AC', defaultArtifacts.testTree, testId, 'Product', productId))
+      }
+      if (inactiveProductIds.has(productId)) {
+        issues.push(scopeLeakIssue('Traceability', 'DEFERRED_SCOPE_LEAK', defaultArtifacts.testTree, testId, productId))
+      }
+    }
+    for (const workId of arrayStrings(testNode.verifiesWorkNodeIds)) {
+      if (!workIds.has(workId)) {
+        issues.push(missingLinkIssue('Traceability', 'TEST_WITHOUT_WORK_OR_AC', defaultArtifacts.testTree, testId, 'Work', workId))
+      }
+    }
+    for (const criteriaId of arrayStrings(testNode.verifiesAcceptanceCriteriaIds)) {
+      if (!acceptanceCriteriaIds.has(criteriaId)) {
+        issues.push(missingLinkIssue('Traceability', 'TEST_WITHOUT_WORK_OR_AC', defaultArtifacts.testTree, testId, 'Acceptance Criteria', criteriaId))
+      }
+    }
   }
 
   for (const evidenceNode of arrayObjects(evidence?.evidence)) {
+    const evidenceId = stringValue(evidenceNode.id)
     if (arrayStrings(evidenceNode.evidenceForTestNodeIds).length === 0 && arrayStrings(evidenceNode.provesNodeIds).length === 0) {
       issues.push(issue({
         validator: 'Traceability',
         code: 'EVIDENCE_WITHOUT_TEST',
         severity: 'error',
         file: defaultArtifacts.evidenceTree,
-        nodeId: stringValue(evidenceNode.id),
+        nodeId: evidenceId,
         message: `Evidence node ${String(evidenceNode.id)} is not linked to Test/Product/Work nodes.`,
         suggestedFix: 'Attach evidence to the Test node, Product node, Work node, or acceptance criteria it proves.',
       }))
+    }
+    for (const testId of arrayStrings(evidenceNode.evidenceForTestNodeIds)) {
+      if (!testIds.has(testId)) {
+        issues.push(missingLinkIssue('Traceability', 'EVIDENCE_WITHOUT_TEST', defaultArtifacts.evidenceTree, evidenceId, 'Test', testId))
+      }
+    }
+    for (const criteriaId of arrayStrings(evidenceNode.evidenceForAcceptanceCriteriaIds)) {
+      if (!acceptanceCriteriaIds.has(criteriaId)) {
+        issues.push(missingLinkIssue('Traceability', 'EVIDENCE_WITHOUT_TEST', defaultArtifacts.evidenceTree, evidenceId, 'Acceptance Criteria', criteriaId))
+      }
     }
   }
 
@@ -360,19 +397,27 @@ export async function validateWpd(root: string): Promise<ValidationIssue[]> {
   }
   const work = await readJsonIfExists(root, 'workTree')
   const issues: ValidationIssue[] = []
+  const workIds = new Set(nodesOf(work).map((node) => stringValue(node.id)).filter(Boolean))
   for (const node of nodesOf(work).filter((entry) => stringValue(entry.id) !== stringValue(work?.rootNodeId))) {
+    const workId = stringValue(node.id)
     if (['selected', 'foundation'].includes(stringValue(node.scopeClass)) && arrayStrings(node.expectedFiles).length === 0 && !node.unknownFileTouchRisk) {
       issues.push(issue({
         validator: 'WPD',
         code: 'EXPECTED_FILES_MISSING',
         severity: 'error',
         file: defaultArtifacts.workTree,
-        nodeId: stringValue(node.id),
+        nodeId: workId,
         message: `Work node ${String(node.id)} has no expectedFiles and is not marked unknownFileTouchRisk.`,
         suggestedFix: 'Declare expectedFiles or mark unknownFileTouchRisk before planning parallel execution.',
       }))
     }
+    for (const dependencyId of arrayStrings(node.dependencies)) {
+      if (!workIds.has(dependencyId)) {
+        issues.push(missingLinkIssue('WPD', 'WORK_PRODUCT_LINK_MISSING', defaultArtifacts.workTree, workId, 'Work dependency', dependencyId))
+      }
+    }
   }
+  issues.push(...validateWorkDependencyGraph(work))
   issues.push(...await validateTraceability(root))
   return issues
 }
@@ -392,7 +437,11 @@ export async function validateVd(root: string): Promise<ValidationIssue[]> {
       continue
     }
     const workId = stringValue(workNode.id)
-    const covered = testNodes.some((testNode) => arrayStrings(testNode.verifiesWorkNodeIds).includes(workId))
+    const criteriaIds = arrayStrings(workNode.satisfiesAcceptanceCriteriaIds)
+    const covered = testNodes.some((testNode) =>
+      arrayStrings(testNode.verifiesWorkNodeIds).includes(workId) ||
+      criteriaIds.some((criteriaId) => arrayStrings(testNode.verifiesAcceptanceCriteriaIds).includes(criteriaId)),
+    )
     if (!covered) {
       issues.push(issue({
         validator: 'VD',
@@ -422,6 +471,21 @@ export async function validateVd(root: string): Promise<ValidationIssue[]> {
       }
     }
   }
+  for (const testNode of testNodes.filter((entry) => stringValue(entry.id) !== stringValue(test?.rootNodeId))) {
+    const testId = stringValue(testNode.id)
+    const requiredEvidence = arrayStrings(testNode.evidenceRequired).join(' ').toLowerCase()
+    if (stringValue(testNode.type) === 'ui_state_test' && !requiredEvidence.includes('screenshot') && !requiredEvidence.includes('manual')) {
+      issues.push(issue({
+        validator: 'VD',
+        code: 'UI_EVIDENCE_MISSING',
+        severity: 'error',
+        file: defaultArtifacts.testTree,
+        nodeId: testId,
+        message: `UI Test node ${testId} does not require screenshot or manual UI evidence.`,
+        suggestedFix: 'Add screenshot, visual, or manual UI evidence requirements before implementation.',
+      }))
+    }
+  }
   return issues
 }
 
@@ -431,6 +495,81 @@ export async function validateAcep(root: string): Promise<ValidationIssue[]> {
     return [missingIssue('ACEP', 'ACEP_MANIFEST_MISSING', defaultArtifacts.executionManifest, 'ACEP execution manifest is missing.')]
   }
   const issues = await validateAcceptedActors(root)
+  const manifest = await readJsonSafe<JsonObject>(manifestPath)
+  if (!manifest.ok) {
+    issues.push(issue({
+      validator: 'ACEP',
+      code: 'JSON_INVALID',
+      severity: 'error',
+      file: defaultArtifacts.executionManifest,
+      message: `Could not parse execution manifest: ${manifest.error}`,
+      suggestedFix: 'Fix execution-manifest.json before running ACEP.',
+    }))
+    return issues
+  }
+  const product = await readJsonIfExists(root, 'productTree')
+  const work = await readJsonIfExists(root, 'workTree')
+  const inactiveProductIds = collectInactiveProductIds(product)
+  const inactiveWorkIds = collectInactiveWorkIds(work)
+  for (const task of arrayObjects(manifest.value.tasks)) {
+    const taskId = stringValue(task.id)
+    const scopeClass = stringValue(task.scopeClass)
+    if (['deferred', 'blocked', 'out_of_scope'].includes(scopeClass)) {
+      issues.push(issue({
+        validator: 'ACEP',
+        code: 'ACEP_SCOPE_LEAK',
+        severity: 'error',
+        file: defaultArtifacts.executionManifest,
+        nodeId: taskId,
+        message: `ACEP task ${taskId} has inactive scopeClass ${scopeClass}.`,
+        suggestedFix: 'Remove deferred/blocked/out_of_scope tasks from the active ACEP manifest.',
+      }))
+    }
+    if (arrayStrings(task.requirementIds).length === 0 && arrayStrings(task.workGraphNodeIds).length === 0 && !stringValue(task.verificationExplanation)) {
+      issues.push(issue({
+        validator: 'ACEP',
+        code: 'ACEP_TASK_WITHOUT_REQUIREMENT',
+        severity: 'error',
+        file: defaultArtifacts.executionManifest,
+        nodeId: taskId,
+        message: `ACEP task ${taskId} has no requirementIds, workGraphNodeIds, or verificationExplanation.`,
+        suggestedFix: 'Link the task to Product/Work scope or record why it is foundation/support work.',
+      }))
+    }
+    for (const productId of arrayStrings(task.requirementIds)) {
+      if (inactiveProductIds.has(productId)) {
+        issues.push(scopeLeakIssue('ACEP', 'ACEP_SCOPE_LEAK', defaultArtifacts.executionManifest, taskId, productId))
+      }
+    }
+    for (const workId of arrayStrings(task.workGraphNodeIds)) {
+      if (inactiveWorkIds.has(workId)) {
+        issues.push(issue({
+          validator: 'ACEP',
+          code: 'ACEP_SCOPE_LEAK',
+          severity: 'error',
+          file: defaultArtifacts.executionManifest,
+          nodeId: taskId,
+          message: `ACEP task ${taskId} includes inactive Work node ${workId}.`,
+          suggestedFix: 'Remove inactive Work nodes from active ACEP scope or reopen them through Change/Impact.',
+        }))
+      }
+    }
+  }
+  for (const phase of arrayObjects(manifest.value.phases)) {
+    for (const group of arrayObjects(phase.parallelGroups)) {
+      if (!stringValue(group.integrationTask) || group.integrationEvidenceRequired !== true || group.groupCannotCompleteWithoutIntegrationPass !== true) {
+        issues.push(issue({
+          validator: 'ACEP',
+          code: 'PARALLEL_GROUP_INCOMPLETE',
+          severity: 'error',
+          file: defaultArtifacts.executionManifest,
+          nodeId: stringValue(group.id),
+          message: `Parallel group ${String(group.id)} lacks required integration task/evidence/pass guard.`,
+          suggestedFix: 'Add integrationTask, integrationEvidenceRequired=true, and groupCannotCompleteWithoutIntegrationPass=true.',
+        }))
+      }
+    }
+  }
   if (!existsSync(artifactPath(root, 'finalCoverageCheck'))) {
     issues.push(missingIssue('ACEP', 'FINAL_COVERAGE_MISSING', defaultArtifacts.finalCoverageCheck, 'ACEP final coverage check is missing.'))
   }
@@ -471,6 +610,21 @@ export async function validateEvidence(root: string): Promise<ValidationIssue[]>
       }))
     }
   }
+  for (const evidenceNode of evidenceNodes) {
+    const evidenceId = stringValue(evidenceNode.id)
+    const evidencePath = stringValue(evidenceNode.path)
+    if (['attached', 'replaced'].includes(stringValue(evidenceNode.status)) && evidencePath && !existsSync(resolveEvidencePath(root, evidencePath))) {
+      issues.push(issue({
+        validator: 'Evidence',
+        code: 'EVIDENCE_FILE_MISSING',
+        severity: 'error',
+        file: defaultArtifacts.evidenceTree,
+        nodeId: evidenceId,
+        message: `Evidence node ${evidenceId} points to a missing file: ${evidencePath}.`,
+        suggestedFix: 'Attach the referenced evidence file or update the evidence path.',
+      }))
+    }
+  }
   return issues
 }
 
@@ -504,6 +658,68 @@ function scopeLeakIssue(validator: string, code: string, file: string, nodeId: s
     message: `Deferred/out_of_scope Product node ${productId} appears in active scope ${nodeId}.`,
     suggestedFix: 'Remove inactive Product scope from active Work/Test/ACEP scope or explicitly reopen it through a Change Node and human gate.',
   })
+}
+
+function missingLinkIssue(validator: string, code: string, file: string, nodeId: string, targetLabel: string, targetId: string): ValidationIssue {
+  return issue({
+    validator,
+    code,
+    severity: 'error',
+    file,
+    nodeId,
+    message: `${nodeId} references missing ${targetLabel}: ${targetId}.`,
+    suggestedFix: `Create the referenced ${targetLabel} node or remove the stale link.`,
+  })
+}
+
+function validateWorkDependencyGraph(work: JsonObject | null): ValidationIssue[] {
+  const issues: ValidationIssue[] = []
+  const nodes = nodesOf(work)
+  const entries: Array<[string, JsonObject]> = []
+  for (const node of nodes) {
+    const id = stringValue(node.id)
+    if (id) {
+      entries.push([id, node])
+    }
+  }
+  const nodeMap = new Map<string, JsonObject>(entries)
+  const visiting = new Set<string>()
+  const visited = new Set<string>()
+  const pathStack: string[] = []
+
+  function visit(id: string): void {
+    if (visited.has(id) || !nodeMap.has(id)) {
+      return
+    }
+    if (visiting.has(id)) {
+      const cycleStart = pathStack.indexOf(id)
+      const cycle = [...pathStack.slice(cycleStart), id].join(' -> ')
+      issues.push(issue({
+        validator: 'WPD',
+        code: 'DEPENDENCY_CYCLE',
+        severity: 'error',
+        file: defaultArtifacts.workTree,
+        nodeId: id,
+        message: `Work dependency graph contains a cycle: ${cycle}.`,
+        suggestedFix: 'Break the dependency cycle before planning or executing work.',
+      }))
+      return
+    }
+    visiting.add(id)
+    pathStack.push(id)
+    const node = nodeMap.get(id)
+    for (const dependencyId of arrayStrings(node?.dependencies)) {
+      visit(dependencyId)
+    }
+    pathStack.pop()
+    visiting.delete(id)
+    visited.add(id)
+  }
+
+  for (const id of nodeMap.keys()) {
+    visit(id)
+  }
+  return issues
 }
 
 function validateAcceptanceCriterion(productNode: JsonObject, criterion: JsonObject): ValidationIssue[] {
@@ -555,6 +771,27 @@ function criteriaIssue(code: string, criterionId: string, productId: string, mes
 function findRootNode(product: JsonObject): JsonObject | null {
   const rootNodeId = stringValue(product.rootNodeId)
   return nodesOf(product).find((node) => stringValue(node.id) === rootNodeId) || null
+}
+
+function collectAcceptanceCriteriaIds(product: JsonObject | null): Set<string> {
+  return new Set(nodesOf(product)
+    .flatMap((node) => acceptanceCriteriaOf(node))
+    .map((criterion) => stringValue(criterion.id))
+    .filter(Boolean))
+}
+
+function collectInactiveProductIds(product: JsonObject | null): Set<string> {
+  return new Set(nodesOf(product)
+    .filter((node) => ['deferred', 'out_of_scope', 'blocked'].includes(stringValue(node.scopeClass)) || ['deferred', 'out_of_scope', 'blocked'].includes(stringValue(node.status)))
+    .map((node) => stringValue(node.id))
+    .filter(Boolean))
+}
+
+function collectInactiveWorkIds(work: JsonObject | null): Set<string> {
+  return new Set(nodesOf(work)
+    .filter((node) => ['deferred', 'out_of_scope', 'blocked'].includes(stringValue(node.scopeClass)) || ['deferred', 'out_of_scope', 'blocked'].includes(stringValue(node.status)))
+    .map((node) => stringValue(node.id))
+    .filter(Boolean))
 }
 
 function nodesOf(tree: JsonObject | null): JsonObject[] {
@@ -616,6 +853,13 @@ function criterionText(criterion: JsonObject): string {
     criterion.expectedBehavior,
     criterion.observableResult,
   ].map(stringValue).join(' ')
+}
+
+function resolveEvidencePath(root: string, evidencePath: string): string {
+  if (/^[a-zA-Z]:[\\/]/.test(evidencePath) || evidencePath.startsWith('/')) {
+    return evidencePath
+  }
+  return `${root}/${evidencePath}`.replaceAll('\\', '/')
 }
 
 function getNestedString(value: unknown, keys: string[]): string {
