@@ -194,10 +194,16 @@ function validateTreeLinks(data) {
   const visualProfileIds = collectProfileIds(data.visualVerification)
   const verificationMissIds = collectMissIds(data.verificationMiss)
   const productMap = collectNodeMap(data.product)
+  const projectMap = collectNodeMap(data.project)
   const workMap = collectNodeMap(data.work)
   const testMap = collectNodeMap(data.test)
   const evidenceMap = collectEvidenceMap(data.evidence)
+  const allNodeMap = new Map([...productMap, ...projectMap, ...workMap, ...testMap, ...evidenceMap])
   const impactsByAffected = collectImpactsByAffected(data.impact)
+  const impactsByChange = collectImpactsByChange(data.impact)
+  const acceptanceCriteriaIds = collectAcceptanceCriteriaIds(data.product)
+  const acceptanceCriteriaByProduct = collectAcceptanceCriteriaByProduct(data.product)
+  const ambiguousProductIds = collectAmbiguousProductIds(data.product)
   const knownNodeIds = new Set([
     ...productIds,
     ...projectIds,
@@ -217,11 +223,12 @@ function validateTreeLinks(data) {
   validateTreeShape(data.project, 'project')
   validateTreeShape(data.work, 'work')
   validateTreeShape(data.test, 'test')
+  validateProductReadiness(data.product)
   validateCycleTree(data.cycle, { productIds, projectIds, workIds, testIds })
   validateDecisionQueue(data.decision, knownNodeIds)
-  validateChangeTree(data.change, knownNodeIds)
-  validateImpactTree(data.impact, { knownNodeIds, changeIds })
-  validateEvidenceTree(data.evidence, knownNodeIds)
+  validateChangeTree(data.change, { knownNodeIds, acceptanceCriteriaIds, impactsByChange })
+  validateImpactTree(data.impact, { knownNodeIds, changeIds, acceptanceCriteriaIds, allNodeMap })
+  validateEvidenceTree(data.evidence, { knownNodeIds, testIds, acceptanceCriteriaIds })
   validateLegacyControlInventory(data.legacyInventory, { productIds, projectIds, workIds, testIds, evidenceIds })
   validateSurfaceCompletionLedger(data.surfaceCompletion, {
     productIds,
@@ -261,15 +268,29 @@ function validateTreeLinks(data) {
     if (!isRoot && ['selected', 'foundation'].includes(node.scopeClass) && !hasAny(node.derivedFromProductNodeIds)) {
       errors.push(`work ${node.id} must derive selected/foundation work from Product Tree nodes`)
     }
+    if (!isRoot && data.project && ['selected', 'foundation'].includes(node.scopeClass) && !hasAny(node.derivedFromProjectNodeIds)) {
+      errors.push(`work ${node.id} must derive selected/foundation work from Project Tree nodes`)
+    }
+    for (const productId of node.derivedFromProductNodeIds || []) {
+      if (ambiguousProductIds.has(productId)) {
+        errors.push(`work ${node.id} derives from ambiguous or partial Product node ${productId}`)
+      }
+    }
+    const sourceCriteriaIds = (node.derivedFromProductNodeIds || [])
+      .flatMap((productId) => acceptanceCriteriaByProduct.get(productId) || [])
+    if (!isRoot && ['selected', 'foundation'].includes(node.scopeClass) && hasAny(sourceCriteriaIds) && !hasAny(node.satisfiesAcceptanceCriteriaIds)) {
+      errors.push(`work ${node.id} derives from Product nodes with acceptanceCriteria but lacks satisfiesAcceptanceCriteriaIds`)
+    }
     validateKnownIds(node.derivedFromProductNodeIds, productIds, `work ${node.id}`, 'product source')
     validateKnownIds(node.derivedFromProjectNodeIds, projectIds, `work ${node.id}`, 'project source')
+    validateKnownIds(node.satisfiesAcceptanceCriteriaIds, acceptanceCriteriaIds, `work ${node.id}`, 'acceptance criteria')
     validateKnownIds(node.dependencies, workIds, `work ${node.id}`, 'work dependency')
   }
 
   for (const node of data.test?.nodes || []) {
     const isRoot = node.id === data.test.rootNodeId
-    if (!isRoot && !hasAny(node.verifiesProductNodeIds) && !hasAny(node.verifiesWorkNodeIds)) {
-      errors.push(`test ${node.id} must verify Product or Work nodes`)
+    if (!isRoot && !hasAny(node.verifiesProductNodeIds) && !hasAny(node.verifiesWorkNodeIds) && !hasAny(node.verifiesAcceptanceCriteriaIds)) {
+      errors.push(`test ${node.id} must verify Product, Work, or Acceptance Criteria nodes`)
     }
     if (!isRoot && !hasAny(node.evidenceRequired)) {
       errors.push(`test ${node.id} must require evidence`)
@@ -277,6 +298,20 @@ function validateTreeLinks(data) {
     validateKnownIds(node.verifiesProductNodeIds, productIds, `test ${node.id}`, 'product verification target')
     validateKnownIds(node.verifiesProjectNodeIds, projectIds, `test ${node.id}`, 'project verification target')
     validateKnownIds(node.verifiesWorkNodeIds, workIds, `test ${node.id}`, 'work verification target')
+    validateKnownIds(node.verifiesAcceptanceCriteriaIds, acceptanceCriteriaIds, `test ${node.id}`, 'acceptance criteria')
+  }
+
+  if (data.test) {
+    const verifiedCriteriaIds = new Set(
+      (data.test.nodes || []).flatMap((node) => node.verifiesAcceptanceCriteriaIds || []),
+    )
+    for (const [productId, criteriaIds] of acceptanceCriteriaByProduct) {
+      for (const criteriaId of criteriaIds) {
+        if (!verifiedCriteriaIds.has(criteriaId)) {
+          errors.push(`product ${productId} acceptance criteria ${criteriaId} lacks Test Tree coverage`)
+        }
+      }
+    }
   }
 }
 
@@ -391,12 +426,50 @@ function validateDecisionQueue(queue, knownNodeIds) {
   }
 }
 
-function validateChangeTree(changeTree, knownNodeIds) {
+function validateProductReadiness(productTree) {
+  if (!productTree) {
+    return
+  }
+  for (const node of productTree.nodes || []) {
+    const isLeaf = !hasAny(node.children)
+    const executableStatus = ['confirmed', 'accepted'].includes(node.status)
+    const executableType = !['non_goal', 'risk', 'assumption', 'decision'].includes(node.type)
+    const executableScope = !['deferred', 'blocked', 'out_of_scope'].includes(node.scopeClass)
+    if (isLeaf && executableStatus && executableType && executableScope && !hasAny(node.acceptanceCriteria) && !node.acceptanceNotRequiredReason) {
+      errors.push(`product ${node.id} is ${node.status} but lacks acceptanceCriteria or acceptanceNotRequiredReason`)
+    }
+
+    if (executableStatus && ['partial', 'ambiguous'].includes(node.ambiguity?.status)) {
+      errors.push(`product ${node.id} is ${node.status} but ambiguity.status is ${node.ambiguity.status}`)
+    }
+    if (node.status === 'needs_clarification' && ['selected', 'foundation'].includes(node.scopeClass)) {
+      errors.push(`product ${node.id} is needs_clarification but remains in executable scope ${node.scopeClass}`)
+    }
+
+    const abstractTerms = collectAbstractTerms(node)
+    if (executableStatus && hasAny(abstractTerms) && node.ambiguityResolution?.status !== 'resolved') {
+      errors.push(`product ${node.id} contains abstract quality terms (${abstractTerms.join(', ')}) but lacks resolved ambiguityResolution`)
+    }
+  }
+}
+
+function validateChangeTree(changeTree, refs) {
   if (!changeTree) {
     return
   }
   for (const change of changeTree.changes || []) {
-    validateKnownIds(change.affectedNodeIds, knownNodeIds, `change ${change.id}`, 'affected node')
+    validateKnownIds(change.affectedNodeIds, refs.knownNodeIds, `change ${change.id}`, 'affected node')
+    validateKnownIds(change.affectedAcceptanceCriteriaIds, refs.acceptanceCriteriaIds, `change ${change.id}`, 'acceptance criteria')
+    validateKnownIds(change.criteriaDelta?.modified, refs.acceptanceCriteriaIds, `change ${change.id} criteriaDelta.modified`, 'acceptance criteria')
+    validateKnownIds(change.criteriaDelta?.invalidated, refs.acceptanceCriteriaIds, `change ${change.id} criteriaDelta.invalidated`, 'acceptance criteria')
+
+    const changesCompletionMeaning =
+      ['missing_requirement', 'design_correction', 'scope_change', 'feedback', 'acceptance_change', 'verification_change'].includes(change.type) ||
+      change.requiresRevisionRpd === true ||
+      hasCriteriaDelta(change.criteriaDelta)
+    if (['approved', 'applied', 'resolved'].includes(change.status) && changesCompletionMeaning && !hasAny(refs.impactsByChange.get(change.id))) {
+      errors.push(`change ${change.id} changes product/scope/acceptance/verification meaning but lacks Impact Tree entries`)
+    }
   }
 }
 
@@ -407,15 +480,28 @@ function validateImpactTree(impactTree, refs) {
   for (const impact of impactTree.impacts || []) {
     validateKnownIds([impact.changeId], refs.changeIds, `impact ${impact.id}`, 'change')
     validateKnownIds([impact.affectedNodeId], refs.knownNodeIds, `impact ${impact.id}`, 'affected node')
+    validateKnownIds(impact.affectedAcceptanceCriteriaIds, refs.acceptanceCriteriaIds, `impact ${impact.id}`, 'acceptance criteria')
+    if (impact.requiredAction === 'reopen') {
+      const affected = refs.allNodeMap.get(impact.affectedNodeId)
+      const reopenedStates = new Set(['reopened', 'stale', 'invalidated', 'stale_evidence'])
+      if (affected && !reopenedStates.has(affected.status)) {
+        errors.push(`impact ${impact.id} requires reopen but affected node ${impact.affectedNodeId} status is ${affected.status}`)
+      }
+    }
   }
 }
 
-function validateEvidenceTree(evidenceTree, knownNodeIds) {
+function validateEvidenceTree(evidenceTree, refs) {
   if (!evidenceTree) {
     return
   }
   for (const evidence of evidenceTree.evidence || []) {
-    validateKnownIds(evidence.provesNodeIds, knownNodeIds, `evidence ${evidence.id}`, 'proved node')
+    validateKnownIds(evidence.provesNodeIds, refs.knownNodeIds, `evidence ${evidence.id}`, 'proved node')
+    validateKnownIds(evidence.evidenceForTestNodeIds, refs.testIds, `evidence ${evidence.id}`, 'test node')
+    validateKnownIds(evidence.evidenceForAcceptanceCriteriaIds, refs.acceptanceCriteriaIds, `evidence ${evidence.id}`, 'acceptance criteria')
+    if (!hasAny(evidence.provesNodeIds) && !hasAny(evidence.evidenceForTestNodeIds)) {
+      errors.push(`evidence ${evidence.id} must prove at least one Product/Work/Test node or evidenceForTestNodeIds`)
+    }
   }
 }
 
@@ -637,6 +723,9 @@ function validateAcceptanceTree(acceptanceTree, refs) {
       if (!branch.userAcceptedAt) {
         errors.push(`acceptance branch ${branch.productNodeId} is accepted_done but lacks userAcceptedAt`)
       }
+      if (branch.decisionSource?.actor !== 'user') {
+        errors.push(`acceptance branch ${branch.productNodeId} is accepted_done but lacks user decisionSource`)
+      }
       if (!hasAny(branch.evidenceNodeIds)) {
         errors.push(`acceptance branch ${branch.productNodeId} is accepted_done but lacks evidenceNodeIds`)
       }
@@ -658,6 +747,14 @@ function validateAcceptanceTree(acceptanceTree, refs) {
         if (!['attached', 'replaced'].includes(evidence.status)) {
           errors.push(`acceptance branch ${branch.productNodeId} uses non-current evidence ${evidenceId} with status ${evidence.status}`)
         }
+      }
+    }
+    if (branch.status === 'submitted_for_review') {
+      if (!hasAny(branch.evidenceNodeIds)) {
+        errors.push(`acceptance branch ${branch.productNodeId} is submitted_for_review but lacks evidenceNodeIds`)
+      }
+      if (!branch.coverageSummary) {
+        errors.push(`acceptance branch ${branch.productNodeId} is submitted_for_review but lacks coverageSummary`)
       }
     }
   }
@@ -770,6 +867,39 @@ function collectEvidenceIds(evidenceTree) {
   return new Set((evidenceTree?.evidence || []).map((evidence) => evidence.id).filter(Boolean))
 }
 
+function collectAcceptanceCriteriaIds(productTree) {
+  return new Set(
+    (productTree?.nodes || [])
+      .flatMap((node) => node.acceptanceCriteria || [])
+      .map((criteria) => criteria.id)
+      .filter(Boolean),
+  )
+}
+
+function collectAcceptanceCriteriaByProduct(productTree) {
+  const criteriaByProduct = new Map()
+  for (const node of productTree?.nodes || []) {
+    const criteriaIds = (node.acceptanceCriteria || [])
+      .filter((criteria) => criteria.status !== 'deferred' && criteria.status !== 'out_of_scope' && criteria.status !== 'invalidated')
+      .map((criteria) => criteria.id)
+      .filter(Boolean)
+    if (criteriaIds.length > 0) {
+      criteriaByProduct.set(node.id, criteriaIds)
+    }
+  }
+  return criteriaByProduct
+}
+
+function collectAmbiguousProductIds(productTree) {
+  const ids = new Set()
+  for (const node of productTree?.nodes || []) {
+    if (node.status === 'needs_clarification' || ['partial', 'ambiguous'].includes(node.ambiguity?.status)) {
+      ids.add(node.id)
+    }
+  }
+  return ids
+}
+
 function collectInventoryIds(inventoryTree) {
   return new Set((inventoryTree?.inventories || []).map((inventory) => inventory.id).filter(Boolean))
 }
@@ -812,8 +942,64 @@ function collectImpactsByAffected(impactTree) {
   return grouped
 }
 
+function collectImpactsByChange(impactTree) {
+  const grouped = new Map()
+  for (const impact of impactTree?.impacts || []) {
+    if (!impact.changeId) {
+      continue
+    }
+    if (!grouped.has(impact.changeId)) {
+      grouped.set(impact.changeId, [])
+    }
+    grouped.get(impact.changeId).push(impact)
+  }
+  return grouped
+}
+
 function evidenceForNode(evidenceMap, nodeId) {
   return [...evidenceMap.values()].filter((evidence) => evidence.provesNodeIds?.includes(nodeId))
+}
+
+function collectAbstractTerms(node) {
+  const terms = new Set([
+    ...(node.ambiguity?.terms || []),
+    ...(node.ambiguity?.abstractTerms || []),
+  ])
+  const text = `${node.title || ''} ${node.why || ''}`.toLowerCase()
+  const abstractTerms = [
+    'clean',
+    'nice',
+    'fast',
+    'intuitive',
+    'stable',
+    'easy to use',
+    'modern',
+    'efficient',
+    'flexible',
+    'scalable',
+    'problem-free',
+    '깔끔하게',
+    '보기 좋게',
+    '빠르게',
+    '안정적으로',
+    '사용하기 쉽게',
+    '직관적으로',
+    '현대적으로',
+    '효율적으로',
+    '유연하게',
+    '확장 가능하게',
+    '문제 없게',
+  ]
+  for (const term of abstractTerms) {
+    if (text.includes(term.toLowerCase())) {
+      terms.add(term)
+    }
+  }
+  return [...terms]
+}
+
+function hasCriteriaDelta(criteriaDelta) {
+  return hasAny(criteriaDelta?.added) || hasAny(criteriaDelta?.modified) || hasAny(criteriaDelta?.invalidated)
 }
 
 function hasAny(value) {

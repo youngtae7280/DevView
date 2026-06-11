@@ -200,6 +200,69 @@ describe('PBE v2 tree validator', () => {
 
     expect(result.status).toBe(0)
   })
+
+  it('rejects confirmed executable Product nodes without acceptance criteria', () => {
+    const workspace = createTreeValidatorWorkspace()
+    writeProductTreeWithoutAcceptanceCriteria(workspace)
+
+    const result = runTreeValidator(workspace)
+
+    expect(result.status).toBe(1)
+    expect(result.output).toContain('lacks acceptanceCriteria or acceptanceNotRequiredReason')
+  })
+
+  it('rejects work derived from ambiguous Product nodes', () => {
+    const workspace = createTreeValidatorWorkspace()
+    writeAmbiguousProductTree(workspace)
+    writeWorkTree(workspace, 'PT-1')
+
+    const result = runTreeValidator(workspace)
+
+    expect(result.status).toBe(1)
+    expect(result.output).toContain('derives from ambiguous or partial Product node PT-1')
+  })
+
+  it('rejects acceptance criteria that lack Test Tree coverage once tests exist', () => {
+    const workspace = createTreeValidatorWorkspace()
+    writeProductTree(workspace)
+    writeWorkTree(workspace, 'PT-1')
+    writeTestTree(workspace, 'PT-1', 'WT-1', 'passed', { verifiesAcceptanceCriteriaIds: [] })
+
+    const result = runTreeValidator(workspace)
+
+    expect(result.status).toBe(1)
+    expect(result.output).toContain('acceptance criteria AC-PT-1-1 lacks Test Tree coverage')
+  })
+
+  it('rejects accepted branches without a user decision source', () => {
+    const workspace = createTreeValidatorWorkspace()
+    writeProductTree(workspace)
+    writeEvidenceTree(workspace, [
+      {
+        id: 'EV-1',
+        type: 'test_output',
+        status: 'attached',
+        provesNodeIds: ['PT-1'],
+      },
+    ])
+    writeAcceptanceTree(workspace, 'PT-1', 'EV-1', { includeDecisionSource: false })
+
+    const result = runTreeValidator(workspace)
+
+    expect(result.status).toBe(1)
+    expect(result.output).toContain('lacks user decisionSource')
+  })
+
+  it('rejects applied acceptance changes without Impact Tree entries', () => {
+    const workspace = createTreeValidatorWorkspace()
+    writeProductTree(workspace)
+    writeChangeTreeWithCriteriaDelta(workspace)
+
+    const result = runTreeValidator(workspace)
+
+    expect(result.status).toBe(1)
+    expect(result.output).toContain('changes product/scope/acceptance/verification meaning but lacks Impact Tree entries')
+  })
 })
 
 function createTreeValidatorWorkspace() {
@@ -255,6 +318,84 @@ function writeProductTree(workspace: string) {
         parent: 'PT-ROOT',
         children: [],
         scopeClass: 'selected',
+        acceptanceCriteria: [
+          {
+            id: 'AC-PT-1-1',
+            format: 'EARS',
+            type: 'ubiquitous',
+            condition: 'The capability is used',
+            systemResponse: 'The system provides the expected capability',
+            statement: 'THE SYSTEM SHALL provide the expected capability.',
+            status: 'confirmed',
+            source: {
+              type: 'user_interview',
+              sourceNodeId: 'PT-1',
+            },
+            verification: {
+              required: true,
+              suggestedTestNodeIds: ['TT-1'],
+              evidenceTypes: ['test_output'],
+            },
+          },
+        ],
+      },
+    ],
+  })
+}
+
+function writeProductTreeWithoutAcceptanceCriteria(workspace: string) {
+  writeJson(join(workspace, '.pbe', 'tree', 'product-tree.json'), {
+    version: '0.2.0-tree-control',
+    rootNodeId: 'PT-ROOT',
+    nodes: [
+      {
+        id: 'PT-ROOT',
+        type: 'goal',
+        title: 'Product root',
+        status: 'accepted',
+        parent: null,
+        children: ['PT-1'],
+      },
+      {
+        id: 'PT-1',
+        type: 'capability',
+        title: 'Example capability',
+        status: 'accepted',
+        parent: 'PT-ROOT',
+        children: [],
+        scopeClass: 'selected',
+      },
+    ],
+  })
+}
+
+function writeAmbiguousProductTree(workspace: string) {
+  writeJson(join(workspace, '.pbe', 'tree', 'product-tree.json'), {
+    version: '0.2.0-tree-control',
+    rootNodeId: 'PT-ROOT',
+    nodes: [
+      {
+        id: 'PT-ROOT',
+        type: 'goal',
+        title: 'Product root',
+        status: 'draft',
+        parent: null,
+        children: ['PT-1'],
+      },
+      {
+        id: 'PT-1',
+        type: 'capability',
+        title: 'Make the screen clean',
+        status: 'needs_clarification',
+        parent: 'PT-ROOT',
+        children: [],
+        scopeClass: 'selected',
+        ambiguity: {
+          status: 'ambiguous',
+          type: 'abstract_quality',
+          terms: ['clean'],
+          missing: ['completion_criteria', 'verification_method'],
+        },
       },
     ],
   })
@@ -287,6 +428,7 @@ function writeWorkTree(workspace: string, productNodeId: string) {
         forbiddenFiles: [],
         unknownFileTouchRisk: false,
         dependencies: [],
+        satisfiesAcceptanceCriteriaIds: ['AC-PT-1-1'],
         doneCriteria: ['Capability implemented'],
         validationHints: ['Run focused tests'],
       },
@@ -295,7 +437,13 @@ function writeWorkTree(workspace: string, productNodeId: string) {
   })
 }
 
-function writeTestTree(workspace: string, productNodeId: string, workNodeId: string, status: string) {
+function writeTestTree(
+  workspace: string,
+  productNodeId: string,
+  workNodeId: string,
+  status: string,
+  options: { verifiesAcceptanceCriteriaIds?: string[] } = {},
+) {
   writeJson(join(workspace, '.pbe', 'tree', 'test-tree.json'), {
     version: '0.2.0-tree-control',
     rootNodeId: 'TT-ROOT',
@@ -318,6 +466,7 @@ function writeTestTree(workspace: string, productNodeId: string, workNodeId: str
         verifiesProductNodeIds: [productNodeId],
         verifiesProjectNodeIds: [],
         verifiesWorkNodeIds: [workNodeId],
+        verifiesAcceptanceCriteriaIds: options.verifiesAcceptanceCriteriaIds ?? ['AC-PT-1-1'],
         validationCommands: ['npm test'],
         manualChecks: [],
         passCriteria: ['Capability is verified'],
@@ -371,7 +520,12 @@ function writeEvidenceTree(
   })
 }
 
-function writeAcceptanceTree(workspace: string, productNodeId: string, evidenceNodeId: string) {
+function writeAcceptanceTree(
+  workspace: string,
+  productNodeId: string,
+  evidenceNodeId: string,
+  options: { includeDecisionSource?: boolean } = {},
+) {
   writeJson(join(workspace, '.pbe', 'control', 'acceptance-tree.json'), {
     version: '0.2.0-tree-control',
     branches: [
@@ -381,7 +535,37 @@ function writeAcceptanceTree(workspace: string, productNodeId: string, evidenceN
         cycleIds: ['CYCLE-1'],
         evidenceNodeIds: [evidenceNodeId],
         userAcceptedAt: '2026-06-11T00:00:00.000Z',
+        ...(options.includeDecisionSource === false
+          ? {}
+          : {
+              decisionSource: {
+                actor: 'user',
+                sourceText: 'User accepted the branch.',
+              },
+            }),
         notes: 'User accepted the branch.',
+      },
+    ],
+  })
+}
+
+function writeChangeTreeWithCriteriaDelta(workspace: string) {
+  writeJson(join(workspace, '.pbe', 'control', 'change-tree.json'), {
+    version: '0.2.0-tree-control',
+    changes: [
+      {
+        id: 'CH-1',
+        type: 'acceptance_change',
+        status: 'applied',
+        reason: 'Acceptance criteria changed.',
+        affectedNodeIds: ['PT-1'],
+        affectedAcceptanceCriteriaIds: ['AC-PT-1-1'],
+        requiresRevisionRpd: true,
+        criteriaDelta: {
+          added: [],
+          modified: ['AC-PT-1-1'],
+          invalidated: [],
+        },
       },
     ],
   })

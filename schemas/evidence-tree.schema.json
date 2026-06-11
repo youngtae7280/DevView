@@ -18,6 +18,8 @@
         "status": { "enum": ["required", "attached", "stale_evidence", "replaced", "not_available"] },
         "path": { "type": "string" },
         "provesNodeIds": { "type": "array", "items": { "type": "string" } },
+        "evidenceForTestNodeIds": { "type": "array", "items": { "type": "string" } },
+        "evidenceForAcceptanceCriteriaIds": { "type": "array", "items": { "type": "string" } },
         "createdAt": { "type": "string" }
       }
     }

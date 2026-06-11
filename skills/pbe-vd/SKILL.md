@@ -77,6 +77,7 @@ Prefer v2 tree files when present. If Work Tree scope classifications conflict w
 - Mark uncertain validation commands as candidates rather than pretending they are guaranteed.
 - Every verification item must link to a requirement ID and task/work ID.
 - Every non-root Test Tree node must link to at least one Product or Work node through `verifiesProductNodeIds` or `verifiesWorkNodeIds`.
+- When source Product nodes have structured `acceptanceCriteria`, Test Tree nodes must link the relevant `verifiesAcceptanceCriteriaIds`.
 - UI-related work must require UI/UX evidence.
 - Visual parity work must not rely only on build or open smoke. Use screenshot review, popup visual review, runtime coordinate check, resize/DPI review, clipped-control audit, or a not-runnable explanation when relevant.
 - Legacy parity work must require inventory comparison evidence or an explicit parity gap/deferred reason.
@@ -150,6 +151,7 @@ Each verification item should include:
 9. Not Runnable / Environment-limited Checks
 
 Every verification item must state its linked requirement and task.
+When available, it must also state the linked acceptance criteria IDs.
 
 For UI/UX verification, include checks for confirmed states, required elements, accessibility expectations, and evidence requirements.
 

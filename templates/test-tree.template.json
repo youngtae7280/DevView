@@ -10,6 +10,7 @@
       "verifiesProductNodeIds": [],
       "verifiesProjectNodeIds": [],
       "verifiesWorkNodeIds": [],
+      "verifiesAcceptanceCriteriaIds": [],
       "validationCommands": [],
       "manualChecks": [],
       "passCriteria": [],

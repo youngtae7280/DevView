@@ -15,6 +15,8 @@ Create a bounded revision instruction pack from user feedback, Change Tree entri
 
 The revision pack must preserve implementation scope classifications. Feedback may affect selected or foundation work from the current slice. Deferred or out-of-scope work can only enter the revision if the user explicitly changes the scope at a human gate.
 
+If a Change Node has `requiresRevisionRpd: true`, run Revision RPD for that Change Node before generating implementation tasks. Revision RPD updates only affected Product nodes and acceptance criteria.
+
 ## Inputs
 
 Prefer v2 files when present:
@@ -89,13 +91,15 @@ Also update:
    - `accepted_done` -> `reopened`
    - evidence attached -> stale or requires replacement
 4. Decide whether each change is local fix, blueprint mutation, scope expansion, or breaking impact.
-5. Ask the user when product/scope/risk/UX/acceptance/verification changes are not already approved.
-6. Generate bounded revision tasks only for affected selected/foundation nodes.
-7. Preserve deferred/out-of-scope nodes unless user approves mutation.
-8. Include allowed files, forbidden files, non-scope, and regression checks.
-9. Include the verification miss root cause and any promoted validation contract requirements when feedback exposed a missed verification dimension.
-10. Write revision manifest with source feedback IDs, source change IDs, impact IDs, affected nodes, reopened nodes, stale evidence nodes, verification miss IDs, and promoted checks.
-11. Continue automatically to `pbe-run-revision` when the revision pack is safe and bounded.
+5. Run Ambiguity Gate for ambiguous Change Nodes and ask exactly one focused Revision RPD question when needed.
+6. Update or create structured acceptance criteria before creating implementation tasks when criteria changed.
+7. Ask the user when product/scope/risk/UX/acceptance/verification changes are not already approved.
+8. Generate bounded revision tasks only for affected selected/foundation nodes.
+9. Preserve deferred/out-of-scope nodes unless user approves mutation.
+10. Include allowed files, forbidden files, non-scope, and regression checks.
+11. Include the verification miss root cause and any promoted validation contract requirements when feedback exposed a missed verification dimension.
+12. Write revision manifest with source feedback IDs, source change IDs, impact IDs, affected nodes, reopened nodes, stale evidence nodes, verification miss IDs, criteria deltas, and promoted checks.
+13. Continue automatically to `pbe-run-revision` when the revision pack is safe and bounded.
 
 ## Scope Rules
 
@@ -118,6 +122,7 @@ Every Impact Tree entry must state:
 - impact type: `none`, `stale`, `invalidated`, `reopened`, `obsolete`, `requires_retest`, or `requires_new_evidence`
 - required action: `preserve`, `defer`, `fork`, `reopen`, `retest`, `replace_evidence`, or `human_decision`
 - reason
+- affected acceptance criteria IDs when the change modifies acceptance meaning
 
 If an affected completed node remains valid, record `impactType: none` and `requiredAction: preserve` so Codex does not unnecessarily rewrite it.
 
@@ -143,6 +148,9 @@ If an affected completed node remains valid, record `impactType: none` and `requ
 - `nonScope`
 - `regressionChecks`
 - `verificationMissIds`
+- `affectedAcceptanceCriteriaIds`
+- `criteriaDelta`
+- `revisionRpdStatus`
 - `whyPreviousVerificationMissedThis`
 - `promotedValidationContractRefs`
 - `surfaceReauditRequired`

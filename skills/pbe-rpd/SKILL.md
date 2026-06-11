@@ -17,6 +17,8 @@ RPD owns user intent. It does not own coding task boundaries, parallel execution
 
 Update Source of Truth Matrix references whenever RPD creates, confirms, defers, or removes a requirement.
 
+RPD must not treat abstract quality expressions as executable requirements. PBE is a requirements-based execution control layer, so RPD converts user intent into verifiable Product Tree nodes before any Work Tree derivation.
+
 ## Inputs And Outputs
 
 Prefer these v2 files when present:
@@ -49,6 +51,7 @@ Every confirmed, deferred, blocked, or out-of-scope requirement node must have a
 6. Do not use multiple-choice unless the user explicitly asks.
 7. After each user answer, extract requirement facts.
 8. Decide whether the current node needs one of:
+   - `run_ambiguity_gate`
    - `ask_next_question`
    - `propose_decomposition`
    - `propose_confirmation`
@@ -58,13 +61,53 @@ Every confirmed, deferred, blocked, or out-of-scope requirement node must have a
    - `blocked`
 9. Before decomposing a node, ask the user to confirm the proposed decomposition.
 10. Before confirming a node, ask the user to confirm the summary.
-11. Update `.pbe/tree/product-tree.json` and `.pbe/blueprint/requirement-tree.json` after every confirmed decision.
-12. Update `.pbe/control/decision-queue.json` when a human decision is needed or resolved.
-13. Update `.pbe/blueprint/rpd-interview-log.md` after every interview turn.
-14. Continue until every leaf node is `confirmed`, `deferred`, or `out_of_scope`.
-15. For UI-facing nodes, collect UI/UX intent without breaking the one-question rule.
-16. Record stable source IDs on every requirement node and Product Tree node.
-17. Preserve scope classification: `selected`, `deferred`, `foundation_candidate`, `blocked`, or `out_of_scope` when known.
+11. Before confirming an executable selected/foundation node, write at least one structured `acceptanceCriteria` item or an explicit `acceptanceNotRequiredReason`.
+12. Update `.pbe/tree/product-tree.json` and `.pbe/blueprint/requirement-tree.json` after every confirmed decision.
+13. Update `.pbe/control/decision-queue.json` when a human decision is needed or resolved.
+14. Update `.pbe/blueprint/rpd-interview-log.md` after every interview turn.
+15. Continue until every leaf node is `confirmed`, `deferred`, or `out_of_scope`.
+16. For UI-facing nodes, collect UI/UX intent without breaking the one-question rule.
+17. Record stable source IDs on every requirement node and Product Tree node.
+18. Preserve scope classification: `selected`, `deferred`, `foundation_candidate`, `blocked`, or `out_of_scope` when known.
+
+## Ambiguity Gate
+
+Run Ambiguity Gate before proposing confirmation for any Product node candidate.
+
+Check:
+
+1. Target: screen, feature, module, user flow, API, or behavior.
+2. Condition: WHEN, IF, WHILE, WHERE, state, trigger, or precondition.
+3. Expected behavior: observable system action.
+4. Completion criteria: rule, threshold, state, layout, or acceptance statement.
+5. Exception handling: failure, empty state, timeout, missing data, permission, error, retry, or cancel behavior.
+6. Verification method: test log, screenshot, manual scenario, diff, automated test, or review evidence.
+
+Classify:
+
+- `CLEAR`: enough information exists to write EARS acceptance criteria and propose confirmation.
+- `PARTIAL`: useful intent exists but one or two critical slots are missing; ask exactly one focused clarification question.
+- `AMBIGUOUS`: too abstract to execute; record a candidate node with `status: needs_clarification`, `ambiguity.status: ambiguous`, and do not derive Work Tree nodes.
+
+Abstract quality expressions include `clean`, `nice`, `fast`, `intuitive`, `stable`, `easy to use`, `modern`, `efficient`, `flexible`, `scalable`, `problem-free`, and Korean equivalents such as `깔끔하게`, `보기 좋게`, `빠르게`, `안정적으로`, `사용하기 쉽게`, `직관적으로`, `현대적으로`, `효율적으로`, `유연하게`, `확장 가능하게`, and `문제 없게`.
+
+Do not reject the user's intent. Preserve it as a Product node candidate, mark the ambiguity, and ask one question that resolves the most blocking missing slot.
+
+## EARS Acceptance Criteria
+
+Use EARS to make Product nodes verifiable:
+
+```text
+WHEN <condition>,
+THE SYSTEM SHALL <observable response>.
+
+IF <unwanted condition or failure>,
+THE SYSTEM SHALL <safe/error/retry behavior>.
+```
+
+Store criteria on Product nodes as `acceptanceCriteria[]` with stable IDs. Keep legacy `acceptance[]` strings as compatibility summaries only.
+
+An executable confirmed Product node must have at least one structured criterion unless it is documentation-only or metadata-only and has `acceptanceNotRequiredReason`.
 
 ## Product Tree Mapping
 
@@ -92,6 +135,7 @@ If the user's request is already clear, do not ask a vague "should I interview m
 4. Set `autoflow.state` to `WAITING_ROOT_CONFIRMATION`, `autoflow.currentGate` to `root_confirmation`, and `autoflow.nextStep` to `root_confirmation` until the user answers.
 
 Clear requests may reduce additional interview questions. They do not remove the confirmation gate.
+Clear requests also do not bypass EARS acceptance criteria. The Root summary or leaf node must be convertible into structured criteria before it can become executable scope.
 
 Example:
 
@@ -241,6 +285,8 @@ RPD is complete only when:
 10. PBE Invariants have no RPD-level violation.
 11. No blocking item remains in `.pbe/control/decision-queue.json`.
 12. Root confirmation has explicit user approval in the interview log or decision queue resolution.
+13. Every executable confirmed Product node has `acceptanceCriteria` or `acceptanceNotRequiredReason`.
+14. No `needs_clarification`, `partial`, or `ambiguous` Product node is selected for downstream WPD.
 
 ## RPD Invariants
 
@@ -251,6 +297,8 @@ RPD is complete only when:
 - User intent is the source of truth; inferred implementation tasks must trace back to a requirement or be recorded as foundation work.
 - A clear request may be summarized and structured by Codex, but the user must approve the Root summary and whether decomposition should stop.
 - RPD completion is a hard gate for every downstream stage and every deliverable-producing action, including documents, slide decks, spreadsheets, images, generated files, code, tests, and review reports.
+- Ambiguous quality language is not executable scope until Ambiguity Gate resolves it into acceptance criteria.
+- Work Tree, Test Tree, Evidence Tree, and Acceptance Tree closure must trace to Product nodes and, where available, structured acceptance criteria.
 
 ## Completion Report
 

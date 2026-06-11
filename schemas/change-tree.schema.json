@@ -3,24 +3,47 @@
   "$id": "https://local/project-blueprint-engine/change-tree.schema.json",
   "title": "PBE Change Tree",
   "type": "object",
-  "required": ["version", "changes"],
+  "required": ["changes"],
   "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
     "version": { "type": "string" },
+    "generatedAt": { "type": "string" },
     "changes": { "type": "array", "items": { "$ref": "#/$defs/change" } }
   },
   "$defs": {
     "change": {
       "type": "object",
-      "required": ["id", "type", "status", "reason", "affectedNodeIds"],
+      "required": ["id", "type", "status"],
       "properties": {
         "id": { "type": "string" },
-        "type": { "enum": ["missing_requirement", "design_correction", "implementation_constraint", "test_gap", "feedback", "scope_change", "risk_discovery"] },
-        "status": { "enum": ["proposed", "needs_human_decision", "approved", "rejected", "deferred", "applied", "blocked"] },
+        "type": { "enum": ["missing_requirement", "design_correction", "implementation_constraint", "test_gap", "feedback", "scope_change", "risk_discovery", "acceptance_change", "verification_change"] },
+        "status": { "enum": ["proposed", "needs_human_decision", "approved", "rejected", "deferred", "applied", "blocked", "resolved"] },
+        "sourceFeedbackId": { "type": "string" },
+        "sourceFeedbackItemIds": { "type": "array", "items": { "type": "string" } },
+        "summary": { "type": "string" },
         "reason": { "type": "string" },
         "affectedNodeIds": { "type": "array", "items": { "type": "string" } },
+        "affectedAcceptanceCriteriaIds": { "type": "array", "items": { "type": "string" } },
+        "affectedRequirementIds": { "type": "array", "items": { "type": "string" } },
+        "affectedTaskIds": { "type": "array", "items": { "type": "string" } },
+        "affectedVerificationIds": { "type": "array", "items": { "type": "string" } },
+        "verificationMissIds": { "type": "array", "items": { "type": "string" } },
+        "requiresRevisionRpd": { "type": "boolean" },
+        "criteriaDelta": {
+          "type": "object",
+          "properties": {
+            "added": { "type": "array", "items": { "type": "string" } },
+            "modified": { "type": "array", "items": { "type": "string" } },
+            "invalidated": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": true
+        },
         "treeMutation": { "type": "object" },
-        "decisionId": { "type": ["string", "null"] }
-      }
+        "decisionId": { "type": ["string", "null"] },
+        "decision": { "type": "object" },
+        "createdAt": { "type": "string" }
+      },
+      "additionalProperties": true
     }
   }
 }

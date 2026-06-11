@@ -21,6 +21,7 @@
         "verifiesProductNodeIds": { "type": "array", "items": { "type": "string" } },
         "verifiesProjectNodeIds": { "type": "array", "items": { "type": "string" } },
         "verifiesWorkNodeIds": { "type": "array", "items": { "type": "string" } },
+        "verifiesAcceptanceCriteriaIds": { "type": "array", "items": { "type": "string" } },
         "validationCommands": { "type": "array", "items": { "type": "string" } },
         "manualChecks": { "type": "array", "items": { "type": "string" } },
         "passCriteria": { "type": "array", "items": { "type": "string" } },

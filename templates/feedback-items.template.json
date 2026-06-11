@@ -28,6 +28,23 @@
       "severity": "medium",
       "needsClarification": false,
       "clarificationQuestions": [],
+      "ambiguity": {
+        "status": "clear",
+        "missing": [],
+        "abstractTerms": [],
+        "requiresRevisionRpd": false
+      },
+      "revisionRpd": {
+        "required": false,
+        "status": "not_required",
+        "questionsAsked": [],
+        "resolvedAcceptanceCriteriaIds": []
+      },
+      "criteriaChanges": {
+        "addsAcceptanceCriteriaIds": [],
+        "modifiesAcceptanceCriteriaIds": [],
+        "invalidatesAcceptanceCriteriaIds": []
+      },
       "desiredOutcome": "Show only essential fields by default.",
       "status": "open"
     }

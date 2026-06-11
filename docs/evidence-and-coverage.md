@@ -6,6 +6,8 @@ Evidence and final coverage checks keep ACEP execution honest.
 
 No verification item should be treated as complete without evidence or a not-runnable explanation.
 
+When acceptance criteria exist, evidence should identify which Test nodes and criteria it proves.
+
 Evidence can include:
 
 - changed files
@@ -28,6 +30,7 @@ Evidence can include:
 It covers:
 
 - requirement coverage
+- acceptance criteria coverage
 - task coverage
 - verification coverage
 - UI/UX coverage

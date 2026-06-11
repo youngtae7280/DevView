@@ -46,6 +46,40 @@
           "severity": { "type": "string", "enum": ["low", "medium", "high", "blocker"] },
           "needsClarification": { "type": "boolean" },
           "clarificationQuestions": { "type": "array", "items": { "type": "string" } },
+          "ambiguity": {
+            "type": "object",
+            "properties": {
+              "status": { "enum": ["clear", "partial", "ambiguous"] },
+              "missing": {
+                "type": "array",
+                "items": {
+                  "enum": ["target", "target_detail", "condition", "expected_behavior", "completion_criteria", "exception_handling", "verification_method"]
+                }
+              },
+              "abstractTerms": { "type": "array", "items": { "type": "string" } },
+              "requiresRevisionRpd": { "type": "boolean" }
+            },
+            "additionalProperties": true
+          },
+          "revisionRpd": {
+            "type": "object",
+            "properties": {
+              "required": { "type": "boolean" },
+              "status": { "enum": ["not_required", "pending", "in_progress", "resolved", "blocked"] },
+              "questionsAsked": { "type": "array", "items": { "type": "string" } },
+              "resolvedAcceptanceCriteriaIds": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": true
+          },
+          "criteriaChanges": {
+            "type": "object",
+            "properties": {
+              "addsAcceptanceCriteriaIds": { "type": "array", "items": { "type": "string" } },
+              "modifiesAcceptanceCriteriaIds": { "type": "array", "items": { "type": "string" } },
+              "invalidatesAcceptanceCriteriaIds": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": true
+          },
           "desiredOutcome": { "type": "string" },
           "status": { "type": "string", "enum": ["open", "clarifying", "packed", "resolved", "deferred"] }
         },

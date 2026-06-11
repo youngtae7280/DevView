@@ -27,6 +27,7 @@
         "forbiddenFiles": { "type": "array", "items": { "type": "string" } },
         "unknownFileTouchRisk": { "type": "boolean" },
         "dependencies": { "type": "array", "items": { "type": "string" } },
+        "satisfiesAcceptanceCriteriaIds": { "type": "array", "items": { "type": "string" } },
         "doneCriteria": { "type": "array", "items": { "type": "string" } },
         "validationHints": { "type": "array", "items": { "type": "string" } }
       }

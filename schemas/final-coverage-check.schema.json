@@ -15,6 +15,7 @@
   "properties": {
     "schemaVersion": { "type": "integer", "minimum": 1 },
     "requirementCoverage": { "$ref": "#/$defs/coverageCount" },
+    "acceptanceCriteriaCoverage": { "$ref": "#/$defs/coverageCount" },
     "taskCoverage": { "$ref": "#/$defs/coverageCount" },
     "verificationCoverage": { "$ref": "#/$defs/coverageCount" },
     "uiUxCoverage": {
@@ -40,7 +41,10 @@
         "missingProductToProjectLinks": { "type": "array", "items": { "type": "string" } },
         "missingProjectToWorkLinks": { "type": "array", "items": { "type": "string" } },
         "missingWorkToTestLinks": { "type": "array", "items": { "type": "string" } },
-        "missingTestToEvidenceLinks": { "type": "array", "items": { "type": "string" } }
+        "missingTestToEvidenceLinks": { "type": "array", "items": { "type": "string" } },
+        "missingAcceptanceCriteriaToWorkLinks": { "type": "array", "items": { "type": "string" } },
+        "missingAcceptanceCriteriaToTestLinks": { "type": "array", "items": { "type": "string" } },
+        "missingAcceptanceCriteriaToEvidenceLinks": { "type": "array", "items": { "type": "string" } }
       },
       "additionalProperties": true
     },
@@ -111,6 +115,10 @@
         "verificationWithoutEvidence": { "type": "array", "items": { "type": "string" } },
         "uiScreensWithoutEvidence": { "type": "array", "items": { "type": "string" } },
         "productNodesWithoutWork": { "type": "array", "items": { "type": "string" } },
+        "productNodesWithoutAcceptanceCriteria": { "type": "array", "items": { "type": "string" } },
+        "acceptanceCriteriaWithoutWork": { "type": "array", "items": { "type": "string" } },
+        "acceptanceCriteriaWithoutTest": { "type": "array", "items": { "type": "string" } },
+        "acceptanceCriteriaWithoutEvidence": { "type": "array", "items": { "type": "string" } },
         "workNodesWithoutTests": { "type": "array", "items": { "type": "string" } },
         "testNodesWithoutEvidence": { "type": "array", "items": { "type": "string" } },
         "acceptedNodesWithStaleEvidence": { "type": "array", "items": { "type": "string" } },

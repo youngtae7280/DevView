@@ -15,6 +15,7 @@
       "forbiddenFiles": [],
       "unknownFileTouchRisk": false,
       "dependencies": [],
+      "satisfiesAcceptanceCriteriaIds": [],
       "doneCriteria": [],
       "validationHints": []
     }

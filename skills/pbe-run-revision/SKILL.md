@@ -71,6 +71,8 @@ When Impact Tree says:
 ## Hard Rules
 
 - If revision work discovers new scope, create a new Change Node. Do not expand the revision silently.
+- If revision work discovers ambiguous product meaning, pause implementation and route only that Change Node through Revision RPD.
+- If acceptance criteria changed, rerun or update affected Test Tree and Evidence Tree links before resubmitting.
 - Do not touch deferred or out-of-scope nodes without explicit user scope approval.
 - Do not mark Product branches `accepted_done`; return to Review Result.
 - Do not clear `reopened`, `stale`, or `invalidated` state without refreshed validation/evidence.

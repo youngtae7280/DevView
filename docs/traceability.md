@@ -5,7 +5,7 @@ Traceability Matrix exists to stop Codex from losing requirements while implemen
 It links:
 
 ```text
-Requirement -> Task -> Verification -> Evidence -> Coverage Status
+Requirement -> Acceptance Criteria -> Task -> Verification -> Evidence -> Coverage Status
 ```
 
 ## Files
@@ -18,8 +18,12 @@ Requirement -> Task -> Verification -> Evidence -> Coverage Status
 ## Rules
 
 - Every confirmed requirement must have at least one linked task.
+- Every executable confirmed Product node must have structured acceptance criteria or an explicit non-executable reason.
+- Every Work node should link relevant `satisfiesAcceptanceCriteriaIds`.
 - Every task must have linked verification or an explicit explanation.
+- Every Test node should link relevant `verifiesAcceptanceCriteriaIds`.
 - Every verification item must have required evidence.
+- Every Evidence node should link relevant `evidenceForAcceptanceCriteriaIds`.
 - Linked requirement, task, and verification IDs must exist in the corresponding RPD, WorkGraph, VD, or ACEP manifest artifact when that artifact is present.
 - A covered traceability item must include captured evidence, not only planned evidence.
 - Pending coverage must be resolved, deferred with reason, or blocked with a stop condition.

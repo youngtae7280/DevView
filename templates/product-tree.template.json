@@ -13,6 +13,18 @@
       "why": "",
       "scopeClass": "selected",
       "acceptance": [],
+      "acceptanceCriteria": [],
+      "acceptanceNotRequiredReason": "",
+      "ambiguity": {
+        "status": "partial",
+        "type": "missing_completion_criteria",
+        "terms": [],
+        "missing": ["completion_criteria", "verification_method"]
+      },
+      "ambiguityResolution": {
+        "status": "pending",
+        "resolvedTerms": []
+      },
       "derivedTo": [],
       "evidence": []
     }

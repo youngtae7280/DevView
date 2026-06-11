@@ -22,17 +22,90 @@
         "id": { "type": "string" },
         "type": { "enum": ["goal", "user", "outcome", "capability", "behavior", "ui_surface", "ui_state", "data", "constraint", "non_goal", "risk", "acceptance", "assumption", "decision"] },
         "title": { "type": "string" },
-        "status": { "enum": ["draft", "assumed", "auto_derived", "needs_human_decision", "proposed", "confirmed", "accepted", "covered", "partial_satisfied", "satisfied", "accepted_done", "deferred", "out_of_scope", "blocked", "changed", "reopened"] },
+        "status": { "enum": ["draft", "assumed", "auto_derived", "needs_human_decision", "needs_clarification", "proposed", "confirmed", "accepted", "covered", "partial_satisfied", "satisfied", "accepted_done", "deferred", "out_of_scope", "blocked", "changed", "reopened"] },
         "parent": { "type": ["string", "null"] },
         "children": { "type": "array", "items": { "type": "string" } },
         "source": { "type": "object" },
         "why": { "type": "string" },
         "scopeClass": { "enum": ["selected", "foundation", "deferred", "blocked", "out_of_scope"] },
         "acceptance": { "type": "array", "items": { "type": "string" } },
+        "acceptanceCriteria": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/acceptanceCriterion" }
+        },
+        "acceptanceNotRequiredReason": { "type": "string" },
+        "ambiguity": { "$ref": "#/$defs/ambiguity" },
+        "ambiguityResolution": { "$ref": "#/$defs/ambiguityResolution" },
         "ux": { "type": "object" },
         "derivedTo": { "type": "array", "items": { "type": "string" } },
         "evidence": { "type": "array", "items": { "type": "string" } }
       }
+    },
+    "acceptanceCriterion": {
+      "type": "object",
+      "required": ["id", "format", "statement", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "format": { "enum": ["EARS", "plain"] },
+        "type": {
+          "enum": ["ubiquitous", "event_driven", "state_driven", "optional_feature", "unwanted_behavior", "complex", "plain"]
+        },
+        "condition": { "type": "string" },
+        "systemResponse": { "type": "string" },
+        "statement": { "type": "string" },
+        "status": { "enum": ["draft", "proposed", "confirmed", "deferred", "out_of_scope", "invalidated"] },
+        "source": {
+          "type": "object",
+          "properties": {
+            "type": { "enum": ["user_interview", "user_feedback", "assumption", "legacy_requirement", "change_node", "other"] },
+            "sourceNodeId": { "type": "string" },
+            "decisionId": { "type": "string" },
+            "changeId": { "type": "string" },
+            "feedbackItemId": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "verification": {
+          "type": "object",
+          "properties": {
+            "required": { "type": "boolean" },
+            "suggestedTestNodeIds": { "type": "array", "items": { "type": "string" } },
+            "evidenceTypes": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "ambiguity": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["clear", "partial", "ambiguous"] },
+        "type": { "enum": ["none", "abstract_quality", "ambiguous_quality_request", "missing_target", "missing_condition", "missing_behavior", "missing_completion_criteria", "missing_exception_handling", "missing_verification", "other"] },
+        "terms": { "type": "array", "items": { "type": "string" } },
+        "abstractTerms": { "type": "array", "items": { "type": "string" } },
+        "missing": {
+          "type": "array",
+          "items": {
+            "enum": ["target", "target_detail", "condition", "expected_behavior", "completion_criteria", "exception_handling", "verification_method"]
+          }
+        },
+        "questionIds": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "ambiguityResolution": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["not_required", "pending", "resolved", "blocked"] },
+        "resolvedAt": { "type": "string" },
+        "decisionId": { "type": "string" },
+        "interviewLogRef": { "type": "string" },
+        "resolvedTerms": { "type": "array", "items": { "type": "string" } },
+        "summary": { "type": "string" }
+      },
+      "additionalProperties": true
     }
   }
 }

@@ -102,6 +102,8 @@ Prefer v2 tree files when present. If `.pbe/tree/product-tree.json` and `.pbe/bl
 - Never mark a WorkGraph node parallel-safe when `expectedFiles` is empty or unknown.
 - Never place foundation work in parallel unless it is documentation or test-fixture only.
 - Never create selected or foundation Work Tree nodes without at least one `derivedFromProductNodeIds` link, except the Work Tree root placeholder.
+- Never derive selected or foundation Work Tree nodes from Product nodes with `ambiguity.status` of `partial` or `ambiguous`, or Product status `needs_clarification`.
+- Link Work Tree nodes to `satisfiesAcceptanceCriteriaIds` whenever the source Product node has structured acceptance criteria.
 - Every Project Tree node must list `derivedFromProductNodeIds` or be a root/container node with an explicit root responsibility.
 - For legacy migration or parity-critical surfaces, do not allow a surface to be reported as parity complete unless `legacy-control-inventory.json` exists and is linked to Product/Project/Work nodes.
 - A command that opens a dialog is not complete at command mapping. Add child work for dialog open, visible controls, default values, enable/disable states, button actions, repeated or async behavior, busy/cancel/error states, and legacy event handlers.

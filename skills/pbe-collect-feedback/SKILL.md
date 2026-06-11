@@ -15,6 +15,8 @@ Turn user feedback into structured feedback items and Change Tree input that can
 
 Feedback is not a license to reinterpret the whole project. It must be mapped to affected tree nodes or clarified before revision work starts.
 
+Feedback that is ambiguous, especially quality language such as "cleaner", "nicer", "faster", "more stable", or "깔끔하게", must enter Ambiguity Gate and Revision RPD. Do not rerun full RPD unless the user explicitly changes the whole product direction.
+
 ## Inputs
 
 Prefer v2 files when present:
@@ -96,6 +98,14 @@ If mapping is impossible, provide an explanation and ask at most one concise cla
 
 Do not reinterpret the entire project. Keep feedback scoped to the affected items.
 
+For each feedback item, record:
+
+- `ambiguity.status`
+- missing ambiguity slots
+- abstract quality terms
+- whether `revisionRpd.required` is true
+- acceptance criteria IDs added, modified, or invalidated
+
 ## Surface Re-Audit And Miss Promotion
 
 When feedback mentions visual mismatch, alignment, clipping, popup mismatch, missing visible controls, legacy parity, hardware readiness, or a repeated failure pattern:
@@ -117,6 +127,8 @@ Create or update a Change Tree entry when feedback changes any of:
 - acceptance criteria
 - verification strategy
 - already implemented, verified, evidenced, submitted, or accepted work
+
+If the feedback changes acceptance criteria or has ambiguous product meaning, set `requiresRevisionRpd: true` on the Change Node and do not create implementation tasks until the affected criteria are resolved.
 
 Use Change Tree types:
 

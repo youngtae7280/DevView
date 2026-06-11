@@ -7,6 +7,9 @@
 ## Requirement Coverage
 
 - Total:
+- Structured acceptance criteria:
+- Acceptance criteria verified:
+- Acceptance criteria missing evidence:
 - Selected implemented:
 - Foundation implemented:
 - Deferred:
@@ -84,6 +87,8 @@
 ## Traceability Matrix Result
 
 - Selected requirements without tasks:
+- Product nodes without acceptance criteria:
+- Acceptance criteria without Work/Test/Evidence:
 - Foundation items without tasks:
 - Tasks without verification:
 - Verification without evidence:

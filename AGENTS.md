@@ -8,6 +8,8 @@ PBE is a Codex Plugin workflow and is evolving into a tree-based development con
 
 PBE is optimized for safe, reviewable, staged project construction, not for speed.
 
+PBE is not an execution engine that tries to do everything. PBE is a requirements-based execution control layer for AI-assisted development.
+
 After future PBE plugin changes, run the relevant validation, commit the finished work, and push to `origin/main` unless the user explicitly asks not to push.
 
 ## Tree Control Direction
@@ -28,6 +30,7 @@ Compatibility terms stay valid during migration:
 - `Revision`: Change Tree, Impact Tree, and Reopen protocol
 
 Never implement work that cannot be traced to Product/Project/Work nodes. Never close work without Test/Evidence links. Never silently edit accepted blueprint scope during execution.
+Never derive executable work from ambiguous Product nodes. A confirmed executable Product node must have structured acceptance criteria or an explicit non-executable reason.
 
 ## Important Files
 
@@ -211,6 +214,8 @@ When running RPD:
 5. Ask before decomposing a node.
 6. Ask before confirming a node.
 6a. If the request is clear, propose the Root summary and child structure, then ask the user to confirm, revise, or decompose further. Do not ask a vague "should I interview more?" question.
+6b. Run Ambiguity Gate before confirmation. Abstract quality expressions are not executable until target, condition, expected behavior, completion criteria, exception handling, and verification method are clear enough to write acceptance criteria.
+6c. Confirmed executable Product nodes must include `acceptanceCriteria` or `acceptanceNotRequiredReason`.
 7. Update `.pbe/tree/product-tree.json` after every confirmed decision when v2 files exist.
 8. Update `.pbe/blueprint/requirement-tree.json` as the compatibility view after every confirmed decision.
 9. Update `.pbe/control/decision-queue.json` when a decision is opened or resolved.
@@ -238,12 +243,15 @@ WPD must not treat RPD/Product Tree nodes as direct Codex tasks. It must produce
 If `expectedFiles` is empty or unknown, the node is not parallel-safe.
 
 Every selected or foundation Work Tree node must derive from Product/Project nodes unless it is the Work Tree root placeholder.
+Every selected or foundation Work Tree node must not derive from Product nodes with `status: needs_clarification` or `ambiguity.status` of `partial` or `ambiguous`.
+When Product nodes have `acceptanceCriteria`, selected/foundation Work Tree nodes should link `satisfiesAcceptanceCriteriaIds`.
 
 ## VD And Test Tree
 
 VD must derive `.pbe/tree/test-tree.json` from Product, Project, and Work Trees when v2 files exist. It must keep `.pbe/blueprint/verification-design.json` and `.pbe/blueprint/verification-plan.md` as compatibility views.
 
 Every non-root Test Tree node must verify at least one Product or Work node and declare required evidence.
+When acceptance criteria exist, Test Tree nodes should link `verifiesAcceptanceCriteriaIds`, and Evidence Tree nodes should link `evidenceForAcceptanceCriteriaIds`.
 
 ## UI/UX Confirmation
 
@@ -333,12 +341,14 @@ If the user is dissatisfied:
 2. Classify feedback in `.pbe/review/feedback-items.json`.
 3. Map feedback to affected Product/Project/Work/Test/Evidence nodes plus compatibility requirement/task/UI/verification items.
 4. Create or update Change Tree entries when feedback changes product meaning, scope, UX, risk, acceptance, verification, or accepted work.
-5. Build or update Impact Tree before revision tasks are created.
-6. Mark affected completed nodes as `stale`, `invalidated`, or `reopened` when needed.
-7. Create a revision pack under `.pbe/revisions/`.
-8. Run revision tasks only within affected selected/foundation scope.
-9. Re-run relevant impacted tests and regression checks.
-10. Refresh stale evidence and submit for review again.
+5. If feedback is ambiguous or changes acceptance meaning, run Revision RPD for the affected Change Node only. Do not restart full RPD.
+6. Update criteria deltas before revision tasks are created when feedback changes acceptance criteria.
+7. Build or update Impact Tree before revision tasks are created.
+8. Mark affected completed nodes as `stale`, `invalidated`, or `reopened` when needed.
+9. Create a revision pack under `.pbe/revisions/`.
+10. Run revision tasks only within affected selected/foundation scope.
+11. Re-run relevant impacted tests and regression checks.
+12. Refresh stale evidence and submit for review again.
 
 When v2 change/impact files exist:
 

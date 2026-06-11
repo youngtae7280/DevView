@@ -18,6 +18,16 @@
         "cycleIds": { "type": "array", "items": { "type": "string" } },
         "evidenceNodeIds": { "type": "array", "items": { "type": "string" } },
         "userAcceptedAt": { "type": ["string", "null"] },
+        "decisionSource": {
+          "type": "object",
+          "properties": {
+            "actor": { "enum": ["user", "codex", "system"] },
+            "sourceText": { "type": "string" },
+            "reviewRef": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "coverageSummary": { "type": "string" },
         "notes": { "type": "string" }
       }
     }

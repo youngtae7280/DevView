@@ -190,6 +190,8 @@ PBE is not only a task-card generator. It creates a traceable tree-linked execut
 - final coverage check
 - result review and bounded revision flow
 
+PBE is not an execution engine that tries to do everything. It is a requirements-based execution control layer for AI-assisted development: natural language intent is clarified through RPD, Ambiguity Gate, and acceptance criteria before Codex implementation proceeds.
+
 ## Plugin Structure
 
 ```text

@@ -14,6 +14,9 @@
 ## Tree Closure Coverage
 
 - Product nodes covered:
+- Acceptance criteria covered:
+- Acceptance criteria missing tests:
+- Acceptance criteria missing evidence:
 - Project boundaries covered:
 - Work nodes implemented:
 - Test nodes passed/manual/not-runnable:
@@ -150,6 +153,8 @@
 ## Traceability Issues
 
 - Product nodes without Work/Test/Evidence:
+- Product nodes without acceptance criteria:
+- Acceptance criteria without Work/Test/Evidence:
 - Work nodes without Test/Evidence:
 - Test nodes without Evidence:
 - Accepted branches with stale/reopened impact:
