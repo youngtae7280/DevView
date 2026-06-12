@@ -4,13 +4,16 @@
 
 Project Blueprint Engine is a Codex Plugin and an evolving tree-based development control system.
 
-It does not provide a GUI, SaaS backend, or separate OpenAI API provider. It runs inside Codex as a set of skills, stores durable artifacts in `.pbe/`, generates execution contracts, and guides Codex through those contracts until a human gate or stop condition.
+It does not provide a GUI, SaaS backend, or separate OpenAI API provider. It runs inside Codex as a set of skills,
+stores durable artifacts in `.pbe/`, generates execution contracts, and guides Codex through those contracts until a
+human gate or stop condition.
 
 PBE is optimized for safe, reviewable, staged project construction, not for speed.
 
 ## The Problem PBE Solves
 
-Ordinary AI coding can jump from a user request straight into code. That is fast, but it can lose the chain between product intent, implementation scope, tests, evidence, user review, and later revision impact.
+Ordinary AI coding can jump from a user request straight into code. That is fast, but it can lose the chain between
+product intent, implementation scope, tests, evidence, user review, and later revision impact.
 
 PBE turns that chain into a durable Codex development control protocol:
 
@@ -29,7 +32,9 @@ Run PBE when a project needs controlled construction rather than a quick edit.
 @project-blueprint-engine start
 ```
 
-PBE then walks the product intent, builds tree artifacts under `.pbe/`, stops for human gates when product judgment is needed, creates execution contracts for Codex, runs only selected/foundation scope, records evidence, and submits the result for user review.
+PBE then walks the product intent, builds tree artifacts under `.pbe/`, stops for human gates when product judgment is
+needed, creates execution contracts for Codex, runs only selected/foundation scope, records evidence, and submits the
+result for user review.
 
 ## Quick Start
 
@@ -41,7 +46,8 @@ PBE then walks the product intent, builds tree artifacts under `.pbe/`, stops fo
 @project-blueprint-engine start
 ```
 
-You do not need to memorize every command. At gates, PBE reports the current state and gives natural-language examples such as:
+You do not need to memorize every command. At gates, PBE reports the current state and gives natural-language examples
+such as:
 
 ```text
 approve
@@ -52,7 +58,9 @@ what is risky here?
 stop
 ```
 
-The detailed installation and use guide is in [docs/usage.md](docs/usage.md). A complete golden example run is in [examples/valid/todo-app-pbe-run](examples/valid/todo-app-pbe-run/README.md). Invalid regression fixtures are in [examples/invalid](examples/invalid).
+The detailed installation and use guide is in [docs/usage.md](docs/usage.md). A complete golden example run is in
+[examples/valid/todo-app-pbe-run](examples/valid/todo-app-pbe-run/README.md). Invalid regression fixtures are in
+[examples/invalid](examples/invalid).
 
 ## Learn The Model
 
@@ -79,7 +87,8 @@ PBE writes durable project-control artifacts into the target repository:
 
 ## Official `.pbe` Layout
 
-The official v2 layout is tree-native and additive. Public v1 paths are preserved as compatibility views, not removed aliases.
+The official v2 layout is tree-native and additive. Public v1 paths are preserved as compatibility views, not removed
+aliases.
 
 ```text
 .pbe/
@@ -132,7 +141,8 @@ PBE has three layers:
 
 - Skill Protocol: Codex skills define how RPD, WPD, VD, ACEP, review, feedback, and revision must behave.
 - Persistent Artifacts: `.pbe/` files make decisions, scope, contracts, evidence, and acceptance auditable across chats.
-- CLI gate/state transition layer: the deterministic `pbe` CLI runs file-based validators, checks allowed transitions, records `stateHistory`, and updates `.pbe/blueprint/pbe-state.json` for supported stage transitions.
+- CLI gate/state transition layer: the deterministic `pbe` CLI runs file-based validators, checks allowed transitions,
+  records `stateHistory`, and updates `.pbe/blueprint/pbe-state.json` for supported stage transitions.
 
 This repository is the plugin and protocol definition. It is not a standalone backend service.
 
@@ -156,7 +166,8 @@ Everything executable should be a tree node or a tree-derived view.
 - Impact Tree: affected nodes that become stale, invalidated, or reopened.
 - Evidence Tree: tests, screenshots, logs, diffs, and review artifacts attached to nodes.
 - Acceptance Tree: user-controlled branch closure.
-- Parity/Completeness controls: optional derived ledgers for legacy inventory, surface completion, visual/runtime checks, hardware readiness, and repeated verification misses.
+- Parity/Completeness controls: optional derived ledgers for legacy inventory, surface completion, visual/runtime
+  checks, hardware readiness, and repeated verification misses.
 
 During migration, the existing RPD/WPD/VD/ACEP terms remain supported as compatibility names:
 
@@ -197,7 +208,8 @@ PBE is not only a task-card generator. It creates a traceable tree-linked execut
 - Project Tree and Work Tree / WPD WorkGraph compatibility views
 - Test Tree / VD verification design compatibility view
 - UI/UX confirmation and UI/UX spec
-- Visual Design Contract artifacts: visual reference, theme spec, design tokens, component style contract, UI surface inventory, visual verification profile, and visual audit
+- Visual Design Contract artifacts: visual reference, theme spec, design tokens, component style contract, UI surface
+  inventory, visual verification profile, and visual audit
 - Cycle Slice / staged execution strategy
 - Change Tree and Impact Tree for safe revisions
 - parity/completeness ledgers for legacy migration, UI-heavy parity, and hardware-dependent work
@@ -207,7 +219,9 @@ PBE is not only a task-card generator. It creates a traceable tree-linked execut
 - final coverage check
 - result review and bounded revision flow
 
-PBE is not an execution engine that tries to do everything. It is a requirements-based execution control layer for AI-assisted development: natural language intent is clarified through RPD, Ambiguity Gate, and acceptance criteria before Codex implementation proceeds.
+PBE is not an execution engine that tries to do everything. It is a requirements-based execution control layer for
+AI-assisted development: natural language intent is clarified through RPD, Ambiguity Gate, and acceptance criteria
+before Codex implementation proceeds.
 
 ## Plugin Structure
 
@@ -243,13 +257,16 @@ scripts/
 
 ## Legacy GUI Removal Status
 
-The old React/Vite GUI has been removed from this repository. PBE now keeps only the Codex Plugin workflow, CLI validators, schemas, templates, skills, and documentation needed for file-backed `.pbe/` control.
+The old React/Vite GUI has been removed from this repository. PBE now keeps only the Codex Plugin workflow, CLI
+validators, schemas, templates, skills, and documentation needed for file-backed `.pbe/` control.
 
-Do not restore the legacy GUI, API-provider, or SaaS direction as the basis for new PBE work unless the product direction is explicitly changed.
+Do not restore the legacy GUI, API-provider, or SaaS direction as the basis for new PBE work unless the product
+direction is explicitly changed.
 
 ## Repository Artifact Layout
 
-The v2 target layout is additive. Existing `.pbe/blueprint/*` files stay as compatibility aliases or human-readable views while tree-native artifacts are introduced.
+The v2 target layout is additive. Existing `.pbe/blueprint/*` files stay as compatibility aliases or human-readable
+views while tree-native artifacts are introduced.
 
 ```text
 .pbe/
@@ -293,7 +310,8 @@ In Codex, start with:
 @project-blueprint-engine start
 ```
 
-After that, deterministic stages continue automatically. PBE stops at human judgment gates and accepts natural-language responses:
+After that, deterministic stages continue automatically. PBE stops at human judgment gates and accepts natural-language
+responses:
 
 ```text
 approve
@@ -391,9 +409,11 @@ PBE stops only where the user has to make a product or delivery decision.
 
 PBE separates UX confirmation from visual design confirmation.
 
-`pbe-ui-ux-confirm` approves the product flow, screen purpose, states, labels, and interaction expectations. It does not by itself approve visual theme, polish, or style consistency.
+`pbe-ui-ux-confirm` approves the product flow, screen purpose, states, labels, and interaction expectations. It does not
+by itself approve visual theme, polish, or style consistency.
 
-When selected UI work changes visual appearance, PBE must create a Visual Design Contract before WPD, ACEP, or UI implementation proceeds. The visual source must be one of:
+When selected UI work changes visual appearance, PBE must create a Visual Design Contract before WPD, ACEP, or UI
+implementation proceeds. The visual source must be one of:
 
 - reference screenshot
 - reference app or website
@@ -445,11 +465,13 @@ pbe acep check
 pbe gate review-result
 ```
 
-Review Result cannot close selected visual UI work when required screenshots are missing, screenshot evidence is stale, `visual-audit.md` is missing, or the audit contains unresolved blocking issues.
+Review Result cannot close selected visual UI work when required screenshots are missing, screenshot evidence is stale,
+`visual-audit.md` is missing, or the audit contains unresolved blocking issues.
 
 ## Artifact Flow
 
-PBE's product interface is the `.pbe/` folder. The files are the contract between user intent, Codex planning, implementation, verification, and review.
+PBE's product interface is the `.pbe/` folder. The files are the contract between user intent, Codex planning,
+implementation, verification, and review.
 
 ```mermaid
 flowchart LR
@@ -622,7 +644,8 @@ When PBE reports workflow state, it separates the official state card from free-
 ...
 ```
 
-`[PBE 상태 보고]` is the authoritative workflow status. It shows the current stage, completed work, artifacts, validation, why PBE stopped, what happens next, possible user replies, and one recommended reply.
+`[PBE 상태 보고]` is the authoritative workflow status. It shows the current stage, completed work, artifacts,
+validation, why PBE stopped, what happens next, possible user replies, and one recommended reply.
 
 `[Codex 메모]` is optional. It contains explanation, rationale, or risk notes.
 
@@ -638,7 +661,8 @@ full
 
 - `bypass`: typo, single-file edit, or clearly bounded small bug fix.
 - `lite`: existing blueprint and small slice with limited risk.
-- `full`: project construction, new feature, multi-module work, UI/UX, architecture runway, parallel work, or future-module impact. This is the default PBE profile.
+- `full`: project construction, new feature, multi-module work, UI/UX, architecture runway, parallel work, or
+  future-module impact. This is the default PBE profile.
 
 ## Autoflow
 
@@ -681,10 +705,13 @@ PBE routing uses that state before implementation or deliverable-producing work:
 - `lastFailure` means Codex must report repair options and must not continue downstream
 - deterministic `nextStep` means Codex should run the next PBE step before ordinary coding
 - ordinary usage help or conceptual review can be answered without a PBE status card
-- `accepted` requires explicit user acceptance metadata; Codex may submit for review, but only the user can set acceptance
-- parity/completeness controls are optional derived views; they may expand audit and verification coverage, but implementation scope still requires Product/Project/Work nodes and normal PBE gates
+- `accepted` requires explicit user acceptance metadata; Codex may submit for review, but only the user can set
+  acceptance
+- parity/completeness controls are optional derived views; they may expand audit and verification coverage, but
+  implementation scope still requires Product/Project/Work nodes and normal PBE gates
 
-`DONE` means the user explicitly approved the current branch/slice or project completion. Starting another slice moves back to `WAITING_IMPLEMENTATION_SCOPE` with a new selected scope.
+`DONE` means the user explicitly approved the current branch/slice or project completion. Starting another slice moves
+back to `WAITING_IMPLEMENTATION_SCOPE` with a new selected scope.
 
 ## CLI Gate And State Transition Layer
 
@@ -692,9 +719,12 @@ PBE is built from three cooperating parts:
 
 - Skill Protocol: human-facing Codex skills for RPD, WPD, VD, ACEP, review, feedback, and revision.
 - Persistent `.pbe` Artifacts: durable trees, contracts, evidence, decisions, and compatibility views.
-- CLI gate/state transition layer: deterministic file checks and state transitions for rules that can be judged without model reasoning.
+- CLI gate/state transition layer: deterministic file checks and state transitions for rules that can be judged without
+  model reasoning.
 
-Codex should not hand-edit `.pbe/blueprint/pbe-state.json` for supported stage transitions. It should generate or update the required artifacts, run the relevant `pbe` command, and let the CLI update `autoflow.state`, `autoflow.completedSteps`, gates, `deliveryStatus`, and `autoflow.stateHistory` only after validation passes.
+Codex should not hand-edit `.pbe/blueprint/pbe-state.json` for supported stage transitions. It should generate or update
+the required artifacts, run the relevant `pbe` command, and let the CLI update `autoflow.state`,
+`autoflow.completedSteps`, gates, `deliveryStatus`, and `autoflow.stateHistory` only after validation passes.
 
 Build the CLI:
 
@@ -732,9 +762,13 @@ npx pbe validate --json
 npx pbe status --json
 ```
 
-Transition commands validate their inputs before writing state. If validation or the allowed-transition check fails, the command exits non-zero and leaves `pbe-state.json` unchanged.
+Transition commands validate their inputs before writing state. If validation or the allowed-transition check fails, the
+command exits non-zero and leaves `pbe-state.json` unchanged.
 
-The commands `pbe dependency audit complete`, `pbe plan execution complete`, `pbe coverage audit complete`, and `pbe ux audit complete` are checkpoint commands inside `SCOPE_SELECTED`. They do not create new top-level states. They record deterministic sub-step completion in `autoflow.completedSteps`, advance `autoflow.nextStep`, and block `pbe acep ready` until all four checkpoints are complete.
+The commands `pbe dependency audit complete`, `pbe plan execution complete`, `pbe coverage audit complete`, and
+`pbe ux audit complete` are checkpoint commands inside `SCOPE_SELECTED`. They do not create new top-level states. They
+record deterministic sub-step completion in `autoflow.completedSteps`, advance `autoflow.nextStep`, and block
+`pbe acep ready` until all four checkpoints are complete.
 
 Execution, review, and acceptance use this canonical CLI flow:
 
@@ -746,7 +780,8 @@ npx pbe review submit
 npx pbe accept
 ```
 
-`pbe review submit` is not user approval; it only moves verified work to the Review Result gate. `pbe accept` requires explicit user acceptance metadata and records both `ACCEPTED` and `DONE` in state history.
+`pbe review submit` is not user approval; it only moves verified work to the Review Result gate. `pbe accept` requires
+explicit user acceptance metadata and records both `ACCEPTED` and `DONE` in state history.
 
 ## Parallel Safety
 
@@ -754,9 +789,8 @@ WPD creates a WorkGraph. Plan Execution converts that WorkGraph into a staged st
 
 PBE does not use RPD nodes directly as parallel coding tasks.
 
-Validator enforcement rejects parallel groups that reuse the same normalized
-`expectedFiles` path, mix shared files with another task's write set, use broad
-or unknown paths, omit integration tasks, or exceed the safe group size without
+Validator enforcement rejects parallel groups that reuse the same normalized `expectedFiles` path, mix shared files with
+another task's write set, use broad or unknown paths, omit integration tasks, or exceed the safe group size without
 human approval.
 
 Default policy:
@@ -768,7 +802,8 @@ maxMatureParallelGroupSize = 3
 moreThanMaxRequiresHumanApproval = true
 ```
 
-Parallel tasks require known expected files, low unknown file-touch risk, no forbidden shared changes, and an integration task. Every parallel group requires integration evidence and cannot complete without an integration pass.
+Parallel tasks require known expected files, low unknown file-touch risk, no forbidden shared changes, and an
+integration task. Every parallel group requires integration evidence and cannot complete without an integration pass.
 
 ## Acceptance
 
@@ -790,11 +825,11 @@ accepted
 accepted_done
 ```
 
-If the user is dissatisfied, feedback is mapped to affected requirements, tasks, UI/UX items, and verification items before a bounded Revision Pack is created.
+If the user is dissatisfied, feedback is mapped to affected requirements, tasks, UI/UX items, and verification items
+before a bounded Revision Pack is created.
 
-Revision manifests declare `allowedFiles`, `forbiddenFiles`, and `mustNotTouch`.
-The validator checks changed, staged, and untracked files against those
-boundaries so a narrow revision does not quietly expand into unrelated code.
+Revision manifests declare `allowedFiles`, `forbiddenFiles`, and `mustNotTouch`. The validator checks changed, staged,
+and untracked files against those boundaries so a narrow revision does not quietly expand into unrelated code.
 
 ## Validation
 
@@ -839,7 +874,9 @@ npm run format
 npm run format:check
 ```
 
-The CLI does not replace Codex, call OpenAI APIs, run a daemon, or revive the legacy GUI. It reads and writes `.pbe` artifacts only. `pbe validate` wraps the preserved validators and adds deterministic stage checks where the rule can be judged from files.
+The CLI does not replace Codex, call OpenAI APIs, run a daemon, or revive the legacy GUI. It reads and writes `.pbe`
+artifacts only. `pbe validate` wraps the preserved validators and adds deterministic stage checks where the rule can be
+judged from files.
 
 Validate plugin structure and JSON files:
 
@@ -848,9 +885,8 @@ npm run validate:pbe
 ```
 
 This command builds the CLI and runs `pbe validate`. The validation compiles the JSON schemas with AJV, validates `.pbe`
-artifacts against those schemas when present, checks cross-artifact
-traceability, enforces dependency-impact artifacts, verifies UI impact fields,
-and rejects unsafe parallel or revision boundaries.
+artifacts against those schemas when present, checks cross-artifact traceability, enforces dependency-impact artifacts,
+verifies UI impact fields, and rejects unsafe parallel or revision boundaries.
 
 Validate v2 tree-control schemas, templates, and optional `.pbe` tree artifacts:
 
@@ -858,9 +894,8 @@ Validate v2 tree-control schemas, templates, and optional `.pbe` tree artifacts:
 npm run validate:pbe:v2
 ```
 
-This validation is backward compatible. If no `.pbe/tree`, `.pbe/execution`,
-`.pbe/control`, or `.pbe/evidence` artifacts exist yet, it validates only the
-v2 schemas/templates and exits successfully.
+This validation is backward compatible. If no `.pbe/tree`, `.pbe/execution`, `.pbe/control`, or `.pbe/evidence`
+artifacts exist yet, it validates only the v2 schemas/templates and exits successfully.
 
 Run the example fixture regression suite:
 
@@ -868,14 +903,11 @@ Run the example fixture regression suite:
 npm run test:examples
 ```
 
-This builds the CLI, validates the closed golden run at
-`examples/valid/todo-app-pbe-run`, and checks invalid fixtures under
-`examples/invalid/*` for their expected PBE issue codes. The valid example
-closes Product -> Work -> Test -> Evidence -> user Acceptance traceability and
-includes a Change/Impact skeleton. Invalid examples intentionally break one
-closure rule at a time, such as ambiguous acceptance criteria, missing Work/Test
-links, missing or stale Evidence, assistant acceptance, deferred scope leakage,
-or revision without Impact analysis.
+This builds the CLI, validates the closed golden run at `examples/valid/todo-app-pbe-run`, and checks invalid fixtures
+under `examples/invalid/*` for their expected PBE issue codes. The valid example closes Product -> Work -> Test ->
+Evidence -> user Acceptance traceability and includes a Change/Impact skeleton. Invalid examples intentionally break one
+closure rule at a time, such as ambiguous acceptance criteria, missing Work/Test links, missing or stale Evidence,
+assistant acceptance, deferred scope leakage, or revision without Impact analysis.
 
 Validate the Codex plugin manifest and skills:
 
@@ -885,7 +917,8 @@ python C:/Users/ytkim/.codex/skills/.system/plugin-creator/scripts/validate_plug
 
 ## Removed Legacy GUI
 
-The previous React/Vite GUI implementation and its local browser API-provider experiment were removed. The removed surface included:
+The previous React/Vite GUI implementation and its local browser API-provider experiment were removed. The removed
+surface included:
 
 ```text
 src/
