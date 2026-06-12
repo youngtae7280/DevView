@@ -1,6 +1,6 @@
 {
   "name": "project-blueprint-engine",
-  "version": "0.2.0-alpha+codex.20260612031027",
+  "version": "0.2.0-alpha+codex.20260612033722",
   "description": "A Codex plugin that turns user intent into traceable Product, Project, Work, and Test trees, then controls staged execution, evidence, review, feedback, and revision through compatible PBE contracts.",
   "author": {
     "name": "Local developer"
