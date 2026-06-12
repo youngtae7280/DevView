@@ -5,25 +5,26 @@ import { missingTerms } from '../validator-utils/markdown-utils.js'
 const validator = 'Examples'
 
 const requiredExampleFiles = [
-  'examples/todo-app-pbe-run/README.md',
-  'examples/todo-app-pbe-run/00-before.md',
-  'examples/todo-app-pbe-run/01-user-request.md',
-  'examples/todo-app-pbe-run/02-project-brief.md',
-  'examples/todo-app-pbe-run/03-product-tree.md',
-  'examples/todo-app-pbe-run/04-project-tree.md',
-  'examples/todo-app-pbe-run/05-work-tree.md',
-  'examples/todo-app-pbe-run/06-test-tree.md',
-  'examples/todo-app-pbe-run/07-human-gate-uiux.md',
-  'examples/todo-app-pbe-run/08-workgraph.md',
-  'examples/todo-app-pbe-run/09-verification-design.md',
-  'examples/todo-app-pbe-run/10-acep-manifest.md',
-  'examples/todo-app-pbe-run/11-review-result.md',
-  'examples/todo-app-pbe-run/12-revision-request.md',
-  'examples/todo-app-pbe-run/13-revision-pack.md',
-  'examples/todo-app-pbe-run/14-final-state.md',
+  'examples/valid/todo-app-pbe-run/README.md',
+  'examples/valid/todo-app-pbe-run/.pbe/tree/product-tree.json',
+  'examples/valid/todo-app-pbe-run/.pbe/tree/project-tree.json',
+  'examples/valid/todo-app-pbe-run/.pbe/tree/work-tree.json',
+  'examples/valid/todo-app-pbe-run/.pbe/tree/test-tree.json',
+  'examples/valid/todo-app-pbe-run/.pbe/evidence/evidence-tree.json',
+  'examples/valid/todo-app-pbe-run/.pbe/control/acceptance-tree.json',
+  'examples/valid/todo-app-pbe-run/.pbe/control/change-tree.json',
+  'examples/valid/todo-app-pbe-run/.pbe/control/impact-tree.json',
+  'examples/invalid/ambiguous-acceptance/fixture.json',
+  'examples/invalid/missing-work-link/fixture.json',
+  'examples/invalid/missing-test-coverage/fixture.json',
+  'examples/invalid/missing-evidence/fixture.json',
+  'examples/invalid/stale-evidence/fixture.json',
+  'examples/invalid/assistant-accepted/fixture.json',
+  'examples/invalid/deferred-scope-leak/fixture.json',
+  'examples/invalid/change-without-impact/fixture.json',
 ]
 
-const requiredReadmeTerms = ['Product', 'Work', 'Test', 'Evidence', 'Change', 'Revision']
+const requiredReadmeTerms = ['Product', 'Work', 'Test', 'Evidence', 'Change', 'Impact', 'Acceptance']
 
 export function runExamplesValidator({ root }) {
   const issues = []
@@ -35,14 +36,14 @@ export function runExamplesValidator({ root }) {
           validator,
           file: relativePath,
           code: 'EXAMPLE_FILE_MISSING',
-          message: `${relativePath} is required by the onboarding example.`,
+          message: `${relativePath} is required by the example regression suite.`,
           suggestedFix: `Restore ${relativePath}.`,
         }),
       )
     }
   }
 
-  const readmePath = 'examples/todo-app-pbe-run/README.md'
+  const readmePath = 'examples/valid/todo-app-pbe-run/README.md'
   if (fileExists(root, readmePath)) {
     const readme = readText(root, readmePath)
     for (const term of missingTerms(readme, requiredReadmeTerms)) {
@@ -51,7 +52,7 @@ export function runExamplesValidator({ root }) {
           validator,
           file: readmePath,
           code: 'EXAMPLE_TRACEABILITY_TERM_MISSING',
-          message: `Todo example README does not mention ${term}.`,
+          message: `Todo golden example README does not mention ${term}.`,
           suggestedFix: `Document ${term} linkage in the Todo example README.`,
         }),
       )

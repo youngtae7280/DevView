@@ -50,7 +50,7 @@ what is risky here?
 stop
 ```
 
-The detailed installation and use guide is in [docs/usage.md](docs/usage.md). A complete example run is in [examples/todo-app-pbe-run](examples/todo-app-pbe-run/README.md).
+The detailed installation and use guide is in [docs/usage.md](docs/usage.md). A complete golden example run is in [examples/valid/todo-app-pbe-run](examples/valid/todo-app-pbe-run/README.md). Invalid regression fixtures are in [examples/invalid](examples/invalid).
 
 ## Learn The Model
 
