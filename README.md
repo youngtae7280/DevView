@@ -72,6 +72,7 @@ Useful entry points:
 - [Execution contracts](docs/execution-contracts.md)
 - [Revision flow](docs/revision-flow.md)
 - [Change impact revision CLI skeleton](docs/change-impact-revision.md)
+- [File Change Guard](docs/file-change-guard.md)
 - [Validator design](docs/validator-design.md)
 - [CLI output](docs/cli-output.md)
 - [Release policy](RELEASE.md)

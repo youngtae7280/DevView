@@ -2,7 +2,12 @@ import { PBE_STATE } from '../core/state-machine.js'
 import { transitionPbeState } from '../core/state-transition.js'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { hasErrors } from '../core/types.js'
-import { validateEvidence, validateTraceability, validateVisualDesign } from '../validators/pbe-validators.js'
+import {
+  validateEvidence,
+  validateFileChanges,
+  validateTraceability,
+  validateVisualDesign,
+} from '../validators/pbe-validators.js'
 import { type CommandContext, hasVisualWork, transitionFailed } from './shared.js'
 
 export async function reviewSubmitCommand(context: CommandContext): Promise<CommandResult> {
@@ -14,6 +19,7 @@ export async function reviewSubmitCommand(context: CommandContext): Promise<Comm
     })),
   )
   issues.push(...(await validateVisualDesign(context.options.root, { requireEvidence: true })))
+  issues.push(...(await validateFileChanges(context.options.root, { enforceReviewGuard: true })))
   if (hasErrors(issues)) {
     return transitionFailed('review submit', 'Review submit failed. State was not changed.', issues)
   }

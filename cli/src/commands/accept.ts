@@ -6,6 +6,7 @@ import { hasErrors, issue } from '../core/types.js'
 import {
   validateAcceptedActors,
   validateEvidence,
+  validateFileChanges,
   validateTraceability,
   validateVisualDesign,
 } from '../validators/pbe-validators.js'
@@ -39,6 +40,7 @@ export async function acceptCommand(context: CommandContext): Promise<CommandRes
     })),
   )
   issues.push(...(await validateVisualDesign(context.options.root, { requireEvidence: true })))
+  issues.push(...(await validateFileChanges(context.options.root, { enforceReviewGuard: true })))
   const userAccepted = await hasUserAcceptedBranch(context.options.root)
   if (!userAccepted) {
     issues.push(

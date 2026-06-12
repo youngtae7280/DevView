@@ -95,6 +95,7 @@ Commands:
   rpd close            Attempt to close RPD
   ui approve           Record user UI/UX approval and transition to UI_UX_APPROVED
   trace check          Check Product/Work/Test/Evidence traceability
+  files check          Check changed files against Work/Revision scope
   wpd check            Check Work Tree and WorkGraph readiness
   wpd close            Validate WPD and transition to WPD_DONE
   vd check             Check Test Tree and verification coverage

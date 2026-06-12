@@ -4,6 +4,7 @@ import { acceptCommand } from './accept.js'
 import { acepCheckCommand, acepReadyCommand } from './acep.js'
 import { changeCreateCommand } from './change.js'
 import { executionCompleteCommand, executionStartCommand } from './execution.js'
+import { filesCheckCommand } from './files.js'
 import { gateCommand } from './gate.js'
 import { impactAnalyzeCommand } from './impact.js'
 import { initCommand } from './init.js'
@@ -55,6 +56,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
       'trace check',
       await validateTraceability(context.options.root, { stage: context.options.stage }),
     )
+  }
+  if (command === 'files' && subcommand === 'check') {
+    return filesCheckCommand(context)
   }
   if (command === 'wpd' && subcommand === 'check') {
     return wpdCheckCommand(context)

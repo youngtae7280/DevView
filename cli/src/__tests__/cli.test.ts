@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -804,6 +805,173 @@ describe('PBE CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
     expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain('EVIDENCE_STALE')
+    expect(after).toBe(before)
+  })
+
+  it('passes file guard when changed source file is within Work expectedFiles', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'WPD_DONE')
+    writeWorkTree(workspace)
+    writeText(join(workspace, 'src', 'status.ts'), 'export const status = "baseline"\n')
+    initGitRepository(workspace)
+    writeText(join(workspace, 'src', 'status.ts'), 'export const status = "changed"\n')
+
+    const result = await runPbeCli(['files', 'check', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(JSON.parse(result.stdout).issues).toEqual([])
+  })
+
+  it('fails file guard when changed source file matches forbiddenFiles', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'WPD_DONE')
+    writeWorkTree(workspace)
+    addWorkNodeFields(workspace, 'WT-1', { forbiddenFiles: ['src/secret.ts'] })
+    writeText(join(workspace, 'src', 'secret.ts'), 'export const secret = "baseline"\n')
+    initGitRepository(workspace)
+    writeText(join(workspace, 'src', 'secret.ts'), 'export const secret = "changed"\n')
+
+    const result = await runPbeCli(['files', 'check', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'FILE_CHANGE_FORBIDDEN',
+    )
+  })
+
+  it('fails file guard for unknown source files when Work scope has no unknownFileTouchRisk', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'WPD_DONE')
+    writeWorkTree(workspace)
+    writeText(join(workspace, 'src', 'outside.ts'), 'export const outside = "baseline"\n')
+    initGitRepository(workspace)
+    writeText(join(workspace, 'src', 'outside.ts'), 'export const outside = "changed"\n')
+
+    const result = await runPbeCli(['files', 'check', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'FILE_CHANGE_OUTSIDE_WORK_SCOPE',
+    )
+  })
+
+  it('does not treat .pbe-only artifact changes as source file violations', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'WPD_DONE')
+    writeWorkTree(workspace)
+    initGitRepository(workspace)
+    writeText(join(workspace, '.pbe', 'blueprint', 'notes.md'), 'artifact update\n')
+
+    const result = await runPbeCli(['files', 'check', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(JSON.parse(result.stdout).issues).toEqual([])
+  })
+
+  it('fails file guard for DONE source changes without activeRevision', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'DONE', { deliveryStatus: 'accepted', completedSteps: ['complete'], nextStep: null })
+    writeWorkTree(workspace)
+    writeText(join(workspace, 'src', 'status.ts'), 'export const status = "baseline"\n')
+    initGitRepository(workspace)
+    writeText(join(workspace, 'src', 'status.ts'), 'export const status = "changed"\n')
+
+    const result = await runPbeCli(['files', 'check', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'FILE_CHANGE_REQUIRES_REVISION',
+    )
+  })
+
+  it('allows activeRevision source changes inside affected Work expectedFiles', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'REVISION_REQUESTED', {
+      activeRevision: {
+        changeNodeId: 'CH-001',
+        impactNodeIds: ['IM-001'],
+        affectedWorkNodeIds: ['WT-1'],
+        status: 'in_progress',
+      },
+    })
+    writeWorkTree(workspace)
+    writeText(join(workspace, 'src', 'status.ts'), 'export const status = "baseline"\n')
+    initGitRepository(workspace)
+    writeText(join(workspace, 'src', 'status.ts'), 'export const status = "changed"\n')
+
+    const result = await runPbeCli(['files', 'check', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(JSON.parse(result.stdout).issues).toEqual([])
+  })
+
+  it('fails activeRevision source changes outside affected Work expectedFiles', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'REVISION_REQUESTED', {
+      activeRevision: {
+        changeNodeId: 'CH-001',
+        impactNodeIds: ['IM-001'],
+        affectedWorkNodeIds: ['WT-1'],
+        status: 'in_progress',
+      },
+    })
+    writeWorkTree(workspace)
+    writeText(join(workspace, 'src', 'outside.ts'), 'export const outside = "baseline"\n')
+    initGitRepository(workspace)
+    writeText(join(workspace, 'src', 'outside.ts'), 'export const outside = "changed"\n')
+
+    const result = await runPbeCli(['files', 'check', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'FILE_CHANGE_OUTSIDE_WORK_SCOPE',
+    )
+  })
+
+  it('does not mutate state when review submit finds unexplained source changes', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'ACEP_RUN_DONE')
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+    writeEvidenceTree(workspace)
+    writeText(join(workspace, 'src', 'outside.ts'), 'export const outside = "baseline"\n')
+    initGitRepository(workspace)
+    writeText(join(workspace, 'src', 'outside.ts'), 'export const outside = "changed"\n')
+
+    const before = readStateText(workspace)
+    const result = await runPbeCli(['review', 'submit', '--json'], { cwd: workspace, pluginRoot })
+    const after = readStateText(workspace)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'FILE_CHANGE_REQUIRES_REVISION',
+    )
+    expect(after).toBe(before)
+  })
+
+  it('does not mutate state when accept finds unexplained source changes', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writePbeState(workspace, 'WAITING_REVIEW_RESULT')
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+    writeEvidenceTree(workspace)
+    writeUserAcceptance(workspace)
+    writeText(join(workspace, 'src', 'outside.ts'), 'export const outside = "baseline"\n')
+    initGitRepository(workspace)
+    writeText(join(workspace, 'src', 'outside.ts'), 'export const outside = "changed"\n')
+
+    const before = readStateText(workspace)
+    const result = await runPbeCli(['accept', '--json'], { cwd: workspace, pluginRoot })
+    const after = readStateText(workspace)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'FILE_CHANGE_REQUIRES_REVISION',
+    )
     expect(after).toBe(before)
   })
 
@@ -2296,6 +2464,22 @@ function readAcceptanceTree(workspace: string): Record<string, any> {
 
 function readEvidenceText(workspace: string): string {
   return readFileSync(join(workspace, '.pbe', 'evidence', 'evidence-tree.json'), 'utf8')
+}
+
+function addWorkNodeFields(workspace: string, workId: string, fields: Record<string, unknown>): void {
+  const workTreePath = join(workspace, '.pbe', 'tree', 'work-tree.json')
+  const workTree = JSON.parse(readFileSync(workTreePath, 'utf8'))
+  const node = workTree.nodes.find((entry: Record<string, unknown>) => entry.id === workId)
+  Object.assign(node, fields)
+  writeJson(workTreePath, workTree)
+}
+
+function initGitRepository(workspace: string): void {
+  execFileSync('git', ['init'], { cwd: workspace, stdio: 'ignore' })
+  execFileSync('git', ['config', 'user.email', 'pbe@example.test'], { cwd: workspace, stdio: 'ignore' })
+  execFileSync('git', ['config', 'user.name', 'PBE Test'], { cwd: workspace, stdio: 'ignore' })
+  execFileSync('git', ['add', '.'], { cwd: workspace, stdio: 'ignore' })
+  execFileSync('git', ['commit', '-m', 'baseline'], { cwd: workspace, stdio: 'ignore' })
 }
 
 function readControlText(workspace: string, fileName: string): string {
