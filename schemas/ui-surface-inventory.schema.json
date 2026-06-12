@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/ui-surface-inventory.schema.json",
+  "title": "PBE UI Surface Inventory",
+  "type": "object",
+  "required": ["schemaVersion", "artifactType", "status", "surfaces"],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "artifactType": { "const": "ui_surface_inventory" },
+    "status": { "enum": ["draft", "proposed", "confirmed", "blocked"] },
+    "surfaces": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/surface" }
+    },
+    "childSurfaces": { "type": "array", "items": { "$ref": "#/$defs/surface" } },
+    "missingInventoryItems": { "type": "array", "items": { "type": "object" } }
+  },
+  "$defs": {
+    "surface": {
+      "type": "object",
+      "required": ["surfaceId", "name", "surfaceType", "statesRequired", "requiredScreenshots"],
+      "properties": {
+        "surfaceId": { "type": "string" },
+        "name": { "type": "string" },
+        "surfaceType": {
+          "enum": ["page", "panel", "dialog", "popup", "subdialog", "route", "widget", "component_demo", "other"]
+        },
+        "owningFiles": { "type": "array", "items": { "type": "string" } },
+        "styleFiles": { "type": "array", "items": { "type": "string" } },
+        "reusableComponentsUsed": { "type": "array", "items": { "type": "string" } },
+        "statesRequired": { "type": "array", "items": { "type": "string" } },
+        "requiredScreenshots": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/screenshotRequirement" }
+        },
+        "relatedProductNodes": { "type": "array", "items": { "type": "string" } },
+        "relatedWorkNodes": { "type": "array", "items": { "type": "string" } },
+        "relatedTestNodes": { "type": "array", "items": { "type": "string" } },
+        "deferredOrOutOfScopeVisualItems": { "type": "array", "items": { "type": "string" } },
+        "riskNotes": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "screenshotRequirement": {
+      "type": "object",
+      "required": ["state", "path", "required"],
+      "properties": {
+        "state": { "type": "string" },
+        "path": { "type": "string" },
+        "required": { "type": "boolean" },
+        "evidenceNodeId": { "type": "string" },
+        "deferredReason": { "type": "string" },
+        "blockedReason": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

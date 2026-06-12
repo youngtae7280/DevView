@@ -142,6 +142,48 @@ If this task changes UI, list the related `SCREEN-*` IDs from `05-ui-ux-spec.jso
 
 - `.pbe/codex-execution-pack/07-ui-ux-confirmation.md`
 
+## Visual Design Contract
+
+- Required only for visual UI tasks.
+- Visual reference: `.pbe/blueprint/visual-reference.json`
+- Theme spec: `.pbe/blueprint/ui-theme-spec.md`
+- Visual source:
+- Waiver:
+
+## Design Token Source
+
+- `.pbe/blueprint/design-tokens.json`
+- Token groups required: colors, spacing, radius, typography, border, shadow, motion
+
+## Component Style Contract
+
+- `.pbe/blueprint/component-style-contract.json`
+- Shared components changed:
+- Local exceptions:
+
+## UI Surface Inventory
+
+- `.pbe/control/ui-surface-inventory.json`
+- Surface IDs:
+- Required visual states:
+
+## Visual Non-Scope
+
+- Do not change visual behavior outside selected/foundation UI surfaces.
+- Do not remove controls for visual simplification.
+- Do not introduce non-token colors, spacing, radius, shadows, typography, or motion unless explicitly recorded as an exception.
+
+## Screenshot Evidence Required
+
+- Required screenshots/manual notes:
+- Evidence Tree node IDs:
+- Stale evidence replacement required:
+
+## Visual Deviation Rule
+
+- Record every visual deviation with disposition: user_accepted, revise_required, deferred, out_of_scope, or waived.
+- Stop before review if a required visual deviation has no disposition.
+
 ## Parity / Completion References
 
 - Surface completion IDs:
@@ -179,6 +221,8 @@ Use these only when the parity/completeness profile is active. They may require 
 - Test command output
 - Validation summary
 - UI manual verification note if UI changed
+- Visual Design Contract compliance note if visual UI changed
+- Screenshot/manual visual evidence if visual UI changed
 - Legacy inventory comparison if parity is claimed
 - Visual/runtime evidence if visual parity is required
 - Hardware readiness or certification evidence if hardware-dependent

@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactType": "component_style_contract",
+  "status": "draft",
+  "sourceRef": ".pbe/blueprint/design-tokens.json",
+  "components": [
+    {
+      "componentName": "Button",
+      "visualRole": "Primary, secondary, icon, and destructive user actions",
+      "requiredTokens": ["colors.primary", "colors.primaryHover", "radius.control", "spacing.sm", "typography.label"],
+      "allowedVariants": ["primary", "secondary", "ghost", "danger", "icon"],
+      "requiredStates": ["default", "hover", "focus", "disabled"],
+      "forbiddenChanges": ["removing existing action controls", "using one-off colors outside tokens"],
+      "evidenceRequired": ["default", "hover_or_focus_when_practical", "disabled_when_applicable"],
+      "applicability": "required"
+    },
+    {
+      "componentName": "Input",
+      "visualRole": "Text entry and editable values",
+      "requiredTokens": ["colors.panelBackground", "colors.borderSubtle", "radius.control", "spacing.sm", "typography.body"],
+      "allowedVariants": ["default", "search", "readonly", "error"],
+      "requiredStates": ["default", "focus", "disabled", "error"],
+      "forbiddenChanges": ["hiding validation messages", "removing accessible labels"],
+      "evidenceRequired": ["default", "focus_or_error_when_applicable"],
+      "applicability": "when_present"
+    },
+    {
+      "componentName": "Select",
+      "visualRole": "Option selection and combo boxes",
+      "requiredTokens": ["colors.panelBackground", "colors.borderSubtle", "radius.control", "spacing.sm", "typography.body"],
+      "allowedVariants": ["default", "compact", "error"],
+      "requiredStates": ["default", "open", "focus", "disabled"],
+      "forbiddenChanges": ["removing existing options", "changing option meaning"],
+      "evidenceRequired": ["default", "open_when_practical"],
+      "applicability": "when_present"
+    },
+    {
+      "componentName": "Checkbox/Switch",
+      "visualRole": "Binary setting and opt-in control",
+      "requiredTokens": ["colors.primary", "colors.borderSubtle", "radius.control", "spacing.sm"],
+      "allowedVariants": ["checkbox", "switch"],
+      "requiredStates": ["checked", "unchecked", "focus", "disabled"],
+      "forbiddenChanges": ["inverting meaning", "removing disabled state clarity"],
+      "evidenceRequired": ["checked_or_on", "unchecked_or_off"],
+      "applicability": "when_present"
+    },
+    {
+      "componentName": "Panel",
+      "visualRole": "Container for related UI controls or information",
+      "requiredTokens": ["colors.panelBackground", "border.subtle", "radius.panel", "spacing.lg"],
+      "allowedVariants": ["default", "nested", "emphasis"],
+      "requiredStates": ["default"],
+      "forbiddenChanges": ["floating inconsistent panel styles", "unapproved decorative shadows"],
+      "evidenceRequired": ["default"],
+      "applicability": "required"
+    },
+    {
+      "componentName": "Modal/Dialog",
+      "visualRole": "Blocking or focused user decisions",
+      "requiredTokens": ["colors.panelBackground", "shadow.modal", "radius.modal", "spacing.xl"],
+      "allowedVariants": ["default", "confirmation", "error"],
+      "requiredStates": ["default", "loading", "error"],
+      "forbiddenChanges": ["removing escape/cancel affordances unless product-approved", "changing destructive action hierarchy"],
+      "evidenceRequired": ["default", "error_when_applicable"],
+      "applicability": "when_present"
+    },
+    {
+      "componentName": "Tabs",
+      "visualRole": "Switch between related views",
+      "requiredTokens": ["colors.primary", "colors.textSecondary", "border.subtle", "spacing.md"],
+      "allowedVariants": ["line", "contained"],
+      "requiredStates": ["selected", "unselected", "hover", "focus"],
+      "forbiddenChanges": ["hiding selected state", "changing tab order without Product approval"],
+      "evidenceRequired": ["selected", "unselected"],
+      "applicability": "when_present"
+    },
+    {
+      "componentName": "Sidebar/Header/Toolbar",
+      "visualRole": "Navigation and persistent commands",
+      "requiredTokens": ["colors.panelBackground", "colors.borderSubtle", "spacing.md", "typography.label"],
+      "allowedVariants": ["sidebar", "header", "toolbar"],
+      "requiredStates": ["default", "collapsed_when_applicable", "responsive_small_when_applicable"],
+      "forbiddenChanges": ["removing persistent commands", "hiding navigation without approved responsive behavior"],
+      "evidenceRequired": ["default", "responsive_when_applicable"],
+      "applicability": "when_present"
+    },
+    {
+      "componentName": "Table/List",
+      "visualRole": "Dense repeated data or options",
+      "requiredTokens": ["colors.panelBackground", "colors.borderSubtle", "spacing.sm", "typography.body"],
+      "allowedVariants": ["table", "list", "compact"],
+      "requiredStates": ["default", "empty", "loading", "selected_when_applicable"],
+      "forbiddenChanges": ["removing row actions", "hiding empty or loading feedback"],
+      "evidenceRequired": ["default", "empty_or_loading_when_applicable"],
+      "applicability": "when_present"
+    },
+    {
+      "componentName": "Expand/Collapse",
+      "visualRole": "State toggle for expanded and collapsed UI regions",
+      "requiredTokens": ["colors.textSecondary", "radius.control", "spacing.sm"],
+      "allowedVariants": ["text", "icon", "button"],
+      "requiredStates": ["expanded", "collapsed", "hover", "focus"],
+      "forbiddenChanges": ["removing the control", "hiding the control in either state", "changing behavior without Product approval"],
+      "evidenceRequired": ["expanded_screenshot", "collapsed_screenshot"],
+      "applicability": "when_present"
+    },
+    {
+      "componentName": "Empty/Loading/Error",
+      "visualRole": "Non-happy-path feedback states",
+      "requiredTokens": ["colors.textSecondary", "colors.warning", "colors.danger", "spacing.lg", "typography.body"],
+      "allowedVariants": ["empty", "loading", "error", "permission_denied"],
+      "requiredStates": ["empty", "loading", "error"],
+      "forbiddenChanges": ["leaving blank states", "using unexplained error wording"],
+      "evidenceRequired": ["state_screenshot_or_manual_note"],
+      "applicability": "when_present"
+    }
+  ],
+  "localExceptions": [],
+  "openQuestions": []
+}

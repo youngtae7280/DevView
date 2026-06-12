@@ -115,6 +115,24 @@
 - Screenshot/evidence provided:
 - Manual verification notes:
 
+## Visual Design Contract Coverage
+
+- Visual UI work active:
+- Visual reference selected:
+- Visual source or waiver:
+- Theme spec present:
+- Design tokens present:
+- Required token groups present:
+- Component Style Contract present:
+- Shared component exceptions:
+- UI surface inventory present:
+- Required visual states:
+- Screenshot/manual evidence provided:
+- Missing visual evidence:
+- Stale visual evidence:
+- Visual deviations:
+- Visual audit result:
+
 ## Parity / Completeness Coverage
 
 - Profile active:
@@ -178,6 +196,10 @@ The current slice can be submitted for review only if:
 - every included Work node has included Test coverage
 - every included Test node has current Evidence Tree evidence or an explicit not-runnable explanation
 - no required UI/UX state is missing without explanation
+- no selected visual UI work lacks Visual Design Contract source or explicit waiver
+- no required visual state lacks screenshot/manual evidence, deferral, or blocker
+- no stale visual evidence is used for review or closure
+- no unresolved visual deviation remains
 - no parity-critical surface claims parity without inventory and evidence
 - no command that opens a dialog claims technical stability or parity without child dialog/control/event inventory
 - no hardware-gated dialog is closed without mock-backed, fake-result, UI-automation-disabled, or explicit manual-not-verified status

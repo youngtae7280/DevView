@@ -66,6 +66,7 @@ If either command fails, do not proceed to RPD until the blocking issue is fixed
 15. Create dependency impact placeholders for `.pbe/blueprint/dependency-impact-audit.json` and `.pbe/blueprint/dependency-impact-audit.md`.
 16. Create `.pbe/blueprint/requirement-tree.md`, `.pbe/blueprint/rpd-interview-log.md`, and `.pbe/blueprint/rpd-summary.md`.
 17. Initialize UI/UX confirmation placeholders when UI work may be involved.
+17a. Initialize Visual Design Contract placeholders when visual UI work may be involved: visual reference, theme spec, design tokens, component style contract, UI surface inventory, component style inventory, visual verification profile, and visual audit report path.
 18. Initialize `pbe-state.json.autoflow` with:
    - `state`: `STARTED`
    - `enabled`: `true`
@@ -97,10 +98,13 @@ Use these primary tree-native paths:
 .pbe/control/legacy-control-inventory.json
 .pbe/control/surface-completion-ledger.json
 .pbe/control/hardware-readiness-ledger.json
+.pbe/control/ui-surface-inventory.json
+.pbe/control/component-style-inventory.json
 .pbe/control/visual-verification-profile.json
 .pbe/control/verification-miss-log.json
 .pbe/evidence/evidence-tree.json
 .pbe/evidence/screenshots/
+.pbe/evidence/review-reports/
 .pbe/evidence/test-results/
 .pbe/evidence/logs/
 ```
@@ -125,6 +129,11 @@ Also keep these backward-compatible blueprint paths:
 .pbe/blueprint/ui-ux-preview.md
 .pbe/blueprint/ui-ux-confirmation.md
 .pbe/blueprint/ui-ux-confirmation-log.md
+.pbe/blueprint/visual-reference.json
+.pbe/blueprint/visual-reference.md
+.pbe/blueprint/ui-theme-spec.md
+.pbe/blueprint/design-tokens.json
+.pbe/blueprint/component-style-contract.json
 ```
 
 When both v2 and v1 files exist, prefer the v2 tree file as the source of truth and update the v1 blueprint file as a compatibility view.
@@ -168,7 +177,13 @@ legacyControlInventory: .pbe/control/legacy-control-inventory.json
 surfaceCompletionLedger: .pbe/control/surface-completion-ledger.json
 hardwareReadinessLedger: .pbe/control/hardware-readiness-ledger.json
 visualVerificationProfile: .pbe/control/visual-verification-profile.json
+uiSurfaceInventory: .pbe/control/ui-surface-inventory.json
+componentStyleInventory: .pbe/control/component-style-inventory.json
 verificationMissLog: .pbe/control/verification-miss-log.json
+visualReference: .pbe/blueprint/visual-reference.json
+uiThemeSpec: .pbe/blueprint/ui-theme-spec.md
+designTokens: .pbe/blueprint/design-tokens.json
+componentStyleContract: .pbe/blueprint/component-style-contract.json
 requirementTree: .pbe/blueprint/requirement-tree.json
 workDesign: .pbe/blueprint/work-design.json
 workGraph: .pbe/blueprint/work-graph.json

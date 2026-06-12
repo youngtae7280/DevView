@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/design-tokens.schema.json",
+  "title": "PBE Design Tokens",
+  "type": "object",
+  "required": ["schemaVersion", "artifactType", "status", "tokens"],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "artifactType": { "const": "design_tokens" },
+    "status": { "enum": ["draft", "proposed", "confirmed", "waived", "blocked"] },
+    "sourceRef": { "type": "string" },
+    "tokens": {
+      "type": "object",
+      "required": ["colors", "spacing", "radius", "typography", "border", "shadow", "motion"],
+      "properties": {
+        "colors": { "type": "object" },
+        "spacing": { "type": "object" },
+        "radius": { "type": "object" },
+        "typography": { "type": "object" },
+        "border": { "type": "object" },
+        "shadow": { "type": "object" },
+        "motion": { "type": "object" },
+        "zIndex": { "type": "object" },
+        "componentAliases": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "openQuestions": { "type": "array", "items": { "type": "string" } },
+    "exceptions": { "type": "array", "items": { "type": "object" } }
+  },
+  "additionalProperties": true
+}

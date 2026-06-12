@@ -1,6 +1,6 @@
 {
   "name": "project-blueprint-engine",
-  "version": "0.2.0-alpha+codex.20260611235114",
+  "version": "0.2.0-alpha+codex.20260612001949",
   "description": "A Codex plugin that turns user intent into traceable Product, Project, Work, and Test trees, then controls staged execution, evidence, review, feedback, and revision through compatible PBE contracts.",
   "author": {
     "name": "Local developer"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Project Blueprint Engine",
     "shortDescription": "Tree-based product blueprint, execution, evidence, and revision control for Codex.",
-    "longDescription": "Project Blueprint Engine runs inside Codex as a tree-based development control workflow while preserving the existing RPD, WPD, VD, and ACEP compatibility terms. It grows product intent into a Product Tree, derives Project, Work, and Test views, routes active PBE work through state-aware gates before ordinary coding, confirms UI/UX before implementation, audits dependency impact before implementation scope, selects staged execution slices, validates schema and cross-artifact traceability, tracks evidence, stops for user review, maps feedback to affected nodes, and creates bounded revision work through change and impact analysis.",
+    "longDescription": "Project Blueprint Engine runs inside Codex as a tree-based development control workflow while preserving the existing RPD, WPD, VD, and ACEP compatibility terms. It grows product intent into a Product Tree, derives Project, Work, and Test views, routes active PBE work through state-aware gates before ordinary coding, confirms UI/UX before implementation, converts visual UI changes into Visual Design Contract artifacts, audits dependency impact before implementation scope, selects staged execution slices, validates schema and cross-artifact traceability, tracks evidence, stops for user review, maps feedback to affected nodes, and creates bounded revision work through change and impact analysis.",
     "developerName": "Local developer",
     "category": "Developer Tools",
     "capabilities": [
@@ -24,6 +24,10 @@
       "Autoflow orchestration",
       "Traceability",
       "Evidence tracking",
+      "Visual Design Contract",
+      "Design token derivation",
+      "UI surface inventory",
+      "Visual implementation audit",
       "Dependency impact auditing",
       "Schema validation",
       "Staged parallel execution planning",

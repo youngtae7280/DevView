@@ -60,6 +60,7 @@ Commands:
   vd check             Check Test Tree and verification coverage
   acep check           Check ACEP execution pack
   evidence check       Check evidence coverage
+  visual check         Check Visual Design Contract and UI evidence
 
 Options:
   --root <path>        Target project root. Defaults to current directory.

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/component-style-inventory.schema.json",
+  "title": "PBE Component Style Inventory",
+  "type": "object",
+  "required": ["schemaVersion", "artifactType", "status", "components"],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "artifactType": { "const": "component_style_inventory" },
+    "status": { "enum": ["draft", "proposed", "confirmed", "blocked"] },
+    "components": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/component" }
+    },
+    "globalStyleFiles": { "type": "array", "items": { "type": "string" } },
+    "tokenIntegrationFiles": { "type": "array", "items": { "type": "string" } },
+    "risks": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "required": ["componentName", "componentType", "owningFiles", "styleSource", "visualChangeScope"],
+      "properties": {
+        "componentName": { "type": "string" },
+        "componentType": {
+          "enum": ["button", "input", "select", "checkbox_switch", "card", "panel", "dialog", "tab", "table", "list", "toolbar", "sidebar", "header", "custom"]
+        },
+        "owningFiles": { "type": "array", "items": { "type": "string" } },
+        "styleSource": {
+          "enum": ["css", "css_module", "scss", "tailwind", "inline", "styled_components", "xaml", "unknown"]
+        },
+        "usedBySurfaces": { "type": "array", "items": { "type": "string" } },
+        "usesDesignTokens": { "type": "boolean" },
+        "hardcodedStyleFindings": { "type": "array", "items": { "type": "string" } },
+        "requiredContractRef": { "type": "string" },
+        "visualChangeScope": { "enum": ["shared", "local", "none"] },
+        "exceptionReason": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

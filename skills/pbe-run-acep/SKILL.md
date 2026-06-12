@@ -43,8 +43,14 @@ Prefer v2 cycle-native inputs:
 .pbe/control/legacy-control-inventory.json
 .pbe/control/surface-completion-ledger.json
 .pbe/control/hardware-readiness-ledger.json
+.pbe/control/ui-surface-inventory.json
+.pbe/control/component-style-inventory.json
 .pbe/control/visual-verification-profile.json
 .pbe/control/verification-miss-log.json
+.pbe/blueprint/visual-reference.json
+.pbe/blueprint/ui-theme-spec.md
+.pbe/blueprint/design-tokens.json
+.pbe/blueprint/component-style-contract.json
 .pbe/codex-execution-pack/22-cycle-contract.md
 .pbe/codex-execution-pack/11-node-execution-contracts/
 ```
@@ -93,6 +99,7 @@ Also read ACEP compatibility inputs:
 21. Attach or update evidence in `.pbe/evidence/evidence-tree.json` when evidence can be represented.
 22. Run focused validation after each task when feasible.
 23. If UI changed, update or complete UI/UX evidence checklist notes.
+23a. If visual UI changed, follow Visual Design Contract references from the task card or Node Execution Contract, update screenshot/manual visual evidence, and run Visual Implementation Audit before review.
 24. Fix failures and revalidate.
 25. Run broader validation at phase or pack completion.
 26. When parity/completeness profile artifacts exist, update surface completion, visual/runtime verification, hardware readiness, and verification miss evidence before final coverage.
@@ -134,6 +141,8 @@ For each task:
     - validation summary
     - UI manual verification note if UI changed
     - screenshot path if available
+    - Visual Design Contract compliance note if visual UI changed
+    - required state screenshot/manual evidence if visual UI changed
     - legacy inventory comparison result when parity is claimed
     - visual/runtime verification result when required
     - hardware readiness or certification result when relevant
@@ -214,6 +223,9 @@ Stop when work requires:
 - hardware-gated surface that lacks mock-backed, fake-result, UI-automation, or explicit blocking manual-not-verified evidence
 - a not-checked item that blocks technical stability, parity review, or product acceptance
 - implementation would conflict with confirmed UI/UX direction
+- implementation would conflict with the Visual Design Contract, design tokens, component style contract, or visual non-scope
+- selected visual UI work lacks required screenshot/manual evidence
+- visual deviations are discovered but not recorded with disposition
 - missing Cycle Contract or missing Node Execution Contract for a selected Work node
 - a parallel group task requires shared schema, shared type, build config, auth, permission, migration, package configuration, deployment, billing, secret handling, or another forbidden change
 - two tasks in the same parallel group need to modify the same file
@@ -239,6 +251,9 @@ Before final completion:
 13. Verify the final report lists every not-checked dialog, control, event handler, hardware action, and workflow state.
 14. Verify any hardware-certified feature has certification evidence.
 15. Verify any required visual profile checks passed or have explicit not-runnable evidence/reason.
+15a. Verify Visual Design Contract artifacts exist or are explicitly waived for selected visual UI work.
+15b. Verify required UI surface states have current screenshot/manual evidence or explicit deferral/blocker.
+15c. Verify no stale screenshot evidence is used for review submission.
 16. Verify no unresolved stop condition remains.
 17. Verify excluded nodes were not changed.
 
@@ -292,6 +307,9 @@ Include:
 - evidence tree update result
 - traceability matrix result
 - UI/UX evidence result
+- Visual Design Contract result
+- UI surface screenshot/manual evidence result
+- visual audit result
 - surface completion and parity result, when active
 - dialog/subdialog controls and event-handler result, when active
 - Not Checked section summary

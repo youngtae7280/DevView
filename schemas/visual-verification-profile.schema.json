@@ -6,6 +6,19 @@
   "required": ["version", "profiles"],
   "properties": {
     "version": { "type": "string" },
+    "schemaVersion": { "type": "string" },
+    "artifactType": { "const": "visual_verification_profile" },
+    "status": { "enum": ["draft", "proposed", "confirmed", "blocked"] },
+    "visualContractRef": { "type": "string" },
+    "designTokensRef": { "type": "string" },
+    "componentContractRef": { "type": "string" },
+    "surfaceInventoryRef": { "type": "string" },
+    "contractChecks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/contractCheck" }
+    },
+    "blockingIssues": { "type": "array", "items": { "type": "object" } },
+    "waivers": { "type": "array", "items": { "type": "object" } },
     "profiles": {
       "type": "array",
       "items": { "$ref": "#/$defs/profile" }
@@ -52,6 +65,19 @@
         "status": { "enum": ["not_planned", "planned", "passed", "failed", "blocked", "not_runnable"] },
         "evidenceRequired": { "type": "array", "items": { "type": "string" } },
         "evidenceNodeIds": { "type": "array", "items": { "type": "string" } },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "contractCheck": {
+      "type": "object",
+      "required": ["checkId", "description", "required", "status"],
+      "properties": {
+        "checkId": { "type": "string" },
+        "description": { "type": "string" },
+        "required": { "type": "boolean" },
+        "status": { "enum": ["pending", "passed", "failed", "blocked", "not_required", "waived"] },
+        "evidenceRefs": { "type": "array", "items": { "type": "string" } },
         "reason": { "type": "string" }
       },
       "additionalProperties": true

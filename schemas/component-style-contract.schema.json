@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/component-style-contract.schema.json",
+  "title": "PBE Component Style Contract",
+  "type": "object",
+  "required": ["schemaVersion", "artifactType", "status", "components"],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "artifactType": { "const": "component_style_contract" },
+    "status": { "enum": ["draft", "proposed", "confirmed", "waived", "blocked"] },
+    "sourceRef": { "type": "string" },
+    "components": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/component" }
+    },
+    "localExceptions": { "type": "array", "items": { "type": "object" } },
+    "openQuestions": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "required": [
+        "componentName",
+        "visualRole",
+        "requiredTokens",
+        "allowedVariants",
+        "requiredStates",
+        "forbiddenChanges",
+        "evidenceRequired"
+      ],
+      "properties": {
+        "componentName": { "type": "string" },
+        "visualRole": { "type": "string" },
+        "requiredTokens": { "type": "array", "items": { "type": "string" } },
+        "allowedVariants": { "type": "array", "items": { "type": "string" } },
+        "requiredStates": { "type": "array", "items": { "type": "string" } },
+        "forbiddenChanges": { "type": "array", "items": { "type": "string" } },
+        "evidenceRequired": { "type": "array", "items": { "type": "string" } },
+        "applicability": { "enum": ["required", "when_present", "optional"] }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

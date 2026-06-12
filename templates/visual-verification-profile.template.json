@@ -1,5 +1,44 @@
 {
   "version": "0.2.1-parity-completeness",
+  "schemaVersion": "1.0.0",
+  "artifactType": "visual_verification_profile",
+  "status": "draft",
+  "visualContractRef": ".pbe/blueprint/ui-theme-spec.md",
+  "designTokensRef": ".pbe/blueprint/design-tokens.json",
+  "componentContractRef": ".pbe/blueprint/component-style-contract.json",
+  "surfaceInventoryRef": ".pbe/control/ui-surface-inventory.json",
+  "contractChecks": [
+    {
+      "checkId": "visual-contract-exists",
+      "description": "Selected visual UI work has a Visual Design Contract or explicit waiver.",
+      "required": true,
+      "status": "pending",
+      "evidenceRefs": []
+    },
+    {
+      "checkId": "screenshots-required-states",
+      "description": "Required selected UI states have screenshot or manual visual evidence.",
+      "required": true,
+      "status": "pending",
+      "evidenceRefs": []
+    },
+    {
+      "checkId": "component-contract-compliance",
+      "description": "Shared components changed visually follow the Component Style Contract or have recorded exceptions.",
+      "required": true,
+      "status": "pending",
+      "evidenceRefs": []
+    },
+    {
+      "checkId": "visual-deviation-log",
+      "description": "Visual deviations are recorded and resolved before acceptance.",
+      "required": true,
+      "status": "pending",
+      "evidenceRefs": []
+    }
+  ],
+  "blockingIssues": [],
+  "waivers": [],
   "profiles": [
     {
       "id": "VVP-001",

@@ -25,6 +25,12 @@
 - [ ] Test or manual verification note provided
 - [ ] Screenshot path provided if available
 - [ ] Accessibility notes checked
+- [ ] Visual reference checked if visual appearance changed
+- [ ] Design tokens checked if visual appearance changed
+- [ ] Component Style Contract checked if shared components changed
+- [ ] Required visual states have screenshot/manual evidence or explicit deferral/blocker
+- [ ] No stale screenshot evidence is used
+- [ ] Visual deviations are recorded with disposition
 - [ ] Evidence Tree node is attached or replaced
 - [ ] No stale, invalidated, or reopened UI evidence remains for submitted scope
 - [ ] Related Product/Work/Test nodes are not reopened by an unresolved Impact Tree entry
@@ -36,6 +42,10 @@
 - Expected behavior:
 - Observed behavior:
 - Screenshot path:
+- Visual contract:
+- Design token source:
+- Component style contract:
+- Visual deviation disposition:
 
 If screenshot capture is unavailable, record:
 

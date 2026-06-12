@@ -24,6 +24,27 @@
 ## Parity / Completion Controls
 {{parityCompletionControls}}
 
+## Visual Design Contract
+{{visualDesignContract}}
+
+## Design Token Source
+{{designTokenSource}}
+
+## Component Style Contract
+{{componentStyleContract}}
+
+## UI Surface Inventory
+{{uiSurfaceInventory}}
+
+## Required Visual States
+{{requiredVisualStates}}
+
+## Screenshot Evidence Required
+{{screenshotEvidenceRequired}}
+
+## Visual Deviation Rule
+{{visualDeviationRule}}
+
 ## Implementation Instructions
 {{implementationInstructions}}
 

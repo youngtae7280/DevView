@@ -19,6 +19,7 @@ import {
   validateRpd,
   validateTraceability,
   validateVd,
+  validateVisualDesign,
   validateWpd,
 } from './validators/pbe-validators.js'
 
@@ -32,6 +33,7 @@ const initDirs = [
   '.pbe/execution/node-execution-contracts',
   '.pbe/control',
   '.pbe/evidence/screenshots',
+  '.pbe/evidence/review-reports',
   '.pbe/evidence/test-results',
   '.pbe/evidence/logs',
   '.pbe/blueprint',
@@ -50,6 +52,12 @@ const jsonTemplateTargets: Array<{ template: string; target: string; transform?:
   { template: 'impact-tree.template.json', target: defaultArtifacts.impactTree },
   { template: 'acceptance-tree.template.json', target: defaultArtifacts.acceptanceTree },
   { template: 'evidence-tree.template.json', target: defaultArtifacts.evidenceTree },
+  { template: 'visual-reference.template.json', target: defaultArtifacts.visualReference },
+  { template: 'design-tokens.template.json', target: defaultArtifacts.designTokens },
+  { template: 'component-style-contract.template.json', target: defaultArtifacts.componentStyleContract },
+  { template: 'ui-surface-inventory.template.json', target: defaultArtifacts.uiSurfaceInventory },
+  { template: 'component-style-inventory.template.json', target: defaultArtifacts.componentStyleInventory },
+  { template: 'visual-verification-profile.template.json', target: defaultArtifacts.visualVerificationProfile },
   { template: 'requirement-tree.template.json', target: defaultArtifacts.requirementTree, transform: transformRequirementTree },
   { template: 'pbe-state.template.json', target: defaultArtifacts.pbeState, transform: transformPbeState },
 ]
@@ -61,6 +69,9 @@ const textTemplateTargets: Array<{ template?: string; target: string; fallback: 
   { target: defaultArtifacts.rpdSummary, fallback: () => '# RPD Summary\n\nRPD is not closed yet.\n' },
   { template: 'source-of-truth-matrix-template.md', target: defaultArtifacts.sourceOfTruthMatrix, fallback: () => '# Source Of Truth Matrix\n\n' },
   { template: 'pbe-invariants-template.md', target: defaultArtifacts.pbeInvariants, fallback: () => '# PBE Invariants\n\n' },
+  { template: 'visual-reference-template.md', target: defaultArtifacts.visualReferenceMarkdown, fallback: () => '# Visual Reference\n\nNo visual work selected yet.\n' },
+  { template: 'ui-theme-spec-template.md', target: defaultArtifacts.uiThemeSpec, fallback: () => '# UI Theme Spec\n\nNo visual work selected yet.\n' },
+  { template: 'visual-audit-template.md', target: defaultArtifacts.visualAudit, fallback: () => '# Visual Implementation Audit\n\nNot run yet.\n' },
 ]
 
 export async function runCommand(positionals: string[], context: CommandContext): Promise<CommandResult> {
@@ -100,6 +111,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'evidence' && subcommand === 'check') {
     return checkResult('evidence check', await validateEvidence(context.options.root))
+  }
+  if (command === 'visual' && subcommand === 'check') {
+    return checkResult('visual check', await validateVisualDesign(context.options.root))
   }
   return invalidCommand(`Unknown command: ${positionals.join(' ')}`)
 }
@@ -250,6 +264,7 @@ async function validateCommand(context: CommandContext): Promise<CommandResult> 
 
   if (existsSync(path.join(context.options.root, '.pbe'))) {
     issues.push(...await validateAcceptedActors(context.options.root))
+    issues.push(...await validateVisualDesign(context.options.root))
   }
 
   return {
@@ -292,11 +307,13 @@ async function gateCommand(stage: string | undefined, context: CommandContext): 
   } else if (stage === 'acep') {
     issues.push(...await validateRpd(context.options.root, { completionMode: true }))
     issues.push(...await validateVd(context.options.root))
+    issues.push(...await validateVisualDesign(context.options.root))
   } else if (stage === 'code-start') {
     issues.push(...await validateAcep(context.options.root))
     issues.push(...implementationScopeIssues(await loadState(context.options.root)))
   } else if (stage === 'review-submit') {
     issues.push(...await validateEvidence(context.options.root))
+    issues.push(...await validateVisualDesign(context.options.root, { requireEvidence: true }))
   } else if (stage === 'accept') {
     issues.push(...await validateAcceptedActors(context.options.root))
     if (!await hasUserAcceptedBranch(context.options.root)) {

@@ -30,6 +30,7 @@ Generate a UI/UX preview and get explicit user confirmation before implementatio
 .pbe/blueprint/ui-ux-preview.md
 .pbe/blueprint/ui-ux-confirmation.md
 .pbe/blueprint/ui-ux-confirmation-log.md
+.pbe/blueprint/visual-reference.json when selected UI work changes visual appearance
 ```
 
 ## Preview Levels
@@ -74,6 +75,34 @@ blocked
 7. If the user approves in natural language, set `autoflow.state` to `UI_UX_APPROVED`, clear `autoflow.currentGate`, and continue downstream automatically.
 8. If the user requests revision, update the preview and stay at `WAITING_UI_UX_CONFIRM`.
 9. If the user asks a question, answer from the preview and confirmation artifacts and stay at `WAITING_UI_UX_CONFIRM`.
+
+## Visual Design Contract Handoff
+
+UI/UX confirmation approves product flow, wording, controls, states, and exceptions. It does not by itself authorize visual redesign.
+
+When selected UI work changes visual appearance, run or hand off to:
+
+```text
+pbe-visual-reference-intake
+pbe-design-system-derive
+```
+
+Before WPD, ACEP, or UI implementation proceeds, selected visual UI work must have one of:
+
+- `visual-reference.json` with `primarySource` set to `reference_screenshot`, `reference_app_or_site`, `existing_project_screen`, `interview_derived`, or `default_pbe_clean_theme`
+- `visual-reference.json` with `primarySource: visual_quality_waived` and user-accepted waiver metadata
+- `visual-reference.json` with `primarySource: not_required` only when no visual appearance changes are selected
+
+If no visual source exists, stop at the visual source gate and offer all six choices. Do not ask only for a screenshot.
+
+The six choices are:
+
+1. Reference screenshot.
+2. Reference app or site.
+3. Existing project screen.
+4. Short visual interview.
+5. Default PBE Clean Theme.
+6. Visual quality waiver for this slice.
 
 ## Friendly Gate Guidance
 
@@ -143,6 +172,7 @@ Report with `[PBE 상태 보고]` first:
 
 - preview file paths
 - confirmed screens/flows
+- visual source status and whether a Visual Design Contract is required
 - deferred or out_of_scope screens/flows
 - blocked items
 - whether WPD may proceed

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/visual-reference.schema.json",
+  "title": "PBE Visual Reference",
+  "type": "object",
+  "required": ["schemaVersion", "artifactType", "status", "visualWorkRequired", "primarySource"],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "artifactType": { "const": "visual_reference" },
+    "status": {
+      "enum": ["draft", "proposed", "confirmed", "waived", "not_required", "blocked"]
+    },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" },
+    "visualWorkRequired": { "type": "boolean" },
+    "primarySource": {
+      "enum": [
+        "reference_screenshot",
+        "reference_app_or_site",
+        "existing_project_screen",
+        "interview_derived",
+        "default_pbe_clean_theme",
+        "visual_quality_waived",
+        "not_required"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "intendedScope": { "$ref": "#/$defs/intendedScope" },
+    "mustPreserve": { "type": "array", "items": { "type": "string" } },
+    "nonGoals": { "type": "array", "items": { "type": "string" } },
+    "interviewAnswers": { "type": "object" },
+    "waiver": { "$ref": "#/$defs/waiver" },
+    "decisionLog": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["sourceId", "sourceType", "description", "providedBy", "scope"],
+      "properties": {
+        "sourceId": { "type": "string" },
+        "sourceType": {
+          "enum": [
+            "reference_screenshot",
+            "reference_app_or_site",
+            "existing_project_screen",
+            "interview_derived",
+            "default_pbe_clean_theme",
+            "visual_quality_waived",
+            "not_required"
+          ]
+        },
+        "description": { "type": "string" },
+        "pathOrUrl": { "type": "string" },
+        "providedBy": { "enum": ["user", "codex", "existing_project"] },
+        "scope": {
+          "enum": ["entire_project_theme", "selected_slice", "selected_surface", "component_only", "unknown"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "intendedScope": {
+      "type": "object",
+      "properties": {
+        "scopeType": {
+          "enum": ["entire_project_theme", "selected_slice", "selected_surface", "component_only", "not_required"]
+        },
+        "includedSurfaces": { "type": "array", "items": { "type": "string" } },
+        "excludedSurfaces": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "waiver": {
+      "type": "object",
+      "properties": {
+        "isWaived": { "type": "boolean" },
+        "reason": { "type": ["string", "null"] },
+        "riskAcceptedByUser": { "type": "boolean" },
+        "scope": { "type": ["string", "null"] },
+        "decisionSource": { "type": "object" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

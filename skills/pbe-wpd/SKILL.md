@@ -38,11 +38,17 @@ If either command fails, do not proceed to VD.
 .pbe/blueprint/requirement-tree.json
 .pbe/blueprint/rpd-summary.md
 .pbe/blueprint/ui-ux-confirmation.md
+.pbe/blueprint/visual-reference.json
+.pbe/blueprint/ui-theme-spec.md
+.pbe/blueprint/design-tokens.json
+.pbe/blueprint/component-style-contract.json
 .pbe/blueprint/source-of-truth-matrix.md
 .pbe/blueprint/pbe-invariants.md
 .pbe/control/legacy-control-inventory.json
 .pbe/control/surface-completion-ledger.json
 .pbe/control/hardware-readiness-ledger.json
+.pbe/control/ui-surface-inventory.json
+.pbe/control/component-style-inventory.json
 ```
 
 ## Outputs
@@ -56,6 +62,8 @@ If either command fails, do not proceed to VD.
 .pbe/control/legacy-control-inventory.json
 .pbe/control/surface-completion-ledger.json
 .pbe/control/hardware-readiness-ledger.json
+.pbe/control/ui-surface-inventory.json
+.pbe/control/component-style-inventory.json
 ```
 
 Prefer v2 tree files when present. If `.pbe/tree/product-tree.json` and `.pbe/blueprint/requirement-tree.json` disagree about selected, deferred, blocked, or out-of-scope scope, stop and report the mismatch instead of deriving work from stale data.
@@ -64,6 +72,7 @@ Prefer v2 tree files when present. If `.pbe/tree/product-tree.json` and `.pbe/bl
 
 1. Verify RPD completion before generating WPD. If any Root or leaf requirement still needs confirmation, stop and return to RPD/root confirmation.
 2. Verify UI/UX confirmation is complete for UI-required items.
+2a. If selected UI work changes visual appearance, verify the Visual Design Contract source is recorded. If the source is not waived or not_required, verify Theme Spec, Design Tokens, and Component Style Contract exist before creating visual work.
 3. Collect confirmed Product Tree branches and their compatibility requirement nodes.
 4. Derive Project Tree module, surface, service, contract, data boundary, integration boundary, and foundation nodes from confirmed Product Tree branches.
 5. Run the internal `Module Boundary Check` before creating work units.
@@ -74,6 +83,7 @@ Prefer v2 tree files when present. If `.pbe/tree/product-tree.json` and `.pbe/bl
 9a. When parity/completeness profile applies, derive or update surface completion and legacy inventory placeholders from Product/Project surface nodes before any parity claim can exist.
 9b. When hardware-dependent work exists, derive or update hardware readiness entries and keep software implementation state separate from certification state.
 9c. When a command opens a dialog, popup, subdialog, or secondary workflow, create child Project/Work nodes for that opened surface instead of treating the command mapping as surface completion.
+9d. When visual UI work is selected, run `pbe-ui-surface-inventory` inside WPD or immediately after WPD. Populate UI surface inventory, component style inventory, required UI states, screenshot requirements, and shared component ownership before VD.
 10. Add required parallel safety metadata to every Work Tree and WorkGraph node.
 11. Create WorkDesign entries from the Work Tree and WorkGraph, not directly from RPD nodes.
 12. Create a root-level implementation roadmap that references Project Tree, Work Tree, and WorkGraph phases.
@@ -101,6 +111,9 @@ Prefer v2 tree files when present. If `.pbe/tree/product-tree.json` and `.pbe/bl
 - Mark UI-related work units so they can be linked to UI/UX Spec screen IDs.
 - Reflect confirmed UI/UX direction in UI-related work units.
 - Do not plan UI implementation for unconfirmed UI/UX items.
+- Do not plan visual UI implementation without a Visual Design Contract source or explicit user waiver.
+- Use `design-tokens.json` and `component-style-contract.json` as the source for visual work boundaries.
+- Shared visual component changes must be represented in `component-style-inventory.json`; if shared components cannot use tokens, record an exception before planning implementation.
 - Do not treat one RPD node as one Codex task.
 - Do not treat one Product Tree node as one Work Tree node unless the module boundary check proves that boundary is safe.
 - Allow one RPD node to split into multiple WPD tasks.

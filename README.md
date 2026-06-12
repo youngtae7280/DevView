@@ -98,6 +98,8 @@ The official v2 layout is tree-native and additive. Public v1 paths are preserve
     legacy-control-inventory.json
     surface-completion-ledger.json
     hardware-readiness-ledger.json
+    ui-surface-inventory.json
+    component-style-inventory.json
     visual-verification-profile.json
     verification-miss-log.json
 
@@ -110,6 +112,11 @@ The official v2 layout is tree-native and additive. Public v1 paths are preserve
 
   blueprint/
     # backward-compatible v1 aliases and human-readable views
+    visual-reference.json
+    visual-reference.md
+    ui-theme-spec.md
+    design-tokens.json
+    component-style-contract.json
 
   codex-execution-pack/
     # ACEP compatibility package
@@ -167,6 +174,8 @@ If work is not derived from Product/Project nodes, it is not executable work.
 If Work/Test/Evidence does not link the relevant acceptance criteria IDs, it does not prove the Product contract.
 If a test does not verify Product/Work nodes, it is not sufficient verification.
 If evidence does not attach to Test/Product nodes, it does not close the branch.
+If visual UI changes lack a Visual Design Contract source or explicit user waiver, they are not executable.
+If required visual states lack current screenshot/manual evidence, visual UI work cannot close.
 If a change invalidates completed work, affected nodes reopen instead of being silently overwritten.
 If a command opens another surface, command mapping does not complete the opened workflow.
 If a control, event handler, hardware action, or workflow state was not checked, it must be reported as not checked and may block closure.
@@ -184,6 +193,7 @@ PBE is not only a task-card generator. It creates a traceable tree-linked execut
 - Project Tree and Work Tree / WPD WorkGraph compatibility views
 - Test Tree / VD verification design compatibility view
 - UI/UX confirmation and UI/UX spec
+- Visual Design Contract artifacts: visual reference, theme spec, design tokens, component style contract, UI surface inventory, visual verification profile, and visual audit
 - Cycle Slice / staged execution strategy
 - Change Tree and Impact Tree for safe revisions
 - parity/completeness ledgers for legacy migration, UI-heavy parity, and hardware-dependent work
@@ -317,10 +327,13 @@ flowchart TD
     F --> G{"UI/UX work involved?"}
     G -- "Yes" --> H["Human Gate<br/>UI/UX confirmation"]
     G -- "No" --> J["WPD"]
-    H -- "approve" --> J
+    H -- "approve" --> HV{"Visual appearance changes?"}
     H -- "revise" --> C
     H -- "ask" --> H
     H -- "stop" --> STOP["STOPPED"]
+    HV -- "Yes" --> VDC["Visual Design Contract<br/>source, tokens, component rules"]
+    HV -- "No" --> J
+    VDC --> J
 
     J["WPD<br/>module boundary check and WorkGraph"] --> K["VD<br/>verification design"]
     K --> L["Dependency Impact Audit<br/>future and deferred module impact"]
@@ -360,6 +373,7 @@ PBE stops only where the user has to make a product or delivery decision.
 | --- | --- | --- |
 | Root confirmation | Even a clear request must be summarized and structurally confirmed before RPD ends. | `use this structure`, `revise the audience`, `decompose this further` |
 | UI/UX confirmation | UI behavior should not be implemented before the user confirms the flow, wording, states, and exceptions. | `approve`, `change the failure screen`, `what is risky?` |
+| Visual design source | Visual appearance changes need a source of truth before implementation. PBE offers screenshot, reference app/site, existing screen, short interview, default PBE Clean Theme, or waiver. | `use the default PBE Clean Theme`, `use this screenshot`, `waive visual quality for this slice` |
 | Implementation scope | The user must decide what is selected now, what is deferred, what is foundation, and what is out of scope. | `select the recommended scope`, `defer Ethernet`, `foundation first` |
 | Architecture runway | Future or deferred modules may require foundation work now to avoid rework later. | `approve the foundation`, `interface only`, `skip this foundation` |
 | Review result | Codex can submit work for review, but only the user can accept it. | `looks good`, `fix the failed case`, `is this safe to finish?` |
@@ -375,11 +389,16 @@ flowchart LR
     B --> C["requirement-tree.json<br/>RPD"]
     C --> D["ui-ux-preview.md/json"]
     D --> E["ui-ux-confirmation.md"]
+    E --> V1["visual-reference.json/md"]
+    V1 --> V2["ui-theme-spec.md<br/>design-tokens.json<br/>component-style-contract.json"]
 
     C --> F["work-design.json<br/>WPD"]
     E --> F
+    V2 --> F
     F --> G["work-graph.json<br/>module-aware work graph"]
+    F --> VS["ui-surface-inventory.json<br/>component-style-inventory.json"]
     G --> H["verification-design.json<br/>VD"]
+    VS --> H
     H --> I["verification-plan.md"]
 
     G --> J["dependency-impact-audit.md/json"]
@@ -400,6 +419,7 @@ flowchart LR
     P --> R["task cards"]
     P --> S["traceability matrix"]
     P --> T["UI/UX spec"]
+    P --> TV["Visual Design Contract refs"]
     P --> U["final coverage check"]
 
     Q --> V["Codex implementation"]
@@ -419,7 +439,10 @@ Each PBE module has one job. The workflow is safe because no module silently exp
 | `pbe-start` | User request, target repo, existing `.pbe/` | Detects whether PBE is new or continuing, initializes state, chooses an execution profile, and starts RPD unless bypassed. | `pbe-state.json`, project brief, initial blueprint files | Usually one `start` request |
 | `RPD` | User answers, project brief, existing requirement tree | Walks one requirement node at a time, asks one open-ended question when needed, extracts facts, and proposes confirmation or decomposition. If the request is clear, Codex proposes the Root summary and child structure instead of asking whether to interview more. User confirmation is still required. | `requirement-tree.json`, `rpd-interview-log.md`, `rpd-summary.md` | Confirms the Root/leaf summary, revises it, or asks for more decomposition |
 | `UI/UX Confirm` | RPD UI facts, UI-related requirements | Creates a text wireframe, markdown mockup, or prototype-level preview before implementation. Blocks UI work until confirmed, deferred, out of scope, or not required. | `ui-ux-preview.*`, `ui-ux-confirmation.md` | Confirms, revises, or asks about UI/UX |
+| `Visual Reference Intake` | Confirmed UI/UX direction, selected visual UI work | Records the source of visual truth: screenshot, reference app/site, existing screen, short interview, default PBE Clean Theme, waiver, or not required. | `visual-reference.json`, `visual-reference.md` | Required only when no visual source or waiver exists |
+| `Design System Derive` | Visual reference | Converts visual source into Theme Spec, Design Tokens, and Component Style Contract. Default PBE Clean Theme is materialized into concrete tokens. | `ui-theme-spec.md`, `design-tokens.json`, `component-style-contract.json` | Only if visual decisions remain unclear |
 | `WPD` | Confirmed RPD, UI/UX confirmation, Source of Truth Matrix | Runs Module Boundary Check internally. Converts requirements into a module-aware WorkGraph instead of copying RPD nodes into coding tasks. Classifies selected, foundation, deferred, blocked, and out-of-scope work. | `work-design.json`, `work-graph.json`, `work-roadmap.md` | Only if a boundary blocker needs a decision |
+| `UI Surface Inventory` | WPD, design tokens, component style contract | Inventories UI surfaces, child dialogs, components, required states, screenshot requirements, shared visual components, and hardcoded style risks. | `ui-surface-inventory.json`, `component-style-inventory.json` | Automatic unless inventory reveals a product decision |
 | `VD` | WorkDesign, WorkGraph, requirement tree | Creates verification items for selected and foundation work. Records deferred and out-of-scope verification notes without treating them as current failures. | `verification-design.json`, `verification-plan.md` | Only if verification is impossible without a decision |
 | `Dependency Impact Audit` | WorkGraph, deferred/future modules, foundation hints | Checks whether future or deferred modules affect today's architecture. Classifies future impact as optional deferred, required foundation, blocking dependency, or high-impact future module. | `dependency-impact-audit.*`, foundation recommendations | Leads into implementation scope gate |
 | `Implementation Scope Gate` | Dependency audit, WorkGraph, VD | Lets the user choose what this slice will implement, what stays deferred, and what foundation is required. | Updated state and scope classification | Required |
@@ -427,6 +450,7 @@ Each PBE module has one job. The workflow is safe because no module silently exp
 | `Plan Execution` | WorkGraph, VD, traceability, foundation and parallel contracts | Builds the staged execution strategy. Foundation runs first, safe independent tasks may become parallel groups, and every parallel group gets an integration task. | `execution-strategy.md/json` | Automatic unless planning is unsafe |
 | `Coverage Audit` | Requirements, WorkGraph, VD, traceability, execution strategy | Checks that selected and foundation scope have work, verification, evidence, and traceability. Deferred and out-of-scope items must be documented but are not failures. | `coverage-audit.md` | Automatic unless blocking gaps exist |
 | `UX Audit` | UI/UX confirmation, WPD, VD, ACEP UI files when present | Checks that confirmed UI/UX direction is represented in work, verification, task cards, states, and evidence requirements. | `ux-audit.md` | Automatic unless UI/UX coverage is missing |
+| `Visual Implementation Audit` | Visual contract, UI surface inventory, evidence, screenshots | Checks that implemented visual UI work follows the contract, tokens, component rules, state coverage, and screenshot/manual evidence requirements. | `visual-audit.md`, updated visual verification profile | Automatic for visual UI work before review |
 | `Generate ACEP` | Blueprint artifacts, audits, execution strategy | Creates the Codex execution contract: manifest, task cards, traceability, UI/UX spec, validation commands, evidence checklist, final coverage check, and report template. | `.pbe/codex-execution-pack/` | Automatic after audits pass |
 | `Run ACEP` | ACEP manifest, task cards, traceability, UI/UX spec | Executes selected and foundation scope only. Runs validation, records evidence, respects parallel strategy, performs final coverage, and submits for review. | Code changes, evidence, final report, review pack | Stops only on stop conditions |
 | `Review Result` | Final report, validation, coverage, UX evidence | Packages the result for the user. Codex reports `submitted_for_review`; it does not mark work as accepted. | `.pbe/review/` | User accepts, asks, revises, or stops |

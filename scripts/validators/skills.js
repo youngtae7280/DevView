@@ -8,12 +8,16 @@ const requiredSkills = [
   'pbe-start',
   'pbe-rpd',
   'pbe-ui-ux-confirm',
+  'pbe-visual-reference-intake',
+  'pbe-design-system-derive',
   'pbe-wpd',
+  'pbe-ui-surface-inventory',
   'pbe-vd',
   'pbe-dependency-impact-audit',
   'pbe-plan-execution',
   'pbe-coverage-audit',
   'pbe-ux-audit',
+  'pbe-visual-implementation-audit',
   'pbe-generate-acep',
   'pbe-run-acep',
   'pbe-review-result',
@@ -94,4 +98,3 @@ export function runSkillsValidator({ root }) {
 
   return issues
 }
-

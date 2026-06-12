@@ -73,6 +73,31 @@ const schemaTargets = {
     target: '.pbe/control/hardware-readiness-ledger.json',
     template: 'templates/hardware-readiness-ledger.template.json',
   },
+  visualReference: {
+    schema: 'schemas/visual-reference.schema.json',
+    target: '.pbe/blueprint/visual-reference.json',
+    template: 'templates/visual-reference.template.json',
+  },
+  designTokens: {
+    schema: 'schemas/design-tokens.schema.json',
+    target: '.pbe/blueprint/design-tokens.json',
+    template: 'templates/design-tokens.template.json',
+  },
+  componentStyleContract: {
+    schema: 'schemas/component-style-contract.schema.json',
+    target: '.pbe/blueprint/component-style-contract.json',
+    template: 'templates/component-style-contract.template.json',
+  },
+  uiSurfaceInventory: {
+    schema: 'schemas/ui-surface-inventory.schema.json',
+    target: '.pbe/control/ui-surface-inventory.json',
+    template: 'templates/ui-surface-inventory.template.json',
+  },
+  componentStyleInventory: {
+    schema: 'schemas/component-style-inventory.schema.json',
+    target: '.pbe/control/component-style-inventory.json',
+    template: 'templates/component-style-inventory.template.json',
+  },
   visualVerification: {
     schema: 'schemas/visual-verification-profile.schema.json',
     target: '.pbe/control/visual-verification-profile.json',
@@ -191,6 +216,8 @@ function validateTreeLinks(data) {
   const legacyInventoryMap = collectInventoryMap(data.legacyInventory)
   const surfaceCompletionIds = collectSurfaceIds(data.surfaceCompletion)
   const hardwareReadinessIds = collectFeatureIds(data.hardwareReadiness)
+  const uiSurfaceIds = collectUiSurfaceIds(data.uiSurfaceInventory)
+  const componentStyleNames = collectComponentStyleNames(data.componentStyleInventory)
   const visualProfileIds = collectProfileIds(data.visualVerification)
   const verificationMissIds = collectMissIds(data.verificationMiss)
   const productMap = collectNodeMap(data.product)
@@ -218,6 +245,8 @@ function validateTreeLinks(data) {
     ...legacyInventoryIds,
     ...surfaceCompletionIds,
     ...hardwareReadinessIds,
+    ...uiSurfaceIds,
+    ...componentStyleNames,
     ...visualProfileIds,
     ...verificationMissIds,
   ])
@@ -246,7 +275,10 @@ function validateTreeLinks(data) {
     hardwareReadinessIds,
   })
   validateHardwareReadinessLedger(data.hardwareReadiness, { productIds, workIds, testIds, evidenceIds })
+  validateUiSurfaceInventory(data.uiSurfaceInventory, { productIds, workIds, testIds })
+  validateComponentStyleInventory(data.componentStyleInventory)
   validateVisualVerificationProfile(data.visualVerification, { productIds, projectIds, workIds, testIds, evidenceIds })
+  validateVisualDesignContractArtifacts(data, { productIds, workIds, testIds })
   validateVerificationMissLog(data.verificationMiss, { knownNodeIds, testIds, evidenceIds })
   validateCycleClosure(data.cycle, { workMap, testMap, evidenceMap })
   validateAcceptanceTree(data.acceptance, {
@@ -739,6 +771,44 @@ function validateHardwareReadinessLedger(ledger, refs) {
   }
 }
 
+function validateUiSurfaceInventory(inventory, refs) {
+  if (!inventory) {
+    return
+  }
+  for (const surface of [...(inventory.surfaces || []), ...(inventory.childSurfaces || [])]) {
+    validateKnownIds(surface.relatedProductNodes, refs.productIds, `UI surface ${surface.surfaceId}`, 'product node')
+    validateKnownIds(surface.relatedWorkNodes, refs.workIds, `UI surface ${surface.surfaceId}`, 'work node')
+    validateKnownIds(surface.relatedTestNodes, refs.testIds, `UI surface ${surface.surfaceId}`, 'test node')
+
+    if (!hasAny(surface.statesRequired)) {
+      errors.push(`UI surface ${surface.surfaceId} lacks statesRequired`)
+    }
+
+    for (const screenshot of surface.requiredScreenshots || []) {
+      if (screenshot.required === true && !screenshot.path && !screenshot.deferredReason && !screenshot.blockedReason) {
+        errors.push(`UI surface ${surface.surfaceId} required screenshot for state ${screenshot.state} lacks path, deferredReason, or blockedReason`)
+      }
+    }
+  }
+}
+
+function validateComponentStyleInventory(inventory) {
+  if (!inventory) {
+    return
+  }
+  for (const component of inventory.components || []) {
+    if (component.visualChangeScope === 'shared' && !component.requiredContractRef && !component.exceptionReason) {
+      errors.push(`component style ${component.componentName} is shared visual scope but lacks requiredContractRef or exceptionReason`)
+    }
+    if (component.visualChangeScope === 'shared' && component.usesDesignTokens === false && !component.exceptionReason) {
+      errors.push(`component style ${component.componentName} is shared visual scope but is not token-backed and lacks exceptionReason`)
+    }
+    if (hasAny(component.hardcodedStyleFindings) && !component.exceptionReason) {
+      errors.push(`component style ${component.componentName} has hardcoded style findings but lacks exceptionReason`)
+    }
+  }
+}
+
 function validateVisualVerificationProfile(profileTree, refs) {
   if (!profileTree) {
     return
@@ -758,6 +828,66 @@ function validateVisualVerificationProfile(profileTree, refs) {
       if (check.status === 'not_runnable' && !check.reason && !profile.notRunnableReason) {
         errors.push(`visual profile ${profile.id} check ${check.id} is not_runnable but lacks a reason`)
       }
+    }
+  }
+
+  for (const check of profileTree.contractChecks || []) {
+    if (check.required === true && ['failed', 'blocked'].includes(check.status)) {
+      errors.push(`visual contract check ${check.checkId} is ${check.status}: ${check.reason || check.description || 'no reason recorded'}`)
+    }
+    if (check.status === 'passed' && !hasAny(check.evidenceRefs) && check.required === true) {
+      errors.push(`visual contract check ${check.checkId} passed but lacks evidenceRefs`)
+    }
+  }
+}
+
+function validateVisualDesignContractArtifacts(data) {
+  const visualReference = data.visualReference
+  if (!visualReference) {
+    return
+  }
+
+  const visualRequired = visualReference.visualWorkRequired === true
+  const primarySource = visualReference.primarySource
+  if (!visualRequired || primarySource === 'not_required') {
+    return
+  }
+
+  if (primarySource === 'visual_quality_waived') {
+    if (visualReference.waiver?.isWaived !== true || visualReference.waiver?.riskAcceptedByUser !== true) {
+      errors.push('visual-reference.json uses visual_quality_waived but lacks waiver.isWaived=true and riskAcceptedByUser=true')
+    }
+    return
+  }
+
+  if (!data.designTokens) {
+    errors.push('visual work requires .pbe/blueprint/design-tokens.json')
+  }
+  if (!data.componentStyleContract) {
+    errors.push('visual work requires .pbe/blueprint/component-style-contract.json')
+  }
+  if (!data.uiSurfaceInventory) {
+    errors.push('visual work requires .pbe/control/ui-surface-inventory.json')
+  }
+  if (!data.visualVerification) {
+    errors.push('visual work requires .pbe/control/visual-verification-profile.json')
+  }
+  if (!existsSync(path.join(root, '.pbe/blueprint/ui-theme-spec.md'))) {
+    errors.push('visual work requires .pbe/blueprint/ui-theme-spec.md')
+  }
+
+  const tokenGroups = ['colors', 'spacing', 'radius', 'typography', 'border', 'shadow', 'motion']
+  for (const group of tokenGroups) {
+    const values = data.designTokens?.tokens?.[group]
+    if (!values || Object.keys(values).length === 0) {
+      errors.push(`design-tokens.json lacks non-empty token group: ${group}`)
+    }
+  }
+
+  const componentNames = new Set((data.componentStyleContract?.components || []).map((component) => component.componentName))
+  for (const requiredComponent of ['Button', 'Panel']) {
+    if (!componentNames.has(requiredComponent)) {
+      errors.push(`component-style-contract.json lacks required base component contract: ${requiredComponent}`)
     }
   }
 }
@@ -1007,6 +1137,14 @@ function collectInventoryMap(inventoryTree) {
 
 function collectSurfaceIds(ledger) {
   return new Set((ledger?.surfaces || []).map((surface) => surface.id).filter(Boolean))
+}
+
+function collectUiSurfaceIds(inventory) {
+  return new Set([...(inventory?.surfaces || []), ...(inventory?.childSurfaces || [])].map((surface) => surface.surfaceId).filter(Boolean))
+}
+
+function collectComponentStyleNames(inventory) {
+  return new Set((inventory?.components || []).map((component) => component.componentName).filter(Boolean))
 }
 
 function collectFeatureIds(ledger) {

@@ -50,6 +50,8 @@ Prefer v2 files when present:
 - `.pbe/control/legacy-control-inventory.json`
 - `.pbe/control/surface-completion-ledger.json`
 - `.pbe/control/hardware-readiness-ledger.json`
+- `.pbe/control/ui-surface-inventory.json`
+- `.pbe/control/component-style-inventory.json`
 - `.pbe/control/visual-verification-profile.json`
 - `.pbe/control/verification-miss-log.json`
 - `.pbe/evidence/evidence-tree.json`
@@ -63,6 +65,11 @@ Backward-compatible v1 views may also exist:
 - `.pbe/blueprint/parallel-safety-contract.md`
 - `.pbe/blueprint/requirement-tree.json`
 - `.pbe/blueprint/ui-ux-confirmation.md`
+- `.pbe/blueprint/visual-reference.json`
+- `.pbe/blueprint/visual-reference.md`
+- `.pbe/blueprint/ui-theme-spec.md`
+- `.pbe/blueprint/design-tokens.json`
+- `.pbe/blueprint/component-style-contract.json`
 - `.pbe/blueprint/work-design.json`
 - `.pbe/blueprint/work-graph.json`
 - `.pbe/blueprint/verification-design.json`
@@ -283,6 +290,28 @@ For UI tasks:
 6. Provide UI/UX evidence after implementation.
 7. If screenshot is unavailable, write manual verification notes.
 
+## Visual Design Contract
+
+UI/UX confirmation approves product flow, screen structure, wording, controls, states, and exceptions. It does not by itself approve visual redesign.
+
+When selected UI work changes visual appearance:
+
+1. Create or update `.pbe/blueprint/visual-reference.json` and `.pbe/blueprint/visual-reference.md`.
+2. The visual source must be one of `reference_screenshot`, `reference_app_or_site`, `existing_project_screen`, `interview_derived`, `default_pbe_clean_theme`, `visual_quality_waived`, or `not_required`.
+3. If no visual source exists, stop at the visual source gate and offer all six choices. Do not ask only for a screenshot.
+4. If using interview-derived visual direction, ask at most three initial questions: UI type, density, and color direction.
+5. If using `default_pbe_clean_theme`, materialize it into concrete tokens and component rules before implementation.
+6. If using `visual_quality_waived`, record the user-accepted waiver reason, risk, and scope.
+7. Unless waived or not required, create `.pbe/blueprint/ui-theme-spec.md`, `.pbe/blueprint/design-tokens.json`, and `.pbe/blueprint/component-style-contract.json` before WPD, ACEP, or UI implementation.
+8. Design tokens must include colors, spacing, radius, typography, border, shadow, and motion.
+9. Component Style Contract must cover relevant shared components, including Button and Panel as base contracts, and Input, Select, Checkbox/Switch, Card, Modal/Dialog, Tabs, Sidebar/Header/Toolbar, Table/List, Expand/Collapse, Empty, Loading, and Error when present.
+10. WPD must create or update `.pbe/control/ui-surface-inventory.json` and `.pbe/control/component-style-inventory.json` for selected visual UI work.
+11. VD must convert required UI surface states into screenshot/manual visual evidence requirements.
+12. ACEP task cards and Node Execution Contracts for visual UI work must include Visual Design Contract refs, token source, component contract, visual non-scope, required visual states, screenshot evidence, forbidden visual changes, and deviation rules.
+13. Run Visual Implementation Audit before review result when visual UI work changed.
+14. Missing or stale required screenshot/manual evidence blocks UI closure.
+15. Visual deviations must be recorded and resolved by user acceptance, revision, deferral, out-of-scope classification, or waiver before closure.
+
 ## Parallel Execution
 
 Default policy:
@@ -381,4 +410,4 @@ After review approval, move to `WAITING_NEXT_SLICE_DECISION`. Do not mark `COMPL
 
 ## Stop Conditions
 
-Stop and ask the user when work requires credentials, deployment, billing, destructive migration, out-of-scope changes, unresolved traceability/UI evidence gaps, UI implementation without confirmation, missing WorkGraph, missing Module Boundary Check, missing foundation approval, parallel group without integration task, forbidden shared-risk work inside a parallel group, revision outside affected scope, unclear feedback scope, or when the same validation failure repeats three times.
+Stop and ask the user when work requires credentials, deployment, billing, destructive migration, out-of-scope changes, unresolved traceability/UI evidence gaps, UI implementation without confirmation, visual UI implementation without Visual Design Contract source or waiver, missing/stale required visual evidence, unresolved visual deviation, missing WorkGraph, missing Module Boundary Check, missing foundation approval, parallel group without integration task, forbidden shared-risk work inside a parallel group, revision outside affected scope, unclear feedback scope, or when the same validation failure repeats three times.

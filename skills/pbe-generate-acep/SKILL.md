@@ -35,6 +35,8 @@ Prefer v2 tree and cycle files when present:
 .pbe/control/legacy-control-inventory.json
 .pbe/control/surface-completion-ledger.json
 .pbe/control/hardware-readiness-ledger.json
+.pbe/control/ui-surface-inventory.json
+.pbe/control/component-style-inventory.json
 .pbe/control/visual-verification-profile.json
 .pbe/control/verification-miss-log.json
 ```
@@ -53,6 +55,10 @@ Also read compatibility, audit, and strategy files:
 .pbe/blueprint/execution-strategy.json
 .pbe/blueprint/execution-strategy.md
 .pbe/blueprint/ui-ux-confirmation.md
+.pbe/blueprint/visual-reference.json
+.pbe/blueprint/ui-theme-spec.md
+.pbe/blueprint/design-tokens.json
+.pbe/blueprint/component-style-contract.json
 .pbe/blueprint/coverage-audit.md
 .pbe/blueprint/ux-audit.md
 .pbe/blueprint/source-of-truth-matrix.md
@@ -122,6 +128,10 @@ Enforce these rules when generating ACEP:
 - No UI screen without state coverage.
 - No final completion without coverage check.
 - No UI implementation without UI/UX confirmation.
+- No visual UI implementation without Visual Design Contract source, Theme Spec, Design Tokens, Component Style Contract, and UI Surface Inventory unless visual quality is explicitly waived by the user.
+- No shared visual component change without Component Style Contract reference or approved exception.
+- No required visual UI state without screenshot/manual evidence requirement.
+- No stale screenshot evidence used for closure.
 - No accepted or accepted_done status from Codex.
 - No parallel execution plan without WPD WorkGraph.
 - No parallel group without an integration task.
@@ -250,6 +260,7 @@ For every required screen or UI flow, include:
 - accessibility expectations
 - forbidden UX
 - evidence required
+- visual source, token source, component style contract, UI surface inventory, and visual evidence requirements when visual appearance changes
 
 ## Task Cards
 
@@ -277,6 +288,19 @@ UI task cards must also include:
 ## UI/UX Non-Scope
 ## UI/UX Evidence Required
 ## UI/UX Confirmation Reference
+```
+
+Visual UI task cards must also include:
+
+```text
+## Visual Design Contract
+## Design Token Source
+## Component Style Contract
+## UI Surface Inventory
+## Visual Non-Scope
+## Required Visual States
+## Screenshot Evidence Required
+## Visual Deviation Rule
 ```
 
 Every task card must include:
@@ -335,6 +359,9 @@ Every verification item must identify its linked Product, Work, task, and Test n
 - evidence for every included Test node
 - validation pass or not-runnable explanation
 - UI/UX evidence for required screens and states
+- Visual Design Contract evidence for required selected visual states
+- screenshot/manual visual evidence for every required surface state, or explicit deferral/blocker
+- no unresolved visual deviations
 - child dialog/subdialog/control/event-handler evidence for commands that open secondary surfaces
 - hardware-gated substitute evidence or explicit blocking manual-not-verified entries
 - a Not Checked section for uninspected dialogs, controls, event handlers, hardware actions, and workflow states
@@ -344,7 +371,7 @@ Every verification item must identify its linked Product, Work, task, and Test n
 - no unresolved stop condition
 - user acceptance as a separate post-review decision
 
-`17-final-report-template.md` must include cycle ID, included/excluded nodes, requirement, task, verification, UI/UX confirmation, approved UI/UX implemented, traceability, evidence, files changed, deviations, known issues, delivery status, user review, revision history, stop conditions, and remaining manual review sections.
+`17-final-report-template.md` must include cycle ID, included/excluded nodes, requirement, task, verification, UI/UX confirmation, Visual Design Contract result, approved UI/UX implemented, traceability, evidence, files changed, deviations, known issues, delivery status, user review, revision history, stop conditions, and remaining manual review sections.
 
 When parity/completeness artifacts exist, final coverage and final report sections must also include surface completion, legacy inventory gaps, dialog/subdialog inventory gaps, event-handler gaps, visual/runtime verification, hardware readiness, verification miss promotion status, and all blocking Not Checked items.
 
@@ -375,6 +402,10 @@ Every task must include:
 - `requirementIds`
 - `verificationIds` or `verificationExplanation`
 - `uiUxIds`
+- `visualContractRefs`
+- `designTokenRef`
+- `componentStyleContractRef`
+- `uiSurfaceInventoryRefs`
 - `evidenceRequired`
 - focused validation
 - execution mode
@@ -391,6 +422,7 @@ Before generating ACEP, run or satisfy:
 
 - `pbe-coverage-audit`
 - `pbe-ux-audit`
+- `pbe visual check` or equivalent Visual Design Contract preflight when visual UI work is selected
 - `pbe-plan-execution`
 
 Do not generate ACEP if either audit has blocking issues.
@@ -448,6 +480,7 @@ Stop and ask the user when work requires:
 - missing requirements that make the task impossible to complete safely
 - unresolved traceability or UI evidence gaps that block completion
 - missing UI/UX confirmation for UI tasks
+- missing Visual Design Contract source, design tokens, component style contract, UI surface inventory, or screenshot evidence for selected visual UI tasks
 - missing WorkGraph or Module Boundary Check
 - missing execution strategy from `pbe-plan-execution`
 - missing Cycle Tree or Cycle Contract

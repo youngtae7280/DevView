@@ -489,6 +489,133 @@ export async function validateVd(root: string): Promise<ValidationIssue[]> {
   return issues
 }
 
+export async function validateVisualDesign(root: string, options: { requireEvidence?: boolean } = {}): Promise<ValidationIssue[]> {
+  const issues: ValidationIssue[] = []
+  const product = await readJsonIfExists(root, 'productTree')
+  const work = await readJsonIfExists(root, 'workTree')
+  const test = await readJsonIfExists(root, 'testTree')
+  const evidence = await readJsonIfExists(root, 'evidenceTree')
+  const visualReference = await readJsonIfExists(root, 'visualReference')
+  const designTokens = await readJsonIfExists(root, 'designTokens')
+  const componentStyleContract = await readJsonIfExists(root, 'componentStyleContract')
+  const uiSurfaceInventory = await readJsonIfExists(root, 'uiSurfaceInventory')
+  const componentStyleInventory = await readJsonIfExists(root, 'componentStyleInventory')
+  const visualVerificationProfile = await readJsonIfExists(root, 'visualVerificationProfile')
+
+  if (!hasSelectedVisualWork(product, work, test, visualReference)) {
+    return issues
+  }
+
+  if (!visualReference) {
+    issues.push(missingIssue('VisualDesign', 'VISUAL_REFERENCE_MISSING', defaultArtifacts.visualReference, 'Selected visual UI work requires visual-reference.json.'))
+    return issues
+  }
+
+  const primarySource = stringValue(visualReference.primarySource)
+  if (primarySource === 'not_required') {
+    issues.push(issue({
+      validator: 'VisualDesign',
+      code: 'VISUAL_SOURCE_NOT_SELECTED',
+      severity: 'error',
+      file: defaultArtifacts.visualReference,
+      message: 'Visual work is selected, but visual-reference.json still says primarySource is not_required.',
+      suggestedFix: 'Run Visual Reference Intake and choose a source, default theme, or explicit waiver.',
+    }))
+    return issues
+  }
+
+  if (primarySource === 'visual_quality_waived') {
+    if (getNestedBoolean(visualReference, ['waiver', 'isWaived']) !== true || getNestedBoolean(visualReference, ['waiver', 'riskAcceptedByUser']) !== true) {
+      issues.push(issue({
+        validator: 'VisualDesign',
+        code: 'VISUAL_WAIVER_NOT_USER_ACCEPTED',
+        severity: 'error',
+        file: defaultArtifacts.visualReference,
+        message: 'Visual quality is waived, but waiver metadata does not show user-accepted risk.',
+        suggestedFix: 'Record waiver.isWaived=true, waiver.riskAcceptedByUser=true, reason, and scope from the user decision.',
+      }))
+    }
+    return issues
+  }
+
+  if (!existsSync(artifactPath(root, 'uiThemeSpec'))) {
+    issues.push(missingIssue('VisualDesign', 'UI_THEME_SPEC_MISSING', defaultArtifacts.uiThemeSpec, 'Selected visual UI work requires ui-theme-spec.md.'))
+  }
+  if (!designTokens) {
+    issues.push(missingIssue('VisualDesign', 'DESIGN_TOKENS_MISSING', defaultArtifacts.designTokens, 'Selected visual UI work requires design-tokens.json.'))
+  } else {
+    for (const group of ['colors', 'spacing', 'radius', 'typography', 'border', 'shadow', 'motion']) {
+      if (!isObject(getNestedValue(designTokens, ['tokens', group])) || Object.keys(getNestedValue(designTokens, ['tokens', group]) as JsonObject).length === 0) {
+        issues.push(issue({
+          validator: 'VisualDesign',
+          code: 'DESIGN_TOKEN_GROUP_MISSING',
+          severity: 'error',
+          file: defaultArtifacts.designTokens,
+          nodeId: group,
+          message: `Design token group ${group} is missing or empty.`,
+          suggestedFix: 'Materialize the Visual Design Contract into concrete colors, spacing, radius, typography, border, shadow, and motion tokens.',
+        }))
+      }
+    }
+  }
+  if (!componentStyleContract) {
+    issues.push(missingIssue('VisualDesign', 'COMPONENT_STYLE_CONTRACT_MISSING', defaultArtifacts.componentStyleContract, 'Selected visual UI work requires component-style-contract.json.'))
+  } else {
+    const componentNames = new Set(arrayObjects(componentStyleContract.components).map((entry) => stringValue(entry.componentName)))
+    for (const requiredComponent of ['Button', 'Panel']) {
+      if (!componentNames.has(requiredComponent)) {
+        issues.push(issue({
+          validator: 'VisualDesign',
+          code: 'BASE_COMPONENT_CONTRACT_MISSING',
+          severity: 'error',
+          file: defaultArtifacts.componentStyleContract,
+          nodeId: requiredComponent,
+          message: `Component Style Contract lacks required base component: ${requiredComponent}.`,
+          suggestedFix: 'Add the base component contract or record why it is not applicable to this UI slice.',
+        }))
+      }
+    }
+  }
+  if (!uiSurfaceInventory) {
+    issues.push(missingIssue('VisualDesign', 'UI_SURFACE_INVENTORY_MISSING', defaultArtifacts.uiSurfaceInventory, 'Selected visual UI work requires ui-surface-inventory.json.'))
+  }
+  if (!visualVerificationProfile) {
+    issues.push(missingIssue('VisualDesign', 'VISUAL_VERIFICATION_PROFILE_MISSING', defaultArtifacts.visualVerificationProfile, 'Selected visual UI work requires visual-verification-profile.json.'))
+  }
+
+  for (const component of arrayObjects(componentStyleInventory?.components)) {
+    const componentName = stringValue(component.componentName)
+    if (stringValue(component.visualChangeScope) === 'shared' && !stringValue(component.requiredContractRef) && !stringValue(component.exceptionReason)) {
+      issues.push(issue({
+        validator: 'VisualDesign',
+        code: 'SHARED_COMPONENT_CONTRACT_MISSING',
+        severity: 'error',
+        file: defaultArtifacts.componentStyleInventory,
+        nodeId: componentName,
+        message: `Shared visual component ${componentName} lacks a Component Style Contract reference or exception.`,
+        suggestedFix: 'Link requiredContractRef or record a local exception before implementation.',
+      }))
+    }
+    if (stringValue(component.visualChangeScope) === 'shared' && component.usesDesignTokens === false && !stringValue(component.exceptionReason)) {
+      issues.push(issue({
+        validator: 'VisualDesign',
+        code: 'SHARED_COMPONENT_NOT_TOKENIZED',
+        severity: 'error',
+        file: defaultArtifacts.componentStyleInventory,
+        nodeId: componentName,
+        message: `Shared visual component ${componentName} is not token-backed.`,
+        suggestedFix: 'Use design tokens for shared component styling or record an approved exception.',
+      }))
+    }
+  }
+
+  if (options.requireEvidence) {
+    issues.push(...validateVisualEvidence(root, uiSurfaceInventory, evidence))
+  }
+
+  return issues
+}
+
 export async function validateAcep(root: string): Promise<ValidationIssue[]> {
   const manifestPath = artifactPath(root, 'executionManifest')
   if (!existsSync(manifestPath)) {
@@ -573,6 +700,7 @@ export async function validateAcep(root: string): Promise<ValidationIssue[]> {
   if (!existsSync(artifactPath(root, 'finalCoverageCheck'))) {
     issues.push(missingIssue('ACEP', 'FINAL_COVERAGE_MISSING', defaultArtifacts.finalCoverageCheck, 'ACEP final coverage check is missing.'))
   }
+  issues.push(...await validateVisualDesign(root))
   return issues
 }
 
@@ -625,6 +753,7 @@ export async function validateEvidence(root: string): Promise<ValidationIssue[]>
       }))
     }
   }
+  issues.push(...await validateVisualDesign(root, { requireEvidence: true }))
   return issues
 }
 
@@ -718,6 +847,100 @@ function validateWorkDependencyGraph(work: JsonObject | null): ValidationIssue[]
 
   for (const id of nodeMap.keys()) {
     visit(id)
+  }
+  return issues
+}
+
+function hasSelectedVisualWork(
+  product: JsonObject | null,
+  work: JsonObject | null,
+  test: JsonObject | null,
+  visualReference: JsonObject | null,
+): boolean {
+  if (visualReference?.visualWorkRequired === true) {
+    return true
+  }
+  const productHasVisualWork = nodesOf(product).some((node) => {
+    if (!['selected', 'foundation'].includes(stringValue(node.scopeClass))) {
+      return false
+    }
+    return stringValue(node.type) === 'ui_surface' && getNestedBoolean(node, ['ux', 'visualAffected']) === true ||
+      stringValue(node.type) === 'ui_state' && getNestedBoolean(node, ['ux', 'visualAffected']) === true ||
+      getNestedBoolean(node, ['ux', 'visualWorkRequired']) === true ||
+      getNestedBoolean(node, ['visualImpact']) === true
+  })
+  const workHasVisualWork = nodesOf(work).some((node) => {
+    if (!['selected', 'foundation'].includes(stringValue(node.scopeClass))) {
+      return false
+    }
+    const impact = stringValue(node.uiImpact)
+    return ['visual', 'appearance', 'direct_visual'].includes(impact) ||
+      getNestedBoolean(node, ['visualImpact']) === true ||
+      getNestedBoolean(node, ['ui', 'visualWorkRequired']) === true
+  })
+  const testHasVisualWork = nodesOf(test).some((node) => {
+    if (stringValue(node.id) === stringValue(test?.rootNodeId)) {
+      return false
+    }
+    return stringValue(node.type) === 'visual_regression_test' ||
+      arrayStrings(node.evidenceRequired).some((entry) => entry.toLowerCase().includes('visual contract'))
+  })
+  return productHasVisualWork || workHasVisualWork || testHasVisualWork
+}
+
+function validateVisualEvidence(root: string, uiSurfaceInventory: JsonObject | null, evidence: JsonObject | null): ValidationIssue[] {
+  const issues: ValidationIssue[] = []
+  const evidenceNodes = arrayObjects(evidence?.evidence)
+  for (const surface of [
+    ...arrayObjects(uiSurfaceInventory?.surfaces),
+    ...arrayObjects(uiSurfaceInventory?.childSurfaces),
+  ]) {
+    const surfaceId = stringValue(surface.surfaceId)
+    for (const screenshot of arrayObjects(surface.requiredScreenshots)) {
+      if (screenshot.required !== true || stringValue(screenshot.deferredReason) || stringValue(screenshot.blockedReason)) {
+        continue
+      }
+      const expectedPath = normalizeEvidencePath(stringValue(screenshot.path))
+      const linkedEvidence = evidenceNodes.filter((entry) => {
+        const entryPath = normalizeEvidencePath(stringValue(entry.path))
+        return entryPath && expectedPath && entryPath === expectedPath ||
+          stringValue(entry.id) === stringValue(screenshot.evidenceNodeId)
+      })
+      const staleEvidence = linkedEvidence.some((entry) => stringValue(entry.status) === 'stale_evidence')
+      const currentEvidence = linkedEvidence.some((entry) => ['attached', 'replaced'].includes(stringValue(entry.status)))
+      if (staleEvidence) {
+        issues.push(issue({
+          validator: 'VisualDesign',
+          code: 'STALE_VISUAL_EVIDENCE',
+          severity: 'error',
+          file: defaultArtifacts.evidenceTree,
+          nodeId: surfaceId,
+          message: `Visual evidence for surface ${surfaceId} state ${String(screenshot.state)} is stale.`,
+          suggestedFix: 'Capture fresh screenshot/manual visual evidence after the latest UI change.',
+        }))
+      }
+      if (!currentEvidence) {
+        issues.push(issue({
+          validator: 'VisualDesign',
+          code: 'VISUAL_SCREENSHOT_EVIDENCE_MISSING',
+          severity: 'error',
+          file: defaultArtifacts.uiSurfaceInventory,
+          nodeId: surfaceId,
+          message: `Required visual evidence is missing for surface ${surfaceId} state ${String(screenshot.state)}.`,
+          suggestedFix: 'Attach screenshot/manual evidence and link it in Evidence Tree, or defer/block the state explicitly.',
+        }))
+      } else if (expectedPath && !existsSync(resolveEvidencePath(root, expectedPath))) {
+        issues.push(issue({
+          validator: 'VisualDesign',
+          code: 'VISUAL_SCREENSHOT_FILE_MISSING',
+          severity: 'error',
+          file: defaultArtifacts.evidenceTree,
+          nodeId: surfaceId,
+          message: `Visual evidence file is missing: ${expectedPath}.`,
+          suggestedFix: 'Create the screenshot file or update the evidence path.',
+        }))
+      }
+    }
   }
   return issues
 }
@@ -860,6 +1083,10 @@ function resolveEvidencePath(root: string, evidencePath: string): string {
     return evidencePath
   }
   return `${root}/${evidencePath}`.replaceAll('\\', '/')
+}
+
+function normalizeEvidencePath(evidencePath: string): string {
+  return evidencePath.replaceAll('\\', '/')
 }
 
 function getNestedString(value: unknown, keys: string[]): string {

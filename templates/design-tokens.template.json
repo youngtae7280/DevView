@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactType": "design_tokens",
+  "status": "draft",
+  "sourceRef": ".pbe/blueprint/visual-reference.json",
+  "tokens": {
+    "colors": {
+      "pageBackground": { "value": "#F6F7F9", "intent": "Main app background" },
+      "panelBackground": { "value": "#FFFFFF", "intent": "Cards, panels, and dialogs" },
+      "surfaceMuted": { "value": "#F1F3F5", "intent": "Subtle nested surface" },
+      "textPrimary": { "value": "#1F2933", "intent": "Main readable text" },
+      "textSecondary": { "value": "#667085", "intent": "Secondary labels and descriptions" },
+      "textMuted": { "value": "#98A2B3", "intent": "Placeholder or disabled text" },
+      "borderSubtle": { "value": "#D0D5DD", "intent": "Default borders" },
+      "primary": { "value": "#3B82F6", "intent": "Primary action" },
+      "primaryHover": { "value": "#2563EB", "intent": "Primary action hover" },
+      "danger": { "value": "#DC2626", "intent": "Destructive or error action" },
+      "warning": { "value": "#D97706", "intent": "Warning state" },
+      "success": { "value": "#16A34A", "intent": "Success state" }
+    },
+    "spacing": {
+      "xs": { "value": "4px" },
+      "sm": { "value": "8px" },
+      "md": { "value": "12px" },
+      "lg": { "value": "16px" },
+      "xl": { "value": "24px" },
+      "xxl": { "value": "32px" }
+    },
+    "radius": {
+      "control": { "value": "8px" },
+      "panel": { "value": "12px" },
+      "modal": { "value": "16px" }
+    },
+    "typography": {
+      "fontFamily": { "value": "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" },
+      "caption": { "fontSize": "12px", "lineHeight": "16px" },
+      "body": { "fontSize": "14px", "lineHeight": "20px" },
+      "label": { "fontSize": "13px", "lineHeight": "18px", "fontWeight": "500" },
+      "title": { "fontSize": "18px", "lineHeight": "24px", "fontWeight": "600" }
+    },
+    "border": {
+      "subtle": { "value": "1px solid var(--color-border-subtle)" },
+      "focus": { "value": "2px solid var(--color-primary)" }
+    },
+    "shadow": {
+      "none": { "value": "none" },
+      "panel": { "value": "0 1px 2px rgba(16, 24, 40, 0.06)" },
+      "modal": { "value": "0 12px 24px rgba(16, 24, 40, 0.14)" }
+    },
+    "motion": {
+      "fast": { "value": "120ms ease" },
+      "normal": { "value": "180ms ease" }
+    }
+  },
+  "openQuestions": [],
+  "exceptions": []
+}

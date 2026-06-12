@@ -17,5 +17,9 @@
 15. `COMPLETED` is used only when the whole project is complete.
 16. Only the user may set `accepted`.
 17. UI tasks must not run without UI/UX confirmation.
-18. Delivery must not be completed without Result Review.
-
+18. Visual UI changes must not run without Visual Design Contract source or explicit user waiver.
+19. Default PBE Clean Theme must be materialized into Design Tokens and Component Style Contract before visual implementation.
+20. Shared visual component changes require Component Style Contract linkage or approved exception.
+21. Required visual UI states need current screenshot/manual evidence, deferral, or blocker before closure.
+22. Stale visual evidence blocks review submission and acceptance.
+23. Delivery must not be completed without Result Review.

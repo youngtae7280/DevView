@@ -30,8 +30,14 @@ Prefer v2 files when present:
 .pbe/control/acceptance-tree.json
 .pbe/control/legacy-control-inventory.json
 .pbe/control/surface-completion-ledger.json
+.pbe/control/ui-surface-inventory.json
+.pbe/control/component-style-inventory.json
 .pbe/control/visual-verification-profile.json
 .pbe/evidence/evidence-tree.json
+.pbe/blueprint/visual-reference.json
+.pbe/blueprint/ui-theme-spec.md
+.pbe/blueprint/design-tokens.json
+.pbe/blueprint/component-style-contract.json
 ```
 
 Also read compatibility and ACEP files:
@@ -93,6 +99,18 @@ Check v2 UI closure:
 7. Accepted UI branches must not have reopened Product nodes or stale evidence.
 8. Deferred or out-of-scope UI nodes are not included in the active Cycle Slice.
 
+Check Visual Design Contract coverage when visual appearance changes:
+
+1. Selected visual UI work has `visual-reference.json`.
+2. Visual source is one of screenshot, app/site reference, existing project screen, interview-derived, default PBE Clean Theme, or explicit waiver.
+3. If not waived or not_required, Theme Spec, Design Tokens, and Component Style Contract exist.
+4. Required token groups exist: colors, spacing, radius, typography, border, shadow, and motion.
+5. Shared visual component changes are represented in Component Style Inventory and either use tokens or record an approved exception.
+6. UI Surface Inventory lists selected surfaces, child surfaces, relevant states, and screenshot/manual evidence requirements.
+7. Visual Verification Profile includes required contract checks and no blocking failures.
+8. Visual deviations are recorded before review, and unresolved deviations block closure.
+9. Stale screenshot evidence blocks closure.
+
 Check parity/completeness UI controls when present:
 
 1. Legacy or parity-critical UI surfaces have visible/enabled inventory before parity is claimed.
@@ -143,6 +161,7 @@ Include:
 - surface completion ledger result, when active
 - dialog/subdialog and not-checked UI result, when active
 - legacy inventory and visual profile result, when active
+- Visual Design Contract source, token, component, surface, and screenshot evidence result when visual UI work is active
 - blocking issues
 - pass/fail result
 - next automatic step when passed: Generate ACEP

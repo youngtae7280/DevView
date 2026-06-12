@@ -37,7 +37,13 @@ If either command fails, do not generate ACEP.
 .pbe/control/surface-completion-ledger.json
 .pbe/control/legacy-control-inventory.json
 .pbe/control/hardware-readiness-ledger.json
+.pbe/control/ui-surface-inventory.json
+.pbe/control/component-style-inventory.json
 .pbe/control/visual-verification-profile.json
+.pbe/blueprint/visual-reference.json
+.pbe/blueprint/ui-theme-spec.md
+.pbe/blueprint/design-tokens.json
+.pbe/blueprint/component-style-contract.json
 ```
 
 ## Outputs
@@ -48,6 +54,7 @@ If either command fails, do not generate ACEP.
 .pbe/blueprint/verification-plan.md
 .pbe/control/visual-verification-profile.json
 .pbe/control/hardware-readiness-ledger.json
+.pbe/evidence/screenshots/
 ```
 
 Prefer v2 tree files when present. If Work Tree scope classifications conflict with WorkGraph or WorkDesign compatibility files, stop and report the mismatch before deriving verification.
@@ -65,6 +72,8 @@ Prefer v2 tree files when present. If Work Tree scope classifications conflict w
 7b. For hardware-dependent Work nodes, record readiness verification state in `.pbe/control/hardware-readiness-ledger.json`.
 7c. For commands that open dialogs, popups, subdialogs, or secondary workflows, add Test Tree coverage for the opened surface, visible controls, default values, enabled/disabled states, event handlers, repeated/async behavior, error handling, busy state, and cancel/retry behavior.
 7d. For hardware-gated dialogs or actions, require substitute evidence such as mock-backed UI validation, fake read/result validation, UI automation with hardware disabled, or an explicit `manual_not_verified` entry that blocks closure.
+7e. When visual UI work is selected, derive screenshot/manual visual evidence checks from `ui-surface-inventory.json`, `design-tokens.json`, and `component-style-contract.json`.
+7f. Update `visual-verification-profile.json` with Visual Design Contract checks: contract exists, required states have screenshot/manual evidence, component contract compliance, and visual deviation log coverage.
 8. Identify validation command candidates.
 9. Identify regression risks, including deferred-module foundation risk.
 10. Save `.pbe/tree/test-tree.json`.
@@ -89,6 +98,10 @@ Prefer v2 tree files when present. If Work Tree scope classifications conflict w
 - When source Product nodes have structured `acceptanceCriteria`, Test Tree nodes must link the relevant `verifiesAcceptanceCriteriaIds`.
 - When a confirmed criterion has `verification.required: true`, VD must create or map Test Tree coverage for it.
 - UI-related work must require UI/UX evidence.
+- Visual UI work must require Visual Design Contract evidence, not only UI/UX flow confirmation.
+- Required selected UI states from `ui-surface-inventory.json` must appear as Test Tree checks or explicit deferral/blockers.
+- Screenshot evidence must be linked through Evidence Tree when the cycle is submitted for review.
+- Stale screenshot evidence blocks UI closure.
 - Visual parity work must not rely only on build or open smoke. Use screenshot review, popup visual review, runtime coordinate check, resize/DPI review, clipped-control audit, or a not-runnable explanation when relevant.
 - Legacy parity work must require inventory comparison evidence or an explicit parity gap/deferred reason.
 - Command availability is not workflow verification. If a command opens another surface, the opened surface must have child Test Tree nodes or a recorded blocking not-checked item.
@@ -165,6 +178,15 @@ When available, it must also state the linked acceptance criteria IDs.
 Evidence planning must identify whether evidence should prove Test nodes, acceptance criteria, or both.
 
 For UI/UX verification, include checks for confirmed states, required elements, accessibility expectations, and evidence requirements.
+
+For Visual Design Contract verification, include:
+
+- Visual source and Theme Spec checks
+- token usage checks
+- Component Style Contract compliance
+- required UI state screenshots or manual visual notes
+- stale screenshot detection
+- recorded visual deviations and disposition
 
 When the parity/completeness profile is active, include:
 

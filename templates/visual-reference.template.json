@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactType": "visual_reference",
+  "status": "draft",
+  "createdAt": "",
+  "updatedAt": "",
+  "visualWorkRequired": false,
+  "primarySource": "not_required",
+  "sources": [
+    {
+      "sourceId": "VISUAL-SOURCE-001",
+      "sourceType": "not_required",
+      "description": "No visual appearance change has been selected yet.",
+      "pathOrUrl": "",
+      "providedBy": "codex",
+      "scope": "unknown"
+    }
+  ],
+  "intendedScope": {
+    "scopeType": "not_required",
+    "includedSurfaces": [],
+    "excludedSurfaces": [],
+    "notes": ""
+  },
+  "mustPreserve": [
+    "existing behavior",
+    "existing controls unless explicitly changed",
+    "expanded and collapsed controls when present"
+  ],
+  "nonGoals": [
+    "do not redesign product flow unless requested",
+    "do not remove controls for visual simplification",
+    "do not introduce unrelated brand colors"
+  ],
+  "interviewAnswers": {
+    "uiType": null,
+    "density": null,
+    "colorDirection": null,
+    "extraNotes": []
+  },
+  "waiver": {
+    "isWaived": false,
+    "reason": null,
+    "riskAcceptedByUser": false,
+    "scope": null
+  },
+  "decisionLog": []
+}
