@@ -8,7 +8,8 @@
     "pbe": "./dist/cli/index.js"
   },
   "scripts": {
-    "build:cli": "tsc -p tsconfig.cli.json",
+    "clean:dist": "node scripts/clean-dist.js",
+    "build:cli": "npm run clean:dist && tsc -p tsconfig.cli.json",
     "pbe": "node dist/cli/index.js",
     "validate:pbe": "npm run build:cli && node dist/cli/index.js validate",
     "validate:pbe:v2": "node scripts/validate-pbe-tree-system.js",
@@ -16,38 +17,17 @@
     "test": "vitest run",
     "lint": "eslint .",
     "build": "npm run validate:pbe",
-    "legacy:dev": "vite",
-    "legacy:typecheck": "tsc -b",
-    "legacy:build": "tsc -b && vite build",
-    "legacy:lint": "eslint .",
-    "legacy:test": "vitest run",
-    "legacy:preview": "vite preview",
     "validate": "npm run validate:pbe"
   },
-  "dependencies": {
-    "@xyflow/react": "12.6.4",
-    "lucide-react": "0.468.0",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@eslint/js": "9.27.0",
-    "@testing-library/jest-dom": "6.6.3",
-    "@testing-library/react": "16.1.0",
-    "@testing-library/user-event": "14.5.2",
     "@types/node": "20.17.10",
-    "@types/react": "18.3.18",
-    "@types/react-dom": "18.3.5",
-    "@vitejs/plugin-react": "4.7.0",
     "ajv": "^8.17.1",
     "eslint": "9.27.0",
-    "eslint-plugin-react-hooks": "5.1.0",
-    "eslint-plugin-react-refresh": "0.4.16",
     "globals": "15.14.0",
-    "jsdom": "25.0.1",
     "typescript": "5.7.2",
     "typescript-eslint": "8.18.2",
-    "vite": "6.4.2",
     "vitest": "3.2.6"
   }
 }

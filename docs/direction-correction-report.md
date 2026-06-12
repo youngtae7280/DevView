@@ -1,12 +1,12 @@
 # Direction Correction Report
 
-## Existing GUI-Oriented Work Found
+## GUI-Oriented Work Removed
 
-- Vite, React, TypeScript, React Flow, and browser-local state are present.
-- GUI files are present under `src/`, `public/`, `index.html`, and Vite config files.
-- GUI PBE implementation exists under `src/plugins/project-blueprint-engine/`.
-- GUI-oriented build output exists under `dist/`.
-- Previous docs described a browser-only MVP and OpenAI provider behavior.
+- The previous React/Vite GUI source under `src/` was removed.
+- Browser assets under `public/`, `index.html`, Vite config files, app TypeScript configs, and legacy GUI notes under `docs/legacy-gui/` were removed.
+- React/Vite dependencies and `legacy:*` npm scripts were removed from package metadata.
+- `dist/` now belongs to the CLI build output, not a GUI build.
+- Active PBE work lives in `.codex-plugin/`, `skills/`, `templates/`, `schemas/`, `scripts/`, `cli/`, and current docs.
 
 ## Reusable Assets
 
@@ -31,7 +31,7 @@
 3. Define `.pbe/` file templates.
 4. Define JSON schemas for PBE artifacts.
 5. Replace README and active docs with Codex Plugin usage.
-6. Mark GUI work as deprecated legacy material.
+6. Remove GUI work rather than preserving it as active repository material.
 7. Add `AGENTS.md` guidance for `.pbe/` and ACEP.
 8. Add lightweight validation.
 

@@ -233,11 +233,11 @@ docs/
 scripts/
 ```
 
-## Legacy GUI Status
+## Legacy GUI Removal Status
 
-The old React/Vite GUI is deprecated. It remains in the repository only as legacy source and test history, guarded by `legacy:*` npm scripts. The active product direction is the Codex Plugin workflow in `.codex-plugin/`, `skills/`, `templates/`, `schemas/`, `docs/`, and `scripts/`.
+The old React/Vite GUI has been removed from this repository. PBE now keeps only the Codex Plugin workflow, CLI validators, schemas, templates, skills, and documentation needed for file-backed `.pbe/` control.
 
-Do not use the legacy GUI, API-provider, or SaaS direction as the basis for new PBE work unless the product direction is explicitly changed.
+Do not restore the legacy GUI, API-provider, or SaaS direction as the basis for new PBE work unless the product direction is explicitly changed.
 
 ## Repository Artifact Layout
 
@@ -675,12 +675,20 @@ Validate the Codex plugin manifest and skills:
 python C:/Users/ytkim/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py .
 ```
 
-## Legacy GUI
+## Removed Legacy GUI
 
-The previous React/Vite GUI implementation is deprecated and preserved only as legacy material. Do not extend the GUI path unless the product direction changes again.
-
-Legacy notes live in:
+The previous React/Vite GUI implementation and its local browser API-provider experiment were removed. The removed surface included:
 
 ```text
+src/
+public/
+index.html
+vite.config.ts
+tsconfig.app.json
+tsconfig.node.json
 docs/legacy-gui/
+legacy:* npm scripts
+React/Vite runtime dependencies
 ```
+
+PBE remains a Codex Plugin workflow with CLI validation, not a standalone application.
