@@ -129,9 +129,8 @@ If gaps exist, report them as blocking issues before ACEP generation or final co
 
 When the audit passes or UI/UX is not required:
 
-- Keep the canonical state on `SCOPE_SELECTED` until ACEP artifacts are generated and `pbe acep ready` succeeds.
-- Add `ux_audit` to `autoflow.completedSteps`.
-- Set `autoflow.nextStep` to `generate_acep`.
+- Run `pbe ux audit complete`.
+- Let the CLI keep state on `SCOPE_SELECTED`, record `ux_audit` in `completedSteps`, and advance `nextStep` to `generate_acep`.
 - Continue automatically to ACEP generation.
 
 When the audit has blocking issues:

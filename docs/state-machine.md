@@ -42,6 +42,20 @@ INIT
 -> DONE, when the user explicitly approves the slice, branch, or whole project
 ```
 
+Pre-ACEP deterministic checkpoints do not create top-level states. While state
+remains `SCOPE_SELECTED`, use:
+
+```bash
+pbe dependency audit complete
+pbe plan execution complete
+pbe coverage audit complete
+pbe ux audit complete
+```
+
+These commands record `dependency_impact_audit`, `plan_execution`,
+`coverage_audit`, and `ux_audit` in `autoflow.completedSteps`. `pbe acep ready`
+must not pass until all four checkpoints are complete.
+
 ## Human Gates
 
 `WAITING_UI_UX_CONFIRM` accepts:

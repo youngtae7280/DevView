@@ -116,6 +116,20 @@ INIT
 -> DONE
 ```
 
+Inside `SCOPE_SELECTED`, deterministic pre-ACEP work is tracked as checkpoints,
+not as new top-level states:
+
+```text
+dependency_impact_audit
+-> plan_execution
+-> coverage_audit
+-> ux_audit
+-> generate_acep
+```
+
+Use the matching CLI commands to record those checkpoints. Do not hand-edit
+`completedSteps`.
+
 Visual states are skipped only when selected work does not change visual appearance or has an explicit not-required or waiver record.
 
 `DONE` requires explicit user approval. Automatic failures do not move to a canonical `BLOCKED` state; they keep the last valid state and record `lastFailure`.

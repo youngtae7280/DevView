@@ -1,7 +1,14 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
-import { artifactPath, defaultArtifacts, getAutoflow, getOpenBlockingDecisions, loadProject } from './core/project.js'
+import {
+  artifactPath,
+  defaultArtifacts,
+  getAutoflow,
+  getOpenBlockingDecisions,
+  loadProject,
+  type ArtifactKey,
+} from './core/project.js'
 import { ensureDir, readJsonSafe, relativePath, writeJsonAtomic, writeTextAtomic } from './core/fs.js'
 import {
   isPbeState,
@@ -11,7 +18,7 @@ import {
   stateMachineIssues,
   type PbeState,
 } from './core/state-machine.js'
-import { transitionPbeState } from './core/state-transition.js'
+import { checkpointPbeState, transitionPbeState } from './core/state-transition.js'
 import type { CliEnvironment, CliOptions, CommandResult, ValidationIssue } from './core/types.js'
 import { ExitCode, hasErrors, issue } from './core/types.js'
 import {
@@ -155,6 +162,18 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'scope' && subcommand === 'select') {
     return scopeSelectCommand(context)
+  }
+  if (command === 'dependency' && subcommand === 'audit' && positionals[2] === 'complete') {
+    return dependencyAuditCompleteCommand(context)
+  }
+  if (command === 'plan' && subcommand === 'execution' && positionals[2] === 'complete') {
+    return planExecutionCompleteCommand(context)
+  }
+  if (command === 'coverage' && subcommand === 'audit' && positionals[2] === 'complete') {
+    return coverageAuditCompleteCommand(context)
+  }
+  if (command === 'ux' && subcommand === 'audit' && positionals[2] === 'complete') {
+    return uxAuditCompleteCommand(context)
   }
   if (command === 'acep' && subcommand === 'check') {
     return checkResult('acep check', await validateAcep(context.options.root))
@@ -590,7 +609,9 @@ async function scopeSelectCommand(context: CommandContext): Promise<CommandResul
 
 async function acepReadyCommand(context: CommandContext): Promise<CommandResult> {
   const issues: ValidationIssue[] = []
-  issues.push(...implementationScopeIssues(await loadState(context.options.root)))
+  const state = await loadState(context.options.root)
+  issues.push(...implementationScopeIssues(state))
+  issues.push(...preAcepCheckpointIssues(state))
   issues.push(...(await validateAcep(context.options.root)))
   if (hasErrors(issues)) {
     return transitionFailed('acep ready', 'ACEP ready failed. State was not changed.', issues)
@@ -603,6 +624,131 @@ async function acepReadyCommand(context: CommandContext): Promise<CommandResult>
     nextStep: 'run_acep',
     data: {
       next: 'Execute the ACEP, attach evidence, then run `pbe execution complete`.',
+    },
+  })
+}
+
+async function dependencyAuditCompleteCommand(context: CommandContext): Promise<CommandResult> {
+  const issues: ValidationIssue[] = []
+  const state = await loadState(context.options.root)
+  issues.push(...implementationScopeIssues(state))
+  issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
+  issues.push(...(await validateWpd(context.options.root)))
+  issues.push(...(await validateVd(context.options.root)))
+  issues.push(...(await validateVisualDesign(context.options.root)))
+  issues.push(
+    ...requiredArtifactIssues(context.options.root, [
+      ['dependencyImpactAudit', 'Dependency Impact Audit JSON'],
+      ['dependencyImpactAuditMarkdown', 'Dependency Impact Audit report'],
+    ]),
+  )
+  if (hasErrors(issues)) {
+    return transitionFailed(
+      'dependency audit complete',
+      'Dependency audit checkpoint failed. State was not changed.',
+      issues,
+    )
+  }
+  return checkpointPbeState(context.options.root, 'dependency audit complete', [PBE_STATE.SCOPE_SELECTED], {
+    completedSteps: ['dependency_impact_audit'],
+    stage: 'execution_planning',
+    mode: 'dependency_impact_audit',
+    currentGate: null,
+    nextStep: 'plan_execution',
+    data: {
+      checkpoint: 'dependency_impact_audit',
+      next: 'Run Plan Execution and then `pbe plan execution complete`.',
+    },
+  })
+}
+
+async function planExecutionCompleteCommand(context: CommandContext): Promise<CommandResult> {
+  const issues: ValidationIssue[] = []
+  issues.push(...requiredCompletedStepIssues(await loadState(context.options.root), ['dependency_impact_audit']))
+  issues.push(...(await validateWpd(context.options.root)))
+  issues.push(...(await validateVd(context.options.root)))
+  issues.push(
+    ...requiredArtifactIssues(context.options.root, [
+      ['dependencyImpactAudit', 'Dependency Impact Audit JSON'],
+      ['cycleTree', 'Cycle Tree'],
+      ['cycleContract', 'Cycle Contract'],
+      ['executionStrategy', 'Execution Strategy JSON'],
+      ['executionStrategyMarkdown', 'Execution Strategy report'],
+    ]),
+  )
+  if (hasErrors(issues)) {
+    return transitionFailed(
+      'plan execution complete',
+      'Plan execution checkpoint failed. State was not changed.',
+      issues,
+    )
+  }
+  return checkpointPbeState(context.options.root, 'plan execution complete', [PBE_STATE.SCOPE_SELECTED], {
+    completedSteps: ['plan_execution'],
+    stage: 'execution_planning',
+    mode: 'plan_execution',
+    currentGate: null,
+    nextStep: 'coverage_audit',
+    data: {
+      checkpoint: 'plan_execution',
+      next: 'Run Coverage Audit and then `pbe coverage audit complete`.',
+    },
+  })
+}
+
+async function coverageAuditCompleteCommand(context: CommandContext): Promise<CommandResult> {
+  const issues: ValidationIssue[] = []
+  issues.push(
+    ...requiredCompletedStepIssues(await loadState(context.options.root), [
+      'dependency_impact_audit',
+      'plan_execution',
+    ]),
+  )
+  issues.push(...(await validateTraceability(context.options.root)))
+  issues.push(...requiredArtifactIssues(context.options.root, [['coverageAudit', 'Coverage Audit report']]))
+  if (hasErrors(issues)) {
+    return transitionFailed(
+      'coverage audit complete',
+      'Coverage audit checkpoint failed. State was not changed.',
+      issues,
+    )
+  }
+  return checkpointPbeState(context.options.root, 'coverage audit complete', [PBE_STATE.SCOPE_SELECTED], {
+    completedSteps: ['coverage_audit'],
+    stage: 'execution_planning',
+    mode: 'coverage_audit',
+    currentGate: null,
+    nextStep: 'ux_audit',
+    data: {
+      checkpoint: 'coverage_audit',
+      next: 'Run UX Audit and then `pbe ux audit complete`.',
+    },
+  })
+}
+
+async function uxAuditCompleteCommand(context: CommandContext): Promise<CommandResult> {
+  const issues: ValidationIssue[] = []
+  issues.push(
+    ...requiredCompletedStepIssues(await loadState(context.options.root), [
+      'dependency_impact_audit',
+      'plan_execution',
+      'coverage_audit',
+    ]),
+  )
+  issues.push(...(await validateVisualDesign(context.options.root)))
+  issues.push(...requiredArtifactIssues(context.options.root, [['uxAudit', 'UX Audit report']]))
+  if (hasErrors(issues)) {
+    return transitionFailed('ux audit complete', 'UX audit checkpoint failed. State was not changed.', issues)
+  }
+  return checkpointPbeState(context.options.root, 'ux audit complete', [PBE_STATE.SCOPE_SELECTED], {
+    completedSteps: ['ux_audit'],
+    stage: 'execution_planning',
+    mode: 'ux_audit',
+    currentGate: null,
+    nextStep: 'generate_acep',
+    data: {
+      checkpoint: 'ux_audit',
+      next: 'Generate ACEP artifacts and run `pbe acep ready`.',
     },
   })
 }
@@ -823,6 +969,57 @@ function implementationScopeIssues(state: Record<string, unknown> | null): Valid
       suggestedFix: 'Stop at the implementation scope gate and ask the user to select the current slice scope.',
     }),
   ]
+}
+
+function preAcepCheckpointIssues(state: Record<string, unknown> | null): ValidationIssue[] {
+  return requiredCompletedStepIssues(state, [
+    'dependency_impact_audit',
+    'plan_execution',
+    'coverage_audit',
+    'ux_audit',
+  ]).map((entry) => ({
+    ...entry,
+    message: `ACEP cannot be marked ready before the checkpoint is complete. ${entry.message}`,
+    suggestedFix:
+      'Run `pbe dependency audit complete`, `pbe plan execution complete`, `pbe coverage audit complete`, and `pbe ux audit complete` in order before `pbe acep ready`.',
+  }))
+}
+
+function requiredCompletedStepIssues(
+  state: Record<string, unknown> | null,
+  requiredSteps: string[],
+): ValidationIssue[] {
+  const autoflow =
+    typeof state?.autoflow === 'object' && state.autoflow !== null ? (state.autoflow as Record<string, unknown>) : {}
+  const completedSteps = new Set(Array.isArray(autoflow.completedSteps) ? autoflow.completedSteps.map(String) : [])
+  return requiredSteps
+    .filter((step) => !completedSteps.has(step))
+    .map((step) =>
+      issue({
+        validator: 'Checkpoint',
+        code: 'CHECKPOINT_STEP_MISSING',
+        severity: 'error',
+        file: defaultArtifacts.pbeState,
+        nodeId: step,
+        message: `Required checkpoint step is missing from autoflow.completedSteps: ${step}.`,
+        suggestedFix: `Run the PBE CLI checkpoint command that records ${step}.`,
+      }),
+    )
+}
+
+function requiredArtifactIssues(root: string, artifacts: Array<[ArtifactKey, string]>): ValidationIssue[] {
+  return artifacts
+    .filter(([key]) => !existsSync(artifactPath(root, key)))
+    .map(([key, label]) =>
+      issue({
+        validator: 'Checkpoint',
+        code: 'CHECKPOINT_ARTIFACT_MISSING',
+        severity: 'error',
+        file: defaultArtifacts[key],
+        message: `${label} is required before this checkpoint can complete.`,
+        suggestedFix: `Create ${defaultArtifacts[key]} before rerunning the checkpoint command.`,
+      }),
+    )
 }
 
 function stageStateIssues(stage: string, state: Record<string, unknown> | null): ValidationIssue[] {

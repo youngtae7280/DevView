@@ -697,6 +697,10 @@ npx pbe ui approve
 npx pbe wpd close
 npx pbe vd close
 npx pbe scope select
+npx pbe dependency audit complete
+npx pbe plan execution complete
+npx pbe coverage audit complete
+npx pbe ux audit complete
 npx pbe acep ready
 npx pbe execution complete
 npx pbe review submit
@@ -711,6 +715,8 @@ npx pbe status --json
 ```
 
 Transition commands validate their inputs before writing state. If validation or the allowed-transition check fails, the command exits non-zero and leaves `pbe-state.json` unchanged.
+
+The commands `pbe dependency audit complete`, `pbe plan execution complete`, `pbe coverage audit complete`, and `pbe ux audit complete` are checkpoint commands inside `SCOPE_SELECTED`. They do not create new top-level states. They record deterministic sub-step completion in `autoflow.completedSteps`, advance `autoflow.nextStep`, and block `pbe acep ready` until all four checkpoints are complete.
 
 ## Parallel Safety
 
@@ -774,6 +780,10 @@ npx pbe rpd close --root /path/to/project
 npx pbe ui approve --root /path/to/project
 npx pbe wpd close --root /path/to/project
 npx pbe vd close --root /path/to/project
+npx pbe dependency audit complete --root /path/to/project
+npx pbe plan execution complete --root /path/to/project
+npx pbe coverage audit complete --root /path/to/project
+npx pbe ux audit complete --root /path/to/project
 npx pbe review submit --root /path/to/project
 npx pbe accept --root /path/to/project
 ```

@@ -16,6 +16,7 @@ review.
 7. Do not run ACEP implementation unless the selected and foundation scope, execution strategy, coverage audit, and UX audit are ready.
 8. Do not mark work `accepted`; only the user may do that through an explicit review reply.
 9. For supported state transitions, run the `pbe` CLI transition command instead of hand-editing `pbe-state.json`.
+10. For pre-ACEP deterministic checkpoints inside `SCOPE_SELECTED`, run `pbe dependency audit complete`, `pbe plan execution complete`, `pbe coverage audit complete`, and `pbe ux audit complete` instead of hand-editing `completedSteps`.
 
 ## Deterministic Steps
 

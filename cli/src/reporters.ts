@@ -66,6 +66,13 @@ Commands:
   vd check             Check Test Tree and verification coverage
   vd close             Validate VD/Test Tree and transition to VD_DONE
   scope select         Record implementation scope selection
+  dependency audit complete
+                       Record Dependency Impact Audit checkpoint
+  plan execution complete
+                       Record Plan Execution checkpoint
+  coverage audit complete
+                       Record Coverage Audit checkpoint
+  ux audit complete    Record UX Audit checkpoint
   acep check           Check ACEP execution pack
   acep ready           Validate ACEP manifest and transition to ACEP_READY
   execution complete   Validate execution evidence and transition to ACEP_RUN_DONE

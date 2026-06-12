@@ -91,10 +91,9 @@ These outputs are later copied or rendered into:
 21. Save `execution-strategy.md`.
 22. Save `execution-strategy.json`.
 23. Update `pbe-state.json` artifact references when available.
-24. Keep the canonical state on `SCOPE_SELECTED` until ACEP artifacts are generated and `pbe acep ready` succeeds.
-25. Record `plan_execution` completion without advancing `autoflow.state`.
-26. Set `autoflow.nextStep` to `coverage_audit`.
-27. Continue automatically to Coverage Audit unless a blocker exists.
+24. Run `pbe plan execution complete`.
+25. Let the CLI keep state on `SCOPE_SELECTED`, record `plan_execution` in `completedSteps`, and advance `nextStep` to `coverage_audit`.
+26. Continue automatically to Coverage Audit only if the CLI command succeeds.
 
 ## Cycle Slice Rules
 

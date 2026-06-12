@@ -3,7 +3,14 @@ import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { runPbeCli } from '../app'
 import { ExitCode } from '../core/types'
-import { writeExecutionManifest, writeFinalCoverage } from './fixtures/acep'
+import {
+  writeCoverageAudit,
+  writeDependencyImpactAudit,
+  writeExecutionManifest,
+  writeExecutionStrategy,
+  writeFinalCoverage,
+  writeUxAudit,
+} from './fixtures/acep'
 import { writeEvidenceTree, writeVisualScreenshotEvidence } from './fixtures/evidence-tree'
 import { writeEmptyAcceptance, writePbeState, writeUserAcceptance } from './fixtures/pbe-state'
 import {
@@ -421,16 +428,28 @@ describe('PBE CLI', () => {
     writePbeState(workspace, 'VD_DONE')
     writeWorkTree(workspace)
     writeTestTree(workspace)
+    writeDependencyImpactAudit(workspace)
+    writeExecutionStrategy(workspace)
+    writeCoverageAudit(workspace)
+    writeUxAudit(workspace)
     writeExecutionManifest(workspace)
     writeFinalCoverage(workspace)
     writeEvidenceTree(workspace)
 
     const scope = await runPbeCli(['scope', 'select', '--json'], { cwd: workspace, pluginRoot })
+    const dependency = await runPbeCli(['dependency', 'audit', 'complete', '--json'], { cwd: workspace, pluginRoot })
+    const plan = await runPbeCli(['plan', 'execution', 'complete', '--json'], { cwd: workspace, pluginRoot })
+    const coverage = await runPbeCli(['coverage', 'audit', 'complete', '--json'], { cwd: workspace, pluginRoot })
+    const ux = await runPbeCli(['ux', 'audit', 'complete', '--json'], { cwd: workspace, pluginRoot })
     const acep = await runPbeCli(['acep', 'ready', '--json'], { cwd: workspace, pluginRoot })
     const execution = await runPbeCli(['execution', 'complete', '--json'], { cwd: workspace, pluginRoot })
     const review = await runPbeCli(['review', 'submit', '--json'], { cwd: workspace, pluginRoot })
 
     expect(scope.exitCode).toBe(ExitCode.Success)
+    expect(dependency.exitCode).toBe(ExitCode.Success)
+    expect(plan.exitCode).toBe(ExitCode.Success)
+    expect(coverage.exitCode).toBe(ExitCode.Success)
+    expect(ux.exitCode).toBe(ExitCode.Success)
     expect(acep.exitCode).toBe(ExitCode.Success)
     expect(execution.exitCode).toBe(ExitCode.Success)
     expect(review.exitCode).toBe(ExitCode.Success)
@@ -444,6 +463,88 @@ describe('PBE CLI', () => {
       'ACEP_RUN_DONE',
       'WAITING_REVIEW_RESULT',
     ])
+  })
+
+  it('records pre-ACEP checkpoints without changing top-level state', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'SCOPE_SELECTED', {
+      completedSteps: ['start', 'rpd', 'wpd', 'vd', 'implementation_scope'],
+      nextStep: 'dependency_impact_audit',
+    })
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+    writeDependencyImpactAudit(workspace)
+    writeExecutionStrategy(workspace)
+    writeCoverageAudit(workspace)
+    writeUxAudit(workspace)
+
+    const dependency = await runPbeCli(['dependency', 'audit', 'complete', '--json'], { cwd: workspace, pluginRoot })
+    const plan = await runPbeCli(['plan', 'execution', 'complete', '--json'], { cwd: workspace, pluginRoot })
+    const coverage = await runPbeCli(['coverage', 'audit', 'complete', '--json'], { cwd: workspace, pluginRoot })
+    const ux = await runPbeCli(['ux', 'audit', 'complete', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(dependency.exitCode).toBe(ExitCode.Success)
+    expect(plan.exitCode).toBe(ExitCode.Success)
+    expect(coverage.exitCode).toBe(ExitCode.Success)
+    expect(ux.exitCode).toBe(ExitCode.Success)
+
+    const state = readState(workspace)
+    expect(state.autoflow.state).toBe('SCOPE_SELECTED')
+    expect(state.autoflow.nextStep).toBe('generate_acep')
+    expect(state.autoflow.completedSteps).toEqual(
+      expect.arrayContaining(['dependency_impact_audit', 'plan_execution', 'coverage_audit', 'ux_audit']),
+    )
+    expect(state.autoflow.stateHistory).toEqual([])
+  })
+
+  it('blocks ACEP ready until pre-ACEP checkpoints are completed', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'SCOPE_SELECTED', {
+      completedSteps: ['start', 'rpd', 'wpd', 'vd', 'implementation_scope'],
+      nextStep: 'generate_acep',
+    })
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+    writeExecutionManifest(workspace)
+    writeFinalCoverage(workspace)
+
+    const before = JSON.stringify(readState(workspace))
+    const result = await runPbeCli(['acep', 'ready', '--json'], { cwd: workspace, pluginRoot })
+    const after = JSON.stringify(readState(workspace))
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    const codes = JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)
+    expect(codes).toContain('CHECKPOINT_STEP_MISSING')
+    expect(after).toBe(before)
+  })
+
+  it('does not mutate state when a checkpoint artifact is missing', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'SCOPE_SELECTED', {
+      completedSteps: ['start', 'rpd', 'wpd', 'vd', 'implementation_scope'],
+      nextStep: 'dependency_impact_audit',
+    })
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+
+    const before = JSON.stringify(readState(workspace))
+    const result = await runPbeCli(['dependency', 'audit', 'complete', '--json'], { cwd: workspace, pluginRoot })
+    const after = JSON.stringify(readState(workspace))
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'CHECKPOINT_ARTIFACT_MISSING',
+    )
+    expect(after).toBe(before)
   })
 
   it('does not mutate state when a transition command fails validation', async () => {

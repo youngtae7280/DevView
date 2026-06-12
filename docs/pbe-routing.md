@@ -31,6 +31,10 @@ pbe ui approve
 pbe wpd close
 pbe vd close
 pbe scope select
+pbe dependency audit complete
+pbe plan execution complete
+pbe coverage audit complete
+pbe ux audit complete
 pbe acep ready
 pbe execution complete
 pbe review submit

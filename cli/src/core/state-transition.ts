@@ -179,6 +179,125 @@ export async function transitionPbeState(
   }
 }
 
+export async function checkpointPbeState(
+  root: string,
+  command: string,
+  allowedStates: PbeState[],
+  update: StateTransitionUpdate,
+): Promise<CommandResult> {
+  const statePath = artifactPath(root, 'pbeState')
+  const parsed = await readJsonSafe<Record<string, unknown>>(statePath)
+  if (!parsed.ok) {
+    return {
+      ok: false,
+      command,
+      exitCode: ExitCode.SchemaError,
+      message: `${command} failed. pbe-state.json was not changed.`,
+      issues: [
+        issue({
+          validator: 'StateCheckpoint',
+          code: 'PBE_STATE_INVALID_JSON',
+          severity: 'error',
+          file: defaultArtifacts.pbeState,
+          message: parsed.error,
+          suggestedFix: 'Fix pbe-state.json before running checkpoint commands.',
+        }),
+      ],
+    }
+  }
+
+  const state = parsed.value
+  const autoflow =
+    typeof state.autoflow === 'object' && state.autoflow !== null ? (state.autoflow as Record<string, unknown>) : {}
+  const current = normalizePbeState(autoflow.state)
+  if (!current) {
+    return {
+      ok: false,
+      command,
+      exitCode: ExitCode.TransitionBlocked,
+      message: `${command} failed. pbe-state.json was not changed.`,
+      issues: [
+        issue({
+          validator: 'StateCheckpoint',
+          code: 'UNKNOWN_STATE',
+          severity: 'error',
+          file: defaultArtifacts.pbeState,
+          message: `Cannot update checkpoint from unknown state: ${String(autoflow.state || '<missing>')}.`,
+          suggestedFix: 'Repair autoflow.state to a canonical state or known migration alias.',
+        }),
+      ],
+    }
+  }
+
+  const existingStateIssues = stateMachineIssues(state)
+  if (hasErrors(existingStateIssues)) {
+    return {
+      ok: false,
+      command,
+      exitCode: ExitCode.TransitionBlocked,
+      message: `${command} failed. pbe-state.json was not changed.`,
+      issues: existingStateIssues,
+    }
+  }
+
+  if (!allowedStates.includes(current)) {
+    return {
+      ok: false,
+      command,
+      exitCode: ExitCode.TransitionBlocked,
+      message: `${command} failed. pbe-state.json was not changed.`,
+      issues: [
+        issue({
+          validator: 'StateCheckpoint',
+          code: 'CHECKPOINT_STATE_BLOCKED',
+          severity: 'error',
+          file: defaultArtifacts.pbeState,
+          message: `${command} can run only from ${allowedStates.join(', ')}. Current state is ${current}.`,
+          suggestedFix: 'Complete the previous PBE state transition before updating this checkpoint.',
+        }),
+      ],
+    }
+  }
+
+  const now = new Date().toISOString()
+  if (update.stage) {
+    state.stage = update.stage
+  }
+  if (update.mode) {
+    state.mode = update.mode
+  }
+  if (update.deliveryStatus) {
+    state.deliveryStatus = update.deliveryStatus
+  }
+
+  autoflow.completedSteps = mergeSteps(autoflow.completedSteps, update.completedSteps || [])
+  autoflow.currentGate = update.currentGate ?? null
+  autoflow.nextStep = update.nextStep ?? null
+  autoflow.lastFailure = null
+  if (update.lastUserAction !== undefined) {
+    autoflow.lastUserAction = update.lastUserAction
+  }
+  state.autoflow = autoflow
+  state.updatedAt = now
+
+  await writeJsonAtomic(statePath, state)
+
+  return {
+    ok: true,
+    command,
+    exitCode: ExitCode.Success,
+    message: `${command} completed. State remains ${current}.`,
+    issues: [],
+    data: {
+      state: current,
+      transitionCount: 0,
+      currentGate: autoflow.currentGate,
+      nextStep: autoflow.nextStep,
+      ...update.data,
+    },
+  }
+}
+
 function mergeSteps(existing: unknown, additions: string[]): string[] {
   const steps = new Set(Array.isArray(existing) ? existing.map(String) : [])
   for (const addition of additions) {

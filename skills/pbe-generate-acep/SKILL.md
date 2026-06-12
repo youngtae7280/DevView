@@ -493,7 +493,7 @@ Stop and ask the user when work requires:
 When ACEP generation succeeds:
 
 - Run `pbe acep ready`.
-- Let the CLI validate ACEP artifacts and implementation-scope confirmation before it writes `ACEP_READY`, completed steps, next step, and state history.
+- Let the CLI validate ACEP artifacts, implementation-scope confirmation, and required pre-ACEP checkpoints: `dependency_impact_audit`, `plan_execution`, `coverage_audit`, and `ux_audit`.
 - Continue automatically to ACEP Runner.
 
 When ACEP generation fails:

@@ -145,9 +145,8 @@ Do not allow ACEP generation or final completion while blocking coverage gaps re
 
 When the audit passes:
 
-- Keep the canonical state on `SCOPE_SELECTED` until ACEP artifacts are generated and `pbe acep ready` succeeds.
-- Add `coverage_audit` to `autoflow.completedSteps`.
-- Set `autoflow.nextStep` to `ux_audit`.
+- Run `pbe coverage audit complete`.
+- Let the CLI keep state on `SCOPE_SELECTED`, record `coverage_audit` in `completedSteps`, and advance `nextStep` to `ux_audit`.
 - Continue automatically to UX Audit.
 
 When the audit has blocking issues:
