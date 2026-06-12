@@ -79,7 +79,7 @@ export async function validateTraceability(
   }
 
   issues.push(...validateCycleScopeLeaks(context))
-  return issues
+  return stage ? issues.map((entry) => ({ ...entry, stage })) : issues
 }
 
 async function loadTraceabilityContext(root: string): Promise<TraceabilityContext> {

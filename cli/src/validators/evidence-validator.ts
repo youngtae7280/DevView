@@ -129,7 +129,7 @@ export async function validateEvidence(
       requireAudit: options.requireVisualAudit !== false,
     })),
   )
-  return issues
+  return stage ? issues.map((entry) => ({ ...entry, stage: entry.stage || stage })) : issues
 }
 
 function validateAcceptedEvidenceFreshness(

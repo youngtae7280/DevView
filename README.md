@@ -63,6 +63,7 @@ The detailed installation and use guide is in [docs/usage.md](docs/usage.md). A 
 - [Revision flow](docs/revision-flow.md)
 - [Change impact revision CLI skeleton](docs/change-impact-revision.md)
 - [Validator design](docs/validator-design.md)
+- [CLI output](docs/cli-output.md)
 - [Release policy](RELEASE.md)
 
 ## What Gets Created

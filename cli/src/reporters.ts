@@ -1,6 +1,7 @@
 import type { CommandResult, ValidationIssue } from './core/types.js'
 
 export function renderResult(result: CommandResult, json: boolean): string {
+  const issues = result.issues
   if (json) {
     return `${JSON.stringify(
       {
@@ -8,7 +9,7 @@ export function renderResult(result: CommandResult, json: boolean): string {
         command: result.command,
         exitCode: result.exitCode,
         message: result.message,
-        issues: result.issues,
+        issues,
         ...result.data,
       },
       null,
@@ -23,11 +24,16 @@ export function renderResult(result: CommandResult, json: boolean): string {
     lines.push(result.ok ? `${result.command} succeeded.` : `${result.command} failed.`)
   }
 
-  if (result.issues.length > 0) {
+  lines.push('')
+  lines.push(`Command: ${result.command}`)
+  lines.push(`Status: ${result.ok ? 'PASS' : 'FAIL'}`)
+  lines.push(`Issues: ${formatIssueSummary(issues)}`)
+
+  if (issues.length > 0) {
     lines.push('')
     lines.push('Issues:')
-    for (const entry of result.issues) {
-      lines.push(formatIssue(entry))
+    for (const entry of issues) {
+      lines.push(...formatIssue(entry))
     }
   }
 
@@ -40,10 +46,38 @@ export function renderResult(result: CommandResult, json: boolean): string {
   return `${lines.join('\n')}\n`
 }
 
-export function formatIssue(entry: ValidationIssue): string {
-  const file = entry.file ? ` (${entry.file}${entry.nodeId ? `:${entry.nodeId}` : ''})` : ''
-  const fix = entry.suggestedFix ? `\n  Required action: ${entry.suggestedFix}` : ''
-  return `- [${entry.code}] ${entry.message}${file}${fix}`
+export function formatIssue(entry: ValidationIssue): string[] {
+  const lines = [`- [${entry.severity}] ${entry.code}: ${entry.message}`]
+  if (entry.file) {
+    lines.push(`  File: ${entry.file}`)
+  }
+  if (entry.nodeId || entry.nodeType) {
+    const nodeLabel = [entry.nodeType, entry.nodeId].filter(Boolean).join(' ')
+    lines.push(`  Node: ${nodeLabel}`)
+  }
+  if (entry.stage) {
+    lines.push(`  Stage: ${entry.stage}`)
+  }
+  if (entry.reason && entry.reason !== entry.message) {
+    lines.push(`  Reason: ${entry.reason}`)
+  }
+  if (entry.suggestedFix) {
+    lines.push(`  Suggested fix: ${entry.suggestedFix}`)
+  }
+  if (entry.nextCommand) {
+    lines.push(`  Next command: ${entry.nextCommand}`)
+  }
+  return lines
+}
+
+function formatIssueSummary(issues: ValidationIssue[]): string {
+  if (issues.length === 0) {
+    return '0'
+  }
+  const errors = issues.filter((entry) => entry.severity === 'error').length
+  const warnings = issues.filter((entry) => entry.severity === 'warning').length
+  const infos = issues.filter((entry) => entry.severity === 'info').length
+  return [`${issues.length} total`, `${errors} error`, `${warnings} warning`, `${infos} info`].join(', ')
 }
 
 export function helpText(): string {

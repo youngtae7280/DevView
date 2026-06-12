@@ -372,6 +372,49 @@ describe('PBE CLI', () => {
     expect(JSON.parse(noTest.stdout).ok).toBe(true)
   })
 
+  it('prints consistent JSON issue metadata for failed validation', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+
+    const result = await runPbeCli(['trace', 'check', '--stage', 'wpd', '--json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    const payload = JSON.parse(result.stderr)
+    const issue = payload.issues.find((entry: { code: string }) => entry.code === 'PRODUCT_WORK_LINK_MISSING')
+    expect(issue).toMatchObject({
+      code: 'PRODUCT_WORK_LINK_MISSING',
+      severity: 'error',
+      message: expect.any(String),
+      file: '.pbe/tree/work-tree.json',
+      nodeType: 'Product',
+      stage: 'wpd',
+      reason: expect.any(String),
+      suggestedFix: expect.any(String),
+      nextCommand: 'pbe wpd close',
+    })
+  })
+
+  it('prints suggested fix and next command in text failure output', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+
+    const result = await runPbeCli(['trace', 'check', '--stage', 'wpd'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(result.stderr).toContain('Command: trace check')
+    expect(result.stderr).toContain('Status: FAIL')
+    expect(result.stderr).toContain('Issues: 1 total, 1 error')
+    expect(result.stderr).toContain('[error] PRODUCT_WORK_LINK_MISSING')
+    expect(result.stderr).toContain('Suggested fix:')
+    expect(result.stderr).toContain('Next command: pbe wpd close')
+  })
+
   it('stage-aware WPD traceability rejects inactive Product scope leaks', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace, { scopeClass: 'deferred', status: 'deferred' })
