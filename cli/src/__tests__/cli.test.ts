@@ -3,6 +3,7 @@ import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { runPbeCli } from '../app'
 import { canTransition, isPbeState, PBE_STATE } from '../core/state-machine'
+import { checkpointPbeState, transitionPbeState } from '../core/state-transition'
 import { ExitCode } from '../core/types'
 import { validateState } from '../validators/state-validator'
 import {
@@ -123,7 +124,14 @@ describe('PBE CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     expect(JSON.parse(result.stdout).state).toBe('RPD_DONE')
-    expect(JSON.parse(status.stdout).state).toBe('RPD_DONE')
+    const statusPayload = JSON.parse(status.stdout)
+    expect(statusPayload.state).toBe('RPD_DONE')
+    expect(statusPayload.stateHistoryCount).toBe(1)
+    expect(statusPayload.lastTransition).toMatchObject({
+      from: 'INIT',
+      to: 'RPD_DONE',
+      command: 'rpd close',
+    })
     expect(readState(workspace).autoflow.stateHistory).toHaveLength(1)
   })
 
@@ -155,11 +163,41 @@ describe('PBE CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     const state = readState(workspace)
     expect(state.autoflow.state).toBe('UI_UX_APPROVED')
+    expect(state.autoflow.completedSteps).toContain('ui_ux_confirm')
+    expect(state.autoflow.currentGate).toBeNull()
     expect(state.autoflow.nextStep).toBe('visual_reference_intake')
     expect(state.autoflow.stateHistory.map((entry: { to: string }) => entry.to)).toEqual([
       'WAITING_UI_UX_CONFIRM',
       'UI_UX_APPROVED',
     ])
+    expectLastTransition(state, {
+      from: 'WAITING_UI_UX_CONFIRM',
+      to: 'UI_UX_APPROVED',
+      command: 'ui approve',
+      actor: 'user',
+    })
+  })
+
+  it('does not mutate state when UI/UX approval runs from the wrong state', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace, { visualImpact: true })
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'ACEP_READY')
+    writeText(
+      join(workspace, '.pbe', 'blueprint', 'ui-ux-confirmation.md'),
+      '# UI/UX Confirmation\n\n- Status: confirmed\n- Confirmed by: user\n',
+    )
+
+    const before = readStateText(workspace)
+    const result = await runPbeCli(['ui', 'approve', '--json'], { cwd: workspace, pluginRoot })
+    const after = readStateText(workspace)
+
+    expect(result.exitCode).toBe(ExitCode.TransitionBlocked)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'INVALID_TRANSITION',
+    )
+    expect(after).toBe(before)
   })
 
   it('blocks accept gate without user approval', async () => {
@@ -405,7 +443,10 @@ describe('PBE CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     const state = readState(workspace)
     expect(state.autoflow.state).toBe('WPD_DONE')
-    expect(state.autoflow.stateHistory.at(-1)).toMatchObject({
+    expect(state.autoflow.completedSteps).toContain('wpd')
+    expect(state.autoflow.currentGate).toBeNull()
+    expect(state.autoflow.nextStep).toBe('vd')
+    expectLastTransition(state, {
       from: 'UI_UX_APPROVED',
       to: 'WPD_DONE',
       command: 'wpd close',
@@ -426,7 +467,83 @@ describe('PBE CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     const state = readState(workspace)
     expect(state.autoflow.state).toBe('VD_DONE')
+    expect(state.autoflow.completedSteps).toContain('vd')
     expect(state.autoflow.currentGate).toBe('implementation_scope')
+    expect(state.autoflow.nextStep).toBe('implementation_scope')
+    expectLastTransition(state, {
+      from: 'WPD_DONE',
+      to: 'VD_DONE',
+      command: 'vd close',
+    })
+  })
+
+  it('does not mutate state when VD close runs from the wrong state', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'SCOPE_SELECTED')
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+
+    const before = readStateText(workspace)
+    const result = await runPbeCli(['vd', 'close', '--json'], { cwd: workspace, pluginRoot })
+    const after = readStateText(workspace)
+
+    expect(result.exitCode).toBe(ExitCode.TransitionBlocked)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'INVALID_TRANSITION',
+    )
+    expect(after).toBe(before)
+  })
+
+  it('transitions implementation scope selection through the CLI', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'VD_DONE')
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+
+    const result = await runPbeCli(['scope', 'select', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const state = readState(workspace)
+    expect(state.autoflow.state).toBe('SCOPE_SELECTED')
+    expect(state.autoflow.completedSteps).toContain('implementation_scope')
+    expect(state.autoflow.currentGate).toBeNull()
+    expect(state.autoflow.nextStep).toBe('generate_acep')
+    expect(state.autoflow.stateHistory.map((entry: { to: string }) => entry.to)).toEqual([
+      'WAITING_IMPLEMENTATION_SCOPE',
+      'SCOPE_SELECTED',
+    ])
+    expectLastTransition(state, {
+      from: 'WAITING_IMPLEMENTATION_SCOPE',
+      to: 'SCOPE_SELECTED',
+      command: 'scope select',
+      actor: 'user',
+    })
+  })
+
+  it('does not mutate state when scope select runs from the wrong state', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'RPD_DONE')
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+
+    const before = readStateText(workspace)
+    const result = await runPbeCli(['scope', 'select', '--json'], { cwd: workspace, pluginRoot })
+    const after = readStateText(workspace)
+
+    expect(result.exitCode).toBe(ExitCode.TransitionBlocked)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'INVALID_TRANSITION',
+    )
+    expect(after).toBe(before)
   })
 
   it('runs deterministic transition commands through review submit', async () => {
@@ -472,6 +589,79 @@ describe('PBE CLI', () => {
       'ACEP_RUN_DONE',
       'WAITING_REVIEW_RESULT',
     ])
+  })
+
+  it('transitions ACEP ready through the CLI', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'SCOPE_SELECTED', {
+      completedSteps: [
+        'start',
+        'rpd',
+        'wpd',
+        'vd',
+        'implementation_scope',
+        'dependency_impact_audit',
+        'plan_execution',
+        'coverage_audit',
+        'ux_audit',
+      ],
+      nextStep: 'generate_acep',
+    })
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+    writeExecutionManifest(workspace)
+    writeFinalCoverage(workspace)
+
+    const result = await runPbeCli(['acep', 'ready', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const state = readState(workspace)
+    expect(state.autoflow.state).toBe('ACEP_READY')
+    expect(state.autoflow.completedSteps).toContain('generate_acep')
+    expect(state.autoflow.currentGate).toBeNull()
+    expect(state.autoflow.nextStep).toBe('run_acep')
+    expectLastTransition(state, {
+      from: 'SCOPE_SELECTED',
+      to: 'ACEP_READY',
+      command: 'acep ready',
+    })
+  })
+
+  it('does not mutate state when ACEP ready runs from the wrong state', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'ACEP_RUN_DONE', {
+      completedSteps: [
+        'start',
+        'rpd',
+        'wpd',
+        'vd',
+        'implementation_scope',
+        'dependency_impact_audit',
+        'plan_execution',
+        'coverage_audit',
+        'ux_audit',
+      ],
+    })
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+    writeExecutionManifest(workspace)
+    writeFinalCoverage(workspace)
+
+    const before = readStateText(workspace)
+    const result = await runPbeCli(['acep', 'ready', '--json'], { cwd: workspace, pluginRoot })
+    const after = readStateText(workspace)
+
+    expect(result.exitCode).toBe(ExitCode.TransitionBlocked)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'INVALID_TRANSITION',
+    )
+    expect(after).toBe(before)
   })
 
   it('records pre-ACEP checkpoints without changing top-level state', async () => {
@@ -590,6 +780,45 @@ describe('PBE CLI', () => {
     expect(after).toBe(before)
   })
 
+  it('does not mutate state on transition helper invalid JSON or unknown state failures', async () => {
+    const invalidJsonWorkspace = createWorkspace()
+    writeText(join(invalidJsonWorkspace, '.pbe', 'blueprint', 'pbe-state.json'), '{ invalid json')
+    const invalidJsonBefore = readStateText(invalidJsonWorkspace)
+    const invalidJsonResult = await transitionPbeState(invalidJsonWorkspace, 'test transition', [PBE_STATE.RPD_DONE], {
+      nextStep: 'wpd',
+    })
+    expect(invalidJsonResult.exitCode).toBe(ExitCode.SchemaError)
+    expect(readStateText(invalidJsonWorkspace)).toBe(invalidJsonBefore)
+
+    const unknownStateWorkspace = createWorkspace()
+    writePbeState(unknownStateWorkspace, 'UNKNOWN_STATE')
+    const unknownStateBefore = readStateText(unknownStateWorkspace)
+    const unknownStateResult = await transitionPbeState(
+      unknownStateWorkspace,
+      'test transition',
+      [PBE_STATE.RPD_DONE],
+      { nextStep: 'wpd' },
+    )
+    expect(unknownStateResult.exitCode).toBe(ExitCode.TransitionBlocked)
+    expect(readStateText(unknownStateWorkspace)).toBe(unknownStateBefore)
+  })
+
+  it('does not mutate state on checkpoint helper blocked state failures', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'VD_DONE')
+
+    const before = readStateText(workspace)
+    const result = await checkpointPbeState(workspace, 'test checkpoint', [PBE_STATE.SCOPE_SELECTED], {
+      completedSteps: ['dependency_impact_audit'],
+      nextStep: 'plan_execution',
+    })
+    const after = readStateText(workspace)
+
+    expect(result.exitCode).toBe(ExitCode.TransitionBlocked)
+    expect(result.issues.map((entry) => entry.code)).toContain('CHECKPOINT_STATE_BLOCKED')
+    expect(after).toBe(before)
+  })
+
   it('blocks transition commands when state history is inconsistent', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
@@ -686,4 +915,17 @@ describe('PBE CLI', () => {
 
 function readState(workspace: string): Record<string, any> {
   return JSON.parse(readFileSync(join(workspace, '.pbe', 'blueprint', 'pbe-state.json'), 'utf8'))
+}
+
+function readStateText(workspace: string): string {
+  return readFileSync(join(workspace, '.pbe', 'blueprint', 'pbe-state.json'), 'utf8')
+}
+
+function expectLastTransition(
+  state: Record<string, any>,
+  expected: { from: string; to: string; command: string; actor?: string },
+): void {
+  const transition = state.autoflow.stateHistory.at(-1)
+  expect(transition).toMatchObject(expected)
+  expect(transition.at).toEqual(expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/))
 }

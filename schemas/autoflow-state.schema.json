@@ -15,20 +15,28 @@
       "type": "string",
       "enum": [
         "INIT",
+        "WAITING_ROOT_CONFIRMATION",
+        "RPD_IN_PROGRESS",
         "RPD_DONE",
         "WAITING_UI_UX_CONFIRM",
         "UI_UX_APPROVED",
         "VISUAL_CONTRACT_READY",
+        "WPD_IN_PROGRESS",
         "WPD_DONE",
         "UI_SURFACE_INVENTORY_DONE",
+        "VD_IN_PROGRESS",
         "VD_DONE",
         "WAITING_IMPLEMENTATION_SCOPE",
         "SCOPE_SELECTED",
         "ACEP_READY",
+        "EXECUTION_IN_PROGRESS",
         "ACEP_RUN_DONE",
         "VISUAL_AUDIT_DONE",
         "WAITING_REVIEW_RESULT",
-        "DONE"
+        "REVISION_REQUESTED",
+        "ACCEPTED",
+        "DONE",
+        "BLOCKED"
       ]
     },
     "completedSteps": {

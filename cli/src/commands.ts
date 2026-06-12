@@ -285,6 +285,12 @@ async function statusCommand(context: CommandContext): Promise<CommandResult> {
 
   const autoflow = getAutoflow(project.state)
   const openDecisions = getOpenBlockingDecisions(project.decisionQueue)
+  const stateHistory = Array.isArray(autoflow.stateHistory)
+    ? autoflow.stateHistory.filter(
+        (entry): entry is Record<string, unknown> => typeof entry === 'object' && entry !== null,
+      )
+    : []
+  const lastTransition = stateHistory.length > 0 ? stateHistory[stateHistory.length - 1] : null
   return {
     ok: true,
     command: 'status',
@@ -297,6 +303,7 @@ async function statusCommand(context: CommandContext): Promise<CommandResult> {
       `Autoflow state: ${String(autoflow.state || 'unknown')}`,
       `Current gate: ${String(autoflow.currentGate || 'none')}`,
       `Next step: ${String(autoflow.nextStep || 'unknown')}`,
+      `Last transition: ${formatTransition(lastTransition)}`,
       `Open blocking decisions: ${openDecisions.length}`,
     ].join('\n'),
     issues,
@@ -306,6 +313,8 @@ async function statusCommand(context: CommandContext): Promise<CommandResult> {
       state: autoflow.state || null,
       currentGate: autoflow.currentGate || null,
       nextStep: autoflow.nextStep || null,
+      stateHistoryCount: stateHistory.length,
+      lastTransition,
       openBlockingDecisions: openDecisions,
       artifacts: project.state.artifacts || {},
     },
@@ -861,6 +870,13 @@ function invalidCommand(message: string): CommandResult {
       }),
     ],
   }
+}
+
+function formatTransition(entry: Record<string, unknown> | null): string {
+  if (!entry) {
+    return 'none'
+  }
+  return `${String(entry.from || '?')} -> ${String(entry.to || '?')} via ${String(entry.command || '?')}`
 }
 
 function transitionFailed(command: string, message: string, issues: ValidationIssue[]): CommandResult {
