@@ -1,0 +1,7 @@
+{
+  "name": "assistant-accepted",
+  "description": "Acceptance branch is marked accepted_done by assistant actor.",
+  "mutation": "assistantAccepted",
+  "command": ["accept", "--json"],
+  "expectedIssueCode": "ASSISTANT_ACCEPTED_STATUS"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "missing-evidence",
+  "description": "Required Test node has no linked Evidence Tree node.",
+  "mutation": "missingEvidence",
+  "command": ["trace", "check", "--stage", "execution", "--json"],
+  "expectedIssueCode": "TEST_EVIDENCE_LINK_MISSING"
+}

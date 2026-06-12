@@ -1,0 +1,7 @@
+{
+  "name": "deferred-scope-leak",
+  "description": "Deferred Product node leaks into selected Work scope.",
+  "mutation": "deferredScopeLeak",
+  "command": ["trace", "check", "--stage", "wpd", "--json"],
+  "expectedIssueCode": "DEFERRED_SCOPE_LEAK"
+}

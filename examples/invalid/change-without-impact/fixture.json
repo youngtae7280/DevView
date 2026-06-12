@@ -1,0 +1,7 @@
+{
+  "name": "change-without-impact",
+  "description": "Revision start is attempted for a Change node without Impact analysis.",
+  "mutation": "changeWithoutImpact",
+  "command": ["revision", "start", "--change", "CH-001", "--json"],
+  "expectedIssueCode": "REVISION_IMPACT_MISSING"
+}

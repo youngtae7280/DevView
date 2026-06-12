@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0-tree-control",
+  "branches": [
+    {
+      "productNodeId": "PT-1",
+      "status": "accepted_done",
+      "decisionSource": {
+        "actor": "user",
+        "source": "chat",
+        "summary": "User accepted the add-todo slice."
+      },
+      "userAcceptedAt": "2026-06-12T12:30:00.000Z",
+      "evidenceNodeIds": ["EV-1"],
+      "coverageSummary": "Product PT-1, Work WT-1, Test TT-1, Evidence EV-1, and AC-PT-1-1 are closed."
+    }
+  ]
+}

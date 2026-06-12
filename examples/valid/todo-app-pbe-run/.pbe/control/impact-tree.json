@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0-tree-control",
+  "impacts": [
+    {
+      "id": "IM-001",
+      "changeId": "CH-001",
+      "changeNodeId": "CH-001",
+      "status": "analyzed",
+      "affectedNodeId": "WT-1",
+      "affectedProductNodeIds": [],
+      "affectedWorkNodeIds": ["WT-1"],
+      "affectedTestNodeIds": ["TT-1"],
+      "affectedEvidenceNodeIds": ["EV-1"],
+      "affectedAcceptanceNodeIds": [],
+      "affectedNodeIds": ["WT-1", "TT-1", "EV-1"],
+      "affectedAcceptanceCriteriaIds": ["AC-PT-1-1"],
+      "impactType": "none",
+      "requiredAction": "preserve",
+      "reason": "Golden run includes a non-blocking analyzed change skeleton.",
+      "createdAt": "2026-06-12T12:15:00.000Z"
+    }
+  ]
+}

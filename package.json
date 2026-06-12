@@ -15,6 +15,7 @@
     "validate:pbe:v2": "node scripts/validate-pbe-tree-system.js",
     "typecheck": "tsc -b",
     "test": "vitest run",
+    "test:examples": "npm run build:cli && node scripts/test-examples.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

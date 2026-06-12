@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "status": "complete",
+  "generatedFrom": ["WT-1"],
+  "futureItems": [],
+  "scopeDecisionRequired": false,
+  "architectureRunwayRequired": false,
+  "blockingIssues": [],
+  "summary": "No future dependency blocks the golden example slice."
+}

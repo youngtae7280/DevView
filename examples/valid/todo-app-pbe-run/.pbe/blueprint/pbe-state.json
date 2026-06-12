@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "version": "0.2.0-alpha",
+  "stage": "complete",
+  "mode": "acep_execution",
+  "deliveryStatus": "accepted",
+  "acceptance": {
+    "setBy": "user",
+    "acceptedAt": "2026-06-12T12:30:00.000Z",
+    "acceptanceSource": "explicit_user_reply",
+    "reviewGateId": "review_result"
+  },
+  "autoflow": {
+    "schemaVersion": 1,
+    "enabled": true,
+    "profile": "full",
+    "state": "DONE",
+    "completedSteps": [
+      "start",
+      "rpd",
+      "wpd",
+      "vd",
+      "dependency_impact_audit",
+      "plan_execution",
+      "coverage_audit",
+      "ux_audit",
+      "generate_acep",
+      "run_acep",
+      "review_result",
+      "complete"
+    ],
+    "deterministicSteps": [
+      "rpd",
+      "wpd",
+      "vd",
+      "dependency_impact_audit",
+      "plan_execution",
+      "coverage_audit",
+      "ux_audit",
+      "generate_acep",
+      "run_acep"
+    ],
+    "humanGates": ["root_confirmation", "implementation_scope", "review_result", "next_slice_decision"],
+    "currentGate": null,
+    "nextStep": null,
+    "lastFailure": null,
+    "lastUserAction": "approve",
+    "stateHistory": [
+      {
+        "from": "INIT",
+        "to": "RPD_DONE",
+        "command": "pbe rpd close",
+        "at": "2026-06-12T09:10:00.000Z"
+      },
+      {
+        "from": "RPD_DONE",
+        "to": "WPD_DONE",
+        "command": "pbe wpd close",
+        "at": "2026-06-12T10:10:00.000Z"
+      },
+      {
+        "from": "WPD_DONE",
+        "to": "VD_DONE",
+        "command": "pbe vd close",
+        "at": "2026-06-12T11:10:00.000Z"
+      },
+      {
+        "from": "VD_DONE",
+        "to": "SCOPE_SELECTED",
+        "command": "pbe scope select",
+        "at": "2026-06-12T11:20:00.000Z"
+      },
+      {
+        "from": "SCOPE_SELECTED",
+        "to": "ACEP_READY",
+        "command": "pbe acep ready",
+        "at": "2026-06-12T11:30:00.000Z"
+      },
+      {
+        "from": "ACEP_READY",
+        "to": "EXECUTION_IN_PROGRESS",
+        "command": "pbe execution start",
+        "at": "2026-06-12T11:40:00.000Z"
+      },
+      {
+        "from": "EXECUTION_IN_PROGRESS",
+        "to": "ACEP_RUN_DONE",
+        "command": "pbe execution complete",
+        "at": "2026-06-12T12:10:00.000Z"
+      },
+      {
+        "from": "ACEP_RUN_DONE",
+        "to": "WAITING_REVIEW_RESULT",
+        "command": "pbe review submit",
+        "at": "2026-06-12T12:20:00.000Z"
+      },
+      {
+        "from": "WAITING_REVIEW_RESULT",
+        "to": "ACCEPTED",
+        "command": "pbe accept",
+        "at": "2026-06-12T12:30:00.000Z",
+        "actor": "user"
+      },
+      {
+        "from": "ACCEPTED",
+        "to": "DONE",
+        "command": "pbe accept",
+        "at": "2026-06-12T12:30:00.000Z",
+        "actor": "user"
+      }
+    ]
+  },
+  "artifacts": {
+    "productTree": ".pbe/tree/product-tree.json",
+    "projectTree": ".pbe/tree/project-tree.json",
+    "workTree": ".pbe/tree/work-tree.json",
+    "testTree": ".pbe/tree/test-tree.json",
+    "evidenceTree": ".pbe/evidence/evidence-tree.json",
+    "acceptanceTree": ".pbe/control/acceptance-tree.json",
+    "requirementTree": ".pbe/blueprint/requirement-tree.json",
+    "pbeRoutingContract": ".pbe/blueprint/pbe-routing-contract.md"
+  },
+  "updatedAt": "2026-06-12T12:30:00.000Z"
+}

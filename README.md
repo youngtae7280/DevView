@@ -848,6 +848,21 @@ This validation is backward compatible. If no `.pbe/tree`, `.pbe/execution`,
 `.pbe/control`, or `.pbe/evidence` artifacts exist yet, it validates only the
 v2 schemas/templates and exits successfully.
 
+Run the example fixture regression suite:
+
+```bash
+npm run test:examples
+```
+
+This builds the CLI, validates the closed golden run at
+`examples/valid/todo-app-pbe-run`, and checks invalid fixtures under
+`examples/invalid/*` for their expected PBE issue codes. The valid example
+closes Product -> Work -> Test -> Evidence -> user Acceptance traceability and
+includes a Change/Impact skeleton. Invalid examples intentionally break one
+closure rule at a time, such as ambiguous acceptance criteria, missing Work/Test
+links, missing or stale Evidence, assistant acceptance, deferred scope leakage,
+or revision without Impact analysis.
+
 Validate the Codex plugin manifest and skills:
 
 ```bash

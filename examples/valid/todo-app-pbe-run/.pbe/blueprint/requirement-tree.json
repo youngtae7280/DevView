@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "rootNodeId": "req-root",
+  "traversal": "breadth_first",
+  "nodes": [
+    {
+      "id": "req-root",
+      "parentId": null,
+      "title": "Todo app accepted slice",
+      "summary": "The todo app lets the user add a todo item and see it in the active list.",
+      "status": "confirmed",
+      "depth": 0,
+      "children": ["req-add-todo"],
+      "facts": ["User confirmed add-todo capability.", "Acceptance is verified by automated test output."],
+      "openQuestions": [],
+      "decisions": [],
+      "scope": ["PT-1"],
+      "nonScope": []
+    },
+    {
+      "id": "req-add-todo",
+      "parentId": "req-root",
+      "title": "Add a todo item",
+      "summary": "When the user submits a todo title, the system persists and displays it.",
+      "status": "confirmed",
+      "depth": 1,
+      "children": [],
+      "facts": ["AC-PT-1-1 is confirmed."],
+      "openQuestions": [],
+      "decisions": [],
+      "scope": ["PT-1"],
+      "nonScope": []
+    }
+  ]
+}

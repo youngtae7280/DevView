@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "WT-ROOT",
+  "nodes": [
+    {
+      "id": "WT-ROOT",
+      "type": "foundation_task",
+      "title": "Todo work root",
+      "status": "implemented",
+      "derivedFromProductNodeIds": ["PT-ROOT"],
+      "derivedFromProjectNodeIds": ["PJ-ROOT"],
+      "scopeClass": "foundation",
+      "expectedFiles": [],
+      "expectedSharedFiles": [],
+      "forbiddenFiles": [],
+      "unknownFileTouchRisk": false,
+      "dependencies": [],
+      "acceptanceCriteriaNotLinkedReason": "Root placeholder groups executable child work."
+    },
+    {
+      "id": "WT-1",
+      "type": "feature_task",
+      "title": "Implement add todo behavior",
+      "status": "implemented",
+      "derivedFromProductNodeIds": ["PT-1"],
+      "derivedFromProjectNodeIds": ["PJ-1"],
+      "scopeClass": "selected",
+      "expectedFiles": ["src/todos.ts"],
+      "expectedSharedFiles": [],
+      "forbiddenFiles": [],
+      "unknownFileTouchRisk": false,
+      "dependencies": [],
+      "satisfiesAcceptanceCriteriaIds": ["AC-PT-1-1"],
+      "doneCriteria": ["AC-PT-1-1 passes with attached test output."],
+      "validationHints": ["node test/todos.test.js"],
+      "updatedAt": "2026-06-12T10:00:00.000Z"
+    }
+  ],
+  "edges": []
+}

@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "PJ-ROOT",
+  "nodes": [
+    {
+      "id": "PJ-ROOT",
+      "type": "foundation",
+      "title": "Todo app project",
+      "status": "derived",
+      "parent": null,
+      "children": ["PJ-1"],
+      "derivedFromProductNodeIds": ["PT-ROOT"],
+      "responsibility": "Group the selected todo slice.",
+      "boundaries": ["Example fixture only"],
+      "risks": []
+    },
+    {
+      "id": "PJ-1",
+      "type": "module",
+      "title": "Todo item module",
+      "status": "module_verified",
+      "parent": "PJ-ROOT",
+      "children": [],
+      "derivedFromProductNodeIds": ["PT-1"],
+      "responsibility": "Persist and expose active todo items.",
+      "boundaries": ["src/todos.ts"],
+      "risks": []
+    }
+  ]
+}

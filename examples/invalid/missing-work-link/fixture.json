@@ -1,0 +1,7 @@
+{
+  "name": "missing-work-link",
+  "description": "Selected Product node has no Work Tree derivation.",
+  "mutation": "missingWorkLink",
+  "command": ["trace", "check", "--stage", "wpd", "--json"],
+  "expectedIssueCode": "PRODUCT_WORK_LINK_MISSING"
+}

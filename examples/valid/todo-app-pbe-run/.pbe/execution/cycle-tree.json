@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0-tree-control",
+  "activeCycleId": "CY-1",
+  "cycles": [
+    {
+      "id": "CY-1",
+      "goal": "Close the selected add-todo capability.",
+      "status": "accepted",
+      "includedProductNodeIds": ["PT-1"],
+      "includedProjectNodeIds": ["PJ-1"],
+      "includedWorkNodeIds": ["WT-1"],
+      "includedTestNodeIds": ["TT-1"],
+      "explicitlyExcludedNodeIds": [],
+      "requiresChangeNode": [],
+      "requiredEvidence": ["EV-1"],
+      "closeCriteria": ["AC-PT-1-1 has fresh evidence and user acceptance."]
+    }
+  ]
+}

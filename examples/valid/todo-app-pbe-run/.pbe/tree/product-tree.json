@@ -1,0 +1,90 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "PT-ROOT",
+  "decisionQueueRef": ".pbe/control/decision-queue.json",
+  "nodes": [
+    {
+      "id": "PT-ROOT",
+      "type": "non_goal",
+      "title": "Todo app accepted slice",
+      "status": "confirmed",
+      "parent": null,
+      "children": ["PT-1"],
+      "source": {
+        "actor": "user",
+        "type": "user_interview"
+      },
+      "why": "Groups the selected todo capability for this example run.",
+      "scopeClass": "selected",
+      "acceptanceCriteria": [],
+      "acceptanceNotRequiredReason": "Root groups child capability acceptance criteria.",
+      "ambiguity": {
+        "status": "clear",
+        "type": "none",
+        "missing": []
+      },
+      "ambiguityResolution": {
+        "status": "resolved",
+        "resolvedAt": "2026-06-12T08:00:00.000Z",
+        "resolvedTerms": []
+      },
+      "derivedTo": ["PJ-1", "WT-1"],
+      "evidence": ["EV-1"]
+    },
+    {
+      "id": "PT-1",
+      "type": "capability",
+      "title": "Add a todo item",
+      "status": "confirmed",
+      "parent": "PT-ROOT",
+      "children": [],
+      "source": {
+        "actor": "user",
+        "type": "user_interview"
+      },
+      "why": "The user needs to create a todo and see it in the active list.",
+      "scopeClass": "selected",
+      "updatedAt": "2026-06-12T09:00:00.000Z",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-PT-1-1",
+          "format": "EARS",
+          "type": "event_driven",
+          "condition": "The user submits a todo title",
+          "system": "THE SYSTEM",
+          "shall": "SHALL persist and display the todo item",
+          "systemResponse": "The system persists the todo item and returns it in the active todo list.",
+          "observableResult": "The submitted todo title appears exactly once in the active todo list.",
+          "verificationMethod": "automated_test",
+          "requiredEvidence": ["test_output"],
+          "statement": "WHEN the user submits a todo title, THE SYSTEM SHALL persist and display the todo item.",
+          "status": "confirmed",
+          "source": {
+            "type": "user_interview",
+            "sourceNodeId": "PT-1"
+          },
+          "verification": {
+            "required": true,
+            "method": "automated_test",
+            "evidenceTypes": ["test_output"],
+            "suggestedTestNodeIds": ["TT-1"]
+          }
+        }
+      ],
+      "ambiguity": {
+        "status": "clear",
+        "type": "none",
+        "terms": [],
+        "missing": []
+      },
+      "ambiguityResolution": {
+        "status": "resolved",
+        "resolvedAt": "2026-06-12T09:05:00.000Z",
+        "resolvedTerms": ["submitted todo title", "active todo list", "automated test output"]
+      },
+      "derivedTo": ["PJ-1", "WT-1", "TT-1"],
+      "evidence": ["EV-1"]
+    }
+  ],
+  "assumptions": []
+}

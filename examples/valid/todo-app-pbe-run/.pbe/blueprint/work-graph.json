@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "id": "WG-TODO-1",
+  "generatedFrom": ["req-add-todo"],
+  "summary": "Single selected add-todo work node; no parallel grouping required.",
+  "moduleBoundaryCheck": {
+    "status": "complete",
+    "summary": "The selected work is isolated to the todo module.",
+    "boundaryFindings": [
+      {
+        "id": "MB-1",
+        "requirementNodeIds": ["req-add-todo"],
+        "title": "Todo module owns add behavior",
+        "findingType": "integration_needed",
+        "description": "The work can remain inside the todo module and is validated by TT-1.",
+        "riskLevel": "low",
+        "recommendedAction": "Keep the work sequential in this fixture.",
+        "blocksParallelization": false
+      }
+    ],
+    "sharedFoundations": [],
+    "featureCandidates": ["WT-1"],
+    "integrationPoints": [],
+    "parallelizationRisks": [],
+    "boundaryBlockers": []
+  },
+  "nodes": [
+    {
+      "id": "WT-1",
+      "title": "Implement add todo behavior",
+      "type": "feature",
+      "scopeClass": "selected",
+      "relatedRequirementNodeIds": ["req-add-todo"],
+      "expectedFiles": ["src/todos.ts"],
+      "expectedSharedFiles": [],
+      "forbiddenFiles": [],
+      "unknownFileTouchRisk": "none",
+      "affectedDomains": ["domain-model"],
+      "expectedOutputs": ["Todo item persistence and active-list display behavior."],
+      "riskLevel": "low",
+      "canRunInParallel": false,
+      "mustRunSequentiallyReason": "Single-node golden fixture; no parallel group is needed.",
+      "parallelSafe": false
+    }
+  ],
+  "edges": [],
+  "parallelGroups": []
+}

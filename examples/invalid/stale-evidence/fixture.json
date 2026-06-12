@@ -1,0 +1,7 @@
+{
+  "name": "stale-evidence",
+  "description": "Evidence is older than the linked Work/Test nodes.",
+  "mutation": "staleEvidence",
+  "command": ["review", "submit", "--json"],
+  "expectedIssueCode": "EVIDENCE_STALE"
+}

@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "TT-ROOT",
+  "nodes": [
+    {
+      "id": "TT-ROOT",
+      "type": "regression_check",
+      "title": "Todo test root",
+      "status": "passed",
+      "verifiesProductNodeIds": ["PT-ROOT"],
+      "verifiesProjectNodeIds": ["PJ-ROOT"],
+      "verifiesWorkNodeIds": ["WT-ROOT"],
+      "verifiesAcceptanceCriteriaIds": [],
+      "validationCommands": [],
+      "passCriteria": ["Child tests pass."],
+      "evidenceRequired": ["test_output"]
+    },
+    {
+      "id": "TT-1",
+      "type": "acceptance_check",
+      "title": "Add todo acceptance check",
+      "status": "passed",
+      "verifiesProductNodeIds": ["PT-1"],
+      "verifiesProjectNodeIds": ["PJ-1"],
+      "verifiesWorkNodeIds": ["WT-1"],
+      "verifiesAcceptanceCriteriaIds": ["AC-PT-1-1"],
+      "validationCommands": ["node test/todos.test.js"],
+      "passCriteria": ["The submitted todo title appears exactly once in the active todo list."],
+      "evidenceRequired": ["test_output"],
+      "updatedAt": "2026-06-12T11:00:00.000Z"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0-tree-control",
+  "evidence": [
+    {
+      "id": "EV-1",
+      "type": "test_output",
+      "status": "attached",
+      "path": ".pbe/evidence/test-results/todo-add.txt",
+      "createdAt": "2026-06-12T12:00:00.000Z",
+      "updatedAt": "2026-06-12T12:05:00.000Z",
+      "provesNodeIds": ["PT-1", "WT-1", "TT-1"],
+      "provesProductNodeIds": ["PT-1"],
+      "provesWorkNodeIds": ["WT-1"],
+      "provesTestNodeIds": ["TT-1"],
+      "evidenceForTestNodeIds": ["TT-1"],
+      "evidenceForAcceptanceCriteriaIds": ["AC-PT-1-1"],
+      "supersedesEvidenceIds": [],
+      "supersededByEvidenceId": null
+    }
+  ]
+}
