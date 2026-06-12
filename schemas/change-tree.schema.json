@@ -16,8 +16,31 @@
       "required": ["id", "type", "status"],
       "properties": {
         "id": { "type": "string" },
-        "type": { "enum": ["missing_requirement", "design_correction", "implementation_constraint", "test_gap", "feedback", "scope_change", "risk_discovery", "acceptance_change", "verification_change"] },
-        "status": { "enum": ["proposed", "needs_human_decision", "approved", "rejected", "deferred", "applied", "blocked", "resolved"] },
+        "type": {
+          "enum": [
+            "missing_requirement",
+            "design_correction",
+            "implementation_constraint",
+            "test_gap",
+            "feedback",
+            "scope_change",
+            "risk_discovery",
+            "acceptance_change",
+            "verification_change"
+          ]
+        },
+        "status": {
+          "enum": [
+            "proposed",
+            "needs_human_decision",
+            "approved",
+            "rejected",
+            "deferred",
+            "applied",
+            "blocked",
+            "resolved"
+          ]
+        },
         "sourceFeedbackId": { "type": "string" },
         "sourceFeedbackItemIds": { "type": "array", "items": { "type": "string" } },
         "summary": { "type": "string" },

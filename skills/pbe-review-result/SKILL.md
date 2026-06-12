@@ -91,9 +91,9 @@ When this skill completes without explicit user approval, set or report status a
 submitted_for_review
 ```
 
-Set `pbe-state.json.autoflow.state` to `WAITING_REVIEW_RESULT`, set `autoflow.currentGate` to `review_result`, and set `autoflow.nextStep` to `review_result`.
+Use `pbe review submit` to enter `WAITING_REVIEW_RESULT`; do not hand-edit `pbe-state.json` for review submission.
 
-If the user approves at this gate, move to `DONE` only when the approval explicitly closes the current branch/slice/project. If the user wants another slice, move back to `WAITING_IMPLEMENTATION_SCOPE` with the new selected scope.
+If the user approves at this gate, record the explicit user approval in Acceptance Tree and run `pbe accept` to move to `DONE` only when the approval closes the current branch/slice/project. If the user wants another slice, use implementation scope selection for the next slice instead of silently editing state.
 
 ## Branch Review Scope
 

@@ -1,17 +1,26 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
-import { tmpdir } from 'node:os'
+import { readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { runPbeCli } from '../app'
 import { ExitCode } from '../core/types'
+import { writeExecutionManifest, writeFinalCoverage } from './fixtures/acep'
+import { writeEvidenceTree, writeVisualScreenshotEvidence } from './fixtures/evidence-tree'
+import { writeEmptyAcceptance, writePbeState, writeUserAcceptance } from './fixtures/pbe-state'
+import {
+  writeDecisionQueue,
+  writeExecutableProduct,
+  writeMinimalPbe,
+  writeRequirementCompat,
+} from './fixtures/product-tree'
+import { writeTestTree } from './fixtures/test-tree'
+import { cleanupWorkspaces, createWorkspace, writeJson, writeText } from './fixtures/workspace'
+import { writePassingVisualAudit, writeVisualContractArtifacts } from './fixtures/visual'
+import { writeWorkTree } from './fixtures/work-tree'
 
 const pluginRoot = resolve(process.cwd())
-const tempRoots: string[] = []
 
 afterEach(() => {
-  for (const root of tempRoots.splice(0)) {
-    rmSync(root, { recursive: true, force: true })
-  }
+  cleanupWorkspaces()
 })
 
 describe('PBE CLI', () => {
@@ -21,6 +30,8 @@ describe('PBE CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     expect(result.stdout).toContain('Project Blueprint Engine CLI')
     expect(result.stdout).toContain('rpd close')
+    expect(result.stdout).toContain('wpd close')
+    expect(result.stdout).toContain('review submit')
   })
 
   it('reports status as not initialized when .pbe is missing', async () => {
@@ -69,7 +80,7 @@ describe('PBE CLI', () => {
   it('rejects RPD close when selected Product has unresolved abstract quality terms', async () => {
     const workspace = createWorkspace()
     writeMinimalPbe(workspace, {
-      productTitle: '화면을 깔끔하게 만든다',
+      productTitle: 'Make the UI clean',
       ambiguityResolved: false,
       includeAcceptanceCriteria: true,
       rootUserConfirmed: true,
@@ -97,6 +108,42 @@ describe('PBE CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     expect(JSON.parse(result.stdout).state).toBe('RPD_DONE')
     expect(JSON.parse(status.stdout).state).toBe('RPD_DONE')
+    expect(readState(workspace).autoflow.stateHistory).toHaveLength(1)
+  })
+
+  it('records UI/UX user approval through the CLI', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace, { visualImpact: true })
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'RPD_DONE')
+    writeText(
+      join(workspace, '.pbe', 'blueprint', 'ui-ux-confirmation.md'),
+      [
+        '# UI/UX Confirmation',
+        '',
+        '## Item: SCREEN-001',
+        '',
+        '- Status: confirmed',
+        '- Confirmed by: user',
+        '',
+        '## Confirmed Direction',
+        '',
+        '- User approved the proposed UI/UX direction.',
+        '',
+      ].join('\n'),
+    )
+
+    const result = await runPbeCli(['ui', 'approve', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const state = readState(workspace)
+    expect(state.autoflow.state).toBe('UI_UX_APPROVED')
+    expect(state.autoflow.nextStep).toBe('visual_reference_intake')
+    expect(state.autoflow.stateHistory.map((entry: { to: string }) => entry.to)).toEqual([
+      'WAITING_UI_UX_CONFIRM',
+      'UI_UX_APPROVED',
+    ])
   })
 
   it('blocks accept gate without user approval', async () => {
@@ -274,22 +321,25 @@ describe('PBE CLI', () => {
     writeVisualContractArtifacts(workspace, { requiredScreenshot: true })
     writePbeState(workspace, 'ACEP_RUN_DONE')
     writeVisualScreenshotEvidence(workspace)
-    writeText(join(workspace, '.pbe', 'evidence', 'visual-audit.md'), [
-      '# Visual Implementation Audit',
-      '',
-      '## Scope',
-      '## Visual Contract Artifacts',
-      '## Screenshot Evidence',
-      '## State Coverage',
-      '## Component Contract Compliance',
-      '## Deviations',
-      '## Blocking Issues',
-      '- Missing selected state screenshot',
-      '',
-      '## Result',
-      '- Status: pass',
-      '',
-    ].join('\n'))
+    writeText(
+      join(workspace, '.pbe', 'evidence', 'visual-audit.md'),
+      [
+        '# Visual Implementation Audit',
+        '',
+        '## Scope',
+        '## Visual Contract Artifacts',
+        '## Screenshot Evidence',
+        '## State Coverage',
+        '## Component Contract Compliance',
+        '## Deviations',
+        '## Blocking Issues',
+        '- Missing selected state screenshot',
+        '',
+        '## Result',
+        '- Status: pass',
+        '',
+      ].join('\n'),
+    )
 
     const result = await runPbeCli(['gate', 'review-result', '--json'], { cwd: workspace, pluginRoot })
 
@@ -303,7 +353,7 @@ describe('PBE CLI', () => {
     writeExecutableProduct(workspace, { scopeClass: 'deferred', status: 'deferred' })
     writeWorkTree(workspace, { workScopeClass: 'deferred', workStatus: 'deferred' })
     writeExecutionManifest(workspace, { taskScopeClass: 'deferred' })
-    writeText(join(workspace, '.pbe', 'codex-execution-pack', '16-final-coverage-check.md'), '# Final Coverage\n')
+    writeFinalCoverage(workspace)
 
     const result = await runPbeCli(['acep', 'check', '--json'], { cwd: workspace, pluginRoot })
 
@@ -325,532 +375,196 @@ describe('PBE CLI', () => {
     const payload = JSON.parse(result.stderr)
     expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain('EVIDENCE_FILE_MISSING')
   })
+
+  it('transitions WPD through CLI and records state history', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'UI_UX_APPROVED')
+    writeWorkTree(workspace)
+
+    const result = await runPbeCli(['wpd', 'close', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const state = readState(workspace)
+    expect(state.autoflow.state).toBe('WPD_DONE')
+    expect(state.autoflow.stateHistory.at(-1)).toMatchObject({
+      from: 'UI_UX_APPROVED',
+      to: 'WPD_DONE',
+      command: 'wpd close',
+    })
+  })
+
+  it('transitions VD and opens implementation scope gate', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'WPD_DONE')
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+
+    const result = await runPbeCli(['vd', 'close', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const state = readState(workspace)
+    expect(state.autoflow.state).toBe('VD_DONE')
+    expect(state.autoflow.currentGate).toBe('implementation_scope')
+  })
+
+  it('runs deterministic transition commands through review submit', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'VD_DONE')
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+    writeExecutionManifest(workspace)
+    writeFinalCoverage(workspace)
+    writeEvidenceTree(workspace)
+
+    const scope = await runPbeCli(['scope', 'select', '--json'], { cwd: workspace, pluginRoot })
+    const acep = await runPbeCli(['acep', 'ready', '--json'], { cwd: workspace, pluginRoot })
+    const execution = await runPbeCli(['execution', 'complete', '--json'], { cwd: workspace, pluginRoot })
+    const review = await runPbeCli(['review', 'submit', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(scope.exitCode).toBe(ExitCode.Success)
+    expect(acep.exitCode).toBe(ExitCode.Success)
+    expect(execution.exitCode).toBe(ExitCode.Success)
+    expect(review.exitCode).toBe(ExitCode.Success)
+    const state = readState(workspace)
+    expect(state.autoflow.state).toBe('WAITING_REVIEW_RESULT')
+    expect(state.deliveryStatus).toBe('submitted_for_review')
+    expect(state.autoflow.stateHistory.map((entry: { to: string }) => entry.to)).toEqual([
+      'WAITING_IMPLEMENTATION_SCOPE',
+      'SCOPE_SELECTED',
+      'ACEP_READY',
+      'ACEP_RUN_DONE',
+      'WAITING_REVIEW_RESULT',
+    ])
+  })
+
+  it('does not mutate state when a transition command fails validation', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'WPD_DONE')
+
+    const before = JSON.stringify(readState(workspace))
+    const result = await runPbeCli(['vd', 'close', '--json'], { cwd: workspace, pluginRoot })
+    const after = JSON.stringify(readState(workspace))
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(after).toBe(before)
+  })
+
+  it('blocks invalid transition and leaves state untouched', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'ACEP_READY')
+    writeWorkTree(workspace)
+
+    const before = JSON.stringify(readState(workspace))
+    const result = await runPbeCli(['wpd', 'close', '--json'], { cwd: workspace, pluginRoot })
+    const after = JSON.stringify(readState(workspace))
+
+    expect(result.exitCode).toBe(ExitCode.TransitionBlocked)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'INVALID_TRANSITION',
+    )
+    expect(after).toBe(before)
+  })
+
+  it('blocks transition commands when state history is inconsistent', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'WPD_DONE', {
+      stateHistory: [{ from: 'INIT', to: 'RPD_DONE', command: 'rpd close', at: '2026-01-01T00:00:00.000Z' }],
+    })
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+
+    const before = JSON.stringify(readState(workspace))
+    const result = await runPbeCli(['vd', 'close', '--json'], { cwd: workspace, pluginRoot })
+    const after = JSON.stringify(readState(workspace))
+
+    expect(result.exitCode).toBe(ExitCode.TransitionBlocked)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'STATE_HISTORY_CURRENT_MISMATCH',
+    )
+    expect(after).toBe(before)
+  })
+
+  it('accepts only after explicit user acceptance metadata exists', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'WAITING_REVIEW_RESULT')
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+    writeEvidenceTree(workspace)
+    writeEmptyAcceptance(workspace)
+
+    const blocked = await runPbeCli(['accept', '--json'], { cwd: workspace, pluginRoot })
+    expect(blocked.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(readState(workspace).autoflow.state).toBe('WAITING_REVIEW_RESULT')
+
+    writeUserAcceptance(workspace)
+    const accepted = await runPbeCli(['accept', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(accepted.exitCode).toBe(ExitCode.Success)
+    const state = readState(workspace)
+    expect(state.autoflow.state).toBe('DONE')
+    expect(state.deliveryStatus).toBe('accepted')
+    expect(state.acceptance.setBy).toBe('user')
+  })
+
+  it('review submit records visual audit transition for visual UI work', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace, { visualImpact: true })
+    writeRequirementCompat(workspace)
+    writeDecisionQueue(workspace)
+    writePbeState(workspace, 'ACEP_RUN_DONE')
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+    writeVisualContractArtifacts(workspace, { requiredScreenshot: true })
+    writeVisualScreenshotEvidence(workspace)
+    writePassingVisualAudit(workspace)
+
+    const result = await runPbeCli(['review', 'submit', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const state = readState(workspace)
+    expect(state.autoflow.state).toBe('WAITING_REVIEW_RESULT')
+    expect(state.autoflow.stateHistory.map((entry: { to: string }) => entry.to)).toEqual([
+      'VISUAL_AUDIT_DONE',
+      'WAITING_REVIEW_RESULT',
+    ])
+  })
+
+  it('validate reports unknown state and broken state history', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'UNKNOWN_STATE', {
+      stateHistory: [{ from: 'INIT', to: 'WPD_DONE', command: 'bad', at: '2026-01-01T00:00:00.000Z' }],
+    })
+
+    const result = await runPbeCli(['validate', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    const codes = JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)
+    expect(codes).toContain('UNKNOWN_STATE')
+    expect(codes).toContain('STATE_HISTORY_INVALID_TRANSITION')
+  })
 })
 
-function createWorkspace(): string {
-  const workspace = mkdtempSync(join(tmpdir(), 'pbe-cli-'))
-  tempRoots.push(workspace)
-  return workspace
-}
-
-function writeMinimalPbe(
-  workspace: string,
-  options: {
-    productTitle: string
-    ambiguityResolved: boolean
-    includeAcceptanceCriteria: boolean
-    rootUserConfirmed: boolean
-    acceptedByAssistant?: boolean
-  },
-) {
-  const productStatus = options.acceptedByAssistant ? 'accepted' : 'confirmed'
-  writeJson(join(workspace, '.pbe', 'tree', 'product-tree.json'), {
-    version: '0.2.0-tree-control',
-    rootNodeId: 'PT-ROOT',
-    nodes: [
-      {
-        id: 'PT-ROOT',
-        type: 'goal',
-        title: options.productTitle,
-        status: productStatus,
-        parent: null,
-        children: [],
-        source: options.rootUserConfirmed ? { actor: options.acceptedByAssistant ? 'assistant' : 'user', type: 'user_interview' } : {},
-        why: '',
-        scopeClass: 'selected',
-        acceptance: [],
-        acceptanceCriteria: options.includeAcceptanceCriteria
-          ? [
-              {
-                id: 'AC-PT-ROOT-1',
-                format: 'EARS',
-                type: 'event_driven',
-                condition: 'The status changes',
-                systemResponse: 'The system shows the updated status text',
-                statement: 'WHEN the status changes, THE SYSTEM SHALL show the updated status text.',
-                status: 'confirmed',
-                source: {
-                  type: 'user_interview',
-                  sourceNodeId: 'PT-ROOT',
-                },
-                verification: {
-                  required: true,
-                  suggestedTestNodeIds: [],
-                  evidenceTypes: ['test_log'],
-                },
-              },
-            ]
-          : [],
-        ambiguity: {
-          status: options.ambiguityResolved ? 'clear' : 'partial',
-          type: options.ambiguityResolved ? 'none' : 'abstract_quality',
-          terms: options.ambiguityResolved ? [] : ['깔끔하게'],
-          missing: options.ambiguityResolved ? [] : ['completion_criteria'],
-        },
-        ambiguityResolution: {
-          status: options.ambiguityResolved ? 'resolved' : 'pending',
-          resolvedTerms: options.ambiguityResolved ? ['status text is observable'] : [],
-        },
-        derivedTo: [],
-        evidence: [],
-      },
-    ],
-  })
-  writeJson(join(workspace, '.pbe', 'blueprint', 'requirement-tree.json'), {
-    schemaVersion: 1,
-    rootNodeId: 'req-root',
-    traversal: 'breadth_first',
-    nodes: [
-      {
-        id: 'req-root',
-        parentId: null,
-        title: options.productTitle,
-        summary: options.productTitle,
-        status: 'confirmed',
-        depth: 0,
-        children: [],
-        facts: [],
-        openQuestions: [],
-        decisions: [],
-        scope: [],
-        nonScope: [],
-      },
-    ],
-  })
-  writeJson(join(workspace, '.pbe', 'control', 'decision-queue.json'), {
-    version: '0.2.0-tree-control',
-    decisions: [],
-  })
-  writeJson(join(workspace, '.pbe', 'control', 'acceptance-tree.json'), {
-    version: '0.2.0-tree-control',
-    branches: options.acceptedByAssistant
-      ? [
-          {
-            productNodeId: 'PT-ROOT',
-            status: 'accepted_done',
-            decisionSource: {
-              actor: 'assistant',
-            },
-            evidenceNodeIds: [],
-          },
-        ]
-      : [],
-  })
-  writeJson(join(workspace, '.pbe', 'blueprint', 'pbe-state.json'), {
-    version: '0.2.0-alpha',
-    autoflow: {
-      enabled: true,
-      profile: 'full',
-      state: 'INIT',
-      completedSteps: ['start'],
-      currentGate: null,
-      nextStep: 'rpd',
-      lastUserAction: options.acceptedByAssistant ? { actor: 'assistant' } : { actor: 'user' },
-    },
-    artifacts: {
-      productTree: '.pbe/tree/product-tree.json',
-      decisionQueue: '.pbe/control/decision-queue.json',
-      acceptanceTree: '.pbe/control/acceptance-tree.json',
-      requirementTree: '.pbe/blueprint/requirement-tree.json',
-    },
-    deliveryStatus: options.acceptedByAssistant ? 'accepted' : 'waiting_root_confirmation',
-  })
-}
-
-function writeJson(file: string, value: unknown) {
-  mkdirSync(resolve(file, '..'), { recursive: true })
-  writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, 'utf8')
-}
-
-function writeText(file: string, value: string) {
-  mkdirSync(resolve(file, '..'), { recursive: true })
-  writeFileSync(file, value, 'utf8')
-}
-
-function writeExecutableProduct(
-  workspace: string,
-  options: { scopeClass?: string; status?: string; visualImpact?: boolean } = {},
-) {
-  writeJson(join(workspace, '.pbe', 'tree', 'product-tree.json'), {
-    version: '0.2.0-tree-control',
-    rootNodeId: 'PT-ROOT',
-    nodes: [
-      {
-        id: 'PT-ROOT',
-        type: 'goal',
-        title: 'Root goal',
-        status: 'confirmed',
-        parent: null,
-        children: ['PT-1'],
-        source: { actor: 'user', type: 'user_interview' },
-        scopeClass: 'selected',
-        acceptanceCriteria: [],
-        acceptanceNotRequiredReason: 'Root groups child capability acceptance criteria.',
-        ambiguity: { status: 'clear', type: 'none', missing: [] },
-        ambiguityResolution: { status: 'resolved', resolvedTerms: [] },
-      },
-      {
-        id: 'PT-1',
-        type: 'capability',
-        title: 'Show connected status',
-        status: options.status || 'confirmed',
-        parent: 'PT-ROOT',
-        children: [],
-        source: { actor: 'user', type: 'user_interview' },
-        scopeClass: options.scopeClass || 'selected',
-        visualImpact: options.visualImpact === true,
-        ux: options.visualImpact === true ? { visualAffected: true, visualWorkRequired: true } : {},
-        acceptanceCriteria: [
-          {
-            id: 'AC-PT-1-1',
-            format: 'EARS',
-            type: 'event_driven',
-            condition: 'The connection status changes',
-            systemResponse: 'The system shows the updated status',
-            statement: 'WHEN the connection status changes, THE SYSTEM SHALL show the updated status.',
-            status: 'confirmed',
-            source: { type: 'user_interview', sourceNodeId: 'PT-1' },
-            verification: {
-              required: true,
-              evidenceTypes: ['test_output'],
-            },
-          },
-        ],
-        ambiguity: { status: 'clear', type: 'none', missing: [] },
-        ambiguityResolution: { status: 'resolved', resolvedTerms: [] },
-      },
-    ],
-  })
-}
-
-function writeVisualContractArtifacts(workspace: string, options: { requiredScreenshot?: boolean; contractOnly?: boolean } = {}) {
-  writeJson(join(workspace, '.pbe', 'blueprint', 'visual-reference.json'), {
-    schemaVersion: '1.0.0',
-    artifactType: 'visual_reference',
-    status: 'confirmed',
-    visualWorkRequired: true,
-    primarySource: 'default_pbe_clean_theme',
-    sources: [
-      {
-        sourceId: 'VISUAL-SOURCE-1',
-        sourceType: 'default_pbe_clean_theme',
-        description: 'Default PBE Clean Theme',
-        providedBy: 'codex',
-        scope: 'selected_slice',
-      },
-    ],
-    intendedScope: {
-      scopeType: 'selected_slice',
-      includedSurfaces: ['surface-1'],
-      excludedSurfaces: [],
-      notes: '',
-    },
-    mustPreserve: ['existing behavior'],
-    nonGoals: ['unrelated redesign'],
-    waiver: {
-      isWaived: false,
-      riskAcceptedByUser: false,
-      reason: null,
-      scope: null,
-    },
-  })
-  writeText(join(workspace, '.pbe', 'blueprint', 'ui-theme-spec.md'), '# UI Theme Spec\n')
-  writeJson(join(workspace, '.pbe', 'blueprint', 'design-tokens.json'), {
-    schemaVersion: '1.0.0',
-    artifactType: 'design_tokens',
-    status: 'confirmed',
-    sourceRef: '.pbe/blueprint/visual-reference.json',
-    tokens: {
-      colors: { primary: { value: '#3B82F6' } },
-      spacing: { sm: { value: '8px' } },
-      radius: { control: { value: '8px' } },
-      typography: { body: { fontSize: '14px', lineHeight: '20px' } },
-      border: { subtle: { value: '1px solid #D0D5DD' } },
-      shadow: { panel: { value: '0 1px 2px rgba(16, 24, 40, 0.06)' } },
-      motion: { fast: { value: '120ms ease' } },
-    },
-    openQuestions: [],
-    exceptions: [],
-  })
-  writeJson(join(workspace, '.pbe', 'blueprint', 'component-style-contract.json'), {
-    schemaVersion: '1.0.0',
-    artifactType: 'component_style_contract',
-    status: 'confirmed',
-    sourceRef: '.pbe/blueprint/design-tokens.json',
-    components: [
-      {
-        componentName: 'Button',
-        visualRole: 'Actions',
-        requiredTokens: ['colors.primary', 'radius.control'],
-        allowedVariants: ['primary'],
-        requiredStates: ['default', 'focus'],
-        forbiddenChanges: ['one-off colors'],
-        evidenceRequired: ['default'],
-      },
-      {
-        componentName: 'Panel',
-        visualRole: 'Container',
-        requiredTokens: ['colors.panelBackground', 'radius.panel'],
-        allowedVariants: ['default'],
-        requiredStates: ['default'],
-        forbiddenChanges: ['unapproved shadows'],
-        evidenceRequired: ['default'],
-      },
-    ],
-    localExceptions: [],
-    openQuestions: [],
-  })
-  if (options.contractOnly) {
-    return
-  }
-  writeJson(join(workspace, '.pbe', 'control', 'ui-surface-inventory.json'), {
-    schemaVersion: '1.0.0',
-    artifactType: 'ui_surface_inventory',
-    status: 'confirmed',
-    surfaces: options.requiredScreenshot
-      ? [
-          {
-            surfaceId: 'surface-1',
-            name: 'Status surface',
-            surfaceType: 'panel',
-            owningFiles: ['src/status.ts'],
-            styleFiles: [],
-            reusableComponentsUsed: ['Button', 'Panel'],
-            statesRequired: ['default'],
-            requiredScreenshots: [
-              {
-                state: 'default',
-                path: '.pbe/evidence/screenshots/surface-1-default.png',
-                required: true,
-              },
-            ],
-            relatedProductNodes: ['PT-1'],
-            relatedWorkNodes: ['WT-1'],
-            relatedTestNodes: ['TT-1'],
-            deferredOrOutOfScopeVisualItems: [],
-            riskNotes: [],
-          },
-        ]
-      : [],
-    childSurfaces: [],
-    missingInventoryItems: [],
-  })
-  writeJson(join(workspace, '.pbe', 'control', 'component-style-inventory.json'), {
-    schemaVersion: '1.0.0',
-    artifactType: 'component_style_inventory',
-    status: 'confirmed',
-    components: [],
-    globalStyleFiles: [],
-    tokenIntegrationFiles: [],
-    risks: [],
-  })
-  writeJson(join(workspace, '.pbe', 'control', 'visual-verification-profile.json'), {
-    version: '0.2.1-parity-completeness',
-    schemaVersion: '1.0.0',
-    artifactType: 'visual_verification_profile',
-    status: 'confirmed',
-    visualContractRef: '.pbe/blueprint/ui-theme-spec.md',
-    designTokensRef: '.pbe/blueprint/design-tokens.json',
-    componentContractRef: '.pbe/blueprint/component-style-contract.json',
-    surfaceInventoryRef: '.pbe/control/ui-surface-inventory.json',
-    contractChecks: [],
-    blockingIssues: [],
-    waivers: [],
-    profiles: [],
-  })
-}
-
-function writeRequirementCompat(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'blueprint', 'requirement-tree.json'), {
-    schemaVersion: 1,
-    rootNodeId: 'req-root',
-    traversal: 'breadth_first',
-    nodes: [
-      {
-        id: 'req-root',
-        parentId: null,
-        title: 'Root goal',
-        summary: 'Root goal',
-        status: 'confirmed',
-        depth: 0,
-        children: [],
-        facts: [],
-        openQuestions: [],
-        decisions: [],
-        scope: [],
-        nonScope: [],
-      },
-    ],
-  })
-}
-
-function writeDecisionQueue(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'control', 'decision-queue.json'), {
-    version: '0.2.0-tree-control',
-    decisions: [],
-  })
-}
-
-function writePbeState(workspace: string, state: string) {
-  writeJson(join(workspace, '.pbe', 'blueprint', 'pbe-state.json'), {
-    version: '0.2.0-alpha',
-    autoflow: {
-      enabled: true,
-      profile: 'full',
-      state,
-      completedSteps: ['start', 'rpd'],
-      currentGate: null,
-      nextStep: 'wpd',
-    },
-    deliveryStatus: 'waiting_root_confirmation',
-  })
-}
-
-function writeWorkTree(
-  workspace: string,
-  options: {
-    dependencyCycle?: boolean
-    workScopeClass?: string
-    workStatus?: string
-  } = {},
-) {
-  const secondNode = options.dependencyCycle
-    ? [
-        {
-          id: 'WT-2',
-          type: 'feature_task',
-          title: 'Second work item',
-          status: 'ready',
-          derivedFromProductNodeIds: ['PT-1'],
-          derivedFromProjectNodeIds: [],
-          scopeClass: 'selected',
-          expectedFiles: ['src/second.ts'],
-          unknownFileTouchRisk: false,
-          dependencies: ['WT-1'],
-          satisfiesAcceptanceCriteriaIds: ['AC-PT-1-1'],
-        },
-      ]
-    : []
-  writeJson(join(workspace, '.pbe', 'tree', 'work-tree.json'), {
-    version: '0.2.0-tree-control',
-    rootNodeId: 'WT-ROOT',
-    nodes: [
-      {
-        id: 'WT-ROOT',
-        type: 'foundation_task',
-        title: 'Work root',
-        status: 'ready',
-        derivedFromProductNodeIds: [],
-        derivedFromProjectNodeIds: [],
-        scopeClass: 'foundation',
-      },
-      {
-        id: 'WT-1',
-        type: 'feature_task',
-        title: 'Implement connected status',
-        status: options.workStatus || 'ready',
-        derivedFromProductNodeIds: ['PT-1'],
-        derivedFromProjectNodeIds: [],
-        scopeClass: options.workScopeClass || 'selected',
-        expectedFiles: ['src/status.ts'],
-        unknownFileTouchRisk: false,
-        dependencies: options.dependencyCycle ? ['WT-2'] : [],
-        satisfiesAcceptanceCriteriaIds: ['AC-PT-1-1'],
-      },
-      ...secondNode,
-    ],
-  })
-}
-
-function writeTestTree(
-  workspace: string,
-  options: {
-    verifiesWork?: boolean
-    verifiesAcceptanceCriteria?: boolean
-    testType?: string
-    evidenceRequired?: string[]
-  } = {},
-) {
-  writeJson(join(workspace, '.pbe', 'tree', 'test-tree.json'), {
-    version: '0.2.0-tree-control',
-    rootNodeId: 'TT-ROOT',
-    nodes: [
-      {
-        id: 'TT-ROOT',
-        type: 'acceptance_check',
-        title: 'Test root',
-        status: 'planned',
-        verifiesProductNodeIds: [],
-        verifiesWorkNodeIds: [],
-        evidenceRequired: [],
-      },
-      {
-        id: 'TT-1',
-        type: options.testType || 'unit_test',
-        title: 'Verify connected status',
-        status: 'planned',
-        verifiesProductNodeIds: ['PT-1'],
-        verifiesWorkNodeIds: options.verifiesWork === false ? [] : ['WT-1'],
-        verifiesAcceptanceCriteriaIds: options.verifiesAcceptanceCriteria === false ? [] : ['AC-PT-1-1'],
-        evidenceRequired: options.evidenceRequired || ['test output'],
-      },
-    ],
-  })
-}
-
-function writeEvidenceTree(workspace: string, options: { path?: string } = {}) {
-  writeJson(join(workspace, '.pbe', 'evidence', 'evidence-tree.json'), {
-    version: '0.2.0-tree-control',
-    evidence: [
-      {
-        id: 'EV-1',
-        type: 'test_output',
-        status: 'attached',
-        path: options.path,
-        provesNodeIds: ['TT-1'],
-        evidenceForTestNodeIds: ['TT-1'],
-        evidenceForAcceptanceCriteriaIds: ['AC-PT-1-1'],
-      },
-    ],
-  })
-}
-
-function writeVisualScreenshotEvidence(workspace: string) {
-  const screenshotPath = join(workspace, '.pbe', 'evidence', 'screenshots', 'surface-1-default.png')
-  writeText(screenshotPath, 'fake screenshot bytes')
-  writeJson(join(workspace, '.pbe', 'evidence', 'evidence-tree.json'), {
-    version: '0.2.0-tree-control',
-    evidence: [
-      {
-        id: 'EV-VISUAL-1',
-        type: 'screenshot',
-        status: 'attached',
-        path: '.pbe/evidence/screenshots/surface-1-default.png',
-        provesNodeIds: ['TT-1'],
-        evidenceForTestNodeIds: ['TT-1'],
-        evidenceForAcceptanceCriteriaIds: ['AC-PT-1-1'],
-      },
-    ],
-  })
-}
-
-function writeExecutionManifest(workspace: string, options: { taskScopeClass: string }) {
-  writeJson(join(workspace, '.pbe', 'codex-execution-pack', 'execution-manifest.json'), {
-    schemaVersion: 1,
-    autonomyLevel: 'autonomous_until_stop',
-    deliveryStatus: 'submitted_for_review',
-    tasks: [
-      {
-        id: 'TASK-1',
-        title: 'Inactive task',
-        file: '11-task-cards/TASK-1.md',
-        scopeClass: options.taskScopeClass,
-        workGraphNodeIds: ['WT-1'],
-        requirementIds: ['PT-1'],
-        verificationIds: ['TT-1'],
-        evidenceRequired: ['test output'],
-      },
-    ],
-    stopConditions: ['Any gate failure stops execution.'],
-  })
+function readState(workspace: string): Record<string, any> {
+  return JSON.parse(readFileSync(join(workspace, '.pbe', 'blueprint', 'pbe-state.json'), 'utf8'))
 }

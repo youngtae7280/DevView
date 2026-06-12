@@ -8,6 +8,11 @@ before implementation work. The Autoflow state decides whether Codex should
 continue a deterministic step, stop at a human gate, repair a blocked step, or
 answer an ordinary non-state-changing question.
 
+For supported stage transitions, Codex should run the deterministic `pbe` CLI
+transition command instead of hand-editing `.pbe/blueprint/pbe-state.json`.
+The CLI validates artifacts and allowed transitions first, then writes state
+history only when the transition is allowed.
+
 ## Routing Order
 
 1. If the user asks for usage, explanation, or a conceptual review, answer normally.
@@ -17,6 +22,20 @@ answer an ordinary non-state-changing question.
 5. If `nextStep` is deterministic, run that PBE step.
 6. If the user explicitly asks for bypass, classify the request as `bypass`, `lite`, or `full`.
 7. If no PBE state exists, use `@project-blueprint-engine start` to initialize PBE.
+
+Common transition commands:
+
+```bash
+pbe rpd close
+pbe ui approve
+pbe wpd close
+pbe vd close
+pbe scope select
+pbe acep ready
+pbe execution complete
+pbe review submit
+pbe accept
+```
 
 ## Deterministic Steps
 

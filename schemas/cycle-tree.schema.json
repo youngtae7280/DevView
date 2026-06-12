@@ -12,11 +12,29 @@
   "$defs": {
     "cycle": {
       "type": "object",
-      "required": ["id", "status", "includedProductNodeIds", "includedWorkNodeIds", "includedTestNodeIds", "explicitlyExcludedNodeIds"],
+      "required": [
+        "id",
+        "status",
+        "includedProductNodeIds",
+        "includedWorkNodeIds",
+        "includedTestNodeIds",
+        "explicitlyExcludedNodeIds"
+      ],
       "properties": {
         "id": { "type": "string" },
         "goal": { "type": "string" },
-        "status": { "enum": ["draft", "selected", "approved", "running", "submitted_for_review", "accepted", "blocked", "reopened"] },
+        "status": {
+          "enum": [
+            "draft",
+            "selected",
+            "approved",
+            "running",
+            "submitted_for_review",
+            "accepted",
+            "blocked",
+            "reopened"
+          ]
+        },
         "includedProductNodeIds": { "type": "array", "items": { "type": "string" } },
         "includedProjectNodeIds": { "type": "array", "items": { "type": "string" } },
         "includedWorkNodeIds": { "type": "array", "items": { "type": "string" } },

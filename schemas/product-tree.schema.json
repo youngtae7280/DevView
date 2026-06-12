@@ -20,9 +20,47 @@
       "required": ["id", "type", "title", "status", "children"],
       "properties": {
         "id": { "type": "string" },
-        "type": { "enum": ["goal", "user", "outcome", "capability", "feature", "behavior", "ui_surface", "ui_state", "data", "constraint", "non_goal", "risk", "acceptance", "assumption", "decision"] },
+        "type": {
+          "enum": [
+            "goal",
+            "user",
+            "outcome",
+            "capability",
+            "feature",
+            "behavior",
+            "ui_surface",
+            "ui_state",
+            "data",
+            "constraint",
+            "non_goal",
+            "risk",
+            "acceptance",
+            "assumption",
+            "decision"
+          ]
+        },
         "title": { "type": "string" },
-        "status": { "enum": ["draft", "assumed", "auto_derived", "needs_human_decision", "needs_clarification", "proposed", "confirmed", "accepted", "covered", "partial_satisfied", "satisfied", "accepted_done", "deferred", "out_of_scope", "blocked", "changed", "reopened"] },
+        "status": {
+          "enum": [
+            "draft",
+            "assumed",
+            "auto_derived",
+            "needs_human_decision",
+            "needs_clarification",
+            "proposed",
+            "confirmed",
+            "accepted",
+            "covered",
+            "partial_satisfied",
+            "satisfied",
+            "accepted_done",
+            "deferred",
+            "out_of_scope",
+            "blocked",
+            "changed",
+            "reopened"
+          ]
+        },
         "parent": { "type": ["string", "null"] },
         "children": { "type": "array", "items": { "type": "string" } },
         "source": { "type": "object" },
@@ -48,7 +86,15 @@
         "id": { "type": "string" },
         "format": { "enum": ["EARS", "plain"] },
         "type": {
-          "enum": ["ubiquitous", "event_driven", "state_driven", "optional_feature", "unwanted_behavior", "complex", "plain"]
+          "enum": [
+            "ubiquitous",
+            "event_driven",
+            "state_driven",
+            "optional_feature",
+            "unwanted_behavior",
+            "complex",
+            "plain"
+          ]
         },
         "condition": { "type": "string" },
         "systemResponse": { "type": "string" },
@@ -57,7 +103,9 @@
         "source": {
           "type": "object",
           "properties": {
-            "type": { "enum": ["user_interview", "user_feedback", "assumption", "legacy_requirement", "change_node", "other"] },
+            "type": {
+              "enum": ["user_interview", "user_feedback", "assumption", "legacy_requirement", "change_node", "other"]
+            },
             "sourceNodeId": { "type": "string" },
             "decisionId": { "type": "string" },
             "changeId": { "type": "string" },
@@ -82,13 +130,34 @@
       "type": "object",
       "properties": {
         "status": { "enum": ["clear", "partial", "ambiguous"] },
-        "type": { "enum": ["none", "abstract_quality", "ambiguous_quality_request", "missing_target", "missing_condition", "missing_behavior", "missing_completion_criteria", "missing_exception_handling", "missing_verification", "other"] },
+        "type": {
+          "enum": [
+            "none",
+            "abstract_quality",
+            "ambiguous_quality_request",
+            "missing_target",
+            "missing_condition",
+            "missing_behavior",
+            "missing_completion_criteria",
+            "missing_exception_handling",
+            "missing_verification",
+            "other"
+          ]
+        },
         "terms": { "type": "array", "items": { "type": "string" } },
         "abstractTerms": { "type": "array", "items": { "type": "string" } },
         "missing": {
           "type": "array",
           "items": {
-            "enum": ["target", "target_detail", "condition", "expected_behavior", "completion_criteria", "exception_handling", "verification_method"]
+            "enum": [
+              "target",
+              "target_detail",
+              "condition",
+              "expected_behavior",
+              "completion_criteria",
+              "exception_handling",
+              "verification_method"
+            ]
           }
         },
         "questionIds": { "type": "array", "items": { "type": "string" } },

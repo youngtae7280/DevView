@@ -52,10 +52,9 @@ scope or architecture runway decision.
 7. Save `dependency-impact-audit.md`.
 8. Update Source of Truth Matrix links.
 9. Update `pbe-state.json.artifacts.dependencyImpactAudit`.
-10. Keep `pbe-state.json.autoflow.state` on the nearest canonical downstream state. If implementation scope selection is needed, use `WAITING_IMPLEMENTATION_SCOPE`.
-11. Add `dependency_impact_audit` to `autoflow.completedSteps`.
-12. Set `autoflow.currentGate` and `autoflow.nextStep` to `implementation_scope`.
-13. Stop at the Implementation Scope gate with friendly guidance.
+10. Do not hand-edit `pbe-state.json.autoflow.state`. If VD has not opened implementation scope yet, run `pbe vd close`; otherwise keep the existing canonical state and only record audit artifacts.
+11. The Implementation Scope gate should already be active from `pbe vd close`; if it is not, stop and run `pbe vd close` or repair the missing VD artifacts instead of guessing a state update.
+12. Stop at the Implementation Scope gate with friendly guidance.
 
 ## Rules
 

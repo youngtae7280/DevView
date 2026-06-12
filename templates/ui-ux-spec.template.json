@@ -13,32 +13,11 @@
       "impactState": "none",
       "reopened": false,
       "primaryUser": "Primary user",
-      "primaryFlow": [
-        "Open screen",
-        "Enter required information",
-        "Submit",
-        "Confirm result"
-      ],
-      "requiredElements": [
-        "Primary input",
-        "Submit action",
-        "Error message area"
-      ],
-      "requiredStates": [
-        "empty",
-        "loading",
-        "success",
-        "validation_error",
-        "server_error"
-      ],
-      "uxRules": [
-        "Validation errors are shown near the invalid field.",
-        "Failed submit does not clear user input."
-      ],
-      "accessibility": [
-        "All inputs have labels.",
-        "Error messages are available to screen readers."
-      ],
+      "primaryFlow": ["Open screen", "Enter required information", "Submit", "Confirm result"],
+      "requiredElements": ["Primary input", "Submit action", "Error message area"],
+      "requiredStates": ["empty", "loading", "success", "validation_error", "server_error"],
+      "uxRules": ["Validation errors are shown near the invalid field.", "Failed submit does not clear user input."],
+      "accessibility": ["All inputs have labels.", "Error messages are available to screen readers."],
       "responsivePriority": "desktop_first",
       "evidenceRequired": [
         "screen implementation file",

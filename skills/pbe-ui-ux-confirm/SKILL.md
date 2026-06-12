@@ -72,7 +72,7 @@ blocked
 4. Do not proceed to WPD or ACEP while any required UI/UX item is not `confirmed`, `deferred`, `out_of_scope`, or `not_required`.
 5. If the user defers or excludes a UI/UX item, record the reason.
 6. Do not implement UI during confirmation.
-7. If the user approves in natural language, set `autoflow.state` to `UI_UX_APPROVED`, clear `autoflow.currentGate`, and continue downstream automatically.
+7. If the user approves in natural language, update the confirmation artifact and run `pbe ui approve` so the CLI records `UI_UX_APPROVED`, clears the gate, and writes state history.
 8. If the user requests revision, update the preview and stay at `WAITING_UI_UX_CONFIRM`.
 9. If the user asks a question, answer from the preview and confirmation artifacts and stay at `WAITING_UI_UX_CONFIRM`.
 

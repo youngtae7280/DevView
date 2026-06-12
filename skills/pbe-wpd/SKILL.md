@@ -93,11 +93,9 @@ Prefer v2 tree files when present. If `.pbe/tree/product-tree.json` and `.pbe/bl
 16. Save `work-design.json`.
 17. Save `work-graph.json` as a standalone copy of the WorkGraph.
 18. Save `work-roadmap.md`.
-19. Update `pbe-state.json` stage to `wpd` or `vd_ready` when complete.
-20. Update `pbe-state.json.autoflow.state` to `WPD_DONE`.
-21. Add `wpd` to `autoflow.completedSteps`.
-22. Set `autoflow.nextStep` to `vd`.
-23. Continue automatically to VD unless a blocker exists.
+19. Run `pbe wpd close`.
+20. Let the CLI validate WPD, visual contract prerequisites, UI/UX approval, and state transition rules before it writes `WPD_DONE`, completed steps, next step, and state history.
+21. Continue automatically to VD only if `pbe wpd close` succeeds.
 
 ## WPD Rules
 

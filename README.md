@@ -128,7 +128,7 @@ PBE has three layers:
 
 - Skill Protocol: Codex skills define how RPD, WPD, VD, ACEP, review, feedback, and revision must behave.
 - Persistent Artifacts: `.pbe/` files make decisions, scope, contracts, evidence, and acceptance auditable across chats.
-- Validators: repository scripts check plugin structure, schemas, examples, WorkGraph safety, ACEP manifests, revision boundaries, and compatibility artifacts.
+- CLI gate/state transition layer: the deterministic `pbe` CLI runs file-based validators, checks allowed transitions, records `stateHistory`, and updates `.pbe/blueprint/pbe-state.json` for supported stage transitions.
 
 This repository is the plugin and protocol definition. It is not a standalone backend service.
 
@@ -669,6 +669,49 @@ PBE routing uses that state before implementation or deliverable-producing work:
 
 `DONE` means the user explicitly approved the current branch/slice or project completion. Starting another slice moves back to `WAITING_IMPLEMENTATION_SCOPE` with a new selected scope.
 
+## CLI Gate And State Transition Layer
+
+PBE is built from three cooperating parts:
+
+- Skill Protocol: human-facing Codex skills for RPD, WPD, VD, ACEP, review, feedback, and revision.
+- Persistent `.pbe` Artifacts: durable trees, contracts, evidence, decisions, and compatibility views.
+- CLI gate/state transition layer: deterministic file checks and state transitions for rules that can be judged without model reasoning.
+
+Codex should not hand-edit `.pbe/blueprint/pbe-state.json` for supported stage transitions. It should generate or update the required artifacts, run the relevant `pbe` command, and let the CLI update `autoflow.state`, `autoflow.completedSteps`, gates, `deliveryStatus`, and `autoflow.stateHistory` only after validation passes.
+
+Build the CLI:
+
+```bash
+npm run build:cli
+```
+
+Core commands:
+
+```bash
+npx pbe --help
+npx pbe init
+npx pbe status
+npx pbe validate
+npx pbe rpd close
+npx pbe ui approve
+npx pbe wpd close
+npx pbe vd close
+npx pbe scope select
+npx pbe acep ready
+npx pbe execution complete
+npx pbe review submit
+npx pbe accept
+```
+
+Use `--json` for stable machine-readable output and exit codes:
+
+```bash
+npx pbe validate --json
+npx pbe status --json
+```
+
+Transition commands validate their inputs before writing state. If validation or the allowed-transition check fails, the command exits non-zero and leaves `pbe-state.json` unchanged.
+
 ## Parallel Safety
 
 WPD creates a WorkGraph. Plan Execution converts that WorkGraph into a staged strategy.
@@ -723,12 +766,16 @@ Build and use the deterministic PBE CLI:
 
 ```bash
 npm run build:cli
-node dist/cli/index.js --help
-node dist/cli/index.js status --root /path/to/project
-node dist/cli/index.js validate --root /path/to/project
-node dist/cli/index.js rpd check --root /path/to/project
-node dist/cli/index.js rpd close --root /path/to/project
-node dist/cli/index.js gate wpd --root /path/to/project
+npx pbe --help
+npx pbe status --root /path/to/project
+npx pbe validate --root /path/to/project
+npx pbe rpd check --root /path/to/project
+npx pbe rpd close --root /path/to/project
+npx pbe ui approve --root /path/to/project
+npx pbe wpd close --root /path/to/project
+npx pbe vd close --root /path/to/project
+npx pbe review submit --root /path/to/project
+npx pbe accept --root /path/to/project
 ```
 
 The CLI does not replace Codex, call OpenAI APIs, run a daemon, or revive the legacy GUI. It reads and writes `.pbe` artifacts only. `pbe validate` wraps the preserved validators and adds deterministic stage checks where the rule can be judged from files.

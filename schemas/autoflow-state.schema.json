@@ -116,6 +116,21 @@
       },
       "additionalProperties": true
     },
+    "stateHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "command", "at"],
+        "properties": {
+          "from": { "$ref": "#/properties/state" },
+          "to": { "$ref": "#/properties/state" },
+          "command": { "type": "string" },
+          "at": { "type": "string" },
+          "actor": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
     "downstreamOnApprove": { "type": "object" },
     "downstreamOnRevision": { "type": "object" }
   },

@@ -13,7 +13,14 @@
     },
     "mode": {
       "type": "string",
-      "enum": ["rpd_tree_walk", "wpd_generation", "vd_generation", "execution_planning", "acep_generation", "acep_execution"]
+      "enum": [
+        "rpd_tree_walk",
+        "wpd_generation",
+        "vd_generation",
+        "execution_planning",
+        "acep_generation",
+        "acep_execution"
+      ]
     },
     "currentNodeId": { "type": ["string", "null"] },
     "deliveryStatus": {
@@ -47,8 +54,7 @@
     },
     "createdAt": { "type": "string" },
     "updatedAt": { "type": "string" },
-    "artifacts": { "type": "object" }
-    ,
+    "artifacts": { "type": "object" },
     "autoflow": { "$ref": "autoflow-state.schema.json" }
   },
   "allOf": [

@@ -49,8 +49,8 @@ pbe validate
 If either command fails, do not proceed to RPD until the blocking issue is fixed.
 
 1. Inspect the target repository enough to understand whether this is a new project or a change to an existing project.
-2. Create `.pbe/tree/`, `.pbe/execution/node-execution-contracts/`, `.pbe/control/`, `.pbe/evidence/screenshots/`, `.pbe/evidence/test-results/`, `.pbe/evidence/logs/`, and `.pbe/blueprint/` if they do not exist.
-3. Create or update `.pbe/blueprint/pbe-state.json`.
+2. Run `pbe init --profile <profile> --brief "<user request>"` to create baseline `.pbe` directories, templates, and initial state.
+3. If compatibility bootstrap must be done manually, mirror `pbe init` output and then run `pbe status` and `pbe validate`.
 4. Create `.pbe/tree/product-tree.json` from `templates/product-tree.template.json` if it does not exist.
 5. Create `.pbe/tree/project-tree.json` from `templates/project-tree.template.json` if it does not exist.
 6. Create `.pbe/tree/work-tree.json` from `templates/work-tree.template.json` if it does not exist.
@@ -67,13 +67,13 @@ If either command fails, do not proceed to RPD until the blocking issue is fixed
 16. Create `.pbe/blueprint/requirement-tree.md`, `.pbe/blueprint/rpd-interview-log.md`, and `.pbe/blueprint/rpd-summary.md`.
 17. Initialize UI/UX confirmation placeholders when UI work may be involved.
 17a. Initialize Visual Design Contract placeholders when visual UI work may be involved: visual reference, theme spec, design tokens, component style contract, UI surface inventory, component style inventory, visual verification profile, and visual audit report path.
-18. Initialize `pbe-state.json.autoflow` with:
+18. Confirm `pbe init` initialized `pbe-state.json.autoflow` with:
    - `state`: `INIT`
    - `enabled`: `true`
    - `profile`: `full`, `lite`, or `bypass`
    - `completedSteps`: `["start"]`
    - `nextStep`: `rpd`
-19. Add tree-native artifact paths to `pbe-state.json.artifacts` so later stages can discover Product, Project, Work, Test, Cycle, Decision, Change, Impact, Evidence, and Acceptance trees without guessing paths.
+19. Confirm tree-native artifact paths exist in `pbe-state.json.artifacts` so later stages can discover Product, Project, Work, Test, Cycle, Decision, Change, Impact, Evidence, and Acceptance trees without guessing paths.
 20. Immediately begin RPD/Product Tree growth unless the selected profile is `bypass`.
 21. If the provided project brief is clear, propose the Root requirement summary and child structure, then stop at the `root_confirmation` gate.
 22. If RPD needs more information before a safe proposal, ask exactly one RPD question. The user should answer naturally; do not require `@project-blueprint-engine rpd`.
@@ -144,21 +144,23 @@ If the user already provided enough detail, clear enough means "ready to propose
 
 - keep the requirement root unconfirmed as `interviewing` or `ready_to_confirm`
 - set the Product root to `proposed`
-- keep `pbe-state.json.autoflow.state` at `INIT`
-- set `pbe-state.json.autoflow.currentGate` to `root_confirmation`
-- set `pbe-state.json.autoflow.nextStep` to `root_confirmation`
-- set `pbe-state.json.deliveryStatus` to `waiting_root_confirmation`
+- keep the initial Autoflow state at `INIT` through `pbe init`
+- record `root_confirmation` as the current gate through the initialized PBE state
+- record `root_confirmation` as the next step through the initialized PBE state
+- keep delivery status as `waiting_root_confirmation`
 - ask the user to confirm, revise, or decompose the proposed Root structure
 
 ## Startup State
 
-Set `pbe-state.json` stage to `rpd` and mode to `rpd_tree_walk`.
+Prefer `pbe init --profile <profile> --brief "<user request>"` for initial `.pbe` bootstrap. If bootstrapping manually for compatibility, create the same artifacts and then run `pbe status` and `pbe validate`.
 
-Set `pbe-state.json.autoflow.state` to `INIT`.
+`pbe init` should create `pbe-state.json` with stage `rpd` and mode `rpd_tree_walk`.
 
-Set `pbe-state.json.autoflow.profile` to the chosen profile. If no profile is explicitly requested, set it to `full`.
+Use `pbe init` so `pbe-state.json.autoflow.state` starts as `INIT`.
 
-Set `pbe-state.json.artifacts` to include at least:
+`pbe init` should set `pbe-state.json.autoflow.profile` to the chosen profile. If no profile is explicitly requested, use `full`.
+
+`pbe init` should set `pbe-state.json.artifacts` to include at least:
 
 ```text
 productTree: .pbe/tree/product-tree.json

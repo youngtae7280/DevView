@@ -21,6 +21,10 @@ export const defaultArtifacts = {
   requirementTreeMarkdown: '.pbe/blueprint/requirement-tree.md',
   rpdInterviewLog: '.pbe/blueprint/rpd-interview-log.md',
   rpdSummary: '.pbe/blueprint/rpd-summary.md',
+  uiUxPreview: '.pbe/blueprint/ui-ux-preview.json',
+  uiUxPreviewMarkdown: '.pbe/blueprint/ui-ux-preview.md',
+  uiUxConfirmation: '.pbe/blueprint/ui-ux-confirmation.md',
+  uiUxConfirmationLog: '.pbe/blueprint/ui-ux-confirmation-log.md',
   sourceOfTruthMatrix: '.pbe/blueprint/source-of-truth-matrix.md',
   pbeInvariants: '.pbe/blueprint/pbe-invariants.md',
   visualReference: '.pbe/blueprint/visual-reference.json',
@@ -55,14 +59,16 @@ export async function loadProject(root: string): Promise<{ project: PbeProject; 
     if (parsed.ok) {
       state = parsed.value
     } else {
-      issues.push(issue({
-        validator: 'Project',
-        code: 'PBE_STATE_INVALID_JSON',
-        severity: 'error',
-        file: defaultArtifacts.pbeState,
-        message: `Could not parse pbe-state.json: ${parsed.error}`,
-        suggestedFix: 'Fix the JSON syntax before running PBE gates.',
-      }))
+      issues.push(
+        issue({
+          validator: 'Project',
+          code: 'PBE_STATE_INVALID_JSON',
+          severity: 'error',
+          file: defaultArtifacts.pbeState,
+          message: `Could not parse pbe-state.json: ${parsed.error}`,
+          suggestedFix: 'Fix the JSON syntax before running PBE gates.',
+        }),
+      )
     }
   }
 
@@ -71,14 +77,16 @@ export async function loadProject(root: string): Promise<{ project: PbeProject; 
     if (parsed.ok) {
       decisionQueue = parsed.value
     } else {
-      issues.push(issue({
-        validator: 'Project',
-        code: 'DECISION_QUEUE_INVALID_JSON',
-        severity: 'error',
-        file: defaultArtifacts.decisionQueue,
-        message: `Could not parse decision queue: ${parsed.error}`,
-        suggestedFix: 'Fix the decision queue JSON syntax before continuing.',
-      }))
+      issues.push(
+        issue({
+          validator: 'Project',
+          code: 'DECISION_QUEUE_INVALID_JSON',
+          severity: 'error',
+          file: defaultArtifacts.decisionQueue,
+          message: `Could not parse decision queue: ${parsed.error}`,
+          suggestedFix: 'Fix the decision queue JSON syntax before continuing.',
+        }),
+      )
     }
   }
 
@@ -97,12 +105,14 @@ export async function loadProject(root: string): Promise<{ project: PbeProject; 
 
 export function getAutoflow(state: Record<string, unknown> | null): Record<string, unknown> {
   const autoflow = state?.autoflow
-  return typeof autoflow === 'object' && autoflow !== null ? autoflow as Record<string, unknown> : {}
+  return typeof autoflow === 'object' && autoflow !== null ? (autoflow as Record<string, unknown>) : {}
 }
 
 export function getOpenBlockingDecisions(decisionQueue: Record<string, unknown> | null): Record<string, unknown>[] {
   const decisions = Array.isArray(decisionQueue?.decisions) ? decisionQueue.decisions : []
   return decisions
     .filter((decision): decision is Record<string, unknown> => typeof decision === 'object' && decision !== null)
-    .filter((decision) => decision.status === 'open' && ['gate', 'blocking'].includes(String(decision.blockingLevel || '')))
+    .filter(
+      (decision) => decision.status === 'open' && ['gate', 'blocking'].includes(String(decision.blockingLevel || '')),
+    )
 }

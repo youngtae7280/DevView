@@ -80,11 +80,9 @@ Prefer v2 tree files when present. If Work Tree scope classifications conflict w
 11. Save `verification-design.json`.
 12. Save `verification-plan.md`.
 13. Update Source of Truth Matrix verification links from Product/Project/Work nodes to Test Tree and VerificationDesign nodes.
-14. Update `pbe-state.json` stage to `vd` or `acep_ready` when complete.
-15. Update `pbe-state.json.autoflow.state` to `VD_DONE`.
-16. Add `vd` to `autoflow.completedSteps`.
-17. Set `autoflow.nextStep` to `dependency_impact_audit`.
-18. Continue automatically to `pbe-dependency-impact-audit` unless a blocker exists.
+14. Run `pbe vd close`.
+15. Let the CLI validate VD/Test Tree, WPD, visual inventory, and state transition rules before it writes `VD_DONE`, the implementation scope gate, completed steps, next step, and state history.
+16. Continue automatically to `pbe-dependency-impact-audit` only if `pbe vd close` succeeds.
 
 ## VD Rules
 

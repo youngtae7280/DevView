@@ -31,6 +31,7 @@
   ],
   "lastUserAction": null,
   "lastFailure": null,
+  "stateHistory": [],
   "downstreamOnApprove": {
     "WAITING_UI_UX_CONFIRM": [
       "visual_reference_intake",
@@ -60,10 +61,7 @@
       "visual_implementation_audit",
       "review_result"
     ],
-    "WAITING_REVIEW_RESULT": [
-      "complete",
-      "implementation_scope"
-    ]
+    "WAITING_REVIEW_RESULT": ["complete", "implementation_scope"]
   },
   "downstreamOnRevision": {
     "WAITING_UI_UX_CONFIRM": [
@@ -97,11 +95,6 @@
       "visual_implementation_audit",
       "review_result"
     ],
-    "WAITING_REVIEW_RESULT": [
-      "collect_feedback",
-      "create_revision_pack",
-      "run_revision",
-      "review_result"
-    ]
+    "WAITING_REVIEW_RESULT": ["collect_feedback", "create_revision_pack", "run_revision", "review_result"]
   }
 }

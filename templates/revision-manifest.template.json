@@ -27,17 +27,13 @@
   "affectedVerificationIds": ["TEST-001-UX"],
   "verificationMissIds": ["VML-001"],
   "whyPreviousVerificationMissedThis": "The previous verification checked behavior but did not check runtime visual parity.",
-  "promotedValidationContractRefs": [
-    ".pbe/control/visual-verification-profile.json#VVP-001"
-  ],
+  "promotedValidationContractRefs": [".pbe/control/visual-verification-profile.json#VVP-001"],
   "surfaceReauditRequired": false,
   "allowedFiles": ["src/features/example.ts"],
   "forbiddenFiles": ["package.json", "build config", "deployment files"],
   "mustNotTouch": ["unrelated modules", "deferred or out-of-scope feature behavior"],
   "maxChangeIntent": "bounded_fix_only",
-  "nonScope": [
-    "Do not change behavior outside the affected items unless the user approves scope expansion."
-  ],
+  "nonScope": ["Do not change behavior outside the affected items unless the user approves scope expansion."],
   "tasks": [
     {
       "id": "REV-TASK-001",
@@ -57,11 +53,7 @@
       "verificationMissIds": ["VML-001"],
       "allowedFiles": ["src/features/example.ts"],
       "forbiddenFiles": ["package.json", "build config", "deployment files"],
-      "evidenceRequired": [
-        "changed files",
-        "focused validation output",
-        "regression check output"
-      ]
+      "evidenceRequired": ["changed files", "focused validation output", "regression check output"]
     }
   ],
   "regressionChecks": ["Run checks that protect unaffected behavior."]

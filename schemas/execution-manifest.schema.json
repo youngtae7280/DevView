@@ -123,14 +123,8 @@
       "items": {
         "type": "object",
         "required": ["id", "title", "requirementIds", "evidenceRequired"],
-        "anyOf": [
-          { "required": ["taskCard"] },
-          { "required": ["file"] }
-        ],
-        "oneOf": [
-          { "required": ["verificationIds"] },
-          { "required": ["verificationExplanation"] }
-        ],
+        "anyOf": [{ "required": ["taskCard"] }, { "required": ["file"] }],
+        "oneOf": [{ "required": ["verificationIds"] }, { "required": ["verificationExplanation"] }],
         "properties": {
           "id": { "type": "string" },
           "title": { "type": "string" },

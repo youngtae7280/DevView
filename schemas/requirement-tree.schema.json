@@ -66,8 +66,7 @@
         "primaryFlow": { "type": "array", "items": { "type": "string" } },
         "screenStates": { "type": "array", "items": { "type": "string" } },
         "responsivePriority": { "type": "string" },
-        "accessibilityNotes": { "type": "array", "items": { "type": "string" } }
-        ,
+        "accessibilityNotes": { "type": "array", "items": { "type": "string" } },
         "uiImpact": {
           "type": "string",
           "enum": ["none", "indirect", "direct"]

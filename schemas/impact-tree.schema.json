@@ -17,8 +17,12 @@
         "changeId": { "type": "string" },
         "affectedNodeId": { "type": "string" },
         "affectedAcceptanceCriteriaIds": { "type": "array", "items": { "type": "string" } },
-        "impactType": { "enum": ["none", "stale", "invalidated", "reopened", "obsolete", "requires_retest", "requires_new_evidence"] },
-        "requiredAction": { "enum": ["preserve", "defer", "fork", "reopen", "retest", "replace_evidence", "human_decision"] },
+        "impactType": {
+          "enum": ["none", "stale", "invalidated", "reopened", "obsolete", "requires_retest", "requires_new_evidence"]
+        },
+        "requiredAction": {
+          "enum": ["preserve", "defer", "fork", "reopen", "retest", "replace_evidence", "human_decision"]
+        },
         "reason": { "type": "string" }
       }
     }

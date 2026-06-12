@@ -350,11 +350,9 @@ Created/updated files:
 - .pbe/blueprint/rpd-summary.md
 
 Autoflow:
-- Set `pbe-state.json.autoflow.state` to `RPD_DONE`.
-- Add `rpd` to `autoflow.completedSteps`.
-- Set `autoflow.currentGate` to `ui_ux_confirm` when UI/UX confirmation is required.
-- Set `autoflow.state` to `WAITING_UI_UX_CONFIRM` when UI/UX confirmation is required.
-- Set `autoflow.nextStep` to `ui_ux_confirm`.
+- Run `pbe rpd close` after Product Tree and compatibility views are updated.
+- Let the CLI record `RPD_DONE`, `WAITING_UI_UX_CONFIRM` when UI/UX confirmation is required, completed steps, gates, next step, and state history.
+- If `pbe rpd close` fails, do not continue downstream; report the blocking issue and required user/artifact action.
 
 Next action:
 Show the UI/UX confirmation gate guidance. Do not ask the user to memorize or type the internal command.

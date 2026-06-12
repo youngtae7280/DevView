@@ -109,10 +109,10 @@ Also read ACEP compatibility inputs:
 30. Write the final report using `17-final-report-template.md` only when technical completion criteria are satisfied.
 31. Do not mark the result `accepted` or `accepted_done`.
 32. End as `submitted_for_review` and run or recommend `pbe-review-result`.
-33. Update `pbe-state.json.autoflow.state` to `ACEP_RUN_DONE`.
-34. Add `run_acep` to `autoflow.completedSteps`.
-35. Set `autoflow.nextStep` to `review_result`.
-36. Continue automatically to Result Review gate.
+33. Run `pbe execution complete`.
+34. If visual UI work changed, complete Visual Implementation Audit before review submission.
+35. Run `pbe review submit`.
+36. Continue to Result Review gate only if the CLI commands succeed.
 
 ## Per-Task Loop
 
@@ -296,9 +296,9 @@ The state card must say that ACEP execution ended as `submitted_for_review` and 
 
 State transitions:
 
-- After execution completes, set `autoflow.state` to `ACEP_RUN_DONE`.
-- If selected visual UI work changed, run `pbe-visual-implementation-audit` next and set `autoflow.state` to `VISUAL_AUDIT_DONE` only after the visual audit passes or is explicitly waived.
-- Only then set `autoflow.state` to `WAITING_REVIEW_RESULT`, `autoflow.currentGate` to `review_result`, and `autoflow.nextStep` to `review_result`.
+- After execution completes, run `pbe execution complete`.
+- If selected visual UI work changed, run `pbe-visual-implementation-audit` next.
+- Only after required evidence and visual audit pass or are explicitly waived, run `pbe review submit` so the CLI records `WAITING_REVIEW_RESULT`, the Review Result gate, and state history.
 
 Include:
 

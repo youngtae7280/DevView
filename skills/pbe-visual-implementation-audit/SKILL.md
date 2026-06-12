@@ -94,7 +94,7 @@ pbe evidence check
 pbe gate review-result
 ```
 
-The audit may set `pbe-state.json.autoflow.state` to `VISUAL_AUDIT_DONE` only when `visual-audit.md` has no unresolved blocking issues, required screenshot/manual evidence is current, and the result is pass, accepted, or explicitly waived by the user.
+The audit does not hand-edit `pbe-state.json`. After `visual-audit.md` has no unresolved blocking issues, required screenshot/manual evidence is current, and the result is pass, accepted, or explicitly waived by the user, run `pbe review submit` so the CLI records `VISUAL_AUDIT_DONE` and `WAITING_REVIEW_RESULT`.
 
 ## Completion Report
 

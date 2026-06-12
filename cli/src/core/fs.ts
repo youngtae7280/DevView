@@ -3,7 +3,9 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-export async function readTextSafe(filePath: string): Promise<{ ok: true; value: string } | { ok: false; error: string }> {
+export async function readTextSafe(
+  filePath: string,
+): Promise<{ ok: true; value: string } | { ok: false; error: string }> {
   try {
     return { ok: true, value: await readFile(filePath, 'utf8') }
   } catch (error) {

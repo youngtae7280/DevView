@@ -13,12 +13,34 @@
   "$defs": {
     "node": {
       "type": "object",
-      "required": ["id", "type", "title", "status", "derivedFromProductNodeIds", "derivedFromProjectNodeIds", "scopeClass"],
+      "required": [
+        "id",
+        "type",
+        "title",
+        "status",
+        "derivedFromProductNodeIds",
+        "derivedFromProjectNodeIds",
+        "scopeClass"
+      ],
       "properties": {
         "id": { "type": "string" },
-        "type": { "enum": ["foundation_task", "feature_task", "ui_task", "api_task", "domain_task", "integration_task", "verification_support_task", "documentation_task", "review_task"] },
+        "type": {
+          "enum": [
+            "foundation_task",
+            "feature_task",
+            "ui_task",
+            "api_task",
+            "domain_task",
+            "integration_task",
+            "verification_support_task",
+            "documentation_task",
+            "review_task"
+          ]
+        },
         "title": { "type": "string" },
-        "status": { "enum": ["ready", "in_progress", "implemented", "blocked", "stale", "revised", "deferred", "out_of_scope"] },
+        "status": {
+          "enum": ["ready", "in_progress", "implemented", "blocked", "stale", "revised", "deferred", "out_of_scope"]
+        },
         "derivedFromProductNodeIds": { "type": "array", "items": { "type": "string" } },
         "derivedFromProjectNodeIds": { "type": "array", "items": { "type": "string" } },
         "scopeClass": { "enum": ["selected", "foundation", "deferred", "blocked", "out_of_scope"] },

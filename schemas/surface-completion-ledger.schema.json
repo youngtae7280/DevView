@@ -88,7 +88,17 @@
         "id": { "type": "string" },
         "label": { "type": "string" },
         "itemKind": {
-          "enum": ["command", "dialog_surface", "control", "event_handler", "workflow_behavior", "mock_check", "hardware_action", "state", "other"]
+          "enum": [
+            "command",
+            "dialog_surface",
+            "control",
+            "event_handler",
+            "workflow_behavior",
+            "mock_check",
+            "hardware_action",
+            "state",
+            "other"
+          ]
         },
         "status": {
           "enum": [
@@ -109,7 +119,13 @@
         },
         "hardwareGated": { "type": "boolean" },
         "substituteEvidenceType": {
-          "enum": ["mock_backed_ui", "fake_read_result", "ui_automation_hardware_disabled", "manual_not_verified", "not_required"]
+          "enum": [
+            "mock_backed_ui",
+            "fake_read_result",
+            "ui_automation_hardware_disabled",
+            "manual_not_verified",
+            "not_required"
+          ]
         },
         "productNodeIds": { "type": "array", "items": { "type": "string" } },
         "workNodeIds": { "type": "array", "items": { "type": "string" } },

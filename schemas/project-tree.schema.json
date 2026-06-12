@@ -15,9 +15,23 @@
       "required": ["id", "type", "title", "status", "derivedFromProductNodeIds", "children"],
       "properties": {
         "id": { "type": "string" },
-        "type": { "enum": ["module", "surface", "service", "contract", "data_boundary", "integration_boundary", "foundation"] },
+        "type": {
+          "enum": ["module", "surface", "service", "contract", "data_boundary", "integration_boundary", "foundation"]
+        },
         "title": { "type": "string" },
-        "status": { "enum": ["derived", "planned", "active", "integrated", "module_verified", "deferred", "blocked", "out_of_scope", "reopened"] },
+        "status": {
+          "enum": [
+            "derived",
+            "planned",
+            "active",
+            "integrated",
+            "module_verified",
+            "deferred",
+            "blocked",
+            "out_of_scope",
+            "reopened"
+          ]
+        },
         "parent": { "type": ["string", "null"] },
         "children": { "type": "array", "items": { "type": "string" } },
         "derivedFromProductNodeIds": { "type": "array", "items": { "type": "string" } },

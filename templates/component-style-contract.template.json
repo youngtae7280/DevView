@@ -17,7 +17,13 @@
     {
       "componentName": "Input",
       "visualRole": "Text entry and editable values",
-      "requiredTokens": ["colors.panelBackground", "colors.borderSubtle", "radius.control", "spacing.sm", "typography.body"],
+      "requiredTokens": [
+        "colors.panelBackground",
+        "colors.borderSubtle",
+        "radius.control",
+        "spacing.sm",
+        "typography.body"
+      ],
       "allowedVariants": ["default", "search", "readonly", "error"],
       "requiredStates": ["default", "focus", "disabled", "error"],
       "forbiddenChanges": ["hiding validation messages", "removing accessible labels"],
@@ -27,7 +33,13 @@
     {
       "componentName": "Select",
       "visualRole": "Option selection and combo boxes",
-      "requiredTokens": ["colors.panelBackground", "colors.borderSubtle", "radius.control", "spacing.sm", "typography.body"],
+      "requiredTokens": [
+        "colors.panelBackground",
+        "colors.borderSubtle",
+        "radius.control",
+        "spacing.sm",
+        "typography.body"
+      ],
       "allowedVariants": ["default", "compact", "error"],
       "requiredStates": ["default", "open", "focus", "disabled"],
       "forbiddenChanges": ["removing existing options", "changing option meaning"],
@@ -60,7 +72,10 @@
       "requiredTokens": ["colors.panelBackground", "shadow.modal", "radius.modal", "spacing.xl"],
       "allowedVariants": ["default", "confirmation", "error"],
       "requiredStates": ["default", "loading", "error"],
-      "forbiddenChanges": ["removing escape/cancel affordances unless product-approved", "changing destructive action hierarchy"],
+      "forbiddenChanges": [
+        "removing escape/cancel affordances unless product-approved",
+        "changing destructive action hierarchy"
+      ],
       "evidenceRequired": ["default", "error_when_applicable"],
       "applicability": "when_present"
     },
@@ -100,7 +115,11 @@
       "requiredTokens": ["colors.textSecondary", "radius.control", "spacing.sm"],
       "allowedVariants": ["text", "icon", "button"],
       "requiredStates": ["expanded", "collapsed", "hover", "focus"],
-      "forbiddenChanges": ["removing the control", "hiding the control in either state", "changing behavior without Product approval"],
+      "forbiddenChanges": [
+        "removing the control",
+        "hiding the control in either state",
+        "changing behavior without Product approval"
+      ],
       "evidenceRequired": ["expanded_screenshot", "collapsed_screenshot"],
       "applicability": "when_present"
     },

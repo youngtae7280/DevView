@@ -145,7 +145,17 @@
         "title": { "type": "string" },
         "type": {
           "type": "string",
-          "enum": ["foundation", "feature", "ui", "api", "domain", "integration", "verification", "documentation", "review"]
+          "enum": [
+            "foundation",
+            "feature",
+            "ui",
+            "api",
+            "domain",
+            "integration",
+            "verification",
+            "documentation",
+            "review"
+          ]
         },
         "scopeClass": {
           "type": "string",

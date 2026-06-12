@@ -14,7 +14,17 @@
       "required": ["id", "type", "status", "provesNodeIds"],
       "properties": {
         "id": { "type": "string" },
-        "type": { "enum": ["test_output", "screenshot", "manual_note", "log", "diff_summary", "review_note", "not_runnable_explanation"] },
+        "type": {
+          "enum": [
+            "test_output",
+            "screenshot",
+            "manual_note",
+            "log",
+            "diff_summary",
+            "review_note",
+            "not_runnable_explanation"
+          ]
+        },
         "status": { "enum": ["required", "attached", "stale_evidence", "replaced", "not_available"] },
         "path": { "type": "string" },
         "provesNodeIds": { "type": "array", "items": { "type": "string" } },

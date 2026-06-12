@@ -89,12 +89,20 @@ pbe status
 pbe validate
 pbe rpd check
 pbe rpd close
+pbe ui approve
 pbe gate <stage>
+pbe wpd close
+pbe vd close
+pbe scope select
+pbe acep ready
+pbe execution complete
+pbe review submit
+pbe accept
 ```
 
 `npm run validate:pbe` builds the CLI and runs `pbe validate`. The CLI must not become a GUI, MCP server, daemon, or OpenAI API caller. It reads and writes `.pbe` artifacts only, while preserving the existing validators as the compatibility layer.
 
-Before WPD/VD/ACEP or implementation starts, the relevant CLI check/gate must pass. If the CLI reports a blocking issue, stop and report the required user or artifact action instead of continuing by judgment.
+Before WPD/VD/ACEP or implementation starts, the relevant CLI check/gate must pass. For supported transitions, do not hand-edit `.pbe/blueprint/pbe-state.json`; generate or update the required artifacts, run the matching `pbe ...` command, and let the CLI write `autoflow.state`, `autoflow.completedSteps`, gates, `deliveryStatus`, and `autoflow.stateHistory`. If the CLI reports a blocking issue, stop and report the required user or artifact action instead of continuing by judgment.
 
 ## Human Questioning Rule
 
@@ -117,7 +125,7 @@ Default to `full` for PBE project construction.
 
 ## Autoflow
 
-Use `pbe-state.json.autoflow` to track:
+Autoflow data is stored in `pbe-state.json.autoflow`. Supported state transitions must be written through the `pbe` CLI, not by hand-editing the state file. Autoflow tracks:
 
 - `profile`
 - `state`

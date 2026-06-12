@@ -2,14 +2,18 @@ import type { CommandResult, ValidationIssue } from './core/types.js'
 
 export function renderResult(result: CommandResult, json: boolean): string {
   if (json) {
-    return `${JSON.stringify({
-      ok: result.ok,
-      command: result.command,
-      exitCode: result.exitCode,
-      message: result.message,
-      issues: result.issues,
-      ...result.data,
-    }, null, 2)}\n`
+    return `${JSON.stringify(
+      {
+        ok: result.ok,
+        command: result.command,
+        exitCode: result.exitCode,
+        message: result.message,
+        issues: result.issues,
+        ...result.data,
+      },
+      null,
+      2,
+    )}\n`
   }
 
   const lines: string[] = []
@@ -55,10 +59,18 @@ Commands:
   gate <stage>         Check whether a stage can be entered, including review-result
   rpd check            Check RPD/Product Tree status
   rpd close            Attempt to close RPD
+  ui approve           Record user UI/UX approval and transition to UI_UX_APPROVED
   trace check          Check Product/Work/Test/Evidence traceability
   wpd check            Check Work Tree and WorkGraph readiness
+  wpd close            Validate WPD and transition to WPD_DONE
   vd check             Check Test Tree and verification coverage
+  vd close             Validate VD/Test Tree and transition to VD_DONE
+  scope select         Record implementation scope selection
   acep check           Check ACEP execution pack
+  acep ready           Validate ACEP manifest and transition to ACEP_READY
+  execution complete   Validate execution evidence and transition to ACEP_RUN_DONE
+  review submit        Submit verified work to Review Result gate
+  accept               Close as DONE only with user acceptance metadata
   evidence check       Check evidence coverage
   visual check         Check Visual Design Contract and UI evidence
 

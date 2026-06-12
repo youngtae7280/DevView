@@ -31,14 +31,7 @@
           "cycleIds": { "type": "array", "items": { "type": "string" } },
           "impactState": {
             "type": "string",
-            "enum": [
-              "none",
-              "pending",
-              "stale_evidence",
-              "invalidated",
-              "reopened",
-              "blocked"
-            ]
+            "enum": ["none", "pending", "stale_evidence", "invalidated", "reopened", "blocked"]
           },
           "reopened": { "type": "boolean" },
           "primaryUser": { "type": "string" },

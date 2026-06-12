@@ -51,10 +51,7 @@
         "occurrenceCount": { "type": "integer", "minimum": 1 },
         "summary": { "type": "string" },
         "whyPreviousVerificationMissedThis": {
-          "oneOf": [
-            { "type": "string" },
-            { "type": "array", "items": { "type": "string" } }
-          ]
+          "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
         },
         "requiredPbeImprovements": { "type": "array", "items": { "type": "string" } },
         "promotionDecision": { "enum": ["not_required", "pending", "promoted", "blocked"] },

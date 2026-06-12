@@ -492,9 +492,8 @@ Stop and ask the user when work requires:
 
 When ACEP generation succeeds:
 
-- Set `pbe-state.json.autoflow.state` to `ACEP_READY`.
-- Add `generate_acep` to `autoflow.completedSteps`.
-- Set `autoflow.nextStep` to `run_acep`.
+- Run `pbe acep ready`.
+- Let the CLI validate ACEP artifacts and implementation-scope confirmation before it writes `ACEP_READY`, completed steps, next step, and state history.
 - Continue automatically to ACEP Runner.
 
 When ACEP generation fails:

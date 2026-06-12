@@ -53,7 +53,15 @@
               "missing": {
                 "type": "array",
                 "items": {
-                  "enum": ["target", "target_detail", "condition", "expected_behavior", "completion_criteria", "exception_handling", "verification_method"]
+                  "enum": [
+                    "target",
+                    "target_detail",
+                    "condition",
+                    "expected_behavior",
+                    "completion_criteria",
+                    "exception_handling",
+                    "verification_method"
+                  ]
                 }
               },
               "abstractTerms": { "type": "array", "items": { "type": "string" } },

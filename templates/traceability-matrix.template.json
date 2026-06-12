@@ -8,12 +8,7 @@
       "linkedVerificationIds": ["TEST-001-1"],
       "uiUxIds": [],
       "scopeClass": "selected",
-      "evidenceRequired": [
-        "changed files",
-        "test file path",
-        "test command output",
-        "validation summary"
-      ],
+      "evidenceRequired": ["changed files", "test file path", "test command output", "validation summary"],
       "evidenceCaptured": [],
       "coverageStatus": "pending",
       "notes": ""

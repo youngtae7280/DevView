@@ -25,14 +25,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "title",
-          "classification",
-          "currentSliceImpact",
-          "riskIfSkipped",
-          "decision"
-        ],
+        "required": ["id", "title", "classification", "currentSliceImpact", "riskIfSkipped", "decision"],
         "properties": {
           "id": { "type": "string" },
           "title": { "type": "string" },
@@ -46,12 +39,7 @@
           },
           "classification": {
             "type": "string",
-            "enum": [
-              "optional_deferred",
-              "required_foundation",
-              "blocking_dependency",
-              "high_impact_future_module"
-            ]
+            "enum": ["optional_deferred", "required_foundation", "blocking_dependency", "high_impact_future_module"]
           },
           "currentSliceImpact": { "type": "string" },
           "requiredFoundationIds": {
@@ -97,11 +85,7 @@
             "contains": {
               "properties": {
                 "classification": {
-                  "enum": [
-                    "required_foundation",
-                    "blocking_dependency",
-                    "high_impact_future_module"
-                  ]
+                  "enum": ["required_foundation", "blocking_dependency", "high_impact_future_module"]
                 }
               },
               "required": ["classification"]

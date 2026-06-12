@@ -40,9 +40,7 @@
       "parent": "PT-ROOT",
       "children": [],
       "scopeClass": "selected",
-      "acceptance": [
-        "USB connected and disconnected states are visible to the user."
-      ],
+      "acceptance": ["USB connected and disconnected states are visible to the user."],
       "acceptanceCriteria": [
         {
           "id": "AC-P1-1",

@@ -152,9 +152,7 @@
       "expectedFiles": ["src/domain/device-status.ts"],
       "expectedSharedFiles": [],
       "forbiddenFiles": [],
-      "forbiddenChanges": [
-        "deployment, billing, secrets, or destructive data changes"
-      ],
+      "forbiddenChanges": ["deployment, billing, secrets, or destructive data changes"],
       "integrationRequired": false,
       "integrationTask": null,
       "dependencyResolved": true,
@@ -176,12 +174,7 @@
       "requiredVisualStates": [],
       "visualEvidenceRequired": [],
       "visualDeviationPolicy": "Record every visual deviation and stop before review if it has no disposition.",
-      "evidenceRequired": [
-        "changed files",
-        "test file path",
-        "test command output",
-        "validation summary"
-      ],
+      "evidenceRequired": ["changed files", "test file path", "test command output", "validation summary"],
       "focusedValidation": []
     },
     {

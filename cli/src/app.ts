@@ -20,18 +20,24 @@ export async function runPbeCli(argv: string[], env: CliEnvironment = { cwd: pro
       exitCode: ExitCode.InvalidArguments,
       stdout: '',
       stderr: wantsJson
-        ? `${JSON.stringify({
-            ok: false,
-            command: 'parse',
-            exitCode: ExitCode.InvalidArguments,
-            issues: [{
-              validator: 'CLI',
-              code: 'INVALID_ARGUMENTS',
-              severity: 'error',
-              message: parsed.error,
-              suggestedFix: 'Run `pbe --help` to see supported commands.',
-            }],
-          }, null, 2)}\n`
+        ? `${JSON.stringify(
+            {
+              ok: false,
+              command: 'parse',
+              exitCode: ExitCode.InvalidArguments,
+              issues: [
+                {
+                  validator: 'CLI',
+                  code: 'INVALID_ARGUMENTS',
+                  severity: 'error',
+                  message: parsed.error,
+                  suggestedFix: 'Run `pbe --help` to see supported commands.',
+                },
+              ],
+            },
+            null,
+            2,
+          )}\n`
         : `${parsed.error}\nRun \`pbe --help\` to see supported commands.\n`,
     }
   }

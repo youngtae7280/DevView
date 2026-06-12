@@ -16,16 +16,18 @@
     "typecheck": "tsc -b",
     "test": "vitest run",
     "lint": "eslint .",
+    "format": "prettier --write \"cli/src/**/*.ts\" \"*.json\" \"schemas/**/*.json\" \"templates/**/*.json\"",
+    "format:check": "prettier --check \"cli/src/**/*.ts\" \"*.json\" \"schemas/**/*.json\" \"templates/**/*.json\"",
     "build": "npm run validate:pbe",
     "validate": "npm run validate:pbe"
   },
-  "dependencies": {},
   "devDependencies": {
     "@eslint/js": "9.27.0",
     "@types/node": "20.17.10",
     "ajv": "^8.17.1",
     "eslint": "9.27.0",
     "globals": "15.14.0",
+    "prettier": "^3.5.3",
     "typescript": "5.7.2",
     "typescript-eslint": "8.18.2",
     "vitest": "3.2.6"

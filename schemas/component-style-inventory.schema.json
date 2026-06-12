@@ -23,7 +23,22 @@
       "properties": {
         "componentName": { "type": "string" },
         "componentType": {
-          "enum": ["button", "input", "select", "checkbox_switch", "card", "panel", "dialog", "tab", "table", "list", "toolbar", "sidebar", "header", "custom"]
+          "enum": [
+            "button",
+            "input",
+            "select",
+            "checkbox_switch",
+            "card",
+            "panel",
+            "dialog",
+            "tab",
+            "table",
+            "list",
+            "toolbar",
+            "sidebar",
+            "header",
+            "custom"
+          ]
         },
         "owningFiles": { "type": "array", "items": { "type": "string" } },
         "styleSource": {
