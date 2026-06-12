@@ -64,6 +64,31 @@ Minimum fields:
 `pbe revision start` requires an Impact node with at least one affected id. It transitions eligible review or accepted
 states into `REVISION_REQUESTED`.
 
+On success, PBE records the active revision context in `.pbe/blueprint/pbe-state.json`:
+
+```json
+{
+  "activeRevision": {
+    "changeNodeId": "CH-001",
+    "impactNodeIds": ["IM-001"],
+    "affectedProductNodeIds": ["PT-1"],
+    "affectedWorkNodeIds": ["WT-2"],
+    "affectedTestNodeIds": ["TT-3"],
+    "affectedEvidenceNodeIds": ["EV-4"],
+    "affectedAcceptanceNodeIds": ["AB-1"],
+    "startedAt": "2026-06-12T00:00:00.000Z",
+    "status": "in_progress"
+  }
+}
+```
+
+`pbe revision complete` requires this `activeRevision` context. The command fails if the requested Change id does not
+match `activeRevision.changeNodeId`, or if the active context has no affected Product, Work, Test, Evidence, or
+Acceptance ids.
+
+When revision completes, PBE removes `activeRevision`, appends a completed entry to `revisionHistory`, and returns the
+branch to the normal reverification path.
+
 `pbe revision complete` does not go to `DONE`. It returns the branch to `WPD_IN_PROGRESS` so the normal closure path
 runs again:
 
@@ -71,6 +96,20 @@ runs again:
 WPD -> VD -> ACEP -> Execution -> Review -> User Accept
 ```
 
-Affected Work, Test, Evidence, and Acceptance nodes should be marked stale, invalidated, superseded, or reopened by
-later implementation/revision work. This skeleton only enforces the Change/Impact gate and does not perform automatic
-semantic analysis or file-diff detection.
+## Evidence And Acceptance Invalidation
+
+`pbe revision start` invalidates affected current proof artifacts at the `.pbe` artifact level:
+
+- Affected Evidence nodes are preserved but marked `status: "invalidated"`.
+- Evidence nodes receive `previousStatus`, `invalidatedByChangeNodeId`, `invalidatedByRevisionChangeNodeId`, and
+  `invalidatedAt`.
+- Affected Acceptance branches are preserved as history but marked `status: "invalidated"`.
+- Acceptance branches receive `previousStatus`, `requiresReacceptance: true`, `invalidatedByChangeNodeId`,
+  `invalidatedByRevisionChangeNodeId`, and `invalidatedAt`.
+
+Invalidated Evidence cannot satisfy review or accept closure as current proof. Invalidated Acceptance cannot be reused
+as user acceptance for the revised branch; the branch must pass WPD, VD, ACEP, Execution, Review, and explicit user
+acceptance again.
+
+This first revision-safety layer is artifact-based. It does not perform automatic semantic analysis or git diff-based
+file mutation detection.

@@ -1878,7 +1878,7 @@ describe('PBE CLI', () => {
     expect(afterState).toBe(beforeState)
   })
 
-  it('starts revision from accepted/done state after Impact analysis and records stateHistory', async () => {
+  it('does not mutate state, Evidence, or Acceptance when revision Impact has no affected ids', async () => {
     const workspace = createWorkspace()
     writePbeState(workspace, 'DONE', { deliveryStatus: 'accepted', completedSteps: ['complete'], nextStep: null })
     writeChangeTree(workspace, [
@@ -1890,7 +1890,52 @@ describe('PBE CLI', () => {
         changeNodeId: 'CH-001',
         changeId: 'CH-001',
         status: 'analyzed',
+        impactType: 'requires_retest',
+        requiredAction: 'retest',
+      },
+    ])
+    writeEvidenceTree(workspace)
+    writeUserAcceptance(workspace)
+
+    const beforeState = readStateText(workspace)
+    const beforeEvidence = readEvidenceText(workspace)
+    const beforeAcceptance = readControlText(workspace, 'acceptance-tree.json')
+    const result = await runPbeCli(['revision', 'start', '--change', 'CH-001', '--json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'REVISION_IMPACT_AFFECTED_IDS_MISSING',
+    )
+    expect(readStateText(workspace)).toBe(beforeState)
+    expect(readEvidenceText(workspace)).toBe(beforeEvidence)
+    expect(readControlText(workspace, 'acceptance-tree.json')).toBe(beforeAcceptance)
+  })
+
+  it('starts revision from accepted/done state, records activeRevision, and invalidates affected proof', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeWorkTree(workspace)
+    writeTestTree(workspace)
+    writeEvidenceTree(workspace)
+    writeUserAcceptance(workspace)
+    writePbeState(workspace, 'DONE', { deliveryStatus: 'accepted', completedSteps: ['complete'], nextStep: null })
+    writeChangeTree(workspace, [
+      { id: 'CH-001', type: 'feedback', status: 'impact_analyzed', summary: 'Adjust collapse' },
+    ])
+    writeImpactTree(workspace, [
+      {
+        id: 'IM-001',
+        changeNodeId: 'CH-001',
+        changeId: 'CH-001',
+        status: 'analyzed',
         affectedProductNodeIds: ['PT-1'],
+        affectedWorkNodeIds: ['WT-1'],
+        affectedTestNodeIds: ['TT-1'],
+        affectedEvidenceNodeIds: ['EV-1'],
+        affectedAcceptanceNodeIds: ['AB-1'],
         affectedNodeId: 'PT-1',
         impactType: 'requires_retest',
         requiredAction: 'retest',
@@ -1911,11 +1956,126 @@ describe('PBE CLI', () => {
       to: 'REVISION_REQUESTED',
       command: 'revision start',
     })
+    expect(state.activeRevision).toMatchObject({
+      changeNodeId: 'CH-001',
+      impactNodeIds: ['IM-001'],
+      affectedProductNodeIds: ['PT-1'],
+      affectedWorkNodeIds: ['WT-1'],
+      affectedTestNodeIds: ['TT-1'],
+      affectedEvidenceNodeIds: ['EV-1'],
+      affectedAcceptanceNodeIds: ['AB-1'],
+      status: 'in_progress',
+    })
+    expect(state.activeRevision.startedAt).toEqual(expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/))
+
+    const evidence = readEvidenceTree(workspace).evidence[0]
+    expect(evidence).toMatchObject({
+      id: 'EV-1',
+      previousStatus: 'current',
+      status: 'invalidated',
+      invalidatedByChangeNodeId: 'CH-001',
+      invalidatedByRevisionChangeNodeId: 'CH-001',
+    })
+    expect(evidence.invalidatedAt).toEqual(expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/))
+
+    const acceptance = readAcceptanceTree(workspace).branches[0]
+    expect(acceptance).toMatchObject({
+      id: 'AB-1',
+      previousStatus: 'accepted_done',
+      status: 'invalidated',
+      requiresReacceptance: true,
+      invalidatedByChangeNodeId: 'CH-001',
+      invalidatedByRevisionChangeNodeId: 'CH-001',
+    })
+    expect(acceptance.invalidatedAt).toEqual(expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/))
+
+    const evidenceIssues = await validateEvidence(workspace, { stage: 'review', requireVisualAudit: false })
+    expect(evidenceIssues.map((entry) => entry.code)).toContain('EVIDENCE_NOT_CURRENT')
+  })
+
+  it('blocks revision complete when activeRevision is missing and leaves artifacts unchanged', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'REVISION_REQUESTED')
+    writeChangeTree(workspace, [
+      { id: 'CH-001', type: 'feedback', status: 'impact_analyzed', summary: 'Adjust collapse' },
+    ])
+    writeImpactTree(workspace, [
+      {
+        id: 'IM-001',
+        changeNodeId: 'CH-001',
+        changeId: 'CH-001',
+        status: 'analyzed',
+        affectedWorkNodeIds: ['WT-1'],
+      },
+    ])
+    writeEvidenceTree(workspace)
+    writeUserAcceptance(workspace)
+
+    const beforeState = readStateText(workspace)
+    const beforeEvidence = readEvidenceText(workspace)
+    const beforeAcceptance = readControlText(workspace, 'acceptance-tree.json')
+    const result = await runPbeCli(['revision', 'complete', '--change', 'CH-001', '--json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'REVISION_CONTEXT_MISSING',
+    )
+    expect(readStateText(workspace)).toBe(beforeState)
+    expect(readEvidenceText(workspace)).toBe(beforeEvidence)
+    expect(readControlText(workspace, 'acceptance-tree.json')).toBe(beforeAcceptance)
+  })
+
+  it('blocks revision complete when command change id differs from activeRevision', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'REVISION_REQUESTED', {
+      activeRevision: {
+        changeNodeId: 'CH-001',
+        impactNodeIds: ['IM-001'],
+        affectedWorkNodeIds: ['WT-1'],
+        status: 'in_progress',
+      },
+    })
+    writeChangeTree(workspace, [
+      { id: 'CH-001', type: 'feedback', status: 'impact_analyzed', summary: 'Adjust collapse' },
+      { id: 'CH-002', type: 'feedback', status: 'impact_analyzed', summary: 'Adjust copy' },
+    ])
+    writeImpactTree(workspace, [
+      {
+        id: 'IM-002',
+        changeNodeId: 'CH-002',
+        changeId: 'CH-002',
+        status: 'analyzed',
+        affectedWorkNodeIds: ['WT-2'],
+      },
+    ])
+
+    const beforeState = readStateText(workspace)
+    const result = await runPbeCli(['revision', 'complete', '--change', 'CH-002', '--json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'REVISION_CHANGE_MISMATCH',
+    )
+    expect(readStateText(workspace)).toBe(beforeState)
   })
 
   it('completes revision by returning to WPD flow instead of DONE', async () => {
     const workspace = createWorkspace()
-    writePbeState(workspace, 'REVISION_REQUESTED')
+    writePbeState(workspace, 'REVISION_REQUESTED', {
+      activeRevision: {
+        changeNodeId: 'CH-001',
+        impactNodeIds: ['IM-001'],
+        affectedWorkNodeIds: ['WT-1'],
+        startedAt: '2026-06-12T10:00:00.000Z',
+        status: 'in_progress',
+      },
+    })
     writeChangeTree(workspace, [
       { id: 'CH-001', type: 'feedback', status: 'impact_analyzed', summary: 'Adjust collapse' },
     ])
@@ -1942,6 +2102,14 @@ describe('PBE CLI', () => {
     expect(state.autoflow.state).toBe('WPD_IN_PROGRESS')
     expect(state.autoflow.nextStep).toBe('wpd')
     expect(state.deliveryStatus).not.toBe('accepted')
+    expect(state.activeRevision).toBeUndefined()
+    expect(state.revisionHistory.at(-1)).toMatchObject({
+      changeNodeId: 'CH-001',
+      impactNodeIds: ['IM-001'],
+      affectedWorkNodeIds: ['WT-1'],
+      status: 'completed',
+    })
+    expect(state.revisionHistory.at(-1).completedAt).toEqual(expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/))
     expectLastTransition(state, {
       from: 'REVISION_REQUESTED',
       to: 'WPD_IN_PROGRESS',
@@ -2026,6 +2194,18 @@ function readChangeTree(workspace: string): Record<string, any> {
 
 function readImpactTree(workspace: string): Record<string, any> {
   return JSON.parse(readControlText(workspace, 'impact-tree.json'))
+}
+
+function readEvidenceTree(workspace: string): Record<string, any> {
+  return JSON.parse(readEvidenceText(workspace))
+}
+
+function readAcceptanceTree(workspace: string): Record<string, any> {
+  return JSON.parse(readControlText(workspace, 'acceptance-tree.json'))
+}
+
+function readEvidenceText(workspace: string): string {
+  return readFileSync(join(workspace, '.pbe', 'evidence', 'evidence-tree.json'), 'utf8')
 }
 
 function readControlText(workspace: string, fileName: string): string {

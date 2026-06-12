@@ -9,4 +9,11 @@ export { validateEvidence } from './evidence-validator.js'
 export { validateState } from './state-validator.js'
 export { validateChangeTree } from './change-validator.js'
 export { validateImpactTree } from './impact-validator.js'
-export { validateRevisionReady } from './revision-validator.js'
+export {
+  buildRevisionContext,
+  revisionAffectedIds,
+  validateRevisionComplete,
+  validateRevisionReady,
+  validateRevisionStart,
+  type ActiveRevisionContext,
+} from './revision-validator.js'

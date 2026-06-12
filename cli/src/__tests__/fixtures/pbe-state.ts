@@ -10,6 +10,8 @@ export function writePbeState(
     nextStep?: string | null
     deliveryStatus?: string
     stateHistory?: Array<Record<string, unknown>>
+    activeRevision?: Record<string, unknown>
+    revisionHistory?: Array<Record<string, unknown>>
   } = {},
 ): void {
   writeJson(join(workspace, '.pbe', 'blueprint', 'pbe-state.json'), {
@@ -26,6 +28,8 @@ export function writePbeState(
       stateHistory: options.stateHistory || [],
     },
     deliveryStatus: options.deliveryStatus || 'waiting_root_confirmation',
+    activeRevision: options.activeRevision,
+    revisionHistory: options.revisionHistory,
   })
 }
 
@@ -34,6 +38,7 @@ export function writeUserAcceptance(workspace: string): void {
     version: '0.2.0-tree-control',
     branches: [
       {
+        id: 'AB-1',
         productNodeId: 'PT-1',
         status: 'accepted_done',
         decisionSource: {

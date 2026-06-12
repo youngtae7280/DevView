@@ -19,6 +19,8 @@ export interface StateTransitionUpdate {
   deliveryStatus?: string
   lastUserAction?: unknown
   acceptance?: Record<string, unknown>
+  activeRevision?: Record<string, unknown> | null
+  revisionHistoryEntry?: Record<string, unknown>
   actor?: string
   data?: Record<string, unknown>
 }
@@ -143,6 +145,21 @@ export async function transitionPbeState(
   }
   if (update.acceptance) {
     state.acceptance = update.acceptance
+  }
+  if (update.activeRevision !== undefined) {
+    if (update.activeRevision === null) {
+      delete state.activeRevision
+    } else {
+      state.activeRevision = update.activeRevision
+    }
+  }
+  if (update.revisionHistoryEntry) {
+    state.revisionHistory = [
+      ...(Array.isArray(state.revisionHistory)
+        ? state.revisionHistory.filter((entry) => typeof entry === 'object' && entry !== null)
+        : []),
+      update.revisionHistoryEntry,
+    ]
   }
 
   autoflow.state = cursor
