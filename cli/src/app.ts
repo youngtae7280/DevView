@@ -95,6 +95,14 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     profile: undefined as 'full' | 'lite' | 'bypass' | undefined,
     brief: undefined as string | undefined,
     stage: undefined as TraceabilityStageOption | undefined,
+    summary: undefined as string | undefined,
+    source: undefined as string | undefined,
+    change: undefined as string | undefined,
+    product: [] as string[],
+    work: [] as string[],
+    test: [] as string[],
+    evidence: [] as string[],
+    acceptance: [] as string[],
   }
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -128,6 +136,62 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.brief = value
       index += 1
+    } else if (arg === '--summary') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--summary requires text.' }
+      }
+      options.summary = value
+      index += 1
+    } else if (arg === '--source') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--source requires text.' }
+      }
+      options.source = value
+      index += 1
+    } else if (arg === '--change') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--change requires a Change node id.' }
+      }
+      options.change = value
+      index += 1
+    } else if (arg === '--product') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--product requires a Product node id.' }
+      }
+      options.product.push(...splitIds(value))
+      index += 1
+    } else if (arg === '--work') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--work requires a Work node id.' }
+      }
+      options.work.push(...splitIds(value))
+      index += 1
+    } else if (arg === '--test') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--test requires a Test node id.' }
+      }
+      options.test.push(...splitIds(value))
+      index += 1
+    } else if (arg === '--evidence') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--evidence requires an Evidence node id.' }
+      }
+      options.evidence.push(...splitIds(value))
+      index += 1
+    } else if (arg === '--acceptance') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--acceptance requires an Acceptance node id.' }
+      }
+      options.acceptance.push(...splitIds(value))
+      index += 1
     } else if (arg === '--stage') {
       const value = argv[index + 1]
       if (!value || !['wpd', 'vd', 'execution', 'review', 'accept'].includes(value)) {
@@ -143,4 +207,11 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
   }
 
   return { positionals, options }
+}
+
+function splitIds(value: string): string[] {
+  return value
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean)
 }

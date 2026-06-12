@@ -79,6 +79,10 @@ Commands:
   execution complete   Validate execution evidence and transition to ACEP_RUN_DONE
   review submit        Submit verified work to Review Result gate
   accept               Close as ACCEPTED then DONE only with user acceptance metadata
+  change create        Record user feedback/change request as a Change node
+  impact analyze       Create Impact node links for an existing Change node
+  revision start       Enter REVISION_REQUESTED after Impact analysis
+  revision complete    Return revision work to WPD/VD/ACEP closure flow
   evidence check       Check evidence coverage
   visual check         Check Visual Design Contract and UI evidence
 
@@ -91,5 +95,13 @@ Options:
   --profile <value>    init profile: full, lite, or bypass. Defaults to full.
   --brief <text>       init project brief.
   --stage <value>      trace check stage: wpd, vd, execution, review, or accept.
+  --summary <text>     change create summary.
+  --source <value>     change source. Defaults to user_feedback.
+  --change <id>        Change node id for impact/revision commands.
+  --product <id>       Affected Product node id. May be repeated or comma-separated.
+  --work <id>          Affected Work node id. May be repeated or comma-separated.
+  --test <id>          Affected Test node id. May be repeated or comma-separated.
+  --evidence <id>      Affected Evidence node id. May be repeated or comma-separated.
+  --acceptance <id>    Affected Acceptance node id. May be repeated or comma-separated.
 `
 }

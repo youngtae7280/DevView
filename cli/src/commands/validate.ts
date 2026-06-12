@@ -2,7 +2,13 @@ import { existsSync } from 'node:fs'
 import path from 'node:path'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { ExitCode, hasErrors, issue } from '../core/types.js'
-import { validateAcceptedActors, validateState, validateVisualDesign } from '../validators/pbe-validators.js'
+import {
+  validateAcceptedActors,
+  validateChangeTree,
+  validateImpactTree,
+  validateState,
+  validateVisualDesign,
+} from '../validators/pbe-validators.js'
 import { type CommandContext, runNodeScript } from './shared.js'
 
 export async function validateCommand(context: CommandContext): Promise<CommandResult> {
@@ -40,6 +46,8 @@ export async function validateCommand(context: CommandContext): Promise<CommandR
   if (existsSync(path.join(context.options.root, '.pbe'))) {
     issues.push(...(await validateState(context.options.root)))
     issues.push(...(await validateAcceptedActors(context.options.root)))
+    issues.push(...(await validateChangeTree(context.options.root)))
+    issues.push(...(await validateImpactTree(context.options.root)))
     issues.push(...(await validateVisualDesign(context.options.root)))
   }
 

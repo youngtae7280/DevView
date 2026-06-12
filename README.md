@@ -59,6 +59,7 @@ The detailed installation and use guide is in [docs/usage.md](docs/usage.md). A 
 - [Human gates](docs/human-gates.md)
 - [Execution contracts](docs/execution-contracts.md)
 - [Revision flow](docs/revision-flow.md)
+- [Change impact revision CLI skeleton](docs/change-impact-revision.md)
 - [Validator design](docs/validator-design.md)
 - [Release policy](RELEASE.md)
 

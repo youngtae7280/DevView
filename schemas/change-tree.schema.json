@@ -34,6 +34,7 @@
             "proposed",
             "needs_human_decision",
             "approved",
+            "impact_analyzed",
             "rejected",
             "deferred",
             "applied",
@@ -41,10 +42,16 @@
             "resolved"
           ]
         },
+        "source": { "type": "string" },
         "sourceFeedbackId": { "type": "string" },
         "sourceFeedbackItemIds": { "type": "array", "items": { "type": "string" } },
         "summary": { "type": "string" },
         "reason": { "type": "string" },
+        "affectedProductNodeIds": { "type": "array", "items": { "type": "string" } },
+        "affectedWorkNodeIds": { "type": "array", "items": { "type": "string" } },
+        "affectedTestNodeIds": { "type": "array", "items": { "type": "string" } },
+        "affectedEvidenceNodeIds": { "type": "array", "items": { "type": "string" } },
+        "affectedAcceptanceNodeIds": { "type": "array", "items": { "type": "string" } },
         "affectedNodeIds": { "type": "array", "items": { "type": "string" } },
         "affectedAcceptanceCriteriaIds": { "type": "array", "items": { "type": "string" } },
         "affectedRequirementIds": { "type": "array", "items": { "type": "string" } },
@@ -64,7 +71,8 @@
         "treeMutation": { "type": "object" },
         "decisionId": { "type": ["string", "null"] },
         "decision": { "type": "object" },
-        "createdAt": { "type": "string" }
+        "createdAt": { "type": "string" },
+        "impactAnalyzedAt": { "type": "string" }
       },
       "additionalProperties": true
     }

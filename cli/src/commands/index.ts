@@ -2,10 +2,13 @@ import type { CommandResult } from '../core/types.js'
 import { validateEvidence, validateTraceability, validateVisualDesign } from '../validators/pbe-validators.js'
 import { acceptCommand } from './accept.js'
 import { acepCheckCommand, acepReadyCommand } from './acep.js'
+import { changeCreateCommand } from './change.js'
 import { executionCompleteCommand, executionStartCommand } from './execution.js'
 import { gateCommand } from './gate.js'
+import { impactAnalyzeCommand } from './impact.js'
 import { initCommand } from './init.js'
 import { reviewSubmitCommand } from './review.js'
+import { revisionCompleteCommand, revisionStartCommand } from './revision.js'
 import { rpdCheckCommand, rpdCloseCommand } from './rpd.js'
 import {
   coverageAuditCompleteCommand,
@@ -97,6 +100,18 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'accept') {
     return acceptCommand(context)
+  }
+  if (command === 'change' && subcommand === 'create') {
+    return changeCreateCommand(context)
+  }
+  if (command === 'impact' && subcommand === 'analyze') {
+    return impactAnalyzeCommand(context)
+  }
+  if (command === 'revision' && subcommand === 'start') {
+    return revisionStartCommand(context)
+  }
+  if (command === 'revision' && subcommand === 'complete') {
+    return revisionCompleteCommand(context)
   }
   if (command === 'evidence' && subcommand === 'check') {
     return checkResult('evidence check', await validateEvidence(context.options.root))

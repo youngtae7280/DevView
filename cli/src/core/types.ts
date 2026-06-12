@@ -39,6 +39,14 @@ export interface CliOptions {
   profile?: 'full' | 'lite' | 'bypass'
   brief?: string
   stage?: TraceabilityStageOption
+  summary?: string
+  source?: string
+  change?: string
+  product?: string[]
+  work?: string[]
+  test?: string[]
+  evidence?: string[]
+  acceptance?: string[]
 }
 
 export interface CliEnvironment {

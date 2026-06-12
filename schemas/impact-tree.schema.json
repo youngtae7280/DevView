@@ -14,7 +14,15 @@
       "required": ["id", "changeId", "affectedNodeId", "impactType", "requiredAction"],
       "properties": {
         "id": { "type": "string" },
+        "changeNodeId": { "type": "string" },
         "changeId": { "type": "string" },
+        "status": { "enum": ["proposed", "analyzed", "applied", "superseded"] },
+        "affectedProductNodeIds": { "type": "array", "items": { "type": "string" } },
+        "affectedWorkNodeIds": { "type": "array", "items": { "type": "string" } },
+        "affectedTestNodeIds": { "type": "array", "items": { "type": "string" } },
+        "affectedEvidenceNodeIds": { "type": "array", "items": { "type": "string" } },
+        "affectedAcceptanceNodeIds": { "type": "array", "items": { "type": "string" } },
+        "affectedNodeIds": { "type": "array", "items": { "type": "string" } },
         "affectedNodeId": { "type": "string" },
         "affectedAcceptanceCriteriaIds": { "type": "array", "items": { "type": "string" } },
         "impactType": {
@@ -23,7 +31,8 @@
         "requiredAction": {
           "enum": ["preserve", "defer", "fork", "reopen", "retest", "replace_evidence", "human_decision"]
         },
-        "reason": { "type": "string" }
+        "reason": { "type": "string" },
+        "createdAt": { "type": "string" }
       }
     }
   }
