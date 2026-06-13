@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0-tree-control",
+  "patches": [
+    {
+      "id": "PP-001",
+      "changeNodeId": "CH-001",
+      "targetProductNodeId": "PT-SEARCH-001",
+      "operation": "update_acceptance_criteria",
+      "status": "proposed",
+      "requiresUserConfirmation": true,
+      "userConfirmed": false,
+      "beforeSnapshot": {
+        "id": "PT-SEARCH-001",
+        "title": "Todo title search",
+        "searchTarget": "title"
+      },
+      "afterProposal": {
+        "summary": "Search target expands from title only to title and note.",
+        "searchTarget": "title_and_note",
+        "acceptanceCriteriaChange": "AC-SEARCH-001 should include Todo note content matches."
+      },
+      "affectedProductNodeIds": ["PT-SEARCH-001"],
+      "createdAt": "2026-06-13T00:00:00.000Z",
+      "appliedAt": null
+    }
+  ]
+}

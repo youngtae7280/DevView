@@ -1,0 +1,99 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "PT-ROOT",
+  "nodes": [
+    {
+      "id": "PT-ROOT",
+      "type": "goal",
+      "title": "Adopt PBE for the next Todo search slice",
+      "status": "confirmed",
+      "parent": null,
+      "children": ["PT-SEARCH-001"],
+      "source": {
+        "actor": "user",
+        "type": "rpd_interview"
+      },
+      "why": "The existing Todo app needs a small, reviewable search improvement.",
+      "scopeClass": "selected",
+      "acceptanceCriteria": [],
+      "acceptanceNotRequiredReason": "Root groups the selected search capability.",
+      "ambiguity": {
+        "status": "clear",
+        "type": "none",
+        "missing": []
+      },
+      "derivedTo": ["WT-SEARCH-001", "TT-SEARCH-001", "TT-SEARCH-002", "TT-SEARCH-003"],
+      "evidence": ["EV-SEARCH-TEST", "EV-SEARCH-REVIEW"]
+    },
+    {
+      "id": "PT-SEARCH-001",
+      "type": "capability",
+      "title": "Todo title search",
+      "status": "confirmed",
+      "parent": "PT-ROOT",
+      "children": [],
+      "source": {
+        "actor": "user",
+        "type": "rpd_interview"
+      },
+      "why": "The user needs to find todos when the list grows.",
+      "scopeClass": "selected",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-SEARCH-001",
+          "format": "EARS",
+          "type": "event_driven",
+          "condition": "The user enters a search query",
+          "system": "THE SYSTEM",
+          "shall": "SHALL show todos whose title contains the query",
+          "observableResult": "Only matching todo titles remain visible.",
+          "verificationMethod": "automated_test",
+          "requiredEvidence": ["test_output"],
+          "statement": "WHEN the user enters a search query, THE SYSTEM SHALL show todos whose title contains the query.",
+          "status": "confirmed"
+        },
+        {
+          "id": "AC-SEARCH-002",
+          "format": "EARS",
+          "type": "state_driven",
+          "condition": "The search query is empty",
+          "system": "THE SYSTEM",
+          "shall": "SHALL show the full Todo list",
+          "observableResult": "All existing todos are visible again.",
+          "verificationMethod": "automated_test",
+          "requiredEvidence": ["test_output"],
+          "statement": "WHEN the search query is empty, THE SYSTEM SHALL show the full Todo list.",
+          "status": "confirmed"
+        },
+        {
+          "id": "AC-SEARCH-003",
+          "format": "EARS",
+          "type": "state_driven",
+          "condition": "No Todo title matches the query",
+          "system": "THE SYSTEM",
+          "shall": "SHALL show an empty search result state",
+          "observableResult": "The UI communicates that no matching todos were found.",
+          "verificationMethod": "manual_review",
+          "requiredEvidence": ["review_note"],
+          "statement": "WHEN no Todo title matches the query, THE SYSTEM SHALL show an empty search result state.",
+          "status": "confirmed"
+        }
+      ],
+      "ambiguity": {
+        "status": "clear",
+        "type": "none",
+        "missing": []
+      },
+      "deferredCandidates": ["tag filter", "date filter", "fuzzy search", "server-side search", "saved search"],
+      "derivedTo": ["WT-SEARCH-001", "TT-SEARCH-001", "TT-SEARCH-002", "TT-SEARCH-003"],
+      "evidence": ["EV-SEARCH-TEST", "EV-SEARCH-REVIEW"]
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "AS-SEARCH-001",
+      "text": "The first slice searches Todo title only.",
+      "source": "user_confirmation"
+    }
+  ]
+}

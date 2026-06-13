@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "EV-ROOT",
+  "nodes": [
+    {
+      "id": "EV-ROOT",
+      "type": "evidence_group",
+      "title": "Todo search evidence root",
+      "status": "current",
+      "provesProductNodeIds": ["PT-ROOT"],
+      "provesWorkNodeIds": ["WT-ROOT"],
+      "provesTestNodeIds": ["TT-ROOT"]
+    },
+    {
+      "id": "EV-SEARCH-TEST",
+      "type": "test_output",
+      "title": "Todo search automated test output",
+      "status": "current",
+      "provesProductNodeIds": ["PT-SEARCH-001"],
+      "provesWorkNodeIds": ["WT-SEARCH-001"],
+      "provesTestNodeIds": ["TT-SEARCH-001", "TT-SEARCH-002"],
+      "provesAcceptanceCriteriaIds": ["AC-SEARCH-001", "AC-SEARCH-002"],
+      "artifact": "npm test -- todo-search passed"
+    },
+    {
+      "id": "EV-SEARCH-REVIEW",
+      "type": "review_note",
+      "title": "No-result empty state review",
+      "status": "current",
+      "provesProductNodeIds": ["PT-SEARCH-001"],
+      "provesWorkNodeIds": ["WT-SEARCH-001"],
+      "provesTestNodeIds": ["TT-SEARCH-003"],
+      "provesAcceptanceCriteriaIds": ["AC-SEARCH-003"],
+      "artifact": "Manual review confirmed no-result empty state."
+    }
+  ],
+  "edges": []
+}

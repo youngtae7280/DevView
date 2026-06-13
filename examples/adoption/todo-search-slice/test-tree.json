@@ -1,0 +1,46 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "TT-ROOT",
+  "nodes": [
+    {
+      "id": "TT-ROOT",
+      "type": "test_suite",
+      "title": "Todo search tests",
+      "status": "passed",
+      "coversProductNodeIds": ["PT-ROOT"],
+      "coversWorkNodeIds": ["WT-ROOT"],
+      "acceptanceCriteriaNotLinkedReason": "Root groups executable tests."
+    },
+    {
+      "id": "TT-SEARCH-001",
+      "type": "automated_test",
+      "title": "Filters todos by title query",
+      "status": "passed",
+      "coversProductNodeIds": ["PT-SEARCH-001"],
+      "coversWorkNodeIds": ["WT-SEARCH-001"],
+      "coversAcceptanceCriteriaIds": ["AC-SEARCH-001"],
+      "evidenceNodeIds": ["EV-SEARCH-TEST"]
+    },
+    {
+      "id": "TT-SEARCH-002",
+      "type": "automated_test",
+      "title": "Restores all todos for empty query",
+      "status": "passed",
+      "coversProductNodeIds": ["PT-SEARCH-001"],
+      "coversWorkNodeIds": ["WT-SEARCH-001"],
+      "coversAcceptanceCriteriaIds": ["AC-SEARCH-002"],
+      "evidenceNodeIds": ["EV-SEARCH-TEST"]
+    },
+    {
+      "id": "TT-SEARCH-003",
+      "type": "manual_review",
+      "title": "Shows no-result empty state",
+      "status": "passed",
+      "coversProductNodeIds": ["PT-SEARCH-001"],
+      "coversWorkNodeIds": ["WT-SEARCH-001"],
+      "coversAcceptanceCriteriaIds": ["AC-SEARCH-003"],
+      "evidenceNodeIds": ["EV-SEARCH-REVIEW"]
+    }
+  ],
+  "edges": []
+}

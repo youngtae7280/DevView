@@ -62,12 +62,15 @@ Useful entry points:
 
 - Detailed installation and use guide: [docs/usage.md](docs/usage.md)
 - Complete golden example run: [examples/valid/todo-app-pbe-run](examples/valid/todo-app-pbe-run/README.md)
+- Dogfooding PBE on an existing project: [docs/dogfooding-existing-project.md](docs/dogfooding-existing-project.md)
+- Todo search adoption example: [examples/adoption/todo-search-slice](examples/adoption/todo-search-slice/README.md)
 - Invalid regression fixtures: [examples/invalid](examples/invalid)
 
 ## Learn The Model
 
 - [Core concepts](docs/core-concepts.md)
 - [RPD Interview Mode](docs/rpd-interview-mode.md)
+- [Dogfooding PBE on an existing project](docs/dogfooding-existing-project.md)
 - [Tree model](docs/tree-model.md)
 - [Human gates](docs/human-gates.md)
 - [Execution contracts](docs/execution-contracts.md)

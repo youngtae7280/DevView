@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "AT-ROOT",
+  "nodes": [
+    {
+      "id": "AT-ROOT",
+      "type": "acceptance_group",
+      "title": "Todo search acceptance",
+      "status": "accepted",
+      "actor": "user",
+      "acceptedAt": "2026-06-13T00:00:00.000Z",
+      "productNodeIds": ["PT-SEARCH-001"],
+      "workNodeIds": ["WT-SEARCH-001"],
+      "testNodeIds": ["TT-SEARCH-001", "TT-SEARCH-002", "TT-SEARCH-003"],
+      "evidenceNodeIds": ["EV-SEARCH-TEST", "EV-SEARCH-REVIEW"],
+      "decisionSource": "User approved the title-only search slice after review."
+    }
+  ]
+}

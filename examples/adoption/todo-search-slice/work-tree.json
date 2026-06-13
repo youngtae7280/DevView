@@ -1,0 +1,41 @@
+{
+  "version": "0.2.0-tree-control",
+  "rootNodeId": "WT-ROOT",
+  "nodes": [
+    {
+      "id": "WT-ROOT",
+      "type": "foundation_task",
+      "title": "Todo search adoption work root",
+      "status": "implemented",
+      "derivedFromProductNodeIds": ["PT-ROOT"],
+      "scopeClass": "foundation",
+      "expectedFiles": [],
+      "expectedSharedFiles": [],
+      "forbiddenFiles": [],
+      "unknownFileTouchRisk": false,
+      "dependencies": [],
+      "acceptanceCriteriaNotLinkedReason": "Root groups executable work."
+    },
+    {
+      "id": "WT-SEARCH-001",
+      "type": "feature_task",
+      "title": "Implement Todo title search",
+      "status": "implemented",
+      "derivedFromProductNodeIds": ["PT-SEARCH-001"],
+      "scopeClass": "selected",
+      "expectedFiles": ["src/todo-list.tsx", "src/todo-search.ts"],
+      "expectedSharedFiles": [],
+      "forbiddenFiles": ["src/tag-filter.ts", "src/server-search.ts"],
+      "unknownFileTouchRisk": false,
+      "dependencies": [],
+      "satisfiesAcceptanceCriteriaIds": ["AC-SEARCH-001", "AC-SEARCH-002", "AC-SEARCH-003"],
+      "doneCriteria": [
+        "Title query filters visible todos.",
+        "Empty query restores all todos.",
+        "No match shows an empty search result state."
+      ],
+      "validationHints": ["npm test -- todo-search"]
+    }
+  ],
+  "edges": []
+}
