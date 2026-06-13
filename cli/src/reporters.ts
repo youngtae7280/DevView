@@ -116,6 +116,9 @@ Commands:
   accept               Close as ACCEPTED then DONE only with user acceptance metadata
   change create        Record user feedback/change request as a Change node
   impact analyze       Create Impact node links for an existing Change node
+  product patch propose
+                       Propose a user-confirmed Product Tree patch from a Change node
+  product patch apply  Apply a confirmed Product Patch Proposal
   revision start       Enter REVISION_REQUESTED after Impact analysis
   revision complete    Return revision work to WPD/VD/ACEP closure flow
   evidence check       Check evidence coverage
@@ -133,6 +136,8 @@ Options:
   --summary <text>     change create summary.
   --source <value>     change source. Defaults to user_feedback.
   --change <id>        Change node id for impact/revision commands.
+  --patch <id>         Product Patch node id for product patch apply.
+  --operation <value>  Product Patch operation.
   --product <id>       Affected Product node id. May be repeated or comma-separated.
   --work <id>          Affected Work node id. May be repeated or comma-separated.
   --test <id>          Affected Test node id. May be repeated or comma-separated.

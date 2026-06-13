@@ -8,6 +8,7 @@ const requiredTemplates = [
   'templates/project-tree.template.json',
   'templates/work-tree.template.json',
   'templates/test-tree.template.json',
+  'templates/product-patch-tree.template.json',
   'templates/visual-reference.template.json',
   'templates/design-tokens.template.json',
   'templates/component-style-contract.template.json',

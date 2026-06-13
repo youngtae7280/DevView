@@ -59,10 +59,18 @@ Use `--json` for automation and for Codex-to-Codex handoff:
 Recommended automation commands:
 
 ```bash
+pbe status --json
 pbe validate --json
 pbe trace check --stage wpd --json
 pbe review submit --json
 ```
+
+## Status Navigator
+
+When unsure, run `pbe status`. Status is a lightweight next-action navigator: it reads the current PBE state, summarizes
+blocking issues already visible in project artifacts, and reports the likely next CLI command.
+
+Status does not replace validation. For full artifact and policy checks, run `pbe validate`.
 
 ## Text Output
 

@@ -12,6 +12,7 @@ const requiredSchemas = [
   'schemas/ui-surface-inventory.schema.json',
   'schemas/component-style-inventory.schema.json',
   'schemas/visual-verification-profile.schema.json',
+  'schemas/product-patch-tree.schema.json',
 ]
 
 export function runSchemasValidator({ root }) {

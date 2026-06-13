@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/project-blueprint-engine/product-patch-tree.schema.json",
+  "title": "PBE Product Patch Tree",
+  "type": "object",
+  "required": ["version", "patches"],
+  "properties": {
+    "version": { "type": "string" },
+    "generatedAt": { "type": ["string", "null"] },
+    "patches": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/productPatch" }
+    }
+  },
+  "$defs": {
+    "productPatch": {
+      "type": "object",
+      "required": [
+        "id",
+        "changeNodeId",
+        "targetProductNodeId",
+        "operation",
+        "status",
+        "requiresUserConfirmation",
+        "userConfirmed",
+        "beforeSnapshot",
+        "afterProposal",
+        "affectedProductNodeIds",
+        "createdAt",
+        "appliedAt"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "changeNodeId": { "type": "string" },
+        "targetProductNodeId": { "type": "string" },
+        "operation": {
+          "enum": ["update", "add_child", "supersede", "update_acceptance_criteria"]
+        },
+        "status": {
+          "enum": ["proposed", "confirmed", "applied", "rejected", "superseded"]
+        },
+        "requiresUserConfirmation": { "type": "boolean" },
+        "userConfirmed": { "type": "boolean" },
+        "confirmation": {
+          "type": "object",
+          "properties": {
+            "actor": { "enum": ["user"] },
+            "confirmedAt": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "summary": { "type": "string" },
+        "beforeSnapshot": { "type": "object" },
+        "afterProposal": { "type": "object" },
+        "affectedProductNodeIds": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string" },
+        "appliedAt": { "type": ["string", "null"] },
+        "appliedOperation": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

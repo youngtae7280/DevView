@@ -14,6 +14,7 @@ export const defaultArtifacts = {
   decisionQueue: '.pbe/control/decision-queue.json',
   changeTree: '.pbe/control/change-tree.json',
   impactTree: '.pbe/control/impact-tree.json',
+  productPatchTree: '.pbe/control/product-patch-tree.json',
   acceptanceTree: '.pbe/control/acceptance-tree.json',
   evidenceTree: '.pbe/evidence/evidence-tree.json',
   pbeState: '.pbe/blueprint/pbe-state.json',

@@ -10,6 +10,7 @@ export { validateFileChanges } from './file-change-validator.js'
 export { validateState } from './state-validator.js'
 export { validateChangeTree } from './change-validator.js'
 export { validateImpactTree } from './impact-validator.js'
+export { validateProductPatchTree } from './product-patch-validator.js'
 export {
   buildRevisionContext,
   revisionAffectedIds,

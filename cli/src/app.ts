@@ -98,6 +98,8 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     summary: undefined as string | undefined,
     source: undefined as string | undefined,
     change: undefined as string | undefined,
+    patch: undefined as string | undefined,
+    operation: undefined as string | undefined,
     product: [] as string[],
     work: [] as string[],
     test: [] as string[],
@@ -156,6 +158,20 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--change requires a Change node id.' }
       }
       options.change = value
+      index += 1
+    } else if (arg === '--patch') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--patch requires a Product Patch node id.' }
+      }
+      options.patch = value
+      index += 1
+    } else if (arg === '--operation') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--operation requires a Product Patch operation.' }
+      }
+      options.operation = value
       index += 1
     } else if (arg === '--product') {
       const value = argv[index + 1]

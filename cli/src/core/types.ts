@@ -46,6 +46,8 @@ export interface CliOptions {
   summary?: string
   source?: string
   change?: string
+  patch?: string
+  operation?: string
   product?: string[]
   work?: string[]
   test?: string[]
@@ -135,6 +137,16 @@ export function nextCommandForIssue(code: string): string | undefined {
     IMPACT_AFFECTED_IDS_MISSING: 'pbe impact analyze',
     IMPACT_CHANGE_NOT_FOUND: 'pbe impact analyze',
     CHANGE_SUMMARY_MISSING: 'pbe change create',
+    PRODUCT_PATCH_CHANGE_REQUIRED: 'pbe product patch propose',
+    PRODUCT_PATCH_CHANGE_MISSING: 'pbe change create',
+    PRODUCT_PATCH_TARGET_REQUIRED: 'pbe product patch propose',
+    PRODUCT_PATCH_TARGET_MISSING: 'pbe rpd check',
+    PRODUCT_PATCH_OPERATION_REQUIRED: 'pbe product patch propose',
+    PRODUCT_PATCH_OPERATION_INVALID: 'pbe product patch propose',
+    PRODUCT_PATCH_SUMMARY_REQUIRED: 'pbe product patch propose',
+    PRODUCT_PATCH_CONFIRMATION_REQUIRED: 'pbe product patch apply',
+    PRODUCT_PATCH_SNAPSHOT_MISMATCH: 'pbe product patch propose',
+    PRODUCT_PATCH_ALREADY_APPLIED: 'pbe status',
   }
 
   if (exact[code]) {

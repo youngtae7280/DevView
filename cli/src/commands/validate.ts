@@ -6,6 +6,7 @@ import {
   validateAcceptedActors,
   validateChangeTree,
   validateImpactTree,
+  validateProductPatchTree,
   validateState,
   validateVisualDesign,
 } from '../validators/pbe-validators.js'
@@ -48,6 +49,7 @@ export async function validateCommand(context: CommandContext): Promise<CommandR
     issues.push(...(await validateAcceptedActors(context.options.root)))
     issues.push(...(await validateChangeTree(context.options.root)))
     issues.push(...(await validateImpactTree(context.options.root)))
+    issues.push(...(await validateProductPatchTree(context.options.root)))
     issues.push(...(await validateVisualDesign(context.options.root)))
   }
 

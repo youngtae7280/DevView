@@ -10,6 +10,7 @@ import { runPluginStructureValidator } from './validators/plugin-structure.js'
 import { runRevisionValidator } from './validators/revision.js'
 import { runRpdTransitionValidator } from './validators/rpd-transition.js'
 import { runSchemasValidator } from './validators/schemas.js'
+import { runSkillsCliSyncValidator } from './validators/skills-cli-sync.js'
 import { runSkillsValidator } from './validators/skills.js'
 import { runTemplatesValidator } from './validators/templates.js'
 import { runWorkgraphValidator } from './validators/workgraph.js'
@@ -21,6 +22,7 @@ const targetRoot = process.cwd()
 const validators = [
   ['Plugin structure', runPluginStructureValidator, pluginRoot],
   ['Skills', runSkillsValidator, pluginRoot],
+  ['Skills CLI sync', runSkillsCliSyncValidator, pluginRoot],
   ['Templates', runTemplatesValidator, pluginRoot],
   ['Schemas', runSchemasValidator, pluginRoot],
   ['PBE layout', runPbeLayoutValidator, targetRoot],

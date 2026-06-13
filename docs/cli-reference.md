@@ -1,0 +1,387 @@
+# CLI Reference
+
+## Overview
+
+The `pbe` CLI is the deterministic transition and validation layer for Project Blueprint Engine. Skills explain the
+workflow, but stage closure, state transitions, file guard checks, and acceptance closure should go through CLI
+commands.
+
+Use `pbe status` when unsure. Use `pbe validate` for full repository and `.pbe` artifact validation.
+
+Most commands follow this pattern:
+
+- read `.pbe` artifacts
+- run the command-specific validator or transition guard
+- leave artifacts unchanged on failure
+- write only the command-owned artifact or state transition on success
+- report `suggestedFix` and `nextCommand` when PBE can infer them
+
+## Common Options
+
+- `--root <path>`: target project root. Defaults to the current directory.
+- `--json`: print stable JSON for automation.
+- `--stage <wpd|vd|execution|review|accept>`: traceability/evidence stage mode.
+- `--change <id>`: Change node id for Impact, Revision, and Product Patch commands.
+- `--product <id>`: Product node id. May be repeated or comma-separated.
+- `--work <id>`: Work node id. May be repeated or comma-separated.
+- `--test <id>`: Test node id. May be repeated or comma-separated.
+- `--evidence <id>`: Evidence node id. May be repeated or comma-separated.
+- `--acceptance <id>`: Acceptance branch/node id. May be repeated or comma-separated.
+- `--patch <id>`: Product Patch node id for `pbe product patch apply`.
+- `--operation <value>`: Product Patch operation, such as `update_acceptance_criteria`.
+
+## Status And Validation Commands
+
+### `pbe status`
+
+- Purpose: Show current PBE state and the likely next CLI command.
+- Typical state before running: Any initialized or uninitialized project.
+- What it checks: Lightweight project initialization, `pbe-state.json` parse, known state, open blocking decisions,
+  recorded `lastFailure`, active revision consistency.
+- What it writes: Nothing.
+- Success result: Prints current state, current gate, next step, delivery status, active revision, last transition,
+  recommended next command, blocking issue summary, and suggested fix.
+- Common failures: `PBE_NOT_INITIALIZED`, invalid state JSON, unknown state issue in JSON output.
+- Next command: Follow `recommendedNextCommand`, or run `pbe validate` for full checks.
+
+### `pbe validate`
+
+- Purpose: Run repository-level and `.pbe` validation.
+- Typical state before running: Any time a full health check is needed.
+- What it checks: Legacy repository validation, v2 tree system validation, state validator, acceptance actor validator,
+  Change Tree, Impact Tree, Product Patch Tree, and visual validator when `.pbe` exists.
+- What it writes: Nothing.
+- Success result: Validation passes with zero error issues.
+- Common failures: `LEGACY_PBE_VALIDATOR_FAILED`, `V2_TREE_VALIDATOR_FAILED`, `UNKNOWN_STATE`,
+  `PRODUCT_PATCH_OPERATION_INVALID`, acceptance/evidence/visual closure issues.
+- Next command: Follow issue `nextCommand`; otherwise fix reported artifacts and rerun `pbe validate`.
+
+### `pbe gate <stage>`
+
+- Purpose: Compatibility gate check for a named stage.
+- Typical state before running: Before entering a stage, especially older workflows that still call gate checks.
+- What it checks: Stage-specific readiness and transition guard compatibility.
+- What it writes: Nothing.
+- Success result: Gate check passes.
+- Common failures: transition blocked, missing prerequisite artifacts, incomplete upstream stage.
+- Next command: Prefer modern transition commands such as `pbe wpd close`, `pbe execution start`, or
+  `pbe review submit`.
+
+## Requirement/Product Commands
+
+### `pbe rpd check`
+
+- Purpose: Check Product Tree/RPD readiness without closing the stage.
+- Typical state before running: `INIT`, `WAITING_ROOT_CONFIRMATION`, or `RPD_IN_PROGRESS`.
+- What it checks: Product Tree structure, root/user confirmation, acceptance criteria, ambiguity, blocking decisions.
+- What it writes: Nothing.
+- Success result: RPD/Product Tree is ready or reports remaining issues.
+- Common failures: `ROOT_NOT_CONFIRMED_BY_USER`, `ACCEPTANCE_CRITERIA_MISSING`, `AC_ABSTRACT_TERM`,
+  `BLOCKING_DECISION_OPEN`.
+- Next command: `pbe rpd close`.
+
+### `pbe rpd close`
+
+- Purpose: Close RPD/Product Tree growth and transition to `RPD_DONE`.
+- Typical state before running: `INIT`, `WAITING_ROOT_CONFIRMATION`, or RPD-ready state.
+- What it checks: RPD validator, Product Tree acceptance readiness, user confirmation, allowed transition.
+- What it writes: `.pbe/blueprint/pbe-state.json` state/history.
+- Success result: State becomes `RPD_DONE`.
+- Common failures: incomplete Product Tree, unresolved ambiguity, missing user confirmation, invalid transition.
+- Next command: `pbe ui approve` when UI/UX confirmation is required, or `pbe wpd close`.
+
+### `pbe product patch propose`
+
+- Purpose: Create a Product Patch Proposal from an existing Change node and target Product node.
+- Typical state before running: After `pbe change create`; before directly editing product meaning.
+- What it checks: `--change`, `--product`, `--operation`, `--summary`; Change node exists; Product node exists;
+  operation is allowed.
+- What it writes: `.pbe/control/product-patch-tree.json`.
+- Success result: Creates `PP-*` with `status: proposed`, `requiresUserConfirmation: true`, `userConfirmed: false`,
+  `beforeSnapshot`, and `afterProposal`. Product Tree is not changed.
+- Common failures: `PRODUCT_PATCH_CHANGE_REQUIRED`, `PRODUCT_PATCH_CHANGE_MISSING`, `PRODUCT_PATCH_TARGET_REQUIRED`,
+  `PRODUCT_PATCH_TARGET_MISSING`, `PRODUCT_PATCH_OPERATION_INVALID`.
+- Next command: Record explicit user confirmation on the patch, then run `pbe product patch apply --patch PP-001`.
+
+### `pbe product patch apply`
+
+- Purpose: Apply a confirmed Product Patch Proposal to Product Tree.
+- Typical state before running: A proposed/confirmed Product Patch has explicit user confirmation.
+- What it checks: Patch exists, status is `proposed` or `confirmed`, `userConfirmed: true`,
+  `confirmation.actor: "user"`, `beforeSnapshot` still matches the target Product node, operation can be applied.
+- What it writes: `.pbe/tree/product-tree.json` and `.pbe/control/product-patch-tree.json`.
+- Success result: Product Tree changes, patch status becomes `applied`, `appliedAt` is recorded.
+- Common failures: `PRODUCT_PATCH_CONFIRMATION_REQUIRED`, `PRODUCT_PATCH_SNAPSHOT_MISMATCH`,
+  `PRODUCT_PATCH_ALREADY_APPLIED`, `PRODUCT_PATCH_OPERATION_INVALID`.
+- Next command: `pbe impact analyze`, then re-enter Change/Impact/Revision and downstream closure.
+
+## Planning Commands
+
+### `pbe ui approve`
+
+- Purpose: Record user UI/UX approval and transition to `UI_UX_APPROVED`.
+- Typical state before running: `RPD_DONE` or `WAITING_UI_UX_CONFIRM`.
+- What it checks: UI/UX confirmation artifact and allowed transition.
+- What it writes: confirmation metadata and `pbe-state.json`.
+- Success result: State becomes `UI_UX_APPROVED`.
+- Common failures: missing UI/UX confirmation, invalid transition, approval not from user.
+- Next command: `pbe wpd close`.
+
+### `pbe wpd check`
+
+- Purpose: Check Work Tree/WorkGraph readiness without closing WPD.
+- Typical state before running: `UI_UX_APPROVED`, `VISUAL_CONTRACT_READY`, or `WPD_IN_PROGRESS`.
+- What it checks: Work derivation, Product-to-Work coverage, inactive scope leaks, dependency graph.
+- What it writes: Nothing.
+- Success result: WPD readiness report.
+- Common failures: `PRODUCT_WORK_LINK_MISSING`, `WORK_WITHOUT_PRODUCT`, `DEFERRED_SCOPE_LEAK`, dependency cycle.
+- Next command: `pbe wpd close`.
+
+### `pbe wpd close`
+
+- Purpose: Validate WPD and transition to `WPD_DONE`.
+- Typical state before running: `UI_UX_APPROVED`, `VISUAL_CONTRACT_READY`, or `WPD_IN_PROGRESS`.
+- What it checks: WPD validator, traceability at WPD stage, allowed transition.
+- What it writes: `pbe-state.json`.
+- Success result: State becomes `WPD_DONE`.
+- Common failures: missing Work Tree/WorkGraph, missing Product-to-Work links, inactive scope leaks.
+- Next command: `pbe vd close`.
+
+### `pbe vd check`
+
+- Purpose: Check Test Tree and verification coverage without closing VD.
+- Typical state before running: `WPD_DONE` or `VD_IN_PROGRESS`.
+- What it checks: Work-to-Test coverage, acceptance criteria coverage, evidence declarations, UI evidence requirements.
+- What it writes: Nothing.
+- Success result: VD readiness report.
+- Common failures: `WORK_TEST_LINK_MISSING`, `ACCEPTANCE_NOT_COVERED`, `TEST_EVIDENCE_DECLARATION_MISSING`.
+- Next command: `pbe vd close`.
+
+### `pbe vd close`
+
+- Purpose: Validate VD/Test Tree and transition to `VD_DONE`.
+- Typical state before running: `WPD_DONE` or `VD_IN_PROGRESS`.
+- What it checks: VD validator, traceability at VD stage, allowed transition.
+- What it writes: `pbe-state.json`.
+- Success result: State becomes `VD_DONE`.
+- Common failures: missing Test Tree, missing test coverage, incomplete verification design.
+- Next command: `pbe scope select`.
+
+### `pbe scope select`
+
+- Purpose: Record implementation scope selection.
+- Typical state before running: `VD_DONE` or `WAITING_IMPLEMENTATION_SCOPE`.
+- What it checks: Scope readiness and allowed transition.
+- What it writes: `pbe-state.json`.
+- Success result: State becomes `SCOPE_SELECTED`.
+- Common failures: invalid transition, unresolved scope/blocking decision.
+- Next command: `pbe acep ready` after required pre-ACEP checkpoints.
+
+## Execution Commands
+
+### `pbe acep check`
+
+- Purpose: Check ACEP execution pack readiness.
+- Typical state before running: After planning artifacts exist, before `pbe acep ready`.
+- What it checks: ACEP manifest, task cards, traceability, selected/foundation scope constraints.
+- What it writes: Nothing.
+- Success result: ACEP readiness report.
+- Common failures: missing manifest, inactive scope tasks, incomplete task/evidence metadata.
+- Next command: `pbe acep ready`.
+
+### `pbe acep ready`
+
+- Purpose: Validate ACEP manifest and transition to `ACEP_READY`.
+- Typical state before running: `SCOPE_SELECTED` plus required pre-ACEP checkpoints.
+- What it checks: ACEP validator, pre-ACEP checkpoints, allowed transition.
+- What it writes: `pbe-state.json`.
+- Success result: State becomes `ACEP_READY`.
+- Common failures: missing checkpoint artifact, missing ACEP manifest, invalid transition.
+- Next command: `pbe execution start`.
+
+### `pbe execution start`
+
+- Purpose: Start implementation execution.
+- Typical state before running: `ACEP_READY`.
+- What it checks: allowed transition.
+- What it writes: `pbe-state.json`.
+- Success result: State becomes `EXECUTION_IN_PROGRESS`.
+- Common failures: invalid transition.
+- Next command: perform bounded implementation work, then `pbe execution complete`.
+
+### `pbe execution complete`
+
+- Purpose: Validate execution evidence and close execution.
+- Typical state before running: `EXECUTION_IN_PROGRESS`.
+- What it checks: execution traceability, evidence coverage, evidence file presence/freshness policy for execution.
+- What it writes: `pbe-state.json`.
+- Success result: State becomes `ACEP_RUN_DONE`.
+- Common failures: `TEST_EVIDENCE_LINK_MISSING`, `REQUIRED_TEST_NO_EVIDENCE`, `EVIDENCE_FILE_MISSING`.
+- Next command: `pbe review submit`.
+
+### `pbe review submit`
+
+- Purpose: Submit verified work to the Review Result gate.
+- Typical state before running: `ACEP_RUN_DONE` or `VISUAL_AUDIT_DONE`.
+- What it checks: review-stage traceability, evidence readiness, visual audit when required, File Change Guard.
+- What it writes: `pbe-state.json`.
+- Success result: State becomes `WAITING_REVIEW_RESULT`.
+- Common failures: stale evidence, missing visual audit, unexplained source file changes, invalid transition.
+- Next command: user review; then `pbe accept` or `pbe change create`.
+
+### `pbe accept`
+
+- Purpose: Close work as accepted only with explicit user acceptance metadata.
+- Typical state before running: `WAITING_REVIEW_RESULT` or `ACCEPTED`.
+- What it checks: user Acceptance Tree closure, accept-stage traceability, evidence freshness, File Change Guard.
+- What it writes: `pbe-state.json`.
+- Success result: State moves through `ACCEPTED` to `DONE` when closure is complete.
+- Common failures: `USER_ACCEPTANCE_REQUIRED`, `ASSISTANT_ACCEPTED_STATUS`, `ACCEPTANCE_CLOSURE_MISSING`,
+  stale/unexplained evidence or file changes.
+- Next command: no next command when complete; for new feedback run `pbe change create`.
+
+## Change/Revision Commands
+
+### `pbe change create`
+
+- Purpose: Record user feedback or change request as a Change node.
+- Typical state before running: User requests changes, often at review or after done.
+- What it checks: `--summary` and valid Change Tree.
+- What it writes: `.pbe/control/change-tree.json`.
+- Success result: Creates `CH-*` with `status: proposed`.
+- Common failures: `CHANGE_SUMMARY_MISSING`, invalid or missing Change Tree.
+- Next command: `pbe impact analyze --change CH-001`.
+
+### `pbe impact analyze`
+
+- Purpose: Create Impact node links for an existing Change node.
+- Typical state before running: After `pbe change create`.
+- What it checks: Change exists, Impact Tree exists, affected ids are provided or derivable.
+- What it writes: `.pbe/control/impact-tree.json` and updates Change node status to `impact_analyzed`.
+- Success result: Creates `IM-*` linked to the Change node.
+- Common failures: `IMPACT_CHANGE_NOT_FOUND`, `IMPACT_AFFECTED_IDS_MISSING`.
+- Next command: `pbe revision start --change CH-001`.
+
+### `pbe revision start`
+
+- Purpose: Enter `REVISION_REQUESTED` after Impact analysis and invalidate affected proof.
+- Typical state before running: `WAITING_REVIEW_RESULT`, `ACCEPTED`, or `DONE` with analyzed impact.
+- What it checks: Change exists, Impact exists, affected ids exist, allowed transition, affected Evidence/Acceptance
+  artifacts are parseable.
+- What it writes: `pbe-state.json`, activeRevision, affected Evidence/Acceptance invalidation metadata.
+- Success result: State becomes `REVISION_REQUESTED`; activeRevision is recorded.
+- Common failures: `REVISION_IMPACT_MISSING`, `REVISION_IMPACT_AFFECTED_IDS_MISSING`, `REVISION_CHANGE_NOT_FOUND`,
+  invalid Evidence/Acceptance JSON.
+- Next command: perform bounded revision work, then `pbe revision complete`.
+
+### `pbe revision complete`
+
+- Purpose: Finish bounded revision work and return to the required closure path.
+- Typical state before running: `REVISION_REQUESTED` with matching activeRevision.
+- What it checks: activeRevision exists and matches `--change`, revision context is valid.
+- What it writes: `pbe-state.json`, revision history/checkpoint state.
+- Success result: Workflow returns to WPD/VD/ACEP/Execution/Review/Accept closure as required.
+- Common failures: `REVISION_CONTEXT_MISSING`, `REVISION_CHANGE_MISMATCH`, `REVISION_CONTEXT_NOT_IN_PROGRESS`.
+- Next command: `pbe wpd close`, `pbe vd close`, `pbe acep ready`, or the next command reported by status.
+
+## Guard/Check Commands
+
+### `pbe trace check`
+
+- Purpose: Check Product/Work/Test/Evidence/Acceptance traceability.
+- Typical state before running: Any time, especially before WPD/VD/execution/review/accept closure.
+- What it checks: Stage-aware traceability with `--stage`.
+- What it writes: Nothing.
+- Success result: Traceability passes for the selected stage.
+- Common failures: `PRODUCT_WORK_LINK_MISSING`, `WORK_TEST_LINK_MISSING`, `TEST_EVIDENCE_LINK_MISSING`,
+  `ACCEPTANCE_CLOSURE_MISSING`.
+- Next command: Follow the stage-specific issue `nextCommand`.
+
+### `pbe files check`
+
+- Purpose: Check changed source files against Work/Revision scope.
+- Typical state before running: Before `pbe review submit` or `pbe accept`, or when unsure about source changes.
+- What it checks: git diff, expected/forbidden files, unknown file risk, activeRevision affected scope.
+- What it writes: Nothing.
+- Success result: File Change Guard passes.
+- Common failures: `FILE_CHANGE_OUTSIDE_WORK_SCOPE`, `FILE_CHANGE_FORBIDDEN`, `FILE_CHANGE_REQUIRES_REVISION`,
+  `GIT_DIFF_UNAVAILABLE`.
+- Next command: Fix scope, run `pbe change create`, or rerun `pbe files check`.
+
+### `pbe evidence check`
+
+- Purpose: Check evidence coverage and freshness.
+- Typical state before running: After tests/evidence are captured, before execution/review/accept closure.
+- What it checks: Evidence Tree links, file existence, timestamp/freshness policy.
+- What it writes: Nothing.
+- Success result: Evidence validation passes.
+- Common failures: `EVIDENCE_FILE_MISSING`, `EVIDENCE_TIMESTAMP_MISSING`, `EVIDENCE_STALE`, `EVIDENCE_NOT_CURRENT`.
+- Next command: Attach or refresh evidence, then rerun the closure command.
+
+### `pbe visual check`
+
+- Purpose: Check Visual Design Contract and UI evidence.
+- Typical state before running: For selected visual UI work, before WPD/ACEP/review/accept closure.
+- What it checks: visual reference, design tokens, component contract, UI surface inventory, visual evidence, visual
+  audit.
+- What it writes: Nothing.
+- Success result: Visual validation passes.
+- Common failures: visual source missing, missing UI screenshot evidence, stale visual evidence, unresolved visual audit
+  blocking issues.
+- Next command: Fix visual artifacts/evidence, then rerun the blocked stage command.
+
+## Recommended Full Workflow
+
+```text
+pbe status
+pbe rpd check
+pbe rpd close
+pbe ui approve
+pbe wpd close
+pbe vd close
+pbe scope select
+pbe acep check
+pbe acep ready
+pbe execution start
+# bounded implementation work
+pbe files check
+pbe execution complete
+pbe review submit
+# user reviews result
+pbe accept
+```
+
+For user feedback or product meaning changes:
+
+```text
+pbe change create --summary "..."
+pbe impact analyze --change CH-001 --product PT-1
+pbe product patch propose --change CH-001 --product PT-1 --operation update_acceptance_criteria --summary "..."
+# record explicit user confirmation on PP-001
+pbe product patch apply --patch PP-001
+pbe revision start --change CH-001
+# bounded revision work
+pbe revision complete --change CH-001
+pbe status
+```
+
+## Common Failure Codes And Next Command Examples
+
+| Failure code                          | Meaning                                                  | Likely next command                                |
+| ------------------------------------- | -------------------------------------------------------- | -------------------------------------------------- |
+| `ROOT_NOT_CONFIRMED_BY_USER`          | Product root lacks explicit user confirmation.           | `pbe rpd check`                                    |
+| `AC_ABSTRACT_TERM`                    | Acceptance criteria contain subjective language.         | `pbe rpd check`                                    |
+| `PRODUCT_WORK_LINK_MISSING`           | Product scope lacks Work coverage.                       | `pbe wpd close`                                    |
+| `WORK_TEST_LINK_MISSING`              | Work lacks Test coverage.                                | `pbe vd close`                                     |
+| `TEST_EVIDENCE_LINK_MISSING`          | Test lacks Evidence coverage.                            | `pbe execution complete`                           |
+| `EVIDENCE_STALE`                      | Evidence is older than linked work/test/product context. | refresh evidence, then rerun closure               |
+| `ACCEPTANCE_CLOSURE_MISSING`          | User Acceptance closure is incomplete.                   | `pbe accept`                                       |
+| `USER_ACCEPTANCE_REQUIRED`            | Acceptance must come from the user.                      | `pbe accept`                                       |
+| `FILE_CHANGE_REQUIRES_REVISION`       | Source file changes are not explained by current scope.  | `pbe change create`                                |
+| `IMPACT_AFFECTED_IDS_MISSING`         | Impact analysis has no affected nodes.                   | `pbe impact analyze`                               |
+| `REVISION_IMPACT_MISSING`             | Revision was requested without analyzed impact.          | `pbe impact analyze`                               |
+| `REVISION_CONTEXT_MISSING`            | Active revision context is missing.                      | `pbe revision start`                               |
+| `PRODUCT_PATCH_CONFIRMATION_REQUIRED` | Product Patch lacks explicit user confirmation.          | `pbe product patch apply` after confirmation       |
+| `PRODUCT_PATCH_SNAPSHOT_MISMATCH`     | Product node changed after patch proposal.               | recreate proposal with `pbe product patch propose` |
+| `PRODUCT_PATCH_OPERATION_INVALID`     | Product Patch operation is unsupported.                  | `pbe product patch propose`                        |
+| `UNKNOWN_STATE`                       | `autoflow.state` is not a known PBE state.               | `pbe status` or `pbe validate`                     |

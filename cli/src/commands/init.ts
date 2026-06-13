@@ -33,6 +33,7 @@ const jsonTemplateTargets: Array<{
   { template: 'decision-queue.template.json', target: defaultArtifacts.decisionQueue },
   { template: 'change-tree.template.json', target: defaultArtifacts.changeTree },
   { template: 'impact-tree.template.json', target: defaultArtifacts.impactTree },
+  { template: 'product-patch-tree.template.json', target: defaultArtifacts.productPatchTree },
   { template: 'acceptance-tree.template.json', target: defaultArtifacts.acceptanceTree },
   { template: 'evidence-tree.template.json', target: defaultArtifacts.evidenceTree },
   { template: 'visual-reference.template.json', target: defaultArtifacts.visualReference },

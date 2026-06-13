@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
+import { cpSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { runPbeCli } from '../app'
@@ -8,6 +8,7 @@ import { canTransition, isPbeState, PBE_STATE } from '../core/state-machine'
 import { checkpointPbeState, transitionPbeState } from '../core/state-transition'
 import { ExitCode } from '../core/types'
 import { validateEvidence } from '../validators/evidence-validator'
+import { validateProductPatchTree } from '../validators/product-patch-validator'
 import { validateState } from '../validators/state-validator'
 import {
   writeCoverageAudit,
@@ -89,6 +90,116 @@ describe('PBE CLI', () => {
     expect(JSON.parse(secondInit.stdout).skipped).toContain('.pbe/tree/product-tree.json')
     expect(status.exitCode).toBe(ExitCode.Success)
     expect(JSON.parse(status.stdout).state).toBe('INIT')
+  })
+
+  it.each([
+    ['INIT', 'pbe rpd close or pbe rpd check'],
+    ['WPD_DONE', 'pbe vd close'],
+    ['ACEP_READY', 'pbe execution start'],
+    ['EXECUTION_IN_PROGRESS', 'pbe execution complete'],
+  ])('recommends the next status command for %s', async (state, expectedCommand) => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, state)
+
+    const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.state).toBe(state)
+    expect(payload.recommendedNextCommand).toBe(expectedCommand)
+  })
+
+  it('points review result status to acceptance or change routing', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'WAITING_REVIEW_RESULT')
+
+    const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.recommendedNextCommand).toContain('pbe accept')
+    expect(payload.recommendedNextCommand).toContain('pbe change create')
+  })
+
+  it('includes active revision and last transition in status JSON', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'REVISION_REQUESTED', {
+      activeRevision: {
+        changeNodeId: 'CH-001',
+        status: 'in_progress',
+        startedAt: '2026-06-12T00:00:00.000Z',
+        impactNodeIds: ['IM-001'],
+        affectedWorkNodeIds: ['WT-1'],
+      },
+      stateHistory: [
+        {
+          from: 'WAITING_REVIEW_RESULT',
+          to: 'REVISION_REQUESTED',
+          command: 'change create',
+          at: '2026-06-12T00:00:00.000Z',
+        },
+      ],
+    })
+
+    const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.activeRevision).toMatchObject({
+      changeNodeId: 'CH-001',
+      status: 'in_progress',
+      impactNodeIds: ['IM-001'],
+      affectedWorkNodeIds: ['WT-1'],
+    })
+    expect(payload.lastTransition).toMatchObject({
+      from: 'WAITING_REVIEW_RESULT',
+      to: 'REVISION_REQUESTED',
+      command: 'change create',
+    })
+  })
+
+  it('reports unknown status state without running full validation', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'UNKNOWN_STATE')
+
+    const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.state).toBe('UNKNOWN_STATE')
+    expect(payload.recommendedNextCommand).toBe('pbe validate')
+    expect(payload.blockingIssues.map((entry: { code: string }) => entry.code)).toContain('UNKNOWN_STATE')
+    expect(payload.suggestedFixes[0]).toContain('pbe validate')
+  })
+
+  it('keeps existing status JSON fields while adding navigator fields', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'WPD_DONE', {
+      currentGate: 'wpd',
+      nextStep: 'vd',
+      deliveryStatus: 'wpd_done',
+    })
+
+    const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload).toMatchObject({
+      initialized: true,
+      profile: 'full',
+      state: 'WPD_DONE',
+      currentGate: 'wpd',
+      nextStep: 'vd',
+      deliveryStatus: 'wpd_done',
+      stateHistoryCount: 0,
+      recommendedNextCommand: 'pbe vd close',
+    })
+    expect(payload).toHaveProperty('openBlockingDecisions')
+    expect(payload).toHaveProperty('artifacts')
+    expect(payload).toHaveProperty('activeRevision')
+    expect(payload).toHaveProperty('lastTransition')
+    expect(payload).toHaveProperty('blockingIssues')
+    expect(payload).toHaveProperty('suggestedFixes')
   })
 
   it('blocks WPD gate before RPD can close', async () => {
@@ -2027,6 +2138,314 @@ describe('PBE CLI', () => {
     expect(afterImpact).toBe(beforeImpact)
   })
 
+  it('proposes a Product Patch from an existing Change and Product node without changing Product Tree', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace, [{ id: 'CH-001', type: 'feedback', status: 'proposed', summary: 'Search by email' }])
+
+    const beforeProduct = readProductText(workspace)
+    const result = await runPbeCli(
+      [
+        'product',
+        'patch',
+        'propose',
+        '--change',
+        'CH-001',
+        '--product',
+        'PT-1',
+        '--operation',
+        'update_acceptance_criteria',
+        '--summary',
+        'Search should include email',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(readProductText(workspace)).toBe(beforeProduct)
+    const patchTree = readProductPatchTree(workspace)
+    expect(patchTree.patches[0]).toMatchObject({
+      id: 'PP-001',
+      changeNodeId: 'CH-001',
+      targetProductNodeId: 'PT-1',
+      operation: 'update_acceptance_criteria',
+      status: 'proposed',
+      requiresUserConfirmation: true,
+      userConfirmed: false,
+      affectedProductNodeIds: ['PT-1'],
+      afterProposal: {
+        acceptance: ['Search should include email'],
+      },
+    })
+  })
+
+  it('does not propose a Product Patch for a missing Change node', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace)
+
+    const result = await runPbeCli(
+      [
+        'product',
+        'patch',
+        'propose',
+        '--change',
+        'CH-404',
+        '--product',
+        'PT-1',
+        '--operation',
+        'update_acceptance_criteria',
+        '--summary',
+        'Search should include email',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'PRODUCT_PATCH_CHANGE_MISSING',
+    )
+  })
+
+  it('does not propose a Product Patch for a missing Product node', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace, [{ id: 'CH-001', type: 'feedback', status: 'proposed', summary: 'Search by email' }])
+
+    const result = await runPbeCli(
+      [
+        'product',
+        'patch',
+        'propose',
+        '--change',
+        'CH-001',
+        '--product',
+        'PT-404',
+        '--operation',
+        'update_acceptance_criteria',
+        '--summary',
+        'Search should include email',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'PRODUCT_PATCH_TARGET_MISSING',
+    )
+  })
+
+  it('does not propose a Product Patch without an operation', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace, [{ id: 'CH-001', type: 'feedback', status: 'proposed', summary: 'Search by email' }])
+
+    const result = await runPbeCli(
+      [
+        'product',
+        'patch',
+        'propose',
+        '--change',
+        'CH-001',
+        '--product',
+        'PT-1',
+        '--summary',
+        'Search should include email',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'PRODUCT_PATCH_OPERATION_REQUIRED',
+    )
+  })
+
+  it('does not propose a Product Patch without a summary', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace, [{ id: 'CH-001', type: 'feedback', status: 'proposed', summary: 'Search by email' }])
+
+    const result = await runPbeCli(
+      [
+        'product',
+        'patch',
+        'propose',
+        '--change',
+        'CH-001',
+        '--product',
+        'PT-1',
+        '--operation',
+        'update_acceptance_criteria',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'PRODUCT_PATCH_SUMMARY_REQUIRED',
+    )
+  })
+
+  it('does not apply a Product Patch without a patch id', async () => {
+    const workspace = createWorkspace()
+
+    const result = await runPbeCli(['product', 'patch', 'apply', '--json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'PRODUCT_PATCH_ID_REQUIRED',
+    )
+  })
+
+  it('does not apply a Product Patch without user confirmation', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace, [{ id: 'CH-001', type: 'feedback', status: 'proposed', summary: 'Search by email' }])
+    await proposeProductPatch(workspace)
+
+    const beforeProduct = readProductText(workspace)
+    const beforePatch = readControlText(workspace, 'product-patch-tree.json')
+    const result = await runPbeCli(['product', 'patch', 'apply', '--patch', 'PP-001', '--json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'PRODUCT_PATCH_CONFIRMATION_REQUIRED',
+    )
+    expect(readProductText(workspace)).toBe(beforeProduct)
+    expect(readControlText(workspace, 'product-patch-tree.json')).toBe(beforePatch)
+  })
+
+  it('applies a confirmed Product Patch and marks it applied', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace, [{ id: 'CH-001', type: 'feedback', status: 'proposed', summary: 'Search by email' }])
+    await proposeProductPatch(workspace)
+    confirmProductPatch(workspace, 'PP-001')
+
+    const result = await runPbeCli(['product', 'patch', 'apply', '--patch', 'PP-001', '--json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const productTree = readProductTree(workspace)
+    const node = productTree.nodes.find((entry: Record<string, any>) => entry.id === 'PT-1')
+    expect(node.acceptance).toEqual(['Search should include email'])
+    const patch = readProductPatchTree(workspace).patches[0]
+    expect(patch.status).toBe('applied')
+    expect(patch.appliedAt).toEqual(expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/))
+    expect(JSON.parse(result.stdout).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'PRODUCT_PATCH_DOWNSTREAM_REVALIDATION_REQUIRED',
+    )
+  })
+
+  it('does not apply a Product Patch when beforeSnapshot is stale', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace, [{ id: 'CH-001', type: 'feedback', status: 'proposed', summary: 'Search by email' }])
+    await proposeProductPatch(workspace)
+    confirmProductPatch(workspace, 'PP-001')
+    mutateProductNode(workspace, 'PT-1', { title: 'Changed after proposal' })
+
+    const beforeProduct = readProductText(workspace)
+    const result = await runPbeCli(['product', 'patch', 'apply', '--patch', 'PP-001', '--json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'PRODUCT_PATCH_SNAPSHOT_MISMATCH',
+    )
+    expect(readProductText(workspace)).toBe(beforeProduct)
+  })
+
+  it('does not reapply an applied Product Patch', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace, [{ id: 'CH-001', type: 'feedback', status: 'proposed', summary: 'Search by email' }])
+    await proposeProductPatch(workspace)
+    confirmProductPatch(workspace, 'PP-001')
+    await runPbeCli(['product', 'patch', 'apply', '--patch', 'PP-001', '--json'], { cwd: workspace, pluginRoot })
+
+    const result = await runPbeCli(['product', 'patch', 'apply', '--patch', 'PP-001', '--json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'PRODUCT_PATCH_ALREADY_APPLIED',
+    )
+  })
+
+  it('Product Patch validator accepts a valid Product Patch Tree', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace, [{ id: 'CH-001', type: 'feedback', status: 'proposed', summary: 'Search by email' }])
+    writeProductPatchTree(workspace, [productPatchFixture(workspace)])
+
+    const issues = await validateProductPatchTree(workspace)
+
+    expect(issues).toEqual([])
+  })
+
+  it('Product Patch validator rejects an invalid Product Patch Tree', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace, [{ id: 'CH-001', type: 'feedback', status: 'proposed', summary: 'Search by email' }])
+    writeProductPatchTree(workspace, [{ ...productPatchFixture(workspace), operation: 'legacy_direct_edit' }])
+
+    const issues = await validateProductPatchTree(workspace)
+
+    expect(issues.map((entry) => entry.code)).toContain('PRODUCT_PATCH_OPERATION_INVALID')
+  })
+
+  it('Product Patch validator passes when Product Patch Tree is absent', async () => {
+    const workspace = createWorkspace()
+    writeExecutableProduct(workspace)
+    writeChangeTree(workspace, [{ id: 'CH-001', type: 'feedback', status: 'proposed', summary: 'Search by email' }])
+
+    const issues = await validateProductPatchTree(workspace)
+
+    expect(issues).toEqual([])
+  })
+
+  it('pbe validate accepts a valid initialized Product Patch Tree', async () => {
+    const workspace = createWorkspace()
+    copyValidExample(workspace)
+    writeProductPatchTree(workspace, [productPatchFixture(workspace)])
+
+    const result = await runPbeCli(['validate', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+  })
+
+  it('pbe validate rejects an invalid initialized Product Patch Tree', async () => {
+    const workspace = createWorkspace()
+    copyValidExample(workspace)
+    writeProductPatchTree(workspace, [{ ...productPatchFixture(workspace), operation: 'legacy_direct_edit' }])
+
+    const result = await runPbeCli(['validate', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'PRODUCT_PATCH_OPERATION_INVALID',
+    )
+  })
+
   it('blocks revision start when the Change node has no Impact analysis', async () => {
     const workspace = createWorkspace()
     writePbeState(workspace, 'WAITING_REVIEW_RESULT')
@@ -2446,12 +2865,31 @@ function writeImpactTree(workspace: string, impacts: Array<Record<string, any>> 
   })
 }
 
+function writeProductPatchTree(workspace: string, patches: Array<Record<string, any>> = []): void {
+  writeJson(join(workspace, '.pbe', 'control', 'product-patch-tree.json'), {
+    version: '0.2.0-tree-control',
+    patches,
+  })
+}
+
 function readChangeTree(workspace: string): Record<string, any> {
   return JSON.parse(readControlText(workspace, 'change-tree.json'))
 }
 
 function readImpactTree(workspace: string): Record<string, any> {
   return JSON.parse(readControlText(workspace, 'impact-tree.json'))
+}
+
+function readProductPatchTree(workspace: string): Record<string, any> {
+  return JSON.parse(readControlText(workspace, 'product-patch-tree.json'))
+}
+
+function readProductTree(workspace: string): Record<string, any> {
+  return JSON.parse(readProductText(workspace))
+}
+
+function readProductText(workspace: string): string {
+  return readFileSync(join(workspace, '.pbe', 'tree', 'product-tree.json'), 'utf8')
 }
 
 function readEvidenceTree(workspace: string): Record<string, any> {
@@ -2484,6 +2922,72 @@ function initGitRepository(workspace: string): void {
 
 function readControlText(workspace: string, fileName: string): string {
   return readFileSync(join(workspace, '.pbe', 'control', fileName), 'utf8')
+}
+
+async function proposeProductPatch(workspace: string): Promise<void> {
+  const result = await runPbeCli(
+    [
+      'product',
+      'patch',
+      'propose',
+      '--change',
+      'CH-001',
+      '--product',
+      'PT-1',
+      '--operation',
+      'update_acceptance_criteria',
+      '--summary',
+      'Search should include email',
+      '--json',
+    ],
+    { cwd: workspace, pluginRoot },
+  )
+  expect(result.exitCode).toBe(ExitCode.Success)
+}
+
+function confirmProductPatch(workspace: string, patchId: string): void {
+  const patchTree = readProductPatchTree(workspace)
+  const patch = patchTree.patches.find((entry: Record<string, any>) => entry.id === patchId)
+  patch.userConfirmed = true
+  patch.confirmation = {
+    actor: 'user',
+    confirmedAt: '2026-06-12T00:00:00.000Z',
+  }
+  writeJson(join(workspace, '.pbe', 'control', 'product-patch-tree.json'), patchTree)
+}
+
+function productPatchFixture(workspace: string): Record<string, any> {
+  const node = readProductTree(workspace).nodes.find((entry: Record<string, any>) => entry.id === 'PT-1')
+  return {
+    id: 'PP-001',
+    changeNodeId: 'CH-001',
+    targetProductNodeId: 'PT-1',
+    operation: 'update_acceptance_criteria',
+    status: 'proposed',
+    requiresUserConfirmation: true,
+    userConfirmed: false,
+    beforeSnapshot: node,
+    afterProposal: { acceptance: ['Search should include email'] },
+    affectedProductNodeIds: ['PT-1'],
+    createdAt: '2026-06-12T00:00:00.000Z',
+    appliedAt: null,
+  }
+}
+
+function mutateProductNode(workspace: string, productId: string, fields: Record<string, unknown>): void {
+  const productTreePath = join(workspace, '.pbe', 'tree', 'product-tree.json')
+  const productTree = JSON.parse(readFileSync(productTreePath, 'utf8'))
+  const node = productTree.nodes.find((entry: Record<string, unknown>) => entry.id === productId)
+  Object.assign(node, fields)
+  writeJson(productTreePath, productTree)
+}
+
+function copyValidExample(workspace: string): void {
+  cpSync(join(pluginRoot, 'examples', 'valid', 'todo-app-pbe-run', '.'), workspace, { recursive: true, force: true })
+  for (const entry of ['.codex-plugin', 'skills', 'templates', 'schemas', 'docs']) {
+    cpSync(join(pluginRoot, entry), join(workspace, entry), { recursive: true, force: true })
+  }
+  cpSync(join(pluginRoot, 'AGENTS.md'), join(workspace, 'AGENTS.md'), { force: true })
 }
 
 function mutateFirstAcceptanceCriterion(

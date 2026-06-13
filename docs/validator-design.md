@@ -45,6 +45,7 @@ The CLI may render pass/fail markers with symbols. The ASCII-safe shape is:
 
 PASS Plugin structure
 PASS Skills
+PASS Skills CLI sync
 PASS Templates
 PASS Schemas
 PASS PBE layout
@@ -60,6 +61,13 @@ Result: PASS
 ```
 
 Failures should include the validator name, file, error code, message, and a suggested fix.
+
+## Skills CLI Sync
+
+`scripts/validators/skills-cli-sync.js` prevents skill documentation from regressing to legacy gate commands or direct
+state-edit instructions. Skills may reference compatibility skill names and templates, but their primary route must use
+CLI transition commands such as `pbe execution start`, `pbe review submit`, `pbe accept`, and the Change/Impact/Revision
+commands.
 
 ## Stage-Aware Traceability
 

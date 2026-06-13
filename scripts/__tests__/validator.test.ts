@@ -1,8 +1,9 @@
 import { execFileSync } from 'node:child_process'
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
+import { runSkillsCliSyncValidator } from '../validators/skills-cli-sync.js'
 
 const tempRoots: string[] = []
 
@@ -73,6 +74,47 @@ describe('PBE validator', () => {
     expect(result.status).toBe(1)
     expect(result.output).toContain('RPD_INCOMPLETE_DOWNSTREAM_BLOCKED')
     expect(result.output).toContain('Decision DEC-ROOT is open with blockingLevel=blocking')
+  })
+
+  it('accepts current CLI-synced skills', () => {
+    const workspace = createValidatorWorkspace()
+
+    const issues = runSkillsCliSyncValidator({ root: workspace })
+
+    expect(issues).toEqual([])
+  })
+
+  it.each([
+    ['pbe gate code-start', 'SKILL_FORBIDDEN_LEGACY_GATE'],
+    ['pbe gate review-result', 'SKILL_FORBIDDEN_LEGACY_GATE'],
+    ['pbe gate accept', 'SKILL_FORBIDDEN_LEGACY_GATE'],
+    ['Set autoflow.nextStep to review_result.', 'SKILL_FORBIDDEN_STATE_EDIT'],
+    ['Add run_revision to pbe-state.json.autoflow.completedSteps.', 'SKILL_FORBIDDEN_STATE_EDIT'],
+    ['Continue automatically to pbe-run-revision.', 'SKILL_FORBIDDEN_LEGACY_REVISION_ROUTE'],
+    ['Continue automatically to `pbe-run-revision`.', 'SKILL_FORBIDDEN_LEGACY_REVISION_ROUTE'],
+  ])('rejects forbidden skill CLI-sync phrase: %s', (phrase, expectedCode) => {
+    const workspace = createValidatorWorkspace()
+    appendSkillLine(workspace, 'pbe-run-acep', phrase)
+
+    const issues = runSkillsCliSyncValidator({ root: workspace })
+
+    expect(issues.map((entry) => entry.code)).toContain(expectedCode)
+    expect(issues[0].file).toContain('skills/pbe-run-acep/SKILL.md:')
+  })
+
+  it('allows safe compatibility references and direct-state-edit warnings', () => {
+    const workspace = createValidatorWorkspace()
+    appendSkillLine(workspace, 'pbe-review-result', 'Compatibility reference: pbe-review-result.')
+    appendSkillLine(workspace, 'pbe-review-result', 'Template reference: review-result-gate-message-template.md.')
+    appendSkillLine(workspace, 'pbe-review-result', 'Compatibility reference: pbe-run-revision.')
+    appendSkillLine(workspace, 'pbe-review-result', 'Do not edit pbe-state.json directly.')
+    appendSkillLine(workspace, 'pbe-review-result', 'Read pbe-state.json before reporting status.')
+    appendSkillLine(workspace, 'pbe-review-result', 'autoflow.state should be written by CLI.')
+    appendSkillLine(workspace, 'pbe-review-result', 'CLI writes autoflow.state.')
+
+    const issues = runSkillsCliSyncValidator({ root: workspace })
+
+    expect(issues).toEqual([])
   })
 })
 
@@ -298,6 +340,12 @@ function writeBlockingDecisionQueue(workspace: string) {
       },
     ],
   })
+}
+
+function appendSkillLine(workspace: string, skillName: string, line: string) {
+  const skillPath = join(workspace, 'skills', skillName, 'SKILL.md')
+  const content = readFileSync(skillPath, 'utf8')
+  writeFileSync(skillPath, `${content.trimEnd()}\n${line}\n`, 'utf8')
 }
 
 const requiredAcepMarkdownFiles = [
