@@ -36,16 +36,22 @@ Draft behavior:
 5. Suggest a first slice when the request implies a practical starting scope.
 6. Ask only the highest-impact question when a human decision is needed.
 7. If the request is already clear, skip unnecessary interview turns and ask for confirmation of the summary/structure.
+8. Classify ambiguity before asking questions.
+9. Do not ask broad questions like "please clarify the requirement."
+10. Record unresolved but non-blocking ambiguity as deferred.
 
 Question priority:
 
 1. Scope decision.
 2. Risky product meaning decision.
 3. Acceptance or verification decision.
-4. UI/UX direction decision.
-5. Edge, error, or permission state decision.
+4. Dangerous data, permission, deletion, payment, or state decision.
+5. UI/UX direction decision.
+6. Implementation convenience or technical choice decision.
 
-Use `templates/rpd-interview-summary-template.md` for durable summaries when helpful. Optional draft notes may follow `templates/rpd-interview-draft.template.json`. Codex must not mark Product nodes as `confirmed` without user confirmation.
+Use `docs/ambiguity-taxonomy.md` to classify scope, behavior, quality, data, permission/state, verification, UI/UX, and technical/environment ambiguity. Use `templates/rpd-ambiguity-checklist-template.md` when the request has multiple ambiguity types. Use `templates/rpd-interview-summary-template.md` for durable summaries when helpful. Optional draft notes may follow `templates/rpd-interview-draft.template.json`. Codex must not mark Product nodes as `confirmed` without user confirmation.
+
+Do not close RPD until ambiguity that blocks Product Tree confirmation is resolved. If the user request is already specific enough, do not over-interview; summarize and ask for confirmation.
 
 If user feedback changes Product Tree meaning after RPD, do not quietly edit `.pbe/tree/product-tree.json`. Route it through Change/Impact/Revision and, when a Product Tree patch is required, Product Patch Proposal.
 

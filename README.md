@@ -74,6 +74,7 @@ Useful entry points:
 
 - [Core concepts](docs/core-concepts.md)
 - [RPD Interview Mode](docs/rpd-interview-mode.md)
+- [Ambiguity Taxonomy](docs/ambiguity-taxonomy.md)
 - [Dogfooding PBE on an existing project](docs/dogfooding-existing-project.md)
 - [Tree model](docs/tree-model.md)
 - [PBE Complexity Governance](docs/complexity-governance.md)
