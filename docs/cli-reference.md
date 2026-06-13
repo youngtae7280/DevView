@@ -8,7 +8,8 @@ commands.
 
 Use `pbe status` when unsure. Use `pbe validate` for full repository and `.pbe` artifact validation.
 
-See also: [Install PBE locally](install.md) and [Troubleshooting](troubleshooting.md).
+See also: [Install PBE locally](install.md), [Troubleshooting](troubleshooting.md), and
+[PBE Complexity Governance](complexity-governance.md).
 
 Run local verification commands sequentially, especially on Windows, because validation commands that rebuild the CLI
 can touch `clean-dist` / `dist`.

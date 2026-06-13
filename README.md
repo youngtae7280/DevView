@@ -76,6 +76,7 @@ Useful entry points:
 - [RPD Interview Mode](docs/rpd-interview-mode.md)
 - [Dogfooding PBE on an existing project](docs/dogfooding-existing-project.md)
 - [Tree model](docs/tree-model.md)
+- [PBE Complexity Governance](docs/complexity-governance.md)
 - [Human gates](docs/human-gates.md)
 - [Execution contracts](docs/execution-contracts.md)
 - [Revision flow](docs/revision-flow.md)
