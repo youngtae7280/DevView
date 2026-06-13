@@ -11,6 +11,8 @@ Use `pbe status` when unsure. Use `pbe validate` for full repository and `.pbe` 
 See also: [Install PBE locally](install.md), [Troubleshooting](troubleshooting.md), and
 [PBE Complexity Governance](complexity-governance.md).
 
+For verification planning quality, see [VD Quality Rubric](vd-quality-rubric.md).
+
 Run local verification commands sequentially, especially on Windows, because validation commands that rebuild the CLI
 can touch `clean-dist` / `dist`.
 

@@ -93,6 +93,17 @@ Prefer v2 tree files when present. If Work Tree scope classifications conflict w
 - Do not conduct a long user interview in VD.
 - Ask only for conditions that make verification impossible.
 - Connect every validation item back to a requirement or work unit.
+- Do not create generic tests such as "Search test" or manual checks like "verify it works".
+- Each Test node should verify a concrete observable result from an Acceptance Criteria item.
+- Prefer Given/When/Then or an equivalent scenario.
+- Each Test node should include concrete `passCriteria`.
+- Evidence type must match the work type.
+- For UI work, require screenshot or manual visual evidence.
+- For CLI work, require command output evidence.
+- For documentation work, require doc excerpt evidence.
+- Consider positive, negative, empty, error, permission, and regression cases when relevant.
+- If a case is intentionally not covered, record it as deferred or out of scope.
+- Use `docs/vd-quality-rubric.md` and `templates/vd-quality-checklist-template.md` when planning high-risk verification.
 - Include focused validation, broader regression validation, and manual checks where needed.
 - Mark uncertain validation commands as candidates rather than pretending they are guaranteed.
 - Every verification item must link to a requirement ID and task/work ID.
