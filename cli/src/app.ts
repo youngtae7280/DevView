@@ -94,6 +94,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     force: false,
     profile: undefined as 'full' | 'lite' | 'bypass' | undefined,
     brief: undefined as string | undefined,
+    files: [] as string[],
     stage: undefined as TraceabilityStageOption | undefined,
     summary: undefined as string | undefined,
     source: undefined as string | undefined,
@@ -137,6 +138,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--brief requires text.' }
       }
       options.brief = value
+      index += 1
+    } else if (arg === '--files') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--files requires a comma-separated file list.' }
+      }
+      options.files.push(...splitIds(value))
       index += 1
     } else if (arg === '--summary') {
       const value = argv[index + 1]

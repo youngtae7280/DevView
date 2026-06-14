@@ -8,6 +8,7 @@ import { filesCheckCommand } from './files.js'
 import { gateCommand } from './gate.js'
 import { impactAnalyzeCommand } from './impact.js'
 import { initCommand } from './init.js'
+import { profileRecommendCommand } from './profile.js'
 import { productPatchApplyCommand, productPatchProposeCommand } from './product.js'
 import { reviewSubmitCommand } from './review.js'
 import { revisionCompleteCommand, revisionStartCommand } from './revision.js'
@@ -111,6 +112,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'impact' && subcommand === 'analyze') {
     return impactAnalyzeCommand(context)
+  }
+  if (command === 'profile' && subcommand === 'recommend') {
+    return profileRecommendCommand(context)
   }
   if (command === 'product' && subcommand === 'patch' && positionals[2] === 'propose') {
     return productPatchProposeCommand(context)

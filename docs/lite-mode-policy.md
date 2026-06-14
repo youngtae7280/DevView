@@ -148,13 +148,13 @@ Poor Lite examples:
 
 ## Future Implementation Candidates
 
-Current limitation: `--profile lite` now receives profile-aware guidance in `pbe status`. It still does not provide a
-dedicated `pbe lite` command or reduced artifact initialization behavior.
+`pbe profile recommend` can recommend a profile from a brief and optional expected files, and `--profile lite` receives
+profile-aware guidance in `pbe status`. The recommendation does not initialize PBE, does not create a dedicated Lite
+command, and does not reduce artifact initialization behavior.
 
 These are candidates only. Do not implement them until they satisfy the Complexity Governance criteria:
 
 - `pbe lite check`
 - `pbe lite ready`
-- profile-aware `pbe status`
 - lite minimal artifact policy
 - lite escalation checklist validator

@@ -42,6 +42,7 @@ export interface CliOptions {
   force: boolean
   profile?: 'full' | 'lite' | 'bypass'
   brief?: string
+  files?: string[]
   stage?: TraceabilityStageOption
   summary?: string
   source?: string

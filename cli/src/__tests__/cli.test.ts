@@ -1,9 +1,10 @@
 import { execFileSync } from 'node:child_process'
-import { cpSync, readFileSync } from 'node:fs'
+import { cpSync, existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { runPbeCli } from '../app'
 import { writeJsonArtifactTransaction } from '../core/artifact-transaction'
+import { recommendProfile } from '../core/profile-recommendation'
 import { canTransition, isPbeState, PBE_STATE } from '../core/state-machine'
 import { checkpointPbeState, transitionPbeState } from '../core/state-transition'
 import { ExitCode } from '../core/types'
@@ -54,10 +55,121 @@ describe('PBE CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     expect(result.stdout).toContain('Project Blueprint Engine CLI')
+    expect(result.stdout).toContain('profile recommend')
     expect(result.stdout).toContain('rpd close')
     expect(result.stdout).toContain('wpd close')
     expect(result.stdout).toContain('execution start')
     expect(result.stdout).toContain('review submit')
+  })
+
+  it('recommends lite for docs-only briefs and files', async () => {
+    const direct = recommendProfile({
+      brief: 'docs/troubleshooting.md에 npm.ps1 설명 추가',
+      files: ['docs/troubleshooting.md', 'docs/install.md'],
+    })
+    const workspace = createWorkspace()
+
+    const result = await runPbeCli(
+      [
+        'profile',
+        'recommend',
+        '--brief',
+        'docs/troubleshooting.md에 npm.ps1 설명 추가',
+        '--files',
+        'docs/troubleshooting.md,docs/install.md',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+
+    expect(direct.recommendedProfile).toBe('lite')
+    expect(direct.confidence).toBe('high')
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.recommendedProfile).toBe('lite')
+    expect(payload.confidence).toBe('high')
+    expect(payload.reasons).toContain('docs-only or low-risk documentation change')
+    expect(payload.reasons).toContain('bounded expected files')
+  })
+
+  it('recommends bypass for explanation-only briefs without changes', async () => {
+    const result = await runPbeCli(
+      ['profile', 'recommend', '--brief', '이 문서 내용 설명해줘. 파일 수정은 하지 마.', '--json'],
+      {
+        cwd: createWorkspace(),
+        pluginRoot,
+      },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.recommendedProfile).toBe('bypass')
+    expect(payload.reasons).toContain('question/explanation request detected')
+  })
+
+  it.each([
+    ['관리자 페이지를 깔끔하게 개선해줘', 'UI/UX or visual design signal detected'],
+    ['권한 정책과 DB schema를 바꿔줘', 'DB/schema change signal detected'],
+  ])('recommends full for high-risk brief: %s', async (brief, expectedReason) => {
+    const result = await runPbeCli(['profile', 'recommend', '--brief', brief, '--json'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.recommendedProfile).toBe('full')
+    expect(payload.reasons).toContain(expectedReason)
+  })
+
+  it('recommends full when files include CLI, validator, schema, state, or fixture paths', async () => {
+    const result = await runPbeCli(
+      [
+        'profile',
+        'recommend',
+        '--brief',
+        '작은 문서 정리',
+        '--files',
+        'cli/src/commands/status.ts,schemas/pbe-state.schema.json,examples/valid/todo-app-pbe-run/README.md',
+        '--json',
+      ],
+      { cwd: createWorkspace(), pluginRoot },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.recommendedProfile).toBe('full')
+    expect(payload.reasons).toContain('high-risk file path: cli/src/commands/status.ts')
+    expect(payload.reasons).toContain('high-risk file path: schemas/pbe-state.schema.json')
+  })
+
+  it('fails profile recommendation when --brief is missing', async () => {
+    const result = await runPbeCli(['profile', 'recommend', '--json'], { cwd: createWorkspace(), pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.InvalidArguments)
+    const payload = JSON.parse(result.stderr)
+    expect(payload.issues[0].code).toBe('PROFILE_BRIEF_REQUIRED')
+    expect(payload.issues[0].message).toBe('Missing required option: --brief')
+  })
+
+  it('prints profile recommendation JSON and does not initialize PBE', async () => {
+    const workspace = createWorkspace()
+
+    const result = await runPbeCli(['profile', 'recommend', '--brief', 'README 링크 문구 한 줄 정리', '--json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload).toMatchObject({
+      recommendedProfile: 'lite',
+      confidence: 'medium',
+      suggestedInitCommand: 'pbe init --profile lite --brief "README 링크 문구 한 줄 정리"',
+    })
+    expect(payload.escalationTriggers).toContain('product meaning change')
+    expect(payload.notes).toContain('This is a recommendation only. It does not initialize PBE.')
+    expect(existsSync(join(workspace, '.pbe'))).toBe(false)
   })
 
   it('reports status as not initialized when .pbe is missing', async () => {

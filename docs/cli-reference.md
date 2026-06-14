@@ -58,6 +58,7 @@ Most commands follow this pattern:
 - `--acceptance <id>`: Acceptance branch/node id. May be repeated or comma-separated.
 - `--patch <id>`: Product Patch node id for `pbe product patch apply`.
 - `--operation <value>`: Product Patch operation, such as `update_acceptance_criteria`.
+- `--files <list>`: comma-separated candidate changed/expected files for `pbe profile recommend`.
 
 ## Status And Validation Commands
 
@@ -98,6 +99,23 @@ Most commands follow this pattern:
 - Common failures: transition blocked, missing prerequisite artifacts, incomplete upstream stage.
 - Next command: Prefer modern transition commands such as `pbe wpd close`, `pbe execution start`, or
   `pbe review submit`.
+
+### `pbe profile recommend`
+
+- Purpose: Recommend `full`, `lite`, or `bypass` from a task brief and optional expected file list.
+- Typical state before running: Before `pbe init`, or when deciding whether a small request needs PBE tracking.
+- Options: `--brief <text>` is required. `--files <comma-separated paths>` is optional and is treated conservatively.
+- What it checks: Deterministic keyword and file-path heuristics. It does not perform semantic product analysis.
+- What it writes: Nothing. It does not run `pbe init`.
+- Success result: Prints `recommendedProfile`, confidence, reasons, escalation triggers, notes, and a suggested
+  `pbe init --profile ...` command.
+- JSON output: Includes `recommendedProfile`, `confidence`, `reasons`, `escalationTriggers`, `suggestedInitCommand`, and
+  `notes`.
+- Common failures: missing or empty `--brief`.
+- Next command: User or Codex confirms the recommendation, then runs `pbe init --profile <profile> --brief "..."` if PBE
+  tracking is desired.
+- Conservative rule: if the brief or files indicate uncertainty, product meaning, UI/UX, CLI/validator/schema/state,
+  CI/package, fixture, or broad implementation risk, the recommendation is `full`.
 
 ## Requirement/Product Commands
 

@@ -41,6 +41,8 @@ PBE guidance can classify ambiguity and suggest questions, but it does not perfe
 
 Natural-language quality checks should not become hard validator failures until deterministic.
 
+Profile recommendation is heuristic and conservative. It is not a full semantic product analysis engine.
+
 ## Not a Substitute for Code Review
 
 PBE improves traceability and evidence, but it does not replace engineering review. Reviewers still need to inspect
