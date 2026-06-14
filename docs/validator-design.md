@@ -62,6 +62,17 @@ Result: PASS
 
 Failures should include the validator name, file, error code, message, and a suggested fix.
 
+## Repository Validator Responsibility Boundaries
+
+`scripts/validate-pbe-files.js` reports `Skills`, `Skills CLI sync`, and `Compatibility core` together, but they protect
+different failure surfaces. Keep them separate unless their failure semantics become the same.
+
+| Validator          | Scope                                          | What it catches                                                           | What it does not catch                     | Why it stays separate                                                                   |
+| ------------------ | ---------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Skills             | Public skill presence and baseline structure   | Missing required skill docs, invalid basic skill metadata/shape           | Legacy CLI flow wording                    | It verifies skill inventory and basic structure, not CLI-flow synchronization           |
+| Skills CLI sync    | Skill-to-CLI flow synchronization              | Forbidden legacy gate/state direct-edit instructions                      | General skill completeness                 | It prevents regression to old gate/state instructions with distinct issue semantics     |
+| Compatibility core | Preserved compatibility/core repository checks | Required compatibility expectations and legacy-safe repository invariants | Skill inventory or forbidden phrase policy | It protects compatibility assumptions that are separate from skill text synchronization |
+
 ## Skills CLI Sync
 
 `scripts/validators/skills-cli-sync.js` prevents skill documentation from regressing to legacy gate commands or direct

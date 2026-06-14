@@ -211,6 +211,9 @@ Validator promotion stages:
 Natural-language quality judgment should not become an immediate hard failure. Keep it as a rubric/checklist first, then
 promote only when repeated failures can be detected deterministically.
 
+Validator consolidation should not happen only because two validators inspect nearby files. If their failure semantics
+differ, keep them separate and document the boundary. See [Validator Design](validator-design.md).
+
 ## Documentation Governance Rules
 
 Add a document when:
