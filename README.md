@@ -61,41 +61,16 @@ stop
 Useful entry points:
 
 - Install PBE locally: [docs/install.md](docs/install.md)
-- Detailed installation and use guide: [docs/usage.md](docs/usage.md)
-- Troubleshooting: [docs/troubleshooting.md](docs/troubleshooting.md)
-- Complete golden example run: [examples/valid/todo-app-pbe-run](examples/valid/todo-app-pbe-run/README.md)
-- Dogfooding PBE on an existing project: [docs/dogfooding-existing-project.md](docs/dogfooding-existing-project.md)
+- CLI Reference: [docs/cli-reference.md](docs/cli-reference.md)
+- Documentation Index: [docs/index.md](docs/index.md)
 - Todo search adoption example: [examples/adoption/todo-search-slice](examples/adoption/todo-search-slice/README.md)
-- Self-dogfooding:
-  [Windows sequential validation guidance](examples/dogfooding/windows-validation-sequential-run/README.md)
-- Invalid regression fixtures: [examples/invalid](examples/invalid)
+- PBE v0.5.0-beta Readiness: [docs/beta-readiness.md](docs/beta-readiness.md)
+- Known Limits: [docs/known-limits.md](docs/known-limits.md)
 
 ## Learn The Model
 
-- [Core concepts](docs/core-concepts.md)
-- [RPD Interview Mode](docs/rpd-interview-mode.md)
-- [Ambiguity Taxonomy](docs/ambiguity-taxonomy.md)
-- [Dogfooding PBE on an existing project](docs/dogfooding-existing-project.md)
-- [Tree model](docs/tree-model.md)
-- [PBE v0.5.0-beta Readiness](docs/beta-readiness.md)
-- [Known Limits](docs/known-limits.md)
+- [Documentation Index](docs/index.md)
 - [PBE Complexity Governance](docs/complexity-governance.md)
-- [Migration / Compatibility Policy](docs/migration-policy.md)
-- [VD Quality Rubric](docs/vd-quality-rubric.md)
-- [Evidence Quality Rubric](docs/evidence-quality-rubric.md)
-- [Parallel Safety Policy](docs/parallel-safety.md)
-- [Human gates](docs/human-gates.md)
-- [Execution contracts](docs/execution-contracts.md)
-- [Revision flow](docs/revision-flow.md)
-- [Review Failure Recovery](docs/review-failure-recovery.md)
-- [Change impact revision CLI skeleton](docs/change-impact-revision.md)
-- [Product Patch proposals](docs/product-patch-proposals.md)
-- [File Change Guard](docs/file-change-guard.md)
-- [Validator design](docs/validator-design.md)
-- [CLI reference](docs/cli-reference.md)
-- [CLI output](docs/cli-output.md)
-- [Troubleshooting](docs/troubleshooting.md)
-- [Release policy](RELEASE.md)
 
 ## What Gets Created
 
