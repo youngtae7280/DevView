@@ -202,6 +202,57 @@ describe('PBE CLI', () => {
     expect(payload).toHaveProperty('suggestedFixes')
   })
 
+  it('shows Lite guidance in status text output', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'WPD_DONE', { profile: 'lite' })
+
+    const result = await runPbeCli(['status'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(result.stdout).toContain('Profile: lite')
+    expect(result.stdout).toContain('Recommended next command: pbe vd close')
+    expect(result.stdout).toContain('Lite guidance:')
+    expect(result.stdout).toContain('Lite mode is a smaller PBE workflow')
+    expect(result.stdout).toContain('Escalate to full if product meaning change')
+  })
+
+  it('includes Lite profile guidance in status JSON without changing next command', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'WPD_DONE', { profile: 'lite' })
+
+    const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.profile).toBe('lite')
+    expect(payload.recommendedNextCommand).toBe('pbe vd close')
+    expect(payload.profileGuidance).toMatchObject({
+      profile: 'lite',
+      summary: 'Lite mode is a smaller PBE workflow for bounded low-risk slices, not a safety bypass.',
+    })
+    expect(payload.profileGuidance.mustKeepGuards).toContain('expectedFiles / File Change Guard')
+    expect(payload.profileGuidance.mustKeepGuards).toContain('minimal Test/Evidence')
+    expect(payload.profileGuidance.escalationTriggers).toContain('product meaning change')
+    expect(payload.profileGuidance.escalationTriggers).toContain('Product Patch required')
+    expect(payload.profileGuidance.limitations).toContain('No dedicated pbe lite command yet')
+  })
+
+  it.each([
+    ['full', 'Full guidance:'],
+    ['bypass', 'Bypass guidance:'],
+  ] as const)('does not fail status for %s profile guidance', async (profile, expectedText) => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'INIT', { profile })
+
+    const textResult = await runPbeCli(['status'], { cwd: workspace, pluginRoot })
+    const jsonResult = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(textResult.exitCode).toBe(ExitCode.Success)
+    expect(textResult.stdout).toContain(expectedText)
+    expect(jsonResult.exitCode).toBe(ExitCode.Success)
+    expect(JSON.parse(jsonResult.stdout).profileGuidance.profile).toBe(profile)
+  })
+
   it('blocks WPD gate before RPD can close', async () => {
     const workspace = createWorkspace()
     await runPbeCli(['init', '--brief', 'Make the UI clean'], { cwd: workspace, pluginRoot })

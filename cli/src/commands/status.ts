@@ -35,6 +35,8 @@ export async function statusCommand(context: CommandContext): Promise<CommandRes
   const openDecisions = getOpenBlockingDecisions(project.decisionQueue)
   const rawState = autoflow.state
   const state = normalizePbeState(rawState)
+  const profile = normalizeProfile(autoflow.profile)
+  const profileGuidance = profile ? profileGuidanceByProfile[profile] : null
   const stateHistory = Array.isArray(autoflow.stateHistory)
     ? autoflow.stateHistory.filter(
         (entry): entry is Record<string, unknown> => typeof entry === 'object' && entry !== null,
@@ -52,30 +54,35 @@ export async function statusCommand(context: CommandContext): Promise<CommandRes
   })
   const recommendedNextCommand = recommendNextCommand(state, blockingIssues)
   const suggestedFixes = uniqueStrings(blockingIssues.map((entry) => entry.suggestedFix).filter(isString))
+  const messageLines = [
+    'PBE Status',
+    '',
+    `Initialized: yes`,
+    `Profile: ${String(autoflow.profile || 'unknown')}`,
+    `Current state: ${String(rawState || 'unknown')}`,
+    `Current gate: ${String(autoflow.currentGate || 'none')}`,
+    `Next step: ${String(autoflow.nextStep || 'unknown')}`,
+    `Delivery status: ${String(project.state.deliveryStatus || 'unknown')}`,
+    `Active revision: ${activeRevision ? formatActiveRevision(activeRevision) : 'none'}`,
+    `Last transition: ${formatTransition(lastTransition)}`,
+    `Open blocking decisions: ${openDecisions.length}`,
+    `Recommended next command: ${recommendedNextCommand || 'none'}`,
+    `Blocking issues: ${blockingIssues.length}`,
+    `Suggested fix: ${suggestedFixes[0] || 'none'}`,
+  ]
+  if (profileGuidance) {
+    messageLines.push('', ...formatProfileGuidance(profileGuidance))
+  }
   return {
     ok: true,
     command: 'status',
     exitCode: ExitCode.Success,
-    message: [
-      'PBE Status',
-      '',
-      `Initialized: yes`,
-      `Profile: ${String(autoflow.profile || 'unknown')}`,
-      `Current state: ${String(rawState || 'unknown')}`,
-      `Current gate: ${String(autoflow.currentGate || 'none')}`,
-      `Next step: ${String(autoflow.nextStep || 'unknown')}`,
-      `Delivery status: ${String(project.state.deliveryStatus || 'unknown')}`,
-      `Active revision: ${activeRevision ? formatActiveRevision(activeRevision) : 'none'}`,
-      `Last transition: ${formatTransition(lastTransition)}`,
-      `Open blocking decisions: ${openDecisions.length}`,
-      `Recommended next command: ${recommendedNextCommand || 'none'}`,
-      `Blocking issues: ${blockingIssues.length}`,
-      `Suggested fix: ${suggestedFixes[0] || 'none'}`,
-    ].join('\n'),
+    message: messageLines.join('\n'),
     issues: blockingIssues,
     data: {
       initialized: true,
       profile: autoflow.profile || null,
+      profileGuidance,
       state: rawState || null,
       currentGate: autoflow.currentGate || null,
       nextStep: autoflow.nextStep || null,
@@ -90,6 +97,84 @@ export async function statusCommand(context: CommandContext): Promise<CommandRes
       artifacts: project.state.artifacts || {},
     },
   }
+}
+
+type PbeProfile = 'full' | 'lite' | 'bypass'
+
+interface ProfileGuidance {
+  profile: PbeProfile
+  summary: string
+  mustKeepGuards: string[]
+  escalationTriggers: string[]
+  limitations: string[]
+}
+
+const profileGuidanceByProfile: Record<PbeProfile, ProfileGuidance> = {
+  lite: {
+    profile: 'lite',
+    summary: 'Lite mode is a smaller PBE workflow for bounded low-risk slices, not a safety bypass.',
+    mustKeepGuards: [
+      'user-only acceptance',
+      'no direct pbe-state edit',
+      'expectedFiles / File Change Guard',
+      'minimal Acceptance Criteria',
+      'minimal Test/Evidence',
+      'evidence freshness/currentness',
+      'review before accept',
+      'Product Patch for product meaning changes',
+      'Change/Impact for accepted-branch changes',
+    ],
+    escalationTriggers: [
+      'product meaning change',
+      'unclear AC or scope',
+      'UI/UX taste or visual design work',
+      'DB/schema/auth/permission change',
+      'external API/hardware/concurrency change',
+      'broad expectedFiles or multiple modules',
+      'repeated review rejection',
+      'Product Patch required',
+      'high-risk manual-only evidence',
+    ],
+    limitations: ['No dedicated pbe lite command yet', 'No reduced artifact initialization yet'],
+  },
+  full: {
+    profile: 'full',
+    summary: 'Follow the full PBE workflow for unclear, high-risk, UI/UX, multi-module, or product-meaning work.',
+    mustKeepGuards: [],
+    escalationTriggers: [],
+    limitations: [],
+  },
+  bypass: {
+    profile: 'bypass',
+    summary:
+      'Bypass means PBE tracking is not active for this work. Escalate to lite/full if traceability, evidence, review, or acceptance control is needed.',
+    mustKeepGuards: [],
+    escalationTriggers: ['any PBE traceability is needed', 'evidence, review, or acceptance control is needed'],
+    limitations: [],
+  },
+}
+
+function normalizeProfile(value: unknown): PbeProfile | null {
+  if (value === 'full' || value === 'lite' || value === 'bypass') {
+    return value
+  }
+  return null
+}
+
+function formatProfileGuidance(guidance: ProfileGuidance): string[] {
+  if (guidance.profile === 'lite') {
+    return [
+      'Lite guidance:',
+      `- ${guidance.summary}`,
+      `- Keep ${guidance.mustKeepGuards.join(', ')}.`,
+      `- Escalate to full if ${guidance.escalationTriggers.join(', ')} appears.`,
+      `- Current limitations: ${guidance.limitations.join('; ')}.`,
+    ]
+  }
+  if (guidance.profile === 'full') {
+    return ['Full guidance:', `- ${guidance.summary}`]
+  }
+  return ['Bypass guidance:', `- ${guidance.summary}`]
 }
 
 const recommendedNextCommandByState: Record<PbeState, string | null> = {

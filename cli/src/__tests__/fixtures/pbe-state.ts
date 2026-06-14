@@ -9,6 +9,7 @@ export function writePbeState(
     currentGate?: string | null
     nextStep?: string | null
     deliveryStatus?: string
+    profile?: 'full' | 'lite' | 'bypass'
     stateHistory?: Array<Record<string, unknown>>
     activeRevision?: Record<string, unknown>
     revisionHistory?: Array<Record<string, unknown>>
@@ -20,7 +21,7 @@ export function writePbeState(
     mode: 'rpd_tree_walk',
     autoflow: {
       enabled: true,
-      profile: 'full',
+      profile: options.profile || 'full',
       state,
       completedSteps: options.completedSteps || ['start', 'rpd'],
       currentGate: options.currentGate ?? null,
