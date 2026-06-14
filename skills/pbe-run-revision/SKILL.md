@@ -9,9 +9,17 @@ description: Execute a bounded PBE revision pack against affected reopened nodes
 
 Use PBE CLI transition commands for workflow state changes. Do not edit `.pbe/blueprint/pbe-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
+## Role
+
+`pbe-run-revision` is a helper skill for executing a bounded revision after Change / Impact / Revision context exists.
+
+It is not a shortcut around review, impact analysis, Product Patch Proposal, or user acceptance. Do not start blind revision immediately after review rejection; first classify the feedback, create or confirm Change/Impact context, and use Product Patch Proposal when product meaning changes.
+
+Use the CLI revision flow as the source of truth.
+
 Use this skill to execute the latest revision pack.
 
-In Autoflow, run this skill automatically after a revision pack is created, then return to the Review Result gate.
+In Autoflow, this skill may be used as a helper route after a revision pack is created, then return to the Review Result gate.
 
 Revision execution stays inside affected selected/foundation scope. It must not implement deferred or out-of-scope behavior unless the user explicitly approved a scope change.
 

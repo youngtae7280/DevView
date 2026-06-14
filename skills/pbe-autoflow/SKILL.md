@@ -9,6 +9,14 @@ description: Orchestrate PBE execution profiles, staged Autoflow, natural-langua
 
 Use PBE CLI transition commands for workflow state changes. Do not edit `.pbe/blueprint/pbe-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
+## Role
+
+`pbe-autoflow` is an orchestration/helper skill.
+
+It helps Codex select the next appropriate PBE skill or CLI phase, but it is not the source of truth for state transitions. The primary state transition path is the `pbe` CLI command flow.
+
+Do not use this skill to directly edit `.pbe` state artifacts, and do not reintroduce legacy gate or direct state-edit instructions.
+
 Use this skill for:
 
 ```text

@@ -9,9 +9,19 @@ description: Create a bounded revision pack from Change Nodes, Feedback Items, I
 
 Use PBE CLI transition commands for workflow state changes. Do not edit `.pbe/blueprint/pbe-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
+## Role
+
+`pbe-create-revision-pack` is a compatibility/helper skill for preparing revision context.
+
+The primary revision path is:
+
+`pbe change create` -> `pbe impact analyze` -> `pbe revision start` -> bounded work -> `pbe revision complete`
+
+This skill may help organize revision inputs, but it must not bypass the CLI Change / Impact / Revision flow.
+
 Use this skill after `pbe-collect-feedback`.
 
-In Autoflow, run this skill automatically after feedback is mapped clearly.
+In Autoflow, this skill may be used as a helper route after feedback is mapped clearly.
 
 ## Purpose
 

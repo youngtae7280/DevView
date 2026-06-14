@@ -233,6 +233,8 @@ If the user is dissatisfied:
 15. Run `pbe revision complete`.
 16. Return through the normal WPD/VD/ACEP/Execution/Review/Accept closure path as required by CLI output.
 
+If bounded revision work is needed after Change / Impact analysis, hand off to `pbe-run-revision` as a helper skill. Do not treat `pbe-run-revision` as a bypass around Product Patch, evidence, review, or user acceptance.
+
 Revision must stay inside affected selected/foundation scope unless the user explicitly changes implementation scope.
 
 ## Completion Report
