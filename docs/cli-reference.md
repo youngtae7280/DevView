@@ -17,6 +17,8 @@ For verification planning quality, see [VD Quality Rubric](vd-quality-rubric.md)
 
 For parallel execution and validation safety, see [Parallel Safety Policy](parallel-safety.md).
 
+For repeated review rejection and realignment, see [Review Failure Recovery](review-failure-recovery.md).
+
 Run local verification commands sequentially, especially on Windows, because validation commands that rebuild the CLI
 can touch `clean-dist` / `dist`.
 

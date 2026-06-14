@@ -205,15 +205,23 @@ Choose one:
 
 If the user is dissatisfied:
 
-1. Run `pbe-collect-feedback`.
-2. Map feedback to affected Product, Project, Work, Test, Evidence, UI/UX, Cycle, and compatibility requirement/task/verification IDs.
-   2a. If the feedback is visual, parity, hardware, or repeated-failure related, map it to surface completion, legacy inventory, visual profile, hardware readiness, or verification miss entries when present.
-3. Run `pbe change create` for feedback that changes product meaning, scope, UX, risk, acceptance, verification, or accepted work.
-4. Run `pbe impact analyze` to create Impact Tree links.
-5. Run `pbe revision start` before coding revision work.
-6. Perform the bounded revision work inside the active Revision scope.
-7. Run `pbe revision complete`.
-8. Return through the normal WPD/VD/ACEP/Execution/Review/Accept closure path as required by CLI output.
+1. If the user repeatedly rejects the same area, do not immediately continue to another revision. First classify the failure type.
+2. Ask one recovery question before creating another revision when alignment is unclear.
+3. If product meaning changed, use Product Patch Proposal.
+4. If UI/UX taste is the issue, ask for reference, screenshot, disliked current result, or design constraints.
+5. If scope is too large, propose a smaller recovery slice.
+6. If acceptance criteria are vague, return to RPD/AC clarification before revision.
+7. Record diagnostic context in Change/Impact notes rather than creating a new artifact.
+8. Use `docs/review-failure-recovery.md` and `templates/review-diagnostic-template.md` for repeated rejection or alignment risk.
+9. Run `pbe-collect-feedback`.
+10. Map feedback to affected Product, Project, Work, Test, Evidence, UI/UX, Cycle, and compatibility requirement/task/verification IDs.
+    10a. If the feedback is visual, parity, hardware, or repeated-failure related, map it to surface completion, legacy inventory, visual profile, hardware readiness, or verification miss entries when present.
+11. Run `pbe change create` for feedback that changes product meaning, scope, UX, risk, acceptance, verification, or accepted work.
+12. Run `pbe impact analyze` to create Impact Tree links.
+13. Run `pbe revision start` before coding revision work.
+14. Perform the bounded revision work inside the active Revision scope.
+15. Run `pbe revision complete`.
+16. Return through the normal WPD/VD/ACEP/Execution/Review/Accept closure path as required by CLI output.
 
 Revision must stay inside affected selected/foundation scope unless the user explicitly changes implementation scope.
 

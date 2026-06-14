@@ -83,6 +83,7 @@ Useful entry points:
 - [Human gates](docs/human-gates.md)
 - [Execution contracts](docs/execution-contracts.md)
 - [Revision flow](docs/revision-flow.md)
+- [Review Failure Recovery](docs/review-failure-recovery.md)
 - [Change impact revision CLI skeleton](docs/change-impact-revision.md)
 - [Product Patch proposals](docs/product-patch-proposals.md)
 - [File Change Guard](docs/file-change-guard.md)
