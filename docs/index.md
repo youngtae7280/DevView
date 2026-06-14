@@ -41,6 +41,7 @@
 
 - [PBE Complexity Governance](complexity-governance.md)
 - [PBE v0.5.0-beta Readiness](beta-readiness.md)
+- [PBE v0.5.0-beta Readiness Snapshot](v0.5.0-beta-readiness-snapshot.md)
 - [Known Limits](known-limits.md)
 
 ## Examples
