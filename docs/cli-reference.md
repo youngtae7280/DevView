@@ -31,6 +31,20 @@ For Lite profile expectations and escalation rules, see [Lite Mode Policy](lite-
 `pbe status` is profile-aware: for `lite`, it shows must-keep guards and escalation triggers. This is guidance only; it
 does not create a separate `pbe lite` command or reduced artifact initialization.
 
+## App-First Usage
+
+In the Codex app, most users start with:
+
+```text
+@project-blueprint-engine start
+```
+
+A one-line task description may be added after `start`, but `Brief:` is not required syntax. If no task is provided,
+PBE/Codex should inspect the current repo and ask which task or slice to manage when it cannot infer one.
+
+The underlying `pbe` CLI commands are primarily for Codex internals, manual CLI control, debugging, CI, and advanced
+users.
+
 Run local verification commands sequentially, especially on Windows, because validation commands that rebuild the CLI
 can touch `clean-dist` / `dist`.
 

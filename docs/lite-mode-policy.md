@@ -26,6 +26,9 @@ Lite is appropriate for:
 
 Lite keeps the PBE control chain, but it keeps the planning surface short.
 
+Lite can be selected by the user or recommended by PBE/Codex after inspecting the request. App users do not need to know
+the exact `pbe init --profile lite` command; Codex may run it after profile recommendation and user confirmation.
+
 ## What Lite Mode Is Not
 
 Lite is:

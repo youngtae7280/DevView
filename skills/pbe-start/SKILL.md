@@ -13,7 +13,6 @@ Use this skill when the user asks to start Project Blueprint Engine, for example
 
 ```text
 @project-blueprint-engine start
-Project: inventory management program
 ```
 
 or:
@@ -41,6 +40,19 @@ PBE is optimized for safe, reviewable, staged project construction, not for spee
 
 Use `bypass` only when the request is a typo, single-file edit, or clearly bounded small bug fix. Use `lite` only when a blueprint already exists and the user asks for a small slice that does not need full ACEP execution.
 
+## App-First Start UX
+
+`start` alone is valid. Do not require the user to provide a `Brief:` label or any other fixed brief syntax.
+
+If no brief or target task is provided, inspect the current repository before initializing. Check for README, project
+briefs, work boards, package metadata, existing `.pbe`, and current conversation context. If the task or slice still
+cannot be inferred, ask one concise question before initializing.
+
+When possible, use `pbe profile recommend --brief "<brief>"` after a target task is clear. Report the recommended
+profile and reason before initialization. The user may override the recommended profile.
+
+Do not silently initialize with an arbitrary brief when the task is unclear.
+
 ## Required Actions
 
 Prefer `pbe init --profile <full|lite|bypass> --brief "<user brief>"` when initializing deterministic PBE artifacts. After creating or updating `.pbe` artifacts, run:
@@ -53,31 +65,37 @@ pbe validate
 If either command fails, do not proceed to RPD until the blocking issue is fixed.
 
 1. Inspect the target repository enough to understand whether this is a new project or a change to an existing project.
-2. Run `pbe init --profile <profile> --brief "<user request>"` to create baseline `.pbe` directories, templates, and initial state.
-3. If compatibility bootstrap must be done manually, mirror `pbe init` output and then run `pbe status` and `pbe validate`.
-4. Create `.pbe/tree/product-tree.json` from `templates/product-tree.template.json` if it does not exist.
-5. Create `.pbe/tree/project-tree.json` from `templates/project-tree.template.json` if it does not exist.
-6. Create `.pbe/tree/work-tree.json` from `templates/work-tree.template.json` if it does not exist.
-7. Create `.pbe/tree/test-tree.json` from `templates/test-tree.template.json` if it does not exist.
-8. Create `.pbe/control/decision-queue.json`, `.pbe/control/change-tree.json`, `.pbe/control/impact-tree.json`, `.pbe/control/acceptance-tree.json`, and `.pbe/evidence/evidence-tree.json` from matching templates if they do not exist.
-   8a. When the brief indicates legacy migration, parity-critical UI, UI-heavy surfaces, hardware-dependent work, or repeated verification misses, initialize the parity/completeness control artifacts from matching templates.
-9. Create or update `.pbe/blueprint/project-brief.md`.
-10. Create `.pbe/blueprint/requirement-tree.json` with a root node if it does not exist, treating it as the Product Tree compatibility alias.
-11. Create `.pbe/blueprint/pbe-routing-contract.md` from the PBE Routing Contract template.
-12. Create `.pbe/blueprint/source-of-truth-matrix.md` from the Source of Truth Matrix template.
-13. Create `.pbe/blueprint/pbe-invariants.md` from the PBE Invariants template.
-14. Create `.pbe/blueprint/foundation-contract.md` and `.pbe/blueprint/parallel-safety-contract.md` placeholders.
-15. Create dependency impact placeholders for `.pbe/blueprint/dependency-impact-audit.json` and `.pbe/blueprint/dependency-impact-audit.md`.
-16. Create `.pbe/blueprint/requirement-tree.md`, `.pbe/blueprint/rpd-interview-log.md`, and `.pbe/blueprint/rpd-summary.md`.
-17. Initialize UI/UX confirmation placeholders when UI work may be involved.
-    17a. Initialize Visual Design Contract placeholders when visual UI work may be involved: visual reference, theme spec, design tokens, component style contract, UI surface inventory, component style inventory, visual verification profile, and visual audit report path.
-18. Confirm `pbe init` initialized Autoflow with the chosen profile and a CLI-reported first next action.
+2. Check whether `.pbe` already exists and whether there is an active run to resume.
+3. If no active run exists, infer or ask for the target task or slice.
+4. Run or emulate profile recommendation once the target task is clear.
+5. Report the recommended profile and reason.
+6. Ask for confirmation if the task or slice is still unclear.
+7. Run `pbe init --profile <profile> --brief "<brief>"` only after the target is clear.
+8. Run `pbe status` and `pbe validate`.
+9. If compatibility bootstrap must be done manually, mirror `pbe init` output and then run `pbe status` and `pbe validate`.
+10. Create `.pbe/tree/product-tree.json` from `templates/product-tree.template.json` if it does not exist.
+11. Create `.pbe/tree/project-tree.json` from `templates/project-tree.template.json` if it does not exist.
+12. Create `.pbe/tree/work-tree.json` from `templates/work-tree.template.json` if it does not exist.
+13. Create `.pbe/tree/test-tree.json` from `templates/test-tree.template.json` if it does not exist.
+14. Create `.pbe/control/decision-queue.json`, `.pbe/control/change-tree.json`, `.pbe/control/impact-tree.json`, `.pbe/control/acceptance-tree.json`, and `.pbe/evidence/evidence-tree.json` from matching templates if they do not exist.
+    14a. When the brief indicates legacy migration, parity-critical UI, UI-heavy surfaces, hardware-dependent work, or repeated verification misses, initialize the parity/completeness control artifacts from matching templates.
+15. Create or update `.pbe/blueprint/project-brief.md`.
+16. Create `.pbe/blueprint/requirement-tree.json` with a root node if it does not exist, treating it as the Product Tree compatibility alias.
+17. Create `.pbe/blueprint/pbe-routing-contract.md` from the PBE Routing Contract template.
+18. Create `.pbe/blueprint/source-of-truth-matrix.md` from the Source of Truth Matrix template.
+19. Create `.pbe/blueprint/pbe-invariants.md` from the PBE Invariants template.
+20. Create `.pbe/blueprint/foundation-contract.md` and `.pbe/blueprint/parallel-safety-contract.md` placeholders.
+21. Create dependency impact placeholders for `.pbe/blueprint/dependency-impact-audit.json` and `.pbe/blueprint/dependency-impact-audit.md`.
+22. Create `.pbe/blueprint/requirement-tree.md`, `.pbe/blueprint/rpd-interview-log.md`, and `.pbe/blueprint/rpd-summary.md`.
+23. Initialize UI/UX confirmation placeholders when UI work may be involved.
+    23a. Initialize Visual Design Contract placeholders when visual UI work may be involved: visual reference, theme spec, design tokens, component style contract, UI surface inventory, component style inventory, visual verification profile, and visual audit report path.
+24. Confirm `pbe init` initialized Autoflow with the chosen profile and a CLI-reported first next action.
 
-19. Confirm tree-native artifact paths are discoverable through the initialized PBE state so later stages can find Product, Project, Work, Test, Cycle, Decision, Change, Impact, Evidence, and Acceptance trees without guessing paths.
-20. Immediately begin RPD/Product Tree growth unless the selected profile is `bypass`.
-21. If the provided project brief is clear, propose the Root requirement summary and child structure, then stop at the `root_confirmation` gate.
-22. If RPD needs more information before a safe proposal, ask exactly one RPD question. The user should answer naturally; do not require `@project-blueprint-engine rpd`.
-23. Do not create code, documents, slide decks, spreadsheets, images, generated assets, or review reports until the Root requirement and decomposition decision are user-confirmed.
+25. Confirm tree-native artifact paths are discoverable through the initialized PBE state so later stages can find Product, Project, Work, Test, Cycle, Decision, Change, Impact, Evidence, and Acceptance trees without guessing paths.
+26. Immediately begin RPD/Product Tree growth unless the selected profile is `bypass`.
+27. If the provided project brief is clear, propose the Root requirement summary and child structure, then stop at the `root_confirmation` gate.
+28. If RPD needs more information before a safe proposal, ask exactly one RPD question. The user should answer naturally; do not require `@project-blueprint-engine rpd`.
+29. Do not create code, documents, slide decks, spreadsheets, images, generated assets, or review reports until the Root requirement and decomposition decision are user-confirmed.
 
 ## File Contract
 

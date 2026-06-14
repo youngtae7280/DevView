@@ -46,6 +46,22 @@ result for user review.
 @project-blueprint-engine start
 ```
 
+Most app users only need to remember `@project-blueprint-engine start`.
+
+If you provide no task description, PBE/Codex should inspect the current repo and ask which task or slice to manage when
+it cannot infer one. You may optionally add a one-line task description after `start`, but `Brief:` is not required
+syntax.
+
+```text
+@project-blueprint-engine start
+현재 작업을 PBE로 관리해줘.
+```
+
+```text
+@project-blueprint-engine start
+Slice 16A 작업을 PBE로 관리해줘.
+```
+
 You do not need to memorize every command. At gates, PBE reports the current state and gives natural-language examples
 such as:
 
@@ -57,6 +73,14 @@ change the empty-state copy before implementation
 what is risky here?
 stop
 ```
+
+App users:
+
+- use `@project-blueprint-engine start`
+- answer in natural language
+
+Advanced/manual users may use CLI commands such as `pbe status`, `pbe validate`, or
+`pbe profile recommend --brief "..."` for direct control, debugging, and automation.
 
 Useful entry points:
 
