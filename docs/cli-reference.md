@@ -26,6 +26,8 @@ For parallel execution and validation safety, see [Parallel Safety Policy](paral
 
 For repeated review rejection and realignment, see [Review Failure Recovery](review-failure-recovery.md).
 
+For Lite profile expectations and escalation rules, see [Lite Mode Policy](lite-mode-policy.md).
+
 Run local verification commands sequentially, especially on Windows, because validation commands that rebuild the CLI
 can touch `clean-dist` / `dist`.
 

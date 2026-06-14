@@ -170,6 +170,19 @@ For each task:
 - Use `docs/evidence-quality-rubric.md` and `templates/evidence-quality-checklist-template.md` when evidence quality is
   non-obvious.
 
+## Lite Profile Execution
+
+Lite does not disable ACEP safety. In Lite profile, still keep:
+
+- `pbe files check`
+- minimal evidence linked to the Test or AC
+- `pbe review submit`
+- explicit user acceptance through `pbe accept`
+
+Do not skip evidence because the profile is Lite. If execution reveals broader file changes, product meaning changes,
+or risk beyond the expectedFiles scope, stop and escalate through Change/Impact/Product Patch or the Full flow before
+continuing.
+
 ## Scope Enforcement
 
 Allowed:

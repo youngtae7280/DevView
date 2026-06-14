@@ -22,6 +22,7 @@
 - [Product Patch Proposals](product-patch-proposals.md)
 - [Review Failure Recovery](review-failure-recovery.md)
 - [Parallel Safety Policy](parallel-safety.md)
+- [Lite Mode Policy](lite-mode-policy.md)
 - [Migration / Compatibility Policy](migration-policy.md)
 - [Dogfooding PBE on an Existing Project](dogfooding-existing-project.md)
 

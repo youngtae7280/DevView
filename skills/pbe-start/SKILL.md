@@ -204,6 +204,20 @@ Report the chosen profile and why:
 
 If profile is `bypass`, do not manufacture `.pbe` artifacts unless the user explicitly wants them.
 
+Lite is not a bypass. Use Lite only for small, bounded, low-risk slices. If unsure, choose Full.
+
+Lite should still produce or confirm:
+
+- mini Acceptance Criteria
+- expectedFiles
+- minimal Test/Evidence plan
+- review submission
+- explicit user acceptance
+
+Escalate Lite to Full when product meaning, UI/UX taste or visual design, permission, DB/schema, API/hardware,
+concurrency, repeated rejection, or high ambiguity appears. If Lite cannot preserve request -> AC -> Work ->
+Test/Evidence -> user review traceability, use Full.
+
 ## Autoflow Behavior
 
 After initialization:
