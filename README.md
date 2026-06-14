@@ -79,6 +79,7 @@ Useful entry points:
 - [Tree model](docs/tree-model.md)
 - [PBE Complexity Governance](docs/complexity-governance.md)
 - [VD Quality Rubric](docs/vd-quality-rubric.md)
+- [Parallel Safety Policy](docs/parallel-safety.md)
 - [Human gates](docs/human-gates.md)
 - [Execution contracts](docs/execution-contracts.md)
 - [Revision flow](docs/revision-flow.md)

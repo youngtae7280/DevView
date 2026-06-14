@@ -200,6 +200,14 @@ For a parallel phase:
 6. Run the `integrationTask`.
 7. Stop if the integration task cannot resolve conflicts safely.
 
+## Parallel Safety During Execution
+
+- Run PBE state transition commands sequentially.
+- Do not run validation commands in parallel unless shared generated resources are known to be isolated.
+- On Windows, do not start `validate:pbe` and `test:examples` at the same time because both may touch generated `dist` / `clean-dist` areas.
+- Prefer sequential local verification.
+- Use `docs/parallel-safety.md` and `templates/parallel-safety-checklist-template.md` before actual parallel execution when safety is not obvious.
+
 ## Partial Testing
 
 Selected Test nodes may pass, fail, be manual_required, skipped, deferred, or blocked. Product nodes receive only partial satisfaction when Test coverage is partial.

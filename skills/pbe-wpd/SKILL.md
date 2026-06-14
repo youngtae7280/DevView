@@ -123,6 +123,11 @@ Prefer v2 tree files when present. If `.pbe/tree/product-tree.json` and `.pbe/bl
 - Allow a parent RPD node to become an integration task.
 - Allow UI/UX nodes to split into UI work and verification/evidence work.
 - Identify task boundaries before any parallel execution planning.
+- Do not mark work as parallel-safe just because files are different.
+- Check source files, PBE artifacts, generated directories, state transitions, test environment, evidence order, and review order before proposing parallel work.
+- If parallel safety is unclear, prefer sequential execution.
+- Record dependencies and shared resources when proposing parallel work.
+- Use `docs/parallel-safety.md` and `templates/parallel-safety-checklist-template.md` for high-risk or non-obvious parallelization decisions.
 - Never mark a WorkGraph node parallel-safe when `expectedFiles` is empty or unknown.
 - Never place foundation work in parallel unless it is documentation or test-fixture only.
 - Never create selected or foundation Work Tree nodes without at least one `derivedFromProductNodeIds` link, except the Work Tree root placeholder.
