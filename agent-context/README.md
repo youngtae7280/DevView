@@ -53,3 +53,9 @@ Start with the smallest matching card.
 Load full docs only when the card says to.
 
 If the task is unclear, ask one question instead of scanning all docs.
+
+## CLI Support
+
+Use `pbe context recommend` to get a read-first context list from a brief, stage, or profile.
+
+This command is read-only and should be used before broad docs scanning.

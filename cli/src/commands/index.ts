@@ -3,6 +3,7 @@ import { validateEvidence, validateTraceability, validateVisualDesign } from '..
 import { acceptCommand } from './accept.js'
 import { acepCheckCommand, acepReadyCommand } from './acep.js'
 import { changeCreateCommand } from './change.js'
+import { contextRecommendCommand } from './context.js'
 import { executionCompleteCommand, executionStartCommand } from './execution.js'
 import { filesCheckCommand } from './files.js'
 import { gateCommand } from './gate.js'
@@ -54,10 +55,11 @@ export async function runCommand(positionals: string[], context: CommandContext)
     return uiApproveCommand(context)
   }
   if (command === 'trace' && subcommand === 'check') {
-    return checkResult(
-      'trace check',
-      await validateTraceability(context.options.root, { stage: context.options.stage }),
-    )
+    const traceStage = context.options.stage
+    if (traceStage && !isTraceabilityStage(traceStage)) {
+      return invalidCommand('--stage for trace check requires one of: wpd, vd, execution, review, accept.')
+    }
+    return checkResult('trace check', await validateTraceability(context.options.root, { stage: traceStage }))
   }
   if (command === 'files' && subcommand === 'check') {
     return filesCheckCommand(context)
@@ -116,6 +118,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   if (command === 'profile' && subcommand === 'recommend') {
     return profileRecommendCommand(context)
   }
+  if (command === 'context' && subcommand === 'recommend') {
+    return contextRecommendCommand(context)
+  }
   if (command === 'product' && subcommand === 'patch' && positionals[2] === 'propose') {
     return productPatchProposeCommand(context)
   }
@@ -138,3 +143,7 @@ export async function runCommand(positionals: string[], context: CommandContext)
 }
 
 export type { CommandContext }
+
+function isTraceabilityStage(value: string): value is 'wpd' | 'vd' | 'execution' | 'review' | 'accept' {
+  return ['wpd', 'vd', 'execution', 'review', 'accept'].includes(value)
+}

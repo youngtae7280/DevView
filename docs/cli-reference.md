@@ -63,7 +63,10 @@ Most commands follow this pattern:
 
 - `--root <path>`: target project root. Defaults to the current directory.
 - `--json`: print stable JSON for automation.
-- `--stage <wpd|vd|execution|review|accept>`: traceability/evidence stage mode.
+- `--brief <text>`: task description for recommendation commands.
+- `--profile <full|lite|bypass>`: execution profile for init and recommendation commands.
+- `--stage <stage>`: traceability/evidence stage mode for `pbe trace check`, or context stage for
+  `pbe context recommend`.
 - `--change <id>`: Change node id for Impact, Revision, and Product Patch commands.
 - `--product <id>`: Product node id. May be repeated or comma-separated.
 - `--work <id>`: Work node id. May be repeated or comma-separated.
@@ -130,6 +133,55 @@ Most commands follow this pattern:
   tracking is desired.
 - Conservative rule: if the brief or files indicate uncertainty, product meaning, UI/UX, CLI/validator/schema/state,
   CI/package, fixture, or broad implementation risk, the recommendation is `full`.
+
+### `pbe context recommend`
+
+- Purpose: Recommend the smallest useful set of skills, `agent-context/` cards, and optional full docs from a brief,
+  stage, and profile.
+- Typical state before running: Before broad docs scanning, before choosing which PBE skill or reference to load.
+- Options: `--brief <text>` and/or `--stage <stage>`. At least one is required. `--profile <full|lite|bypass>` is
+  optional.
+- Supported context stages: `start`, `rpd`, `wpd`, `vd`, `execution`, `review`, `revision`, `product-patch`, and
+  `parallel`.
+- What it checks: Deterministic keyword and stage mapping only. It does not perform semantic product analysis.
+- What it writes: Nothing. It is read-only, does not create `.pbe`, does not run `pbe init`, and does not modify state
+  or artifacts.
+- Success result: Prints detected stage, profile, recommended skills, cards to read first, full docs to read only if
+  needed, docs not to read by default, reasons, and notes.
+- JSON output: Includes `detectedStage`, `profile`, `skills`, `readFirst`, `readOnlyIfNeeded`, `doNotReadByDefault`,
+  `reasons`, and `notes`.
+- Common failures: missing both `--brief` and `--stage`; unsupported context stage.
+- Next command: Read the `readFirst` cards first. Load full docs only when a card says they are needed.
+- Judgment rule: The command helps route context. It does not replace user judgment, Product Tree confirmation, or stage
+  closure gates.
+
+Examples:
+
+```bash
+pbe context recommend --brief "검색 기능 검증 설계"
+pbe context recommend --stage rpd
+pbe context recommend --stage vd --profile lite
+pbe context recommend --brief "리뷰했는데 아직도 별로야" --profile full --json
+```
+
+Example JSON shape:
+
+```json
+{
+  "detectedStage": "vd",
+  "profile": "lite",
+  "skills": ["pbe-vd"],
+  "readFirst": ["agent-context/vd.md", "agent-context/evidence.md", "agent-context/lite.md"],
+  "readOnlyIfNeeded": ["docs/vd-quality-rubric.md", "docs/evidence-quality-rubric.md", "docs/lite-mode-policy.md"],
+  "doNotReadByDefault": ["docs/review-failure-recovery.md", "docs/parallel-safety.md"],
+  "reasons": ["brief appears to ask for verification design", "VD work requires Test/Evidence guidance"],
+  "notes": [
+    "Read readFirst before broad docs scanning.",
+    "Load full docs only when the context card says they are needed.",
+    "This command is read-only and does not modify PBE state."
+  ]
+}
+```
 
 ## Requirement/Product Commands
 

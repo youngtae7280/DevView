@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { runPbeCli } from '../app'
 import { writeJsonArtifactTransaction } from '../core/artifact-transaction'
+import { recommendContext } from '../core/context-recommendation'
 import { recommendProfile } from '../core/profile-recommendation'
 import { canTransition, isPbeState, PBE_STATE } from '../core/state-machine'
 import { checkpointPbeState, transitionPbeState } from '../core/state-transition'
@@ -56,6 +57,7 @@ describe('PBE CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     expect(result.stdout).toContain('Project Blueprint Engine CLI')
     expect(result.stdout).toContain('profile recommend')
+    expect(result.stdout).toContain('context recommend')
     expect(result.stdout).toContain('rpd close')
     expect(result.stdout).toContain('wpd close')
     expect(result.stdout).toContain('execution start')
@@ -170,6 +172,158 @@ describe('PBE CLI', () => {
     expect(payload.escalationTriggers).toContain('product meaning change')
     expect(payload.notes).toContain('This is a recommendation only. It does not initialize PBE.')
     expect(existsSync(join(workspace, '.pbe'))).toBe(false)
+  })
+
+  it('recommends RPD context for explicit stage', async () => {
+    const result = await runPbeCli(['context', 'recommend', '--stage', 'rpd', '--json'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.detectedStage).toBe('rpd')
+    expect(payload.skills).toContain('pbe-rpd')
+    expect(payload.readFirst).toContain('agent-context/rpd.md')
+    expect(payload.readOnlyIfNeeded).toContain('docs/rpd-interview-mode.md')
+  })
+
+  it('recommends VD and Evidence context for explicit VD stage', async () => {
+    const result = await runPbeCli(['context', 'recommend', '--stage', 'vd', '--json'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.detectedStage).toBe('vd')
+    expect(payload.skills).toContain('pbe-vd')
+    expect(payload.readFirst).toContain('agent-context/vd.md')
+    expect(payload.readFirst).toContain('agent-context/evidence.md')
+  })
+
+  it('recommends Review and Evidence context for explicit review stage', async () => {
+    const result = await runPbeCli(['context', 'recommend', '--stage', 'review', '--json'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.detectedStage).toBe('review')
+    expect(payload.skills).toContain('pbe-review-result')
+    expect(payload.readFirst).toContain('agent-context/review.md')
+    expect(payload.readFirst).toContain('agent-context/evidence.md')
+  })
+
+  it('adds Lite context and docs when profile is lite', async () => {
+    const recommendation = recommendContext({ stage: 'vd', profile: 'lite' })
+
+    expect(recommendation.readFirst).toContain('agent-context/lite.md')
+    expect(recommendation.readOnlyIfNeeded).toContain('docs/lite-mode-policy.md')
+    expect(recommendation.reasons).toContain('lite profile adds Lite guard guidance')
+  })
+
+  it('detects VD context from verification design brief', async () => {
+    const result = await runPbeCli(
+      ['context', 'recommend', '--brief', '검색 기능 검증 설계', '--profile', 'lite', '--json'],
+      {
+        cwd: createWorkspace(),
+        pluginRoot,
+      },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.detectedStage).toBe('vd')
+    expect(payload.profile).toBe('lite')
+    expect(payload.readFirst).toEqual(['agent-context/vd.md', 'agent-context/evidence.md', 'agent-context/lite.md'])
+    expect(payload.readOnlyIfNeeded).toContain('docs/vd-quality-rubric.md')
+    expect(payload.readOnlyIfNeeded).toContain('docs/evidence-quality-rubric.md')
+    expect(payload.readOnlyIfNeeded).toContain('docs/lite-mode-policy.md')
+    expect(payload.doNotReadByDefault).toContain('docs/review-failure-recovery.md')
+    expect(payload.doNotReadByDefault).toContain('docs/parallel-safety.md')
+    expect(payload.doNotReadByDefault).toContain('docs/migration-policy.md')
+    expect(payload.reasons).toContain('brief appears to ask for verification design')
+    expect(payload.notes).toContain('This command is read-only and does not modify PBE state.')
+  })
+
+  it('detects review context from rejection brief', async () => {
+    const result = await runPbeCli(['context', 'recommend', '--brief', '리뷰했는데 아직도 별로야', '--json'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.detectedStage).toBe('review')
+    expect(payload.skills).toContain('pbe-review-result')
+    expect(payload.readFirst).toContain('agent-context/review.md')
+  })
+
+  it('detects product patch context from product meaning brief', async () => {
+    const result = await runPbeCli(['context', 'recommend', '--brief', '제품 의미가 바뀌었어', '--json'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.detectedStage).toBe('product-patch')
+    expect(payload.readFirst).toContain('agent-context/product-patch.md')
+    expect(payload.readOnlyIfNeeded).toContain('docs/product-patch-proposals.md')
+  })
+
+  it('fails context recommendation when both --brief and --stage are missing', async () => {
+    const result = await runPbeCli(['context', 'recommend', '--json'], { cwd: createWorkspace(), pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.InvalidArguments)
+    const payload = JSON.parse(result.stderr)
+    expect(payload.issues[0].code).toBe('CONTEXT_INPUT_REQUIRED')
+  })
+
+  it('prints context recommendation JSON fields and text output', async () => {
+    const jsonResult = await runPbeCli(['context', 'recommend', '--stage', 'vd', '--profile', 'lite', '--json'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+    const textResult = await runPbeCli(['context', 'recommend', '--stage', 'vd', '--profile', 'lite'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+
+    expect(jsonResult.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(jsonResult.stdout)
+    expect(payload).toHaveProperty('skills')
+    expect(payload).toHaveProperty('readFirst')
+    expect(payload).toHaveProperty('readOnlyIfNeeded')
+    expect(payload).toHaveProperty('doNotReadByDefault')
+    expect(payload).toHaveProperty('reasons')
+    expect(payload).toHaveProperty('notes')
+    expect(textResult.stdout).toContain('Recommended context')
+    expect(textResult.stdout).toContain('Read first:')
+    expect(textResult.stdout).toContain('agent-context/vd.md')
+  })
+
+  it('does not create .pbe or mutate state when recommending context', async () => {
+    const emptyWorkspace = createWorkspace()
+    const emptyResult = await runPbeCli(['context', 'recommend', '--stage', 'start'], {
+      cwd: emptyWorkspace,
+      pluginRoot,
+    })
+    expect(emptyResult.exitCode).toBe(ExitCode.Success)
+    expect(existsSync(join(emptyWorkspace, '.pbe'))).toBe(false)
+
+    const initializedWorkspace = createWorkspace()
+    writePbeState(initializedWorkspace, 'RPD_DONE')
+    const beforeState = readStateText(initializedWorkspace)
+    const initializedResult = await runPbeCli(['context', 'recommend', '--brief', '검색 기능 검증 설계'], {
+      cwd: initializedWorkspace,
+      pluginRoot,
+    })
+
+    expect(initializedResult.exitCode).toBe(ExitCode.Success)
+    expect(readStateText(initializedWorkspace)).toBe(beforeState)
   })
 
   it('reports status as not initialized when .pbe is missing', async () => {

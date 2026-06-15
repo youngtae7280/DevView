@@ -1,6 +1,6 @@
 import process from 'node:process'
 import { findPluginRoot, resolveRoot } from './core/fs.js'
-import type { CliEnvironment, ParsedArgs, TraceabilityStageOption } from './core/types.js'
+import type { CliEnvironment, CliStageOption, ParsedArgs } from './core/types.js'
 import { ExitCode } from './core/types.js'
 import { runCommand } from './commands.js'
 import { helpText, renderResult } from './reporters.js'
@@ -95,7 +95,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     profile: undefined as 'full' | 'lite' | 'bypass' | undefined,
     brief: undefined as string | undefined,
     files: [] as string[],
-    stage: undefined as TraceabilityStageOption | undefined,
+    stage: undefined as CliStageOption | undefined,
     summary: undefined as string | undefined,
     source: undefined as string | undefined,
     change: undefined as string | undefined,
@@ -218,10 +218,27 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       index += 1
     } else if (arg === '--stage') {
       const value = argv[index + 1]
-      if (!value || !['wpd', 'vd', 'execution', 'review', 'accept'].includes(value)) {
-        return { error: '--stage requires one of: wpd, vd, execution, review, accept.' }
+      if (
+        !value ||
+        ![
+          'start',
+          'rpd',
+          'wpd',
+          'vd',
+          'execution',
+          'review',
+          'revision',
+          'product-patch',
+          'parallel',
+          'accept',
+        ].includes(value)
+      ) {
+        return {
+          error:
+            '--stage requires one of: start, rpd, wpd, vd, execution, review, revision, product-patch, parallel, accept.',
+        }
       }
-      options.stage = value as TraceabilityStageOption
+      options.stage = value as CliStageOption
       index += 1
     } else if (arg.startsWith('--') && arg !== '--help') {
       return { error: `Unknown option: ${arg}` }

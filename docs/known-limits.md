@@ -43,6 +43,9 @@ Natural-language quality checks should not become hard validator failures until 
 
 Profile recommendation is heuristic and conservative. It is not a full semantic product analysis engine.
 
+Context recommendation is deterministic and heuristic. It routes the agent to likely relevant context, but it is not a
+full semantic understanding engine.
+
 ## Not a Substitute for Code Review
 
 PBE improves traceability and evidence, but it does not replace engineering review. Reviewers still need to inspect

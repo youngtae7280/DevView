@@ -10,6 +10,17 @@ export enum ExitCode {
 
 export type IssueSeverity = 'info' | 'warning' | 'error'
 export type TraceabilityStageOption = 'wpd' | 'vd' | 'execution' | 'review' | 'accept'
+export type ContextStageOption =
+  | 'start'
+  | 'rpd'
+  | 'wpd'
+  | 'vd'
+  | 'execution'
+  | 'review'
+  | 'revision'
+  | 'product-patch'
+  | 'parallel'
+export type CliStageOption = TraceabilityStageOption | ContextStageOption
 
 export interface ValidationIssue {
   validator: string
@@ -43,7 +54,7 @@ export interface CliOptions {
   profile?: 'full' | 'lite' | 'bypass'
   brief?: string
   files?: string[]
-  stage?: TraceabilityStageOption
+  stage?: CliStageOption
   summary?: string
   source?: string
   change?: string
