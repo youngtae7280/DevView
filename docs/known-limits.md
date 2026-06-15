@@ -43,14 +43,11 @@ Natural-language quality checks should not become hard validator failures until 
 
 Profile recommendation is heuristic and conservative. It is not a full semantic product analysis engine.
 
-Context recommendation is deterministic and heuristic. It routes the agent to likely relevant context, but it is not a
-full semantic understanding engine.
+`pbe context recommend` and `pbe status` `recommendedContext` are heuristic, path-based guidance; they do not replace
+human or Codex judgment about semantic relevance.
 
 Documentation routing is based on keyword and file path signals such as `docs/`, README, troubleshooting, install, and
 PowerShell/npm help text.
-
-Status context recommendation is heuristic and path-based. It recommends context files but does not guarantee semantic
-completeness.
 
 ## Not a Substitute for Code Review
 
