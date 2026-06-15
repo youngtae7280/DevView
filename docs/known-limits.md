@@ -49,6 +49,9 @@ full semantic understanding engine.
 Documentation routing is based on keyword and file path signals such as `docs/`, README, troubleshooting, install, and
 PowerShell/npm help text.
 
+Status context recommendation is heuristic and path-based. It recommends context files but does not guarantee semantic
+completeness.
+
 ## Not a Substitute for Code Review
 
 PBE improves traceability and evidence, but it does not replace engineering review. Reviewers still need to inspect

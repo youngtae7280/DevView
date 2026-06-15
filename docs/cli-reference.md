@@ -88,6 +88,9 @@ Most commands follow this pattern:
 - What it writes: Nothing.
 - Success result: Prints current state, current gate, next step, delivery status, active revision, last transition,
   recommended next command, blocking issue summary, and suggested fix.
+- Context guidance: `pbe status` is context-aware. In JSON output, `recommendedContext` suggests which `agent-context/`
+  cards to read first and which full docs to load only if needed. This is guidance only; status does not read those
+  files or mutate PBE state.
 - Common failures: `PBE_NOT_INITIALIZED`, invalid state JSON, unknown state issue in JSON output.
 - Next command: Follow `recommendedNextCommand`, or run `pbe validate` for full checks.
 

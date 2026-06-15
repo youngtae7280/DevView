@@ -1,6 +1,7 @@
+import { recommendContext } from '../core/context-recommendation.js'
 import { getAutoflow, getOpenBlockingDecisions, loadProject } from '../core/project.js'
 import { normalizePbeState, PBE_STATES, type PbeState } from '../core/state-machine.js'
-import type { CommandResult } from '../core/types.js'
+import type { CommandResult, ContextStageOption } from '../core/types.js'
 import type { ValidationIssue } from '../core/types.js'
 import { ExitCode, issue } from '../core/types.js'
 import type { CommandContext } from './shared.js'
@@ -53,6 +54,7 @@ export async function statusCommand(context: CommandContext): Promise<CommandRes
     activeRevision,
   })
   const recommendedNextCommand = recommendNextCommand(state, blockingIssues)
+  const recommendedContext = recommendStatusContext(state, profile, blockingIssues)
   const suggestedFixes = uniqueStrings(blockingIssues.map((entry) => entry.suggestedFix).filter(isString))
   const messageLines = [
     'PBE Status',
@@ -73,6 +75,7 @@ export async function statusCommand(context: CommandContext): Promise<CommandRes
   if (profileGuidance) {
     messageLines.push('', ...formatProfileGuidance(profileGuidance))
   }
+  messageLines.push('', ...formatRecommendedContext(recommendedContext))
   return {
     ok: true,
     command: 'status',
@@ -91,6 +94,7 @@ export async function statusCommand(context: CommandContext): Promise<CommandRes
       stateHistoryCount: stateHistory.length,
       lastTransition,
       recommendedNextCommand,
+      recommendedContext,
       blockingIssues,
       suggestedFixes,
       openBlockingDecisions: openDecisions,
@@ -212,6 +216,86 @@ function recommendNextCommand(state: PbeState | null, issues: ValidationIssue[])
     return 'pbe validate'
   }
   return recommendedNextCommandByState[state]
+}
+
+function recommendStatusContext(
+  state: PbeState | null,
+  profile: PbeProfile | null,
+  issues: ValidationIssue[],
+): ReturnType<typeof recommendContext> {
+  const contextStage = contextStageForState(state, issues)
+  const recommendation = recommendContext({
+    stage: contextStage,
+    profile: profile || undefined,
+  })
+  return {
+    ...recommendation,
+    reasons: [
+      state
+        ? `current state ${state} maps to ${recommendation.detectedStage} context`
+        : `unknown state maps to ${recommendation.detectedStage} context`,
+      ...recommendation.reasons.filter((reason) => !reason.startsWith('--stage ')),
+    ],
+    notes: [
+      'Read readFirst before broad docs scanning.',
+      'Load full docs only when the context card says they are needed.',
+      'This is context guidance only.',
+    ],
+  }
+}
+
+function contextStageForState(state: PbeState | null, issues: ValidationIssue[]): ContextStageOption {
+  if (!state) {
+    return 'start'
+  }
+  if (state === 'BLOCKED') {
+    return isReviewRelatedBlock(issues) ? 'review' : 'start'
+  }
+  const mapping: Record<Exclude<PbeState, 'BLOCKED'>, ContextStageOption> = {
+    INIT: 'start',
+    WAITING_ROOT_CONFIRMATION: 'start',
+    RPD_IN_PROGRESS: 'rpd',
+    RPD_DONE: 'rpd',
+    WAITING_UI_UX_CONFIRM: 'vd',
+    UI_UX_APPROVED: 'vd',
+    VISUAL_CONTRACT_READY: 'vd',
+    WPD_IN_PROGRESS: 'wpd',
+    WPD_DONE: 'wpd',
+    UI_SURFACE_INVENTORY_DONE: 'vd',
+    VD_IN_PROGRESS: 'vd',
+    VD_DONE: 'vd',
+    WAITING_IMPLEMENTATION_SCOPE: 'wpd',
+    SCOPE_SELECTED: 'wpd',
+    ACEP_READY: 'execution',
+    EXECUTION_IN_PROGRESS: 'execution',
+    ACEP_RUN_DONE: 'execution',
+    VISUAL_AUDIT_DONE: 'review',
+    WAITING_REVIEW_RESULT: 'review',
+    REVISION_REQUESTED: 'revision',
+    ACCEPTED: 'review',
+    DONE: 'review',
+  }
+  return mapping[state]
+}
+
+function isReviewRelatedBlock(issues: ValidationIssue[]): boolean {
+  return issues.some((entry) =>
+    ['REVIEW', 'ACCEPT', 'ACCEPTANCE', 'EVIDENCE', 'VISUAL', 'FILE_CHANGE', 'REVISION'].some((token) =>
+      entry.code.includes(token),
+    ),
+  )
+}
+
+function formatRecommendedContext(recommendation: ReturnType<typeof recommendContext>): string[] {
+  return [
+    'Recommended context:',
+    `- Read first: ${formatPathList(recommendation.readFirst)}`,
+    `- Full docs only if needed: ${formatPathList(recommendation.readOnlyIfNeeded)}`,
+  ]
+}
+
+function formatPathList(paths: string[]): string {
+  return paths.length > 0 ? paths.join(', ') : 'none'
 }
 
 function collectStatusBlockingIssues(input: {

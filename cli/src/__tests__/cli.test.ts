@@ -544,6 +544,73 @@ describe('PBE CLI', () => {
     expect(payload).toHaveProperty('suggestedFixes')
   })
 
+  it('adds recommended context to lite VD status JSON without changing the next command', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'VD_IN_PROGRESS', { profile: 'lite' })
+    const beforeState = readStateText(workspace)
+
+    const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.recommendedNextCommand).toBe('pbe vd close')
+    expect(payload.recommendedContext).toMatchObject({
+      detectedStage: 'vd',
+      profile: 'lite',
+      skills: ['pbe-vd'],
+    })
+    expect(payload.recommendedContext.readFirst).toContain('agent-context/vd.md')
+    expect(payload.recommendedContext.readFirst).toContain('agent-context/evidence.md')
+    expect(payload.recommendedContext.readFirst).toContain('agent-context/lite.md')
+    expect(payload.recommendedContext.readOnlyIfNeeded).toContain('docs/vd-quality-rubric.md')
+    expect(payload.recommendedContext.readOnlyIfNeeded).toContain('docs/evidence-quality-rubric.md')
+    expect(payload.recommendedContext.readOnlyIfNeeded).toContain('docs/lite-mode-policy.md')
+    expect(readStateText(workspace)).toBe(beforeState)
+  })
+
+  it('shows a short recommended context section in status text output', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'VD_IN_PROGRESS', { profile: 'lite' })
+
+    const result = await runPbeCli(['status'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(result.stdout).toContain('Recommended context:')
+    expect(result.stdout).toContain('Read first: agent-context/vd.md')
+    expect(result.stdout).toContain('agent-context/lite.md')
+    expect(result.stdout).toContain('Full docs only if needed: docs/vd-quality-rubric.md')
+  })
+
+  it('includes recommended context for full profile without adding the Lite card', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'VD_IN_PROGRESS', { profile: 'full' })
+
+    const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.profileGuidance.profile).toBe('full')
+    expect(payload.recommendedContext.detectedStage).toBe('vd')
+    expect(payload.recommendedContext.profile).toBe('full')
+    expect(payload.recommendedContext.readFirst).toContain('agent-context/vd.md')
+    expect(payload.recommendedContext.readFirst).not.toContain('agent-context/lite.md')
+  })
+
+  it('keeps bypass status context minimal', async () => {
+    const workspace = createWorkspace()
+    writePbeState(workspace, 'VD_IN_PROGRESS', { profile: 'bypass' })
+
+    const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.profileGuidance.profile).toBe('bypass')
+    expect(payload.recommendedContext.detectedStage).toBe('vd')
+    expect(payload.recommendedContext.profile).toBe('bypass')
+    expect(payload.recommendedContext.skills).toEqual([])
+    expect(payload.recommendedContext.readFirst).toEqual(['agent-context/start.md'])
+  })
+
   it('shows Lite guidance in status text output', async () => {
     const workspace = createWorkspace()
     writePbeState(workspace, 'WPD_DONE', { profile: 'lite' })

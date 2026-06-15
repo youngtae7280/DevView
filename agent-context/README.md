@@ -64,3 +64,8 @@ If the task is unclear, ask one question instead of scanning all docs.
 Use `pbe context recommend` to get a read-first context list from a brief, stage, or profile.
 
 This command is read-only and should be used before broad docs scanning.
+
+`pbe status --json` may include `recommendedContext` for the current state/profile. Prefer that when an active PBE run
+exists.
+
+Use `pbe context recommend` when starting from a brief or when no active run exists.
