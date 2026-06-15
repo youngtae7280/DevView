@@ -58,6 +58,7 @@ describe('PBE CLI', () => {
     expect(result.stdout).toContain('Project Blueprint Engine CLI')
     expect(result.stdout).toContain('profile recommend')
     expect(result.stdout).toContain('context recommend')
+    expect(result.stdout).toContain('context pack')
     expect(result.stdout).toContain('rpd close')
     expect(result.stdout).toContain('wpd close')
     expect(result.stdout).toContain('execution start')
@@ -400,6 +401,111 @@ describe('PBE CLI', () => {
 
     expect(initializedResult.exitCode).toBe(ExitCode.Success)
     expect(readStateText(initializedWorkspace)).toBe(beforeState)
+  })
+
+  it('prints a markdown context pack from readFirst files', async () => {
+    const result = await runPbeCli(
+      ['context', 'pack', '--brief', 'docs/known-limits.md one line update', '--profile', 'lite'],
+      {
+        cwd: createWorkspace(),
+        pluginRoot,
+      },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(result.stdout).toContain('# PBE Context Pack')
+    expect(result.stdout).toContain('## Recommendation Summary')
+    expect(result.stdout).toContain('## Included Context')
+    expect(result.stdout).toContain('## Read Only If Needed')
+    expect(result.stdout).toContain('## Do Not Read By Default')
+    expect(result.stdout).toContain('### agent-context/lite.md')
+    expect(result.stdout).toContain('# Lite Context')
+  })
+
+  it('prints context pack JSON with only readFirst files included', async () => {
+    const result = await runPbeCli(
+      ['context', 'pack', '--brief', 'docs/known-limits.md one line update', '--profile', 'lite', '--json'],
+      {
+        cwd: createWorkspace(),
+        pluginRoot,
+      },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.recommendation.detectedStage).toBe('documentation')
+    expect(payload).toHaveProperty('includedFiles')
+    expect(payload).toHaveProperty('bundle')
+    expect(payload.readOnly).toBe(true)
+    const includedPaths = payload.includedFiles.map((entry: { path: string }) => entry.path)
+    expect(includedPaths).toEqual(payload.recommendation.readFirst)
+    expect(includedPaths).toContain('agent-context/lite.md')
+    expect(includedPaths).toContain('agent-context/evidence.md')
+    expect(includedPaths).not.toContain('docs/lite-mode-policy.md')
+    expect(includedPaths).not.toContain('docs/evidence-quality-rubric.md')
+  })
+
+  it('truncates context pack bundle with --max-chars and records a warning', async () => {
+    const result = await runPbeCli(
+      ['context', 'pack', '--brief', 'vd work', '--profile', 'lite', '--max-chars', '500', '--json'],
+      {
+        cwd: createWorkspace(),
+        pluginRoot,
+      },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.bundle.length).toBeLessThanOrEqual(500)
+    expect(payload.warnings.some((entry: string) => entry.includes('bundle was truncated'))).toBe(true)
+  })
+
+  it('does not create .pbe, mutate state, or change git status when packing context', async () => {
+    const emptyWorkspace = createWorkspace()
+    const emptyResult = await runPbeCli(['context', 'pack', '--stage', 'start'], {
+      cwd: emptyWorkspace,
+      pluginRoot,
+    })
+    expect(emptyResult.exitCode).toBe(ExitCode.Success)
+    expect(existsSync(join(emptyWorkspace, '.pbe'))).toBe(false)
+
+    const initializedWorkspace = createWorkspace()
+    writePbeState(initializedWorkspace, 'RPD_DONE')
+    const beforeState = readStateText(initializedWorkspace)
+    const initializedResult = await runPbeCli(['context', 'pack', '--brief', 'docs update'], {
+      cwd: initializedWorkspace,
+      pluginRoot,
+    })
+    expect(initializedResult.exitCode).toBe(ExitCode.Success)
+    expect(readStateText(initializedWorkspace)).toBe(beforeState)
+
+    const beforeGitStatus = execFileSync('git', ['status', '--short'], { cwd: pluginRoot, encoding: 'utf8' })
+    const gitResult = await runPbeCli(['context', 'pack', '--stage', 'vd'], {
+      cwd: pluginRoot,
+      pluginRoot,
+    })
+    const afterGitStatus = execFileSync('git', ['status', '--short'], { cwd: pluginRoot, encoding: 'utf8' })
+    expect(gitResult.exitCode).toBe(ExitCode.Success)
+    expect(afterGitStatus).toBe(beforeGitStatus)
+  })
+
+  it('keeps context pack recommendation consistent with context recommend', async () => {
+    const args = ['--brief', 'docs/known-limits.md one line update', '--profile', 'lite', '--json']
+    const recommend = await runPbeCli(['context', 'recommend', ...args], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+    const pack = await runPbeCli(['context', 'pack', ...args], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+
+    expect(recommend.exitCode).toBe(ExitCode.Success)
+    expect(pack.exitCode).toBe(ExitCode.Success)
+    const recommendPayload = JSON.parse(recommend.stdout)
+    const packPayload = JSON.parse(pack.stdout)
+    expect(packPayload.recommendation.detectedStage).toBe(recommendPayload.detectedStage)
+    expect(packPayload.recommendation.readFirst).toEqual(recommendPayload.readFirst)
   })
 
   it('reports status as not initialized when .pbe is missing', async () => {

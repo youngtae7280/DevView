@@ -55,6 +55,7 @@ export interface CliOptions {
   force: boolean
   profile?: 'full' | 'lite' | 'bypass'
   brief?: string
+  maxChars?: number
   files?: string[]
   stage?: CliStageOption
   summary?: string

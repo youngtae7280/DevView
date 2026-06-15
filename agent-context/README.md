@@ -69,3 +69,10 @@ This command is read-only and should be used before broad docs scanning.
 exists.
 
 Use `pbe context recommend` when starting from a brief or when no active run exists.
+
+Suggested routing flow:
+
+1. `pbe context recommend`: choose the smallest relevant context.
+2. `pbe context pack`: create a compact prompt-ready bundle from `readFirst`.
+3. Agent works from the pack first.
+4. Read full docs only when the pack or task requires it.

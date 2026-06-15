@@ -94,6 +94,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     force: false,
     profile: undefined as 'full' | 'lite' | 'bypass' | undefined,
     brief: undefined as string | undefined,
+    maxChars: undefined as number | undefined,
     files: [] as string[],
     stage: undefined as CliStageOption | undefined,
     summary: undefined as string | undefined,
@@ -138,6 +139,14 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--brief requires text.' }
       }
       options.brief = value
+      index += 1
+    } else if (arg === '--max-chars') {
+      const value = argv[index + 1]
+      const parsed = Number(value)
+      if (!value || !Number.isInteger(parsed) || parsed <= 0) {
+        return { error: '--max-chars requires a positive integer.' }
+      }
+      options.maxChars = parsed
       index += 1
     } else if (arg === '--files') {
       const value = argv[index + 1]

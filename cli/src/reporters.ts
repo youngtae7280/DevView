@@ -17,6 +17,10 @@ export function renderResult(result: CommandResult, json: boolean): string {
     )}\n`
   }
 
+  if (result.command === 'context pack' && result.ok && result.message) {
+    return `${result.message}\n`
+  }
+
   const lines: string[] = []
   if (result.message) {
     lines.push(result.message)
@@ -93,6 +97,7 @@ Commands:
   gate <stage>         Check whether a stage can be entered, including review-result
   profile recommend    Recommend full, lite, or bypass from a task brief
   context recommend    Recommend skills, agent-context cards, and optional full docs
+  context pack         Create a prompt-ready bundle from recommended readFirst context
   rpd check            Check RPD/Product Tree status
   rpd close            Attempt to close RPD
   ui approve           Record user UI/UX approval and transition to UI_UX_APPROVED
@@ -134,6 +139,7 @@ Options:
   --force              Allow init to overwrite existing PBE files.
   --profile <value>    init profile: full, lite, or bypass. Defaults to full.
   --brief <text>       init project brief.
+  --max-chars <n>      Maximum context pack bundle characters. Defaults to 12000.
   --files <list>       Candidate changed/expected files for profile recommend, comma-separated.
   --stage <value>      trace/context stage. Trace uses wpd, vd, execution, review, or accept.
   --summary <text>     change create summary.

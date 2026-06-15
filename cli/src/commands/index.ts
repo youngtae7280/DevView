@@ -3,7 +3,7 @@ import { validateEvidence, validateTraceability, validateVisualDesign } from '..
 import { acceptCommand } from './accept.js'
 import { acepCheckCommand, acepReadyCommand } from './acep.js'
 import { changeCreateCommand } from './change.js'
-import { contextRecommendCommand } from './context.js'
+import { contextPackCommand, contextRecommendCommand } from './context.js'
 import { executionCompleteCommand, executionStartCommand } from './execution.js'
 import { filesCheckCommand } from './files.js'
 import { gateCommand } from './gate.js'
@@ -120,6 +120,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'context' && subcommand === 'recommend') {
     return contextRecommendCommand(context)
+  }
+  if (command === 'context' && subcommand === 'pack') {
+    return contextPackCommand(context)
   }
   if (command === 'product' && subcommand === 'patch' && positionals[2] === 'propose') {
     return productPatchProposeCommand(context)

@@ -67,6 +67,7 @@ Most commands follow this pattern:
 - `--profile <full|lite|bypass>`: execution profile for init and recommendation commands.
 - `--stage <stage>`: traceability/evidence stage mode for `pbe trace check`, or context stage for
   `pbe context recommend`.
+- `--max-chars <number>`: maximum generated bundle length for `pbe context pack`. Defaults to `12000`.
 - `--change <id>`: Change node id for Impact, Revision, and Product Patch commands.
 - `--product <id>`: Product node id. May be repeated or comma-separated.
 - `--work <id>`: Work node id. May be repeated or comma-separated.
@@ -188,6 +189,33 @@ Example JSON shape:
     "This command is read-only and does not modify PBE state."
   ]
 }
+```
+
+### `pbe context pack`
+
+- Purpose: Create a compact prompt-ready Markdown bundle from the `readFirst` files recommended by
+  `pbe context recommend`.
+- Typical state before running: Before broad docs scanning, especially when Codex needs a small context bundle for a
+  brief, stage, or profile.
+- Options: `--brief <text>` and/or `--stage <stage>`. At least one is required. `--profile <full|lite|bypass>` is
+  optional. `--max-chars <number>` limits the generated bundle and defaults to `12000`.
+- What it reads: Only recommended `readFirst` files from `agent-context/`, resolved from the plugin root.
+- What it does not read: `readOnlyIfNeeded` and `doNotReadByDefault` file contents are not included. They are listed as
+  paths only.
+- What it writes: Nothing. It is read-only, does not create `.pbe`, does not run `pbe init`, and does not modify state,
+  artifacts, source files, or docs.
+- Success result: Prints a Markdown context pack with recommendation summary, operating rules, included context,
+  read-only-if-needed paths, do-not-read-by-default paths, and warnings.
+- JSON output: Includes `recommendation`, `includedFiles`, `bundle`, `warnings`, and `readOnly: true`.
+- Missing files: Missing recommended `readFirst` files are reported as warnings instead of failing the command.
+- Truncation: If the generated bundle exceeds `--max-chars`, the bundle is truncated and a warning is recorded.
+
+Examples:
+
+```bash
+pbe context pack --brief "검색 기능 검증 설계" --profile lite
+pbe context pack --stage vd --profile lite --json
+pbe context pack --brief "docs/known-limits.md 한 줄 수정" --profile lite --max-chars 8000
 ```
 
 ## Requirement/Product Commands

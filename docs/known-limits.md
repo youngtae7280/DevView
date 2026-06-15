@@ -46,6 +46,9 @@ Profile recommendation is heuristic and conservative. It is not a full semantic 
 `pbe context recommend` and `pbe status` `recommendedContext` are heuristic, path-based guidance; they do not replace
 human or Codex judgment about semantic relevance.
 
+`pbe context pack` includes only recommended `readFirst` context. It does not guarantee that every task-specific project
+file has been read.
+
 Documentation routing is based on keyword and file path signals such as `docs/`, README, troubleshooting, install, and
 PowerShell/npm help text.
 

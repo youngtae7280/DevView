@@ -1,16 +1,73 @@
 import { isContextStage, recommendContext } from '../core/context-recommendation.js'
+import { createContextPack } from '../core/context-pack.js'
 import type { CommandResult } from '../core/types.js'
 import { ExitCode, issue } from '../core/types.js'
 import type { CommandContext } from './shared.js'
 
 export async function contextRecommendCommand(context: CommandContext): Promise<CommandResult> {
+  const inputError = validateContextInput(context, 'context recommend')
+  if (inputError) {
+    return inputError
+  }
+
+  const brief = context.options.brief?.trim()
+  const recommendation = recommendContext({
+    brief,
+    stage: getContextStage(context),
+    profile: context.options.profile,
+  })
+
+  return {
+    ok: true,
+    command: 'context recommend',
+    exitCode: ExitCode.Success,
+    message: formatContextRecommendation(recommendation),
+    issues: [],
+    data: { ...recommendation },
+  }
+}
+
+export async function contextPackCommand(context: CommandContext): Promise<CommandResult> {
+  const inputError = validateContextInput(context, 'context pack')
+  if (inputError) {
+    return inputError
+  }
+
+  const pack = createContextPack({
+    pluginRoot: context.env.pluginRoot,
+    brief: context.options.brief?.trim(),
+    stage: getContextStage(context),
+    profile: context.options.profile,
+    maxChars: context.options.maxChars,
+  })
+
+  return {
+    ok: true,
+    command: 'context pack',
+    exitCode: ExitCode.Success,
+    message: pack.bundle,
+    issues: [],
+    data: {
+      recommendation: pack.recommendation,
+      includedFiles: pack.includedFiles,
+      bundle: pack.bundle,
+      warnings: pack.warnings,
+      readOnly: pack.readOnly,
+    },
+  }
+}
+
+function validateContextInput(
+  context: CommandContext,
+  command: 'context recommend' | 'context pack',
+): CommandResult | null {
   const brief = context.options.brief?.trim()
   const stage = context.options.stage
 
   if (stage && !isContextStage(stage)) {
     return {
       ok: false,
-      command: 'context recommend',
+      command,
       exitCode: ExitCode.InvalidArguments,
       message: `Unsupported context stage: ${stage}.`,
       issues: [
@@ -29,7 +86,7 @@ export async function contextRecommendCommand(context: CommandContext): Promise<
   if (!brief && !stage) {
     return {
       ok: false,
-      command: 'context recommend',
+      command,
       exitCode: ExitCode.InvalidArguments,
       message: 'Missing required option: provide --brief or --stage.',
       issues: [
@@ -38,26 +95,18 @@ export async function contextRecommendCommand(context: CommandContext): Promise<
           code: 'CONTEXT_INPUT_REQUIRED',
           severity: 'error',
           message: 'Missing required option: provide --brief or --stage.',
-          suggestedFix: 'Run `pbe context recommend --brief "..."` or `pbe context recommend --stage <stage>`.',
+          suggestedFix: `Run \`pbe ${command} --brief "..."\` or \`pbe ${command} --stage <stage>\`.`,
         }),
       ],
     }
   }
 
-  const recommendation = recommendContext({
-    brief,
-    stage,
-    profile: context.options.profile,
-  })
+  return null
+}
 
-  return {
-    ok: true,
-    command: 'context recommend',
-    exitCode: ExitCode.Success,
-    message: formatContextRecommendation(recommendation),
-    issues: [],
-    data: { ...recommendation },
-  }
+function getContextStage(context: CommandContext) {
+  const stage = context.options.stage
+  return stage && isContextStage(stage) ? stage : undefined
 }
 
 type ContextRecommendation = ReturnType<typeof recommendContext>
