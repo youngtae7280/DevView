@@ -46,6 +46,11 @@ Parallel / dependency risk:
 
 - [parallel.md](parallel.md)
 
+Documentation / troubleshooting / install docs:
+
+- [lite.md](lite.md)
+- [evidence.md](evidence.md)
+
 ## Rule
 
 Start with the smallest matching card.

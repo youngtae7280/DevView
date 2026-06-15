@@ -20,6 +20,8 @@ export type ContextStageOption =
   | 'revision'
   | 'product-patch'
   | 'parallel'
+  | 'documentation'
+  | 'docs'
 export type CliStageOption = TraceabilityStageOption | ContextStageOption
 
 export interface ValidationIssue {

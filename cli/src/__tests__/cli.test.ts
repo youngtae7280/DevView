@@ -224,6 +224,70 @@ describe('PBE CLI', () => {
     expect(recommendation.reasons).toContain('lite profile adds Lite guard guidance')
   })
 
+  it('detects documentation context from troubleshooting npm brief', async () => {
+    const result = await runPbeCli(
+      ['context', 'recommend', '--brief', 'docs/troubleshooting.md에 npm.cmd 설명 추가', '--profile', 'lite', '--json'],
+      {
+        cwd: createWorkspace(),
+        pluginRoot,
+      },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.detectedStage).toBe('documentation')
+    expect(payload.profile).toBe('lite')
+    expect(payload.skills).toContain('pbe-run-acep')
+    expect(payload.readFirst.filter((entry: string) => entry === 'agent-context/lite.md')).toHaveLength(1)
+    expect(payload.readFirst).toContain('agent-context/evidence.md')
+    expect(payload.readOnlyIfNeeded).toContain('docs/troubleshooting.md')
+    expect(payload.readOnlyIfNeeded).toContain('docs/install.md')
+    expect(payload.doNotReadByDefault).toContain('docs/vd-quality-rubric.md')
+    expect(payload.doNotReadByDefault).toContain('docs/review-failure-recovery.md')
+    expect(payload.doNotReadByDefault).toContain('docs/parallel-safety.md')
+    expect(payload.doNotReadByDefault).toContain('docs/migration-policy.md')
+    expect(payload.doNotReadByDefault).toContain('docs/complexity-governance.md')
+  })
+
+  it('detects documentation context from README maintenance brief', async () => {
+    const result = await runPbeCli(['context', 'recommend', '--brief', 'README 링크 정리', '--json'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(JSON.parse(result.stdout).detectedStage).toBe('documentation')
+  })
+
+  it('detects documentation context from install PowerShell npm brief', async () => {
+    const result = await runPbeCli(
+      ['context', 'recommend', '--brief', '설치 문서에 PowerShell npm.ps1 오류 설명 추가', '--json'],
+      {
+        cwd: createWorkspace(),
+        pluginRoot,
+      },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(JSON.parse(result.stdout).detectedStage).toBe('documentation')
+  })
+
+  it('supports documentation and docs context stages', async () => {
+    const documentation = await runPbeCli(['context', 'recommend', '--stage', 'documentation', '--json'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+    const docsAlias = await runPbeCli(['context', 'recommend', '--stage', 'docs', '--json'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+
+    expect(documentation.exitCode).toBe(ExitCode.Success)
+    expect(docsAlias.exitCode).toBe(ExitCode.Success)
+    expect(JSON.parse(documentation.stdout).detectedStage).toBe('documentation')
+    expect(JSON.parse(docsAlias.stdout).detectedStage).toBe('documentation')
+  })
+
   it('detects VD context from verification design brief', async () => {
     const result = await runPbeCli(
       ['context', 'recommend', '--brief', '검색 기능 검증 설계', '--profile', 'lite', '--json'],
@@ -272,6 +336,18 @@ describe('PBE CLI', () => {
     expect(payload.detectedStage).toBe('product-patch')
     expect(payload.readFirst).toContain('agent-context/product-patch.md')
     expect(payload.readOnlyIfNeeded).toContain('docs/product-patch-proposals.md')
+  })
+
+  it('detects parallel context from clean-dist conflict brief', async () => {
+    const result = await runPbeCli(['context', 'recommend', '--brief', '병렬 clean-dist conflict', '--json'], {
+      cwd: createWorkspace(),
+      pluginRoot,
+    })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.detectedStage).toBe('parallel')
+    expect(payload.readFirst).toContain('agent-context/parallel.md')
   })
 
   it('fails context recommendation when both --brief and --stage are missing', async () => {

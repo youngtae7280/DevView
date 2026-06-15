@@ -19,7 +19,8 @@ export async function contextRecommendCommand(context: CommandContext): Promise<
           code: 'CONTEXT_STAGE_UNSUPPORTED',
           severity: 'error',
           message: `Unsupported context stage: ${stage}.`,
-          suggestedFix: 'Use one of: start, rpd, wpd, vd, execution, review, revision, product-patch, parallel.',
+          suggestedFix:
+            'Use one of: start, rpd, wpd, vd, execution, review, revision, product-patch, parallel, documentation, docs.',
         }),
       ],
     }

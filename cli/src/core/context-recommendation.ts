@@ -1,6 +1,7 @@
 import type { ContextStageOption } from './types.js'
 
 export type ContextProfileOption = 'full' | 'lite' | 'bypass'
+type CanonicalContextStageOption = Exclude<ContextStageOption, 'docs'>
 
 export interface ContextRecommendationInput {
   brief?: string
@@ -9,7 +10,7 @@ export interface ContextRecommendationInput {
 }
 
 export interface ContextRecommendation {
-  detectedStage: ContextStageOption
+  detectedStage: CanonicalContextStageOption
   profile?: ContextProfileOption
   skills: string[]
   readFirst: string[]
@@ -25,7 +26,7 @@ interface StageContextDefinition {
   readOnlyIfNeeded: string[]
 }
 
-const stageContexts: Record<ContextStageOption, StageContextDefinition> = {
+const stageContexts: Record<CanonicalContextStageOption, StageContextDefinition> = {
   start: {
     skills: ['pbe-start'],
     readFirst: ['agent-context/start.md'],
@@ -71,6 +72,16 @@ const stageContexts: Record<ContextStageOption, StageContextDefinition> = {
     readFirst: ['agent-context/parallel.md'],
     readOnlyIfNeeded: ['docs/parallel-safety.md', 'docs/troubleshooting.md'],
   },
+  documentation: {
+    skills: ['pbe-run-acep'],
+    readFirst: ['agent-context/lite.md', 'agent-context/evidence.md'],
+    readOnlyIfNeeded: [
+      'docs/lite-mode-policy.md',
+      'docs/evidence-quality-rubric.md',
+      'docs/troubleshooting.md',
+      'docs/install.md',
+    ],
+  },
 }
 
 const fullDocs = [
@@ -86,6 +97,8 @@ const fullDocs = [
   'docs/product-patch-proposals.md',
   'docs/migration-policy.md',
   'docs/troubleshooting.md',
+  'docs/install.md',
+  'docs/complexity-governance.md',
 ]
 
 const notes = [
@@ -94,7 +107,7 @@ const notes = [
   'This command is read-only and does not modify PBE state.',
 ]
 
-export const contextStages = Object.keys(stageContexts) as ContextStageOption[]
+export const contextStages = [...Object.keys(stageContexts), 'docs'] as ContextStageOption[]
 
 export function isContextStage(value: string): value is ContextStageOption {
   return contextStages.includes(value as ContextStageOption)
@@ -104,7 +117,7 @@ export function recommendContext(input: ContextRecommendationInput): ContextReco
   const profile = input.profile
   const stageResult = input.stage
     ? {
-        stage: input.stage,
+        stage: normalizeContextStage(input.stage),
         reason: `--stage ${input.stage} was provided and takes precedence over brief heuristics`,
       }
     : detectStage(input.brief)
@@ -151,9 +164,16 @@ export function recommendContext(input: ContextRecommendationInput): ContextReco
   }
 }
 
-function detectStage(brief: string | undefined): { stage: ContextStageOption; reason: string } {
+function normalizeContextStage(stage: ContextStageOption): CanonicalContextStageOption {
+  return stage === 'docs' ? 'documentation' : stage
+}
+
+function detectStage(brief: string | undefined): { stage: CanonicalContextStageOption; reason: string } {
   const text = normalize(brief || '')
 
+  if (hasDocumentationSignal(text)) {
+    return { stage: 'documentation', reason: 'brief appears to ask for documentation maintenance' }
+  }
   if (hasAny(text, ['병렬', '동시에', 'parallel', 'conflict', 'clean-dist', 'clean dist'])) {
     return { stage: 'parallel', reason: 'brief appears to ask about parallel or dependency risk' }
   }
@@ -185,8 +205,8 @@ function detectStage(brief: string | undefined): { stage: ContextStageOption; re
   return { stage: 'start', reason: 'no strong stage signal detected' }
 }
 
-function stageReason(stage: ContextStageOption): string {
-  const reasons: Record<ContextStageOption, string> = {
+function stageReason(stage: CanonicalContextStageOption): string {
+  const reasons: Record<CanonicalContextStageOption, string> = {
     start: 'Start work should use initialization and profile guidance first',
     rpd: 'RPD work requires Product Tree and ambiguity guidance',
     wpd: 'WPD work requires Work planning and file scope guidance',
@@ -196,6 +216,7 @@ function stageReason(stage: ContextStageOption): string {
     revision: 'Revision work requires Change/Impact bounded-scope guidance',
     'product-patch': 'Product Patch work requires Product meaning change control',
     parallel: 'Parallel work requires dependency and shared-resource safety guidance',
+    documentation: 'Documentation work should use Lite guard and evidence guidance without broad docs scanning',
   }
   return reasons[stage]
 }
@@ -206,6 +227,30 @@ function normalize(value: string): string {
 
 function hasAny(value: string, needles: string[]): boolean {
   return needles.some((needle) => value.includes(needle.toLowerCase()))
+}
+
+function hasDocumentationSignal(value: string): boolean {
+  return hasAny(value, [
+    'docs/',
+    'readme',
+    '문서',
+    'documentation',
+    'troubleshooting',
+    'install',
+    '설치',
+    '사용법',
+    'guide',
+    'reference',
+    'npm.cmd',
+    'npm.ps1',
+    'powershell',
+    'execution policy',
+    'windows에서 npm',
+    'cli reference',
+    'known limits',
+    'readme 링크',
+    'docs index',
+  ])
 }
 
 function unique<T>(values: T[]): T[] {

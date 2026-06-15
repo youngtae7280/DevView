@@ -141,8 +141,10 @@ Most commands follow this pattern:
 - Typical state before running: Before broad docs scanning, before choosing which PBE skill or reference to load.
 - Options: `--brief <text>` and/or `--stage <stage>`. At least one is required. `--profile <full|lite|bypass>` is
   optional.
-- Supported context stages: `start`, `rpd`, `wpd`, `vd`, `execution`, `review`, `revision`, `product-patch`, and
-  `parallel`.
+- Supported context stages: `start`, `rpd`, `wpd`, `vd`, `execution`, `review`, `revision`, `product-patch`, `parallel`,
+  and `documentation`. `docs` is an alias for `documentation`.
+- Documentation maintenance requests such as `docs/troubleshooting`, install guide, README, `npm.cmd`, PowerShell
+  execution policy, or usage docs are routed to the `documentation` context category.
 - What it checks: Deterministic keyword and stage mapping only. It does not perform semantic product analysis.
 - What it writes: Nothing. It is read-only, does not create `.pbe`, does not run `pbe init`, and does not modify state
   or artifacts.
@@ -160,6 +162,8 @@ Examples:
 ```bash
 pbe context recommend --brief "검색 기능 검증 설계"
 pbe context recommend --stage rpd
+pbe context recommend --stage documentation
+pbe context recommend --stage docs
 pbe context recommend --stage vd --profile lite
 pbe context recommend --brief "리뷰했는데 아직도 별로야" --profile full --json
 ```
