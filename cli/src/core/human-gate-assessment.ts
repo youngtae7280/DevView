@@ -43,7 +43,7 @@ export interface HumanGateAssessment {
   hardTriggers: string[]
   requiresHumanGate: boolean
   reasons: string[]
-  recommendedQuestion: string
+  recommendedQuestion: string | null
   readOnly: true
 }
 
@@ -315,7 +315,9 @@ export function assessHumanGateClarity(input: HumanGateAssessmentInput): HumanGa
     hardTriggers,
     requiresHumanGate,
     reasons,
-    recommendedQuestion: buildRecommendedQuestion(signals, hardTriggers, transition, profile, inputText),
+    recommendedQuestion: requiresHumanGate
+      ? buildRecommendedQuestion(signals, hardTriggers, transition, profile, inputText)
+      : null,
     readOnly: true,
   }
 }

@@ -121,6 +121,29 @@ describe('PBE CLI', () => {
     expect(specifiedPayload.clarity.score).toBeGreaterThan(ambiguousPayload.clarity.score)
     expect(specifiedPayload.hardTriggers).not.toContain('user-facing-ui-choice')
     expect(specifiedPayload.hardTriggers).not.toContain('multiple-implementation-options')
+    expect(specifiedPayload.requiresHumanGate).toBe(false)
+    expect(specifiedPayload.recommendedQuestion).toBeNull()
+  })
+
+  it('omits the Recommended question section when Human Gate is not required', async () => {
+    const result = await runPbeCli(
+      [
+        'gate',
+        'assess',
+        '--text',
+        'choices should be displayed as a Combobox with 2 to 3 options',
+        '--transition',
+        'product-to-work',
+        '--profile',
+        'lite',
+      ],
+      { cwd: createWorkspace(), pluginRoot },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(result.stdout).toContain('Requires Human Gate: no')
+    expect(result.stdout).toContain('No Human Gate required.')
+    expect(result.stdout).not.toContain('Recommended question:')
   })
 
   it('assesses subjective quality as requiring a Human Gate', async () => {

@@ -155,7 +155,7 @@ export async function gateCommand(stage: string | undefined, context: CommandCon
 
 function formatHumanGateAssessment(assessment: HumanGateAssessment): string {
   const dimensions = assessment.clarity.dimensions
-  return [
+  const lines = [
     'Human Gate Assessment',
     '',
     `Transition: ${assessment.transition}`,
@@ -176,10 +176,15 @@ function formatHumanGateAssessment(assessment: HumanGateAssessment): string {
     '',
     'Reasons:',
     ...formatHumanGateList(assessment.reasons),
-    '',
-    'Recommended question:',
-    assessment.recommendedQuestion,
-  ].join('\n')
+  ]
+
+  if (assessment.recommendedQuestion) {
+    lines.push('', 'Recommended question:', assessment.recommendedQuestion)
+  } else {
+    lines.push('', 'No Human Gate required.')
+  }
+
+  return lines.join('\n')
 }
 
 function formatHumanGateList(values: string[]): string[] {
