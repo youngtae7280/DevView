@@ -279,6 +279,60 @@ const repeatedRejectionTerms = [
   '다시 고쳐',
 ]
 
+const questionHighRiskTerms = [
+  'auth',
+  'authentication',
+  'authorization',
+  'security',
+  'permission',
+  'login',
+  'session',
+  'token',
+  'payment',
+  'migration',
+  'database migration',
+  '\uC778\uC99D',
+  '\uB85C\uADF8\uC778',
+  '\uBCF4\uC548',
+  '\uAD8C\uD55C',
+  '\uC138\uC158',
+  '\uD1A0\uD070',
+  '\uACB0\uC81C',
+  '\uB9C8\uC774\uADF8\uB808\uC774\uC158',
+]
+
+const questionStorageTerms = [
+  'save',
+  'storage',
+  'persist',
+  'persistence',
+  'autosave',
+  'load',
+  'localstorage',
+  'file',
+  'database',
+  'db',
+  'api',
+  '\uC800\uC7A5',
+  '\uC790\uB3D9 \uC800\uC7A5',
+  '\uBD88\uB7EC\uC624\uAE30',
+  '\uC601\uC18D',
+  '\uD30C\uC77C',
+  '\uB370\uC774\uD130\uBCA0\uC774\uC2A4',
+  '\uC11C\uBC84',
+]
+
+const questionStorageImplementationTerms = [
+  'localstorage',
+  'file',
+  'database',
+  'db',
+  'api',
+  '\uD30C\uC77C',
+  '\uB370\uC774\uD130\uBCA0\uC774\uC2A4',
+  '\uC11C\uBC84',
+]
+
 export function isHumanGateTransition(value: string): value is HumanGateTransition {
   return humanGateTransitions.includes(value as HumanGateTransition)
 }
@@ -549,6 +603,20 @@ function buildRecommendedQuestion(
       ? '증거가 검토 준비 상태입니다. 이 결과를 승인하시겠습니까, 아니면 수정이 필요합니까?'
       : 'Evidence is ready for review. Do you accept this result, or should it be revised?'
   }
+  if (
+    hardTriggers.includes('high-risk-area') ||
+    hardTriggers.includes('restricted-file-change') ||
+    hasAny(signals.normalized, questionHighRiskTerms)
+  ) {
+    return signals.hasKorean
+      ? '\uC774 \uC791\uC5C5\uC740 \uC778\uC99D/\uBCF4\uC548/\uAD8C\uD55C \uB4F1 \uACE0\uC704\uD5D8 \uC601\uC5ED\uC5D0 \uD574\uB2F9\uD569\uB2C8\uB2E4. \uD3EC\uD568\uD560 \uC815\uD655\uD55C \uBC94\uC704, \uC218\uC815 \uD30C\uC77C, \uAC80\uC99D \uAE30\uC900\uC740 \uC5B4\uB514\uAE4C\uC9C0\uC778\uAC00\uC694?'
+      : 'This touches a high-risk area. What exact scope, affected files, and verification criteria should be included?'
+  }
+  if (hasStorageQuestionDomain(signals)) {
+    return signals.hasKorean
+      ? '\uC800\uC7A5 \uC704\uCE58\uC640 \uBC29\uC2DD\uC774 \uBA85\uC2DC\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. localStorage, \uD30C\uC77C, DB/API, \uB610\uB294 \uB2E4\uB978 \uC800\uC7A5 \uBC29\uC2DD \uC911 \uBB34\uC5C7\uC744 \uC0AC\uC6A9\uD560\uAE4C\uC694?'
+      : 'Storage behavior is unspecified. Should this use localStorage, a file, DB/API persistence, or another storage method?'
+  }
   if (hardTriggers.includes('restricted-file-change') || hardTriggers.includes('expected-files-cap-exceeded')) {
     return signals.hasKorean
       ? '이 작업은 Lite 범위를 넘거나 제한 파일을 건드릴 수 있습니다. 이 slice를 Full로 전환할까요?'
@@ -582,6 +650,12 @@ function buildRecommendedQuestion(
   return signals.hasKorean
     ? '이 가정을 확정해도 될까요, 아니면 범위나 검증 기준을 더 좁혀야 할까요?'
     : 'Can this assumption be confirmed, or should the scope or verification criterion be narrowed first?'
+}
+
+function hasStorageQuestionDomain(signals: HumanGateSignals): boolean {
+  return (
+    hasAny(signals.normalized, questionStorageTerms) && !hasAny(signals.normalized, questionStorageImplementationTerms)
+  )
 }
 
 function ambiguityLevel(score: number): HumanGateAmbiguityLevel {

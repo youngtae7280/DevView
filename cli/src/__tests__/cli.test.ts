@@ -146,6 +146,100 @@ describe('PBE CLI', () => {
     expect(result.stdout).not.toContain('Recommended question:')
   })
 
+  it('routes save/storage ambiguity to a storage question instead of a UI control question', async () => {
+    const result = await runPbeCli(
+      [
+        'gate',
+        'assess',
+        '--text',
+        '\uC800\uC7A5 \uAE30\uB2A5\uC744 \uCD94\uAC00\uD574\uC918',
+        '--transition',
+        'product-to-work',
+        '--profile',
+        'lite',
+        '--json',
+      ],
+      { cwd: createWorkspace(), pluginRoot },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.requiresHumanGate).toBe(true)
+    expect(payload.hardTriggers).toContain('multiple-implementation-options')
+    expect(payload.recommendedQuestion).toMatch(/localStorage|DB\/API|\uC800\uC7A5/)
+    expect(payload.recommendedQuestion).not.toContain('Combobox')
+    expect(payload.recommendedQuestion).not.toContain('\uCE74\uB4DC\uD615')
+  })
+
+  it('keeps storage implementation specified without a recommended question', async () => {
+    const result = await runPbeCli(
+      [
+        'gate',
+        'assess',
+        '--text',
+        'localStorage\uC5D0 \uC790\uB3D9 \uC800\uC7A5\uB418\uAC8C \uD574\uC918',
+        '--transition',
+        'product-to-work',
+        '--profile',
+        'lite',
+        '--json',
+      ],
+      { cwd: createWorkspace(), pluginRoot },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.requiresHumanGate).toBe(false)
+    expect(payload.recommendedQuestion).toBeNull()
+  })
+
+  it('keeps specified UI controls without a recommended question', async () => {
+    const result = await runPbeCli(
+      [
+        'gate',
+        'assess',
+        '--text',
+        '\uC120\uD0DD\uC9C0\uB294 \uBC84\uD2BC 3\uAC1C\uB85C \uD45C\uC2DC\uD55C\uB2E4',
+        '--transition',
+        'product-to-work',
+        '--profile',
+        'lite',
+        '--json',
+      ],
+      { cwd: createWorkspace(), pluginRoot },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.requiresHumanGate).toBe(false)
+    expect(payload.recommendedQuestion).toBeNull()
+  })
+
+  it('routes auth high-risk ambiguity to a scope and verification question', async () => {
+    const result = await runPbeCli(
+      [
+        'gate',
+        'assess',
+        '--text',
+        '\uC778\uC99D \uB85C\uC9C1\uC744 \uACE0\uCCD0\uC918',
+        '--transition',
+        'work-scope',
+        '--profile',
+        'lite',
+        '--json',
+      ],
+      { cwd: createWorkspace(), pluginRoot },
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.requiresHumanGate).toBe(true)
+    expect(payload.hardTriggers).toContain('high-risk-area')
+    expect(payload.recommendedQuestion).toMatch(
+      /\uC778\uC99D|\uBCF4\uC548|\uAD8C\uD55C|verification criteria|high-risk/,
+    )
+  })
+
   it('assesses subjective quality as requiring a Human Gate', async () => {
     const result = await runPbeCli(
       [
@@ -189,7 +283,7 @@ describe('PBE CLI', () => {
     const payload = JSON.parse(result.stdout)
     expect(payload.requiresHumanGate).toBe(true)
     expect(payload.hardTriggers).toEqual(expect.arrayContaining(['restricted-file-change', 'high-risk-area']))
-    expect(payload.recommendedQuestion).toContain('exceed the Lite scope')
+    expect(payload.recommendedQuestion).toContain('high-risk area')
   })
 
   it('always requires a Human Gate for acceptance assessment', async () => {
