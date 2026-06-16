@@ -73,6 +73,20 @@ profile and reason before initialization. The user may override the recommended 
 
 Do not silently initialize with an arbitrary brief when the task is unclear.
 
+## Start / RPD Clarity Scoring
+
+During start and RPD, assess ambiguity before creating or confirming Product Tree nodes.
+
+- Compute a compact `clarityScore`.
+- Identify `hardTriggers`.
+- Set `requiresHumanGate`.
+- Ask one concise Human Gate question when the score is low or a hard trigger exists.
+- Do not convert vague product intent into implementation decisions.
+- Record the assumption and rationale if proceeding without a gate.
+
+Do not turn "choices should be displayed" into "implement a list" unless the UI control is specified, follows an
+existing pattern, or the assumption is recorded and safe.
+
 ## Required Actions
 
 Prefer `pbe init --profile <full|lite|bypass> --brief "<user brief>"` when initializing deterministic PBE artifacts. After creating or updating `.pbe` artifacts, run:

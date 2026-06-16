@@ -36,6 +36,22 @@ pbe review submit
 
 Do not mark any scope as accepted. Acceptance requires explicit user approval and must pass `pbe accept`.
 
+## ACEP Human Gate Preflight
+
+Before execution, check whether the selected cycle contains unconfirmed assumptions:
+
+- Product intent clear?
+- expectedFiles clear and within profile cap?
+- Product AC testable?
+- Product -> Work mapping free of unconfirmed implementation alternatives?
+- Work -> Test mapping has concrete verification method?
+- Test -> Evidence mapping has appropriate evidence type for the AC?
+- hard triggers absent?
+- user acceptance still reserved for after review?
+
+If `clarityScore` is low or hard triggers exist, do not execute yet. Ask the smallest Human Gate question that resolves
+the blocker.
+
 ## Inputs
 
 Prefer v2 cycle-native inputs:

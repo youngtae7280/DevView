@@ -84,6 +84,16 @@ Default Lite artifacts:
 - files check
 - compact review summary
 
+### Clarity-Based Escalation
+
+Escalation should be based on clarity score plus hard triggers. If the request is small but implementation choices are
+unclear, ask a focused Human Gate question instead of expanding into broad analysis or full workflow adaptation.
+
+Examples:
+
+- "Selection UI is unspecified. Use button list, Combobox, or card list?"
+- "This change needs package/schema updates and exceeds Lite cap. Escalate to Full?"
+
 ## Full Workload Cap
 
 Full is broader than Lite, but it is not unlimited. Even in Full, these require prior notice or confirmation:

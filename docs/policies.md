@@ -78,6 +78,92 @@ Escalate or expand reporting when:
 
 Compact does not mean incomplete. Reduce explanation length, not traceability.
 
+## Human Gate Clarity Scoring
+
+Human Gate decisions should not rely on vague intuition. PBE should classify ambiguity using a compact clarity
+assessment before allowing AI assumptions to become product, implementation, verification, scope, product-patch, or
+acceptance decisions.
+
+Use the following fields when a node, transition, or execution plan may be ambiguous:
+
+- `clarityScore`: `0.0` to `1.0`
+- `ambiguityLevel`: `low`, `medium`, `high`, or `very_high`
+- `hardTriggers`: risk conditions that require a Human Gate regardless of score
+- `requiresHumanGate`: boolean
+- `reasons`: short explanation
+- `recommendedQuestion`: concise question for the user
+
+Suggested interpretation:
+
+| clarityScore | ambiguityLevel | Default action                                         |
+| -----------: | -------------- | ------------------------------------------------------ |
+|  0.80 - 1.00 | low            | Proceed unless hard trigger exists                     |
+|  0.60 - 0.79 | medium         | Proceed with recorded assumption or ask if user-facing |
+|  0.40 - 0.59 | high           | Human Gate recommended                                 |
+|  0.00 - 0.39 | very_high      | Human Gate required                                    |
+
+Score dimensions:
+
+| Dimension                  | 0                         | 1                  | 2                             |
+| -------------------------- | ------------------------- | ------------------ | ----------------------------- |
+| Intent clarity             | unclear outcome           | partial outcome    | clear user-visible outcome    |
+| Scope clarity              | broad/unknown scope       | partial boundary   | clear boundary/expectedFiles  |
+| AC testability             | not testable              | partially testable | directly testable             |
+| Implementation specificity | many unchosen options     | default assumption | specified or existing pattern |
+| Evidence fit               | unknown evidence          | partial evidence   | evidence type is clear        |
+| Risk/reversibility         | high risk/hard to reverse | moderate           | low risk/easy to reverse      |
+
+```text
+clarityScore = earnedPoints / 12
+```
+
+Hard triggers require a Human Gate regardless of clarity score:
+
+- product meaning change
+- user-facing UI/UX choice not specified by the user
+- implementation alternatives materially affect user experience
+- expectedFiles exceed Lite cap
+- AGENTS.md, CI, package, schema, template, auth, security, permission, payment, data migration, or destructive changes
+- manual-only or subjective evidence
+- weak evidence for a high-risk AC
+- repeated rejection or review failure
+- product patch proposal
+- final acceptance
+
+Human Gate rule:
+
+```text
+if hardTriggers is not empty:
+  requiresHumanGate = true
+else if clarityScore < 0.60:
+  requiresHumanGate = true
+else:
+  requiresHumanGate = false
+```
+
+Compact does not mean opaque. If PBE proceeds without a Human Gate, record the assumption and rationale.
+
+Example:
+
+```text
+Product Node:
+- Choices should be displayed.
+
+Clarity:
+- intent: 2
+- scope: 1
+- testability: 1
+- implementationSpecificity: 0
+- evidenceFit: 1
+- riskReversibility: 1
+- clarityScore: 0.50
+- hardTriggers: [user-facing-ui-choice]
+- requiresHumanGate: true
+
+Question:
+- "Selection UI is unspecified. Should it be button list, Combobox, or card list?"
+```
+
 ## Workload Cap and Artifact Minimalism
 
 PBE should control work, not generate process material for its own sake.

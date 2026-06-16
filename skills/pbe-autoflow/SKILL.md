@@ -37,6 +37,24 @@ Do not start broad workflow adaptation or repo-wide conversion before user confi
 - Compact reporting must not bypass state transitions, human gates, Review Result, or explicit user acceptance.
 - Codex must not mark work accepted automatically.
 
+## Human Gate Clarity Rule
+
+Autoflow may continue only when clarity is sufficient and no hard trigger exists. If ambiguity or a hard trigger appears,
+stop and ask the smallest Human Gate question that resolves the blocker.
+
+Autoflow stop conditions:
+
+- `clarityScore` below threshold
+- hard trigger present
+- unconfirmed Product -> Work implementation choice
+- verification method is subjective/manual-only
+- evidence is weak for the AC type
+- scope exceeds selected profile cap
+- acceptance is required
+
+Do not hide Product -> Work, Work -> Test, or Evidence -> Acceptance assumptions inside automated flow. Short reporting
+is fine; skipped gates are not.
+
 ## Role
 
 `pbe-autoflow` is an orchestration/helper skill.
