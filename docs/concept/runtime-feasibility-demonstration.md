@@ -217,6 +217,10 @@ The representative slice now includes manual equivalent read-model parity artifa
 decision preparation, while generated builder / CLI-backed output remains a later question for full promotion or
 repeatability.
 
+The limited pilot decision package is recorded in
+[limited-pilot-promotion-decision-package.md](limited-pilot-promotion-decision-package.md). It prepares the user
+decision surface only and does not execute promotion.
+
 ## Promotion Boundary
 
 Runtime Feasibility Demonstration is a Graph-source promotion readiness gate. It is not Graph-source promotion.
@@ -336,7 +340,7 @@ Those remain later concept or implementation questions.
 
 - Should future demo results become a generated artifact?
 - How should future demo results connect to CI or validators?
-- Should the next decision surface be limited pilot promotion or full promotion?
+- Which limited pilot promotion decision option will the user choose?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
 - Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?

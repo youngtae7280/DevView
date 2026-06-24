@@ -54,6 +54,7 @@ This review uses the following observable sources:
 - `examples/adoption/todo-search-slice/maintainability-graph-read-model.json`
 - `examples/adoption/todo-search-slice/maintainability-graph-read-model.md`
 - `examples/adoption/todo-search-slice/parity-check.md`
+- [limited-pilot-promotion-decision-package.md](limited-pilot-promotion-decision-package.md)
 
 AI self-report is not Evidence for this review. Readiness findings are based on reviewable files, linked records,
 passing fixture command Evidence, and explicit exception or warning records.
@@ -137,9 +138,15 @@ It recommends:
 ready for limited pilot promotion decision with warnings
 ```
 
-Allowed next decision surfaces:
+Prepared decision surface:
 
-- ask the user whether to prepare a limited pilot promotion decision
+- [limited-pilot-promotion-decision-package.md](limited-pilot-promotion-decision-package.md)
+
+The package state is `Ready for approval`; the promotion state remains `Decision required`.
+
+Allowed next user decisions:
+
+- ask the user to approve, defer, reject, or add prerequisites before a limited pilot promotion decision
 - ask the user whether generated builder/repeatable graph output is required before full promotion
 - ask the user whether ACEP public-doc cleanup may remain deferred for the promotion decision
 
@@ -180,17 +187,19 @@ Acceptance is user-approved with warnings retained.
 
 The user must decide whether to:
 
-1. prepare a limited pilot promotion decision surface,
+1. approve the limited pilot promotion decision package option,
 2. require generated graph builder / CLI output before full promotion,
 3. defer or require ACEP task-card public-doc cleanup before any promotion decision, and
 4. require full-product/runtime/UI Evidence before pilot promotion or only before full product parity claims.
 
 ### Approval Choice Candidates
 
-- `Prepare limited pilot promotion decision with warnings`
+- `Approve limited pilot promotion decision`
+- `Approve only decision-package readiness, not pilot promotion`
 - `Require generated graph builder before any promotion decision`
 - `Require public-doc cleanup before promotion decision`
-- `Accept public-doc cleanup as deferred warning for promotion decision`
+- `Defer limited pilot decision`
+- `Reject limited pilot promotion`
 - `Stop promotion readiness and continue concept/implementation hardening`
 
 ### State Label
@@ -199,8 +208,8 @@ The user must decide whether to:
 Decision required
 ```
 
-Reason: limited pilot promotion decision preparation is now possible with warnings, but the user must decide whether to
-ask for that decision surface, require generated builder output first, or require cleanup/full-product evidence first.
+Reason: limited pilot promotion decision package is now ready, but the user must decide whether to approve the pilot
+decision, approve only package readiness, require generated builder output first, require cleanup first, defer, or reject.
 
 ## Control Node / Risk Classification
 
@@ -226,7 +235,8 @@ ask for that decision surface, require generated builder output first, or requir
 
 ### Decisions Needed Before Promotion Approval
 
-- Whether to prepare a limited pilot promotion decision rather than wait for a full generated output.
+- Whether to approve the limited pilot promotion decision, approve only package readiness, defer, reject, or require
+  prerequisites first.
 - Whether full promotion requires generated graph/read-model output as a future CLI-backed report or generated artifact.
 - Whether bounded fixture Evidence is enough for the pilot decision surface.
 - Whether ACEP task-card public-doc cleanup must happen before promotion approval or may remain deferred with an

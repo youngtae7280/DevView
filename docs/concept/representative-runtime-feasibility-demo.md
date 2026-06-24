@@ -37,6 +37,10 @@ The representative slice now also has manual equivalent read-model parity artifa
 These artifacts support limited pilot promotion decision preparation with warnings, but they are not generated builder
 implementation and do not promote source authority.
 
+The user judgment surface for that decision is recorded in
+[limited-pilot-promotion-decision-package.md](limited-pilot-promotion-decision-package.md). It is not promotion
+execution and keeps the promotion state `Decision required`.
+
 This document is not:
 
 - actual demo execution
@@ -525,7 +529,7 @@ Those remain later concept or implementation questions.
 - Should the future demo result be a generated artifact or a manual Evidence pack?
 - How should future demo Evidence connect to CI or validators?
 - Does promotion review need a specialized Approval Brief template?
-- Should the next decision surface be limited pilot promotion or full promotion?
+- Which limited pilot promotion decision option will the user choose?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
 - Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?

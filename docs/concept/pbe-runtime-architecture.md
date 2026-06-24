@@ -107,6 +107,10 @@ Manual equivalent read-model parity artifacts now exist under `examples/adoption
 recommendation can move to `ready for limited pilot promotion decision with warnings`. Generated builder or CLI-backed
 output remains a later full-promotion/repeatability question rather than current runtime authority.
 
+[limited-pilot-promotion-decision-package.md](limited-pilot-promotion-decision-package.md) is now the user judgment
+surface for the limited pilot decision. It is package-ready, but the promotion decision remains pending and no runtime
+authority changes.
+
 ## Runtime Boundaries
 
 PBE is not:
@@ -136,7 +140,7 @@ PBE is a requirements-based execution control layer for AI-assisted development.
 - Whether Maintainability Graph later gains generated/read-model artifact support.
 - Whether View Tree Pack remains a conceptual projection or becomes a concrete artifact pack.
 - Which older public docs still need terminology cleanup after this concept baseline is reviewed.
-- Whether the next decision surface should be a limited pilot promotion decision or a full promotion decision.
+- Which limited pilot promotion decision option the user will choose.
 - Whether the user will accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before
   promotion approval.
 - Whether full Graph-source promotion requires an actual generated graph builder or CLI-backed read-model output.

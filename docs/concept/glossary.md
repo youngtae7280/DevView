@@ -54,21 +54,22 @@ Terms are classified as `canonical`, `active-operational`, `compatibility`, `leg
 
 ## Transition Terms
 
-| Term                                    | Status    | Meaning                                                                                                                                                |
-| --------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Transition Stance                       | canonical | The documented position that current plugin behavior remains tree-native while Maintainability Graph is the long-term source model target.             |
-| Operational Source Of Truth             | canonical | The artifact structure that currently governs actual plugin behavior. In the current plugin, this is the tree-native artifact structure.               |
-| Canonical Read Model                    | canonical | A stable conceptual model used to align, inspect, and reason over current artifacts without yet replacing them.                                        |
-| Target Source Model                     | canonical | The intended future source model after explicit promotion approval.                                                                                    |
-| Graph-Source Promotion                  | canonical | The future transition where Maintainability Graph becomes the source model and tree-native artifacts become projections, compatibility, or view files. |
-| Legacy Compatibility Map                | canonical | Transition interpretation policy mapping older terms/artifacts to canonical concepts without runtime migration or Graph-source promotion.              |
-| Runtime Feasibility Demonstration       | canonical | Graph-source promotion readiness gate that requires representative observable Evidence before source promotion can be considered.                      |
-| Source Transition Path                  | canonical | Concept-level authority transition policy describing prerequisites and invariants before Maintainability Graph can be promoted to source model.        |
-| Rollback / Compatibility Strategy       | canonical | Concept-level safety policy defining recovery and compatibility boundaries required before Graph-source promotion can be considered.                   |
-| Representative Runtime Feasibility Demo | canonical | Readiness artifact selecting the representative slice and Evidence review criteria before actual runtime feasibility demo execution.                   |
-| Actual Runtime Feasibility Demo Result  | canonical | Manual Evidence pack / review result recording observed feasibility Evidence, gaps, and non-promotion status for the selected representative slice.    |
-| Graph-source Promotion Readiness Review | canonical | Review report that classifies promotion prerequisites, retained warnings, blockers, and remaining decisions without promoting source authority.        |
-| Read-Model Parity Artifact              | canonical | Manual or generated read/alignment Evidence showing graph-style nodes, edges, parity status, warnings, and source-authority boundaries.                |
+| Term                                     | Status    | Meaning                                                                                                                                                                                |
+| ---------------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Transition Stance                        | canonical | The documented position that current plugin behavior remains tree-native while Maintainability Graph is the long-term source model target.                                             |
+| Operational Source Of Truth              | canonical | The artifact structure that currently governs actual plugin behavior. In the current plugin, this is the tree-native artifact structure.                                               |
+| Canonical Read Model                     | canonical | A stable conceptual model used to align, inspect, and reason over current artifacts without yet replacing them.                                                                        |
+| Target Source Model                      | canonical | The intended future source model after explicit promotion approval.                                                                                                                    |
+| Graph-Source Promotion                   | canonical | The future transition where Maintainability Graph becomes the source model and tree-native artifacts become projections, compatibility, or view files.                                 |
+| Legacy Compatibility Map                 | canonical | Transition interpretation policy mapping older terms/artifacts to canonical concepts without runtime migration or Graph-source promotion.                                              |
+| Runtime Feasibility Demonstration        | canonical | Graph-source promotion readiness gate that requires representative observable Evidence before source promotion can be considered.                                                      |
+| Source Transition Path                   | canonical | Concept-level authority transition policy describing prerequisites and invariants before Maintainability Graph can be promoted to source model.                                        |
+| Rollback / Compatibility Strategy        | canonical | Concept-level safety policy defining recovery and compatibility boundaries required before Graph-source promotion can be considered.                                                   |
+| Representative Runtime Feasibility Demo  | canonical | Readiness artifact selecting the representative slice and Evidence review criteria before actual runtime feasibility demo execution.                                                   |
+| Actual Runtime Feasibility Demo Result   | canonical | Manual Evidence pack / review result recording observed feasibility Evidence, gaps, and non-promotion status for the selected representative slice.                                    |
+| Graph-source Promotion Readiness Review  | canonical | Review report that classifies promotion prerequisites, retained warnings, blockers, and remaining decisions without promoting source authority.                                        |
+| Read-Model Parity Artifact               | canonical | Manual or generated read/alignment Evidence showing graph-style nodes, edges, parity status, warnings, and source-authority boundaries.                                                |
+| Limited Pilot Promotion Decision Package | canonical | User judgment surface that packages scoped pilot Evidence, warnings, rollback/compatibility boundaries, and decision options without executing promotion or changing source authority. |
 
 ## Source Transition Terms
 

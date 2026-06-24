@@ -112,7 +112,8 @@ Graph-source promotion may not be requested as ready unless all of these are tru
 7. Projection/parity expectations are defined at the level needed for promotion review.
 8. Conflict resolution rules are defined for tree-native/graph mismatch.
 9. Check/Evidence obligations for promotion review are defined.
-10. Approval Brief or equivalent user judgment surface is prepared for the promotion decision.
+10. Approval Brief, Limited Pilot Promotion Decision Package, or equivalent user judgment surface is prepared for the
+    intended promotion decision scope.
 11. Explicit user approval is obtained.
 
 None of these prerequisites may be replaced by AI self-report.
@@ -224,6 +225,11 @@ but they do not clean up public docs or change source authority.
 It now recommends `ready for limited pilot promotion decision with warnings` after manual equivalent parity artifacts
 were added, and keeps all source authority unchanged.
 
+[limited-pilot-promotion-decision-package.md](limited-pilot-promotion-decision-package.md) records the user judgment
+surface for that limited pilot decision. The package may be ready for approval, but the promotion state remains
+`Decision required` until the user explicitly chooses an option. It does not execute source transition, promote
+Maintainability Graph, or change source authority.
+
 Manual equivalent read-model parity artifacts are now recorded for the representative slice:
 
 - `examples/adoption/todo-search-slice/maintainability-graph-read-model.json`
@@ -296,7 +302,7 @@ Those remain later concept or implementation questions.
 
 - How formal should projection/parity expectations be before promotion review?
 - Does promotion review need a specialized Approval Brief template?
-- Should the next decision surface be limited pilot promotion or full promotion?
+- Which limited pilot promotion decision option will the user choose?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
 - Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?

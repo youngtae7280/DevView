@@ -72,6 +72,11 @@ The promotion readiness review is recorded in
 and now recommends `ready for limited pilot promotion decision with warnings` after manual equivalent parity artifacts
 were added. It does not promote Maintainability Graph or change source authority.
 
+The limited pilot user judgment surface is recorded in
+[limited-pilot-promotion-decision-package.md](limited-pilot-promotion-decision-package.md). Its package state may be
+`Ready for approval`, but the promotion state remains `Decision required`; it does not make Maintainability Graph the
+current source model.
+
 The representative slice now includes manual equivalent read-model parity artifacts:
 
 - `examples/adoption/todo-search-slice/maintainability-graph-read-model.json`
@@ -116,6 +121,7 @@ traceability view.
 - OQ-026: Which existing tree-native artifacts are sufficient inputs for future generated/read-model support?
 - OQ-027: Should graph checks become validators, evidence reports, documentation-only review aids, or a combination?
 - OQ-052: Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?
+- OQ-053: Which limited pilot promotion decision option will the user choose?
 
 ## Related Gate
 

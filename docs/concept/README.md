@@ -63,6 +63,8 @@ Graph-source promotion requires a separate phase and explicit user approval afte
 8. Graph-source Promotion Readiness Review classifies retained warnings, blockers, and remaining decisions.
 9. A Maintainability Graph read-model parity artifact resolves any read-model output blocker for the intended promotion
    decision scope.
+10. A user-facing decision package is prepared for the intended limited pilot or promotion scope, and the user makes an
+    explicit approval decision.
 
 ## Phase 1 Repository Files
 
@@ -136,12 +138,20 @@ artifacts in `examples/adoption/todo-search-slice/`. Generated builder output re
 for full promotion or repeatable CI-backed parity. The review does not approve Graph-source promotion or change source
 authority.
 
+The following decision package is now prepared for user judgment:
+
+- [limited-pilot-promotion-decision-package.md](limited-pilot-promotion-decision-package.md)
+
+The package state is `Ready for approval`; the promotion state remains `Decision required`. It is a user decision
+surface only. It does not approve limited pilot promotion, full Graph-source promotion, source authority change, public
+doc cleanup, generated builder implementation, or tree-native artifact retirement.
+
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.
-Further generated read-model builder support, promotion decision packaging, rollback mechanics, compatibility artifact
-generation, type models, CLI command design, validators, migration scripts, and Graph-source promotion are next-phase
-candidates only.
+Further generated read-model builder support, actual pilot transition records, rollback mechanics, compatibility
+artifact generation, type models, CLI command design, validators, migration scripts, and Graph-source promotion are
+next-phase candidates only.
 
 If a later outline-only concept file is added, use the outline gate criteria below until it is promoted.
 

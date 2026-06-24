@@ -267,6 +267,10 @@ Manual equivalent read-model parity artifacts now resolve that read-model output
 preparation while keeping generated builder output as a later full-promotion or repeatability question. The artifacts do
 not perform rollback, fallback, compatibility retirement, migration, or source promotion.
 
+[limited-pilot-promotion-decision-package.md](limited-pilot-promotion-decision-package.md) packages the limited pilot
+decision options, retained warnings, and rollback/compatibility boundaries for user judgment. It does not perform
+rollback, fallback, compatibility retirement, migration, source transition, or promotion.
+
 ### Maintainability Graph
 
 [maintainability-graph.md](maintainability-graph.md) remains the canonical read/alignment model and long-term
@@ -339,7 +343,7 @@ Those remain later concept or implementation questions.
 - How should a future validator or CI check rollback readiness without over-automating source authority decisions?
 - Does rollback review need a specialized Approval Brief template?
 - Who approves compatibility retirement, and at what review point?
-- Should the next decision surface be limited pilot promotion or full promotion?
+- Which limited pilot promotion decision option will the user choose?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
 - Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?

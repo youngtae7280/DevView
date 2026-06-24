@@ -36,6 +36,7 @@ This log is the source of truth for confirmed concept decisions in the PBE runti
 | DEC-028 | active | User-renewed Acceptance for the representative Todo Search demo slice may close the demo-support acceptance branch with retained warnings, but it does not approve Graph-source promotion or change source authority. Retained warnings must be carried into Graph-source Promotion Readiness Review as explicit review items.                                          | Renewed Acceptance For Demo Slice                                                 |
 | DEC-029 | active | Graph-source Promotion Readiness Review classifies prerequisites and retained warnings, but it does not promote Maintainability Graph or change source authority. A representative demo may be demonstrated with retained warnings while blockers, warnings, cleanup, and user promotion approval remain separately reviewable.                                         | Graph-source Promotion Readiness Review                                           |
 | DEC-030 | active | A manual or generated Maintainability Graph read-model parity artifact can resolve the read-model output blocker for a limited pilot promotion decision only when it preserves source links, node/edge parity, warning status, and source-authority boundaries. Resolving that blocker for readiness does not promote Maintainability Graph or change source authority. | Maintainability Graph Read-Model Parity Artifact                                  |
+| DEC-031 | active | Limited Pilot Promotion Decision Package is a user judgment surface for a scoped pilot decision. It may package Evidence, warnings, rollback/compatibility boundaries, and choices, but it does not execute promotion, approve full Graph-source promotion, change source authority, replace tree-native artifacts, or let Codex/PBE approve on the user's behalf.      | Limited Pilot Promotion Decision Package                                          |
 
 ## Supersede Relationships
 
@@ -120,6 +121,11 @@ DEC-030 does not supersede DEC-013, DEC-020, DEC-021, DEC-027, DEC-028, or DEC-0
 blocker only for limited pilot decision preparation, while generated builder output, full promotion repeatability,
 source transition approval, rollback/compatibility safety, bounded fixture limits, and user promotion approval remain
 separate.
+
+DEC-031 does not supersede DEC-007, DEC-013, DEC-020, DEC-021, DEC-029, or DEC-030. It creates the user-facing decision
+package for a limited pilot decision, while user acceptance authority, current tree-native source authority, source
+transition prerequisites, rollback/compatibility safety, readiness warning classification, manual parity limits, and
+explicit user promotion approval remain separate.
 
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
