@@ -6,7 +6,7 @@
       "id": "EV-ROOT",
       "type": "evidence_group",
       "title": "Todo search evidence root",
-      "status": "current",
+      "status": "partial_requires_refresh",
       "provesProductNodeIds": ["PT-ROOT"],
       "provesWorkNodeIds": ["WT-ROOT"],
       "provesTestNodeIds": ["TT-ROOT"]
@@ -15,23 +15,39 @@
       "id": "EV-SEARCH-TEST",
       "type": "test_output",
       "title": "Todo search automated test output",
-      "status": "current",
+      "status": "partial_stale_for_expanded_scope",
       "provesProductNodeIds": ["PT-SEARCH-001"],
       "provesWorkNodeIds": ["WT-SEARCH-001"],
       "provesTestNodeIds": ["TT-SEARCH-001", "TT-SEARCH-002"],
       "provesAcceptanceCriteriaIds": ["AC-SEARCH-001", "AC-SEARCH-002"],
-      "artifact": "npm test -- todo-search passed"
+      "artifact": "npm test -- todo-search passed",
+      "staleReason": "Evidence proves title-only and empty-query behavior. PP-001 requires refreshed title + note/content test evidence."
     },
     {
       "id": "EV-SEARCH-REVIEW",
       "type": "review_note",
       "title": "No-result empty state review",
-      "status": "current",
+      "status": "partial_requires_review_refresh",
       "provesProductNodeIds": ["PT-SEARCH-001"],
       "provesWorkNodeIds": ["WT-SEARCH-001"],
       "provesTestNodeIds": ["TT-SEARCH-003"],
       "provesAcceptanceCriteriaIds": ["AC-SEARCH-003"],
-      "artifact": "Manual review confirmed no-result empty state."
+      "artifact": "Manual review confirmed no-result empty state for title-only behavior.",
+      "staleReason": "PP-001 requires refreshed review for no-result behavior when title and note/content are searched."
+    },
+    {
+      "id": "EV-SEARCH-NOTE-TEST",
+      "type": "test_output",
+      "title": "Todo note/content search automated test output",
+      "status": "missing",
+      "createdByProductPatchId": "PP-001",
+      "provesProductNodeIds": ["PT-SEARCH-001"],
+      "provesWorkNodeIds": ["WT-SEARCH-001"],
+      "provesTestNodeIds": ["TT-SEARCH-004"],
+      "provesAcceptanceCriteriaIds": ["AC-SEARCH-001"],
+      "artifact": null,
+      "missingReason": "No actual Todo feature implementation or test run was performed in this evidence task.",
+      "requiredForRenewedAcceptance": true
     }
   ],
   "edges": []

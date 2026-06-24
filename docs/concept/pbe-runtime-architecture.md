@@ -91,7 +91,8 @@ for future demo execution. It does not execute the demo or create runtime author
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md) records the current manual demo
 result for that slice. It is `partially demonstrated`, so it provides evidence and gap visibility without changing
 runtime authority. A supplemental compatibility mismatch slice now demonstrates a real ACEP task-card-only wording
-mismatch as a bounded warning, not as cleanup or source promotion.
+mismatch as a bounded warning, and PP-001 confirmation is recorded for the Todo Search slice. Neither is cleanup,
+runtime Evidence, renewed Acceptance, or source promotion.
 
 [rollback-compatibility-strategy.md](rollback-compatibility-strategy.md) defines the recovery and compatibility safety
 policy required before any future promotion review. That policy does not change current source authority or implement
@@ -126,7 +127,8 @@ PBE is a requirements-based execution control layer for AI-assisted development.
 - Whether Maintainability Graph later gains generated/read-model artifact support.
 - Whether View Tree Pack remains a conceptual projection or becomes a concrete artifact pack.
 - Which older public docs still need terminology cleanup after this concept baseline is reviewed.
-- Whether Product Patch confirmation/refreshed Evidence is needed before stale/reopen can be called demonstrated.
+- Whether actual implementation/test Evidence for title + note/content search is needed before promotion readiness
+  review.
 - Whether the observed ACEP task-card-only wording must be cleaned up before promotion readiness review, or warning plus
   deferred cleanup is sufficient.
 - Which compatibility views must remain maintained after a future promotion.

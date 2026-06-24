@@ -6,9 +6,13 @@ Rough request:
 
 > Todo 목록이 많아지니까 찾기 불편해. 검색 좀 되게 해줘.
 
-Suggested first slice:
+Original first slice:
 
 Todo title text search only.
+
+Confirmed PP-001 revision scope:
+
+Todo title + note/content search. The user approved PP-001 in the parent orchestration chat on 2026-06-24.
 
 Deferred/out of scope for this slice:
 
@@ -17,7 +21,7 @@ Deferred/out of scope for this slice:
 - fuzzy search
 - server-side search
 - saved search
-- note/description search until Product Patch feedback
+- note/content search beyond the confirmed title + note/content semantics
 
 Files in this folder are illustrative artifact snapshots, not regression fixtures wired into `test:examples`.
 
@@ -38,8 +42,9 @@ pbe review submit
 pbe accept
 ```
 
-The accepted title-only slice later receives Product meaning feedback: search should include todo note content. That
-feedback is represented through Change/Impact/Product Patch/Revision instead of directly editing Product Tree meaning.
+The accepted title-only slice later receives Product meaning feedback: search should include todo note content. PP-001 is
+now confirmed in the demo-support artifacts, and the affected Work/Test/Evidence/Acceptance snapshots are reopened or
+marked stale/missing until refreshed Evidence exists.
 
 Demo-support evidence strengthening adds manual, non-authoritative selected-slice snapshots:
 

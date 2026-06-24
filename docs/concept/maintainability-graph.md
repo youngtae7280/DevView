@@ -64,8 +64,8 @@ The representative slice and Evidence review criteria are defined in
 The current manual actual demo result is recorded in
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md). Its `partially demonstrated`
 judgment records evidence gaps and does not satisfy promotion readiness by itself. Supplemental compatibility mismatch
-Evidence strengthens the compatibility path, but PP-001 stale/reopen closure, generated read-model output, and cleanup
-judgment remain unresolved.
+Evidence and PP-001 confirmation strengthen the compatibility and stale/reopen paths, but refreshed title +
+note/content Evidence, renewed Acceptance, generated read-model output, and cleanup judgment remain unresolved.
 The concept-level authority transition policy is defined in [source-transition-path.md](source-transition-path.md).
 The concept-level recovery and compatibility safety policy is defined in
 [rollback-compatibility-strategy.md](rollback-compatibility-strategy.md).

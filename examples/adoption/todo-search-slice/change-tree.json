@@ -16,12 +16,12 @@
   "derivationNotes": [
     "Change CH-001 is referenced by Product Patch PP-001.",
     "The change summary is derived from the README and dogfooding docs: search should include todo note content.",
-    "The change is not applied because PP-001 has userConfirmed false."
+    "PP-001 was user-confirmed in the parent orchestration chat on 2026-06-24.",
+    "The change is applied to demo-support snapshots but still requires refreshed Work/Test/Evidence and renewed Acceptance."
   ],
   "limitations": [
     "This is a manual demo-support Change Tree snapshot.",
-    "It does not mutate Product Tree meaning.",
-    "It does not confirm or apply PP-001.",
+    "It records Product Patch confirmation for demo-support evidence only.",
     "It does not execute revision work."
   ],
   "changes": [
@@ -30,11 +30,13 @@
       "type": "feedback",
       "source": "user_feedback",
       "summary": "Search should include todo note content.",
-      "status": "product_patch_proposed_waiting_user_confirmation",
+      "status": "product_patch_confirmed_revision_required",
       "createdAt": "2026-06-13T00:00:00.000Z",
+      "confirmedAt": "2026-06-24T00:00:00.000Z",
+      "confirmationSource": "user approved PP-001 in parent orchestration chat on 2026-06-24",
       "linkedProductPatchIds": ["PP-001"],
       "requiresUserConfirmation": true,
-      "userConfirmed": false,
+      "userConfirmed": true,
       "requiresProductPatch": true,
       "requiresRevisionAfterConfirmation": true,
       "affectedProductNodeIds": ["PT-SEARCH-001"],
@@ -48,11 +50,23 @@
       "controlNodeCandidates": [
         {
           "family": "Decision Control Node",
-          "reason": "User must confirm whether title-only search should expand to title + note search."
+          "status": "Resolved",
+          "reason": "User confirmed PP-001 in the parent orchestration chat on 2026-06-24."
         },
         {
           "family": "Impact Control Node",
-          "reason": "Accepted title-only Work/Test/Evidence/Acceptance may become stale or require review if PP-001 is confirmed."
+          "status": "Active",
+          "reason": "Accepted title-only Work/Test/Evidence/Acceptance are now stale, reopened, or require refreshed review after PP-001 confirmation."
+        },
+        {
+          "family": "Evidence Control Node",
+          "status": "Active",
+          "reason": "Refreshed note/content test output and renewed review evidence are missing."
+        },
+        {
+          "family": "Acceptance Control Node",
+          "status": "Waiting for human",
+          "reason": "Renewed Acceptance cannot close until refreshed Evidence is available and submitted for user review."
         }
       ]
     }

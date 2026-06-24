@@ -6,7 +6,7 @@
       "id": "TT-ROOT",
       "type": "test_suite",
       "title": "Todo search tests",
-      "status": "passed",
+      "status": "partial_requires_refresh",
       "coversProductNodeIds": ["PT-ROOT"],
       "coversWorkNodeIds": ["WT-ROOT"],
       "acceptanceCriteriaNotLinkedReason": "Root groups executable tests."
@@ -15,11 +15,12 @@
       "id": "TT-SEARCH-001",
       "type": "automated_test",
       "title": "Filters todos by title query",
-      "status": "passed",
+      "status": "passed_partial_for_expanded_scope",
       "coversProductNodeIds": ["PT-SEARCH-001"],
       "coversWorkNodeIds": ["WT-SEARCH-001"],
       "coversAcceptanceCriteriaIds": ["AC-SEARCH-001"],
-      "evidenceNodeIds": ["EV-SEARCH-TEST"]
+      "evidenceNodeIds": ["EV-SEARCH-TEST"],
+      "staleReason": "PP-001 expands AC-SEARCH-001 from title-only to title + note/content; this test covers title matching only."
     },
     {
       "id": "TT-SEARCH-002",
@@ -34,12 +35,26 @@
     {
       "id": "TT-SEARCH-003",
       "type": "manual_review",
-      "title": "Shows no-result empty state",
-      "status": "passed",
+      "title": "Shows no-result empty state for title and note search",
+      "status": "requires_review_refresh",
       "coversProductNodeIds": ["PT-SEARCH-001"],
       "coversWorkNodeIds": ["WT-SEARCH-001"],
       "coversAcceptanceCriteriaIds": ["AC-SEARCH-003"],
-      "evidenceNodeIds": ["EV-SEARCH-REVIEW"]
+      "evidenceNodeIds": ["EV-SEARCH-REVIEW"],
+      "staleReason": "Existing manual review was for title-only no-result behavior; title + note no-result semantics require refreshed review."
+    },
+    {
+      "id": "TT-SEARCH-004",
+      "type": "automated_test",
+      "title": "Filters todos by note/content query",
+      "status": "required_missing_evidence",
+      "createdByProductPatchId": "PP-001",
+      "coversProductNodeIds": ["PT-SEARCH-001"],
+      "coversWorkNodeIds": ["WT-SEARCH-001"],
+      "coversAcceptanceCriteriaIds": ["AC-SEARCH-001"],
+      "evidenceNodeIds": ["EV-SEARCH-NOTE-TEST"],
+      "requiredEvidence": ["test_output"],
+      "missingReason": "PP-001 is confirmed, but this task does not implement the Todo feature or run product tests."
     }
   ],
   "edges": []

@@ -6,14 +6,30 @@
       "id": "AT-ROOT",
       "type": "acceptance_group",
       "title": "Todo search acceptance",
-      "status": "accepted",
+      "status": "reopened_requires_renewed_acceptance",
+      "previousStatus": "accepted",
       "actor": "user",
       "acceptedAt": "2026-06-13T00:00:00.000Z",
+      "acceptedScope": "title-only search",
+      "reopenedAt": "2026-06-24T00:00:00.000Z",
+      "reopenedByProductPatchId": "PP-001",
+      "reopenSource": "user approved PP-001 in parent orchestration chat on 2026-06-24",
       "productNodeIds": ["PT-SEARCH-001"],
       "workNodeIds": ["WT-SEARCH-001"],
-      "testNodeIds": ["TT-SEARCH-001", "TT-SEARCH-002", "TT-SEARCH-003"],
-      "evidenceNodeIds": ["EV-SEARCH-TEST", "EV-SEARCH-REVIEW"],
-      "decisionSource": "User approved the title-only search slice after review."
+      "testNodeIds": ["TT-SEARCH-001", "TT-SEARCH-002", "TT-SEARCH-003", "TT-SEARCH-004"],
+      "evidenceNodeIds": ["EV-SEARCH-TEST", "EV-SEARCH-REVIEW", "EV-SEARCH-NOTE-TEST"],
+      "decisionSource": "User approved the title-only search slice after review.",
+      "currentMeaning": "title + note/content search after PP-001 confirmation",
+      "renewedAcceptance": {
+        "status": "not_ready_missing_refreshed_evidence",
+        "requiredBeforeClosure": [
+          "Implement or otherwise evidence title + note/content search behavior.",
+          "Provide fresh automated evidence for note/content query matching.",
+          "Refresh no-result review evidence for title + note/content semantics.",
+          "Submit expanded behavior for user review."
+        ],
+        "selfAcceptanceProhibited": true
+      }
     }
   ]
 }

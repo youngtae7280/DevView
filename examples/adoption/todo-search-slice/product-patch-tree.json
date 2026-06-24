@@ -6,9 +6,14 @@
       "changeNodeId": "CH-001",
       "targetProductNodeId": "PT-SEARCH-001",
       "operation": "update_acceptance_criteria",
-      "status": "proposed",
+      "status": "confirmed_revision_required",
       "requiresUserConfirmation": true,
-      "userConfirmed": false,
+      "userConfirmed": true,
+      "confirmedAt": "2026-06-24T00:00:00.000Z",
+      "confirmationSource": "user approved PP-001 in parent orchestration chat on 2026-06-24",
+      "confirmationNote": "Todo Search Adoption + Product Meaning Feedback now includes Todo note/content search in addition to title search.",
+      "artifactRole": "demo_support_evidence_snapshot",
+      "sourceAuthority": "This confirmation records selected-slice demo evidence only. It is not Graph-source promotion, runtime source authority change, or public-doc cleanup.",
       "beforeSnapshot": {
         "id": "PT-SEARCH-001",
         "title": "Todo title search",
@@ -21,7 +26,10 @@
       },
       "affectedProductNodeIds": ["PT-SEARCH-001"],
       "createdAt": "2026-06-13T00:00:00.000Z",
-      "appliedAt": null
+      "appliedAt": "2026-06-24T00:00:00.000Z",
+      "applicationScope": "demo-support selected-slice snapshots only",
+      "requiresRefreshedEvidence": true,
+      "renewedAcceptanceStatus": "not_ready_missing_refreshed_evidence"
     }
   ]
 }

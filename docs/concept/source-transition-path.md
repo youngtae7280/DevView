@@ -215,9 +215,9 @@ for future demo execution. It is a readiness artifact and does not count as obse
 
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md) records the current manual demo
 Evidence result. Its strengthened `partially demonstrated` status means the feasibility prerequisite remains unmet until
-Product Patch confirmation/refreshed Evidence, generated/parity expectations, and compatibility cleanup/defer judgment
-are resolved or explicitly accepted for promotion review. Supplemental compatibility mismatch Evidence now exists, but it
-does not clean up public docs or change source authority.
+refreshed title + note/content Evidence, renewed Acceptance, generated/parity expectations, and compatibility
+cleanup/defer judgment are resolved or explicitly accepted for promotion review. PP-001 confirmation and supplemental
+compatibility mismatch Evidence now exist, but they do not clean up public docs or change source authority.
 
 ### Rollback / Compatibility Strategy
 
@@ -281,8 +281,8 @@ Those remain later concept or implementation questions.
 
 - How formal should projection/parity expectations be before promotion review?
 - Does promotion review need a specialized Approval Brief template?
-- Does Product Patch `PP-001` need actual user confirmation plus refreshed revision Evidence before stale/reopen can be
-  called `demonstrated`?
+- Should actual implementation/test Evidence for title + note/content search be created before promotion readiness
+  review?
 - Must the observed ACEP task-card-only wording be cleaned up before promotion readiness review, or is warning plus
   deferred cleanup sufficient?
 - How long should a post-promotion compatibility period last?

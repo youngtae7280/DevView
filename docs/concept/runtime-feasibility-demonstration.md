@@ -289,9 +289,9 @@ representative slice and defines the demo Evidence review checklist. It does not
 
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md) records the current manual
 Evidence pack for the selected slice. Its strengthened `partially demonstrated` result now includes Project/Contract,
-Change/Impact, Approval Brief, Compatibility Review, Evidence Exception support artifacts, and a supplemental real
-compatibility mismatch slice. Product Patch confirmation, refreshed revision Evidence, generated graph output, and
-public-doc cleanup judgment remain visible as remaining gaps.
+Change/Impact, Approval Brief, Compatibility Review, Evidence Exception support artifacts, a supplemental real
+compatibility mismatch slice, and PP-001 confirmation. Refreshed title + note/content runtime Evidence, renewed
+Acceptance, generated graph output, and public-doc cleanup judgment remain visible as remaining gaps.
 
 ### Rollback / Compatibility Strategy
 
@@ -320,12 +320,11 @@ Those remain later concept or implementation questions.
 
 - Should future demo results become a generated artifact?
 - How should future demo results connect to CI or validators?
-- Does Product Patch `PP-001` need actual user confirmation plus refreshed revision Evidence before the stale/reopen path
-  can be called `demonstrated`?
+- Should actual implementation/test Evidence for title + note/content search be created before promotion readiness
+  review?
 - Must the observed ACEP task-card-only wording be cleaned up before promotion readiness review, or is warning plus
   deferred cleanup sufficient?
-- What fallback slice should be used if the Todo Search slice cannot produce stale/reopen Evidence during actual
-  execution?
+- What fallback slice should be used if the Todo Search slice cannot produce runtime Evidence during actual execution?
 
 ## Related Gate
 

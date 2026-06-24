@@ -24,28 +24,31 @@ runtime source artifact, and not Graph-source promotion.
 - Project boundary is derived in `project-tree.json` from existing selected-slice snapshots.
 - Validation hints and expected files come from `work-tree.json`.
 - Evidence obligations come from `test-tree.json` and `evidence-tree.json`.
-- Product Patch `PP-001` is not confirmed and is treated as change pressure, not selected implementation scope.
+- Product Patch `PP-001` was user-confirmed in the parent orchestration chat on 2026-06-24.
+- The selected revision scope now includes title + note/content search, but refreshed implementation/test Evidence is
+  still missing.
 
 ## Limitations
 
 - This is a manual demo-support contract.
 - It was not produced by `pbe acep ready`.
 - It does not prove product code was implemented in this repository.
-- It does not authorize note, tag, date, fuzzy, server-side, or saved search behavior.
+- It does not authorize tag, date, fuzzy, server-side, or saved search behavior.
+- It does not close renewed Acceptance for the expanded title + note/content behavior.
 
 ## Selected Cycle Scope
 
-| Category         | Nodes / Scope                                                                 |
-| ---------------- | ----------------------------------------------------------------------------- |
-| Product          | `PT-SEARCH-001` Todo title search                                             |
-| Project          | `PJ-TODO-LIST-SURFACE`, `PJ-TODO-SEARCH-HELPER`                               |
-| Work             | `WT-SEARCH-001` Implement Todo title search                                   |
-| Tests            | `TT-SEARCH-001`, `TT-SEARCH-002`, `TT-SEARCH-003`                             |
-| Evidence         | `EV-SEARCH-TEST`, `EV-SEARCH-REVIEW`                                          |
-| Acceptance       | `AT-ROOT` accepted title-only slice                                           |
-| Product Patch    | `PP-001` is proposed only; it is not included as implemented selected scope   |
-| Change pressure  | `CH-001` note-content feedback requires user confirmation and impact handling |
-| Demo result role | Evidence strengthening for runtime feasibility review                         |
+| Category         | Nodes / Scope                                                                |
+| ---------------- | ---------------------------------------------------------------------------- |
+| Product          | `PT-SEARCH-001` Todo title and note search                                   |
+| Project          | `PJ-TODO-LIST-SURFACE`, `PJ-TODO-SEARCH-HELPER`                              |
+| Work             | `WT-SEARCH-001` Revise Todo search for title and note content                |
+| Tests            | `TT-SEARCH-001`, `TT-SEARCH-002`, `TT-SEARCH-003`, `TT-SEARCH-004`           |
+| Evidence         | `EV-SEARCH-TEST`, `EV-SEARCH-REVIEW`, `EV-SEARCH-NOTE-TEST`                  |
+| Acceptance       | `AT-ROOT` reopened; renewed Acceptance is not ready                          |
+| Product Patch    | `PP-001` is confirmed and included as selected revision scope                |
+| Change pressure  | `CH-001` note-content feedback is confirmed; evidence refresh remains active |
+| Demo result role | Evidence strengthening for runtime feasibility review                        |
 
 ## Foundation Scope
 
@@ -62,7 +65,7 @@ The following are deferred or out of scope for this selected cycle:
 - fuzzy search
 - server-side search
 - saved search
-- note/description search until Product Patch `PP-001` is confirmed by the user
+- note/content search outside the approved title + note/content semantics
 
 ## Expected Files
 
@@ -75,17 +78,18 @@ The following are deferred or out of scope for this selected cycle:
 - `src/server-search.ts`
 - backend search API changes
 - tag/date/fuzzy/server-side/saved search implementation
-- note/description search implementation before confirmed Product Patch
+- note/content search behavior beyond title + note/content query matching
 
 ## Required Checks And Evidence
 
-| Check                                           | Required evidence                                           | Existing evidence snapshot                                                   |
-| ----------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Title query filters visible todos by title.     | Automated test output                                       | `TT-SEARCH-001`, `EV-SEARCH-TEST`                                            |
-| Empty query restores all todos.                 | Automated test output                                       | `TT-SEARCH-002`, `EV-SEARCH-TEST`                                            |
-| No title match shows an empty result state.     | Manual review note or screenshot                            | `TT-SEARCH-003`, `EV-SEARCH-REVIEW`                                          |
-| Search scope remains title-only for this cycle. | Static inspection / file-scope review                       | `work-tree.json`, this contract, `node-execution-contracts/wt-search-001.md` |
-| Evidence freshness after note-content feedback. | Impact analysis and refreshed evidence or visible exception | `impact-tree.json`, `evidence-exceptions.md`                                 |
+| Check                                                 | Required evidence                                           | Existing evidence snapshot                                                   |
+| ----------------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Title query filters visible todos by title.           | Automated test output                                       | `TT-SEARCH-001`, `EV-SEARCH-TEST`                                            |
+| Note/content query filters visible todos.             | Automated test output                                       | `TT-SEARCH-004`, `EV-SEARCH-NOTE-TEST` missing                               |
+| Empty query restores all todos.                       | Automated test output                                       | `TT-SEARCH-002`, `EV-SEARCH-TEST`                                            |
+| No title or note/content match shows an empty state.  | Manual review note or screenshot                            | `TT-SEARCH-003`, `EV-SEARCH-REVIEW` requires refresh                         |
+| Search scope remains bounded to title + note/content. | Static inspection / file-scope review                       | `work-tree.json`, this contract, `node-execution-contracts/wt-search-001.md` |
+| Evidence freshness after note-content feedback.       | Impact analysis and refreshed evidence or visible exception | `impact-tree.json`, `evidence-exceptions.md`                                 |
 
 ## Validation Commands
 
@@ -96,18 +100,19 @@ npm test -- todo-search
 ```
 
 The evidence snapshot records this command as already passed in `EV-SEARCH-TEST`, but this repository demo did not rerun
-the product test. The command output remains an evidence snapshot, not fresh command output from this task.
+the product test. The command output remains an evidence snapshot, not fresh command output from this task. No command
+output exists for `TT-SEARCH-004`.
 
 ## Stop / Change Rules
 
 Stop and create or use a Change/Impact path if:
 
-- search target expands from title-only to note/description, tag, date, fuzzy, server-side, or saved search
+- search target expands beyond title + note/content to tag, date, fuzzy, server-side, or saved search
 - forbidden files or boundaries are touched
 - required test output or review note is missing
-- evidence becomes stale after Product Patch confirmation
-- user confirmation is required for Product Patch `PP-001`
-- implementation discovers behavior outside the selected title-only scope
+- evidence remains stale after Product Patch confirmation
+- renewed Acceptance is requested without refreshed Evidence
+- implementation discovers behavior outside the selected title + note/content scope
 
 ## Non-Promotion Statement
 

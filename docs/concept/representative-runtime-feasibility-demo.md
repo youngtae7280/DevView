@@ -269,9 +269,9 @@ Todo Search Adoption + Product Meaning Feedback
 
 The future demo should attempt to show:
 
-1. Product intent records title-only Todo search as selected current behavior.
-2. Deferred/non-scope search targets are explicit: tag, date, fuzzy, server-side, saved search, and note/description
-   search before Product Patch confirmation.
+1. Product intent records original title-only Todo search and confirmed PP-001 title + note/content revision meaning.
+2. Deferred/non-scope search targets are explicit: tag, date, fuzzy, server-side, saved search, and note/content behavior
+   beyond the confirmed title + note/content semantics.
 3. Product -> Work -> Test -> Evidence -> Acceptance links are reviewable from existing adoption snapshots.
 4. Project Tree and Cycle/Node Execution Contract boundaries are added or referenced during actual demo execution.
 5. Work scope includes `src/todo-list.tsx` and `src/todo-search.ts`, while forbidding `src/tag-filter.ts` and
@@ -449,8 +449,9 @@ readiness artifact selects the representative slice and Evidence review checklis
 The current manual result is recorded in
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md). It confirms the selected slice is
 useful but partial: selected-slice Project/Contract/Change/Impact evidence has been strengthened, while Product Patch
-confirmation, refreshed revision Evidence, generated graph output, and public-doc cleanup judgment remain unresolved. A
-supplemental compatibility mismatch slice now covers the real mismatch path outside the Todo Search product slice.
+confirmation is now recorded. Refreshed title + note/content runtime Evidence, renewed Acceptance, generated graph
+output, and public-doc cleanup judgment remain unresolved. A supplemental compatibility mismatch slice now covers the
+real mismatch path outside the Todo Search product slice.
 
 ### Source Transition Path
 
@@ -507,12 +508,11 @@ Those remain later concept or implementation questions.
 - Should the future demo result be a generated artifact or a manual Evidence pack?
 - How should future demo Evidence connect to CI or validators?
 - Does promotion review need a specialized Approval Brief template?
-- Does Product Patch `PP-001` need actual user confirmation plus refreshed revision Evidence before stale/reopen can be
-  called `demonstrated`?
+- Should actual implementation/test Evidence for title + note/content search be created before promotion readiness
+  review?
 - Must the observed ACEP task-card-only wording be cleaned up before promotion readiness review, or is warning plus
   deferred cleanup sufficient?
-- What fallback slice should be used if the Todo Search slice cannot produce stale/reopen Evidence during actual
-  execution?
+- What fallback slice should be used if the Todo Search slice cannot produce runtime Evidence during actual execution?
 
 ## Related Gate
 

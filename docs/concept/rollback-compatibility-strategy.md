@@ -254,9 +254,9 @@ implement rollback mechanics.
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md) records the current manual demo
 result. Its rollback/compatibility notes use concept labels only: no rollback action, fallback action, compatibility
 retirement, migration, or source-authority change is performed. The strengthened result keeps rollback blocked for
-future promotion claims until remaining Evidence, compatibility cleanup/defer judgment, and source-transition
-prerequisites are resolved. Supplemental compatibility mismatch Evidence strengthens the compatibility path but does not
-perform cleanup or recovery.
+future promotion claims until refreshed title + note/content Evidence, renewed Acceptance, compatibility cleanup/defer
+judgment, and source-transition prerequisites are resolved. PP-001 confirmation and supplemental compatibility mismatch
+Evidence strengthen the demo but do not perform cleanup, recovery, or source promotion.
 
 ### Maintainability Graph
 
@@ -330,8 +330,8 @@ Those remain later concept or implementation questions.
 - How should a future validator or CI check rollback readiness without over-automating source authority decisions?
 - Does rollback review need a specialized Approval Brief template?
 - Who approves compatibility retirement, and at what review point?
-- Does Product Patch `PP-001` need actual user confirmation plus refreshed revision Evidence before stale/reopen can be
-  called `demonstrated`?
+- Should actual implementation/test Evidence for title + note/content search be created before promotion readiness
+  review?
 - Must the observed ACEP task-card-only wording be cleaned up before promotion readiness review, or is warning plus
   deferred cleanup sufficient?
 

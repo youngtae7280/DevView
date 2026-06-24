@@ -22,22 +22,32 @@
         "type": "none",
         "missing": []
       },
-      "derivedTo": ["WT-SEARCH-001", "TT-SEARCH-001", "TT-SEARCH-002", "TT-SEARCH-003"],
-      "evidence": ["EV-SEARCH-TEST", "EV-SEARCH-REVIEW"]
+      "derivedTo": ["WT-SEARCH-001", "TT-SEARCH-001", "TT-SEARCH-002", "TT-SEARCH-003", "TT-SEARCH-004"],
+      "evidence": ["EV-SEARCH-TEST", "EV-SEARCH-REVIEW", "EV-SEARCH-NOTE-TEST"]
     },
     {
       "id": "PT-SEARCH-001",
       "type": "capability",
-      "title": "Todo title search",
-      "status": "confirmed",
+      "title": "Todo title and note search",
+      "status": "confirmed_revision_required",
       "parent": "PT-ROOT",
       "children": [],
       "source": {
         "actor": "user",
-        "type": "rpd_interview"
+        "type": "rpd_interview_and_product_patch_confirmation",
+        "confirmationSource": "user approved PP-001 in parent orchestration chat on 2026-06-24"
       },
       "why": "The user needs to find todos when the list grows.",
       "scopeClass": "selected",
+      "productPatchIds": ["PP-001"],
+      "meaningRevision": {
+        "status": "confirmed_requires_work_test_evidence_refresh",
+        "previousSearchTarget": "title",
+        "confirmedSearchTarget": "title_and_note",
+        "confirmedAt": "2026-06-24T00:00:00.000Z",
+        "confirmationSource": "user approved PP-001 in parent orchestration chat on 2026-06-24",
+        "renewedAcceptanceStatus": "not_ready_missing_refreshed_evidence"
+      },
       "acceptanceCriteria": [
         {
           "id": "AC-SEARCH-001",
@@ -45,12 +55,13 @@
           "type": "event_driven",
           "condition": "The user enters a search query",
           "system": "THE SYSTEM",
-          "shall": "SHALL show todos whose title contains the query",
-          "observableResult": "Only matching todo titles remain visible.",
+          "shall": "SHALL show todos whose title or note content contains the query",
+          "observableResult": "Todos matching either title or note content remain visible.",
           "verificationMethod": "automated_test",
           "requiredEvidence": ["test_output"],
-          "statement": "WHEN the user enters a search query, THE SYSTEM SHALL show todos whose title contains the query.",
-          "status": "confirmed"
+          "statement": "WHEN the user enters a search query, THE SYSTEM SHALL show todos whose title or note content contains the query.",
+          "status": "confirmed_requires_refreshed_evidence",
+          "changedByProductPatchId": "PP-001"
         },
         {
           "id": "AC-SEARCH-002",
@@ -69,14 +80,15 @@
           "id": "AC-SEARCH-003",
           "format": "EARS",
           "type": "state_driven",
-          "condition": "No Todo title matches the query",
+          "condition": "No Todo title or note content matches the query",
           "system": "THE SYSTEM",
           "shall": "SHALL show an empty search result state",
           "observableResult": "The UI communicates that no matching todos were found.",
           "verificationMethod": "manual_review",
           "requiredEvidence": ["review_note"],
-          "statement": "WHEN no Todo title matches the query, THE SYSTEM SHALL show an empty search result state.",
-          "status": "confirmed"
+          "statement": "WHEN no Todo title or note content matches the query, THE SYSTEM SHALL show an empty search result state.",
+          "status": "confirmed_requires_review_refresh",
+          "changedByProductPatchId": "PP-001"
         }
       ],
       "ambiguity": {
@@ -85,15 +97,23 @@
         "missing": []
       },
       "deferredCandidates": ["tag filter", "date filter", "fuzzy search", "server-side search", "saved search"],
-      "derivedTo": ["WT-SEARCH-001", "TT-SEARCH-001", "TT-SEARCH-002", "TT-SEARCH-003"],
-      "evidence": ["EV-SEARCH-TEST", "EV-SEARCH-REVIEW"]
+      "derivedTo": ["WT-SEARCH-001", "TT-SEARCH-001", "TT-SEARCH-002", "TT-SEARCH-003", "TT-SEARCH-004"],
+      "evidence": ["EV-SEARCH-TEST", "EV-SEARCH-REVIEW", "EV-SEARCH-NOTE-TEST"]
     }
   ],
   "assumptions": [
     {
       "id": "AS-SEARCH-001",
       "text": "The first slice searches Todo title only.",
-      "source": "user_confirmation"
+      "source": "user_confirmation",
+      "status": "superseded_by_PP-001",
+      "supersededAt": "2026-06-24T00:00:00.000Z"
+    },
+    {
+      "id": "AS-SEARCH-002",
+      "text": "After PP-001 confirmation, the representative slice searches Todo title and note/content.",
+      "source": "user approved PP-001 in parent orchestration chat on 2026-06-24",
+      "status": "confirmed"
     }
   ]
 }

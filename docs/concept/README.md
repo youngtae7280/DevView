@@ -120,9 +120,9 @@ The following manual demo result is recorded:
 The actual result reviews `Todo Search Adoption + Product Meaning Feedback` against observable docs and selected-slice
 demo-support artifacts. Its final feasibility judgment remains `partially demonstrated`, but Project/Contract and
 Change/Impact gaps are strengthened with manual evidence snapshots. A supplemental compatibility mismatch slice now
-records real ACEP task-card-only wording and maps it through Compatibility Control Node policy. Product Patch
-confirmation, refreshed revision Evidence, generated graph output, and public-doc cleanup judgment remain unresolved
-before promotion readiness.
+records real ACEP task-card-only wording and maps it through Compatibility Control Node policy. PP-001 confirmation is
+now recorded in the selected-slice artifacts. Refreshed runtime Evidence, renewed Acceptance, generated graph output, and
+public-doc cleanup judgment remain unresolved before promotion readiness.
 
 ## Outline-Only Later-Phase Docs
 
