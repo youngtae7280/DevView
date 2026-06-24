@@ -12,10 +12,11 @@ The Product Tree remains the source of product truth for projects managed by PBE
 documentation, the source of truth order is:
 
 1. Confirmed decisions in [decision-log.md](decision-log.md).
-2. Canonical and compatibility vocabulary in [glossary.md](glossary.md).
-3. Canonical candidate architecture docs in this directory.
-4. Existing public docs under `docs/` when they do not conflict with the concept repository.
-5. Open questions and active assumptions when no confirmed decision exists.
+2. Concept policies in this directory.
+3. Canonical and compatibility vocabulary in [glossary.md](glossary.md).
+4. Current tree-native operational artifacts and CLI behavior.
+5. Existing public docs under `docs/` when they do not conflict with the concept repository.
+6. Open questions and active assumptions when no confirmed decision exists.
 
 If a later document conflicts with a confirmed decision, record the conflict instead of silently changing scope.
 
@@ -93,18 +94,18 @@ The following concept policies are complete at documentation level:
 - [approval-brief.md](approval-brief.md)
 - [check-evidence-policy.md](check-evidence-policy.md)
 - [control-node-policy.md](control-node-policy.md)
+- [legacy-compatibility-map.md](legacy-compatibility-map.md)
 
 Concept policy completion does not create CLI commands, schemas, validators, templates, runtime artifacts, or durable
 acceptance storage by itself.
 
 ## Outline-Only Later-Phase Docs
 
-The following files intentionally stay as outlines in this phase:
+No `docs/concept` policy file remains outline-only after Legacy Compatibility Map promotion. Runtime feasibility
+demonstration, source transition path, rollback strategy, type models, CLI command design, validators, and migration
+scripts are next-phase candidates only.
 
-- [legacy-compatibility-map.md](legacy-compatibility-map.md)
-
-Feasibility demonstration, detailed policy design, type models, CLI command design, validators, and migration scripts are
-next-phase candidates only.
+If a later outline-only concept file is added, use the outline gate criteria below until it is promoted.
 
 ## Outline Gate Common Criteria
 

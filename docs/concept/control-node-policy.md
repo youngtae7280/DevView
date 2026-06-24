@@ -293,7 +293,8 @@ Feedback or drift
 Change Control Node is not the same as Change Tree.
 
 ```text
-Change Tree / Change artifact = compatibility or artifact view
+Change Tree = current canonical / active-operational change artifact
+older change artifact or view = compatibility artifact only
 Change Control Node = conceptual control record explaining why change lifecycle is active
 ```
 
@@ -381,7 +382,8 @@ old ACEP/task-card-only wording conflicts with Execution Contract policy
 -> Compatibility Control Node or superseded item record
 ```
 
-Legacy Compatibility Map remains outline-only until separately promoted.
+Legacy Compatibility Map defines the compatibility interpretation policy. Compatibility Control Nodes are needed only
+when legacy/canonical mismatch affects current approval, verification, scope, migration judgment, or user decision.
 
 ## Scope Boundaries
 
@@ -425,13 +427,16 @@ acceptance.
 - Should Control Node summaries become a separate artifact or remain represented through existing trees and control
   files?
 - Which Control Node family should receive CLI support first?
-- Where is the exact boundary between Compatibility Control Node and `superseded-items.md`?
 - Should every Evidence exception create an Evidence Control Node, or only high-risk/blocking exceptions?
 - When should validators check Control Node state transitions?
+
+The boundary between Compatibility Control Node, Legacy Compatibility Map, and `superseded-items.md` is defined in
+[legacy-compatibility-map.md](legacy-compatibility-map.md).
 
 ## Related Gate
 
 This policy satisfies the Control Node lifecycle policy completion condition for Graph-source promotion readiness at
 concept level.
 
-It does not complete Legacy Compatibility Map, runtime feasibility demonstration, or Graph-source promotion itself.
+It does not complete runtime feasibility demonstration, source transition path, rollback/compatibility strategy, or
+Graph-source promotion itself.

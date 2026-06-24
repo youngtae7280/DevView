@@ -2,6 +2,10 @@
 
 This file records older explanations, terms, or structures that current decisions replace.
 
+Do not use this file for active compatibility terms that remain valid as bridge language. Those belong in
+[legacy-compatibility-map.md](legacy-compatibility-map.md) or [glossary.md](glossary.md). Use this file for replaced
+directions, deprecated behavior, or terms that should not be read as current authority.
+
 | Item                                        | Status     | Replaced By                                                                                         | Notes                                                               |
 | ------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | GUI/API-provider/SaaS product direction     | superseded | Codex plugin workflow and tree-based control system                                                 | Do not revive unless the user explicitly changes product direction. |

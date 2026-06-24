@@ -1,32 +1,45 @@
 # Concept Glossary
 
-Terms are classified as `canonical`, `legacy`, `compatibility`, `deprecated`, or `superseded`.
+Terms are classified as `canonical`, `active-operational`, `compatibility`, `legacy`, `superseded`, `deprecated`, or
+`future-target`.
+
+## Compatibility Status Categories
+
+| Status             | Meaning                                                                                      |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| canonical          | Preferred current concept term or policy term.                                               |
+| active-operational | Current runtime/file authority for plugin behavior.                                          |
+| compatibility      | Valid bridge, shorthand, package label, or view when read through canonical policy.          |
+| legacy             | Historical or older explanatory language that is not current architecture authority.         |
+| superseded         | Replaced direction or framing that should not be revived without explicit product direction. |
+| deprecated         | Discouraged behavior or interpretation that conflicts with current safety policy.            |
+| future-target      | Long-term architectural target or candidate that is not current operational authority.       |
 
 ## Canonical Terms
 
-| Term                    | Status    | Meaning                                                                                                                              |
-| ----------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Product Tree            | canonical | Source of product truth: intent, behavior, constraints, UX decisions, acceptance criteria, and product non-scope.                    |
-| Project Tree            | canonical | Derived architecture and ownership structure for modules, surfaces, boundaries, dependencies, and integration responsibilities.      |
-| Work Tree               | canonical | Executable work nodes derived from Product and Project nodes.                                                                        |
-| Test Tree               | canonical | Verification nodes that prove Product and Work nodes and declare required evidence.                                                  |
-| Cycle Tree              | canonical | Selected implementation slice packaged into Cycle and Node Execution Contracts.                                                      |
-| Change Tree             | canonical | Product, scope, UX, risk, acceptance, or verification changes discovered during review or execution.                                 |
-| Impact Tree             | canonical | Affected Product, Project, Work, Test, Evidence, Cycle, and Acceptance nodes that must be stale, invalidated, or reopened.           |
-| Evidence Tree           | canonical | Test results, logs, diffs, screenshots, manual notes, and other proof linked to nodes and criteria.                                  |
-| Acceptance Tree         | canonical | User-controlled closure state for product branches or slices.                                                                        |
-| Cycle Contract          | canonical | Contract for one selected implementation slice, including included scope, non-scope, tests, evidence, and stop conditions.           |
-| Node Execution Contract | canonical | Contract for a single executable Work node, including source nodes, files, dependencies, tests, evidence, and rules.                 |
-| Visual Design Contract  | canonical | Visual source, tokens, component rules, state coverage, evidence requirements, and waiver/not-required decisions for visual UI work. |
-| Maintainability Graph   | canonical | Current canonical read model / alignment model over tree-native artifacts and long-term target source model candidate.               |
-| View Tree Pack          | canonical | Conceptual projection pack that lets Codex read selected tree views without treating compatibility views as product truth.           |
-| Approval Brief          | canonical | User-facing judgment surface for interpreted intent, result, verification, remaining judgment, and approval choice.                  |
-| Human Gate              | canonical | Control mechanism used when PBE needs human judgment, authority, risk acceptance, or intent confirmation before safe progress.       |
-| Check                   | canonical | Verification obligation: a condition, question, criterion, or judgment item that must be verified.                                   |
-| Evidence                | canonical | Observable artifact showing that a Check was performed or satisfied; AI self-report alone is not Evidence.                           |
-| Evidence Exception      | canonical | Visible record that required Evidence is absent or insufficient, including reason, residual risk, user judgment, and later remedy.   |
-| Evidence Freshness      | canonical | Whether Evidence still supports the linked Check after the current change, impact, scope, or acceptance shift.                       |
-| Control Node            | canonical | Control record that tracks user judgment, change control, impact scope, acceptance closure, and block/reopen status.                 |
+| Term                    | Status                         | Meaning                                                                                                                              |
+| ----------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Product Tree            | canonical / active-operational | Source of product truth: intent, behavior, constraints, UX decisions, acceptance criteria, and product non-scope.                    |
+| Project Tree            | canonical / active-operational | Derived architecture and ownership structure for modules, surfaces, boundaries, dependencies, and integration responsibilities.      |
+| Work Tree               | canonical / active-operational | Executable work nodes derived from Product and Project nodes.                                                                        |
+| Test Tree               | canonical / active-operational | Verification nodes that prove Product and Work nodes and declare required evidence.                                                  |
+| Cycle Tree              | canonical / active-operational | Selected implementation slice packaged into Cycle and Node Execution Contracts.                                                      |
+| Change Tree             | canonical / active-operational | Product, scope, UX, risk, acceptance, or verification changes discovered during review or execution.                                 |
+| Impact Tree             | canonical / active-operational | Affected Product, Project, Work, Test, Evidence, Cycle, and Acceptance nodes that must be stale, invalidated, or reopened.           |
+| Evidence Tree           | canonical / active-operational | Test results, logs, diffs, screenshots, manual notes, and other proof linked to nodes and criteria.                                  |
+| Acceptance Tree         | canonical / active-operational | User-controlled closure state for product branches or slices.                                                                        |
+| Cycle Contract          | canonical / active-operational | Contract for one selected implementation slice, including included scope, non-scope, tests, evidence, and stop conditions.           |
+| Node Execution Contract | canonical / active-operational | Contract for a single executable Work node, including source nodes, files, dependencies, tests, evidence, and rules.                 |
+| Visual Design Contract  | canonical / active-operational | Visual source, tokens, component rules, state coverage, evidence requirements, and waiver/not-required decisions for visual UI work. |
+| Maintainability Graph   | canonical / future-target      | Current canonical read model / alignment model over tree-native artifacts and long-term target source model candidate.               |
+| View Tree Pack          | canonical                      | Conceptual projection pack that lets Codex read selected tree views without treating compatibility views as product truth.           |
+| Approval Brief          | canonical                      | User-facing judgment surface for interpreted intent, result, verification, remaining judgment, and approval choice.                  |
+| Human Gate              | canonical                      | Control mechanism used when PBE needs human judgment, authority, risk acceptance, or intent confirmation before safe progress.       |
+| Check                   | canonical                      | Verification obligation: a condition, question, criterion, or judgment item that must be verified.                                   |
+| Evidence                | canonical                      | Observable artifact showing that a Check was performed or satisfied; AI self-report alone is not Evidence.                           |
+| Evidence Exception      | canonical                      | Visible record that required Evidence is absent or insufficient, including reason, residual risk, user judgment, and later remedy.   |
+| Evidence Freshness      | canonical                      | Whether Evidence still supports the linked Check after the current change, impact, scope, or acceptance shift.                       |
+| Control Node            | canonical                      | Control record that tracks user judgment, change control, impact scope, acceptance closure, and block/reopen status.                 |
 
 ## Control Node Terms
 
@@ -48,6 +61,7 @@ Terms are classified as `canonical`, `legacy`, `compatibility`, `deprecated`, or
 | Canonical Read Model        | canonical | A stable conceptual model used to align, inspect, and reason over current artifacts without yet replacing them.                                        |
 | Target Source Model         | canonical | The intended future source model after explicit promotion approval.                                                                                    |
 | Graph-Source Promotion      | canonical | The future transition where Maintainability Graph becomes the source model and tree-native artifacts become projections, compatibility, or view files. |
+| Legacy Compatibility Map    | canonical | Transition interpretation policy mapping older terms/artifacts to canonical concepts without runtime migration or Graph-source promotion.              |
 
 ## Approval Brief Terms
 
