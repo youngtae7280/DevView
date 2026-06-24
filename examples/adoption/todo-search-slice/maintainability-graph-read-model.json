@@ -1,0 +1,518 @@
+{
+  "version": "0.2.0-read-model-parity",
+  "metadata": {
+    "artifactPurpose": "Maintainability Graph read/alignment output for the representative Todo Search demo slice.",
+    "artifactRole": "manual_equivalent_parity_artifact",
+    "createdAt": "2026-06-24T00:00:00.000Z",
+    "basisCommit": "d43da58",
+    "selectedSlice": "Todo Search Adoption + Product Meaning Feedback",
+    "sourceAuthority": "Tree-native selected-slice artifacts remain the current operational source.",
+    "nonPromotionStatement": "This artifact does not promote Maintainability Graph, does not change source authority, does not mark tree-native artifacts as projections, and does not implement a graph builder, CLI, schema, runtime, or validator.",
+    "generatedStatus": "manual parity artifact; no generator command was implemented or run",
+    "readinessUse": "Equivalent read-model parity output for limited pilot promotion readiness discussion only."
+  },
+  "sourceInputs": [
+    "examples/adoption/todo-search-slice/product-tree.json",
+    "examples/adoption/todo-search-slice/project-tree.json",
+    "examples/adoption/todo-search-slice/work-tree.json",
+    "examples/adoption/todo-search-slice/test-tree.json",
+    "examples/adoption/todo-search-slice/evidence-tree.json",
+    "examples/adoption/todo-search-slice/acceptance-tree.json",
+    "examples/adoption/todo-search-slice/change-tree.json",
+    "examples/adoption/todo-search-slice/impact-tree.json",
+    "examples/adoption/todo-search-slice/product-patch-tree.json",
+    "examples/adoption/todo-search-slice/cycle-contract.md",
+    "examples/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md",
+    "examples/adoption/todo-search-slice/runtime-evidence.md",
+    "examples/adoption/todo-search-slice/approval-brief.md",
+    "examples/adoption/todo-search-slice/evidence-exceptions.md",
+    "examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md"
+  ],
+  "nodes": [
+    {
+      "id": "PT-SEARCH-001",
+      "graphType": "product",
+      "sourceArtifact": "product-tree.json",
+      "title": "Todo title and note search",
+      "status": "confirmed_renewed_acceptance_approved_with_warnings",
+      "parityStatus": "present",
+      "notes": "Product meaning includes title + note/content search after PP-001."
+    },
+    {
+      "id": "AC-SEARCH-001",
+      "graphType": "product_acceptance_criterion",
+      "sourceArtifact": "product-tree.json",
+      "title": "Search query matches title or note content",
+      "status": "confirmed_runtime_evidence_present",
+      "parityStatus": "present"
+    },
+    {
+      "id": "AC-SEARCH-002",
+      "graphType": "product_acceptance_criterion",
+      "sourceArtifact": "product-tree.json",
+      "title": "Empty query restores full Todo list",
+      "status": "confirmed",
+      "parityStatus": "present"
+    },
+    {
+      "id": "AC-SEARCH-003",
+      "graphType": "product_acceptance_criterion",
+      "sourceArtifact": "product-tree.json",
+      "title": "No title or note content match shows empty result state",
+      "status": "confirmed_runtime_behavior_present_visual_review_pending",
+      "parityStatus": "partial",
+      "notes": "Runtime no-match behavior is covered, but UI screenshot/manual visual evidence remains partial."
+    },
+    {
+      "id": "PJ-TODO-LIST-SURFACE",
+      "graphType": "project_boundary",
+      "sourceArtifact": "project-tree.json",
+      "title": "Todo list search surface",
+      "status": "derived_demo_support_accepted_with_warnings",
+      "parityStatus": "present"
+    },
+    {
+      "id": "PJ-TODO-SEARCH-HELPER",
+      "graphType": "project_boundary",
+      "sourceArtifact": "project-tree.json",
+      "title": "Todo title and note search helper",
+      "status": "derived_demo_support_accepted_with_warnings",
+      "parityStatus": "present"
+    },
+    {
+      "id": "WT-SEARCH-001",
+      "graphType": "work",
+      "sourceArtifact": "work-tree.json",
+      "title": "Revise Todo search for title and note content",
+      "status": "accepted_with_warnings",
+      "parityStatus": "present"
+    },
+    {
+      "id": "TT-SEARCH-001",
+      "graphType": "test_check",
+      "sourceArtifact": "test-tree.json",
+      "title": "Filters todos by title query",
+      "status": "passed_refreshed_by_runtime_fixture",
+      "parityStatus": "present"
+    },
+    {
+      "id": "TT-SEARCH-002",
+      "graphType": "test_check",
+      "sourceArtifact": "test-tree.json",
+      "title": "Restores all todos for empty query",
+      "status": "passed_refreshed_by_runtime_fixture",
+      "parityStatus": "present"
+    },
+    {
+      "id": "TT-SEARCH-003",
+      "graphType": "test_check",
+      "sourceArtifact": "test-tree.json",
+      "title": "Shows no-result empty state for title and note search",
+      "status": "partial_runtime_behavior_present_visual_review_pending",
+      "parityStatus": "partial"
+    },
+    {
+      "id": "TT-SEARCH-004",
+      "graphType": "test_check",
+      "sourceArtifact": "test-tree.json",
+      "title": "Filters todos by note/content query",
+      "status": "passed_runtime_fixture",
+      "parityStatus": "present"
+    },
+    {
+      "id": "EV-SEARCH-TEST",
+      "graphType": "evidence",
+      "sourceArtifact": "evidence-tree.json",
+      "title": "Todo search automated test output",
+      "status": "present_historical_supplemented_by_runtime_fixture",
+      "parityStatus": "partial"
+    },
+    {
+      "id": "EV-SEARCH-REVIEW",
+      "graphType": "evidence",
+      "sourceArtifact": "evidence-tree.json",
+      "title": "No-result empty state review",
+      "status": "partial_visual_review_refresh_pending",
+      "parityStatus": "partial"
+    },
+    {
+      "id": "EV-SEARCH-NOTE-TEST",
+      "graphType": "evidence",
+      "sourceArtifact": "evidence-tree.json",
+      "title": "Todo note/content search automated test output",
+      "status": "present_fresh",
+      "parityStatus": "present"
+    },
+    {
+      "id": "AT-ROOT",
+      "graphType": "acceptance",
+      "sourceArtifact": "acceptance-tree.json",
+      "title": "Todo search acceptance",
+      "status": "renewed_acceptance_approved_with_warnings",
+      "parityStatus": "present"
+    },
+    {
+      "id": "PP-001",
+      "graphType": "product_patch",
+      "sourceArtifact": "product-patch-tree.json",
+      "title": "Expand search target from title to title and note",
+      "status": "confirmed_renewed_acceptance_approved_with_warnings",
+      "parityStatus": "present"
+    },
+    {
+      "id": "CH-001",
+      "graphType": "change",
+      "sourceArtifact": "change-tree.json",
+      "title": "Search should include todo note content",
+      "status": "closed_with_retained_warnings",
+      "parityStatus": "present"
+    },
+    {
+      "id": "IM-SEARCH-001",
+      "graphType": "impact",
+      "sourceArtifact": "impact-tree.json",
+      "title": "Impact of note/content search meaning change",
+      "status": "closed_with_retained_warnings",
+      "parityStatus": "present"
+    },
+    {
+      "id": "CYCLE-TODO-SEARCH",
+      "graphType": "contract",
+      "sourceArtifact": "cycle-contract.md",
+      "title": "Todo Search Demo-Support Cycle Contract",
+      "status": "demo_support_evidence_snapshot",
+      "parityStatus": "present"
+    },
+    {
+      "id": "NEC-WT-SEARCH-001",
+      "graphType": "contract",
+      "sourceArtifact": "node-execution-contracts/wt-search-001.md",
+      "title": "Node Execution Contract for WT-SEARCH-001",
+      "status": "demo_support_evidence_snapshot",
+      "parityStatus": "present"
+    },
+    {
+      "id": "AB-TODO-SEARCH",
+      "graphType": "approval_brief",
+      "sourceArtifact": "approval-brief.md",
+      "title": "Todo Search Demo-Support Approval Brief",
+      "status": "accepted_with_warnings",
+      "parityStatus": "present"
+    },
+    {
+      "id": "CCN-ACEP-TASK-CARD-AUTHORITY-001",
+      "graphType": "compatibility_warning",
+      "sourceArtifact": "../compatibility-mismatch-slice/compatibility-control-node.md",
+      "title": "ACEP task-card-only authority wording",
+      "status": "active_deferred_cleanup",
+      "parityStatus": "present"
+    }
+  ],
+  "edges": [
+    {
+      "id": "E-PT-PJ-SURFACE",
+      "from": "PT-SEARCH-001",
+      "to": "PJ-TODO-LIST-SURFACE",
+      "relationship": "derivesProjectBoundary",
+      "parityStatus": "present",
+      "source": "project-tree.json"
+    },
+    {
+      "id": "E-PT-PJ-HELPER",
+      "from": "PT-SEARCH-001",
+      "to": "PJ-TODO-SEARCH-HELPER",
+      "relationship": "derivesProjectBoundary",
+      "parityStatus": "present",
+      "source": "project-tree.json"
+    },
+    {
+      "id": "E-PT-WT",
+      "from": "PT-SEARCH-001",
+      "to": "WT-SEARCH-001",
+      "relationship": "realizedByWork",
+      "parityStatus": "present",
+      "source": "work-tree.json"
+    },
+    {
+      "id": "E-PJ-SURFACE-WT",
+      "from": "PJ-TODO-LIST-SURFACE",
+      "to": "WT-SEARCH-001",
+      "relationship": "boundedWork",
+      "parityStatus": "present",
+      "source": "project-tree.json"
+    },
+    {
+      "id": "E-PJ-HELPER-WT",
+      "from": "PJ-TODO-SEARCH-HELPER",
+      "to": "WT-SEARCH-001",
+      "relationship": "boundedWork",
+      "parityStatus": "present",
+      "source": "project-tree.json"
+    },
+    {
+      "id": "E-WT-TT-001",
+      "from": "WT-SEARCH-001",
+      "to": "TT-SEARCH-001",
+      "relationship": "verifiedBy",
+      "parityStatus": "present",
+      "source": "test-tree.json"
+    },
+    {
+      "id": "E-WT-TT-002",
+      "from": "WT-SEARCH-001",
+      "to": "TT-SEARCH-002",
+      "relationship": "verifiedBy",
+      "parityStatus": "present",
+      "source": "test-tree.json"
+    },
+    {
+      "id": "E-WT-TT-003",
+      "from": "WT-SEARCH-001",
+      "to": "TT-SEARCH-003",
+      "relationship": "verifiedBy",
+      "parityStatus": "partial",
+      "source": "test-tree.json"
+    },
+    {
+      "id": "E-WT-TT-004",
+      "from": "WT-SEARCH-001",
+      "to": "TT-SEARCH-004",
+      "relationship": "verifiedBy",
+      "parityStatus": "present",
+      "source": "test-tree.json"
+    },
+    {
+      "id": "E-TT-001-EV-NOTE",
+      "from": "TT-SEARCH-001",
+      "to": "EV-SEARCH-NOTE-TEST",
+      "relationship": "evidencedBy",
+      "parityStatus": "present",
+      "source": "test-tree.json"
+    },
+    {
+      "id": "E-TT-002-EV-NOTE",
+      "from": "TT-SEARCH-002",
+      "to": "EV-SEARCH-NOTE-TEST",
+      "relationship": "evidencedBy",
+      "parityStatus": "present",
+      "source": "test-tree.json"
+    },
+    {
+      "id": "E-TT-003-EV-REVIEW",
+      "from": "TT-SEARCH-003",
+      "to": "EV-SEARCH-REVIEW",
+      "relationship": "evidencedBy",
+      "parityStatus": "partial",
+      "source": "test-tree.json"
+    },
+    {
+      "id": "E-TT-004-EV-NOTE",
+      "from": "TT-SEARCH-004",
+      "to": "EV-SEARCH-NOTE-TEST",
+      "relationship": "evidencedBy",
+      "parityStatus": "present",
+      "source": "test-tree.json"
+    },
+    {
+      "id": "E-EV-NOTE-AT",
+      "from": "EV-SEARCH-NOTE-TEST",
+      "to": "AT-ROOT",
+      "relationship": "supportsAcceptance",
+      "parityStatus": "present",
+      "source": "acceptance-tree.json"
+    },
+    {
+      "id": "E-AB-AT",
+      "from": "AB-TODO-SEARCH",
+      "to": "AT-ROOT",
+      "relationship": "summarizesAcceptanceJudgment",
+      "parityStatus": "present",
+      "source": "approval-brief.md"
+    },
+    {
+      "id": "E-PP-CH",
+      "from": "PP-001",
+      "to": "CH-001",
+      "relationship": "resolvesProductMeaningChange",
+      "parityStatus": "present",
+      "source": "product-patch-tree.json"
+    },
+    {
+      "id": "E-CH-IM",
+      "from": "CH-001",
+      "to": "IM-SEARCH-001",
+      "relationship": "analyzedByImpact",
+      "parityStatus": "present",
+      "source": "impact-tree.json"
+    },
+    {
+      "id": "E-IM-WT",
+      "from": "IM-SEARCH-001",
+      "to": "WT-SEARCH-001",
+      "relationship": "affectsWork",
+      "parityStatus": "present",
+      "source": "impact-tree.json"
+    },
+    {
+      "id": "E-IM-TT-003",
+      "from": "IM-SEARCH-001",
+      "to": "TT-SEARCH-003",
+      "relationship": "affectsTest",
+      "parityStatus": "partial",
+      "source": "impact-tree.json"
+    },
+    {
+      "id": "E-IM-EV-REVIEW",
+      "from": "IM-SEARCH-001",
+      "to": "EV-SEARCH-REVIEW",
+      "relationship": "affectsEvidence",
+      "parityStatus": "partial",
+      "source": "impact-tree.json"
+    },
+    {
+      "id": "E-IM-AT",
+      "from": "IM-SEARCH-001",
+      "to": "AT-ROOT",
+      "relationship": "affectsAcceptance",
+      "parityStatus": "present",
+      "source": "impact-tree.json"
+    },
+    {
+      "id": "E-CYCLE-WT",
+      "from": "CYCLE-TODO-SEARCH",
+      "to": "WT-SEARCH-001",
+      "relationship": "boundsWork",
+      "parityStatus": "present",
+      "source": "cycle-contract.md"
+    },
+    {
+      "id": "E-NEC-WT",
+      "from": "NEC-WT-SEARCH-001",
+      "to": "WT-SEARCH-001",
+      "relationship": "boundsNodeExecution",
+      "parityStatus": "present",
+      "source": "node-execution-contracts/wt-search-001.md"
+    },
+    {
+      "id": "E-CYCLE-EV",
+      "from": "CYCLE-TODO-SEARCH",
+      "to": "EV-SEARCH-NOTE-TEST",
+      "relationship": "requiresEvidence",
+      "parityStatus": "present",
+      "source": "cycle-contract.md"
+    },
+    {
+      "id": "E-CCN-READINESS",
+      "from": "CCN-ACEP-TASK-CARD-AUTHORITY-001",
+      "to": "AB-TODO-SEARCH",
+      "relationship": "readinessWarning",
+      "parityStatus": "present",
+      "source": "../compatibility-mismatch-slice/compatibility-control-node.md"
+    }
+  ],
+  "parityStatusByRequirement": [
+    {
+      "requirement": "Product -> Project",
+      "status": "present",
+      "evidence": ["E-PT-PJ-SURFACE", "E-PT-PJ-HELPER"]
+    },
+    {
+      "requirement": "Product -> Work",
+      "status": "present",
+      "evidence": ["E-PT-WT"]
+    },
+    {
+      "requirement": "Work -> Test",
+      "status": "present",
+      "evidence": ["E-WT-TT-001", "E-WT-TT-002", "E-WT-TT-004"],
+      "partialEvidence": ["E-WT-TT-003"]
+    },
+    {
+      "requirement": "Test -> Evidence",
+      "status": "present",
+      "evidence": ["E-TT-001-EV-NOTE", "E-TT-002-EV-NOTE", "E-TT-004-EV-NOTE"],
+      "partialEvidence": ["E-TT-003-EV-REVIEW"]
+    },
+    {
+      "requirement": "Evidence -> Acceptance",
+      "status": "present",
+      "evidence": ["E-EV-NOTE-AT", "E-AB-AT"]
+    },
+    {
+      "requirement": "Product Patch -> Change",
+      "status": "present",
+      "evidence": ["E-PP-CH"]
+    },
+    {
+      "requirement": "Change -> Impact",
+      "status": "present",
+      "evidence": ["E-CH-IM"]
+    },
+    {
+      "requirement": "Impact -> affected Work/Test/Evidence/Acceptance",
+      "status": "present",
+      "evidence": ["E-IM-WT", "E-IM-AT"],
+      "partialEvidence": ["E-IM-TT-003", "E-IM-EV-REVIEW"]
+    },
+    {
+      "requirement": "Contract -> Work/Test/Evidence boundaries",
+      "status": "present",
+      "evidence": ["E-CYCLE-WT", "E-NEC-WT", "E-CYCLE-EV"]
+    },
+    {
+      "requirement": "Approval Brief -> Acceptance / warnings",
+      "status": "present",
+      "evidence": ["E-AB-AT"]
+    },
+    {
+      "requirement": "Compatibility warning -> readiness review item",
+      "status": "present",
+      "evidence": ["E-CCN-READINESS"]
+    }
+  ],
+  "retainedWarnings": [
+    {
+      "id": "RW-BOUNDED-FIXTURE",
+      "summary": "Bounded fixture evidence, not full Todo app implementation.",
+      "classification": "acceptable warning",
+      "statusAfterReadModel": "retained"
+    },
+    {
+      "id": "RW-PARTIAL-UI",
+      "summary": "UI screenshot/manual visual evidence remains partial.",
+      "classification": "acceptable warning",
+      "statusAfterReadModel": "retained"
+    },
+    {
+      "id": "RW-GENERATED-BUILDER",
+      "summary": "No generated graph builder or CLI output exists.",
+      "classification": "later implementation requirement for full promotion; resolved for limited pilot readiness by this manual parity artifact",
+      "statusAfterReadModel": "manual_equivalent_present"
+    },
+    {
+      "id": "RW-ACEP-CLEANUP",
+      "summary": "ACEP task-card public-doc cleanup remains deferred.",
+      "classification": "deferred cleanup",
+      "statusAfterReadModel": "retained"
+    }
+  ],
+  "sourceAuthorityBoundary": {
+    "currentOperationalSource": "tree-native selected-slice artifacts",
+    "readModelAuthority": "none; this file is review evidence only",
+    "promotionStatus": "not-promoted",
+    "treeNativeArtifactsReclassified": false,
+    "generatedBuilderImplemented": false,
+    "requiresExplicitUserPromotionApproval": true
+  },
+  "readinessConclusion": {
+    "limitedPilotReadiness": "ready_with_warnings",
+    "fullPromotionReadiness": "not_ready_without_generator_or_full_parity_decision",
+    "blockerResolution": "This manual equivalent parity artifact resolves the prior read-model output blocker for limited pilot decision preparation only.",
+    "remainingDecisions": [
+      "Whether to ask the user for limited pilot promotion decision.",
+      "Whether full promotion requires an actual generated graph builder/output.",
+      "Whether ACEP task-card public-doc cleanup must happen before any promotion approval.",
+      "Whether bounded fixture Evidence is enough for pilot promotion scope."
+    ]
+  }
+}

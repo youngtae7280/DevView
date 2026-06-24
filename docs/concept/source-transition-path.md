@@ -221,8 +221,18 @@ and compatibility cleanup/defer judgment. PP-001 confirmation and supplemental c
 but they do not clean up public docs or change source authority.
 
 [graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md) records the readiness review.
-It recommends `ready for promotion decision with blockers`, classifies missing generated graph/read-model output as the
-promotion blocker, and keeps all source authority unchanged.
+It now recommends `ready for limited pilot promotion decision with warnings` after manual equivalent parity artifacts
+were added, and keeps all source authority unchanged.
+
+Manual equivalent read-model parity artifacts are now recorded for the representative slice:
+
+- `examples/adoption/todo-search-slice/maintainability-graph-read-model.json`
+- `examples/adoption/todo-search-slice/maintainability-graph-read-model.md`
+- `examples/adoption/todo-search-slice/parity-check.md`
+
+After those artifacts, the readiness recommendation is `ready for limited pilot promotion decision with warnings`.
+Generated builder/CLI-backed output remains a full-promotion or repeatability question, not a current source authority
+change.
 
 ### Rollback / Compatibility Strategy
 
@@ -286,11 +296,10 @@ Those remain later concept or implementation questions.
 
 - How formal should projection/parity expectations be before promotion review?
 - Does promotion review need a specialized Approval Brief template?
-- What exact generated graph/read-model output should resolve the promotion blocker before a positive promotion
-  decision?
 - Should the next decision surface be limited pilot promotion or full promotion?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
+- Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?
 - How long should a post-promotion compatibility period last?
 - Where is the boundary between automatic recovery and manual judgment when tree-native artifacts and graph records
   conflict?

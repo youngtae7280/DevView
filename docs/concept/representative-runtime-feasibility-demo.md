@@ -24,10 +24,18 @@ Exception artifacts, supplemental compatibility mismatch evidence, PP-001 confir
 and user-renewed Acceptance.
 
 The promotion readiness review is recorded in
-[graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md). It classifies missing generated
-graph/read-model output as a promotion blocker, bounded fixture and partial UI Evidence as acceptable warnings for
-readiness discussion, and ACEP task-card public-doc cleanup as deferred cleanup. It does not approve Graph-source
-promotion.
+[graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md). It classifies retained warnings
+and now recommends `ready for limited pilot promotion decision with warnings` after manual equivalent parity artifacts
+were added. It does not approve Graph-source promotion.
+
+The representative slice now also has manual equivalent read-model parity artifacts:
+
+- `examples/adoption/todo-search-slice/maintainability-graph-read-model.json`
+- `examples/adoption/todo-search-slice/maintainability-graph-read-model.md`
+- `examples/adoption/todo-search-slice/parity-check.md`
+
+These artifacts support limited pilot promotion decision preparation with warnings, but they are not generated builder
+implementation and do not promote source authority.
 
 This document is not:
 
@@ -459,8 +467,8 @@ The current manual result is recorded in
 demonstrated with retained warnings: selected-slice Project/Contract/Change/Impact evidence has been strengthened,
 Product Patch confirmation and fresh bounded runtime fixture Evidence are recorded, and renewed Acceptance is approved by
 the user. A supplemental compatibility mismatch slice covers the real mismatch path outside the Todo Search product
-slice. The later readiness review classifies generated graph output as the promotion blocker, bounded fixture and partial
-UI Evidence as acceptable warnings, and public-doc cleanup as deferred cleanup.
+slice. The later readiness review treats the manual read-model parity artifact as sufficient for limited pilot decision
+preparation with warnings, while generated builder output remains a full-promotion/repeatability question.
 
 ### Source Transition Path
 
@@ -517,11 +525,10 @@ Those remain later concept or implementation questions.
 - Should the future demo result be a generated artifact or a manual Evidence pack?
 - How should future demo Evidence connect to CI or validators?
 - Does promotion review need a specialized Approval Brief template?
-- What exact generated graph/read-model output should resolve the promotion blocker before a positive promotion
-  decision?
 - Should the next decision surface be limited pilot promotion or full promotion?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
+- Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?
 
 ## Related Gate
 

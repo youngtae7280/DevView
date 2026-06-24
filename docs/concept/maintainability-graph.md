@@ -68,10 +68,18 @@ compatibility mismatch Evidence, PP-001 confirmation, bounded runtime fixture Ev
 strengthen the compatibility and stale/reopen paths, but generated read-model output, full-product/runtime scope
 judgment, and cleanup judgment remain unresolved for promotion approval.
 The promotion readiness review is recorded in
-[graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md). It classifies missing generated
-graph/read-model output as the promotion blocker, bounded fixture and partial UI Evidence as acceptable warnings for
-readiness discussion, and ACEP task-card public-doc cleanup as deferred cleanup. It does not promote Maintainability
-Graph or change source authority.
+[graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md). It classifies retained warnings
+and now recommends `ready for limited pilot promotion decision with warnings` after manual equivalent parity artifacts
+were added. It does not promote Maintainability Graph or change source authority.
+
+The representative slice now includes manual equivalent read-model parity artifacts:
+
+- `examples/adoption/todo-search-slice/maintainability-graph-read-model.json`
+- `examples/adoption/todo-search-slice/maintainability-graph-read-model.md`
+- `examples/adoption/todo-search-slice/parity-check.md`
+
+These artifacts resolve the read-model output blocker for limited pilot promotion decision preparation only. They do not
+implement a generated graph builder and do not make Maintainability Graph the current source model.
 The concept-level authority transition policy is defined in [source-transition-path.md](source-transition-path.md).
 The concept-level recovery and compatibility safety policy is defined in
 [rollback-compatibility-strategy.md](rollback-compatibility-strategy.md).
@@ -107,6 +115,7 @@ traceability view.
 - OQ-001: When should Maintainability Graph be promoted from canonical read model to source model?
 - OQ-026: Which existing tree-native artifacts are sufficient inputs for future generated/read-model support?
 - OQ-027: Should graph checks become validators, evidence reports, documentation-only review aids, or a combination?
+- OQ-052: Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?
 
 ## Related Gate
 

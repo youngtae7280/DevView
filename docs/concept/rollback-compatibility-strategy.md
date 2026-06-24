@@ -260,9 +260,12 @@ supplemental compatibility mismatch Evidence, bounded runtime fixture Evidence, 
 cleanup, recovery, or source promotion.
 
 [graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md) records the readiness review and
-warning classification. It treats missing generated graph/read-model output as the promotion blocker, bounded fixture
-and partial UI Evidence as acceptable warnings for readiness discussion, and ACEP task-card public-doc cleanup as
-deferred cleanup.
+warning classification. It now treats manual equivalent read-model parity output as sufficient for limited pilot
+decision preparation with warnings, while generated builder output remains a full-promotion/repeatability question.
+
+Manual equivalent read-model parity artifacts now resolve that read-model output blocker for limited pilot decision
+preparation while keeping generated builder output as a later full-promotion or repeatability question. The artifacts do
+not perform rollback, fallback, compatibility retirement, migration, or source promotion.
 
 ### Maintainability Graph
 
@@ -336,11 +339,10 @@ Those remain later concept or implementation questions.
 - How should a future validator or CI check rollback readiness without over-automating source authority decisions?
 - Does rollback review need a specialized Approval Brief template?
 - Who approves compatibility retirement, and at what review point?
-- What exact generated graph/read-model output should resolve the promotion blocker before a positive promotion
-  decision?
 - Should the next decision surface be limited pilot promotion or full promotion?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
+- Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?
 
 ## Related Gate
 

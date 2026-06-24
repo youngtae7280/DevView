@@ -209,9 +209,13 @@ demo-support artifacts, user-renewed Acceptance, and visible warnings, but it do
 or source promotion by itself.
 
 [graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md) records the later readiness
-review. It classifies retained warnings and prerequisites while keeping promotion separate. That review identifies
-missing generated Maintainability Graph/read-model output as the promotion blocker before any positive promotion
-approval.
+review. It classifies retained warnings and prerequisites while keeping promotion separate. After manual equivalent
+parity artifacts were added, that review recommends `ready for limited pilot promotion decision with warnings`.
+
+The representative slice now includes manual equivalent read-model parity artifacts in
+`examples/adoption/todo-search-slice/`. Those artifacts resolve the read-model output blocker for limited pilot promotion
+decision preparation, while generated builder / CLI-backed output remains a later question for full promotion or
+repeatability.
 
 ## Promotion Boundary
 
@@ -301,8 +305,9 @@ Acceptance with retained warnings. Generated graph output, full-product/runtime 
 judgment, and retained warning outcomes remain visible as readiness review items.
 
 [graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md) classifies those retained
-warnings. It keeps missing generated graph/read-model output as the promotion blocker, while bounded fixture Evidence,
-partial UI Evidence, and deferred public-doc cleanup remain visible warnings or cleanup items.
+warnings. It treats manual read-model parity output as sufficient for limited pilot decision preparation, while bounded
+fixture Evidence, partial UI Evidence, generated builder absence, and deferred public-doc cleanup remain visible
+warnings or later requirements.
 
 ### Rollback / Compatibility Strategy
 
@@ -331,11 +336,10 @@ Those remain later concept or implementation questions.
 
 - Should future demo results become a generated artifact?
 - How should future demo results connect to CI or validators?
-- What exact generated graph/read-model output should resolve the promotion blocker before a positive promotion
-  decision?
 - Should the next decision surface be limited pilot promotion or full promotion?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
+- Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?
 
 ## Related Gate
 

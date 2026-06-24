@@ -350,11 +350,15 @@ Graph-source promotion readiness review is recorded separately in graph-source-p
 Graph-source promotion and must not change source authority without explicit user approval.
 ```
 
-That readiness review classifies:
+That readiness review now classifies:
 
-1. missing generated graph/read-model output as the promotion blocker,
-2. bounded fixture Evidence and partial UI Evidence as acceptable warnings for readiness discussion, and
-3. ACEP task-card public-doc cleanup as deferred cleanup.
+1. manual equivalent read-model parity output as sufficient for limited pilot decision preparation,
+2. bounded fixture Evidence and partial UI Evidence as acceptable warnings for readiness discussion,
+3. generated builder output as a later full-promotion/repeatability question, and
+4. ACEP task-card public-doc cleanup as deferred cleanup.
+
+The manual parity artifacts preserve this demo result's non-promotion boundary and leave explicit user promotion
+approval as a separate future decision.
 
 ## 14. Explicit Non-Promotion Statement
 

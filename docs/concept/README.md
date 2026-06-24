@@ -61,6 +61,8 @@ Graph-source promotion requires a separate phase and explicit user approval afte
 6. Source Transition Path policy is complete and the source authority matrix is agreed.
 7. Rollback / Compatibility Strategy policy is complete.
 8. Graph-source Promotion Readiness Review classifies retained warnings, blockers, and remaining decisions.
+9. A Maintainability Graph read-model parity artifact resolves any read-model output blocker for the intended promotion
+   decision scope.
 
 ## Phase 1 Repository Files
 
@@ -128,15 +130,16 @@ The following readiness review is recorded:
 
 - [graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md)
 
-The readiness review recommends `ready for promotion decision with blockers`. It classifies generated
-Maintainability Graph/read-model output as the promotion blocker, bounded fixture and partial UI Evidence as acceptable
-warnings for readiness discussion, and ACEP task-card public-doc cleanup as deferred cleanup. It does not approve
-Graph-source promotion or change source authority.
+The readiness review now recommends `ready for limited pilot promotion decision with warnings`. The prior generated
+Maintainability Graph/read-model output blocker is resolved for limited pilot readiness by manual equivalent parity
+artifacts in `examples/adoption/todo-search-slice/`. Generated builder output remains a later implementation requirement
+for full promotion or repeatable CI-backed parity. The review does not approve Graph-source promotion or change source
+authority.
 
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.
-Further generated read-model support, promotion decision packaging, rollback mechanics, compatibility artifact
+Further generated read-model builder support, promotion decision packaging, rollback mechanics, compatibility artifact
 generation, type models, CLI command design, validators, migration scripts, and Graph-source promotion are next-phase
 candidates only.
 
