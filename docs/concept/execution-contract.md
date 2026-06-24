@@ -9,6 +9,9 @@ This document defines the concept role of Execution Contracts in the PBE runtime
 Execution Contracts are the boundary between planning and implementation. They tell Codex what it may change, what it
 must not change, and what evidence must be produced.
 
+They may declare required Checks and required Evidence, but the meaning of Check, Evidence, Evidence status, freshness,
+and exception handling is defined by [check-evidence-policy.md](check-evidence-policy.md).
+
 ## Scope
 
 This document covers the conceptual contract boundary.
@@ -33,6 +36,7 @@ Codex may execute:
 - foundation Work nodes required by the selected slice
 - tests and evidence required by included Test nodes
 - integration tasks declared by the execution strategy or contract
+- Checks and Evidence obligations declared by the selected Cycle or Node Execution Contract
 
 Codex must not execute:
 
@@ -43,6 +47,26 @@ Codex must not execute:
 - visual UI changes without a Visual Design Contract source, waiver, out-of-scope decision, or not-required decision
 - product, risk, acceptance, or verification changes without Change and Impact handling
 
+## Check And Evidence Relationship
+
+Execution Contracts can name what must be checked and what Evidence is required for the selected scope.
+
+Typical contract-level obligations include:
+
+- behavior checks
+- regression checks
+- integration checks
+- visual checks
+- risk checks
+- evidence freshness checks
+- acceptance checks
+- expected Evidence type
+- allowed or forbidden Evidence exception
+- validation commands or manual review obligations
+
+The contract is not the user-facing approval surface. Approval Brief summarizes contract-relevant Check/Evidence status
+in Verification Summary and Remaining Judgment. Acceptance Tree remains the durable acceptance record.
+
 ## Confirmed Decisions
 
 - ACEP is the compatibility name for packaging Cycle and Node Execution Contracts.
@@ -51,12 +75,15 @@ Codex must not execute:
 - Evidence must attach back to Product, Work, Test, criteria, or review requirements as applicable.
 - Approval Brief maps contract-relevant facts into user-facing sections without exposing Execution Contract internals by
   default.
+- Check/Evidence policy defines what the contract means by required Check, required Evidence, Evidence status, Evidence
+  exception, and freshness.
 
 ## Remaining Open Questions
 
 - Which contract fields should become mandatory in the next schema refinement?
 - Which validation commands are required for concept-only, docs-only, UI, and code implementation cycles?
 - How should execution contracts reference View Tree Pack projections if that concept becomes an artifact later?
+- How should contract-level Check/Evidence obligations map to future generated artifacts, if such artifacts are added?
 
 ## Related Gate
 

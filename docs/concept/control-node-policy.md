@@ -24,6 +24,8 @@ This future document should cover:
 - Impact analysis maps affected nodes before revision work starts.
 - User acceptance is separate from Codex technical completion.
 - Approval Brief displays Control Nodes only when they affect user judgment, warnings, Human Gate, or Blocked status.
+- Check/Evidence policy determines when missing, stale, partial, or exception-level Evidence becomes a warning,
+  Human Gate, Blocked condition, or later Control Node input.
 
 ## 4. Still Undefined
 
@@ -31,6 +33,7 @@ This future document should cover:
 - Which transitions should be CLI-controlled first.
 - Whether control node summaries need a shared template.
 - How optional parity ledgers should report blocking versus non-blocking findings.
+- How Evidence exceptions should create, update, or reference Control Nodes in a later detailed lifecycle policy.
 
 ## 5. Next Phase Content
 

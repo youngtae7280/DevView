@@ -22,6 +22,10 @@ Terms are classified as `canonical`, `legacy`, `compatibility`, `deprecated`, or
 | View Tree Pack          | canonical | Conceptual projection pack that lets Codex read selected tree views without treating compatibility views as product truth.           |
 | Approval Brief          | canonical | User-facing judgment surface for interpreted intent, result, verification, remaining judgment, and approval choice.                  |
 | Human Gate              | canonical | Control mechanism used when PBE needs human judgment, authority, risk acceptance, or intent confirmation before safe progress.       |
+| Check                   | canonical | Verification obligation: a condition, question, criterion, or judgment item that must be verified.                                   |
+| Evidence                | canonical | Observable artifact showing that a Check was performed or satisfied; AI self-report alone is not Evidence.                           |
+| Evidence Exception      | canonical | Visible record that required Evidence is absent or insufficient, including reason, residual risk, user judgment, and later remedy.   |
+| Evidence Freshness      | canonical | Whether Evidence still supports the linked Check after the current change, impact, scope, or acceptance shift.                       |
 
 ## Transition Terms
 
@@ -45,7 +49,7 @@ Terms are classified as `canonical`, `legacy`, `compatibility`, `deprecated`, or
 | Blocked              | canonical | State where PBE cannot safely continue or present the result as approvable until a blocker is resolved or reframed.                |
 | Trace Detail         | canonical | Trigger-scoped trace shown only for high-risk triggers or explicit user requests; it must not become a full Graph dump.            |
 | Remaining judgment   | canonical | The visible assumptions, unknowns, risks, conflicts, Human Gate reasons, and accepted or deferred risks that affect user judgment. |
-| Verification summary | canonical | The Approval Brief section that reports required Checks, Evidence status, missing/stale/scope-mismatched Evidence, and exceptions. |
+| Verification summary | canonical | Approval Brief section that summarizes required Checks, Evidence status, exceptions, and remaining verification judgment.          |
 
 ## Compatibility Terms
 

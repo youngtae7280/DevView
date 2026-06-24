@@ -29,6 +29,10 @@ This policy defines the concept-level shape of Approval Briefs:
 - alignment with Execution Contracts
 - compatibility with Acceptance Tree closure
 
+Detailed Check/Evidence meaning, categories, statuses, freshness, and exception rules live in
+[check-evidence-policy.md](check-evidence-policy.md). This document defines how those facts appear on the user-facing
+Approval Brief surface.
+
 ## Non-Goals
 
 This document does not define:
@@ -107,13 +111,13 @@ Show which Checks apply and which Evidence exists.
 
 Include:
 
-- required Checks
-- Evidence status
-- missing Evidence
-- stale Evidence
-- scope-mismatched Evidence
-- unknown freshness
-- Evidence exception with explicit reason
+- required Checks, summarized rather than dumped as an internal trace
+- performed Checks
+- Evidence status: present, missing, stale, partial, not-applicable, or exception
+- Evidence categories that matter to the decision
+- missing, stale, partial, or scope-mismatched Evidence
+- unknown freshness when freshness cannot be established
+- Evidence exception with explicit reason, residual risk, user judgment, and later remedy condition
 
 Do not:
 
@@ -123,6 +127,9 @@ Do not:
 
 Evidence exception is not proof. It is a visible record of why Evidence is absent, omitted, not runnable, or otherwise
 incomplete.
+
+Verification Summary does not replace Check/Evidence policy, Execution Contract internals, Evidence Tree records, or
+Acceptance Tree state. It gives the user enough verification context to decide what to do now.
 
 ### 4. Remaining Judgment
 
@@ -212,7 +219,7 @@ The user may approve the interpreted intent, result, evidence sufficiency, and s
 
 Use when the result may still be approvable, but one or more visible low-risk warnings exists:
 
-- Evidence exception exists but is low-risk and explicit
+- Evidence is stale, partial, or exception-level but non-blocking and explicit
 - optional Evidence is deferred
 - non-blocking Unknown exists
 - low-risk accepted Risk exists
@@ -233,7 +240,7 @@ Use when:
 - the user must answer, choose, confirm, or accept risk
 - confirmed intent or decision may change
 - risk acceptance requires explicit human judgment
-- missing required Evidence needs human acceptance or resolution
+- missing, stale, partial, or exception-level Evidence requires human acceptance, policy choice, or resolution
 
 User meaning:
 
@@ -249,6 +256,7 @@ Use when:
 - PBE cannot present the result as approvable
 - required information is missing
 - required verification cannot be satisfied
+- required Evidence is missing and no valid exception or human decision can make the result approvable
 - scope or authority is unsafe
 - the blocker cannot yet be converted into a clear Human Gate decision
 
@@ -430,5 +438,5 @@ marks the state as `Blocked` and explains the blocker instead of offering approv
 This policy satisfies the Approval Brief policy completion condition for Graph-source promotion readiness at concept
 level.
 
-It does not complete Check / Evidence policy, Control Node lifecycle policy, Legacy Compatibility Map, runtime
-feasibility demonstration, or Graph-source promotion itself.
+It does not complete Control Node lifecycle policy, Legacy Compatibility Map, runtime feasibility demonstration, or
+Graph-source promotion itself.

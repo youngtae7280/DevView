@@ -17,10 +17,11 @@ This log is the source of truth for confirmed concept decisions in the PBE runti
 | DEC-009 | active | The deterministic CLI is a file-based gate and state transition layer. It must not become a GUI, MCP server, daemon, or API caller.                                                                                   | `README.md`, `AGENTS.md`                                         |
 | DEC-010 | active | RPD, WPD, VD, ACEP, and Revision remain valid compatibility terms during the tree-native migration.                                                                                                                   | `README.md`, `docs/tree-model.md`                                |
 | DEC-011 | active | Existing "5 Layer" descriptions are legacy explanatory frames, not the active architecture baseline.                                                                                                                  | `AGENTS.md`, `docs/concept/glossary.md`                          |
-| DEC-012 | active | Check/Evidence policy, Control Node policy, Legacy Compatibility Map, and feasibility demonstration stay outline-only or next-phase candidates until promoted by later decisions.                                     | Attached v2.1 work instruction; updated by Approval Brief policy |
+| DEC-012 | active | Control Node policy, Legacy Compatibility Map, and feasibility demonstration stay outline-only or next-phase candidates until promoted by later decisions. Check/Evidence policy has been promoted separately.        | Attached v2.1 work instruction; updated by Check/Evidence policy |
 | DEC-013 | active | Long-term target is to promote Maintainability Graph to the source model, but during the current transition tree-native artifacts remain the operational source of truth.                                             | Transition stance decision                                       |
 | DEC-014 | active | Approval Brief is the user-facing judgment surface for interpreted intent, result, verification, remaining judgment, and approval choice. It does not expose internal graph or execution contract details by default. | Approval Brief policy                                            |
 | DEC-015 | active | Approval Brief state labels are Ready for approval, Review with warning, Decision required, and Blocked; action labels are Approve this step, Request revision, Resolve required item, and Defer approval.            | Approval Brief policy                                            |
+| DEC-016 | active | Check and Evidence are separate concepts: Check is the verification obligation, Evidence is observable proof, AI self-report is not Evidence, and Evidence exceptions must be visible rather than treated as proof.   | Check/Evidence policy                                            |
 
 ## Supersede Relationships
 
@@ -41,6 +42,9 @@ long-term Graph-source promotion target and the requirement for separate approva
 
 DEC-014 and DEC-015 do not supersede DEC-007. Approval Brief explains a user-facing judgment situation, while the user
 remains the acceptance authority and Acceptance Tree remains the durable closure record.
+
+DEC-016 does not replace DEC-006 or DEC-014. Execution Contracts may declare required Checks and Evidence obligations,
+while Approval Brief summarizes them for user judgment and Acceptance Tree remains durable acceptance state.
 
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in

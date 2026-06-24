@@ -25,6 +25,8 @@ This future document should cover:
 - ACEP means Cycle Contract and Node Execution Contract packaging.
 - Revision means Change Tree, Impact Tree, and Reopen protocol.
 - 5 Layer is a legacy explanatory frame, not active architecture.
+- Legacy validation, evidence, and not-runnable wording should be read through Check/Evidence policy when it affects
+  approval, warning, or blocked judgment.
 
 ## 4. Still Undefined
 
@@ -32,6 +34,7 @@ This future document should cover:
 - Which compatibility terms should remain public-facing.
 - Which examples need terminology migration.
 - Whether migration scripts are needed after documentation cleanup.
+- Full mapping from legacy evidence wording to Check/Evidence categories and statuses.
 
 ## 5. Next Phase Content
 

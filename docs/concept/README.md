@@ -88,9 +88,10 @@ scripts, or implementation tasks.
 
 ## Concept Policies
 
-The following concept policy is complete at documentation level:
+The following concept policies are complete at documentation level:
 
 - [approval-brief.md](approval-brief.md)
+- [check-evidence-policy.md](check-evidence-policy.md)
 
 Concept policy completion does not create CLI commands, schemas, validators, templates, runtime artifacts, or durable
 acceptance storage by itself.
@@ -99,7 +100,6 @@ acceptance storage by itself.
 
 The following files intentionally stay as outlines in this phase:
 
-- [check-evidence-policy.md](check-evidence-policy.md)
 - [control-node-policy.md](control-node-policy.md)
 - [legacy-compatibility-map.md](legacy-compatibility-map.md)
 
