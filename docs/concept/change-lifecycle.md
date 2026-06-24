@@ -19,14 +19,14 @@ Changes move through this conceptual flow:
 
 ```text
 Feedback or drift
--> Change Tree input
--> affected node mapping
--> Impact Tree analysis
--> stale, invalidated, or reopened nodes
--> bounded revision work
--> refreshed tests and evidence
--> review submission
--> user acceptance
+-> Change Control Node
+-> Change Tree input / compatibility artifact view
+-> Impact Control Node
+-> affected nodes marked stale / invalidated / reopened / unaffected
+-> bounded revision or decision
+-> refreshed tests and evidence if needed
+-> Approval Brief for review
+-> Acceptance Control Node update
 ```
 
 ## Change Inputs
@@ -59,12 +59,30 @@ Impact analysis maps affected:
 
 Affected completed nodes must be marked stale, invalidated, or reopened before revision work claims completion.
 
+## Control Node Relationship
+
+Change Control Node is the conceptual control record explaining why the change lifecycle is active.
+
+Change Tree remains the current tree-native artifact or compatibility view for recorded changes. The two are related but
+not identical:
+
+```text
+Change Tree / Change artifact = operational or compatibility view
+Change Control Node = conceptual control record
+```
+
+Impact Control Nodes explain which affected nodes are unaffected, stale, invalidated, reopened, or closed after refreshed
+verification. Acceptance Control Nodes explain whether user-controlled closure is open, deferred, invalidated, renewed,
+or closed.
+
 ## Confirmed Decisions
 
 - Codex does not silently edit accepted or completed work when feedback changes meaning or verification.
 - Change and Impact records bound revision scope.
 - Revisions rerun impacted tests and refresh stale evidence.
 - User acceptance must be renewed when acceptance was invalidated.
+- Control Nodes explain the control reason behind change, impact, reopen, and acceptance flows without replacing
+  tree-native artifacts.
 
 ## Remaining Open Questions
 
@@ -74,5 +92,5 @@ Affected completed nodes must be marked stale, invalidated, or reopened before r
 
 ## Related Gate
 
-This document establishes the lifecycle concept only. Detailed Control Node lifecycle policy remains outline-only in this
-phase.
+This document establishes the change lifecycle concept. Detailed Control Node lifecycle rules live in
+[control-node-policy.md](control-node-policy.md).

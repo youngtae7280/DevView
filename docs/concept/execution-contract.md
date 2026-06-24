@@ -12,6 +12,9 @@ must not change, and what evidence must be produced.
 They may declare required Checks and required Evidence, but the meaning of Check, Evidence, Evidence status, freshness,
 and exception handling is defined by [check-evidence-policy.md](check-evidence-policy.md).
 
+They may also declare stop conditions, forbidden scope, risks, unknowns, assumptions, and output obligations whose
+control implications are defined by [control-node-policy.md](control-node-policy.md).
+
 ## Scope
 
 This document covers the conceptual contract boundary.
@@ -67,6 +70,19 @@ Typical contract-level obligations include:
 The contract is not the user-facing approval surface. Approval Brief summarizes contract-relevant Check/Evidence status
 in Verification Summary and Remaining Judgment. Acceptance Tree remains the durable acceptance record.
 
+## Control Node Relationship
+
+Execution Contract facts become Control Nodes when they affect workflow control, user judgment, warning, block, reopen,
+or acceptance closure.
+
+Examples:
+
+- forbidden scope touched -> Control Node: Blocked or Decision required
+- required Evidence missing -> Evidence Control Node
+- risk boundary touched -> Decision Control Node or risk-triggered Control Node
+- unknown blocks execution -> Control Node: Waiting for human or Blocked
+- output obligation not satisfied -> Evidence or Decision Control Node, depending on risk and judgment needed
+
 ## Confirmed Decisions
 
 - ACEP is the compatibility name for packaging Cycle and Node Execution Contracts.
@@ -77,6 +93,7 @@ in Verification Summary and Remaining Judgment. Acceptance Tree remains the dura
   default.
 - Check/Evidence policy defines what the contract means by required Check, required Evidence, Evidence status, Evidence
   exception, and freshness.
+- Control Node policy defines when contract facts become active control records.
 
 ## Remaining Open Questions
 

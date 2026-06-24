@@ -92,6 +92,7 @@ The following concept policies are complete at documentation level:
 
 - [approval-brief.md](approval-brief.md)
 - [check-evidence-policy.md](check-evidence-policy.md)
+- [control-node-policy.md](control-node-policy.md)
 
 Concept policy completion does not create CLI commands, schemas, validators, templates, runtime artifacts, or durable
 acceptance storage by itself.
@@ -100,7 +101,6 @@ acceptance storage by itself.
 
 The following files intentionally stay as outlines in this phase:
 
-- [control-node-policy.md](control-node-policy.md)
 - [legacy-compatibility-map.md](legacy-compatibility-map.md)
 
 Feasibility demonstration, detailed policy design, type models, CLI command design, validators, and migration scripts are
@@ -108,7 +108,7 @@ next-phase candidates only.
 
 ## Outline Gate Common Criteria
 
-Gate 4 through Gate 6 are outline gates for this Phase 1-2 pass. Passing an outline gate does not mean detailed design is
+Remaining outline-only docs use these criteria until promoted. Passing an outline gate does not mean detailed design is
 complete. It means the outline clearly states:
 
 1. The topic purpose.

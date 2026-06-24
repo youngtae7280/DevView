@@ -26,6 +26,18 @@ Terms are classified as `canonical`, `legacy`, `compatibility`, `deprecated`, or
 | Evidence                | canonical | Observable artifact showing that a Check was performed or satisfied; AI self-report alone is not Evidence.                           |
 | Evidence Exception      | canonical | Visible record that required Evidence is absent or insufficient, including reason, residual risk, user judgment, and later remedy.   |
 | Evidence Freshness      | canonical | Whether Evidence still supports the linked Check after the current change, impact, scope, or acceptance shift.                       |
+| Control Node            | canonical | Control record that tracks user judgment, change control, impact scope, acceptance closure, and block/reopen status.                 |
+
+## Control Node Terms
+
+| Term                       | Status    | Meaning                                                                                                    |
+| -------------------------- | --------- | ---------------------------------------------------------------------------------------------------------- |
+| Decision Control Node      | canonical | Tracks user choice, policy decision, scope decision, risk acceptance, or conflict resolution.              |
+| Change Control Node        | canonical | Tracks feedback, drift, or discovery that changes product meaning, scope, UX, risk, acceptance, or checks. |
+| Impact Control Node        | canonical | Tracks affected nodes and whether they are unaffected, stale, invalidated, reopened, or reclosed.          |
+| Acceptance Control Node    | canonical | Tracks user approval, deferral, rejection, review request, invalidation, renewal, or closure status.       |
+| Evidence Control Node      | canonical | Tracks missing, stale, partial, or exception Evidence when it affects warning, decision, block, or remedy. |
+| Compatibility Control Node | canonical | Tracks legacy/canonical mismatch, parity gap, migration caveat, or accepted compatibility exception.       |
 
 ## Transition Terms
 

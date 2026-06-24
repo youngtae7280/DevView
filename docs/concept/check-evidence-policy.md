@@ -195,6 +195,17 @@ Exception handling:
 - Missing required proof with no acceptable exception results in `Blocked`.
 - Exception must remain visible until resolved, accepted, deferred, or replaced by Evidence.
 
+When an Evidence gap affects workflow control, it may create or update an Evidence Control Node:
+
+```text
+missing required Evidence -> Evidence Control Node -> Blocked or Decision required
+stale non-blocking Evidence -> Evidence Control Node or warning record -> Review with warning
+valid Evidence exception -> Evidence Control Node -> Resolved, Deferred, or Active-with-warning
+```
+
+Not every Evidence exception must become a separate Control Node in this concept phase. The exact threshold remains a
+later implementation question, but hiding material exceptions is not allowed.
+
 ## AI Self-Report Limitation
 
 AI statements are not Evidence by themselves.
@@ -215,6 +226,8 @@ May point to Evidence:
 
 Evidence must be observable. AI summary can organize evidence, but it cannot substitute for the artifact, output, or
 human judgment record.
+
+Because AI self-report is not Evidence, it cannot close an Evidence Control Node or remove a Check/Evidence warning.
 
 ## Scope Boundaries
 
@@ -266,5 +279,4 @@ exists. The Approval Brief must not offer the result as ready for approval.
 This policy satisfies the Check / Evidence policy completion condition for Graph-source promotion readiness at concept
 level.
 
-It does not complete Control Node lifecycle policy, Legacy Compatibility Map, runtime feasibility demonstration, or
-Graph-source promotion itself.
+It does not complete Legacy Compatibility Map, runtime feasibility demonstration, or Graph-source promotion itself.

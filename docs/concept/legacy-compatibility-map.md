@@ -27,6 +27,8 @@ This future document should cover:
 - 5 Layer is a legacy explanatory frame, not active architecture.
 - Legacy validation, evidence, and not-runnable wording should be read through Check/Evidence policy when it affects
   approval, warning, or blocked judgment.
+- Compatibility Control Nodes may record legacy/canonical mismatch, parity gap, migration caveat, or accepted
+  compatibility exception, but this file remains the future detailed compatibility policy source.
 
 ## 4. Still Undefined
 
@@ -35,6 +37,7 @@ This future document should cover:
 - Which examples need terminology migration.
 - Whether migration scripts are needed after documentation cleanup.
 - Full mapping from legacy evidence wording to Check/Evidence categories and statuses.
+- Exact boundary between Compatibility Control Node and `superseded-items.md`.
 
 ## 5. Next Phase Content
 
@@ -44,6 +47,8 @@ The next phase may define:
 - file path compatibility table
 - public docs cleanup plan
 - example migration checklist
+- Compatibility Control Node examples and closure rules for accepted compatibility, deferred cleanup, and superseded
+  wording
 
 ## 6. Related Gate
 

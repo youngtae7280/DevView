@@ -25,6 +25,7 @@ This policy defines the concept-level shape of Approval Briefs:
 - approval state labels
 - approval action labels
 - evidence and exception handling
+- Control Node exposure rules
 - Trace Detail exposure rules
 - alignment with Execution Contracts
 - compatibility with Acceptance Tree closure
@@ -145,6 +146,7 @@ Include:
 - unresolved unknowns
 - risks
 - decision conflicts
+- Control Nodes that affect the current user judgment
 - human gate reason
 - accepted or deferred risk, if any
 
@@ -152,6 +154,7 @@ Do not:
 
 - hide risks that are material to user judgment
 - overexpose low-risk record-only internal items that do not affect the user decision
+- show every internal Control Node or trace record by default
 
 ### 5. Approval Choice
 
@@ -207,6 +210,7 @@ Use when:
 - required Checks have sufficient fresh Evidence, or no required Check applies
 - no Human Gate is active
 - no Blocked Control Node is active
+- no Active Control Node affects approval choice
 - no required user judgment remains
 
 User meaning:
@@ -220,6 +224,7 @@ The user may approve the interpreted intent, result, evidence sufficiency, and s
 Use when the result may still be approvable, but one or more visible low-risk warnings exists:
 
 - Evidence is stale, partial, or exception-level but non-blocking and explicit
+- a Control Node creates a visible low-risk warning
 - optional Evidence is deferred
 - non-blocking Unknown exists
 - low-risk accepted Risk exists
@@ -241,6 +246,7 @@ Use when:
 - confirmed intent or decision may change
 - risk acceptance requires explicit human judgment
 - missing, stale, partial, or exception-level Evidence requires human acceptance, policy choice, or resolution
+- a Decision, Evidence, Impact, Acceptance, or Compatibility Control Node requires user judgment
 
 User meaning:
 
@@ -257,6 +263,7 @@ Use when:
 - required information is missing
 - required verification cannot be satisfied
 - required Evidence is missing and no valid exception or human decision can make the result approvable
+- a Control Node is Blocked and affects the current approval choice
 - scope or authority is unsafe
 - the blocker cannot yet be converted into a clear Human Gate decision
 
@@ -345,10 +352,32 @@ derived from contract-relevant facts.
 | Required Evidence                          | Verification summary                                       |
 | Evidence exceptions                        | Verification summary or Remaining judgment                 |
 | Risks / Unknowns / Assumptions / Decisions | Remaining judgment                                         |
+| Active user-relevant Control Nodes         | Remaining judgment / Approval choice / State label         |
 | Human Gate conditions                      | Approval choice / Resolve required item                    |
 | Stop conditions                            | State label: Decision required or Blocked                  |
 | Output obligations                         | Result summary / Verification summary / Remaining judgment |
 | Graph update hints                         | Hidden by default; Trace Detail only when justified        |
+
+## Control Node Exposure
+
+Approval Brief shows only Control Nodes that affect the user's current judgment.
+
+Show:
+
+- control reason
+- affected scope
+- required judgment or blocker
+- related Evidence, risk, or unknown summary when relevant
+- available user action
+
+Hide by default:
+
+- closed Control Nodes that do not affect the current approval choice
+- low-risk record-only items
+- internal trace records
+- unrelated Control Nodes outside the current scope
+
+Approval Brief remains the user-facing judgment surface. Control Node remains the underlying control record.
 
 ## Acceptance Tree Relationship
 
@@ -438,5 +467,4 @@ marks the state as `Blocked` and explains the blocker instead of offering approv
 This policy satisfies the Approval Brief policy completion condition for Graph-source promotion readiness at concept
 level.
 
-It does not complete Control Node lifecycle policy, Legacy Compatibility Map, runtime feasibility demonstration, or
-Graph-source promotion itself.
+It does not complete Legacy Compatibility Map, runtime feasibility demonstration, or Graph-source promotion itself.
