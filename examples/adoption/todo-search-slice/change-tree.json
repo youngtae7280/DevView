@@ -1,0 +1,60 @@
+{
+  "version": "0.2.0-tree-control",
+  "artifactRole": "demo_support_snapshot",
+  "sourceAuthority": "non-authoritative evidence snapshot; does not change Product Tree or promote Maintainability Graph",
+  "createdFor": "Actual Representative Runtime Feasibility Demo evidence strengthening",
+  "createdAt": "2026-06-24T00:00:00.000Z",
+  "sourceReferences": [
+    "examples/adoption/todo-search-slice/README.md",
+    "examples/adoption/todo-search-slice/product-tree.json",
+    "examples/adoption/todo-search-slice/product-patch-tree.json",
+    "examples/adoption/todo-search-slice/acceptance-tree.json",
+    "docs/dogfooding-existing-project.md",
+    "docs/product-patch-proposals.md",
+    "docs/change-impact-revision.md"
+  ],
+  "derivationNotes": [
+    "Change CH-001 is referenced by Product Patch PP-001.",
+    "The change summary is derived from the README and dogfooding docs: search should include todo note content.",
+    "The change is not applied because PP-001 has userConfirmed false."
+  ],
+  "limitations": [
+    "This is a manual demo-support Change Tree snapshot.",
+    "It does not mutate Product Tree meaning.",
+    "It does not confirm or apply PP-001.",
+    "It does not execute revision work."
+  ],
+  "changes": [
+    {
+      "id": "CH-001",
+      "type": "feedback",
+      "source": "user_feedback",
+      "summary": "Search should include todo note content.",
+      "status": "product_patch_proposed_waiting_user_confirmation",
+      "createdAt": "2026-06-13T00:00:00.000Z",
+      "linkedProductPatchIds": ["PP-001"],
+      "requiresUserConfirmation": true,
+      "userConfirmed": false,
+      "requiresProductPatch": true,
+      "requiresRevisionAfterConfirmation": true,
+      "affectedProductNodeIds": ["PT-SEARCH-001"],
+      "affectedProjectNodeIds": ["PJ-TODO-LIST-SURFACE", "PJ-TODO-SEARCH-HELPER"],
+      "affectedWorkNodeIds": ["WT-SEARCH-001"],
+      "affectedTestNodeIds": ["TT-SEARCH-001", "TT-SEARCH-003"],
+      "affectedEvidenceNodeIds": ["EV-SEARCH-TEST", "EV-SEARCH-REVIEW"],
+      "affectedAcceptanceNodeIds": ["AT-ROOT"],
+      "affectedAcceptanceCriteriaIds": ["AC-SEARCH-001", "AC-SEARCH-003"],
+      "notCurrentlyAffectedNodeIds": ["TT-SEARCH-002"],
+      "controlNodeCandidates": [
+        {
+          "family": "Decision Control Node",
+          "reason": "User must confirm whether title-only search should expand to title + note search."
+        },
+        {
+          "family": "Impact Control Node",
+          "reason": "Accepted title-only Work/Test/Evidence/Acceptance may become stale or require review if PP-001 is confirmed."
+        }
+      ]
+    }
+  ]
+}

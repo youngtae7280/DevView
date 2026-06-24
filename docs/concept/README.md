@@ -117,15 +117,17 @@ The following manual demo result is recorded:
 
 - [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md)
 
-The actual result reviews `Todo Search Adoption + Product Meaning Feedback` against observable docs and snapshots. Its
-final feasibility judgment is `partially demonstrated`, so it records evidence and gaps but does not satisfy promotion
-readiness by itself.
+The actual result reviews `Todo Search Adoption + Product Meaning Feedback` against observable docs and selected-slice
+demo-support artifacts. Its final feasibility judgment remains `partially demonstrated`, but Project/Contract and
+Change/Impact gaps are strengthened with manual evidence snapshots. Product Patch confirmation, refreshed revision
+Evidence, and real compatibility mismatch coverage remain unresolved before promotion readiness.
 
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.
-Evidence strengthening after the partial actual demo result, rollback mechanics, compatibility artifact generation, type
-models, CLI command design, validators, migration scripts, and Graph-source promotion are next-phase candidates only.
+Further evidence strengthening after the partial actual demo result, rollback mechanics, compatibility artifact
+generation, type models, CLI command design, validators, migration scripts, and Graph-source promotion are next-phase
+candidates only.
 
 If a later outline-only concept file is added, use the outline gate criteria below until it is promoted.
 

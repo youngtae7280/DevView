@@ -204,8 +204,8 @@ demo execution but does not execute it.
 
 The current manual result is recorded in
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md). That result is
-`partially demonstrated`, so it records useful Evidence and visible gaps but does not satisfy promotion readiness by
-itself.
+`partially demonstrated`, so it records useful Evidence, selected-slice demo-support artifacts, and visible gaps but
+does not satisfy promotion readiness by itself.
 
 ## Promotion Boundary
 
@@ -288,8 +288,10 @@ representative slice and defines the demo Evidence review checklist. It does not
 ### Actual Runtime Feasibility Demo Result
 
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md) records the current manual
-Evidence pack for the selected slice. Its `partially demonstrated` result keeps Project/Contract/Change/Impact and
-compatibility evidence gaps visible for later strengthening.
+Evidence pack for the selected slice. Its strengthened `partially demonstrated` result now includes Project/Contract,
+Change/Impact, Approval Brief, Compatibility Review, and Evidence Exception support artifacts, while keeping Product
+Patch confirmation, refreshed revision Evidence, generated graph output, and real compatibility mismatch coverage
+visible as remaining gaps.
 
 ### Rollback / Compatibility Strategy
 
@@ -318,7 +320,10 @@ Those remain later concept or implementation questions.
 
 - Should future demo results become a generated artifact?
 - How should future demo results connect to CI or validators?
-- Which missing selected-slice artifacts should be strengthened before promotion readiness review?
+- Does Product Patch `PP-001` need actual user confirmation plus refreshed revision Evidence before the stale/reopen path
+  can be called `demonstrated`?
+- Is no real selected-slice compatibility mismatch sufficient for promotion readiness, or is a supplemental
+  compatibility mismatch slice required?
 - What fallback slice should be used if the Todo Search slice cannot produce Project/Contract, compatibility, or
   stale/reopen Evidence during actual execution?
 

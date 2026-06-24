@@ -125,7 +125,8 @@ PBE is a requirements-based execution control layer for AI-assisted development.
 - Whether Maintainability Graph later gains generated/read-model artifact support.
 - Whether View Tree Pack remains a conceptual projection or becomes a concrete artifact pack.
 - Which older public docs still need terminology cleanup after this concept baseline is reviewed.
-- Which missing selected-slice artifacts should be strengthened before promotion readiness review.
+- Whether Product Patch confirmation/refreshed Evidence or a supplemental compatibility mismatch slice is needed before
+  promotion readiness review.
 - Which compatibility views must remain maintained after a future promotion.
 
 ## Related Gate

@@ -40,3 +40,17 @@ pbe accept
 
 The accepted title-only slice later receives Product meaning feedback: search should include todo note content. That
 feedback is represented through Change/Impact/Product Patch/Revision instead of directly editing Product Tree meaning.
+
+Demo-support evidence strengthening adds manual, non-authoritative selected-slice snapshots:
+
+- `project-tree.json`
+- `cycle-contract.md`
+- `node-execution-contracts/wt-search-001.md`
+- `change-tree.json`
+- `impact-tree.json`
+- `compatibility-review.md`
+- `approval-brief.md`
+- `evidence-exceptions.md`
+
+These files make the representative demo more reviewable. They are not CLI-generated runtime artifacts, not product
+feature implementation, and not Graph-source promotion.

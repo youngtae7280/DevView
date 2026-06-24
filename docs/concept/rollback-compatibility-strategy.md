@@ -253,7 +253,8 @@ implement rollback mechanics.
 
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md) records the current manual demo
 result. Its rollback/compatibility notes use concept labels only: no rollback action, fallback action, compatibility
-retirement, migration, or source-authority change is performed.
+retirement, migration, or source-authority change is performed. The strengthened result keeps rollback blocked for
+future promotion claims until remaining Evidence, compatibility, and source-transition prerequisites are resolved.
 
 ### Maintainability Graph
 
@@ -327,7 +328,9 @@ Those remain later concept or implementation questions.
 - How should a future validator or CI check rollback readiness without over-automating source authority decisions?
 - Does rollback review need a specialized Approval Brief template?
 - Who approves compatibility retirement, and at what review point?
-- Which missing selected-slice artifacts should be strengthened before promotion readiness review?
+- Does Product Patch `PP-001` need actual user confirmation plus refreshed revision Evidence before stale/reopen can be
+  called `demonstrated`?
+- Is a supplemental compatibility mismatch slice required before promotion readiness review?
 
 ## Related Gate
 

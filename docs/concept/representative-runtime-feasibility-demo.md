@@ -18,7 +18,8 @@ This document provides no runtime feasibility Evidence by itself.
 
 The current manual Evidence result for this selected slice is recorded separately in
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md). That result is
-`partially demonstrated` and does not promote Maintainability Graph.
+`partially demonstrated` and does not promote Maintainability Graph. It now includes selected-slice demo-support
+Project/Contract, Change/Impact, Approval Brief, Compatibility Review, and Evidence Exception artifacts.
 
 This document is not:
 
@@ -447,7 +448,9 @@ readiness artifact selects the representative slice and Evidence review checklis
 
 The current manual result is recorded in
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md). It confirms the selected slice is
-useful but partial because selected-slice Project/Contract/Change/Impact and compatibility evidence are missing.
+useful but partial: selected-slice Project/Contract/Change/Impact evidence has been strengthened, while Product Patch
+confirmation, refreshed revision Evidence, generated graph output, and real compatibility mismatch coverage remain
+unresolved.
 
 ### Source Transition Path
 
@@ -504,7 +507,9 @@ Those remain later concept or implementation questions.
 - Should the future demo result be a generated artifact or a manual Evidence pack?
 - How should future demo Evidence connect to CI or validators?
 - Does promotion review need a specialized Approval Brief template?
-- Which missing selected-slice artifacts should be strengthened before promotion readiness review?
+- Does Product Patch `PP-001` need actual user confirmation plus refreshed revision Evidence before stale/reopen can be
+  called `demonstrated`?
+- Is a supplemental compatibility mismatch slice needed when the selected slice has no real compatibility mismatch?
 - What fallback slice should be used if the Todo Search slice cannot produce Project/Contract, compatibility, or
   stale/reopen Evidence during actual execution?
 
@@ -513,5 +518,5 @@ Those remain later concept or implementation questions.
 This document satisfies the representative slice selection condition before actual Runtime Feasibility Demonstration
 execution.
 
-The separate actual demo result records a partial manual Evidence pack. This document still does not complete generated
-result design, validation automation, promotion readiness review, or Graph-source promotion.
+The separate actual demo result records a strengthened but still partial manual Evidence pack. This document still does
+not complete generated result design, validation automation, promotion readiness review, or Graph-source promotion.

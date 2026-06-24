@@ -1,0 +1,119 @@
+{
+  "version": "0.2.0-tree-control",
+  "artifactRole": "demo_support_snapshot",
+  "sourceAuthority": "non-authoritative evidence snapshot; does not invalidate runtime artifacts or promote Maintainability Graph",
+  "createdFor": "Actual Representative Runtime Feasibility Demo evidence strengthening",
+  "createdAt": "2026-06-24T00:00:00.000Z",
+  "sourceReferences": [
+    "examples/adoption/todo-search-slice/change-tree.json",
+    "examples/adoption/todo-search-slice/product-patch-tree.json",
+    "examples/adoption/todo-search-slice/product-tree.json",
+    "examples/adoption/todo-search-slice/project-tree.json",
+    "examples/adoption/todo-search-slice/work-tree.json",
+    "examples/adoption/todo-search-slice/test-tree.json",
+    "examples/adoption/todo-search-slice/evidence-tree.json",
+    "examples/adoption/todo-search-slice/acceptance-tree.json",
+    "docs/change-impact-revision.md",
+    "docs/revision-flow.md",
+    "docs/evidence-and-coverage.md"
+  ],
+  "derivationNotes": [
+    "Impact is manually classified from PP-001 and existing selected-slice links.",
+    "Classifications are relative to the proposed title + note meaning, not a confirmed Product Tree mutation.",
+    "Existing title-only evidence remains current for the accepted title-only branch but stale or partial for the proposed expanded meaning."
+  ],
+  "limitations": [
+    "This is not the output of `pbe impact analyze`.",
+    "It does not apply PP-001.",
+    "It does not mark real runtime Evidence or Acceptance nodes invalidated.",
+    "It does not prove refreshed implementation or tests exist."
+  ],
+  "impacts": [
+    {
+      "id": "IM-SEARCH-001",
+      "changeNodeId": "CH-001",
+      "changeId": "CH-001",
+      "productPatchId": "PP-001",
+      "status": "analyzed_demo_support",
+      "userConfirmed": false,
+      "overallImpact": "decision_required_before_revision",
+      "affectedProductNodeIds": ["PT-SEARCH-001"],
+      "affectedProjectNodeIds": ["PJ-TODO-LIST-SURFACE", "PJ-TODO-SEARCH-HELPER"],
+      "affectedWorkNodeIds": ["WT-SEARCH-001"],
+      "affectedTestNodeIds": ["TT-SEARCH-001", "TT-SEARCH-003"],
+      "unaffectedTestNodeIds": ["TT-SEARCH-002"],
+      "affectedEvidenceNodeIds": ["EV-SEARCH-TEST", "EV-SEARCH-REVIEW"],
+      "affectedAcceptanceNodeIds": ["AT-ROOT"],
+      "affectedAcceptanceCriteriaIds": ["AC-SEARCH-001", "AC-SEARCH-003"],
+      "nodeClassifications": [
+        {
+          "nodeId": "PT-SEARCH-001",
+          "nodeType": "product",
+          "classification": "requires-review",
+          "reason": "PP-001 proposes changing search target from title-only to title + note."
+        },
+        {
+          "nodeId": "PJ-TODO-SEARCH-HELPER",
+          "nodeType": "project",
+          "classification": "stale",
+          "condition": "if PP-001 is confirmed",
+          "reason": "The helper boundary currently owns title-only matching and would need note-content scope review."
+        },
+        {
+          "nodeId": "WT-SEARCH-001",
+          "nodeType": "work",
+          "classification": "stale",
+          "condition": "if PP-001 is confirmed",
+          "reason": "Existing work implements title-only search and may not satisfy title + note search."
+        },
+        {
+          "nodeId": "TT-SEARCH-001",
+          "nodeType": "test",
+          "classification": "stale",
+          "condition": "if PP-001 is confirmed",
+          "reason": "The existing behavior test verifies title matches, not note-content matches."
+        },
+        {
+          "nodeId": "TT-SEARCH-002",
+          "nodeType": "test",
+          "classification": "unaffected",
+          "reason": "Empty query restores the full list regardless of title-only or title + note search target."
+        },
+        {
+          "nodeId": "TT-SEARCH-003",
+          "nodeType": "test",
+          "classification": "requires-review",
+          "condition": "if PP-001 is confirmed",
+          "reason": "No-result behavior likely remains required, but must be reviewed for title + note query semantics."
+        },
+        {
+          "nodeId": "EV-SEARCH-TEST",
+          "nodeType": "evidence",
+          "classification": "stale",
+          "condition": "if PP-001 is confirmed",
+          "reason": "Automated test output proves title-only checks and is partial for title + note search."
+        },
+        {
+          "nodeId": "EV-SEARCH-REVIEW",
+          "nodeType": "evidence",
+          "classification": "requires-review",
+          "condition": "if PP-001 is confirmed",
+          "reason": "Manual empty-state review may need refreshed review for note-content matching."
+        },
+        {
+          "nodeId": "AT-ROOT",
+          "nodeType": "acceptance",
+          "classification": "reopened",
+          "condition": "if PP-001 is confirmed and applied",
+          "reason": "User accepted title-only behavior; expanded title + note behavior requires renewed review and acceptance."
+        }
+      ],
+      "requiredActions": [
+        "User confirmation is required before PP-001 can apply.",
+        "If confirmed, update Product acceptance criteria before revision work.",
+        "If confirmed, add or refresh tests for note-content matching.",
+        "If confirmed, refresh Evidence and renew user acceptance."
+      ]
+    }
+  ]
+}

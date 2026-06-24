@@ -29,6 +29,7 @@ This log is the source of truth for confirmed concept decisions in the PBE runti
 | DEC-021 | active | Rollback / Compatibility Strategy is a concept-level safety policy required before Graph-source promotion can be considered. Rollback, fallback, and compatibility retirement require visible user judgment, and maintained compatibility views require explicit source-boundary, freshness, projection, and exception markings.     | Rollback / Compatibility Strategy work instruction and policy                     |
 | DEC-022 | active | Representative Runtime Feasibility Demo slice selection is a readiness artifact before actual demo execution. The selected slice must cover happy path, stale/reopen, evidence exception, decision required, compatibility mismatch, and scope boundary scenarios with observable Evidence criteria; AI self-report is not Evidence. | Representative Runtime Feasibility Demo                                           |
 | DEC-023 | active | Actual Representative Runtime Feasibility Demo result records observed feasibility Evidence for the selected slice without promoting Maintainability Graph or changing source authority. Partial or blocked demo status must keep evidence gaps visible rather than treating AI summary as proof.                                    | Actual Runtime Feasibility Demo Result                                            |
+| DEC-024 | active | Selected-slice evidence strengthening may add manual demo-support artifacts only when they include source references, derivation notes, limitations, and explicit non-promotion/source-authority boundaries. Such artifacts strengthen feasibility Evidence but do not become runtime source authority.                              | Representative Demo Evidence Strengthening                                        |
 
 ## Supersede Relationships
 
@@ -79,6 +80,10 @@ Source Transition Path remains the authority policy, and Rollback / Compatibilit
 DEC-023 does not supersede DEC-019, DEC-020, DEC-021, or DEC-022. It records the observed result of the selected demo
 slice, while partial findings remain promotion blockers or evidence-strengthening inputs and source authority remains
 tree-native until explicit promotion.
+
+DEC-024 does not supersede DEC-006, DEC-013, DEC-019, DEC-020, or DEC-023. Manual demo-support Project, Contract,
+Change, Impact, Approval, Compatibility, or Evidence Exception artifacts may reduce review gaps, but they do not replace
+CLI-generated runtime artifacts, source-transition prerequisites, or explicit user approval.
 
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in

@@ -214,8 +214,9 @@ successful feasibility demo is required before promotion review, but it is not s
 for future demo execution. It is a readiness artifact and does not count as observable demo Evidence by itself.
 
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md) records the current manual demo
-Evidence result. Its `partially demonstrated` status means the feasibility prerequisite remains unmet until missing
-selected-slice evidence is strengthened or otherwise resolved.
+Evidence result. Its strengthened `partially demonstrated` status means the feasibility prerequisite remains unmet until
+Product Patch confirmation/refreshed Evidence, generated/parity expectations, and compatibility coverage are resolved or
+explicitly accepted for promotion review.
 
 ### Rollback / Compatibility Strategy
 
@@ -279,7 +280,9 @@ Those remain later concept or implementation questions.
 
 - How formal should projection/parity expectations be before promotion review?
 - Does promotion review need a specialized Approval Brief template?
-- Which missing selected-slice artifacts should be strengthened before promotion readiness review?
+- Does Product Patch `PP-001` need actual user confirmation plus refreshed revision Evidence before stale/reopen can be
+  called `demonstrated`?
+- Is a supplemental compatibility mismatch slice required before promotion readiness review?
 - How long should a post-promotion compatibility period last?
 - Where is the boundary between automatic recovery and manual judgment when tree-native artifacts and graph records
   conflict?
