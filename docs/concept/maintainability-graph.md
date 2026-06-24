@@ -66,7 +66,12 @@ The current manual actual demo result is recorded in
 the representative demo slice records retained warnings and does not satisfy promotion readiness by itself. Supplemental
 compatibility mismatch Evidence, PP-001 confirmation, bounded runtime fixture Evidence, and user-renewed Acceptance
 strengthen the compatibility and stale/reopen paths, but generated read-model output, full-product/runtime scope
-judgment, cleanup judgment, and retained-warning classification remain unresolved.
+judgment, and cleanup judgment remain unresolved for promotion approval.
+The promotion readiness review is recorded in
+[graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md). It classifies missing generated
+graph/read-model output as the promotion blocker, bounded fixture and partial UI Evidence as acceptable warnings for
+readiness discussion, and ACEP task-card public-doc cleanup as deferred cleanup. It does not promote Maintainability
+Graph or change source authority.
 The concept-level authority transition policy is defined in [source-transition-path.md](source-transition-path.md).
 The concept-level recovery and compatibility safety policy is defined in
 [rollback-compatibility-strategy.md](rollback-compatibility-strategy.md).

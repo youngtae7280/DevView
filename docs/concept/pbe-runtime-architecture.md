@@ -99,6 +99,10 @@ source promotion.
 policy required before any future promotion review. That policy does not change current source authority or implement
 rollback behavior.
 
+[graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md) records the later readiness
+review. It recommends `ready for promotion decision with blockers` and identifies missing generated graph/read-model
+output as the promotion blocker. It does not promote Maintainability Graph or change current runtime authority.
+
 ## Runtime Boundaries
 
 PBE is not:
@@ -128,10 +132,11 @@ PBE is a requirements-based execution control layer for AI-assisted development.
 - Whether Maintainability Graph later gains generated/read-model artifact support.
 - Whether View Tree Pack remains a conceptual projection or becomes a concrete artifact pack.
 - Which older public docs still need terminology cleanup after this concept baseline is reviewed.
-- Whether bounded fixture Evidence is enough for promotion readiness review, or full-product/runtime Evidence is needed.
-- Whether the observed ACEP task-card-only wording must be cleaned up before promotion readiness review, or warning plus
-  deferred cleanup is sufficient.
-- Which retained warnings are blockers, acceptable warnings, deferred cleanup, or later implementation requirements.
+- What exact generated graph/read-model output should resolve the promotion blocker before a positive promotion
+  decision?
+- Whether the next decision surface should be a limited pilot promotion decision or a full promotion decision.
+- Whether the user will accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before
+  promotion approval.
 - Which compatibility views must remain maintained after a future promotion.
 
 ## Related Gate

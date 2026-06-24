@@ -255,10 +255,14 @@ implement rollback mechanics.
 result. Its rollback/compatibility notes use concept labels only: no rollback action, fallback action, compatibility
 retirement, migration, or source-authority change is performed. The demonstrated representative result now includes
 renewed Acceptance with retained warnings, but keeps rollback/promotion readiness blocked until generated/parity
-expectations, full-product/runtime scope judgment, compatibility cleanup/defer judgment, retained-warning
-classification, and source-transition prerequisites are resolved. PP-001 confirmation, supplemental compatibility
-mismatch Evidence, bounded runtime fixture Evidence, and renewed Acceptance do not perform cleanup, recovery, or source
-promotion.
+expectations are supported by observable output and source-transition prerequisites are resolved. PP-001 confirmation,
+supplemental compatibility mismatch Evidence, bounded runtime fixture Evidence, and renewed Acceptance do not perform
+cleanup, recovery, or source promotion.
+
+[graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md) records the readiness review and
+warning classification. It treats missing generated graph/read-model output as the promotion blocker, bounded fixture
+and partial UI Evidence as acceptable warnings for readiness discussion, and ACEP task-card public-doc cleanup as
+deferred cleanup.
 
 ### Maintainability Graph
 
@@ -332,10 +336,11 @@ Those remain later concept or implementation questions.
 - How should a future validator or CI check rollback readiness without over-automating source authority decisions?
 - Does rollback review need a specialized Approval Brief template?
 - Who approves compatibility retirement, and at what review point?
-- Is bounded fixture Evidence enough for promotion readiness review, or is full-product/runtime Evidence required?
-- Must the observed ACEP task-card-only wording be cleaned up before promotion readiness review, or is warning plus
-  deferred cleanup sufficient?
-- Which retained warnings are blockers, acceptable warnings, deferred cleanup, or later implementation requirements?
+- What exact generated graph/read-model output should resolve the promotion blocker before a positive promotion
+  decision?
+- Should the next decision surface be limited pilot promotion or full promotion?
+- Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
+  approval?
 
 ## Related Gate
 

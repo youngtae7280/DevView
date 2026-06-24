@@ -19,8 +19,8 @@ This result is not Graph-source promotion. It does not change source authority, 
 source, retire tree-native artifacts, implement PBE runtime behavior, define schemas, implement validators, or create
 migration/rollback mechanics.
 
-Tree-native artifacts remain the current operational source of truth until a later promotion readiness review and
-explicit user approval.
+Tree-native artifacts remain the current operational source of truth until a later explicit promotion decision receives
+user approval. The subsequent readiness review is a review artifact, not promotion approval.
 
 ## 2. Selected Slice Summary
 
@@ -343,19 +343,18 @@ Remaining blockers / gaps:
 4. Historical product command output and generated graph/read-model output remain explicit exceptions.
 5. New artifacts are manual demo-support snapshots, not CLI-generated runtime artifacts.
 
-Promotion blocker:
+Promotion readiness note:
 
 ```text
-Graph-source promotion readiness review may proceed as a review of retained warnings and prerequisites. It is not
+Graph-source promotion readiness review is recorded separately in graph-source-promotion-readiness-review.md. It is not
 Graph-source promotion and must not change source authority without explicit user approval.
 ```
 
-Next evidence strengthening should decide:
+That readiness review classifies:
 
-1. whether each retained warning is a promotion blocker, acceptable warning, deferred cleanup, or later implementation
-   requirement,
-2. whether generated graph/read-model output is required before promotion readiness, or
-3. whether public-doc cleanup for the ACEP task-card-only mismatch is required before promotion readiness.
+1. missing generated graph/read-model output as the promotion blocker,
+2. bounded fixture Evidence and partial UI Evidence as acceptable warnings for readiness discussion, and
+3. ACEP task-card public-doc cleanup as deferred cleanup.
 
 ## 14. Explicit Non-Promotion Statement
 
@@ -367,5 +366,5 @@ This demo result does not make Maintainability Graph the current operational sou
 
 This demo result does not supersede Product, Project, Work, Test, Evidence, or Acceptance Trees.
 
-Until a separate promotion readiness review passes and the user explicitly approves promotion, tree-native artifacts
-remain the operational source of truth.
+The separate promotion readiness review is still not promotion approval. Until a user explicitly approves a source
+promotion decision, tree-native artifacts remain the operational source of truth.

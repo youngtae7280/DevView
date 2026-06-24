@@ -60,6 +60,7 @@ Graph-source promotion requires a separate phase and explicit user approval afte
    representative demo result has passed with observable Evidence and no hidden partial/blocking gaps.
 6. Source Transition Path policy is complete and the source authority matrix is agreed.
 7. Rollback / Compatibility Strategy policy is complete.
+8. Graph-source Promotion Readiness Review classifies retained warnings, blockers, and remaining decisions.
 
 ## Phase 1 Repository Files
 
@@ -120,14 +121,24 @@ The following manual demo result is recorded:
 The actual result reviews `Todo Search Adoption + Product Meaning Feedback` against observable docs, selected-slice
 demo-support artifacts, supplemental compatibility evidence, a bounded runtime fixture, and user-renewed Acceptance. Its
 final feasibility judgment is now `demonstrated` for the representative demo slice with retained warnings. Generated
-graph output, full-product/runtime scope judgment, public-doc cleanup judgment, and retained-warning classification
-remain unresolved before promotion readiness.
+graph output, full-product/runtime scope judgment, and public-doc cleanup judgment remain visible before any positive
+promotion approval.
+
+The following readiness review is recorded:
+
+- [graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md)
+
+The readiness review recommends `ready for promotion decision with blockers`. It classifies generated
+Maintainability Graph/read-model output as the promotion blocker, bounded fixture and partial UI Evidence as acceptable
+warnings for readiness discussion, and ACEP task-card public-doc cleanup as deferred cleanup. It does not approve
+Graph-source promotion or change source authority.
 
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.
-Further user acceptance review, generated read-model support, rollback mechanics, compatibility artifact generation, type
-models, CLI command design, validators, migration scripts, and Graph-source promotion are next-phase candidates only.
+Further generated read-model support, promotion decision packaging, rollback mechanics, compatibility artifact
+generation, type models, CLI command design, validators, migration scripts, and Graph-source promotion are next-phase
+candidates only.
 
 If a later outline-only concept file is added, use the outline gate criteria below until it is promoted.
 

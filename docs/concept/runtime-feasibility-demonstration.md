@@ -208,6 +208,11 @@ The current manual result is recorded in
 demo-support artifacts, user-renewed Acceptance, and visible warnings, but it does not perform promotion readiness review
 or source promotion by itself.
 
+[graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md) records the later readiness
+review. It classifies retained warnings and prerequisites while keeping promotion separate. That review identifies
+missing generated Maintainability Graph/read-model output as the promotion blocker before any positive promotion
+approval.
+
 ## Promotion Boundary
 
 Runtime Feasibility Demonstration is a Graph-source promotion readiness gate. It is not Graph-source promotion.
@@ -293,7 +298,11 @@ Evidence pack for the selected slice. Its `demonstrated` result now includes Pro
 Brief, Compatibility Review, Evidence Exception support artifacts, a supplemental real compatibility mismatch slice,
 PP-001 confirmation, fresh bounded runtime fixture Evidence for title + note/content search, and user-renewed
 Acceptance with retained warnings. Generated graph output, full-product/runtime scope judgment, public-doc cleanup
-judgment, and retained-warning classification remain visible as readiness review items.
+judgment, and retained warning outcomes remain visible as readiness review items.
+
+[graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md) classifies those retained
+warnings. It keeps missing generated graph/read-model output as the promotion blocker, while bounded fixture Evidence,
+partial UI Evidence, and deferred public-doc cleanup remain visible warnings or cleanup items.
 
 ### Rollback / Compatibility Strategy
 
@@ -322,11 +331,11 @@ Those remain later concept or implementation questions.
 
 - Should future demo results become a generated artifact?
 - How should future demo results connect to CI or validators?
-- Is bounded fixture Evidence enough for promotion readiness review, or is full-product/runtime Evidence required?
-- Must the observed ACEP task-card-only wording be cleaned up before promotion readiness review, or is warning plus
-  deferred cleanup sufficient?
-- Should generated graph/read-model output be created before promotion readiness review?
-- Which retained warnings are blockers, acceptable warnings, deferred cleanup, or later implementation requirements?
+- What exact generated graph/read-model output should resolve the promotion blocker before a positive promotion
+  decision?
+- Should the next decision surface be limited pilot promotion or full promotion?
+- Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
+  approval?
 
 ## Related Gate
 

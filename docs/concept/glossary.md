@@ -67,6 +67,7 @@ Terms are classified as `canonical`, `active-operational`, `compatibility`, `leg
 | Rollback / Compatibility Strategy       | canonical | Concept-level safety policy defining recovery and compatibility boundaries required before Graph-source promotion can be considered.                   |
 | Representative Runtime Feasibility Demo | canonical | Readiness artifact selecting the representative slice and Evidence review criteria before actual runtime feasibility demo execution.                   |
 | Actual Runtime Feasibility Demo Result  | canonical | Manual Evidence pack / review result recording observed feasibility Evidence, gaps, and non-promotion status for the selected representative slice.    |
+| Graph-source Promotion Readiness Review | canonical | Review report that classifies promotion prerequisites, retained warnings, blockers, and remaining decisions without promoting source authority.        |
 
 ## Source Transition Terms
 

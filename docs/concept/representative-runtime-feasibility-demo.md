@@ -23,6 +23,12 @@ now includes selected-slice demo-support Project/Contract, Change/Impact, Approv
 Exception artifacts, supplemental compatibility mismatch evidence, PP-001 confirmation, bounded runtime fixture Evidence,
 and user-renewed Acceptance.
 
+The promotion readiness review is recorded in
+[graph-source-promotion-readiness-review.md](graph-source-promotion-readiness-review.md). It classifies missing generated
+graph/read-model output as a promotion blocker, bounded fixture and partial UI Evidence as acceptable warnings for
+readiness discussion, and ACEP task-card public-doc cleanup as deferred cleanup. It does not approve Graph-source
+promotion.
+
 This document is not:
 
 - actual demo execution
@@ -452,9 +458,9 @@ The current manual result is recorded in
 [actual-runtime-feasibility-demo-result.md](actual-runtime-feasibility-demo-result.md). It confirms the selected slice is
 demonstrated with retained warnings: selected-slice Project/Contract/Change/Impact evidence has been strengthened,
 Product Patch confirmation and fresh bounded runtime fixture Evidence are recorded, and renewed Acceptance is approved by
-the user. Generated graph output, full-product/runtime scope judgment, public-doc cleanup judgment, and retained-warning
-classification remain for readiness review. A supplemental compatibility mismatch slice covers the real mismatch path
-outside the Todo Search product slice.
+the user. A supplemental compatibility mismatch slice covers the real mismatch path outside the Todo Search product
+slice. The later readiness review classifies generated graph output as the promotion blocker, bounded fixture and partial
+UI Evidence as acceptable warnings, and public-doc cleanup as deferred cleanup.
 
 ### Source Transition Path
 
@@ -511,11 +517,11 @@ Those remain later concept or implementation questions.
 - Should the future demo result be a generated artifact or a manual Evidence pack?
 - How should future demo Evidence connect to CI or validators?
 - Does promotion review need a specialized Approval Brief template?
-- Is bounded fixture Evidence enough for promotion readiness review, or is full-product/runtime Evidence required?
-- Must the observed ACEP task-card-only wording be cleaned up before promotion readiness review, or is warning plus
-  deferred cleanup sufficient?
-- Should generated graph/read-model output be created before promotion readiness review?
-- Which retained warnings are blockers, acceptable warnings, deferred cleanup, or later implementation requirements?
+- What exact generated graph/read-model output should resolve the promotion blocker before a positive promotion
+  decision?
+- Should the next decision surface be limited pilot promotion or full promotion?
+- Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
+  approval?
 
 ## Related Gate
 
