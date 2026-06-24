@@ -18,8 +18,18 @@ Terms are classified as `canonical`, `legacy`, `compatibility`, `deprecated`, or
 | Cycle Contract          | canonical | Contract for one selected implementation slice, including included scope, non-scope, tests, evidence, and stop conditions.           |
 | Node Execution Contract | canonical | Contract for a single executable Work node, including source nodes, files, dependencies, tests, evidence, and rules.                 |
 | Visual Design Contract  | canonical | Visual source, tokens, component rules, state coverage, evidence requirements, and waiver/not-required decisions for visual UI work. |
-| Maintainability Graph   | canonical | Conceptual traceability view over tree nodes, contracts, decisions, changes, impacts, evidence, and acceptance.                      |
+| Maintainability Graph   | canonical | Current canonical read model / alignment model over tree-native artifacts and long-term target source model candidate.               |
 | View Tree Pack          | canonical | Conceptual projection pack that lets Codex read selected tree views without treating compatibility views as product truth.           |
+
+## Transition Terms
+
+| Term                        | Status    | Meaning                                                                                                                                                |
+| --------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Transition Stance           | canonical | The documented position that current plugin behavior remains tree-native while Maintainability Graph is the long-term source model target.             |
+| Operational Source Of Truth | canonical | The artifact structure that currently governs actual plugin behavior. In the current plugin, this is the tree-native artifact structure.               |
+| Canonical Read Model        | canonical | A stable conceptual model used to align, inspect, and reason over current artifacts without yet replacing them.                                        |
+| Target Source Model         | canonical | The intended future source model after explicit promotion approval.                                                                                    |
+| Graph-Source Promotion      | canonical | The future transition where Maintainability Graph becomes the source model and tree-native artifacts become projections, compatibility, or view files. |
 
 ## Compatibility Terms
 

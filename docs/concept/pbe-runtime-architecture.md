@@ -61,6 +61,26 @@ Change Tree -> Impact Tree -> reopened or invalidated nodes -> refreshed evidenc
 Compatibility views such as `.pbe/blueprint/*` and `.pbe/codex-execution-pack/*` can support older workflows, but they
 do not replace the tree-native source artifacts.
 
+## Transition Position
+
+Current operational architecture:
+
+```text
+tree-native source artifacts plus skills, contracts, evidence, acceptance, and CLI gates
+```
+
+Target architecture:
+
+```text
+Maintainability Graph as source model, with Trees and Views projected from it
+```
+
+This document describes the current operational architecture and the transition stance. It does not perform source-model
+promotion.
+
+In this document, "Product Tree is the source of product truth" describes the current operational architecture. It does
+not reject the long-term Graph-source target, and it does not make Maintainability Graph the operational source now.
+
 ## Runtime Boundaries
 
 PBE is not:
@@ -77,6 +97,8 @@ PBE is a requirements-based execution control layer for AI-assisted development.
 ## Confirmed Decisions
 
 - Product Tree is the source of product truth.
+- Tree-native artifacts remain the current operational source artifacts.
+- Maintainability Graph is the long-term target source model, pending separate approval.
 - Lower trees derive from Product Tree branches.
 - Work is executable only through selected or foundation Work nodes.
 - Cycle and Node Execution Contracts bound implementation.

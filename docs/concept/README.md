@@ -19,6 +19,46 @@ documentation, the source of truth order is:
 
 If a later document conflicts with a confirmed decision, record the conflict instead of silently changing scope.
 
+## Transition Stance
+
+The current plugin remains tree-native at the operational source level.
+
+The long-term architectural target is to promote Maintainability Graph to the source model.
+
+Until that promotion is explicitly approved, Maintainability Graph is a canonical read model / alignment model over
+current tree-native artifacts.
+
+This means Phase 1-2 documents are not rejecting the Graph-source target. They preserve current plugin safety while
+documenting the transition path.
+
+Current operational source:
+
+```text
+tree-native artifacts
+```
+
+Current conceptual alignment model:
+
+```text
+Maintainability Graph
+```
+
+Long-term target source model:
+
+```text
+Maintainability Graph
+```
+
+Graph-source promotion requires a separate phase and explicit user approval after:
+
+1. Approval Brief policy is complete.
+2. Check / Evidence policy is complete.
+3. Control Node lifecycle policy is complete.
+4. Legacy Compatibility Map is complete.
+5. Representative runtime feasibility demonstration is complete.
+6. Tree-native artifacts to Graph-source transition path is defined.
+7. Rollback or compatibility strategy is defined.
+
 ## Phase 1 Repository Files
 
 | File                                           | Role                                                                              |

@@ -36,9 +36,30 @@ The graph is maintainability-focused because it answers questions such as:
 - Which completed nodes are stale after feedback?
 - Which compatibility views are projections rather than sources of truth?
 
+## Source Promotion Target
+
+Maintainability Graph is currently a canonical read model over tree-native source artifacts.
+
+The long-term target is to promote it into the source model after the required policies, compatibility mapping, and
+feasibility demonstration are complete.
+
+Until then, it must not silently override Product Tree, Work Tree, Test Tree, Evidence Tree, Acceptance Tree, or
+confirmed user decisions.
+
+Graph-source promotion requires explicit user approval after:
+
+1. Approval Brief policy is complete.
+2. Check / Evidence policy is complete.
+3. Control Node lifecycle policy is complete.
+4. Legacy Compatibility Map is complete.
+5. Representative runtime feasibility demonstration is complete.
+6. Tree-native artifacts to Graph-source transition path is defined.
+7. Rollback or compatibility strategy is defined.
+
 ## Confirmed Decisions
 
-- Maintainability Graph is not a replacement for Product, Project, Work, Test, or control trees.
+- Maintainability Graph is currently not a replacement for Product, Project, Work, Test, or control trees.
+- Maintainability Graph is the long-term source promotion candidate.
 - It is not a generic knowledge graph.
 - It must preserve traceability back to Product truth and user-controlled acceptance.
 - It must not infer new product meaning without a Product or Change node.
@@ -63,7 +84,7 @@ traceability view.
 
 ## Remaining Open Questions
 
-- Should this remain purely conceptual, or become a generated artifact in a later phase?
+- When should Maintainability Graph be promoted from canonical read model to source model?
 - If generated, which existing tree files are sufficient inputs?
 - Should graph checks become validators, evidence reports, or documentation-only review aids?
 

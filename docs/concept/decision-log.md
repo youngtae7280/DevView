@@ -18,6 +18,7 @@ This log is the source of truth for confirmed concept decisions in the PBE runti
 | DEC-010 | active | RPD, WPD, VD, ACEP, and Revision remain valid compatibility terms during the tree-native migration.                                                                          | `README.md`, `docs/tree-model.md`                     |
 | DEC-011 | active | Existing "5 Layer" descriptions are legacy explanatory frames, not the active architecture baseline.                                                                         | `AGENTS.md`, `docs/concept/glossary.md`               |
 | DEC-012 | active | Approval Brief, Check/Evidence policy, Control Node policy, Legacy Compatibility Map, and feasibility demonstration stay outline-only or next-phase candidates in this pass. | Attached v2.1 work instruction                        |
+| DEC-013 | active | Long-term target is to promote Maintainability Graph to the source model, but during the current transition tree-native artifacts remain the operational source of truth.    | Transition stance decision                            |
 
 ## Supersede Relationships
 
@@ -32,6 +33,9 @@ This log is the source of truth for confirmed concept decisions in the PBE runti
 ## Conflict Check
 
 No active concept repository conflict is intentionally left unresolved in this pass.
+
+DEC-013 does not supersede DEC-003. DEC-003 remains the current operational source decision, while DEC-013 records the
+long-term Graph-source promotion target and the requirement for separate approval.
 
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in

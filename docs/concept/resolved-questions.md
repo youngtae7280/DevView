@@ -13,3 +13,4 @@ This file records questions that are no longer active because decisions or exist
 | RQ-007 | How should product, UX, risk, acceptance, or verification drift be handled? | It becomes a Change Node and goes through impact analysis and reopen rules.                 | DEC-008  |
 | RQ-008 | Are RPD/WPD/VD/ACEP still valid terms?                                      | Yes, as compatibility names during the tree-native migration.                               | DEC-010  |
 | RQ-009 | Is the old 5 Layer explanation still active architecture?                   | No. It is a legacy explanatory frame.                                                       | DEC-011  |
+| RQ-010 | Does the Graph-source target make Maintainability Graph the source today?   | No. Tree-native artifacts remain the current operational source until explicit promotion.   | DEC-013  |
