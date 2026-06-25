@@ -148,15 +148,18 @@ However, it still contains Todo Search-shaped assumptions:
 
 ## SliceReadModelConfig / Profile Strategy
 
-Introduce a future design concept:
+The first extraction step is now implemented for Todo Search:
 
 ```text
 SliceReadModelConfig
 ```
 
-or equivalent descriptor/profile.
+`cli/src/core/read-model-evidence.ts` defines the Todo Search profile/config explicitly and keeps generated output,
+parity, validation, retained warnings, and source-authority boundaries behaviorally unchanged for
+`examples/adoption/todo-search-slice`.
 
-This is concept-level only in this document.
+This remains a single-slice profile extraction. It is not a second slice implementation, aggregate validator, CI workflow
+change, enforcement mode, source authority expansion, or full promotion.
 
 Possible responsibilities:
 
@@ -177,11 +180,13 @@ Possible responsibilities:
 
 Recommended implementation sequence:
 
-1. Extract Todo Search profile/config without behavior change.
-2. Prove Todo Search generated output, parity report, validation report, and CI-backed manifest semantics remain unchanged.
-3. Add/read `examples/valid/todo-app-pbe-run` as a second `structure-only` fixture.
-4. Add per-slice validation report independence.
-5. Add aggregation only after per-slice validation is stable.
+1. Extract Todo Search profile/config without behavior change. Status: complete for the Todo Search profile.
+2. Prove Todo Search generated output, parity report, validation report, and CI-backed manifest semantics remain
+   unchanged. Status: local generated/parity/validation checks remain 40 nodes, 59 edges, `comparison-pass`,
+   `validation-pass`, and 20 validation checks.
+3. Add/read `examples/valid/todo-app-pbe-run` as a second `structure-only` fixture. Status: not started.
+4. Add per-slice validation report independence. Status: not started.
+5. Add aggregation only after per-slice validation is stable. Status: not started.
 
 ## Validation Policy Levels
 

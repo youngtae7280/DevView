@@ -183,6 +183,9 @@ artifacts depending on the approved transition:
 
 This policy does not decide which artifacts retire. It defines the safety boundary for deciding later.
 
+The Todo Search read-model profile extraction does not retire or supersede tree-native selected-slice artifacts. It only
+isolates builder/validator assumptions so later slices can be considered without changing fallback/reference authority.
+
 ## Rollback Evidence And Control Records
 
 Rollback readiness and rollback completion require observable Evidence and linked records.

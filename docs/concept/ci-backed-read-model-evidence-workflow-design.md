@@ -355,7 +355,8 @@ Decision required
 ```
 
 Reason: non-enforcing manual CI workflow implementation exists and run `28151296796` has been reviewed as Todo Search
-CI-backed Evidence. PR triggers, enforcement, broader scope, and promotion authority remain separate decisions.
+CI-backed Evidence. Todo Search profile extraction does not change the workflow boundary. PR triggers, enforcement,
+broader scope, and promotion authority remain separate decisions.
 
 ## Gate Self-Check
 

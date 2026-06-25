@@ -179,17 +179,195 @@ interface AcceptanceCriterion {
   [key: string]: unknown
 }
 
+export interface SliceReadModelConfig {
+  profileId: string
+  displayName: string
+  supportedSlice: string
+  policyLevel: 'pilot-marker-backed'
+  sourceLayout: 'flat-demo-support'
+  expectedCounts: {
+    nodes: number
+    edges: number
+    validationChecks: number
+  }
+  ids: {
+    product: string
+    work: string
+    testRoot: string
+    evidenceRoot: string
+    acceptanceRoot: string
+    cycleContract: string
+    nodeExecutionContract: string
+    viewInstance: string
+  }
+  artifacts: {
+    productTree: string
+    projectTree: string
+    workTree: string
+    testTree: string
+    evidenceTree: string
+    acceptanceTree: string
+    changeTree: string
+    impactTree: string
+    productPatchTree: string
+    cycleContract: string
+    nodeExecutionContract: string
+    runtimeEvidence: string
+    approvalBrief: string
+    evidenceExceptions: string
+    runtimeHelper: string
+    runtimeTest: string
+    viewManifest: string
+    generatedReadModel: string
+    generatedParityReport: string
+    scopedPilotMarker: string
+    limitedPilotTransitionRecord: string
+    limitedPilotPackage: string
+    scopedPilotExecutionRecord: string
+    scopedPilotReview: string
+    scopedPilotActiveObservation: string
+    generatedEvidenceRequirement: string
+    compatibilitySlice: string
+    compatibilityControlNode: string
+    compatibilityEvidenceExceptions: string
+  }
+  sourceArtifactRelativePaths: string[]
+  retainedWarnings: Array<Record<string, unknown>>
+  compatibilityWarnings: Array<Record<string, unknown>>
+}
+
+export const todoSearchReadModelProfile: SliceReadModelConfig = {
+  profileId: 'todo-search-selected-slice',
+  displayName: 'Todo Search Adoption + Product Meaning Feedback',
+  supportedSlice: 'examples/adoption/todo-search-slice',
+  policyLevel: 'pilot-marker-backed',
+  sourceLayout: 'flat-demo-support',
+  expectedCounts: {
+    nodes: 40,
+    edges: 59,
+    validationChecks: 20,
+  },
+  ids: {
+    product: 'PT-SEARCH-001',
+    work: 'WT-SEARCH-001',
+    testRoot: 'TT-ROOT',
+    evidenceRoot: 'EV-ROOT',
+    acceptanceRoot: 'AT-ROOT',
+    cycleContract: 'CYCLE-TODO-SEARCH',
+    nodeExecutionContract: 'NEC-WT-SEARCH-001',
+    viewInstance: 'VIEW-TODO-SEARCH-CORE-VIEWS',
+  },
+  artifacts: {
+    productTree: 'product-tree.json',
+    projectTree: 'project-tree.json',
+    workTree: 'work-tree.json',
+    testTree: 'test-tree.json',
+    evidenceTree: 'evidence-tree.json',
+    acceptanceTree: 'acceptance-tree.json',
+    changeTree: 'change-tree.json',
+    impactTree: 'impact-tree.json',
+    productPatchTree: 'product-patch-tree.json',
+    cycleContract: 'cycle-contract.md',
+    nodeExecutionContract: 'node-execution-contracts/wt-search-001.md',
+    runtimeEvidence: 'runtime-evidence.md',
+    approvalBrief: 'approval-brief.md',
+    evidenceExceptions: 'evidence-exceptions.md',
+    runtimeHelper: 'runtime-fixture/todo-search.js',
+    runtimeTest: 'runtime-fixture/todo-search.test.js',
+    viewManifest: 'view-instance-manifest.json',
+    generatedReadModel: 'generated/generated-read-model.json',
+    generatedParityReport: 'generated/read-model-parity-report.json',
+    scopedPilotMarker: 'generated/scoped-source-authority-pilot-marker.json',
+    limitedPilotTransitionRecord: 'docs/concept/limited-pilot-transition-record.md',
+    limitedPilotPackage: 'docs/concept/limited-pilot-promotion-decision-package.md',
+    scopedPilotExecutionRecord: 'docs/concept/scoped-source-authority-pilot-execution-record.md',
+    scopedPilotReview: 'docs/concept/scoped-source-authority-pilot-review.md',
+    scopedPilotActiveObservation: 'docs/concept/scoped-source-authority-pilot-active-observation.md',
+    generatedEvidenceRequirement: 'docs/concept/generated-read-model-evidence-requirement.md',
+    compatibilitySlice: 'examples/adoption/compatibility-mismatch-slice',
+    compatibilityControlNode: 'examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
+    compatibilityEvidenceExceptions: 'examples/adoption/compatibility-mismatch-slice/evidence-exceptions.md',
+  },
+  sourceArtifactRelativePaths: [
+    'product-tree.json',
+    'project-tree.json',
+    'work-tree.json',
+    'test-tree.json',
+    'evidence-tree.json',
+    'acceptance-tree.json',
+    'change-tree.json',
+    'impact-tree.json',
+    'product-patch-tree.json',
+    'cycle-contract.md',
+    'node-execution-contracts/wt-search-001.md',
+    'runtime-evidence.md',
+    'approval-brief.md',
+    'evidence-exceptions.md',
+    'generated/scoped-source-authority-pilot-marker.json',
+    'docs/concept/scoped-source-authority-pilot-execution-record.md',
+    'docs/concept/scoped-source-authority-pilot-review.md',
+    'docs/concept/scoped-source-authority-pilot-active-observation.md',
+    'examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
+  ],
+  retainedWarnings: [
+    {
+      id: 'RW-BOUNDED-FIXTURE',
+      findingNodeId: 'FIND-BOUNDED-FIXTURE',
+      status: 'acceptable-warning',
+      summary: 'Bounded fixture Evidence is not full Todo app implementation.',
+    },
+    {
+      id: 'RW-PARTIAL-UI',
+      findingNodeId: 'FIND-PARTIAL-UI',
+      status: 'acceptable-warning',
+      summary: 'UI screenshot/manual visual Evidence remains partial for the no-result empty state.',
+    },
+    {
+      id: 'RW-GENERATED-BUILDER',
+      findingNodeId: 'FIND-GENERATED-BUILDER-MISSING',
+      status: 'generated-present-for-bounded-slice',
+      summary:
+        'Generated read-model output and scoped validator-backed Evidence now exist for the bounded Todo Search slice; CI/full promotion repeatability remains later.',
+    },
+    {
+      id: 'RW-ACEP-CLEANUP',
+      findingNodeId: 'FIND-ACEP-CLEANUP-DEFERRED',
+      status: 'deferred-cleanup',
+      summary: 'ACEP task-card public-doc cleanup remains deferred.',
+    },
+  ],
+  compatibilityWarnings: [
+    {
+      id: 'CCN-ACEP-TASK-CARD-AUTHORITY-001',
+      source: 'examples/adoption/compatibility-mismatch-slice',
+      role: 'supplemental warning only',
+      summary: 'Legacy ACEP/task-card wording remains a compatibility warning, not pilot source scope.',
+    },
+  ],
+}
+
+export function getSliceReadModelProfile(slice: string): SliceReadModelConfig {
+  const normalized = normalizePath(slice)
+  if (normalized === todoSearchReadModelProfile.supportedSlice) {
+    return todoSearchReadModelProfile
+  }
+  throw new Error(
+    `No read-model profile is configured for slice "${slice}". Currently supported profile: ${todoSearchReadModelProfile.supportedSlice}`,
+  )
+}
+
 export async function generateReadModelEvidence(root: string, slice: string): Promise<GenerateResult> {
+  const profile = getSliceReadModelProfile(slice)
   const sliceDir = path.resolve(root, slice)
   const outputDir = path.join(sliceDir, 'generated')
-  const sourceInputs = sourceArtifactList(root, slice)
-  const data = await loadSliceData(sliceDir)
+  const sourceInputs = sourceArtifactList(root, slice, profile)
+  const data = await loadSliceData(sliceDir, profile)
   const commandIdentity = `pbe graph read-model generate --slice ${slice}`
   const generatedAt = new Date().toISOString()
   const sourceCommit = resolveSourceCommit(root)
-  const nodes = buildNodes(data)
-  const edges = buildEdges()
-  const coreViewCoverage = buildCoreViewCoverage()
+  const nodes = buildNodes(data, profile)
+  const edges = buildEdges(profile)
+  const coreViewCoverage = buildCoreViewCoverage(profile)
   const model: GeneratedReadModel = {
     version: '0.1.0-generated-read-model-evidence',
     metadata: {
@@ -198,6 +376,10 @@ export async function generateReadModelEvidence(root: string, slice: string): Pr
       commandIdentity,
       sourceCommit,
       sourceSlice: slice,
+      sliceProfile: profile.profileId,
+      sliceProfileDisplayName: profile.displayName,
+      slicePolicyLevel: profile.policyLevel,
+      sourceLayout: profile.sourceLayout,
       inputArtifactList: sourceInputs.map((entry) => entry.relativePath),
       generatedStatus: 'generated-present',
       sourceAuthority: 'Tree-native selected-slice artifacts remain current operational source.',
@@ -219,9 +401,9 @@ export async function generateReadModelEvidence(root: string, slice: string): Pr
     nodes,
     edges,
     coreViewCoverage,
-    checkEvidenceMapping: buildCheckEvidenceMapping(data),
-    retainedWarnings: buildRetainedWarnings(),
-    compatibilityWarnings: buildCompatibilityWarnings(),
+    checkEvidenceMapping: buildCheckEvidenceMapping(data, profile),
+    retainedWarnings: buildRetainedWarnings(profile),
+    compatibilityWarnings: buildCompatibilityWarnings(profile),
     sourceAuthorityBoundary: 'Tree-native selected-slice artifacts remain current operational source.',
     nonPromotionStatement:
       'Generated output is reviewable Evidence only and cannot change source authority without later explicit user approval.',
@@ -256,6 +438,7 @@ export async function compareReadModelEvidence(
 }
 
 export async function validateReadModelEvidence(root: string, slice: string): Promise<ValidateResult> {
+  const profile = getSliceReadModelProfile(slice)
   const sliceDir = path.resolve(root, slice)
   const outputDir = path.join(sliceDir, 'generated')
   const generatedPath = path.join(outputDir, 'generated-read-model.json')
@@ -266,7 +449,7 @@ export async function validateReadModelEvidence(root: string, slice: string): Pr
   const parity = await readRequiredJson<ParityReport>(parityPath, 'read-model parity report')
   const manifest = await readRequiredJson<Record<string, unknown>>(manifestPath, 'read-model evidence manifest')
   const marker = await readRequiredJson<Record<string, unknown>>(markerPath, 'scoped source-authority pilot marker')
-  const report = buildValidationReport(root, slice, generated, parity, manifest, marker)
+  const report = buildValidationReport(root, slice, profile, generated, parity, manifest, marker)
   const reportJsonPath = path.join(outputDir, 'read-model-validation-report.json')
   const reportMarkdownPath = path.join(outputDir, 'read-model-validation-report.md')
   await writeFormattedJson(reportJsonPath, report)
@@ -274,44 +457,54 @@ export async function validateReadModelEvidence(root: string, slice: string): Pr
   return { reportJsonPath, reportMarkdownPath, report }
 }
 
-async function loadSliceData(sliceDir: string): Promise<Record<string, unknown>> {
+async function loadSliceData(sliceDir: string, profile: SliceReadModelConfig): Promise<Record<string, unknown>> {
+  const artifactPath = (relativePathFromSlice: string) => path.join(sliceDir, ...relativePathFromSlice.split('/'))
   return {
     productTree: await readRequiredJson<Record<string, unknown>>(
-      path.join(sliceDir, 'product-tree.json'),
+      artifactPath(profile.artifacts.productTree),
       'product tree',
     ),
     projectTree: await readRequiredJson<Record<string, unknown>>(
-      path.join(sliceDir, 'project-tree.json'),
+      artifactPath(profile.artifacts.projectTree),
       'project tree',
     ),
-    workTree: await readRequiredJson<Record<string, unknown>>(path.join(sliceDir, 'work-tree.json'), 'work tree'),
-    testTree: await readRequiredJson<Record<string, unknown>>(path.join(sliceDir, 'test-tree.json'), 'test tree'),
+    workTree: await readRequiredJson<Record<string, unknown>>(artifactPath(profile.artifacts.workTree), 'work tree'),
+    testTree: await readRequiredJson<Record<string, unknown>>(artifactPath(profile.artifacts.testTree), 'test tree'),
     evidenceTree: await readRequiredJson<Record<string, unknown>>(
-      path.join(sliceDir, 'evidence-tree.json'),
+      artifactPath(profile.artifacts.evidenceTree),
       'evidence tree',
     ),
     acceptanceTree: await readRequiredJson<Record<string, unknown>>(
-      path.join(sliceDir, 'acceptance-tree.json'),
+      artifactPath(profile.artifacts.acceptanceTree),
       'acceptance tree',
     ),
-    changeTree: await readRequiredJson<Record<string, unknown>>(path.join(sliceDir, 'change-tree.json'), 'change tree'),
-    impactTree: await readRequiredJson<Record<string, unknown>>(path.join(sliceDir, 'impact-tree.json'), 'impact tree'),
+    changeTree: await readRequiredJson<Record<string, unknown>>(
+      artifactPath(profile.artifacts.changeTree),
+      'change tree',
+    ),
+    impactTree: await readRequiredJson<Record<string, unknown>>(
+      artifactPath(profile.artifacts.impactTree),
+      'impact tree',
+    ),
     productPatchTree: await readRequiredJson<Record<string, unknown>>(
-      path.join(sliceDir, 'product-patch-tree.json'),
+      artifactPath(profile.artifacts.productPatchTree),
       'product patch tree',
     ),
-    cycleContract: await readRequiredText(path.join(sliceDir, 'cycle-contract.md'), 'cycle contract'),
+    cycleContract: await readRequiredText(artifactPath(profile.artifacts.cycleContract), 'cycle contract'),
     nodeExecutionContract: await readRequiredText(
-      path.join(sliceDir, 'node-execution-contracts', 'wt-search-001.md'),
+      artifactPath(profile.artifacts.nodeExecutionContract),
       'node execution contract',
     ),
-    runtimeEvidence: await readRequiredText(path.join(sliceDir, 'runtime-evidence.md'), 'runtime evidence'),
-    approvalBrief: await readRequiredText(path.join(sliceDir, 'approval-brief.md'), 'approval brief'),
-    evidenceExceptions: await readRequiredText(path.join(sliceDir, 'evidence-exceptions.md'), 'evidence exceptions'),
+    runtimeEvidence: await readRequiredText(artifactPath(profile.artifacts.runtimeEvidence), 'runtime evidence'),
+    approvalBrief: await readRequiredText(artifactPath(profile.artifacts.approvalBrief), 'approval brief'),
+    evidenceExceptions: await readRequiredText(
+      artifactPath(profile.artifacts.evidenceExceptions),
+      'evidence exceptions',
+    ),
   }
 }
 
-function buildNodes(data: Record<string, unknown>): GraphNode[] {
+function buildNodes(data: Record<string, unknown>, profile: SliceReadModelConfig): GraphNode[] {
   const productNodes = getArray<TreeNode>(data.productTree, 'nodes')
   const projectNodes = getArray<TreeNode>(data.projectTree, 'nodes')
   const workNodes = getArray<TreeNode>(data.workTree, 'nodes')
@@ -321,13 +514,13 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
   const changes = getArray<TreeNode>(data.changeTree, 'changes')
   const impacts = getArray<TreeNode>(data.impactTree, 'impacts')
   const patches = getArray<TreeNode>(data.productPatchTree, 'patches')
-  const searchProduct = productNodes.find((node) => node.id === 'PT-SEARCH-001') || productNodes[0]
+  const searchProduct = productNodes.find((node) => node.id === profile.ids.product) || productNodes[0]
   const criteria = searchProduct?.acceptanceCriteria || []
   const nodes: GraphNode[] = [
     node(
       'TASK-TODO-SEARCH-PILOT',
       'task',
-      'docs/concept/limited-pilot-transition-record.md',
+      profile.artifacts.limitedPilotTransitionRecord,
       'Todo Search generated read-model Evidence task',
       'generated_evidence_prepared',
       'inferred',
@@ -339,7 +532,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       node(
         criterion.id,
         'requirement',
-        'examples/adoption/todo-search-slice/product-tree.json',
+        sliceArtifact(profile, 'productTree'),
         criterion.statement || criterion.id,
         criterion.status || 'confirmed',
         'user-confirmed',
@@ -349,12 +542,12 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       ),
     ),
     ...productNodes
-      .filter((entry) => entry.id === 'PT-SEARCH-001')
+      .filter((entry) => entry.id === profile.ids.product)
       .map((entry) =>
         node(
           entry.id,
           'requirement',
-          'examples/adoption/todo-search-slice/product-tree.json',
+          sliceArtifact(profile, 'productTree'),
           entry.title || entry.id,
           entry.status || 'confirmed',
           'user-confirmed',
@@ -366,7 +559,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'BEH-SEARCH-TITLE-NOTE',
       'behavior',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js',
+      sliceArtifact(profile, 'runtimeTest'),
       'Search query matches Todo title or note/content',
       'verified_by_runtime_fixture',
       'tool-confirmed',
@@ -377,7 +570,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'BEH-EMPTY-QUERY',
       'behavior',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js',
+      sliceArtifact(profile, 'runtimeTest'),
       'Blank query returns all todos',
       'verified_by_runtime_fixture',
       'tool-confirmed',
@@ -388,7 +581,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'BEH-NO-RESULT',
       'behavior',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js',
+      sliceArtifact(profile, 'runtimeTest'),
       'No matching title or note/content returns empty result',
       'runtime_behavior_present_visual_partial',
       'tool-confirmed',
@@ -399,7 +592,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'BEH-NON-SCOPE-GUARD',
       'behavior',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js',
+      sliceArtifact(profile, 'runtimeTest'),
       'Tag/date/fuzzy/server/saved search remain out of selected scope',
       'guard_verified',
       'tool-confirmed',
@@ -413,7 +606,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
         node(
           entry.id,
           'code',
-          'examples/adoption/todo-search-slice/project-tree.json',
+          sliceArtifact(profile, 'projectTree'),
           entry.title || entry.id,
           entry.status || 'derived',
           'inferred',
@@ -423,12 +616,12 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
         ),
       ),
     ...workNodes
-      .filter((entry) => entry.id === 'WT-SEARCH-001')
+      .filter((entry) => entry.id === profile.ids.work)
       .map((entry) =>
         node(
           entry.id,
           'task',
-          'examples/adoption/todo-search-slice/work-tree.json',
+          sliceArtifact(profile, 'workTree'),
           entry.title || entry.id,
           entry.status || 'selected',
           'inferred',
@@ -440,7 +633,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'CODE-RUNTIME-SEARCH-HELPER',
       'code',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.js',
+      sliceArtifact(profile, 'runtimeHelper'),
       'Bounded runtime fixture search helper',
       'present',
       'tool-confirmed',
@@ -451,7 +644,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'CODE-RUNTIME-SEARCH-TEST',
       'code',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js',
+      sliceArtifact(profile, 'runtimeTest'),
       'Bounded runtime fixture Vitest tests',
       'present',
       'tool-confirmed',
@@ -462,7 +655,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'DATA-TODO-ITEM',
       'data',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js',
+      sliceArtifact(profile, 'runtimeTest'),
       'Todo item with title and note/content fields',
       'present',
       'tool-confirmed',
@@ -471,12 +664,12 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       ['structure-view', 'behavior-view'],
     ),
     ...testNodes
-      .filter((entry) => entry.id !== 'TT-ROOT')
+      .filter((entry) => entry.id !== profile.ids.testRoot)
       .map((entry) =>
         node(
           entry.id,
           'check',
-          'examples/adoption/todo-search-slice/test-tree.json',
+          sliceArtifact(profile, 'testTree'),
           entry.title || entry.id,
           entry.status || 'defined',
           confidenceForStatus(entry.status),
@@ -486,12 +679,12 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
         ),
       ),
     ...evidenceNodes
-      .filter((entry) => entry.id !== 'EV-ROOT')
+      .filter((entry) => entry.id !== profile.ids.evidenceRoot)
       .map((entry) =>
         node(
           entry.id,
           'evidence',
-          'examples/adoption/todo-search-slice/evidence-tree.json',
+          sliceArtifact(profile, 'evidenceTree'),
           entry.title || entry.id,
           entry.status || 'present',
           confidenceForStatus(entry.status),
@@ -504,7 +697,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       node(
         entry.id,
         'decision',
-        'examples/adoption/todo-search-slice/product-patch-tree.json',
+        sliceArtifact(profile, 'productPatchTree'),
         entry.title || entry.id,
         entry.status || 'confirmed',
         'user-confirmed',
@@ -517,7 +710,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       node(
         entry.id,
         'change',
-        'examples/adoption/todo-search-slice/change-tree.json',
+        sliceArtifact(profile, 'changeTree'),
         textField(entry, 'summary', entry.title || entry.id),
         entry.status || 'closed',
         'user-confirmed',
@@ -530,7 +723,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       node(
         entry.id,
         'finding',
-        'examples/adoption/todo-search-slice/impact-tree.json',
+        sliceArtifact(profile, 'impactTree'),
         textField(entry, 'overallImpact', entry.title || entry.id),
         entry.status || 'closed',
         'inferred',
@@ -543,7 +736,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       node(
         entry.id,
         'decision',
-        'examples/adoption/todo-search-slice/acceptance-tree.json',
+        sliceArtifact(profile, 'acceptanceTree'),
         entry.title || entry.id,
         entry.status || 'accepted',
         'user-confirmed',
@@ -553,9 +746,9 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       ),
     ),
     node(
-      'CYCLE-TODO-SEARCH',
+      profile.ids.cycleContract,
       'document',
-      'examples/adoption/todo-search-slice/cycle-contract.md',
+      sliceArtifact(profile, 'cycleContract'),
       'Todo Search Cycle Contract',
       'present',
       'inferred',
@@ -564,10 +757,10 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       ['scope-execution-view'],
     ),
     node(
-      'NEC-WT-SEARCH-001',
+      profile.ids.nodeExecutionContract,
       'document',
-      'examples/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md',
-      'WT-SEARCH-001 Node Execution Contract',
+      sliceArtifact(profile, 'nodeExecutionContract'),
+      `${profile.ids.work} Node Execution Contract`,
       'present',
       'inferred',
       'fresh',
@@ -577,7 +770,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'AB-TODO-SEARCH',
       'document',
-      'examples/adoption/todo-search-slice/approval-brief.md',
+      sliceArtifact(profile, 'approvalBrief'),
       'Todo Search Approval Brief',
       'present',
       'user-confirmed',
@@ -588,7 +781,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'CCN-ACEP-TASK-CARD-AUTHORITY-001',
       'finding',
-      'examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
+      profile.artifacts.compatibilityControlNode,
       'ACEP task-card compatibility cleanup deferred',
       'deferred_warning',
       'inferred',
@@ -599,7 +792,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'FIND-BOUNDED-FIXTURE',
       'finding',
-      'examples/adoption/todo-search-slice/runtime-evidence.md',
+      sliceArtifact(profile, 'runtimeEvidence'),
       'Bounded fixture is not full Todo app implementation',
       'retained_warning',
       'tool-confirmed',
@@ -610,7 +803,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'FIND-PARTIAL-UI',
       'finding',
-      'examples/adoption/todo-search-slice/evidence-exceptions.md',
+      sliceArtifact(profile, 'evidenceExceptions'),
       'UI screenshot/manual visual Evidence remains partial',
       'retained_warning',
       'inferred',
@@ -621,7 +814,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'FIND-GENERATED-BUILDER-MISSING',
       'finding',
-      'docs/concept/generated-read-model-evidence-requirement.md',
+      profile.artifacts.generatedEvidenceRequirement,
       'Generated builder was missing before this command',
       'resolved_by_generated_output_for_bounded_slice',
       'tool-confirmed',
@@ -632,7 +825,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'FIND-ACEP-CLEANUP-DEFERRED',
       'finding',
-      'examples/adoption/compatibility-mismatch-slice/evidence-exceptions.md',
+      profile.artifacts.compatibilityEvidenceExceptions,
       'ACEP public-doc cleanup deferred',
       'deferred_warning',
       'inferred',
@@ -643,7 +836,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'DOC-READ-MODEL',
       'document',
-      'examples/adoption/todo-search-slice/generated/generated-read-model.json',
+      sliceArtifact(profile, 'generatedReadModel'),
       'Generated read-model Evidence output',
       'generated_present',
       'tool-confirmed',
@@ -654,7 +847,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'DOC-PARITY-CHECK',
       'document',
-      'examples/adoption/todo-search-slice/generated/read-model-parity-report.json',
+      sliceArtifact(profile, 'generatedParityReport'),
       'Generated/manual parity report',
       'pending_compare',
       'tool-confirmed',
@@ -665,7 +858,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'DOC-LIMITED-PILOT-PACKAGE',
       'document',
-      'docs/concept/limited-pilot-promotion-decision-package.md',
+      profile.artifacts.limitedPilotPackage,
       'Limited Pilot Promotion Decision Package',
       'approved_option_recorded',
       'user-confirmed',
@@ -676,7 +869,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'DEC-SCOPED-PILOT-EXECUTION',
       'decision',
-      'docs/concept/scoped-source-authority-pilot-execution-record.md',
+      profile.artifacts.scopedPilotExecutionRecord,
       'Actual scoped source-authority pilot execution approved for Todo Search',
       'scoped_pilot_executed_with_fallback_ready',
       'user-confirmed',
@@ -687,7 +880,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
     node(
       'DOC-LIMITED-PILOT-TRANSITION-RECORD',
       'document',
-      'docs/concept/limited-pilot-transition-record.md',
+      profile.artifacts.limitedPilotTransitionRecord,
       'Limited Pilot Transition Record',
       'recorded_non_executing',
       'user-confirmed',
@@ -696,9 +889,9 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       ['intent-view'],
     ),
     node(
-      'VIEW-TODO-SEARCH-CORE-VIEWS',
+      profile.ids.viewInstance,
       'view-instance',
-      'examples/adoption/todo-search-slice/view-instance-manifest.json',
+      sliceArtifact(profile, 'viewManifest'),
       'Todo Search 7 Core View projection',
       'present',
       'inferred',
@@ -718,54 +911,54 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
   return nodes
 }
 
-function buildEdges(): GraphEdge[] {
+function buildEdges(profile: SliceReadModelConfig): GraphEdge[] {
   return [
     edge(
       'E-TASK-TARGETS-REQ',
       'TASK-TODO-SEARCH-PILOT',
-      'PT-SEARCH-001',
+      profile.ids.product,
       'targets',
-      'docs/concept/limited-pilot-transition-record.md',
+      profile.artifacts.limitedPilotTransitionRecord,
       'inferred',
     ),
     edge(
       'E-TASK-REQUIRES-CYCLE',
       'TASK-TODO-SEARCH-PILOT',
-      'CYCLE-TODO-SEARCH',
+      profile.ids.cycleContract,
       'requires',
-      'examples/adoption/todo-search-slice/cycle-contract.md',
+      sliceArtifact(profile, 'cycleContract'),
       'inferred',
     ),
     edge(
       'E-TASK-REQUIRES-NEC',
       'TASK-TODO-SEARCH-PILOT',
-      'NEC-WT-SEARCH-001',
+      profile.ids.nodeExecutionContract,
       'requires',
-      'examples/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md',
+      sliceArtifact(profile, 'nodeExecutionContract'),
       'inferred',
     ),
     edge(
       'E-PT-REQUIRES-AC1',
-      'PT-SEARCH-001',
+      profile.ids.product,
       'AC-SEARCH-001',
       'requires',
-      'examples/adoption/todo-search-slice/product-tree.json',
+      sliceArtifact(profile, 'productTree'),
       'user-confirmed',
     ),
     edge(
       'E-PT-REQUIRES-AC2',
-      'PT-SEARCH-001',
+      profile.ids.product,
       'AC-SEARCH-002',
       'requires',
-      'examples/adoption/todo-search-slice/product-tree.json',
+      sliceArtifact(profile, 'productTree'),
       'user-confirmed',
     ),
     edge(
       'E-PT-REQUIRES-AC3',
-      'PT-SEARCH-001',
+      profile.ids.product,
       'AC-SEARCH-003',
       'requires',
-      'examples/adoption/todo-search-slice/product-tree.json',
+      sliceArtifact(profile, 'productTree'),
       'user-confirmed',
     ),
     edge(
@@ -773,7 +966,7 @@ function buildEdges(): GraphEdge[] {
       'BEH-SEARCH-TITLE-NOTE',
       'AC-SEARCH-001',
       'satisfies',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js',
+      sliceArtifact(profile, 'runtimeTest'),
       'tool-confirmed',
     ),
     edge(
@@ -781,7 +974,7 @@ function buildEdges(): GraphEdge[] {
       'BEH-EMPTY-QUERY',
       'AC-SEARCH-002',
       'satisfies',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js',
+      sliceArtifact(profile, 'runtimeTest'),
       'tool-confirmed',
     ),
     edge(
@@ -789,63 +982,63 @@ function buildEdges(): GraphEdge[] {
       'BEH-NO-RESULT',
       'AC-SEARCH-003',
       'satisfies',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js',
+      sliceArtifact(profile, 'runtimeTest'),
       'tool-confirmed',
     ),
     edge(
       'E-PT-DERIVES-PJ-SURFACE',
-      'PT-SEARCH-001',
+      profile.ids.product,
       'PJ-TODO-LIST-SURFACE',
       'targets',
-      'examples/adoption/todo-search-slice/project-tree.json',
+      sliceArtifact(profile, 'projectTree'),
       'inferred',
     ),
     edge(
       'E-PT-DERIVES-PJ-HELPER',
-      'PT-SEARCH-001',
+      profile.ids.product,
       'PJ-TODO-SEARCH-HELPER',
       'targets',
-      'examples/adoption/todo-search-slice/project-tree.json',
+      sliceArtifact(profile, 'projectTree'),
       'inferred',
     ),
     edge(
       'E-WT-TARGETS-BEH-SEARCH',
-      'WT-SEARCH-001',
+      profile.ids.work,
       'BEH-SEARCH-TITLE-NOTE',
       'targets',
-      'examples/adoption/todo-search-slice/work-tree.json',
+      sliceArtifact(profile, 'workTree'),
       'inferred',
     ),
     edge(
       'E-WT-TARGETS-BEH-EMPTY',
-      'WT-SEARCH-001',
+      profile.ids.work,
       'BEH-EMPTY-QUERY',
       'targets',
-      'examples/adoption/todo-search-slice/work-tree.json',
+      sliceArtifact(profile, 'workTree'),
       'inferred',
     ),
     edge(
       'E-WT-TARGETS-BEH-NO-RESULT',
-      'WT-SEARCH-001',
+      profile.ids.work,
       'BEH-NO-RESULT',
       'targets',
-      'examples/adoption/todo-search-slice/work-tree.json',
+      sliceArtifact(profile, 'workTree'),
       'inferred',
     ),
     edge(
       'E-WT-PRESERVES-GUARD',
-      'WT-SEARCH-001',
+      profile.ids.work,
       'BEH-NON-SCOPE-GUARD',
       'preserves',
-      'examples/adoption/todo-search-slice/work-tree.json',
+      sliceArtifact(profile, 'workTree'),
       'tool-confirmed',
     ),
     edge(
       'E-WT-TOUCHES-CODE',
-      'WT-SEARCH-001',
+      profile.ids.work,
       'CODE-RUNTIME-SEARCH-HELPER',
       'touches',
-      'examples/adoption/todo-search-slice/work-tree.json',
+      sliceArtifact(profile, 'workTree'),
       'inferred',
     ),
     edge(
@@ -853,7 +1046,7 @@ function buildEdges(): GraphEdge[] {
       'PJ-TODO-SEARCH-HELPER',
       'CODE-RUNTIME-SEARCH-HELPER',
       'touches',
-      'examples/adoption/todo-search-slice/project-tree.json',
+      sliceArtifact(profile, 'projectTree'),
       'inferred',
     ),
     edge(
@@ -861,7 +1054,7 @@ function buildEdges(): GraphEdge[] {
       'CODE-RUNTIME-SEARCH-HELPER',
       'BEH-SEARCH-TITLE-NOTE',
       'implements',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.js',
+      sliceArtifact(profile, 'runtimeHelper'),
       'tool-confirmed',
     ),
     edge(
@@ -869,7 +1062,7 @@ function buildEdges(): GraphEdge[] {
       'CODE-RUNTIME-SEARCH-HELPER',
       'BEH-EMPTY-QUERY',
       'implements',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.js',
+      sliceArtifact(profile, 'runtimeHelper'),
       'tool-confirmed',
     ),
     edge(
@@ -877,7 +1070,7 @@ function buildEdges(): GraphEdge[] {
       'CODE-RUNTIME-SEARCH-HELPER',
       'BEH-NO-RESULT',
       'implements',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.js',
+      sliceArtifact(profile, 'runtimeHelper'),
       'tool-confirmed',
     ),
     edge(
@@ -885,7 +1078,7 @@ function buildEdges(): GraphEdge[] {
       'CODE-RUNTIME-SEARCH-HELPER',
       'BEH-NON-SCOPE-GUARD',
       'preserves',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js',
+      sliceArtifact(profile, 'runtimeTest'),
       'tool-confirmed',
     ),
     edge(
@@ -893,7 +1086,7 @@ function buildEdges(): GraphEdge[] {
       'CODE-RUNTIME-SEARCH-HELPER',
       'DATA-TODO-ITEM',
       'reads',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.js',
+      sliceArtifact(profile, 'runtimeHelper'),
       'tool-confirmed',
     ),
     edge(
@@ -901,7 +1094,7 @@ function buildEdges(): GraphEdge[] {
       'CODE-RUNTIME-SEARCH-HELPER',
       'DATA-TODO-ITEM',
       'takes-input',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.js',
+      sliceArtifact(profile, 'runtimeHelper'),
       'tool-confirmed',
     ),
     edge(
@@ -909,7 +1102,7 @@ function buildEdges(): GraphEdge[] {
       'CODE-RUNTIME-SEARCH-HELPER',
       'DATA-TODO-ITEM',
       'returns',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.js',
+      sliceArtifact(profile, 'runtimeHelper'),
       'tool-confirmed',
     ),
     edge(
@@ -917,7 +1110,7 @@ function buildEdges(): GraphEdge[] {
       'TT-SEARCH-001',
       'BEH-SEARCH-TITLE-NOTE',
       'verifies',
-      'examples/adoption/todo-search-slice/test-tree.json',
+      sliceArtifact(profile, 'testTree'),
       'tool-confirmed',
     ),
     edge(
@@ -925,7 +1118,7 @@ function buildEdges(): GraphEdge[] {
       'TT-SEARCH-002',
       'BEH-EMPTY-QUERY',
       'verifies',
-      'examples/adoption/todo-search-slice/test-tree.json',
+      sliceArtifact(profile, 'testTree'),
       'tool-confirmed',
     ),
     edge(
@@ -933,7 +1126,7 @@ function buildEdges(): GraphEdge[] {
       'TT-SEARCH-003',
       'BEH-NO-RESULT',
       'verifies',
-      'examples/adoption/todo-search-slice/test-tree.json',
+      sliceArtifact(profile, 'testTree'),
       'inferred',
     ),
     edge(
@@ -941,7 +1134,7 @@ function buildEdges(): GraphEdge[] {
       'TT-SEARCH-004',
       'BEH-SEARCH-TITLE-NOTE',
       'verifies',
-      'examples/adoption/todo-search-slice/test-tree.json',
+      sliceArtifact(profile, 'testTree'),
       'tool-confirmed',
     ),
     edge(
@@ -949,7 +1142,7 @@ function buildEdges(): GraphEdge[] {
       'EV-SEARCH-NOTE-TEST',
       'TT-SEARCH-001',
       'evidences',
-      'examples/adoption/todo-search-slice/runtime-evidence.md',
+      sliceArtifact(profile, 'runtimeEvidence'),
       'tool-confirmed',
     ),
     edge(
@@ -957,7 +1150,7 @@ function buildEdges(): GraphEdge[] {
       'EV-SEARCH-NOTE-TEST',
       'TT-SEARCH-002',
       'evidences',
-      'examples/adoption/todo-search-slice/runtime-evidence.md',
+      sliceArtifact(profile, 'runtimeEvidence'),
       'tool-confirmed',
     ),
     edge(
@@ -965,7 +1158,7 @@ function buildEdges(): GraphEdge[] {
       'EV-SEARCH-NOTE-TEST',
       'TT-SEARCH-004',
       'evidences',
-      'examples/adoption/todo-search-slice/runtime-evidence.md',
+      sliceArtifact(profile, 'runtimeEvidence'),
       'tool-confirmed',
     ),
     edge(
@@ -973,7 +1166,7 @@ function buildEdges(): GraphEdge[] {
       'EV-SEARCH-REVIEW',
       'TT-SEARCH-003',
       'evidences',
-      'examples/adoption/todo-search-slice/evidence-tree.json',
+      sliceArtifact(profile, 'evidenceTree'),
       'inferred',
       'unknown',
     ),
@@ -982,7 +1175,7 @@ function buildEdges(): GraphEdge[] {
       'EV-SEARCH-TEST',
       'TT-SEARCH-001',
       'evidences',
-      'examples/adoption/todo-search-slice/evidence-tree.json',
+      sliceArtifact(profile, 'evidenceTree'),
       'inferred',
       'stale',
     ),
@@ -991,7 +1184,7 @@ function buildEdges(): GraphEdge[] {
       'PP-001',
       'CH-001',
       'approves',
-      'examples/adoption/todo-search-slice/product-patch-tree.json',
+      sliceArtifact(profile, 'productPatchTree'),
       'user-confirmed',
     ),
     edge(
@@ -999,7 +1192,7 @@ function buildEdges(): GraphEdge[] {
       'CH-001',
       'BEH-SEARCH-TITLE-NOTE',
       'touches',
-      'examples/adoption/todo-search-slice/change-tree.json',
+      sliceArtifact(profile, 'changeTree'),
       'user-confirmed',
     ),
     edge(
@@ -1007,16 +1200,16 @@ function buildEdges(): GraphEdge[] {
       'CH-001',
       'EV-SEARCH-TEST',
       'invalidates',
-      'examples/adoption/todo-search-slice/impact-tree.json',
+      sliceArtifact(profile, 'impactTree'),
       'inferred',
       'fresh',
     ),
     edge(
       'E-CH-INVALIDATES-OLD-ACCEPTANCE',
       'CH-001',
-      'AT-ROOT',
+      profile.ids.acceptanceRoot,
       'invalidates',
-      'examples/adoption/todo-search-slice/acceptance-tree.json',
+      sliceArtifact(profile, 'acceptanceTree'),
       'inferred',
       'fresh',
     ),
@@ -1025,7 +1218,7 @@ function buildEdges(): GraphEdge[] {
       'CH-001',
       'BEH-NON-SCOPE-GUARD',
       'preserves',
-      'examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js',
+      sliceArtifact(profile, 'runtimeTest'),
       'tool-confirmed',
     ),
     edge(
@@ -1033,7 +1226,7 @@ function buildEdges(): GraphEdge[] {
       'CH-001',
       'EV-SEARCH-NOTE-TEST',
       'requires',
-      'examples/adoption/todo-search-slice/impact-tree.json',
+      sliceArtifact(profile, 'impactTree'),
       'inferred',
     ),
     edge(
@@ -1041,7 +1234,7 @@ function buildEdges(): GraphEdge[] {
       'IM-SEARCH-001',
       'CH-001',
       'reports-on',
-      'examples/adoption/todo-search-slice/impact-tree.json',
+      sliceArtifact(profile, 'impactTree'),
       'inferred',
     ),
     edge(
@@ -1049,63 +1242,63 @@ function buildEdges(): GraphEdge[] {
       'IM-SEARCH-001',
       'EV-SEARCH-REVIEW',
       'reports-on',
-      'examples/adoption/todo-search-slice/impact-tree.json',
+      sliceArtifact(profile, 'impactTree'),
       'inferred',
     ),
     edge(
       'E-CYCLE-REQUIRES-WT',
-      'CYCLE-TODO-SEARCH',
-      'WT-SEARCH-001',
+      profile.ids.cycleContract,
+      profile.ids.work,
       'requires',
-      'examples/adoption/todo-search-slice/cycle-contract.md',
+      sliceArtifact(profile, 'cycleContract'),
       'inferred',
     ),
     edge(
       'E-CYCLE-REQUIRES-EV',
-      'CYCLE-TODO-SEARCH',
+      profile.ids.cycleContract,
       'EV-SEARCH-NOTE-TEST',
       'requires',
-      'examples/adoption/todo-search-slice/cycle-contract.md',
+      sliceArtifact(profile, 'cycleContract'),
       'inferred',
     ),
     edge(
       'E-NEC-REQUIRES-WT',
-      'NEC-WT-SEARCH-001',
-      'WT-SEARCH-001',
+      profile.ids.nodeExecutionContract,
+      profile.ids.work,
       'requires',
-      'examples/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md',
+      sliceArtifact(profile, 'nodeExecutionContract'),
       'inferred',
     ),
     edge(
       'E-NEC-PRESERVES-GUARD',
-      'NEC-WT-SEARCH-001',
+      profile.ids.nodeExecutionContract,
       'BEH-NON-SCOPE-GUARD',
       'preserves',
-      'examples/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md',
+      sliceArtifact(profile, 'nodeExecutionContract'),
       'inferred',
     ),
     edge(
       'E-AT-APPROVES-PT',
-      'AT-ROOT',
-      'PT-SEARCH-001',
+      profile.ids.acceptanceRoot,
+      profile.ids.product,
       'approves',
-      'examples/adoption/todo-search-slice/acceptance-tree.json',
+      sliceArtifact(profile, 'acceptanceTree'),
       'user-confirmed',
     ),
     edge(
       'E-AT-APPROVES-EV-NOTE',
-      'AT-ROOT',
+      profile.ids.acceptanceRoot,
       'EV-SEARCH-NOTE-TEST',
       'approves',
-      'examples/adoption/todo-search-slice/acceptance-tree.json',
+      sliceArtifact(profile, 'acceptanceTree'),
       'user-confirmed',
     ),
     edge(
       'E-AB-REPORTS-ON-AT',
       'AB-TODO-SEARCH',
-      'AT-ROOT',
+      profile.ids.acceptanceRoot,
       'reports-on',
-      'examples/adoption/todo-search-slice/approval-brief.md',
+      sliceArtifact(profile, 'approvalBrief'),
       'user-confirmed',
     ),
     edge(
@@ -1113,7 +1306,7 @@ function buildEdges(): GraphEdge[] {
       'FIND-BOUNDED-FIXTURE',
       'EV-SEARCH-NOTE-TEST',
       'reports-on',
-      'examples/adoption/todo-search-slice/runtime-evidence.md',
+      sliceArtifact(profile, 'runtimeEvidence'),
       'tool-confirmed',
     ),
     edge(
@@ -1121,7 +1314,7 @@ function buildEdges(): GraphEdge[] {
       'FIND-PARTIAL-UI',
       'EV-SEARCH-REVIEW',
       'reports-on',
-      'examples/adoption/todo-search-slice/evidence-exceptions.md',
+      sliceArtifact(profile, 'evidenceExceptions'),
       'inferred',
       'unknown',
     ),
@@ -1130,7 +1323,7 @@ function buildEdges(): GraphEdge[] {
       'FIND-GENERATED-BUILDER-MISSING',
       'DOC-READ-MODEL',
       'reports-on',
-      'docs/concept/generated-read-model-evidence-requirement.md',
+      profile.artifacts.generatedEvidenceRequirement,
       'tool-confirmed',
     ),
     edge(
@@ -1138,7 +1331,7 @@ function buildEdges(): GraphEdge[] {
       'FIND-ACEP-CLEANUP-DEFERRED',
       'CCN-ACEP-TASK-CARD-AUTHORITY-001',
       'reports-on',
-      'examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
+      profile.artifacts.compatibilityControlNode,
       'inferred',
       'unknown',
     ),
@@ -1147,47 +1340,47 @@ function buildEdges(): GraphEdge[] {
       'CCN-ACEP-TASK-CARD-AUTHORITY-001',
       'DOC-LIMITED-PILOT-PACKAGE',
       'reports-on',
-      'examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
+      profile.artifacts.compatibilityControlNode,
       'inferred',
     ),
     edge(
       'E-DOC-PARITY-REPORTS-ON-VIEW',
       'DOC-PARITY-CHECK',
-      'VIEW-TODO-SEARCH-CORE-VIEWS',
+      profile.ids.viewInstance,
       'reports-on',
-      'examples/adoption/todo-search-slice/generated/read-model-parity-report.json',
+      sliceArtifact(profile, 'generatedParityReport'),
       'tool-confirmed',
     ),
     edge(
       'E-VIEW-DERIVES-TASK',
-      'VIEW-TODO-SEARCH-CORE-VIEWS',
+      profile.ids.viewInstance,
       'TASK-TODO-SEARCH-PILOT',
       'derives-view',
-      'examples/adoption/todo-search-slice/view-instance-manifest.json',
+      sliceArtifact(profile, 'viewManifest'),
       'inferred',
     ),
     edge(
       'E-VIEW-DERIVES-REQ',
-      'VIEW-TODO-SEARCH-CORE-VIEWS',
-      'PT-SEARCH-001',
+      profile.ids.viewInstance,
+      profile.ids.product,
       'derives-view',
-      'examples/adoption/todo-search-slice/view-instance-manifest.json',
+      sliceArtifact(profile, 'viewManifest'),
       'inferred',
     ),
     edge(
       'E-VIEW-DERIVES-CONTRACT',
-      'VIEW-TODO-SEARCH-CORE-VIEWS',
-      'CYCLE-TODO-SEARCH',
+      profile.ids.viewInstance,
+      profile.ids.cycleContract,
       'derives-view',
-      'examples/adoption/todo-search-slice/view-instance-manifest.json',
+      sliceArtifact(profile, 'viewManifest'),
       'inferred',
     ),
     edge(
       'E-VIEW-DERIVES-EVIDENCE',
-      'VIEW-TODO-SEARCH-CORE-VIEWS',
+      profile.ids.viewInstance,
       'EV-SEARCH-NOTE-TEST',
       'derives-view',
-      'examples/adoption/todo-search-slice/view-instance-manifest.json',
+      sliceArtifact(profile, 'viewManifest'),
       'inferred',
     ),
     edge(
@@ -1195,25 +1388,25 @@ function buildEdges(): GraphEdge[] {
       'DEC-SCOPED-PILOT-EXECUTION',
       'DOC-LIMITED-PILOT-TRANSITION-RECORD',
       'approves',
-      'docs/concept/scoped-source-authority-pilot-execution-record.md',
+      profile.artifacts.scopedPilotExecutionRecord,
       'user-confirmed',
     ),
   ]
 }
 
-function buildCoreViewCoverage(): CoreViewCoverage[] {
+function buildCoreViewCoverage(profile: SliceReadModelConfig): CoreViewCoverage[] {
   return [
     view(
       'intent-view',
       'Intent View',
       [
         'TASK-TODO-SEARCH-PILOT',
-        'PT-SEARCH-001',
+        profile.ids.product,
         'AC-SEARCH-001',
         'AC-SEARCH-002',
         'AC-SEARCH-003',
         'PP-001',
-        'AT-ROOT',
+        profile.ids.acceptanceRoot,
       ],
       [
         'E-TASK-TARGETS-REQ',
@@ -1230,7 +1423,7 @@ function buildCoreViewCoverage(): CoreViewCoverage[] {
       'behavior-view',
       'Behavior View',
       [
-        'PT-SEARCH-001',
+        profile.ids.product,
         'BEH-SEARCH-TITLE-NOTE',
         'BEH-EMPTY-QUERY',
         'BEH-NO-RESULT',
@@ -1267,7 +1460,13 @@ function buildCoreViewCoverage(): CoreViewCoverage[] {
     view(
       'scope-execution-view',
       'Scope / Execution View',
-      ['TASK-TODO-SEARCH-PILOT', 'WT-SEARCH-001', 'CYCLE-TODO-SEARCH', 'NEC-WT-SEARCH-001', 'BEH-NON-SCOPE-GUARD'],
+      [
+        'TASK-TODO-SEARCH-PILOT',
+        profile.ids.work,
+        profile.ids.cycleContract,
+        profile.ids.nodeExecutionContract,
+        'BEH-NON-SCOPE-GUARD',
+      ],
       [
         'E-TASK-REQUIRES-CYCLE',
         'E-TASK-REQUIRES-NEC',
@@ -1286,7 +1485,7 @@ function buildCoreViewCoverage(): CoreViewCoverage[] {
         'CH-001',
         'IM-SEARCH-001',
         'EV-SEARCH-TEST',
-        'AT-ROOT',
+        profile.ids.acceptanceRoot,
         'FIND-ACEP-CLEANUP-DEFERRED',
         'CCN-ACEP-TASK-CARD-AUTHORITY-001',
       ],
@@ -1330,7 +1529,7 @@ function buildCoreViewCoverage(): CoreViewCoverage[] {
         'EV-SEARCH-TEST',
         'EV-SEARCH-REVIEW',
         'EV-SEARCH-NOTE-TEST',
-        'AT-ROOT',
+        profile.ids.acceptanceRoot,
         'AB-TODO-SEARCH',
         'FIND-BOUNDED-FIXTURE',
         'FIND-PARTIAL-UI',
@@ -1354,8 +1553,11 @@ function buildCoreViewCoverage(): CoreViewCoverage[] {
   ]
 }
 
-function buildCheckEvidenceMapping(data: Record<string, unknown>): Array<Record<string, unknown>> {
-  const tests = getArray<TreeNode>(data.testTree, 'nodes').filter((entry) => entry.id !== 'TT-ROOT')
+function buildCheckEvidenceMapping(
+  data: Record<string, unknown>,
+  profile: SliceReadModelConfig,
+): Array<Record<string, unknown>> {
+  const tests = getArray<TreeNode>(data.testTree, 'nodes').filter((entry) => entry.id !== profile.ids.testRoot)
   const evidence = getArray<TreeNode>(data.evidenceTree, 'nodes')
   return tests.map((test) => ({
     checkNodeId: test.id,
@@ -1369,45 +1571,12 @@ function buildCheckEvidenceMapping(data: Record<string, unknown>): Array<Record<
   }))
 }
 
-function buildRetainedWarnings(): Array<Record<string, unknown>> {
-  return [
-    {
-      id: 'RW-BOUNDED-FIXTURE',
-      findingNodeId: 'FIND-BOUNDED-FIXTURE',
-      status: 'acceptable-warning',
-      summary: 'Bounded fixture Evidence is not full Todo app implementation.',
-    },
-    {
-      id: 'RW-PARTIAL-UI',
-      findingNodeId: 'FIND-PARTIAL-UI',
-      status: 'acceptable-warning',
-      summary: 'UI screenshot/manual visual Evidence remains partial for the no-result empty state.',
-    },
-    {
-      id: 'RW-GENERATED-BUILDER',
-      findingNodeId: 'FIND-GENERATED-BUILDER-MISSING',
-      status: 'generated-present-for-bounded-slice',
-      summary:
-        'Generated read-model output and scoped validator-backed Evidence now exist for the bounded Todo Search slice; CI/full promotion repeatability remains later.',
-    },
-    {
-      id: 'RW-ACEP-CLEANUP',
-      findingNodeId: 'FIND-ACEP-CLEANUP-DEFERRED',
-      status: 'deferred-cleanup',
-      summary: 'ACEP task-card public-doc cleanup remains deferred.',
-    },
-  ]
+function buildRetainedWarnings(profile: SliceReadModelConfig): Array<Record<string, unknown>> {
+  return profile.retainedWarnings
 }
 
-function buildCompatibilityWarnings(): Array<Record<string, unknown>> {
-  return [
-    {
-      id: 'CCN-ACEP-TASK-CARD-AUTHORITY-001',
-      source: 'examples/adoption/compatibility-mismatch-slice',
-      role: 'supplemental warning only',
-      summary: 'Legacy ACEP/task-card wording remains a compatibility warning, not pilot source scope.',
-    },
-  ]
+function buildCompatibilityWarnings(profile: SliceReadModelConfig): Array<Record<string, unknown>> {
+  return profile.compatibilityWarnings
 }
 
 function buildEvidenceManifest(
@@ -1515,13 +1684,14 @@ function buildParityReport(
 function buildValidationReport(
   root: string,
   slice: string,
+  profile: SliceReadModelConfig,
   generated: GeneratedReadModel,
   parity: ParityReport,
   manifest: Record<string, unknown>,
   marker: Record<string, unknown>,
 ): ValidationReport {
   const commandIdentity = `pbe graph read-model validate --slice ${slice}`
-  const checks = buildValidationChecks(root, slice, generated, parity, manifest, marker)
+  const checks = buildValidationChecks(root, slice, profile, generated, parity, manifest, marker)
   const blockingCount = checks.filter((entry) => entry.status === 'blocking').length
   const decisionRequiredCount = checks.filter((entry) => entry.status === 'decision-required').length
   const warningCount = checks.filter((entry) => entry.status === 'warning').length
@@ -1541,6 +1711,7 @@ function buildValidationReport(
       commandIdentity,
       sourceCommit: resolveSourceCommit(root),
       sourceSlice: slice,
+      sliceProfile: profile.profileId,
       scopeLevel: 'scoped-slice-validation',
       generatedReadModel: `${slice}/generated/generated-read-model.json`,
       parityReport: `${slice}/generated/read-model-parity-report.json`,
@@ -1579,6 +1750,7 @@ function buildValidationReport(
 function buildValidationChecks(
   root: string,
   slice: string,
+  profile: SliceReadModelConfig,
   generated: GeneratedReadModel,
   parity: ParityReport,
   manifest: Record<string, unknown>,
@@ -1634,7 +1806,9 @@ function buildValidationChecks(
     check(
       'parity-counts-zero',
       'Mismatch, blocking, and decision-required counts are zero',
-      parity.summary.mismatchCount === 0 && parity.summary.blockingCount === 0 && parity.summary.decisionRequiredCount === 0,
+      parity.summary.mismatchCount === 0 &&
+        parity.summary.blockingCount === 0 &&
+        parity.summary.decisionRequiredCount === 0,
       'blocking',
       `${outputPrefix}/read-model-parity-report.json`,
     ),
@@ -1685,7 +1859,9 @@ function buildValidationChecks(
     check(
       'source-authority-boundary-bounded',
       'Source authority boundary is present and bounded',
-      /Tree-native selected-slice artifacts remain current operational source/i.test(generated.sourceAuthorityBoundary) &&
+      /Tree-native selected-slice artifacts remain current operational source/i.test(
+        generated.sourceAuthorityBoundary,
+      ) &&
         String(markerScope) === slice &&
         String(activeObservationScope).includes(slice),
       'blocking',
@@ -1721,7 +1897,10 @@ function buildValidationChecks(
       'User acceptance authority is not replaced by Codex/PBE',
       !/codex\/pbe self-acceptance|replace user acceptance/i.test(
         `${generated.sourceAuthorityBoundary} ${generated.nonPromotionStatement} ${marker.nonPromotionStatement || ''}`,
-      ) && generated.nodes.some((entry) => entry.id === 'AT-ROOT' && entry.confidence === 'user-confirmed'),
+      ) &&
+        generated.nodes.some(
+          (entry) => entry.id === profile.ids.acceptanceRoot && entry.confidence === 'user-confirmed',
+        ),
       'blocking',
       `${outputPrefix}/generated-read-model.json`,
     ),
@@ -1729,8 +1908,7 @@ function buildValidationChecks(
       'compatibility-warning-boundary-preserved',
       'Supplemental compatibility warning boundary is preserved',
       generated.compatibilityWarnings.some((entry) => /supplemental warning only/i.test(String(entry.role || ''))) &&
-        String(getPath(marker, ['pilotScope', 'supplementalWarningOnly'])) ===
-          'examples/adoption/compatibility-mismatch-slice',
+        String(getPath(marker, ['pilotScope', 'supplementalWarningOnly'])) === profile.artifacts.compatibilitySlice,
       'blocking',
       `${outputPrefix}/generated-read-model.json`,
     ),
@@ -2186,28 +2364,10 @@ ${report.recommendedNextDecisionSurface.map((entry) => `- ${entry}`).join('\n')}
 `
 }
 
-function sourceArtifactList(root: string, slice: string): SourceArtifact[] {
-  const relativePaths = [
-    `${slice}/product-tree.json`,
-    `${slice}/project-tree.json`,
-    `${slice}/work-tree.json`,
-    `${slice}/test-tree.json`,
-    `${slice}/evidence-tree.json`,
-    `${slice}/acceptance-tree.json`,
-    `${slice}/change-tree.json`,
-    `${slice}/impact-tree.json`,
-    `${slice}/product-patch-tree.json`,
-    `${slice}/cycle-contract.md`,
-    `${slice}/node-execution-contracts/wt-search-001.md`,
-    `${slice}/runtime-evidence.md`,
-    `${slice}/approval-brief.md`,
-    `${slice}/evidence-exceptions.md`,
-    `${slice}/generated/scoped-source-authority-pilot-marker.json`,
-    'docs/concept/scoped-source-authority-pilot-execution-record.md',
-    'docs/concept/scoped-source-authority-pilot-review.md',
-    'docs/concept/scoped-source-authority-pilot-active-observation.md',
-    'examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
-  ]
+function sourceArtifactList(root: string, slice: string, profile: SliceReadModelConfig): SourceArtifact[] {
+  const relativePaths = profile.sourceArtifactRelativePaths.map((entry) =>
+    isSliceRelativeArtifact(entry) ? `${slice}/${entry}` : entry,
+  )
   return relativePaths.map((entry) => {
     const absolutePath = path.resolve(root, entry)
     return {
@@ -2216,6 +2376,14 @@ function sourceArtifactList(root: string, slice: string): SourceArtifact[] {
       status: existsSync(absolutePath) ? 'present' : 'missing',
     }
   })
+}
+
+function isSliceRelativeArtifact(relativePathFromProfile: string): boolean {
+  return !relativePathFromProfile.startsWith('docs/') && !relativePathFromProfile.startsWith('examples/')
+}
+
+function sliceArtifact(profile: SliceReadModelConfig, artifactKey: keyof SliceReadModelConfig['artifacts']): string {
+  return `${profile.supportedSlice}/${profile.artifacts[artifactKey]}`
 }
 
 async function readRequiredJson<T>(filePath: string, label: string): Promise<T> {
@@ -2394,6 +2562,10 @@ function isString(value: unknown): value is string {
 
 function formatList(value: unknown): string {
   return Array.isArray(value) ? value.map(String).join(', ') : String(value || '')
+}
+
+function normalizePath(value: string): string {
+  return value.replace(/\\/g, '/').replace(/\/+$/, '')
 }
 
 async function writeFormattedJson(filePath: string, value: unknown): Promise<void> {

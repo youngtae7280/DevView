@@ -58,7 +58,12 @@ examples/adoption/compatibility-mismatch-slice
 | Required parity report                        | `examples/adoption/todo-search-slice/generated/read-model-parity-report.json`             |
 | Validator-backed Evidence report              | `examples/adoption/todo-search-slice/generated/read-model-validation-report.json`         |
 | Evidence manifest                             | `examples/adoption/todo-search-slice/generated/read-model-evidence-manifest.json`         |
+| Todo Search read-model profile                | `cli/src/core/read-model-evidence.ts`                                                     |
 | Review record                                 | `docs/concept/scoped-source-authority-pilot-review.md`                                    |
+
+The Todo Search read-model profile is an implementation structure for the bounded builder/validator path. It preserves
+the active observation boundary and does not add a second slice, aggregation, CI enforcement, or broader source
+authority.
 
 ## Fallback / Reference Artifacts
 

@@ -1,9 +1,9 @@
 {
   "version": "0.1.0-read-model-parity-report",
   "metadata": {
-    "comparedAt": "2026-06-25T06:10:09.644Z",
+    "comparedAt": "2026-06-25T07:13:38.339Z",
     "commandIdentity": "pbe graph read-model compare --generated examples/adoption/todo-search-slice/generated/generated-read-model.json --manual examples/adoption/todo-search-slice/maintainability-graph-read-model.json",
-    "sourceCommit": "bc9bb24",
+    "sourceCommit": "eaaee15",
     "generatedArtifact": "examples/adoption/todo-search-slice/generated/generated-read-model.json",
     "manualArtifact": "examples/adoption/todo-search-slice/maintainability-graph-read-model.json",
     "comparisonScope": "Todo Search selected-slice read-model Evidence"

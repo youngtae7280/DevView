@@ -332,6 +332,7 @@ cleanup remain separate.
 
 - Generated graph builder, CLI-backed parity, and local validator-backed Evidence now exist for the Todo Search scoped
   pilot.
+- Todo Search read-model assumptions are now isolated into an explicit profile/config without intended behavior change.
 - Broader/multi-slice validation, CI enforcement, and full-promotion waiver policy remain future questions.
 
 ### Decisions Needed Before Promotion Approval

@@ -246,8 +246,10 @@ choose one of:
 5. `Require public-doc cleanup before broader promotion`
 6. `Defer or reject broader execution/enforcement path`
 
-Recommended next step: keep the workflow manual/non-enforcing and observe, unless the user chooses PR triggers,
-enforcement, multi-slice validation, cleanup, broader promotion review, or rollback/defer.
+Recommended next step: keep the workflow manual/non-enforcing and observe, or proceed through the multi-slice path by
+first extracting the Todo Search profile/config without behavior change. That extraction is now complete for Todo Search
+only; second-slice validation, aggregation, PR triggers, enforcement, cleanup, broader promotion review, and rollback/defer
+remain separate decisions.
 
 ## Gate Self-Check
 

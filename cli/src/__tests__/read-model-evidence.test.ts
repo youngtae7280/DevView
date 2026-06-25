@@ -2,7 +2,13 @@ import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { compareReadModelEvidence, generateReadModelEvidence, validateReadModelEvidence } from '../core/read-model-evidence'
+import {
+  compareReadModelEvidence,
+  generateReadModelEvidence,
+  getSliceReadModelProfile,
+  todoSearchReadModelProfile,
+  validateReadModelEvidence,
+} from '../core/read-model-evidence'
 
 const workspaces: string[] = []
 const allowedTags = new Set(['target', 'context', 'candidate', 'guard', 'required', 'stale', 'blocked', 'output'])
@@ -17,6 +23,16 @@ const coreViews = [
 ]
 
 describe('read-model Evidence builder', () => {
+  it('uses the Todo Search read-model profile for the bounded selected slice', () => {
+    const profile = getSliceReadModelProfile('examples/adoption/todo-search-slice')
+
+    expect(profile).toBe(todoSearchReadModelProfile)
+    expect(profile.profileId).toBe('todo-search-selected-slice')
+    expect(profile.expectedCounts).toEqual({ nodes: 40, edges: 59, validationChecks: 20 })
+    expect(profile.artifacts.nodeExecutionContract).toBe('node-execution-contracts/wt-search-001.md')
+    expect(profile.artifacts.compatibilitySlice).toBe('examples/adoption/compatibility-mismatch-slice')
+  })
+
   afterEach(async () => {
     await Promise.all(workspaces.splice(0).map((workspace) => rm(workspace, { recursive: true, force: true })))
   })
@@ -27,7 +43,9 @@ describe('read-model Evidence builder', () => {
     const result = await generateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')
     const generated = JSON.parse(await readFile(result.generatedJsonPath, 'utf8')) as {
       nodes: Array<{ viewScopedTags?: string[]; includedInViewIds?: string[] }>
+      edges: unknown[]
       coreViewCoverage: Array<{ name: string; viewScopedTags?: string[] }>
+      metadata: { sliceProfile?: string }
       sourceAuthorityBoundary: string
       nonPromotionStatement: string
     }
@@ -35,6 +53,9 @@ describe('read-model Evidence builder', () => {
     expect(generated.sourceAuthorityBoundary).toContain('Tree-native selected-slice artifacts')
     expect(generated.nonPromotionStatement).toContain('cannot change source authority')
     expect(generated.coreViewCoverage.map((entry) => entry.name)).toEqual(coreViews)
+    expect(generated.nodes).toHaveLength(todoSearchReadModelProfile.expectedCounts.nodes)
+    expect(generated.edges).toHaveLength(todoSearchReadModelProfile.expectedCounts.edges)
+    expect(generated.metadata.sliceProfile).toBe(todoSearchReadModelProfile.profileId)
     expect(generated.nodes.length).toBeGreaterThan(0)
     expect(
       generated.nodes.some((entry) => Array.isArray(entry.includedInViewIds) && entry.includedInViewIds.length > 0),
@@ -85,13 +106,14 @@ describe('read-model Evidence builder', () => {
     const report = JSON.parse(await readFile(result.reportJsonPath, 'utf8')) as {
       status: string
       evidenceLevel: string
-      summary: { blockingCount: number; decisionRequiredCount: number }
+      summary: { blockingCount: number; checkCount: number; decisionRequiredCount: number }
       sourceAuthorityBoundary: string
       nonPromotionStatement: string
     }
 
     expect(report.status).toBe('validation-pass')
     expect(report.evidenceLevel).toBe('validator-backed')
+    expect(report.summary.checkCount).toBe(todoSearchReadModelProfile.expectedCounts.validationChecks)
     expect(report.summary.blockingCount).toBe(0)
     expect(report.summary.decisionRequiredCount).toBe(0)
     expect(report.sourceAuthorityBoundary).toContain('does not change source authority')
@@ -161,7 +183,10 @@ describe('read-model Evidence builder', () => {
       generated.generatedJsonPath,
       'examples/adoption/todo-search-slice/maintainability-graph-read-model.json',
     )
-    const manifestPath = join(workspace, 'examples/adoption/todo-search-slice/generated/read-model-evidence-manifest.json')
+    const manifestPath = join(
+      workspace,
+      'examples/adoption/todo-search-slice/generated/read-model-evidence-manifest.json',
+    )
     const markerPath = join(
       workspace,
       'examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json',

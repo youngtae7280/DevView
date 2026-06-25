@@ -1,10 +1,11 @@
 {
   "version": "0.1.0-read-model-validation-report",
   "metadata": {
-    "validatedAt": "2026-06-25T06:10:12.631Z",
+    "validatedAt": "2026-06-25T07:13:38.342Z",
     "commandIdentity": "pbe graph read-model validate --slice examples/adoption/todo-search-slice",
-    "sourceCommit": "bc9bb24",
+    "sourceCommit": "eaaee15",
     "sourceSlice": "examples/adoption/todo-search-slice",
+    "sliceProfile": "todo-search-selected-slice",
     "scopeLevel": "scoped-slice-validation",
     "generatedReadModel": "examples/adoption/todo-search-slice/generated/generated-read-model.json",
     "parityReport": "examples/adoption/todo-search-slice/generated/read-model-parity-report.json",

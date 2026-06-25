@@ -309,6 +309,11 @@ Search hardcoding risks, proposes a future `SliceReadModelConfig` / profile stra
 aggregation rules. It does not implement multi-slice validation, change CI workflows, expand source authority, or approve
 full Graph-source promotion.
 
+The first implementation step after that design is complete for Todo Search only: `cli/src/core/read-model-evidence.ts`
+now exposes an explicit Todo Search `SliceReadModelConfig` profile. Generated output, parity, validation, and CI workflow
+semantics remain bounded to `examples/adoption/todo-search-slice`; no second slice, aggregate validation, CI enforcement,
+source authority expansion, or full promotion is implemented.
+
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.

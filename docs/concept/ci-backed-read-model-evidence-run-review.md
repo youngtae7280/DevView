@@ -223,6 +223,10 @@ Recommended next step:
 Keep workflow manual/non-enforcing and observe, unless the user wants the next major branch: PR informational trigger, enforcement policy, multi-slice validation, cleanup, broader promotion review, or rollback/defer.
 ```
 
+Follow-up status: multi-slice validation design is now recorded, and the first implementation step extracted an explicit
+Todo Search `SliceReadModelConfig` profile without intended behavior change. This does not alter the reviewed CI-backed
+run result and does not add PR triggers, enforcement, or a second slice.
+
 ## Gate Self-Check
 
 | Gate                             | Status | Result                                                                                         |
