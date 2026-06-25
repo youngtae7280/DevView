@@ -1,6 +1,6 @@
 # Scoped Limited Pilot Transition Execution Plan
 
-Status: scoped-limited-pilot-transition-execution-plan / decision-required / not-executed
+Status: scoped-limited-pilot-transition-execution-plan / dry-run-selected / source-authority-unchanged
 
 ## Document Purpose
 
@@ -18,8 +18,13 @@ It is an execution planning and judgment surface. It is not:
 - Codex/PBE self-approval
 
 The prior [limited-pilot-transition-record.md](limited-pilot-transition-record.md) records that the user approved the
-bounded limited pilot option. This document asks which execution mode, evidence standard, and approval gate should be
-used before anything is executed.
+bounded limited pilot option. This document defines the execution-mode choices, evidence standards, and approval gates
+that must stay separate before anything authority-bearing is executed.
+
+The user selected Option 1, `Run dry-run / review-only scoped pilot first`, on 2026-06-25. The resulting review-only
+observation is recorded in
+[dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md). That record
+does not execute scoped source-authority transition and does not approve full Graph-source promotion.
 
 ## Scope
 
@@ -69,6 +74,12 @@ Source authority remains unchanged until the user explicitly approves an executi
 ### Option 1: Run Dry-Run / Review-Only Scoped Pilot First
 
 Recommended.
+
+Current selection:
+
+```text
+selected by user on 2026-06-25; observation recorded
+```
 
 Meaning:
 
@@ -228,10 +239,10 @@ The user must choose one execution mode:
 ### State Label
 
 ```text
-Decision required
+Review with warning
 ```
 
-Reason: the limited pilot decision is approved, but execution mode has not been selected.
+Reason: the dry-run mode was selected and observed, but the next authority-bearing choice remains a user decision.
 
 ## Control Node Summary
 
@@ -257,12 +268,13 @@ Reason: the limited pilot decision is approved, but execution mode has not been 
 
 ## Final Non-Execution Statement
 
-This plan does not execute dry-run.
-
 This plan does not execute scoped source-authority transition.
+
+The dry-run / review-only observation is recorded separately.
 
 This plan does not approve or execute full Graph-source promotion.
 
 This plan does not change source authority.
 
-The next step requires user selection of an execution mode.
+The next step requires user selection of whether to prepare scoped source-authority pilot execution, require generated
+builder output, require public-doc cleanup, strengthen Evidence, defer, or reject the scoped pilot.

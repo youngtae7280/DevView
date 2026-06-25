@@ -45,6 +45,7 @@ This log is the source of truth for confirmed concept decisions in the PBE runti
 | DEC-037 | active | The Todo Search read-model parity artifact is refreshed under the Graph-first Node/Edge/Tag taxonomy for limited pilot review. The refresh adds node kinds, edge types, view-scoped tags, confidence/freshness separation, and 7 Core View coverage without changing source authority or approving promotion.                                                                                                            | Todo Search Node/Edge/Tag Parity Refresh                                          |
 | DEC-038 | active | The user approved `Approve limited pilot promotion decision` for the Todo Search selected slice only. This approval permits a bounded limited pilot transition record for `examples/adoption/todo-search-slice`, with retained warnings carried forward, but it is not full Graph-source promotion, broad source authority change, generated builder completion, public-doc cleanup, or tree-native artifact retirement. | Limited Pilot Transition Record                                                   |
 | DEC-039 | active | Actual scoped limited pilot transition requires an execution plan and explicit execution mode selection. Dry-run / review-only scoped pilot execution does not change source authority, while any scoped source-authority pilot execution requires separate user approval, source boundary definition, rollback/fallback handling, compatibility marking, and Evidence gates.                                            | Scoped Limited Pilot Transition Execution Plan                                    |
+| DEC-040 | active | The user selected `Run dry-run / review-only scoped pilot first` for the Todo Search selected slice. The dry-run observation records workflow Evidence without changing source authority and cannot by itself approve scoped source-authority pilot execution, full Graph-source promotion, tree-native artifact retirement, generated builder implementation, or public-doc cleanup.                                    | Dry-Run Scoped Limited Pilot Observation Record                                   |
 
 ## Supersede Relationships
 
@@ -167,6 +168,11 @@ DEC-039 does not supersede DEC-020, DEC-021, DEC-030, DEC-031, or DEC-038. It pl
 after the bounded limited pilot approval, while the approval record remains non-executing, dry-run remains
 non-authoritative, scoped source-authority pilot execution requires separate approval, and full Graph-source promotion
 remains out of scope.
+
+DEC-040 does not supersede DEC-020, DEC-021, DEC-030, DEC-031, DEC-038, or DEC-039. It records the user's dry-run mode
+selection and the review-only observation result, while source transition policy, rollback/compatibility requirements,
+manual parity limits, limited pilot decision boundaries, the bounded transition record, and the execution plan's
+separation between dry-run and scoped authority execution remain active.
 
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in

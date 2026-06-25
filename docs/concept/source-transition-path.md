@@ -235,8 +235,10 @@ the bounded `Approve limited pilot promotion decision` option for the Todo Searc
 transition, promote Maintainability Graph, or change source authority.
 
 [scoped-limited-pilot-transition-execution-plan.md](scoped-limited-pilot-transition-execution-plan.md) separates the next
-execution modes. A dry-run / review-only scoped pilot remains non-authoritative, while any scoped source-authority pilot
-execution requires a separate explicit user approval and rollback/fallback/compatibility boundary.
+execution modes. The user selected dry-run / review-only first, and
+[dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md) records that
+review-only observation as `usable-with-warnings`. Any scoped source-authority pilot execution still requires a separate
+explicit user approval and rollback/fallback/compatibility boundary.
 
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) defines the target Graph-first responsibility split:
 Nodes are durable targets, Edges are durable semantic relationships, and Tags are temporary view-scoped roles.
@@ -318,8 +320,8 @@ Those remain later concept or implementation questions.
 
 - How formal should projection/parity expectations be before promotion review?
 - Does promotion review need a specialized Approval Brief template?
-- Will the user run a dry-run / review-only scoped pilot first, approve scoped source-authority pilot execution, or
-  require prerequisites first?
+- After the usable-with-warnings dry-run, will the user proceed to scoped source-authority pilot preparation, require
+  prerequisites first, run another dry-run, defer, or reject the scoped pilot?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
 - Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?

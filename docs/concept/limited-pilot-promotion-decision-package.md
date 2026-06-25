@@ -57,6 +57,10 @@ the user selected the bounded limited pilot option.
 
 The resulting bounded transition record is [limited-pilot-transition-record.md](limited-pilot-transition-record.md).
 
+The user then selected the dry-run / review-only scoped pilot option. The observation is recorded in
+[dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md) as
+`usable-with-warnings`; it does not change source authority or approve scoped source-authority pilot execution.
+
 ## Pilot Scope
 
 ### Primary Pilot Scope
@@ -254,8 +258,8 @@ This package does not decide:
 - Will the user require ACEP task-card public-doc cleanup before full promotion?
 - Will the user treat bounded fixture Evidence as enough for the limited pilot, while reserving full-product runtime
   proof for a later full promotion review?
-- Will the user run a dry-run / review-only scoped pilot first, approve scoped source-authority pilot execution, or
-  require prerequisites first?
+- After the usable-with-warnings dry-run, will the user proceed to scoped source-authority pilot preparation, require
+  generated builder output, require public-doc cleanup, strengthen Evidence, defer, or reject the scoped pilot?
 
 ## Gate Self-Check
 
@@ -275,7 +279,8 @@ This package does not decide:
 
 This package remains the reviewed decision package refreshed under the Graph-first Node/Edge/Tag baseline.
 
-It records user approval of the bounded limited pilot decision option.
+It records user approval of the bounded limited pilot decision option and links to the later dry-run / review-only
+observation.
 
 It does not approve full Graph-source promotion.
 
@@ -283,4 +288,4 @@ It does not change source authority.
 
 It does not supersede tree-native artifacts.
 
-The next step must be a user decision using one of the action labels in this package.
+The next step must be a separate user decision about scoped source-authority pilot preparation or prerequisites.

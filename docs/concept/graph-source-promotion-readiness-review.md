@@ -59,6 +59,7 @@ This review uses the following observable sources:
 - `examples/adoption/todo-search-slice/view-instance-manifest.json`
 - `examples/adoption/todo-search-slice/view-instance-manifest.md`
 - [limited-pilot-promotion-decision-package.md](limited-pilot-promotion-decision-package.md)
+- [dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md)
 
 AI self-report is not Evidence for this review. Readiness findings are based on reviewable files, linked records,
 passing fixture command Evidence, and explicit exception or warning records.
@@ -83,6 +84,16 @@ Approve limited pilot promotion decision
 This outcome is bounded to `examples/adoption/todo-search-slice` and is recorded in
 [limited-pilot-transition-record.md](limited-pilot-transition-record.md). It is not full Graph-source promotion and does
 not change source authority.
+
+Subsequent execution-mode outcome:
+
+```text
+Run dry-run / review-only scoped pilot first
+```
+
+The dry-run observation result is recorded as `usable-with-warnings` in
+[dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md). It is
+review-only and does not approve scoped source-authority pilot execution.
 
 Meaning:
 
@@ -233,8 +244,9 @@ The user approved the bounded limited pilot option. Remaining judgment concerns 
 Decision required
 ```
 
-Reason: the Graph-first Node/Edge/Tag baseline refresh is complete and the user approved the bounded limited pilot
-option, but full promotion, broad source authority change, and actual scoped transition execution remain separate.
+Reason: the Graph-first Node/Edge/Tag baseline refresh is complete, the user approved the bounded limited pilot option,
+and the user selected dry-run / review-only observation. Full promotion, broad source authority change, and actual
+scoped transition execution remain separate.
 
 ## Control Node / Risk Classification
 
@@ -261,8 +273,8 @@ option, but full promotion, broad source authority change, and actual scoped tra
 
 ### Decisions Needed Before Promotion Approval
 
-- Which execution mode the user selects next: dry-run / review-only scoped pilot, scoped source-authority pilot,
-  prerequisite-first, defer, or reject.
+- Whether the `usable-with-warnings` dry-run is enough to begin scoped source-authority pilot preparation, or whether
+  generated builder output, public-doc cleanup, another dry-run, or stronger Evidence should come first.
 - Whether full promotion requires generated graph/read-model output as a future CLI-backed report or generated artifact.
 - Whether bounded fixture Evidence is enough for the pilot decision surface.
 - Whether ACEP task-card public-doc cleanup must happen before promotion approval or may remain deferred with an

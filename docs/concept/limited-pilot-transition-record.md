@@ -163,3 +163,7 @@ public-doc cleanup requires a separate task and the required user judgment.
 [scoped-limited-pilot-transition-execution-plan.md](scoped-limited-pilot-transition-execution-plan.md) defines the next
 mode-selection surface. It recommends a dry-run / review-only scoped pilot first, and it keeps scoped source-authority
 pilot execution behind a separate explicit user approval gate.
+
+The user selected the dry-run / review-only scoped pilot option on 2026-06-25. The review-only observation is recorded in
+[dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md). That observation
+does not change source authority and does not execute scoped source-authority pilot transition.

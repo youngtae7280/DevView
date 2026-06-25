@@ -175,7 +175,19 @@ The following execution plan is prepared for the next user mode decision:
 - [scoped-limited-pilot-transition-execution-plan.md](scoped-limited-pilot-transition-execution-plan.md)
 
 The plan recommends a dry-run / review-only scoped pilot first. It separates dry-run review from any scoped
-source-authority pilot and from full Graph-source promotion. Its status is `decision-required / not-executed`.
+source-authority pilot and from full Graph-source promotion. The user selected the dry-run / review-only option on
+2026-06-25.
+
+The following dry-run observation is recorded:
+
+- [dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md)
+
+The observation result is `usable-with-warnings`. It shows that the manual Maintainability Graph read-model, View
+Instance Manifest, 7 Core Views, Approval Brief, Check/Evidence records, and Control Node summary are usable for
+review-only workflow observation. It does not execute scoped source-authority transition, does not approve full
+Graph-source promotion, and does not change current operational source. The next step remains a user decision about
+whether to prepare scoped source-authority pilot execution, require generated builder output, require public-doc cleanup,
+strengthen evidence, defer, or reject the scoped pilot.
 
 ## Outline-Only Later-Phase Docs
 
