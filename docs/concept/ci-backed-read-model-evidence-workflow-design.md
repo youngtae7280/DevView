@@ -354,8 +354,8 @@ rollback/defer the scoped pilot.
 Decision required
 ```
 
-Reason: non-enforcing manual CI workflow implementation exists, but running/reviewing the CI artifact result, PR
-triggers, enforcement, and broader scope remain separate decisions.
+Reason: non-enforcing manual CI workflow implementation exists and run `28151296796` has been reviewed as Todo Search
+CI-backed Evidence. PR triggers, enforcement, broader scope, and promotion authority remain separate decisions.
 
 ## Gate Self-Check
 

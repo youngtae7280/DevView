@@ -95,14 +95,15 @@ promotion readiness.
 ## Proposed Report Artifacts
 
 The scoped Todo Search validator now creates the first two artifacts below under
-`examples/adoption/todo-search-slice/generated/`. The CI manifest remains a future design target.
+`examples/adoption/todo-search-slice/generated/`. The CI manifest is implemented for the manual Todo Search workflow and
+remains a future design target for multi-slice or repo-wide CI evidence.
 
-| Artifact                               | Role                                                                                                |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `read-model-validation-report.json`    | Machine-readable validator-backed Evidence summary. Implemented for Todo Search scoped validation.  |
-| `read-model-validation-report.md`      | Human-readable validation summary for review and Approval Brief use. Implemented for Todo Search.   |
-| `read-model-ci-evidence-manifest.json` | Future CI-backed manifest linking commit, run identity, validation command, and produced artifacts. |
-| `read-model-validation-summary.md`     | Optional concise summary for promotion or scoped execution review packages.                         |
+| Artifact                               | Role                                                                                                                                                                               |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `read-model-validation-report.json`    | Machine-readable validator-backed Evidence summary. Implemented for Todo Search scoped validation.                                                                                 |
+| `read-model-validation-report.md`      | Human-readable validation summary for review and Approval Brief use. Implemented for Todo Search.                                                                                  |
+| `read-model-ci-evidence-manifest.json` | CI-backed manifest linking commit, run identity, validation command, and produced artifacts. Implemented for the manual Todo Search workflow; future for multi-slice/repo-wide CI. |
+| `read-model-validation-summary.md`     | Optional concise summary for promotion or scoped execution review packages.                                                                                                        |
 
 ## Implemented And Future CLI / CI Surfaces
 

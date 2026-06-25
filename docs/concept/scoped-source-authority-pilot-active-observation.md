@@ -51,14 +51,14 @@ examples/adoption/compatibility-mismatch-slice
 
 ## Observed Authority Record
 
-| Role                                                        | Artifact                                                                                  |
-| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Generated authority record for bounded pilot interpretation | `examples/adoption/todo-search-slice/generated/generated-read-model.json`                 |
-| Pilot marker                                                | `examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json` |
-| Required parity report                                      | `examples/adoption/todo-search-slice/generated/read-model-parity-report.json`             |
-| Validator-backed Evidence report                            | `examples/adoption/todo-search-slice/generated/read-model-validation-report.json`         |
-| Evidence manifest                                           | `examples/adoption/todo-search-slice/generated/read-model-evidence-manifest.json`         |
-| Review record                                               | `docs/concept/scoped-source-authority-pilot-review.md`                                    |
+| Role                                          | Artifact                                                                                  |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Generated bounded pilot interpretation record | `examples/adoption/todo-search-slice/generated/generated-read-model.json`                 |
+| Pilot marker                                  | `examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json` |
+| Required parity report                        | `examples/adoption/todo-search-slice/generated/read-model-parity-report.json`             |
+| Validator-backed Evidence report              | `examples/adoption/todo-search-slice/generated/read-model-validation-report.json`         |
+| Evidence manifest                             | `examples/adoption/todo-search-slice/generated/read-model-evidence-manifest.json`         |
+| Review record                                 | `docs/concept/scoped-source-authority-pilot-review.md`                                    |
 
 ## Fallback / Reference Artifacts
 
@@ -95,7 +95,7 @@ Run or review these checks whenever the pilot is observed again:
 | Blocking count                           | 0                                                         |
 | Decision-required count                  | 0                                                         |
 | Validator-backed Evidence status         | `validation-pass`                                         |
-| Generated authority boundary             | bounded to `examples/adoption/todo-search-slice`          |
+| Generated interpretation boundary        | bounded to `examples/adoption/todo-search-slice`          |
 | Tree-native fallback/reference artifacts | present and usable                                        |
 | Retained warnings                        | visible in marker, review records, and concept docs       |
 | User acceptance authority                | remains user-controlled                                   |
@@ -123,7 +123,7 @@ Fallback to tree-native selected-slice artifacts, or defer the pilot pending use
 
 - parity report becomes `comparison-warning`, `comparison-blocked`, or `decision-required`
 - validator-backed Evidence becomes `validation-warning`, `validation-blocked`, or `decision-required`
-- generated authority boundary widens beyond Todo Search selected slice
+- generated interpretation boundary widens beyond Todo Search selected slice
 - generated output or marker implies repository-wide promotion
 - tree-native fallback/reference artifacts become missing or unusable
 - Check/Evidence separation becomes ambiguous

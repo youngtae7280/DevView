@@ -231,8 +231,8 @@ execution record is:
 - [scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md)
 
 The scoped pilot status is `scoped-pilot-executed-with-fallback-ready`. The generated read-model Evidence is accepted as
-the pilot-scoped Graph-first authority record for Todo Search Node/Edge/Tag interpretation and 7 Core View traversal
-only. Tree-native selected-slice artifacts remain fallback/reference and are not retired. This record is not full
+the bounded Graph-first interpretation record for Todo Search Node/Edge/Tag review and 7 Core View traversal only.
+Tree-native selected-slice artifacts remain fallback/reference and are not retired. This record is not full
 Graph-source promotion, repository-wide source authority change, public-doc cleanup, or validator/CI enforcement.
 
 The scoped pilot review is:
@@ -299,6 +299,15 @@ Run `28151296796` completed successfully on `workflow_dispatch` for `main`. The 
 `pbe-todo-search-read-model-evidence` artifact was reviewed, and its CI manifest records `ci-backed` /
 `ci-evidence-pass`, `validation-pass`, `comparison-pass`, and retained warning visibility. This remains non-enforcing
 Evidence only and does not change source authority.
+
+The multi-slice validation design is recorded:
+
+- [multi-slice-read-model-validation-design.md](multi-slice-read-model-validation-design.md)
+
+This design selects `examples/valid/todo-app-pbe-run` as the next structural validation candidate, records Todo
+Search hardcoding risks, proposes a future `SliceReadModelConfig` / profile strategy, and defines Evidence-only
+aggregation rules. It does not implement multi-slice validation, change CI workflows, expand source authority, or approve
+full Graph-source promotion.
 
 ## Outline-Only Later-Phase Docs
 

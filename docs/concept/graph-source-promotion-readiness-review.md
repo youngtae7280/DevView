@@ -191,25 +191,25 @@ do not justify full promotion by themselves.
 
 ## Readiness Prerequisite Status
 
-| Prerequisite                                                                | Status             | Evidence / Reason                                                                                                                                                               |
-| --------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Concept policies complete through Rollback / Compatibility Strategy         | ready              | Approval Brief, Check/Evidence, Control Node, Legacy Compatibility, Runtime Feasibility, Source Transition, and Rollback policies are complete.                                 |
-| Representative demo slice selected                                          | ready              | `representative-runtime-feasibility-demo.md` selects `Todo Search Adoption + Product Meaning Feedback`.                                                                         |
-| Actual representative demo result recorded                                  | ready              | `actual-runtime-feasibility-demo-result.md` records a manual Evidence pack and final `demonstrated` status with retained warnings.                                              |
-| Missing Project/Contract/Change/Impact evidence strengthened                | ready              | Todo Search selected-slice support artifacts include Project Tree, Cycle Contract, Node Execution Contract, Change Tree, and Impact Tree snapshots.                             |
-| Compatibility mismatch path demonstrated with real repo wording             | ready              | `examples/adoption/compatibility-mismatch-slice` records ACEP task-card-only authority wording and a Compatibility Control Node candidate.                                      |
-| PP-001 product meaning decision confirmed                                   | ready              | Product Patch and Change Tree record parent orchestration approval for title + note/content search on 2026-06-24.                                                               |
-| Title + note/content runtime fixture Evidence present/fresh                 | ready              | `EV-SEARCH-NOTE-TEST` points to `runtime-evidence.md`; Vitest fixture command passed 1 file and 6 tests.                                                                        |
-| Renewed user Acceptance approved with retained warnings                     | ready with warning | `acceptance-tree.json` records `renewed_acceptance_approved_with_warnings`; warnings remain carried to this readiness review.                                                   |
-| Source Transition Path defined                                              | ready              | `source-transition-path.md` defines stages, authority matrix, prerequisites, invariants, conflict handling, and promotion review surface.                                       |
-| Rollback / Compatibility Strategy defined                                   | ready              | `rollback-compatibility-strategy.md` defines rollback/fallback, compatibility period, triggers, statuses, safety principles, and control records.                               |
-| Source authority matrix available                                           | ready              | Source matrix is defined in Source Transition Path.                                                                                                                             |
-| Graph-first Node/Edge/Tag baseline reflected in limited pilot parity        | ready              | `maintainability-graph-read-model.json` and `view-instance-manifest.json` now use `nodeKind`, `edgeType`, view-scoped tags, confidence/freshness split, and 7 Core Views.       |
-| Check/Evidence obligations visible                                          | ready              | Check/Evidence policy and demo artifacts distinguish Checks, Evidence, freshness, partial Evidence, and exceptions.                                                             |
-| Approval Brief / Control Node handling visible                              | ready              | Todo Search Approval Brief, actual demo result, and compatibility supplemental slice expose user-relevant judgment/control points.                                              |
-| Retained warnings classified                                                | ready              | This review classifies each retained warning below.                                                                                                                             |
-| Generated graph/read-model output available or explicitly deferred/blocking | ready with warning | Bounded Todo Search generated read-model output and local validator-backed Evidence now exist. Full promotion or CI-backed repeatability may still require stronger CI support. |
-| Public-doc cleanup status classified                                        | ready with warning | ACEP task-card public-doc cleanup is classified as deferred cleanup with a Compatibility Control Node candidate and explicit readiness warning.                                 |
+| Prerequisite                                                                | Status             | Evidence / Reason                                                                                                                                                                                                         |
+| --------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Concept policies complete through Rollback / Compatibility Strategy         | ready              | Approval Brief, Check/Evidence, Control Node, Legacy Compatibility, Runtime Feasibility, Source Transition, and Rollback policies are complete.                                                                           |
+| Representative demo slice selected                                          | ready              | `representative-runtime-feasibility-demo.md` selects `Todo Search Adoption + Product Meaning Feedback`.                                                                                                                   |
+| Actual representative demo result recorded                                  | ready              | `actual-runtime-feasibility-demo-result.md` records a manual Evidence pack and final `demonstrated` status with retained warnings.                                                                                        |
+| Missing Project/Contract/Change/Impact evidence strengthened                | ready              | Todo Search selected-slice support artifacts include Project Tree, Cycle Contract, Node Execution Contract, Change Tree, and Impact Tree snapshots.                                                                       |
+| Compatibility mismatch path demonstrated with real repo wording             | ready              | `examples/adoption/compatibility-mismatch-slice` records ACEP task-card-only authority wording and a Compatibility Control Node candidate.                                                                                |
+| PP-001 product meaning decision confirmed                                   | ready              | Product Patch and Change Tree record parent orchestration approval for title + note/content search on 2026-06-24.                                                                                                         |
+| Title + note/content runtime fixture Evidence present/fresh                 | ready              | `EV-SEARCH-NOTE-TEST` points to `runtime-evidence.md`; Vitest fixture command passed 1 file and 6 tests.                                                                                                                  |
+| Renewed user Acceptance approved with retained warnings                     | ready with warning | `acceptance-tree.json` records `renewed_acceptance_approved_with_warnings`; warnings remain carried to this readiness review.                                                                                             |
+| Source Transition Path defined                                              | ready              | `source-transition-path.md` defines stages, authority matrix, prerequisites, invariants, conflict handling, and promotion review surface.                                                                                 |
+| Rollback / Compatibility Strategy defined                                   | ready              | `rollback-compatibility-strategy.md` defines rollback/fallback, compatibility period, triggers, statuses, safety principles, and control records.                                                                         |
+| Source authority matrix available                                           | ready              | Source matrix is defined in Source Transition Path.                                                                                                                                                                       |
+| Graph-first Node/Edge/Tag baseline reflected in limited pilot parity        | ready              | `maintainability-graph-read-model.json` and `view-instance-manifest.json` now use `nodeKind`, `edgeType`, view-scoped tags, confidence/freshness split, and 7 Core Views.                                                 |
+| Check/Evidence obligations visible                                          | ready              | Check/Evidence policy and demo artifacts distinguish Checks, Evidence, freshness, partial Evidence, and exceptions.                                                                                                       |
+| Approval Brief / Control Node handling visible                              | ready              | Todo Search Approval Brief, actual demo result, and compatibility supplemental slice expose user-relevant judgment/control points.                                                                                        |
+| Retained warnings classified                                                | ready              | This review classifies each retained warning below.                                                                                                                                                                       |
+| Generated graph/read-model output available or explicitly deferred/blocking | ready with warning | Bounded Todo Search generated output, local validator-backed Evidence, and reviewed CI-backed Evidence exist. Full promotion may still require broader/multi-slice validation, enforcement decisions, or explicit waiver. |
+| Public-doc cleanup status classified                                        | ready with warning | ACEP task-card public-doc cleanup is classified as deferred cleanup with a Compatibility Control Node candidate and explicit readiness warning.                                                                           |
 
 ## Retained Warnings Classification
 
@@ -266,24 +266,24 @@ Acceptance is user-approved with warnings retained.
 
 ### Verification Summary
 
-| Check                                   | Status             | Summary                                                                                                             |
-| --------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| Representative lifecycle demonstrated   | ready              | Product -> Project -> Work -> Test -> Evidence -> Acceptance is reviewable for the selected slice.                  |
-| Source authority safety                 | ready              | All updated artifacts preserve tree-native operational source authority.                                            |
-| Check/Evidence safety                   | ready              | AI self-report is excluded; command Evidence and exceptions are linked.                                             |
-| Compatibility mismatch visibility       | ready with warning | ACEP task-card-only wording is documented as a Compatibility Control Node candidate.                                |
-| Rollback / compatibility readiness      | ready with warning | Strategy exists, but no rollback or compatibility retirement mechanics are implemented.                             |
-| Manual graph/read-model parity output   | ready with warning | Manual parity artifacts make the read-model relationship reviewable for limited pilot discussion.                   |
-| Generated / validator-backed CLI output | ready with warning | Generated output and local validator-backed Evidence exist for Todo Search; CI-backed repeatability remains future. |
-| Public-doc cleanup                      | deferred           | Cleanup is deferred and must be accepted as a caveat or resolved before promotion approval.                         |
+| Check                                           | Status             | Summary                                                                                                                                                                                       |
+| ----------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Representative lifecycle demonstrated           | ready              | Product -> Project -> Work -> Test -> Evidence -> Acceptance is reviewable for the selected slice.                                                                                            |
+| Source authority safety                         | ready              | All updated artifacts preserve tree-native operational source authority.                                                                                                                      |
+| Check/Evidence safety                           | ready              | AI self-report is excluded; command Evidence and exceptions are linked.                                                                                                                       |
+| Compatibility mismatch visibility               | ready with warning | ACEP task-card-only wording is documented as a Compatibility Control Node candidate.                                                                                                          |
+| Rollback / compatibility readiness              | ready with warning | Strategy exists, but no rollback or compatibility retirement mechanics are implemented.                                                                                                       |
+| Manual graph/read-model parity output           | ready with warning | Manual parity artifacts make the read-model relationship reviewable for limited pilot discussion.                                                                                             |
+| Generated / validator-backed / CI-backed output | ready with warning | Generated output, local validator-backed Evidence, and reviewed non-enforcing CI-backed Evidence exist for Todo Search; broader/multi-slice coverage and enforcement remain future decisions. |
+| Public-doc cleanup                              | deferred           | Cleanup is deferred and must be accepted as a caveat or resolved before promotion approval.                                                                                                   |
 
 ### Remaining Judgment
 
 The user approved the bounded limited pilot option, dry-run, bounded scoped execution, active observation, and local
 validator-backed Evidence. Remaining judgment concerns whether to:
 
-1. run and review the non-enforcing manual CI workflow artifact, design PR informational triggers, design enforcement
-   policy, or keep local observation only,
+1. keep observing the reviewed non-enforcing manual CI workflow artifact, design PR informational triggers, design
+   enforcement policy, or prepare multi-slice validation,
 2. defer or require ACEP task-card public-doc cleanup before full promotion,
 3. require full-product/runtime/UI Evidence before full promotion or only before full product parity claims, and
 4. prepare broader promotion review inputs or keep observing the scoped pilot.
@@ -332,7 +332,7 @@ cleanup remain separate.
 
 - Generated graph builder, CLI-backed parity, and local validator-backed Evidence now exist for the Todo Search scoped
   pilot.
-- CI-backed repeatability and broader/multi-slice validation remain future questions.
+- Broader/multi-slice validation, CI enforcement, and full-promotion waiver policy remain future questions.
 
 ### Decisions Needed Before Promotion Approval
 

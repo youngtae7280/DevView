@@ -292,9 +292,10 @@ Manual equivalent read-model parity artifacts are now recorded for the represent
 - `examples/adoption/todo-search-slice/view-instance-manifest.md`
 
 After the Node/Edge/Tag refresh, the artifacts show durable node kinds, durable edge types, view-scoped tags,
-confidence/freshness separation, and 7 Core View coverage. Generated builder/CLI-backed output and scoped
-validator-backed Evidence now exist for the Todo Search pilot, but CI-backed repeatability, broader validation, and full
-promotion remain future questions. None of this is a repository-wide source authority change.
+confidence/freshness separation, and 7 Core View coverage. Generated builder/CLI-backed output, scoped
+validator-backed Evidence, and reviewed non-enforcing CI-backed Evidence now exist for the Todo Search pilot, but
+broader/multi-slice validation, CI enforcement, and full promotion remain future questions. None of this is a
+repository-wide source authority change.
 
 ### Rollback / Compatibility Strategy
 

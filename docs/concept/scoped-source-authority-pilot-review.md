@@ -31,7 +31,7 @@ introduce validator/CI enforcement, clean up public docs, or replace user accept
 scoped-pilot-review-pass-with-retained-warnings
 ```
 
-The scoped pilot is safe to keep active for the Todo Search selected slice because the generated authority boundary
+The scoped pilot is safe to keep active for the Todo Search selected slice because the generated interpretation boundary
 remains bounded, generated/manual parity remains `comparison-pass`, tree-native fallback/reference artifacts remain
 preserved, and retained warnings remain visible.
 
@@ -41,17 +41,17 @@ changes.
 
 ## Required Review Questions
 
-| Question                                                                           | Answer                                                                                                                                             |
-| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Did generated read-model authority stay bounded to Todo Search selected slice?     | Yes. The pilot marker and execution record limit authority to `examples/adoption/todo-search-slice`; the compatibility slice remains warning-only. |
-| Did generated/manual parity remain `comparison-pass`?                              | Yes. The regenerated parity report remains `comparison-pass` with zero mismatches, zero blocking issues, and zero decision-required issues.        |
-| Did fallback/reference tree-native artifacts remain preserved and usable?          | Yes. The Product, Project, Work, Test, Evidence, Acceptance, Change, and Impact artifacts remain present and are not retired or superseded.        |
-| Did retained warnings remain visible?                                              | Yes. Bounded fixture scope, partial UI evidence, validator/CI absence, and ACEP public-doc cleanup deferment remain carried forward.               |
-| Did user acceptance authority remain user-controlled?                              | Yes. Demo-support Acceptance remains a user approval record and is not replaced by generated graph authority or Codex/PBE judgment.                |
-| Did the supplemental compatibility mismatch slice remain warning-only?             | Yes. It remains supplemental compatibility Evidence and is not included in the pilot source scope.                                                 |
-| Is validator/CI-backed Evidence required before broader use?                       | Yes for broader execution, enforcement, or full promotion planning. It is not required to keep this bounded pilot active.                          |
-| Is public-doc cleanup required before broader promotion, or still safely deferred? | It is safely deferred for the current scoped pilot, but broader promotion should revisit whether cleanup becomes a blocker.                        |
-| Is the scoped pilot safe to keep active?                                           | Yes, with retained warnings and fallback ready.                                                                                                    |
+| Question                                                                            | Answer                                                                                                                                                               |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Did generated read-model interpretation stay bounded to Todo Search selected slice? | Yes. The pilot marker and execution record limit the interpretation boundary to `examples/adoption/todo-search-slice`; the compatibility slice remains warning-only. |
+| Did generated/manual parity remain `comparison-pass`?                               | Yes. The regenerated parity report remains `comparison-pass` with zero mismatches, zero blocking issues, and zero decision-required issues.                          |
+| Did fallback/reference tree-native artifacts remain preserved and usable?           | Yes. The Product, Project, Work, Test, Evidence, Acceptance, Change, and Impact artifacts remain present and are not retired or superseded.                          |
+| Did retained warnings remain visible?                                               | Yes. Bounded fixture scope, partial UI evidence, CI enforcement absence, and ACEP public-doc cleanup deferment remain carried forward.                               |
+| Did user acceptance authority remain user-controlled?                               | Yes. Demo-support Acceptance remains a user approval record and is not replaced by generated graph authority or Codex/PBE judgment.                                  |
+| Did the supplemental compatibility mismatch slice remain warning-only?              | Yes. It remains supplemental compatibility Evidence and is not included in the pilot source scope.                                                                   |
+| Is validator/CI-backed Evidence required before broader use?                        | Yes for broader execution, enforcement, or full promotion planning. It is not required to keep this bounded pilot active.                                            |
+| Is public-doc cleanup required before broader promotion, or still safely deferred?  | It is safely deferred for the current scoped pilot, but broader promotion should revisit whether cleanup becomes a blocker.                                          |
+| Is the scoped pilot safe to keep active?                                            | Yes, with retained warnings and fallback ready.                                                                                                                      |
 
 ## Observation Summary
 
@@ -92,14 +92,14 @@ replaced by Codex/PBE.
 
 ## Control Node Observation
 
-| Control record                     | Family                       | Review status               | Notes                                                         |
-| ---------------------------------- | ---------------------------- | --------------------------- | ------------------------------------------------------------- |
-| Scoped pilot review                | Decision Control Node        | resolved for observation    | User approved observe/run scoped pilot review.                |
-| Generated parity stability         | Evidence Control Node        | pass                        | `comparison-pass`; no blocking or decision-required mismatch. |
-| Validator/CI-backed repeatability  | Evidence Control Node        | open / future strengthening | Not introduced by this review.                                |
-| ACEP public-doc cleanup            | Compatibility Control Node   | deferred / active warning   | Cleanup remains outside this task.                            |
-| Broader source authority expansion | Impact / Change Control Node | not started                 | Full promotion and broader pilot expansion remain unapproved. |
-| Demo-support Acceptance            | Acceptance Control Node      | preserved with warnings     | User acceptance remains user-controlled.                      |
+| Control record                     | Family                       | Review status                                        | Notes                                                                                                                                       |
+| ---------------------------------- | ---------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Scoped pilot review                | Decision Control Node        | resolved for observation                             | User approved observe/run scoped pilot review.                                                                                              |
+| Generated parity stability         | Evidence Control Node        | pass                                                 | `comparison-pass`; no blocking or decision-required mismatch.                                                                               |
+| Validator/CI-backed repeatability  | Evidence Control Node        | later resolved for scoped pilot / enforcement future | This review did not introduce it; later local validator-backed and reviewed non-enforcing CI-backed Evidence were recorded for Todo Search. |
+| ACEP public-doc cleanup            | Compatibility Control Node   | deferred / active warning                            | Cleanup remains outside this task.                                                                                                          |
+| Broader source authority expansion | Impact / Change Control Node | not started                                          | Full promotion and broader pilot expansion remain unapproved.                                                                               |
+| Demo-support Acceptance            | Acceptance Control Node      | preserved with warnings                              | User acceptance remains user-controlled.                                                                                                    |
 
 ## Next Decision Surface
 

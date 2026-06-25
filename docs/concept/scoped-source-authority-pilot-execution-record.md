@@ -57,7 +57,7 @@ The compatibility mismatch slice remains warning Evidence only. It is not pilot 
 
 ## Source-Authority Pilot Meaning
 
-For this pilot only, the generated read-model output is accepted as the scoped Graph-first authority record for:
+For this pilot only, the generated read-model output is accepted as the bounded Graph-first interpretation record for:
 
 - Node/Edge/Tag interpretation of the Todo Search selected slice
 - 7 Core View assembly and traversal
@@ -87,21 +87,21 @@ The pilot does not make these authoritative:
 
 ## Source Authority Matrix
 
-| Artifact / record                         | Pilot role                                                                 | Fallback / reference role                                                   | Retirement allowed? |
-| ----------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------- |
-| Product Tree selected-slice artifact      | Current operational product source and fallback source                     | Primary fallback for product meaning and acceptance criteria                | No                  |
-| Project Tree selected-slice artifact      | Current operational project/boundary source and fallback source            | Primary fallback for structure and ownership boundaries                     | No                  |
-| Work Tree selected-slice artifact         | Current operational work source and fallback source                        | Primary fallback for task/scope responsibility                              | No                  |
-| Test Tree selected-slice artifact         | Current operational Check source and fallback source                       | Primary fallback for verification obligations                               | No                  |
-| Evidence Tree selected-slice artifact     | Current operational Evidence source and fallback source                    | Primary fallback for proof, freshness, and exceptions                       | No                  |
-| Acceptance Tree selected-slice artifact   | User-controlled demo-support Acceptance source                             | Primary fallback for acceptance status and retained warnings                | No                  |
-| Generated read-model Evidence             | Pilot-scoped Graph-first authority record for Node/Edge/Tag interpretation | Compare against tree-native and manual parity artifacts; not broad source   | No                  |
-| Generated parity report                   | Pilot gate Evidence; must remain `comparison-pass` for active pilot use    | Fallback trigger if mismatches become warning/blocking/decision-required    | No                  |
-| Manual read-model parity artifact         | Reference artifact for parity and review continuity                        | Reference/fallback for manual review, not the active generated pilot record | No                  |
-| View Instance Manifest                    | Projection/reference Evidence for 7 Core Views                             | Reference for view membership and role tags                                 | No                  |
-| Compatibility mismatch supplemental slice | Warning/control Evidence only                                              | Reference for ACEP cleanup and compatibility caveat                         | No                  |
-| Runtime fixture Evidence                  | Behavior Evidence supporting pilot readiness                               | Bounded runtime proof; not full Todo app implementation                     | No                  |
-| Public docs / ACEP docs                   | Deferred cleanup input only                                                | Compatibility reference; cleanup requires separate approval                 | No                  |
+| Artifact / record                         | Pilot role                                                              | Fallback / reference role                                                   | Retirement allowed? |
+| ----------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------- |
+| Product Tree selected-slice artifact      | Current operational product source and fallback source                  | Primary fallback for product meaning and acceptance criteria                | No                  |
+| Project Tree selected-slice artifact      | Current operational project/boundary source and fallback source         | Primary fallback for structure and ownership boundaries                     | No                  |
+| Work Tree selected-slice artifact         | Current operational work source and fallback source                     | Primary fallback for task/scope responsibility                              | No                  |
+| Test Tree selected-slice artifact         | Current operational Check source and fallback source                    | Primary fallback for verification obligations                               | No                  |
+| Evidence Tree selected-slice artifact     | Current operational Evidence source and fallback source                 | Primary fallback for proof, freshness, and exceptions                       | No                  |
+| Acceptance Tree selected-slice artifact   | User-controlled demo-support Acceptance source                          | Primary fallback for acceptance status and retained warnings                | No                  |
+| Generated read-model Evidence             | Bounded Graph-first interpretation record for Node/Edge/Tag review      | Compare against tree-native and manual parity artifacts; not broad source   | No                  |
+| Generated parity report                   | Pilot gate Evidence; must remain `comparison-pass` for active pilot use | Fallback trigger if mismatches become warning/blocking/decision-required    | No                  |
+| Manual read-model parity artifact         | Reference artifact for parity and review continuity                     | Reference/fallback for manual review, not the active generated pilot record | No                  |
+| View Instance Manifest                    | Projection/reference Evidence for 7 Core Views                          | Reference for view membership and role tags                                 | No                  |
+| Compatibility mismatch supplemental slice | Warning/control Evidence only                                           | Reference for ACEP cleanup and compatibility caveat                         | No                  |
+| Runtime fixture Evidence                  | Behavior Evidence supporting pilot readiness                            | Bounded runtime proof; not full Todo app implementation                     | No                  |
+| Public docs / ACEP docs                   | Deferred cleanup input only                                             | Compatibility reference; cleanup requires separate approval                 | No                  |
 
 ## Fallback / Rollback Criteria
 
@@ -137,9 +137,9 @@ selected-slice artifacts.
 scoped-pilot-executed-with-fallback-ready
 ```
 
-The pilot is executed only as a bounded source-authority record for the Todo Search selected slice. Generated Evidence
-and `comparison-pass` parity are sufficient for this scoped pilot. Tree-native selected-slice artifacts remain retained
-as fallback/reference, and broader promotion remains unapproved.
+The pilot is executed only as a bounded Todo Search scoped source-authority pilot record. Generated Evidence and
+`comparison-pass` parity are sufficient for this scoped pilot. Tree-native selected-slice artifacts remain retained as
+fallback/reference, and broader promotion remains unapproved.
 
 ## Review Status
 
@@ -152,8 +152,8 @@ Review outcome:
 scoped-pilot-review-pass-with-retained-warnings
 ```
 
-The review confirms that generated authority remains bounded to the Todo Search selected slice, generated/manual parity
-remains `comparison-pass`, fallback/reference artifacts remain usable, retained warnings remain visible, and user
+The review confirms that generated interpretation remains bounded to the Todo Search selected slice, generated/manual
+parity remains `comparison-pass`, fallback/reference artifacts remain usable, retained warnings remain visible, and user
 acceptance authority remains user-controlled. The review does not expand the pilot or approve broader promotion.
 
 Active observation criteria are recorded in
@@ -162,14 +162,14 @@ status is `keep-active-with-retained-warnings`; it does not expand pilot scope o
 
 ## Control Node Summary
 
-| Control record                     | Family                       | Status                      | Notes                                                                                     |
-| ---------------------------------- | ---------------------------- | --------------------------- | ----------------------------------------------------------------------------------------- |
-| Actual scoped execution approval   | Decision Control Node        | resolved                    | User approved the bounded Todo Search scoped source-authority pilot execution.            |
-| Generated Evidence / parity pass   | Evidence Control Node        | resolved for scoped pilot   | Generated read-model and parity report are present; parity is `comparison-pass`.          |
-| Public-doc cleanup                 | Compatibility Control Node   | deferred / active warning   | ACEP task-card cleanup remains visible and is not executed here.                          |
-| Scoped source authority transition | Impact / Change Control Node | executed in bounded scope   | Limited to Todo Search generated read-model authority with tree-native fallback retained. |
-| Demo-support Acceptance            | Acceptance Control Node      | preserved with warnings     | User Acceptance remains user-controlled and is not replaced by graph authority.           |
-| Validator/CI-backed repeatability  | Evidence Control Node        | open / future strengthening | Not required for this pilot, but still relevant before broader promotion or enforcement.  |
+| Control record                     | Family                       | Status                                         | Notes                                                                                                                                              |
+| ---------------------------------- | ---------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Actual scoped execution approval   | Decision Control Node        | resolved                                       | User approved the bounded Todo Search scoped source-authority pilot execution.                                                                     |
+| Generated Evidence / parity pass   | Evidence Control Node        | resolved for scoped pilot                      | Generated read-model and parity report are present; parity is `comparison-pass`.                                                                   |
+| Public-doc cleanup                 | Compatibility Control Node   | deferred / active warning                      | ACEP task-card cleanup remains visible and is not executed here.                                                                                   |
+| Scoped source authority transition | Impact / Change Control Node | executed in bounded scope                      | Limited to Todo Search generated read-model authority with tree-native fallback retained.                                                          |
+| Demo-support Acceptance            | Acceptance Control Node      | preserved with warnings                        | User Acceptance remains user-controlled and is not replaced by graph authority.                                                                    |
+| Validator/CI-backed repeatability  | Evidence Control Node        | resolved for scoped pilot / enforcement future | Local validator-backed and reviewed non-enforcing CI-backed Evidence exist for Todo Search; enforcement and broader scope remain future decisions. |
 
 ## User Acceptance Boundary
 

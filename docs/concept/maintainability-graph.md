@@ -142,9 +142,9 @@ CLI-backed read-model output before authority-bearing execution and keeps curren
 
 [scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md) records the later
 user-approved bounded execution for `examples/adoption/todo-search-slice` only. In that scoped pilot, generated
-read-model Evidence is accepted as the pilot-scoped Graph-first authority record for Node/Edge/Tag interpretation and 7
-Core View traversal, while tree-native selected-slice artifacts remain fallback/reference. This is not full
-Maintainability Graph promotion and does not make the graph the repository-wide source model.
+read-model Evidence is accepted as the bounded pilot interpretation record for Node/Edge/Tag interpretation and 7 Core
+View traversal, while tree-native selected-slice artifacts remain fallback/reference. This is not full Maintainability
+Graph promotion and does not make the graph the repository-wide source model.
 
 [scoped-source-authority-pilot-review.md](scoped-source-authority-pilot-review.md) records a later review-only
 observation of that bounded pilot. The review outcome is `scoped-pilot-review-pass-with-retained-warnings`; it confirms
@@ -161,7 +161,13 @@ approval.
 
 [ci-backed-read-model-evidence-workflow-design.md](ci-backed-read-model-evidence-workflow-design.md) records the CI
 workflow integration design for read-model Evidence. The first implementation is manual and non-enforcing, and it does
-not add CI enforcement or broaden Maintainability Graph source authority.
+not add CI enforcement or broaden Maintainability Graph source authority. Run `28151296796` is reviewed as
+`ci-evidence-pass` for the Todo Search selected slice only.
+
+[multi-slice-read-model-validation-design.md](multi-slice-read-model-validation-design.md) records the next design step
+for validation beyond the Todo Search slice. It treats multi-slice validation as Evidence-only, selects
+`examples/valid/todo-app-pbe-run` as the next structural candidate, and requires Todo Search hardcoding to be isolated
+behind a future slice profile/config before implementation.
 
 [generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md) records the user's decision
 to require generated builder / CLI-backed read-model Evidence before actual scoped execution. It is an Evidence
