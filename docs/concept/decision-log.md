@@ -50,6 +50,7 @@ This log is the source of truth for confirmed concept decisions in the PBE runti
 | DEC-042 | active | The user requires generated builder / CLI-backed read-model Evidence before actual scoped source-authority pilot execution. This is a prerequisite decision only; it does not approve implementation, CLI command creation, validator/CI work, source authority change, tree-native artifact retirement, or Graph-source promotion.                                                                                                               | Generated Read-Model Evidence Requirement                                         |
 | DEC-043 | active | The user approved design-first work for CLI-backed read-model Evidence output. This defines command/surface, output artifact, generated/manual comparison, mismatch, status label, and gate expectations without implementing CLI, builder, parser, validator, CI, generated output, source authority change, or Graph-source promotion.                                                                                                          | CLI-Backed Read-Model Evidence Output Design                                      |
 | DEC-044 | active | The user approved and Codex implemented a bounded generated read-model Evidence builder for the Todo Search selected slice. The builder can generate read-model Evidence and a generated/manual parity report, but its output is Evidence only and does not approve scoped source-authority execution, change source authority, retire tree-native artifacts, enforce validator/CI gates, clean up public docs, or promote Maintainability Graph. | Bounded Generated Read-Model Evidence Builder                                     |
+| DEC-045 | active | The generated/manual freshness warnings from the first bounded Todo Search parity report were reviewed against source artifacts and resolved by correcting generated freshness mapping. The current parity report is `comparison-pass` with zero mismatches, but this warning resolution remains Evidence review only and does not approve scoped source-authority execution or change source authority.                                          | Generated / Manual Parity Warning Resolution                                      |
 
 ## Supersede Relationships
 
@@ -196,6 +197,11 @@ requirement, and future implementation/execution approvals remain active.
 DEC-044 does not supersede DEC-016, DEC-020, DEC-021, DEC-030, DEC-039, DEC-040, DEC-041, DEC-042, or DEC-043. It
 implements bounded Evidence generation and comparison for the Todo Search selected slice only. Generated output remains
 Evidence, not source authority, and scoped source-authority execution remains unapproved.
+
+DEC-045 does not supersede DEC-016, DEC-020, DEC-021, DEC-034, DEC-042, DEC-043, or DEC-044. It resolves a bounded
+generated/manual parity warning review by aligning generated freshness/status mapping with source artifacts. It does not
+make generated output source authority, does not execute a scoped source-authority pilot, and does not remove the need
+for user approval before any source boundary changes.
 
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in

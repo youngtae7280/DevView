@@ -1,13 +1,13 @@
 # Read-Model Parity Report
 
-Status: comparison-warning
+Status: comparison-pass
 
 ## Run Identity
 
-- Compared at: 2026-06-25T03:55:22.670Z
+- Compared at: 2026-06-25T04:04:47.733Z
 - Command identity:
   `pbe graph read-model compare --generated examples/adoption/todo-search-slice/generated/generated-read-model.json --manual examples/adoption/todo-search-slice/maintainability-graph-read-model.json`
-- Source commit: ba34953
+- Source commit: 7e80b31
 
 ## Boundary
 
@@ -22,23 +22,19 @@ execution, or retire tree-native artifacts.
 - Manual nodes: 40
 - Generated edges: 59
 - Manual edges: 59
-- Mismatches: 5
+- Mismatches: 0
 - Blocking: 0
 - Decision required: 0
 
 ## Mismatches
 
-| Severity | Category                 | Subject                          | Message                                                  |
-| -------- | ------------------------ | -------------------------------- | -------------------------------------------------------- |
-| warning  | stale/freshness mismatch | AC-SEARCH-003                    | Generated freshness differs from manual parity artifact. |
-| warning  | stale/freshness mismatch | TT-SEARCH-003                    | Generated freshness differs from manual parity artifact. |
-| warning  | stale/freshness mismatch | CCN-ACEP-TASK-CARD-AUTHORITY-001 | Generated freshness differs from manual parity artifact. |
-| warning  | stale/freshness mismatch | FIND-PARTIAL-UI                  | Generated freshness differs from manual parity artifact. |
-| warning  | stale/freshness mismatch | FIND-ACEP-CLEANUP-DEFERRED       | Generated freshness differs from manual parity artifact. |
+| Severity | Category | Subject                 | Message              |
+| -------- | -------- | ----------------------- | -------------------- |
+| info     | none     | generated/manual parity | No mismatches found. |
 
 ## Control Node Candidates
 
-- Evidence Control Node: candidate - Generated/manual parity mismatch needs review before authority-bearing execution.
+- Evidence Control Node: resolved-for-generated-output - Generated/manual comparison produced no mismatch.
 
 ## Treatment Rules
 

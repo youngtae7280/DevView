@@ -225,9 +225,8 @@ now:
 1. `Approve actual scoped source-authority pilot execution with generated Evidence`
 2. `Require validator/CI-backed read-model Evidence before execution`
 3. `Require public-doc cleanup before execution`
-4. `Resolve generated/manual comparison warnings first`
-5. `Defer scoped source-authority pilot execution`
-6. `Reject scoped source-authority pilot path`
+4. `Defer scoped source-authority pilot execution`
+5. `Reject scoped source-authority pilot path`
 
 Recommended option after bounded generated Evidence:
 
@@ -238,7 +237,9 @@ Ask the user whether to proceed to scoped source-authority pilot execution revie
 Reason:
 
 - Generated output and parity report now exist for the bounded Todo Search slice.
-- The parity report has no blocking or decision-required mismatch.
+- The initial generated/manual freshness warnings were reviewed and resolved in
+  `examples/adoption/todo-search-slice/generated/parity-warning-resolution.md`.
+- The current parity report is `comparison-pass` with no mismatch, blocking, or decision-required entries.
 - Source authority remains unchanged until a separate explicit user execution approval.
 
 If the user wants stricter repeatability, choose `Require validator/CI-backed read-model Evidence before execution`
@@ -267,20 +268,20 @@ builder now creates generated output for Todo Search only.
 | Output artifact design          | present      | Generated artifact, summary, comparison report, and optional manifest roles are defined.       |
 | Comparison / parity design      | present      | Comparable units, mismatch categories, severities, and treatment rules are defined.            |
 | Generated output                | present      | Bounded Todo Search generated read-model and parity report are created under `generated/`.     |
-| Source authority change         | not approved | Generated output, when later implemented, will still be Evidence rather than automatic source. |
+| Source authority change         | not approved | Generated output remains Evidence rather than automatic source.                                |
 | Validator/CI linkage            | open         | Validator/CI-backed Evidence remains a stronger future level.                                  |
+| Comparison warning resolution   | present      | The five freshness warnings were reviewed and resolved; current parity status is pass.         |
 
 ### Remaining Judgment
 
 The user must decide whether generated Evidence is enough to review actual scoped source-authority pilot execution, or
-whether validator/CI backing, public-doc cleanup, warning resolution, deferral, or rejection is required first.
+whether validator/CI backing, public-doc cleanup, deferral, or rejection is required first.
 
 ### Approval Choice Candidates
 
 - `Approve actual scoped source-authority pilot execution with generated Evidence`
 - `Require validator/CI-backed read-model Evidence before execution`
 - `Require public-doc cleanup before execution`
-- `Resolve generated/manual comparison warnings first`
 - `Defer scoped source-authority pilot execution`
 - `Reject scoped source-authority pilot path`
 

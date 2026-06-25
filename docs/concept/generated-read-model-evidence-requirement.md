@@ -235,30 +235,29 @@ non-scope boundaries without implementing anything.
 
 ### Verification Summary
 
-| Check                                        | Status           | Summary                                                                                   |
-| -------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------- |
-| User selected generated prerequisite         | present          | Parent orchestration chat selected `Require generated builder / CLI-backed read-model`.   |
-| Manual parity usefulness                     | present          | Manual artifacts remain accepted for dry-run and preparation.                             |
-| Manual parity as default authority candidate | not sufficient   | Authority-bearing execution needs stronger repeatability unless user accepts manual risk. |
-| Generated read-model Evidence requirement    | defined          | Source inputs, output expectations, mismatch categories, and gates are documented.        |
-| Output design                                | recorded         | `cli-backed-read-model-evidence-output-design.md` defines the future output surface.      |
-| Bounded builder / CLI implementation         | present          | Todo Search generated output and parity report are created under `generated/`.            |
-| Source authority change                      | not approved     | Generated Evidence, when later created, is not automatic source authority.                |
-| Rollback/fallback readiness                  | partial          | Generated Evidence can help but does not close rollback/fallback gate by itself.          |
-| Compatibility cleanup                        | deferred warning | Public-doc cleanup remains visible and separate.                                          |
+| Check                                        | Status           | Summary                                                                                    |
+| -------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------ |
+| User selected generated prerequisite         | present          | Parent orchestration chat selected `Require generated builder / CLI-backed read-model`.    |
+| Manual parity usefulness                     | present          | Manual artifacts remain accepted for dry-run and preparation.                              |
+| Manual parity as default authority candidate | not sufficient   | Authority-bearing execution needs stronger repeatability unless user accepts manual risk.  |
+| Generated read-model Evidence requirement    | defined          | Source inputs, output expectations, mismatch categories, and gates are documented.         |
+| Output design                                | recorded         | `cli-backed-read-model-evidence-output-design.md` defines the future output surface.       |
+| Bounded builder / CLI implementation         | present          | Todo Search generated output and parity report are created under `generated/`.             |
+| Source authority change                      | not approved     | Generated Evidence is not automatic source authority.                                      |
+| Rollback/fallback readiness                  | partial          | Generated Evidence can help but does not close rollback/fallback gate by itself.           |
+| Compatibility cleanup                        | deferred warning | Public-doc cleanup remains visible and separate.                                           |
+| Generated/manual comparison warning review   | complete         | The five freshness warnings were reviewed; the current parity report is `comparison-pass`. |
 
 ### Remaining Judgment
 
 The user must decide whether to proceed to scoped source-authority pilot execution review with generated Evidence,
-require validator/CI backing, require cleanup first, resolve comparison warnings first, defer, or reject the scoped
-pilot path.
+require validator/CI backing, require cleanup first, defer, or reject the scoped pilot path.
 
 ### Approval Choice Candidates
 
 - `Approve actual scoped source-authority pilot execution with generated Evidence`
 - `Require validator/CI-backed read-model Evidence before execution`
 - `Require public-doc cleanup before execution`
-- `Resolve generated/manual comparison warnings first`
 - `Defer scoped source-authority pilot execution`
 - `Reject scoped source-authority pilot path`
 

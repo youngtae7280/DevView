@@ -284,7 +284,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
         criterion.statement || criterion.id,
         criterion.status || 'confirmed',
         'user-confirmed',
-        statusFreshness(criterion.status),
+        requirementFreshness(criterion.status),
         ['required'],
         ['intent-view', 'behavior-view', 'verification-view'],
       ),
@@ -421,7 +421,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
           entry.title || entry.id,
           entry.status || 'defined',
           confidenceForStatus(entry.status),
-          statusFreshness(entry.status),
+          checkFreshness(entry.status),
           ['required'],
           ['verification-view'],
         ),
@@ -533,7 +533,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       'ACEP task-card compatibility cleanup deferred',
       'deferred_warning',
       'inferred',
-      'unknown',
+      'fresh',
       ['context'],
       ['impact-view'],
     ),
@@ -555,7 +555,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       'UI screenshot/manual visual Evidence remains partial',
       'retained_warning',
       'inferred',
-      'unknown',
+      'stale',
       ['stale'],
       ['evidence-acceptance-view'],
     ),
@@ -577,7 +577,7 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       'ACEP public-doc cleanup deferred',
       'deferred_warning',
       'inferred',
-      'unknown',
+      'fresh',
       ['context'],
       ['impact-view'],
     ),
@@ -1883,6 +1883,22 @@ function statusFreshness(status: unknown): FreshnessStatus {
     return 'unknown'
   }
   return 'fresh'
+}
+
+function requirementFreshness(status: unknown): FreshnessStatus {
+  const value = String(status || '')
+  if (/confirmed_runtime_behavior_present_visual_review_pending/i.test(value)) {
+    return 'fresh'
+  }
+  return statusFreshness(status)
+}
+
+function checkFreshness(status: unknown): FreshnessStatus {
+  const value = String(status || '')
+  if (/partial_runtime_behavior_present_visual_review_pending/i.test(value)) {
+    return 'fresh'
+  }
+  return statusFreshness(status)
 }
 
 function evidenceTags(status: unknown): string[] {

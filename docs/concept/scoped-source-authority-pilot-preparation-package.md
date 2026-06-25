@@ -265,31 +265,31 @@ CLI-backed read-model output before authority-bearing execution.
 
 ### Verification Summary
 
-| Check                                      | Status            | Summary                                                                                               |
-| ------------------------------------------ | ----------------- | ----------------------------------------------------------------------------------------------------- |
-| Dry-run observation completed              | present           | `dry-run-scoped-limited-pilot-observation-record.md` is `usable-with-warnings`.                       |
-| Runtime fixture Evidence                   | present / fresh   | Bounded Vitest command passes title + note/content behavior checks.                                   |
-| Node/Edge/Tag parity                       | present           | Manual read-model and View Instance Manifest are reviewable.                                          |
-| Source authority unchanged                 | present           | Tree-native selected-slice artifacts remain operational source.                                       |
-| CLI-backed output design                   | present           | `cli-backed-read-model-evidence-output-design.md` defines the output and comparison surface.          |
-| Generated builder / CLI-backed output      | present / warning | Bounded Todo Search generated output exists; validator/CI and execution approval remain separate.     |
-| Rollback/fallback readiness                | partial           | Not needed for preparation; not ready for authority execution without boundary and fallback Evidence. |
-| Compatibility cleanup                      | deferred warning  | ACEP task-card public-doc cleanup remains deferred and visible.                                       |
-| Actual scoped authority execution approval | missing           | Requires next explicit user decision.                                                                 |
+| Check                                      | Status           | Summary                                                                                               |
+| ------------------------------------------ | ---------------- | ----------------------------------------------------------------------------------------------------- |
+| Dry-run observation completed              | present          | `dry-run-scoped-limited-pilot-observation-record.md` is `usable-with-warnings`.                       |
+| Runtime fixture Evidence                   | present / fresh  | Bounded Vitest command passes title + note/content behavior checks.                                   |
+| Node/Edge/Tag parity                       | present          | Manual read-model and View Instance Manifest are reviewable.                                          |
+| Source authority unchanged                 | present          | Tree-native selected-slice artifacts remain operational source.                                       |
+| CLI-backed output design                   | present          | `cli-backed-read-model-evidence-output-design.md` defines the output and comparison surface.          |
+| Generated builder / CLI-backed output      | present          | Bounded Todo Search generated output exists; validator/CI and execution approval remain separate.     |
+| Generated/manual comparison warning review | complete         | The five freshness warnings were reviewed; the current parity report is `comparison-pass`.            |
+| Rollback/fallback readiness                | partial          | Not needed for preparation; not ready for authority execution without boundary and fallback Evidence. |
+| Compatibility cleanup                      | deferred warning | ACEP task-card public-doc cleanup remains deferred and visible.                                       |
+| Actual scoped authority execution approval | missing          | Requires next explicit user decision.                                                                 |
 
 ### Remaining Judgment
 
 The user selected generated builder / CLI-backed read-model Evidence as a prerequisite, selected design-first work, and
 approved the bounded implementation task. Generated Evidence now exists for Todo Search. The next judgment is whether to
 approve actual scoped source-authority pilot execution with generated Evidence, require validator/CI backing, require
-cleanup first, resolve comparison warnings, defer, or reject the scoped pilot path.
+cleanup first, defer, or reject the scoped pilot path.
 
 ### Approval Choice Candidates
 
 - `Approve actual scoped source-authority pilot execution with generated Evidence`
 - `Require validator/CI-backed read-model Evidence before execution`
 - `Require public-doc cleanup before execution`
-- `Resolve generated/manual comparison warnings first`
 - `Defer scoped source-authority pilot execution`
 - `Reject scoped source-authority pilot path`
 

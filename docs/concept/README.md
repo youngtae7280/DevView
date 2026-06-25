@@ -219,8 +219,11 @@ The bounded generated read-model Evidence builder is now implemented for the Tod
 - command: `pbe graph read-model compare --generated <file> --manual <file>`
 - output directory: `examples/adoption/todo-search-slice/generated/`
 
-The generated output is Evidence only. It does not approve scoped source-authority execution, change source authority,
-retire tree-native artifacts, enforce validator/CI gates, clean up public docs, or promote Maintainability Graph.
+The generated output is Evidence only. The first generated/manual comparison warnings were reviewed in
+`examples/adoption/todo-search-slice/generated/parity-warning-resolution.md`; the current parity report is
+`comparison-pass` with zero blocking or decision-required mismatches. This still does not approve scoped source-authority
+execution, change source authority, retire tree-native artifacts, enforce validator/CI gates, clean up public docs, or
+promote Maintainability Graph.
 
 ## Outline-Only Later-Phase Docs
 

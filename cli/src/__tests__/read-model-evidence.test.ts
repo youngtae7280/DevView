@@ -63,10 +63,11 @@ describe('read-model Evidence builder', () => {
     }
 
     expect(afterManual).toBe(beforeManual)
-    expect(report.summary.status).toBe('comparison-warning')
+    expect(report.summary.status).toBe('comparison-pass')
     expect(report.summary.blockingCount).toBe(0)
     expect(report.summary.decisionRequiredCount).toBe(0)
     expect(Array.isArray(report.mismatches)).toBe(true)
+    expect(report.mismatches).toHaveLength(0)
     expect(report.severityLabels).toEqual(['info', 'warning', 'blocking', 'decision-required'])
     expect(report.nonPromotionStatement).toContain('does not promote Maintainability Graph')
   })
