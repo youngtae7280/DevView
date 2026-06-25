@@ -35,13 +35,15 @@ retire tree-native artifacts, does not clean up public docs, and does not approv
 The local validator baseline is enough to keep the scoped pilot active under observation. The non-enforcing manual CI
 workflow produced reviewed Todo Search CI-backed Evidence in run `28151296796`; the later aggregate-enabled workflow run
 `28156403793` reviewed the Todo Search, Todo App PBE Run, and aggregate artifact bundle. The post-update Node 24 run
-`28157938343` reviewed the same aggregate-enabled workflow after the action/runtime hygiene update. PR/push triggers,
-required checks, branch protection, and enforcement remain unimplemented.
+`28157938343` reviewed the same aggregate-enabled workflow after the action/runtime hygiene update. PR #1 then reviewed
+run `28207822252` as a non-enforcing `pull_request-informational` Evidence run. Push/schedule triggers, required checks,
+branch protection, and enforcement remain unimplemented.
 
-The future PR informational trigger design is recorded in
-[pr-informational-read-model-evidence-design.md](pr-informational-read-model-evidence-design.md). It defines how a later
-`pull_request` mode could provide visible PR Evidence without becoming a required check, branch protection rule, source
-authority expansion, or user acceptance replacement. The workflow file is not changed by that design.
+The PR informational trigger design and first run review are recorded in
+[pr-informational-read-model-evidence-design.md](pr-informational-read-model-evidence-design.md) and
+[ci-backed-read-model-evidence-run-review.md](ci-backed-read-model-evidence-run-review.md). The `pull_request` mode
+provides visible PR Evidence without becoming a required check, branch protection rule, source authority expansion, or
+user acceptance replacement.
 
 Run `28156403793` also surfaced a GitHub Actions maintenance annotation that Node.js 20 is deprecated for
 `actions/checkout@v4`, `actions/setup-node@v4`, and `actions/upload-artifact@v4` execution. This is a retained CI hygiene
@@ -328,21 +330,20 @@ This implementation and design do not:
 
 ## Recommended Next Decision Surface
 
-After this aggregate-enabled workflow run review and PR informational implementation, the next user decision should choose one
-of:
+After this aggregate-enabled workflow run review and PR informational run review, the next user decision should choose
+one of:
 
-1. `Review a real PR informational workflow run`
-2. `Refine PR informational path filters after observing noise`
-3. `Keep PR informational workflow non-enforcing and observe`
-4. `Design CI enforcement / required check policy`
-5. `Require public-doc cleanup before broader CI or promotion work`
-6. `Prepare broader Graph-source promotion review`
-7. `Defer broader CI mode changes`
+1. `Keep PR informational workflow non-enforcing and observe`
+2. `Refine PR informational path filters after observing more PRs`
+3. `Design CI enforcement / required check policy`
+4. `Require public-doc cleanup before broader CI or promotion work`
+5. `Prepare broader Graph-source promotion review`
+6. `Defer broader CI mode changes`
 
-Recommended next step: review a real PR informational workflow run when a suitable PR exists, then decide whether path
-filters or artifact naming need refinement. Enforcement design, public-doc cleanup, broader promotion review, and defer
-remain separate major branches. The Node.js 20 deprecation annotation from run `28156403793` has been handled by the
-Node 24 action/runtime update and reviewed post-update run `28157938343`.
+Recommended next step: keep the PR informational workflow non-enforcing and observe more PRs before deciding whether
+path filters or artifact naming need refinement. Enforcement design, public-doc cleanup, broader promotion review, and
+defer remain separate major branches. The Node.js 20 deprecation annotation from run `28156403793` has been handled by
+the Node 24 action/runtime update and reviewed post-update run `28157938343`.
 
 ## Approval Brief Draft
 
@@ -366,11 +367,11 @@ Source Transition Path, rollback, and compatibility.
 | CI enforcement             | not approved | Enforcement mode remains future-only.                                                                                                                                    |
 | Source authority boundary  | preserved    | CI Evidence would remain Evidence only.                                                                                                                                  |
 | Retained warnings          | visible      | Bounded fixture, partial UI, enforcement gap, and ACEP cleanup remain visible.                                                                                           |
-| Next user decision         | required     | User must choose whether to review a real PR run, refine filters, or branch into enforcement, cleanup, promotion review, or defer.                                       |
+| Next user decision         | required     | User must choose whether to observe more PRs, refine filters, or branch into enforcement, cleanup, promotion review, or defer.                                           |
 
 ### Remaining Judgment
 
-The user must decide whether to review a real PR informational run, refine path filters, design enforcement policy,
+The user must decide whether to observe more PR informational runs, refine path filters, design enforcement policy,
 prepare multi-slice validation, require public-doc cleanup before broader work, prepare broader promotion review, or
 rollback/defer the scoped pilot.
 
@@ -383,7 +384,8 @@ Decision required
 Reason: non-enforcing manual CI workflow implementation exists, run `28151296796` has been reviewed as Todo Search
 CI-backed Evidence, run `28156403793` has been reviewed as aggregate-enabled CI-backed Evidence, run `28157938343` has
 been reviewed after the Node 24 action/runtime update, and PR informational mode is now implemented as non-enforcing.
-PR run review, enforcement, broader source authority, and full promotion remain unapproved.
+PR #1 run `28207822252` has been reviewed as `pull_request-informational` / `ci-evidence-pass`. Enforcement, broader
+source authority, and full promotion remain unapproved.
 
 ## Gate Self-Check
 

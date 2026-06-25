@@ -367,8 +367,8 @@ The staged path is:
 2. Keep `examples/valid/todo-app-pbe-run` at `structure-only` until a later user decision adds parity, pilot marker, or
    CI-backed Evidence.
 3. Add aggregate summary only after per-slice validation is stable. This is now implemented as Evidence-only output.
-4. Add PR informational visibility only after manual and aggregate Evidence are stable. This is now implemented as
-   non-enforcing PR informational Evidence, with real PR run review pending.
+4. Add PR informational visibility only after manual and aggregate Evidence are stable. This is now implemented and
+   reviewed in PR run `28207822252` as non-enforcing PR informational Evidence.
 
 Do not move next to `validate --all`, required checks, enforcement, or broad CI changes without a separate user
 decision.
@@ -422,7 +422,7 @@ design, multi-slice scope redesign, or continued observation.
 | Aggregate summary                   | Evidence Control Node      | implemented / Evidence-only  | First aggregate summary reads existing per-slice validation reports only.                                                |
 | Aggregate CI-backed review          | Evidence Control Node      | reviewed                     | Runs `28156403793` and `28157938343` reviewed the aggregate-enabled artifact bundle as non-enforcing CI-backed Evidence. |
 | Aggregate validation                | Decision Control Node      | deferred                     | `validate --all`, aggregate validation execution, and enforcement remain separate.                                       |
-| PR informational trigger            | Decision Control Node      | implemented / review pending | PR visibility is implemented as non-enforcing informational Evidence; real PR run review remains pending.                |
+| PR informational trigger            | Decision Control Node      | implemented / reviewed       | PR visibility is implemented as non-enforcing informational Evidence and reviewed in PR run `28207822252`.               |
 | CI enforcement / required checks    | Decision Control Node      | not approved                 | Reviewed CI-backed Evidence exists, but enforcement and required checks remain future-only.                              |
 
 ## Gate Self-Check

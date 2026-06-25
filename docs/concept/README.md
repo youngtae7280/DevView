@@ -367,7 +367,8 @@ The workflow now implements `workflow_dispatch` and a non-enforcing `pull_reques
 filters. The PR mode records `pull_request-informational` trigger metadata, PR head/base fields, artifact/manifest
 fields, GitHub Step Summary wording, and conservative failure semantics. Required checks, branch protection, CI
 enforcement, source authority expansion, public-doc cleanup, `validate --all`, and full Graph-source promotion remain
-unimplemented. A real PR informational run review is still pending.
+unimplemented. PR #1 triggered run `28207822252`, which is reviewed as `pull_request-informational` /
+`ci-evidence-pass`; the temporary PR was closed without merge and its remote branch was deleted.
 
 ## Outline-Only Later-Phase Docs
 

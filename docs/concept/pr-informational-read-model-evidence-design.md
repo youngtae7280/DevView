@@ -1,6 +1,6 @@
 # PR Informational Read-Model Evidence Design
 
-Status: pr-informational-read-model-evidence-design / implemented / pr-run-review-pending
+Status: pr-informational-read-model-evidence-design / implemented / pr-run-reviewed
 
 ## Purpose
 
@@ -28,6 +28,7 @@ approve full Graph-source promotion.
 | Workflow                     | `PBE Read-Model Evidence`                                                                              |
 | Implemented trigger          | `workflow_dispatch`; `pull_request` informational with path filters                                    |
 | Latest reviewed manual run   | `28157938343`                                                                                          |
+| Latest reviewed PR run       | `28207822252`                                                                                          |
 | Latest run status            | `success` / `ci-evidence-pass`                                                                         |
 | Todo Search profile          | `todo-search-selected-slice`, `pilot-marker-backed`                                                    |
 | Todo Search generated output | 40 nodes / 59 edges                                                                                    |
@@ -228,22 +229,36 @@ This design does not:
 - retire tree-native or `.pbe` artifacts
 - make CI pass equivalent to user acceptance
 
+## Reviewed PR Informational Run
+
+The first real PR informational run is reviewed in
+[ci-backed-read-model-evidence-run-review.md](ci-backed-read-model-evidence-run-review.md).
+
+| Field        | Observed value                                                                          |
+| ------------ | --------------------------------------------------------------------------------------- |
+| PR           | `#1`, temporary smoke PR closed without merge                                           |
+| Run ID       | `28207822252`                                                                           |
+| Event        | `pull_request`                                                                          |
+| Trigger mode | `pull_request-informational`                                                            |
+| Result       | `success` / `ci-evidence-pass`                                                          |
+| Cleanup      | temporary PR closed without merge; remote smoke branch deleted                          |
+| Boundary     | informational only; no required check, branch protection, enforcement, or source change |
+
 ## Recommended Next Decision Surface
 
-After this implementation, the next choices are:
+After this implementation and first PR run review, the next choices are:
 
-1. `Open or update a real PR and review the informational read-model Evidence run`
-2. `Refine PR path filters after observing run noise`
-3. `Keep PR informational mode and observe`
-4. `Design CI enforcement / required check policy`
-5. `Require public-doc cleanup before broader CI changes`
-6. `Defer PR-trigger work`
+1. `Keep PR informational mode non-enforcing and observe`
+2. `Refine PR path filters after observing more PRs`
+3. `Design CI enforcement / required check policy`
+4. `Require public-doc cleanup before broader CI changes`
+5. `Defer PR-trigger work`
 
 Recommended next step:
 
 ```text
-Review a real PR informational run before deciding whether path filters, artifact naming, or failure semantics need
-adjustment. Do not move to enforcement without a separate decision.
+Keep PR informational mode non-enforcing and observe more PRs before deciding whether path filters, artifact naming, or
+failure semantics need adjustment. Do not move to enforcement without a separate decision.
 ```
 
 The implementation adds `pull_request` as informational only and uses the recommended path filters and failure semantics
@@ -266,5 +281,5 @@ above. It does not make the check required.
 ## Final Statement
 
 PR informational read-model Evidence is a CI visibility layer, not an enforcement layer. The implementation preserves
-manual dispatch, source authority, promotion, public-doc cleanup, and user acceptance boundaries. A real PR run review is
-still pending.
+manual dispatch, source authority, promotion, public-doc cleanup, and user acceptance boundaries. The first smoke PR run
+is reviewed as successful non-enforcing Evidence.
