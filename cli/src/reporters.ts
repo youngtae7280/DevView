@@ -135,6 +135,10 @@ Commands:
   revision complete    Return revision work to WPD/VD/ACEP closure flow
   evidence check       Check evidence coverage
   visual check         Check Visual Design Contract and UI evidence
+  graph read-model generate
+                       Generate bounded read-model Evidence from a selected slice
+  graph read-model compare
+                       Compare generated read-model Evidence with a manual parity artifact
 
 Options:
   --root <path>        Target project root. Defaults to current directory.
@@ -159,5 +163,8 @@ Options:
   --test <id>          Affected Test node id. May be repeated or comma-separated.
   --evidence <id>      Affected Evidence node id. May be repeated or comma-separated.
   --acceptance <id>    Affected Acceptance node id. May be repeated or comma-separated.
+  --slice <path>       Selected slice path for graph read-model generation.
+  --generated <file>   Generated read-model file for graph read-model comparison.
+  --manual <file>      Manual parity artifact for graph read-model comparison.
 `
 }

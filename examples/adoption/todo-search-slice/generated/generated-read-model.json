@@ -1,0 +1,1510 @@
+{
+  "version": "0.1.0-generated-read-model-evidence",
+  "metadata": {
+    "artifactRole": "generated_read_model_evidence",
+    "generatedAt": "2026-06-25T03:55:22.173Z",
+    "commandIdentity": "pbe graph read-model generate --slice examples/adoption/todo-search-slice",
+    "sourceCommit": "ba34953",
+    "sourceSlice": "examples/adoption/todo-search-slice",
+    "inputArtifactList": [
+      "examples/adoption/todo-search-slice/product-tree.json",
+      "examples/adoption/todo-search-slice/project-tree.json",
+      "examples/adoption/todo-search-slice/work-tree.json",
+      "examples/adoption/todo-search-slice/test-tree.json",
+      "examples/adoption/todo-search-slice/evidence-tree.json",
+      "examples/adoption/todo-search-slice/acceptance-tree.json",
+      "examples/adoption/todo-search-slice/change-tree.json",
+      "examples/adoption/todo-search-slice/impact-tree.json",
+      "examples/adoption/todo-search-slice/product-patch-tree.json",
+      "examples/adoption/todo-search-slice/cycle-contract.md",
+      "examples/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md",
+      "examples/adoption/todo-search-slice/runtime-evidence.md",
+      "examples/adoption/todo-search-slice/approval-brief.md",
+      "examples/adoption/todo-search-slice/evidence-exceptions.md",
+      "examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md"
+    ],
+    "generatedStatus": "generated-present",
+    "sourceAuthority": "Tree-native selected-slice artifacts remain current operational source.",
+    "nonPromotionStatement": "This generated read-model is Evidence only. It does not promote Maintainability Graph, change source authority, retire tree-native artifacts, approve scoped source-authority execution, or clean up public docs.",
+    "taxonomyBasis": "docs/concept/graph-node-edge-tag-policy.md",
+    "coreViewBasis": "docs/concept/view-tree-pack.md 7 Core Views",
+    "viewMembershipBoundary": "View membership is represented by includedInViewIds and coreViewCoverage. viewScopedTags contains only role tags."
+  },
+  "sourceInputs": [
+    {
+      "relativePath": "examples/adoption/todo-search-slice/product-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\product-tree.json",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/project-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\project-tree.json",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/work-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\work-tree.json",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/test-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\test-tree.json",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/evidence-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\evidence-tree.json",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/acceptance-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\acceptance-tree.json",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/change-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\change-tree.json",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/impact-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\impact-tree.json",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/product-patch-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\product-patch-tree.json",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/cycle-contract.md",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\cycle-contract.md",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\node-execution-contracts\\wt-search-001.md",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/runtime-evidence.md",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\runtime-evidence.md",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/approval-brief.md",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\approval-brief.md",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/evidence-exceptions.md",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\evidence-exceptions.md",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\compatibility-mismatch-slice\\compatibility-control-node.md",
+      "status": "present"
+    }
+  ],
+  "taxonomy": {
+    "nodeKindsUsed": [
+      "task",
+      "requirement",
+      "behavior",
+      "code",
+      "data",
+      "check",
+      "evidence",
+      "decision",
+      "change",
+      "finding",
+      "document",
+      "view-instance"
+    ],
+    "edgeTypesUsed": [
+      "targets",
+      "requires",
+      "satisfies",
+      "preserves",
+      "touches",
+      "implements",
+      "reads",
+      "takes-input",
+      "returns",
+      "verifies",
+      "evidences",
+      "approves",
+      "invalidates",
+      "reports-on",
+      "derives-view"
+    ],
+    "viewScopedTagsAllowed": ["target", "context", "candidate", "guard", "required", "stale", "blocked", "output"],
+    "tagBoundary": "Tags describe temporary roles inside a View Instance only. Durable semantic meaning is represented by edges, not tags."
+  },
+  "nodes": [
+    {
+      "id": "TASK-TODO-SEARCH-PILOT",
+      "nodeKind": "task",
+      "sourceArtifact": "docs/concept/limited-pilot-transition-record.md",
+      "title": "Todo Search generated read-model Evidence task",
+      "status": "generated_evidence_prepared",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["target", "required"],
+      "includedInViewIds": ["intent-view", "scope-execution-view"],
+      "viewRoles": { "intent-view": ["target", "required"], "scope-execution-view": ["target", "required"] }
+    },
+    {
+      "id": "AC-SEARCH-001",
+      "nodeKind": "requirement",
+      "sourceArtifact": "examples/adoption/todo-search-slice/product-tree.json",
+      "title": "WHEN the user enters a search query, THE SYSTEM SHALL show todos whose title or note content contains the query.",
+      "status": "confirmed_runtime_evidence_present",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["required"],
+      "includedInViewIds": ["intent-view", "behavior-view", "verification-view"],
+      "viewRoles": { "intent-view": ["required"], "behavior-view": ["required"], "verification-view": ["required"] }
+    },
+    {
+      "id": "AC-SEARCH-002",
+      "nodeKind": "requirement",
+      "sourceArtifact": "examples/adoption/todo-search-slice/product-tree.json",
+      "title": "WHEN the search query is empty, THE SYSTEM SHALL show the full Todo list.",
+      "status": "confirmed",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["required"],
+      "includedInViewIds": ["intent-view", "behavior-view", "verification-view"],
+      "viewRoles": { "intent-view": ["required"], "behavior-view": ["required"], "verification-view": ["required"] }
+    },
+    {
+      "id": "AC-SEARCH-003",
+      "nodeKind": "requirement",
+      "sourceArtifact": "examples/adoption/todo-search-slice/product-tree.json",
+      "title": "WHEN no Todo title or note content matches the query, THE SYSTEM SHALL show an empty search result state.",
+      "status": "confirmed_runtime_behavior_present_visual_review_pending",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "stale",
+      "parityStatus": "present",
+      "viewScopedTags": ["required"],
+      "includedInViewIds": ["intent-view", "behavior-view", "verification-view"],
+      "viewRoles": { "intent-view": ["required"], "behavior-view": ["required"], "verification-view": ["required"] }
+    },
+    {
+      "id": "PT-SEARCH-001",
+      "nodeKind": "requirement",
+      "sourceArtifact": "examples/adoption/todo-search-slice/product-tree.json",
+      "title": "Todo title and note search",
+      "status": "confirmed_renewed_acceptance_approved_with_warnings",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["target", "required"],
+      "includedInViewIds": ["intent-view", "behavior-view"],
+      "viewRoles": { "intent-view": ["target", "required"], "behavior-view": ["target", "required"] }
+    },
+    {
+      "id": "BEH-SEARCH-TITLE-NOTE",
+      "nodeKind": "behavior",
+      "sourceArtifact": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js",
+      "title": "Search query matches Todo title or note/content",
+      "status": "verified_by_runtime_fixture",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["target", "required"],
+      "includedInViewIds": ["behavior-view", "verification-view"],
+      "viewRoles": { "behavior-view": ["target", "required"], "verification-view": ["target", "required"] }
+    },
+    {
+      "id": "BEH-EMPTY-QUERY",
+      "nodeKind": "behavior",
+      "sourceArtifact": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js",
+      "title": "Blank query returns all todos",
+      "status": "verified_by_runtime_fixture",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["guard", "required"],
+      "includedInViewIds": ["behavior-view", "verification-view"],
+      "viewRoles": { "behavior-view": ["guard", "required"], "verification-view": ["guard", "required"] }
+    },
+    {
+      "id": "BEH-NO-RESULT",
+      "nodeKind": "behavior",
+      "sourceArtifact": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js",
+      "title": "No matching title or note/content returns empty result",
+      "status": "runtime_behavior_present_visual_partial",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["required"],
+      "includedInViewIds": ["behavior-view", "verification-view"],
+      "viewRoles": { "behavior-view": ["required"], "verification-view": ["required"] }
+    },
+    {
+      "id": "BEH-NON-SCOPE-GUARD",
+      "nodeKind": "behavior",
+      "sourceArtifact": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js",
+      "title": "Tag/date/fuzzy/server/saved search remain out of selected scope",
+      "status": "guard_verified",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["guard"],
+      "includedInViewIds": ["behavior-view", "scope-execution-view"],
+      "viewRoles": { "behavior-view": ["guard"], "scope-execution-view": ["guard"] }
+    },
+    {
+      "id": "PJ-TODO-LIST-SURFACE",
+      "nodeKind": "code",
+      "sourceArtifact": "examples/adoption/todo-search-slice/project-tree.json",
+      "title": "Todo list search surface",
+      "status": "derived_demo_support_accepted_with_warnings",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["context"],
+      "includedInViewIds": ["structure-view", "scope-execution-view"],
+      "viewRoles": { "structure-view": ["context"], "scope-execution-view": ["context"] }
+    },
+    {
+      "id": "PJ-TODO-SEARCH-HELPER",
+      "nodeKind": "code",
+      "sourceArtifact": "examples/adoption/todo-search-slice/project-tree.json",
+      "title": "Todo title and note search helper",
+      "status": "derived_demo_support_accepted_with_warnings",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["context"],
+      "includedInViewIds": ["structure-view", "scope-execution-view"],
+      "viewRoles": { "structure-view": ["context"], "scope-execution-view": ["context"] }
+    },
+    {
+      "id": "WT-SEARCH-001",
+      "nodeKind": "task",
+      "sourceArtifact": "examples/adoption/todo-search-slice/work-tree.json",
+      "title": "Revise Todo search for title and note content",
+      "status": "accepted_with_warnings",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["target", "required"],
+      "includedInViewIds": ["scope-execution-view", "impact-view"],
+      "viewRoles": { "scope-execution-view": ["target", "required"], "impact-view": ["target", "required"] }
+    },
+    {
+      "id": "CODE-RUNTIME-SEARCH-HELPER",
+      "nodeKind": "code",
+      "sourceArtifact": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.js",
+      "title": "Bounded runtime fixture search helper",
+      "status": "present",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output"],
+      "includedInViewIds": ["structure-view", "behavior-view"],
+      "viewRoles": { "structure-view": ["output"], "behavior-view": ["output"] }
+    },
+    {
+      "id": "CODE-RUNTIME-SEARCH-TEST",
+      "nodeKind": "code",
+      "sourceArtifact": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js",
+      "title": "Bounded runtime fixture Vitest tests",
+      "status": "present",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output"],
+      "includedInViewIds": ["structure-view", "verification-view"],
+      "viewRoles": { "structure-view": ["output"], "verification-view": ["output"] }
+    },
+    {
+      "id": "DATA-TODO-ITEM",
+      "nodeKind": "data",
+      "sourceArtifact": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js",
+      "title": "Todo item with title and note/content fields",
+      "status": "present",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["context"],
+      "includedInViewIds": ["structure-view", "behavior-view"],
+      "viewRoles": { "structure-view": ["context"], "behavior-view": ["context"] }
+    },
+    {
+      "id": "TT-SEARCH-001",
+      "nodeKind": "check",
+      "sourceArtifact": "examples/adoption/todo-search-slice/test-tree.json",
+      "title": "Filters todos by title query",
+      "status": "passed_refreshed_by_runtime_fixture",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["required"],
+      "includedInViewIds": ["verification-view"],
+      "viewRoles": { "verification-view": ["required"] }
+    },
+    {
+      "id": "TT-SEARCH-002",
+      "nodeKind": "check",
+      "sourceArtifact": "examples/adoption/todo-search-slice/test-tree.json",
+      "title": "Restores all todos for empty query",
+      "status": "passed_refreshed_by_runtime_fixture",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["required"],
+      "includedInViewIds": ["verification-view"],
+      "viewRoles": { "verification-view": ["required"] }
+    },
+    {
+      "id": "TT-SEARCH-003",
+      "nodeKind": "check",
+      "sourceArtifact": "examples/adoption/todo-search-slice/test-tree.json",
+      "title": "Shows no-result empty state for title and note search",
+      "status": "partial_runtime_behavior_present_visual_review_pending",
+      "confidence": "inferred",
+      "freshnessStatus": "stale",
+      "parityStatus": "present",
+      "viewScopedTags": ["required"],
+      "includedInViewIds": ["verification-view"],
+      "viewRoles": { "verification-view": ["required"] }
+    },
+    {
+      "id": "TT-SEARCH-004",
+      "nodeKind": "check",
+      "sourceArtifact": "examples/adoption/todo-search-slice/test-tree.json",
+      "title": "Filters todos by note/content query",
+      "status": "passed_runtime_fixture",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["required"],
+      "includedInViewIds": ["verification-view"],
+      "viewRoles": { "verification-view": ["required"] }
+    },
+    {
+      "id": "EV-SEARCH-TEST",
+      "nodeKind": "evidence",
+      "sourceArtifact": "examples/adoption/todo-search-slice/evidence-tree.json",
+      "title": "Todo search automated test output",
+      "status": "present_historical_supplemented_by_runtime_fixture",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "stale",
+      "parityStatus": "present",
+      "viewScopedTags": ["stale", "context"],
+      "includedInViewIds": ["evidence-acceptance-view", "verification-view"],
+      "viewRoles": { "evidence-acceptance-view": ["stale", "context"], "verification-view": ["stale", "context"] }
+    },
+    {
+      "id": "EV-SEARCH-REVIEW",
+      "nodeKind": "evidence",
+      "sourceArtifact": "examples/adoption/todo-search-slice/evidence-tree.json",
+      "title": "No-result empty state review",
+      "status": "partial_visual_review_refresh_pending",
+      "confidence": "inferred",
+      "freshnessStatus": "stale",
+      "parityStatus": "present",
+      "viewScopedTags": ["stale", "context"],
+      "includedInViewIds": ["evidence-acceptance-view", "verification-view"],
+      "viewRoles": { "evidence-acceptance-view": ["stale", "context"], "verification-view": ["stale", "context"] }
+    },
+    {
+      "id": "EV-SEARCH-NOTE-TEST",
+      "nodeKind": "evidence",
+      "sourceArtifact": "examples/adoption/todo-search-slice/evidence-tree.json",
+      "title": "Todo note/content search automated test output",
+      "status": "present_fresh",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output", "required"],
+      "includedInViewIds": ["evidence-acceptance-view", "verification-view"],
+      "viewRoles": { "evidence-acceptance-view": ["output", "required"], "verification-view": ["output", "required"] }
+    },
+    {
+      "id": "PP-001",
+      "nodeKind": "decision",
+      "sourceArtifact": "examples/adoption/todo-search-slice/product-patch-tree.json",
+      "title": "PP-001",
+      "status": "confirmed_renewed_acceptance_approved_with_warnings",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["context"],
+      "includedInViewIds": ["intent-view", "impact-view"],
+      "viewRoles": { "intent-view": ["context"], "impact-view": ["context"] }
+    },
+    {
+      "id": "CH-001",
+      "nodeKind": "change",
+      "sourceArtifact": "examples/adoption/todo-search-slice/change-tree.json",
+      "title": "Search should include todo note content.",
+      "status": "closed_with_retained_warnings",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["context"],
+      "includedInViewIds": ["impact-view"],
+      "viewRoles": { "impact-view": ["context"] }
+    },
+    {
+      "id": "IM-SEARCH-001",
+      "nodeKind": "finding",
+      "sourceArtifact": "examples/adoption/todo-search-slice/impact-tree.json",
+      "title": "runtime_fixture_evidence_refreshed_acceptance_approved_with_warnings",
+      "status": "closed_with_retained_warnings",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["stale"],
+      "includedInViewIds": ["impact-view"],
+      "viewRoles": { "impact-view": ["stale"] }
+    },
+    {
+      "id": "AT-ROOT",
+      "nodeKind": "decision",
+      "sourceArtifact": "examples/adoption/todo-search-slice/acceptance-tree.json",
+      "title": "Todo search acceptance",
+      "status": "renewed_acceptance_approved_with_warnings",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output"],
+      "includedInViewIds": ["intent-view", "evidence-acceptance-view"],
+      "viewRoles": { "intent-view": ["output"], "evidence-acceptance-view": ["output"] }
+    },
+    {
+      "id": "CYCLE-TODO-SEARCH",
+      "nodeKind": "document",
+      "sourceArtifact": "examples/adoption/todo-search-slice/cycle-contract.md",
+      "title": "Todo Search Cycle Contract",
+      "status": "present",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["required", "guard"],
+      "includedInViewIds": ["scope-execution-view"],
+      "viewRoles": { "scope-execution-view": ["required", "guard"] }
+    },
+    {
+      "id": "NEC-WT-SEARCH-001",
+      "nodeKind": "document",
+      "sourceArtifact": "examples/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md",
+      "title": "WT-SEARCH-001 Node Execution Contract",
+      "status": "present",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["required", "guard"],
+      "includedInViewIds": ["scope-execution-view"],
+      "viewRoles": { "scope-execution-view": ["required", "guard"] }
+    },
+    {
+      "id": "AB-TODO-SEARCH",
+      "nodeKind": "document",
+      "sourceArtifact": "examples/adoption/todo-search-slice/approval-brief.md",
+      "title": "Todo Search Approval Brief",
+      "status": "present",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output"],
+      "includedInViewIds": ["evidence-acceptance-view"],
+      "viewRoles": { "evidence-acceptance-view": ["output"] }
+    },
+    {
+      "id": "CCN-ACEP-TASK-CARD-AUTHORITY-001",
+      "nodeKind": "finding",
+      "sourceArtifact": "examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md",
+      "title": "ACEP task-card compatibility cleanup deferred",
+      "status": "deferred_warning",
+      "confidence": "inferred",
+      "freshnessStatus": "unknown",
+      "parityStatus": "present",
+      "viewScopedTags": ["context"],
+      "includedInViewIds": ["impact-view"],
+      "viewRoles": { "impact-view": ["context"] }
+    },
+    {
+      "id": "FIND-BOUNDED-FIXTURE",
+      "nodeKind": "finding",
+      "sourceArtifact": "examples/adoption/todo-search-slice/runtime-evidence.md",
+      "title": "Bounded fixture is not full Todo app implementation",
+      "status": "retained_warning",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["context"],
+      "includedInViewIds": ["evidence-acceptance-view"],
+      "viewRoles": { "evidence-acceptance-view": ["context"] }
+    },
+    {
+      "id": "FIND-PARTIAL-UI",
+      "nodeKind": "finding",
+      "sourceArtifact": "examples/adoption/todo-search-slice/evidence-exceptions.md",
+      "title": "UI screenshot/manual visual Evidence remains partial",
+      "status": "retained_warning",
+      "confidence": "inferred",
+      "freshnessStatus": "unknown",
+      "parityStatus": "present",
+      "viewScopedTags": ["stale"],
+      "includedInViewIds": ["evidence-acceptance-view"],
+      "viewRoles": { "evidence-acceptance-view": ["stale"] }
+    },
+    {
+      "id": "FIND-GENERATED-BUILDER-MISSING",
+      "nodeKind": "finding",
+      "sourceArtifact": "docs/concept/generated-read-model-evidence-requirement.md",
+      "title": "Generated builder was missing before this command",
+      "status": "resolved_by_generated_output_for_bounded_slice",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output"],
+      "includedInViewIds": ["evidence-acceptance-view"],
+      "viewRoles": { "evidence-acceptance-view": ["output"] }
+    },
+    {
+      "id": "FIND-ACEP-CLEANUP-DEFERRED",
+      "nodeKind": "finding",
+      "sourceArtifact": "examples/adoption/compatibility-mismatch-slice/evidence-exceptions.md",
+      "title": "ACEP public-doc cleanup deferred",
+      "status": "deferred_warning",
+      "confidence": "inferred",
+      "freshnessStatus": "unknown",
+      "parityStatus": "present",
+      "viewScopedTags": ["context"],
+      "includedInViewIds": ["impact-view"],
+      "viewRoles": { "impact-view": ["context"] }
+    },
+    {
+      "id": "DOC-READ-MODEL",
+      "nodeKind": "document",
+      "sourceArtifact": "examples/adoption/todo-search-slice/generated/generated-read-model.json",
+      "title": "Generated read-model Evidence output",
+      "status": "generated_present",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output"],
+      "includedInViewIds": ["evidence-acceptance-view"],
+      "viewRoles": { "evidence-acceptance-view": ["output"] }
+    },
+    {
+      "id": "DOC-PARITY-CHECK",
+      "nodeKind": "document",
+      "sourceArtifact": "examples/adoption/todo-search-slice/generated/read-model-parity-report.json",
+      "title": "Generated/manual parity report",
+      "status": "pending_compare",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output"],
+      "includedInViewIds": ["evidence-acceptance-view"],
+      "viewRoles": { "evidence-acceptance-view": ["output"] }
+    },
+    {
+      "id": "DOC-LIMITED-PILOT-PACKAGE",
+      "nodeKind": "document",
+      "sourceArtifact": "docs/concept/limited-pilot-promotion-decision-package.md",
+      "title": "Limited Pilot Promotion Decision Package",
+      "status": "approved_option_recorded",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output"],
+      "includedInViewIds": ["intent-view"],
+      "viewRoles": { "intent-view": ["output"] }
+    },
+    {
+      "id": "DEC-LIMITED-PILOT-PENDING",
+      "nodeKind": "decision",
+      "sourceArtifact": "docs/concept/scoped-source-authority-pilot-preparation-package.md",
+      "title": "Actual scoped source-authority execution decision remains pending",
+      "status": "decision_required",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output"],
+      "includedInViewIds": ["intent-view", "scope-execution-view"],
+      "viewRoles": { "intent-view": ["output"], "scope-execution-view": ["output"] }
+    },
+    {
+      "id": "DOC-LIMITED-PILOT-TRANSITION-RECORD",
+      "nodeKind": "document",
+      "sourceArtifact": "docs/concept/limited-pilot-transition-record.md",
+      "title": "Limited Pilot Transition Record",
+      "status": "recorded_non_executing",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output"],
+      "includedInViewIds": ["intent-view"],
+      "viewRoles": { "intent-view": ["output"] }
+    },
+    {
+      "id": "VIEW-TODO-SEARCH-CORE-VIEWS",
+      "nodeKind": "view-instance",
+      "sourceArtifact": "examples/adoption/todo-search-slice/view-instance-manifest.json",
+      "title": "Todo Search 7 Core View projection",
+      "status": "present",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "viewScopedTags": ["output"],
+      "includedInViewIds": [
+        "intent-view",
+        "behavior-view",
+        "structure-view",
+        "scope-execution-view",
+        "impact-view",
+        "verification-view",
+        "evidence-acceptance-view"
+      ],
+      "viewRoles": {
+        "intent-view": ["output"],
+        "behavior-view": ["output"],
+        "structure-view": ["output"],
+        "scope-execution-view": ["output"],
+        "impact-view": ["output"],
+        "verification-view": ["output"],
+        "evidence-acceptance-view": ["output"]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "E-TASK-TARGETS-REQ",
+      "from": "TASK-TODO-SEARCH-PILOT",
+      "to": "PT-SEARCH-001",
+      "edgeType": "targets",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "docs/concept/limited-pilot-transition-record.md"
+    },
+    {
+      "id": "E-TASK-REQUIRES-CYCLE",
+      "from": "TASK-TODO-SEARCH-PILOT",
+      "to": "CYCLE-TODO-SEARCH",
+      "edgeType": "requires",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/cycle-contract.md"
+    },
+    {
+      "id": "E-TASK-REQUIRES-NEC",
+      "from": "TASK-TODO-SEARCH-PILOT",
+      "to": "NEC-WT-SEARCH-001",
+      "edgeType": "requires",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md"
+    },
+    {
+      "id": "E-PT-REQUIRES-AC1",
+      "from": "PT-SEARCH-001",
+      "to": "AC-SEARCH-001",
+      "edgeType": "requires",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/product-tree.json"
+    },
+    {
+      "id": "E-PT-REQUIRES-AC2",
+      "from": "PT-SEARCH-001",
+      "to": "AC-SEARCH-002",
+      "edgeType": "requires",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/product-tree.json"
+    },
+    {
+      "id": "E-PT-REQUIRES-AC3",
+      "from": "PT-SEARCH-001",
+      "to": "AC-SEARCH-003",
+      "edgeType": "requires",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/product-tree.json"
+    },
+    {
+      "id": "E-BEH-SEARCH-SATISFIES-AC1",
+      "from": "BEH-SEARCH-TITLE-NOTE",
+      "to": "AC-SEARCH-001",
+      "edgeType": "satisfies",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js"
+    },
+    {
+      "id": "E-BEH-EMPTY-SATISFIES-AC2",
+      "from": "BEH-EMPTY-QUERY",
+      "to": "AC-SEARCH-002",
+      "edgeType": "satisfies",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js"
+    },
+    {
+      "id": "E-BEH-NO-RESULT-SATISFIES-AC3",
+      "from": "BEH-NO-RESULT",
+      "to": "AC-SEARCH-003",
+      "edgeType": "satisfies",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js"
+    },
+    {
+      "id": "E-PT-DERIVES-PJ-SURFACE",
+      "from": "PT-SEARCH-001",
+      "to": "PJ-TODO-LIST-SURFACE",
+      "edgeType": "targets",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/project-tree.json"
+    },
+    {
+      "id": "E-PT-DERIVES-PJ-HELPER",
+      "from": "PT-SEARCH-001",
+      "to": "PJ-TODO-SEARCH-HELPER",
+      "edgeType": "targets",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/project-tree.json"
+    },
+    {
+      "id": "E-WT-TARGETS-BEH-SEARCH",
+      "from": "WT-SEARCH-001",
+      "to": "BEH-SEARCH-TITLE-NOTE",
+      "edgeType": "targets",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/work-tree.json"
+    },
+    {
+      "id": "E-WT-TARGETS-BEH-EMPTY",
+      "from": "WT-SEARCH-001",
+      "to": "BEH-EMPTY-QUERY",
+      "edgeType": "targets",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/work-tree.json"
+    },
+    {
+      "id": "E-WT-TARGETS-BEH-NO-RESULT",
+      "from": "WT-SEARCH-001",
+      "to": "BEH-NO-RESULT",
+      "edgeType": "targets",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/work-tree.json"
+    },
+    {
+      "id": "E-WT-PRESERVES-GUARD",
+      "from": "WT-SEARCH-001",
+      "to": "BEH-NON-SCOPE-GUARD",
+      "edgeType": "preserves",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/work-tree.json"
+    },
+    {
+      "id": "E-WT-TOUCHES-CODE",
+      "from": "WT-SEARCH-001",
+      "to": "CODE-RUNTIME-SEARCH-HELPER",
+      "edgeType": "touches",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/work-tree.json"
+    },
+    {
+      "id": "E-PJ-HELPER-TOUCHES-CODE",
+      "from": "PJ-TODO-SEARCH-HELPER",
+      "to": "CODE-RUNTIME-SEARCH-HELPER",
+      "edgeType": "touches",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/project-tree.json"
+    },
+    {
+      "id": "E-CODE-IMPLEMENTS-SEARCH",
+      "from": "CODE-RUNTIME-SEARCH-HELPER",
+      "to": "BEH-SEARCH-TITLE-NOTE",
+      "edgeType": "implements",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.js"
+    },
+    {
+      "id": "E-CODE-IMPLEMENTS-EMPTY",
+      "from": "CODE-RUNTIME-SEARCH-HELPER",
+      "to": "BEH-EMPTY-QUERY",
+      "edgeType": "implements",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.js"
+    },
+    {
+      "id": "E-CODE-IMPLEMENTS-NO-RESULT",
+      "from": "CODE-RUNTIME-SEARCH-HELPER",
+      "to": "BEH-NO-RESULT",
+      "edgeType": "implements",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.js"
+    },
+    {
+      "id": "E-CODE-PRESERVES-GUARD",
+      "from": "CODE-RUNTIME-SEARCH-HELPER",
+      "to": "BEH-NON-SCOPE-GUARD",
+      "edgeType": "preserves",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js"
+    },
+    {
+      "id": "E-CODE-READS-DATA",
+      "from": "CODE-RUNTIME-SEARCH-HELPER",
+      "to": "DATA-TODO-ITEM",
+      "edgeType": "reads",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.js"
+    },
+    {
+      "id": "E-CODE-TAKES-INPUT-DATA",
+      "from": "CODE-RUNTIME-SEARCH-HELPER",
+      "to": "DATA-TODO-ITEM",
+      "edgeType": "takes-input",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.js"
+    },
+    {
+      "id": "E-CODE-RETURNS-DATA",
+      "from": "CODE-RUNTIME-SEARCH-HELPER",
+      "to": "DATA-TODO-ITEM",
+      "edgeType": "returns",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.js"
+    },
+    {
+      "id": "E-TT-001-VERIFIES-SEARCH",
+      "from": "TT-SEARCH-001",
+      "to": "BEH-SEARCH-TITLE-NOTE",
+      "edgeType": "verifies",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/test-tree.json"
+    },
+    {
+      "id": "E-TT-002-VERIFIES-EMPTY",
+      "from": "TT-SEARCH-002",
+      "to": "BEH-EMPTY-QUERY",
+      "edgeType": "verifies",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/test-tree.json"
+    },
+    {
+      "id": "E-TT-003-VERIFIES-NO-RESULT",
+      "from": "TT-SEARCH-003",
+      "to": "BEH-NO-RESULT",
+      "edgeType": "verifies",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/test-tree.json"
+    },
+    {
+      "id": "E-TT-004-VERIFIES-SEARCH",
+      "from": "TT-SEARCH-004",
+      "to": "BEH-SEARCH-TITLE-NOTE",
+      "edgeType": "verifies",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/test-tree.json"
+    },
+    {
+      "id": "E-EV-NOTE-EVIDENCES-TT001",
+      "from": "EV-SEARCH-NOTE-TEST",
+      "to": "TT-SEARCH-001",
+      "edgeType": "evidences",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-evidence.md"
+    },
+    {
+      "id": "E-EV-NOTE-EVIDENCES-TT002",
+      "from": "EV-SEARCH-NOTE-TEST",
+      "to": "TT-SEARCH-002",
+      "edgeType": "evidences",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-evidence.md"
+    },
+    {
+      "id": "E-EV-NOTE-EVIDENCES-TT004",
+      "from": "EV-SEARCH-NOTE-TEST",
+      "to": "TT-SEARCH-004",
+      "edgeType": "evidences",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-evidence.md"
+    },
+    {
+      "id": "E-EV-REVIEW-EVIDENCES-TT003",
+      "from": "EV-SEARCH-REVIEW",
+      "to": "TT-SEARCH-003",
+      "edgeType": "evidences",
+      "confidence": "inferred",
+      "freshnessStatus": "unknown",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/evidence-tree.json"
+    },
+    {
+      "id": "E-EV-HISTORICAL-EVIDENCES-TT001",
+      "from": "EV-SEARCH-TEST",
+      "to": "TT-SEARCH-001",
+      "edgeType": "evidences",
+      "confidence": "inferred",
+      "freshnessStatus": "stale",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/evidence-tree.json"
+    },
+    {
+      "id": "E-PP-APPROVES-CH",
+      "from": "PP-001",
+      "to": "CH-001",
+      "edgeType": "approves",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/product-patch-tree.json"
+    },
+    {
+      "id": "E-CH-TOUCHES-BEH-SEARCH",
+      "from": "CH-001",
+      "to": "BEH-SEARCH-TITLE-NOTE",
+      "edgeType": "touches",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/change-tree.json"
+    },
+    {
+      "id": "E-CH-INVALIDATES-EV-HISTORICAL",
+      "from": "CH-001",
+      "to": "EV-SEARCH-TEST",
+      "edgeType": "invalidates",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/impact-tree.json"
+    },
+    {
+      "id": "E-CH-INVALIDATES-OLD-ACCEPTANCE",
+      "from": "CH-001",
+      "to": "AT-ROOT",
+      "edgeType": "invalidates",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/acceptance-tree.json"
+    },
+    {
+      "id": "E-CH-PRESERVES-NON-SCOPE",
+      "from": "CH-001",
+      "to": "BEH-NON-SCOPE-GUARD",
+      "edgeType": "preserves",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js"
+    },
+    {
+      "id": "E-CH-REQUIRES-EV-NOTE",
+      "from": "CH-001",
+      "to": "EV-SEARCH-NOTE-TEST",
+      "edgeType": "requires",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/impact-tree.json"
+    },
+    {
+      "id": "E-IM-REPORTS-ON-CH",
+      "from": "IM-SEARCH-001",
+      "to": "CH-001",
+      "edgeType": "reports-on",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/impact-tree.json"
+    },
+    {
+      "id": "E-IM-REPORTS-ON-EV-REVIEW",
+      "from": "IM-SEARCH-001",
+      "to": "EV-SEARCH-REVIEW",
+      "edgeType": "reports-on",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/impact-tree.json"
+    },
+    {
+      "id": "E-CYCLE-REQUIRES-WT",
+      "from": "CYCLE-TODO-SEARCH",
+      "to": "WT-SEARCH-001",
+      "edgeType": "requires",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/cycle-contract.md"
+    },
+    {
+      "id": "E-CYCLE-REQUIRES-EV",
+      "from": "CYCLE-TODO-SEARCH",
+      "to": "EV-SEARCH-NOTE-TEST",
+      "edgeType": "requires",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/cycle-contract.md"
+    },
+    {
+      "id": "E-NEC-REQUIRES-WT",
+      "from": "NEC-WT-SEARCH-001",
+      "to": "WT-SEARCH-001",
+      "edgeType": "requires",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md"
+    },
+    {
+      "id": "E-NEC-PRESERVES-GUARD",
+      "from": "NEC-WT-SEARCH-001",
+      "to": "BEH-NON-SCOPE-GUARD",
+      "edgeType": "preserves",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md"
+    },
+    {
+      "id": "E-AT-APPROVES-PT",
+      "from": "AT-ROOT",
+      "to": "PT-SEARCH-001",
+      "edgeType": "approves",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/acceptance-tree.json"
+    },
+    {
+      "id": "E-AT-APPROVES-EV-NOTE",
+      "from": "AT-ROOT",
+      "to": "EV-SEARCH-NOTE-TEST",
+      "edgeType": "approves",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/acceptance-tree.json"
+    },
+    {
+      "id": "E-AB-REPORTS-ON-AT",
+      "from": "AB-TODO-SEARCH",
+      "to": "AT-ROOT",
+      "edgeType": "reports-on",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/approval-brief.md"
+    },
+    {
+      "id": "E-FIND-BOUNDED-REPORTS-ON-EV",
+      "from": "FIND-BOUNDED-FIXTURE",
+      "to": "EV-SEARCH-NOTE-TEST",
+      "edgeType": "reports-on",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/runtime-evidence.md"
+    },
+    {
+      "id": "E-FIND-UI-REPORTS-ON-EV",
+      "from": "FIND-PARTIAL-UI",
+      "to": "EV-SEARCH-REVIEW",
+      "edgeType": "reports-on",
+      "confidence": "inferred",
+      "freshnessStatus": "unknown",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/evidence-exceptions.md"
+    },
+    {
+      "id": "E-FIND-BUILDER-REPORTS-ON-DOC",
+      "from": "FIND-GENERATED-BUILDER-MISSING",
+      "to": "DOC-READ-MODEL",
+      "edgeType": "reports-on",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "docs/concept/generated-read-model-evidence-requirement.md"
+    },
+    {
+      "id": "E-FIND-ACEP-REPORTS-ON-CCN",
+      "from": "FIND-ACEP-CLEANUP-DEFERRED",
+      "to": "CCN-ACEP-TASK-CARD-AUTHORITY-001",
+      "edgeType": "reports-on",
+      "confidence": "inferred",
+      "freshnessStatus": "unknown",
+      "parityStatus": "present",
+      "source": "examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md"
+    },
+    {
+      "id": "E-CCN-REPORTS-ON-PACKAGE",
+      "from": "CCN-ACEP-TASK-CARD-AUTHORITY-001",
+      "to": "DOC-LIMITED-PILOT-PACKAGE",
+      "edgeType": "reports-on",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md"
+    },
+    {
+      "id": "E-DOC-PARITY-REPORTS-ON-VIEW",
+      "from": "DOC-PARITY-CHECK",
+      "to": "VIEW-TODO-SEARCH-CORE-VIEWS",
+      "edgeType": "reports-on",
+      "confidence": "tool-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/generated/read-model-parity-report.json"
+    },
+    {
+      "id": "E-VIEW-DERIVES-TASK",
+      "from": "VIEW-TODO-SEARCH-CORE-VIEWS",
+      "to": "TASK-TODO-SEARCH-PILOT",
+      "edgeType": "derives-view",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/view-instance-manifest.json"
+    },
+    {
+      "id": "E-VIEW-DERIVES-REQ",
+      "from": "VIEW-TODO-SEARCH-CORE-VIEWS",
+      "to": "PT-SEARCH-001",
+      "edgeType": "derives-view",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/view-instance-manifest.json"
+    },
+    {
+      "id": "E-VIEW-DERIVES-CONTRACT",
+      "from": "VIEW-TODO-SEARCH-CORE-VIEWS",
+      "to": "CYCLE-TODO-SEARCH",
+      "edgeType": "derives-view",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/view-instance-manifest.json"
+    },
+    {
+      "id": "E-VIEW-DERIVES-EVIDENCE",
+      "from": "VIEW-TODO-SEARCH-CORE-VIEWS",
+      "to": "EV-SEARCH-NOTE-TEST",
+      "edgeType": "derives-view",
+      "confidence": "inferred",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "examples/adoption/todo-search-slice/view-instance-manifest.json"
+    },
+    {
+      "id": "E-DEC-APPROVES-TRANSITION-RECORD",
+      "from": "DEC-LIMITED-PILOT-PENDING",
+      "to": "DOC-LIMITED-PILOT-TRANSITION-RECORD",
+      "edgeType": "approves",
+      "confidence": "user-confirmed",
+      "freshnessStatus": "fresh",
+      "parityStatus": "present",
+      "source": "docs/concept/limited-pilot-transition-record.md"
+    }
+  ],
+  "coreViewCoverage": [
+    {
+      "viewId": "intent-view",
+      "name": "Intent View",
+      "coverageStatus": "present",
+      "includedNodeIds": [
+        "TASK-TODO-SEARCH-PILOT",
+        "PT-SEARCH-001",
+        "AC-SEARCH-001",
+        "AC-SEARCH-002",
+        "AC-SEARCH-003",
+        "PP-001",
+        "AT-ROOT"
+      ],
+      "includedEdgeIds": [
+        "E-TASK-TARGETS-REQ",
+        "E-PT-REQUIRES-AC1",
+        "E-PT-REQUIRES-AC2",
+        "E-PT-REQUIRES-AC3",
+        "E-PP-APPROVES-CH",
+        "E-AT-APPROVES-PT"
+      ],
+      "viewScopedTags": ["target", "required", "output"],
+      "boundaryNotes": "Shows product meaning and user acceptance without changing source authority."
+    },
+    {
+      "viewId": "behavior-view",
+      "name": "Behavior View",
+      "coverageStatus": "present",
+      "includedNodeIds": [
+        "PT-SEARCH-001",
+        "BEH-SEARCH-TITLE-NOTE",
+        "BEH-EMPTY-QUERY",
+        "BEH-NO-RESULT",
+        "BEH-NON-SCOPE-GUARD",
+        "CODE-RUNTIME-SEARCH-HELPER",
+        "DATA-TODO-ITEM"
+      ],
+      "includedEdgeIds": [
+        "E-BEH-SEARCH-SATISFIES-AC1",
+        "E-BEH-EMPTY-SATISFIES-AC2",
+        "E-BEH-NO-RESULT-SATISFIES-AC3",
+        "E-CODE-IMPLEMENTS-SEARCH",
+        "E-CODE-IMPLEMENTS-EMPTY",
+        "E-CODE-IMPLEMENTS-NO-RESULT",
+        "E-CODE-PRESERVES-GUARD"
+      ],
+      "viewScopedTags": ["target", "guard", "required"],
+      "boundaryNotes": "Shows title + note/content behavior and non-scope guards."
+    },
+    {
+      "viewId": "structure-view",
+      "name": "Structure View",
+      "coverageStatus": "present",
+      "includedNodeIds": [
+        "PJ-TODO-LIST-SURFACE",
+        "PJ-TODO-SEARCH-HELPER",
+        "CODE-RUNTIME-SEARCH-HELPER",
+        "CODE-RUNTIME-SEARCH-TEST",
+        "DATA-TODO-ITEM"
+      ],
+      "includedEdgeIds": ["E-CODE-READS-DATA"],
+      "viewScopedTags": ["context"],
+      "boundaryNotes": "Shows bounded fixture and project anchors only."
+    },
+    {
+      "viewId": "scope-execution-view",
+      "name": "Scope / Execution View",
+      "coverageStatus": "present",
+      "includedNodeIds": [
+        "TASK-TODO-SEARCH-PILOT",
+        "WT-SEARCH-001",
+        "CYCLE-TODO-SEARCH",
+        "NEC-WT-SEARCH-001",
+        "BEH-NON-SCOPE-GUARD"
+      ],
+      "includedEdgeIds": [
+        "E-TASK-REQUIRES-CYCLE",
+        "E-TASK-REQUIRES-NEC",
+        "E-CYCLE-REQUIRES-WT",
+        "E-NEC-REQUIRES-WT",
+        "E-WT-PRESERVES-GUARD"
+      ],
+      "viewScopedTags": ["target", "required", "guard"],
+      "boundaryNotes": "Shows selected/deferred/forbidden boundary."
+    },
+    {
+      "viewId": "impact-view",
+      "name": "Impact View",
+      "coverageStatus": "present",
+      "includedNodeIds": [
+        "PP-001",
+        "CH-001",
+        "IM-SEARCH-001",
+        "EV-SEARCH-TEST",
+        "AT-ROOT",
+        "FIND-ACEP-CLEANUP-DEFERRED",
+        "CCN-ACEP-TASK-CARD-AUTHORITY-001"
+      ],
+      "includedEdgeIds": [
+        "E-PP-APPROVES-CH",
+        "E-CH-INVALIDATES-EV-HISTORICAL",
+        "E-CH-INVALIDATES-OLD-ACCEPTANCE",
+        "E-IM-REPORTS-ON-CH",
+        "E-FIND-ACEP-REPORTS-ON-CCN"
+      ],
+      "viewScopedTags": ["context", "stale"],
+      "boundaryNotes": "Shows PP-001 impact, retained compatibility cleanup warning, and stale/reopen history."
+    },
+    {
+      "viewId": "verification-view",
+      "name": "Verification View",
+      "coverageStatus": "present",
+      "includedNodeIds": [
+        "TT-SEARCH-001",
+        "TT-SEARCH-002",
+        "TT-SEARCH-003",
+        "TT-SEARCH-004",
+        "BEH-SEARCH-TITLE-NOTE",
+        "BEH-EMPTY-QUERY",
+        "BEH-NO-RESULT",
+        "EV-SEARCH-NOTE-TEST"
+      ],
+      "includedEdgeIds": [
+        "E-TT-001-VERIFIES-SEARCH",
+        "E-TT-002-VERIFIES-EMPTY",
+        "E-TT-003-VERIFIES-NO-RESULT",
+        "E-TT-004-VERIFIES-SEARCH",
+        "E-EV-NOTE-EVIDENCES-TT004"
+      ],
+      "viewScopedTags": ["required", "stale"],
+      "boundaryNotes": "Shows checks and partial visual review warning."
+    },
+    {
+      "viewId": "evidence-acceptance-view",
+      "name": "Evidence / Acceptance View",
+      "coverageStatus": "present",
+      "includedNodeIds": [
+        "EV-SEARCH-TEST",
+        "EV-SEARCH-REVIEW",
+        "EV-SEARCH-NOTE-TEST",
+        "AT-ROOT",
+        "AB-TODO-SEARCH",
+        "FIND-BOUNDED-FIXTURE",
+        "FIND-PARTIAL-UI",
+        "DOC-READ-MODEL",
+        "DOC-PARITY-CHECK"
+      ],
+      "includedEdgeIds": [
+        "E-EV-NOTE-EVIDENCES-TT001",
+        "E-EV-NOTE-EVIDENCES-TT002",
+        "E-EV-NOTE-EVIDENCES-TT004",
+        "E-EV-REVIEW-EVIDENCES-TT003",
+        "E-AT-APPROVES-EV-NOTE",
+        "E-AB-REPORTS-ON-AT",
+        "E-FIND-BOUNDED-REPORTS-ON-EV",
+        "E-FIND-UI-REPORTS-ON-EV",
+        "E-DOC-PARITY-REPORTS-ON-VIEW"
+      ],
+      "viewScopedTags": ["output", "stale", "context"],
+      "boundaryNotes": "Shows Evidence, user acceptance with warnings, and non-promotion boundary."
+    }
+  ],
+  "checkEvidenceMapping": [
+    {
+      "checkNodeId": "TT-SEARCH-001",
+      "checkTitle": "Filters todos by title query",
+      "evidenceNodeIds": ["EV-SEARCH-TEST", "EV-SEARCH-NOTE-TEST"],
+      "evidenceStatuses": [
+        { "evidenceNodeId": "EV-SEARCH-TEST", "status": "present_historical_supplemented_by_runtime_fixture" },
+        { "evidenceNodeId": "EV-SEARCH-NOTE-TEST", "status": "present_fresh" }
+      ],
+      "checkEvidenceSeparation": "Check node records the verification obligation; Evidence nodes record observable proof."
+    },
+    {
+      "checkNodeId": "TT-SEARCH-002",
+      "checkTitle": "Restores all todos for empty query",
+      "evidenceNodeIds": ["EV-SEARCH-TEST", "EV-SEARCH-NOTE-TEST"],
+      "evidenceStatuses": [
+        { "evidenceNodeId": "EV-SEARCH-TEST", "status": "present_historical_supplemented_by_runtime_fixture" },
+        { "evidenceNodeId": "EV-SEARCH-NOTE-TEST", "status": "present_fresh" }
+      ],
+      "checkEvidenceSeparation": "Check node records the verification obligation; Evidence nodes record observable proof."
+    },
+    {
+      "checkNodeId": "TT-SEARCH-003",
+      "checkTitle": "Shows no-result empty state for title and note search",
+      "evidenceNodeIds": ["EV-SEARCH-REVIEW"],
+      "evidenceStatuses": [{ "evidenceNodeId": "EV-SEARCH-REVIEW", "status": "partial_visual_review_refresh_pending" }],
+      "checkEvidenceSeparation": "Check node records the verification obligation; Evidence nodes record observable proof."
+    },
+    {
+      "checkNodeId": "TT-SEARCH-004",
+      "checkTitle": "Filters todos by note/content query",
+      "evidenceNodeIds": ["EV-SEARCH-NOTE-TEST"],
+      "evidenceStatuses": [{ "evidenceNodeId": "EV-SEARCH-NOTE-TEST", "status": "present_fresh" }],
+      "checkEvidenceSeparation": "Check node records the verification obligation; Evidence nodes record observable proof."
+    }
+  ],
+  "retainedWarnings": [
+    {
+      "id": "RW-BOUNDED-FIXTURE",
+      "findingNodeId": "FIND-BOUNDED-FIXTURE",
+      "status": "acceptable-warning",
+      "summary": "Bounded fixture Evidence is not full Todo app implementation."
+    },
+    {
+      "id": "RW-PARTIAL-UI",
+      "findingNodeId": "FIND-PARTIAL-UI",
+      "status": "acceptable-warning",
+      "summary": "UI screenshot/manual visual Evidence remains partial for the no-result empty state."
+    },
+    {
+      "id": "RW-GENERATED-BUILDER",
+      "findingNodeId": "FIND-GENERATED-BUILDER-MISSING",
+      "status": "generated-present-for-bounded-slice",
+      "summary": "Generated read-model output now exists for the bounded Todo Search slice; validator/CI/full promotion repeatability remains later."
+    },
+    {
+      "id": "RW-ACEP-CLEANUP",
+      "findingNodeId": "FIND-ACEP-CLEANUP-DEFERRED",
+      "status": "deferred-cleanup",
+      "summary": "ACEP task-card public-doc cleanup remains deferred."
+    }
+  ],
+  "compatibilityWarnings": [
+    {
+      "id": "CCN-ACEP-TASK-CARD-AUTHORITY-001",
+      "source": "examples/adoption/compatibility-mismatch-slice",
+      "role": "supplemental warning only",
+      "summary": "Legacy ACEP/task-card wording remains a compatibility warning, not pilot source scope."
+    }
+  ],
+  "sourceAuthorityBoundary": "Tree-native selected-slice artifacts remain current operational source.",
+  "nonPromotionStatement": "Generated output is reviewable Evidence only and cannot change source authority without later explicit user approval."
+}

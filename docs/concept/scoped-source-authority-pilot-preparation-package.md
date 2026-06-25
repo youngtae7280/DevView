@@ -101,7 +101,8 @@ requires-generated-builder-first
 
 The user selected that prerequisite after this package. The generated read-model Evidence requirement is recorded in
 [generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md). It is a requirement record
-only and does not implement generated output.
+that led to bounded Todo Search generated output. The output is Evidence only and does not approve actual scoped
+source-authority execution.
 
 Reason:
 
@@ -137,14 +138,14 @@ Approval Brief, source boundary, fallback rule, and rollback/fallback gate.
 
 ### Evidence Gate
 
-| Requirement                           | Current status  | Notes                                                                                       |
-| ------------------------------------- | --------------- | ------------------------------------------------------------------------------------------- |
-| Runtime fixture command Evidence      | present / fresh | `npx vitest run examples/adoption/todo-search-slice/runtime-fixture` passes 1 file/6 tests. |
-| Node/Edge/Tag parity                  | present         | Manual read-model separates `nodeKind`, `edgeType`, and allowed `viewScopedTags`.           |
-| 7 Core View coverage                  | present         | Intent, Behavior, Structure, Scope/Execution, Impact, Verification, Evidence/Acceptance.    |
-| Check/Evidence separation             | visible         | Checks and Evidence are separated through Test/Evidence artifacts and read-model edges.     |
-| Retained warnings                     | visible         | Bounded fixture, UI visual partial, generated builder missing, public-doc cleanup deferred. |
-| Generated builder / CLI-backed output | missing         | Recommended prerequisite before actual authority-bearing execution.                         |
+| Requirement                           | Current status  | Notes                                                                                             |
+| ------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------- |
+| Runtime fixture command Evidence      | present / fresh | `npx vitest run examples/adoption/todo-search-slice/runtime-fixture` passes 1 file/6 tests.       |
+| Node/Edge/Tag parity                  | present         | Manual read-model separates `nodeKind`, `edgeType`, and allowed `viewScopedTags`.                 |
+| 7 Core View coverage                  | present         | Intent, Behavior, Structure, Scope/Execution, Impact, Verification, Evidence/Acceptance.          |
+| Check/Evidence separation             | visible         | Checks and Evidence are separated through Test/Evidence artifacts and read-model edges.           |
+| Retained warnings                     | visible         | Bounded fixture, UI visual partial, validator/CI repeatability open, public-doc cleanup deferred. |
+| Generated builder / CLI-backed output | present         | Bounded Todo Search generated output exists; execution approval remains separate.                 |
 
 ### Authority Gate
 
@@ -270,25 +271,26 @@ CLI-backed read-model output before authority-bearing execution.
 | Runtime fixture Evidence                   | present / fresh   | Bounded Vitest command passes title + note/content behavior checks.                                   |
 | Node/Edge/Tag parity                       | present           | Manual read-model and View Instance Manifest are reviewable.                                          |
 | Source authority unchanged                 | present           | Tree-native selected-slice artifacts remain operational source.                                       |
-| CLI-backed output design                   | present           | `cli-backed-read-model-evidence-output-design.md` defines the future output and comparison surface.   |
-| Generated builder / CLI-backed output      | missing / warning | Still required before authority-bearing execution if the user keeps that prerequisite.                |
+| CLI-backed output design                   | present           | `cli-backed-read-model-evidence-output-design.md` defines the output and comparison surface.          |
+| Generated builder / CLI-backed output      | present / warning | Bounded Todo Search generated output exists; validator/CI and execution approval remain separate.     |
 | Rollback/fallback readiness                | partial           | Not needed for preparation; not ready for authority execution without boundary and fallback Evidence. |
 | Compatibility cleanup                      | deferred warning  | ACEP task-card public-doc cleanup remains deferred and visible.                                       |
 | Actual scoped authority execution approval | missing           | Requires next explicit user decision.                                                                 |
 
 ### Remaining Judgment
 
-The user selected generated builder / CLI-backed read-model Evidence as a prerequisite, then selected design-first work.
-The output design is now recorded. The next judgment is whether to approve a builder implementation task, refine the
-design, require validator/CI design first, require cleanup first, defer, or reject the scoped pilot path.
+The user selected generated builder / CLI-backed read-model Evidence as a prerequisite, selected design-first work, and
+approved the bounded implementation task. Generated Evidence now exists for Todo Search. The next judgment is whether to
+approve actual scoped source-authority pilot execution with generated Evidence, require validator/CI backing, require
+cleanup first, resolve comparison warnings, defer, or reject the scoped pilot path.
 
 ### Approval Choice Candidates
 
-- `Approve generated read-model builder implementation task`
-- `Refine output design before implementation`
-- `Require validator/CI design first`
-- `Require public-doc cleanup before implementation`
-- `Defer generated builder work`
+- `Approve actual scoped source-authority pilot execution with generated Evidence`
+- `Require validator/CI-backed read-model Evidence before execution`
+- `Require public-doc cleanup before execution`
+- `Resolve generated/manual comparison warnings first`
+- `Defer scoped source-authority pilot execution`
 - `Reject scoped source-authority pilot path`
 
 ### State Label
@@ -297,21 +299,21 @@ design, require validator/CI design first, require cleanup first, defer, or reje
 Decision required
 ```
 
-Reason: preparation and output design are recorded, but generated Evidence, implementation, and execution are not
-approved.
+Reason: preparation, output design, and bounded generated Evidence are recorded, but scoped source-authority execution
+is not approved.
 
 ## Control Node Summary
 
-| Control record                        | Family                       | Status                                             | Reason                                                                                          |
-| ------------------------------------- | ---------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Preparation selected                  | Decision Control Node        | resolved                                           | User approved scoped source-authority pilot preparation on 2026-06-25.                          |
-| Output design selected                | Decision Control Node        | resolved                                           | User selected CLI-backed Evidence output design first; the design is now recorded.              |
-| Actual execution decision             | Decision Control Node        | waiting for human                                  | User must approve execution, require prerequisites, defer, or reject.                           |
-| Manual parity / generated builder     | Evidence Control Node        | manual accepted for preparation; generated missing | Manual parity supports preparation; generated output is recommended before authority execution. |
-| Public-doc cleanup                    | Compatibility Control Node   | deferred / active warning                          | ACEP task-card cleanup remains visible and may be prerequisite if user chooses.                 |
-| Scoped source authority change        | Impact / Change Control Node | not started                                        | No source authority boundary changes in this package.                                           |
-| Demo-support Acceptance with warnings | Acceptance Control Node      | closed with warnings                               | It supports demo review but is not source-transition approval.                                  |
-| Rollback/fallback readiness           | Evidence / Decision Control  | partial                                            | No rollback is needed now; rollback-ready status is not established for execution.              |
+| Control record                        | Family                       | Status                          | Reason                                                                                     |
+| ------------------------------------- | ---------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------ |
+| Preparation selected                  | Decision Control Node        | resolved                        | User approved scoped source-authority pilot preparation on 2026-06-25.                     |
+| Output design selected                | Decision Control Node        | resolved                        | User selected CLI-backed Evidence output design first; the design is now recorded.         |
+| Actual execution decision             | Decision Control Node        | waiting for human               | User must approve execution, require prerequisites, defer, or reject.                      |
+| Manual parity / generated builder     | Evidence Control Node        | generated present with warnings | Bounded generated output supports review; validator/CI and execution approval remain open. |
+| Public-doc cleanup                    | Compatibility Control Node   | deferred / active warning       | ACEP task-card cleanup remains visible and may be prerequisite if user chooses.            |
+| Scoped source authority change        | Impact / Change Control Node | not started                     | No source authority boundary changes in this package.                                      |
+| Demo-support Acceptance with warnings | Acceptance Control Node      | closed with warnings            | It supports demo review but is not source-transition approval.                             |
+| Rollback/fallback readiness           | Evidence / Decision Control  | partial                         | No rollback is needed now; rollback-ready status is not established for execution.         |
 
 ## Gate Self-Check
 

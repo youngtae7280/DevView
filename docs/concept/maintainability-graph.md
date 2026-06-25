@@ -146,7 +146,8 @@ prerequisite, not builder implementation and not source authority change.
 
 [cli-backed-read-model-evidence-output-design.md](cli-backed-read-model-evidence-output-design.md) records the user's
 design-first choice. It defines conceptual command surfaces, output artifacts, comparison rules, mismatch severity, and
-gate relationships, but it does not implement generated output or change source authority.
+gate relationships. A bounded Todo Search generated read-model builder now implements that design for selected-slice
+Evidence only; it does not change source authority.
 
 The representative slice now includes manual equivalent read-model parity artifacts:
 
@@ -199,8 +200,8 @@ traceability view.
 - OQ-052: Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?
 - OQ-064: Will the user approve actual scoped source-authority pilot execution with warnings, require prerequisites,
   defer, or reject execution?
-- OQ-071: Will the user approve generated read-model builder implementation, refine output design, require
-  validator/CI design first, require cleanup, defer, or reject?
+- OQ-070: After generated read-model Evidence exists, will the user approve actual scoped source-authority pilot
+  execution or require additional gates first?
 - OQ-054: Should `task` and `view-instance` be first-class node kinds or durable records outside node kind?
 
 ## Related Gate

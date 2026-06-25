@@ -109,6 +109,9 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     test: [] as string[],
     evidence: [] as string[],
     acceptance: [] as string[],
+    slice: undefined as string | undefined,
+    generated: undefined as string | undefined,
+    manual: undefined as string | undefined,
   }
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -240,6 +243,27 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--acceptance requires an Acceptance node id.' }
       }
       options.acceptance.push(...splitIds(value))
+      index += 1
+    } else if (arg === '--slice') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--slice requires a path.' }
+      }
+      options.slice = value
+      index += 1
+    } else if (arg === '--generated') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--generated requires a file path.' }
+      }
+      options.generated = value
+      index += 1
+    } else if (arg === '--manual') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--manual requires a file path.' }
+      }
+      options.manual = value
       index += 1
     } else if (arg === '--stage') {
       const value = argv[index + 1]

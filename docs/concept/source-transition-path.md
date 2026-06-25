@@ -250,9 +250,8 @@ strengthen Evidence and authority-readiness gates, but it does not close rollbac
 gates by itself.
 
 [cli-backed-read-model-evidence-output-design.md](cli-backed-read-model-evidence-output-design.md) records the
-design-first follow-up. It defines future command/surface candidates, output artifact expectations, comparison and
-mismatch handling, and status labels. It is a concept design only and does not execute or approve scoped authority
-transition.
+design-first follow-up. The bounded Todo Search builder now creates generated read-model Evidence and a parity report.
+Those outputs support readiness review only; they do not execute or approve scoped authority transition.
 
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) defines the target Graph-first responsibility split:
 Nodes are durable targets, Edges are durable semantic relationships, and Tags are temporary view-scoped roles.
@@ -338,8 +337,8 @@ Those remain later concept or implementation questions.
   strengthen Evidence, defer, or reject execution?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
-- Will the user approve generated read-model builder implementation, require validator/CI design first, require cleanup,
-  defer, or reject the scoped pilot path?
+- After generated read-model Evidence exists, will the user approve scoped source-authority pilot execution, require
+  validator/CI backing, require cleanup, defer, or reject the scoped pilot path?
 - How long should a post-promotion compatibility period last?
 - Where is the boundary between automatic recovery and manual judgment when tree-native artifacts and graph records
   conflict?

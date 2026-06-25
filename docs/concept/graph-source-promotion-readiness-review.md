@@ -183,7 +183,7 @@ do not justify full promotion by themselves.
 | Check/Evidence obligations visible                                          | ready              | Check/Evidence policy and demo artifacts distinguish Checks, Evidence, freshness, partial Evidence, and exceptions.                                                       |
 | Approval Brief / Control Node handling visible                              | ready              | Todo Search Approval Brief, actual demo result, and compatibility supplemental slice expose user-relevant judgment/control points.                                        |
 | Retained warnings classified                                                | ready              | This review classifies each retained warning below.                                                                                                                       |
-| Generated graph/read-model output available or explicitly deferred/blocking | ready with warning | Manual equivalent read-model parity artifacts now exist. A generated builder/CLI output remains a later implementation requirement for full promotion or repeatability.   |
+| Generated graph/read-model output available or explicitly deferred/blocking | ready with warning | Bounded Todo Search generated read-model output now exists. Full promotion or CI-backed repeatability may still require stronger validator/CI support.                    |
 | Public-doc cleanup status classified                                        | ready with warning | ACEP task-card public-doc cleanup is classified as deferred cleanup with a Compatibility Control Node candidate and explicit readiness warning.                           |
 
 ## Retained Warnings Classification

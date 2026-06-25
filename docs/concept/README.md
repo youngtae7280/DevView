@@ -213,12 +213,20 @@ The user selected design-first work. The design defines conceptual command surfa
 reports, mismatch categories, status labels, and gate relationships. It does not implement a CLI, builder, parser,
 validator, CI workflow, generated output, source authority change, or Graph-source promotion.
 
+The bounded generated read-model Evidence builder is now implemented for the Todo Search selected slice only:
+
+- command: `pbe graph read-model generate --slice examples/adoption/todo-search-slice`
+- command: `pbe graph read-model compare --generated <file> --manual <file>`
+- output directory: `examples/adoption/todo-search-slice/generated/`
+
+The generated output is Evidence only. It does not approve scoped source-authority execution, change source authority,
+retire tree-native artifacts, enforce validator/CI gates, clean up public docs, or promote Maintainability Graph.
+
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.
-Further generated read-model builder support, actual scoped transition execution, rollback mechanics, compatibility
-artifact generation, type models, CLI command design, validators, migration scripts, and full Graph-source promotion are
-next-phase candidates only.
+Further scoped transition execution, rollback mechanics, compatibility artifact generation, type models, broader CLI
+command design, validators, migration scripts, and full Graph-source promotion are next-phase candidates only.
 
 If a later outline-only concept file is added, use the outline gate criteria below until it is promoted.
 

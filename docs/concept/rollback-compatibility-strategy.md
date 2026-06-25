@@ -289,8 +289,9 @@ to require generated builder / CLI-backed read-model Evidence before actual scop
 improve fallback comparison, but rollback/fallback readiness still needs explicit trigger and precedence rules.
 
 [cli-backed-read-model-evidence-output-design.md](cli-backed-read-model-evidence-output-design.md) records the
-design-first follow-up. Its comparison report and Evidence manifest concepts can later support rollback/fallback review,
-but this design does not implement the generator, create Evidence, or make rollback-ready status true.
+design-first follow-up. The bounded Todo Search builder now creates a comparison report and Evidence manifest that can
+support rollback/fallback review. Those outputs still do not make rollback-ready status true or approve scoped source
+authority execution by themselves.
 
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) adds a source-transition safety constraint: durable
 semantic relationships must remain Edges, while Tags are view-scoped roles only. A future transition or parity artifact

@@ -7,6 +7,7 @@ import { contextPackCommand, contextRecommendCommand } from './context.js'
 import { executionCompleteCommand, executionStartCommand } from './execution.js'
 import { filesCheckCommand } from './files.js'
 import { gateAssessCommand, gateCommand } from './gate.js'
+import { graphReadModelCompareCommand, graphReadModelGenerateCommand } from './graph.js'
 import { impactAnalyzeCommand } from './impact.js'
 import { initCommand } from './init.js'
 import { profileRecommendCommand } from './profile.js'
@@ -144,6 +145,12 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'visual' && subcommand === 'check') {
     return checkResult('visual check', await validateVisualDesign(context.options.root))
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate') {
+    return graphReadModelGenerateCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'compare') {
+    return graphReadModelCompareCommand(context)
   }
   return invalidCommand(`Unknown command: ${positionals.join(' ')}`)
 }

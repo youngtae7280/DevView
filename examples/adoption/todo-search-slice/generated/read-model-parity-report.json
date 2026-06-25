@@ -1,0 +1,105 @@
+{
+  "version": "0.1.0-read-model-parity-report",
+  "metadata": {
+    "comparedAt": "2026-06-25T03:55:22.670Z",
+    "commandIdentity": "pbe graph read-model compare --generated examples/adoption/todo-search-slice/generated/generated-read-model.json --manual examples/adoption/todo-search-slice/maintainability-graph-read-model.json",
+    "sourceCommit": "ba34953",
+    "generatedArtifact": "examples/adoption/todo-search-slice/generated/generated-read-model.json",
+    "manualArtifact": "examples/adoption/todo-search-slice/maintainability-graph-read-model.json",
+    "comparisonScope": "Todo Search selected-slice read-model Evidence"
+  },
+  "sourceAuthorityBoundary": "Comparison reports Evidence only and does not update source or manual artifacts.",
+  "nonPromotionStatement": "This parity report does not promote Maintainability Graph, change source authority, approve scoped source-authority execution, or retire tree-native artifacts.",
+  "comparisonUnits": [
+    "node id/kind",
+    "edge source/target/type",
+    "source references",
+    "view memberships",
+    "role tags",
+    "confidence and freshness/status",
+    "warnings and Evidence exceptions",
+    "source authority boundary statement",
+    "7 Core View coverage",
+    "Check/Evidence mappings"
+  ],
+  "mismatchCategories": [
+    "missing node",
+    "missing edge",
+    "wrong role tag",
+    "stale/freshness mismatch",
+    "source reference mismatch",
+    "warning omission",
+    "authority-boundary mismatch"
+  ],
+  "severityLabels": ["info", "warning", "blocking", "decision-required"],
+  "summary": {
+    "generatedNodeCount": 40,
+    "manualNodeCount": 40,
+    "generatedEdgeCount": 59,
+    "manualEdgeCount": 59,
+    "mismatchCount": 5,
+    "blockingCount": 0,
+    "decisionRequiredCount": 0,
+    "status": "comparison-warning"
+  },
+  "mismatches": [
+    {
+      "category": "stale/freshness mismatch",
+      "severity": "warning",
+      "subject": "AC-SEARCH-003",
+      "message": "Generated freshness differs from manual parity artifact.",
+      "generatedValue": "stale",
+      "manualValue": "fresh",
+      "controlNodeCandidate": "Evidence Control Node"
+    },
+    {
+      "category": "stale/freshness mismatch",
+      "severity": "warning",
+      "subject": "TT-SEARCH-003",
+      "message": "Generated freshness differs from manual parity artifact.",
+      "generatedValue": "stale",
+      "manualValue": "fresh",
+      "controlNodeCandidate": "Evidence Control Node"
+    },
+    {
+      "category": "stale/freshness mismatch",
+      "severity": "warning",
+      "subject": "CCN-ACEP-TASK-CARD-AUTHORITY-001",
+      "message": "Generated freshness differs from manual parity artifact.",
+      "generatedValue": "unknown",
+      "manualValue": "fresh",
+      "controlNodeCandidate": "Evidence Control Node"
+    },
+    {
+      "category": "stale/freshness mismatch",
+      "severity": "warning",
+      "subject": "FIND-PARTIAL-UI",
+      "message": "Generated freshness differs from manual parity artifact.",
+      "generatedValue": "unknown",
+      "manualValue": "stale",
+      "controlNodeCandidate": "Evidence Control Node"
+    },
+    {
+      "category": "stale/freshness mismatch",
+      "severity": "warning",
+      "subject": "FIND-ACEP-CLEANUP-DEFERRED",
+      "message": "Generated freshness differs from manual parity artifact.",
+      "generatedValue": "unknown",
+      "manualValue": "fresh",
+      "controlNodeCandidate": "Evidence Control Node"
+    }
+  ],
+  "controlNodeCandidates": [
+    {
+      "family": "Evidence Control Node",
+      "status": "candidate",
+      "reason": "Generated/manual parity mismatch needs review before authority-bearing execution."
+    }
+  ],
+  "treatmentRules": [
+    "Mismatch never auto-fixes source artifacts.",
+    "Mismatch never silently updates manual parity artifacts.",
+    "Mismatch affecting source, acceptance, risk, or authority requires user judgment.",
+    "Mismatch can create Evidence, Impact, Compatibility, or Decision Control Node candidates depending on severity."
+  ]
+}

@@ -1,6 +1,6 @@
 # Generated Read-Model Evidence Requirement
 
-Status: generated-read-model-evidence-requirement / prerequisite-selected / implementation-not-started
+Status: generated-read-model-evidence-requirement / prerequisite-selected / bounded-implementation-complete
 
 ## Document Purpose
 
@@ -185,6 +185,14 @@ After that output design, the next decision surface is:
 The recommended next option from the output design is `Approve generated read-model builder implementation task` if the
 user accepts the current concept-level output shape. Stricter users can choose `Require validator/CI design first`.
 
+The user approved that bounded implementation task. Todo Search generated read-model Evidence is now created by:
+
+- `pbe graph read-model generate --slice examples/adoption/todo-search-slice`
+- `pbe graph read-model compare --generated <file> --manual <file>`
+
+Outputs are written under `examples/adoption/todo-search-slice/generated/`. They satisfy this prerequisite for bounded
+Todo Search Evidence discussion only; they do not approve scoped source-authority execution.
+
 ### Original Requirement Choice Set
 
 After this requirement is recorded, the user must choose one of:
@@ -234,23 +242,24 @@ non-scope boundaries without implementing anything.
 | Manual parity as default authority candidate | not sufficient   | Authority-bearing execution needs stronger repeatability unless user accepts manual risk. |
 | Generated read-model Evidence requirement    | defined          | Source inputs, output expectations, mismatch categories, and gates are documented.        |
 | Output design                                | recorded         | `cli-backed-read-model-evidence-output-design.md` defines the future output surface.      |
-| Builder / CLI implementation                 | not started      | Neither this requirement nor the design implements generated output.                      |
+| Bounded builder / CLI implementation         | present          | Todo Search generated output and parity report are created under `generated/`.            |
 | Source authority change                      | not approved     | Generated Evidence, when later created, is not automatic source authority.                |
 | Rollback/fallback readiness                  | partial          | Generated Evidence can help but does not close rollback/fallback gate by itself.          |
 | Compatibility cleanup                        | deferred warning | Public-doc cleanup remains visible and separate.                                          |
 
 ### Remaining Judgment
 
-The user must decide whether to approve implementation, refine the output design, require validator/CI design first,
-require cleanup first, defer generated builder work, or reject the scoped pilot path.
+The user must decide whether to proceed to scoped source-authority pilot execution review with generated Evidence,
+require validator/CI backing, require cleanup first, resolve comparison warnings first, defer, or reject the scoped
+pilot path.
 
 ### Approval Choice Candidates
 
-- `Approve generated read-model builder implementation task`
-- `Refine output design before implementation`
-- `Require validator/CI design first`
-- `Require public-doc cleanup before implementation`
-- `Defer generated builder work`
+- `Approve actual scoped source-authority pilot execution with generated Evidence`
+- `Require validator/CI-backed read-model Evidence before execution`
+- `Require public-doc cleanup before execution`
+- `Resolve generated/manual comparison warnings first`
+- `Defer scoped source-authority pilot execution`
 - `Reject scoped source-authority pilot path`
 
 ### State Label
@@ -263,27 +272,27 @@ Reason: the prerequisite is selected, but implementation/design of generated Evi
 
 ## Control Node Summary
 
-| Control record                        | Family                       | Status                    | Reason                                                                                 |
-| ------------------------------------- | ---------------------------- | ------------------------- | -------------------------------------------------------------------------------------- |
-| Generated prerequisite selected       | Decision Control Node        | resolved                  | User required generated/CLI-backed Evidence before execution.                          |
-| Output design selected                | Decision Control Node        | resolved                  | User selected design-first work, now recorded in the CLI-backed output design.         |
-| Generated output required/missing     | Evidence Control Node        | active / missing          | Generated read-model Evidence is now a prerequisite but does not yet exist.            |
-| Public-doc cleanup                    | Compatibility Control Node   | deferred / active warning | ACEP task-card cleanup remains visible and separate.                                   |
-| Scoped source authority change        | Impact / Change Control Node | not started               | No source authority execution occurs from this requirement.                            |
-| Demo-support Acceptance with warnings | Acceptance Control Node      | closed with warnings      | It remains demo-support acceptance, not source-transition approval.                    |
-| Rollback/fallback readiness           | Evidence / Decision Control  | partial                   | Generated Evidence can help; rollback-ready conditions still require later definition. |
+| Control record                        | Family                       | Status                    | Reason                                                                                                 |
+| ------------------------------------- | ---------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Generated prerequisite selected       | Decision Control Node        | resolved                  | User required generated/CLI-backed Evidence before execution.                                          |
+| Output design selected                | Decision Control Node        | resolved                  | User selected design-first work, now recorded in the CLI-backed output design.                         |
+| Bounded generated output present      | Evidence Control Node        | present with warnings     | Generated read-model Evidence exists for Todo Search; validator/CI and execution approval remain open. |
+| Public-doc cleanup                    | Compatibility Control Node   | deferred / active warning | ACEP task-card cleanup remains visible and separate.                                                   |
+| Scoped source authority change        | Impact / Change Control Node | not started               | No source authority execution occurs from this requirement.                                            |
+| Demo-support Acceptance with warnings | Acceptance Control Node      | closed with warnings      | It remains demo-support acceptance, not source-transition approval.                                    |
+| Rollback/fallback readiness           | Evidence / Decision Control  | partial                   | Generated Evidence can help; rollback-ready conditions still require later definition.                 |
 
 ## Gate Self-Check
 
-| Gate                                         | Result | Notes                                                                                        |
-| -------------------------------------------- | ------ | -------------------------------------------------------------------------------------------- |
-| Non-Implementation Gate                      | PASS   | No builder, CLI, schema, validator, CI, or generated output is implemented.                  |
-| Non-Promotion Gate                           | PASS   | This requirement does not promote Maintainability Graph or change source authority.          |
-| Requirement / Implementation Separation Gate | PASS   | The requirement is recorded separately from any future implementation task.                  |
-| Evidence Reality Gate                        | PASS   | Current manual Evidence remains visible; generated Evidence is recorded as missing/required. |
-| Source Authority Boundary Gate               | PASS   | Tree-native selected-slice artifacts remain current operational source.                      |
-| Taxonomy / View Integrity Gate               | PASS   | Generated output expectations preserve Node/Edge/Tag and 7 Core View constraints.            |
-| User Approval Gate                           | PASS   | Execution and implementation still require later explicit user approval.                     |
+| Gate                                         | Result | Notes                                                                                               |
+| -------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------- |
+| Non-Implementation Gate                      | PASS   | No builder, CLI, schema, validator, CI, or generated output is implemented.                         |
+| Non-Promotion Gate                           | PASS   | This requirement does not promote Maintainability Graph or change source authority.                 |
+| Requirement / Implementation Separation Gate | PASS   | The requirement is recorded separately from any future implementation task.                         |
+| Evidence Reality Gate                        | PASS   | Current manual Evidence remains visible; bounded generated Evidence is recorded under `generated/`. |
+| Source Authority Boundary Gate               | PASS   | Tree-native selected-slice artifacts remain current operational source.                             |
+| Taxonomy / View Integrity Gate               | PASS   | Generated output expectations preserve Node/Edge/Tag and 7 Core View constraints.                   |
+| User Approval Gate                           | PASS   | Execution and implementation still require later explicit user approval.                            |
 
 ## Final Statement
 

@@ -70,6 +70,9 @@ export interface CliOptions {
   test?: string[]
   evidence?: string[]
   acceptance?: string[]
+  slice?: string
+  generated?: string
+  manual?: string
 }
 
 export interface CliEnvironment {

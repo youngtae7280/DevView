@@ -1,6 +1,6 @@
 # CLI-Backed Read-Model Evidence Output Design
 
-Status: cli-backed-read-model-evidence-output-design / design-approved-to-draft / implementation-not-started
+Status: cli-backed-read-model-evidence-output-design / design-approved / bounded-implementation-complete
 
 ## Document Purpose
 
@@ -182,16 +182,35 @@ views.
 Generated output may support a later user decision. It does not approve scoped execution, source transition, Acceptance,
 or full promotion.
 
+## Bounded Implementation Result
+
+The user later approved the recommended implementation task. The bounded implementation now provides:
+
+- `pbe graph read-model generate --slice examples/adoption/todo-search-slice`
+- `pbe graph read-model compare --generated <file> --manual <file>`
+- `examples/adoption/todo-search-slice/generated/generated-read-model.json`
+- `examples/adoption/todo-search-slice/generated/generated-read-model.md`
+- `examples/adoption/todo-search-slice/generated/read-model-evidence-manifest.json`
+- `examples/adoption/todo-search-slice/generated/read-model-parity-report.json`
+- `examples/adoption/todo-search-slice/generated/read-model-parity-report.md`
+
+Implementation status:
+
+```text
+bounded-generated-read-model-evidence-builder / implemented-for-todo-search-slice / evidence-only
+```
+
+This result satisfies the design at bounded selected-slice scope. It does not implement validator/CI enforcement,
+public-doc cleanup, scoped source-authority execution, full promotion, or broad graph-source migration.
+
 ## Non-Scope
 
-This design does not include:
+This design and bounded implementation result do not include:
 
-- implementation
-- generated file creation
-- actual CLI command
+- broad implementation beyond the Todo Search selected-slice builder
 - parser implementation
 - schema/type model
-- validator/CI
+- validator/CI enforcement
 - source authority change
 - Graph-source promotion
 - public-doc cleanup
@@ -200,41 +219,43 @@ This design does not include:
 
 ## Recommended Next User Decision Surface
 
-After this design, the user must choose one of:
+After this design, the user approved and Codex implemented the bounded builder task. The next user decision surface is
+now:
 
-1. `Approve generated read-model builder implementation task`
-2. `Refine output design before implementation`
-3. `Require validator/CI design first`
-4. `Require public-doc cleanup before implementation`
-5. `Defer generated builder work`
+1. `Approve actual scoped source-authority pilot execution with generated Evidence`
+2. `Require validator/CI-backed read-model Evidence before execution`
+3. `Require public-doc cleanup before execution`
+4. `Resolve generated/manual comparison warnings first`
+5. `Defer scoped source-authority pilot execution`
 6. `Reject scoped source-authority pilot path`
 
-Recommended option:
+Recommended option after bounded generated Evidence:
 
 ```text
-Approve generated read-model builder implementation task
+Ask the user whether to proceed to scoped source-authority pilot execution review, with warnings retained.
 ```
 
 Reason:
 
-- The output shape, candidate command surfaces, comparison units, mismatch categories, severity labels, and gate
-  boundaries are now defined at concept level.
-- The design explicitly prevents generated output from becoming source authority by itself.
-- Validator/CI can remain a later stronger Evidence level unless the user wants to raise the gate before scoped pilot
-  work.
+- Generated output and parity report now exist for the bounded Todo Search slice.
+- The parity report has no blocking or decision-required mismatch.
+- Source authority remains unchanged until a separate explicit user execution approval.
 
-If the user wants stricter repeatability before any implementation, choose `Require validator/CI design first` instead.
+If the user wants stricter repeatability, choose `Require validator/CI-backed read-model Evidence before execution`
+instead.
 
 ## Approval Brief Draft
 
 ### Intent Understood
 
-PBE is defining the future CLI-backed/generated read-model Evidence output design before any builder or CLI work starts.
+PBE has defined and implemented bounded CLI-backed/generated read-model Evidence output for the Todo Search selected
+slice.
 
 ### Result Summary
 
-The design proposes conceptual command surfaces, output artifacts, required fields/sections, generated/manual comparison
-rules, mismatch categories, severity labels, Evidence status labels, gate relationships, and non-scope boundaries.
+The design proposes command surfaces, output artifacts, required fields/sections, generated/manual comparison rules,
+mismatch categories, severity labels, Evidence status labels, gate relationships, and non-scope boundaries. The bounded
+builder now creates generated output for Todo Search only.
 
 ### Verification Summary
 
@@ -242,25 +263,25 @@ rules, mismatch categories, severity labels, Evidence status labels, gate relati
 | ------------------------------- | ------------ | ---------------------------------------------------------------------------------------------- |
 | User selected design-first path | present      | Parent orchestration chat selected `Prepare CLI-backed evidence output design first`.          |
 | Requirement basis               | present      | `generated-read-model-evidence-requirement.md` defines generated Evidence prerequisite.        |
-| Command/surface concept         | present      | Conceptual command candidates are named without committing CLI API or implementation.          |
+| Command/surface implementation  | present      | `pbe graph read-model generate` and `pbe graph read-model compare` exist for bounded Evidence. |
 | Output artifact design          | present      | Generated artifact, summary, comparison report, and optional manifest roles are defined.       |
 | Comparison / parity design      | present      | Comparable units, mismatch categories, severities, and treatment rules are defined.            |
-| Generated output                | missing      | No generated output is created by this design.                                                 |
+| Generated output                | present      | Bounded Todo Search generated read-model and parity report are created under `generated/`.     |
 | Source authority change         | not approved | Generated output, when later implemented, will still be Evidence rather than automatic source. |
 | Validator/CI linkage            | open         | Validator/CI-backed Evidence remains a stronger future level.                                  |
 
 ### Remaining Judgment
 
-The user must decide whether to approve an implementation task, refine the design, require validator/CI design first,
-require public-doc cleanup first, defer, or reject the scoped pilot path.
+The user must decide whether generated Evidence is enough to review actual scoped source-authority pilot execution, or
+whether validator/CI backing, public-doc cleanup, warning resolution, deferral, or rejection is required first.
 
 ### Approval Choice Candidates
 
-- `Approve generated read-model builder implementation task`
-- `Refine output design before implementation`
-- `Require validator/CI design first`
-- `Require public-doc cleanup before implementation`
-- `Defer generated builder work`
+- `Approve actual scoped source-authority pilot execution with generated Evidence`
+- `Require validator/CI-backed read-model Evidence before execution`
+- `Require public-doc cleanup before execution`
+- `Resolve generated/manual comparison warnings first`
+- `Defer scoped source-authority pilot execution`
 - `Reject scoped source-authority pilot path`
 
 ### State Label
@@ -269,36 +290,36 @@ require public-doc cleanup first, defer, or reject the scoped pilot path.
 Decision required
 ```
 
-Reason: output design is drafted, but implementation and generated Evidence are not approved or created.
+Reason: bounded generated Evidence exists, but scoped source-authority execution remains unapproved.
 
 ## Control Node Summary
 
-| Control record                       | Family                       | Status                             | Reason                                                                                        |
-| ------------------------------------ | ---------------------------- | ---------------------------------- | --------------------------------------------------------------------------------------------- |
-| Output design selected               | Decision Control Node        | resolved                           | User selected design-first work.                                                              |
-| Generated output required/missing    | Evidence Control Node        | active / missing                   | Output design defines future Evidence shape; generated output does not exist yet.             |
-| Public-doc cleanup                   | Compatibility Control Node   | deferred / active warning          | ACEP cleanup remains separate and can still be required by user before implementation.        |
-| Scoped source authority change       | Impact / Change Control Node | not started                        | No source transition or scoped execution is performed.                                        |
-| Demo-support Acceptance with warning | Acceptance Control Node      | closed with warnings               | Demo-support acceptance remains separate from source-transition approval.                     |
-| Generated/manual mismatch handling   | Evidence / Decision Control  | design-defined / execution pending | Future mismatches may create Evidence, Impact, Compatibility, or Decision Control candidates. |
+| Control record                       | Family                       | Status                             | Reason                                                                                                |
+| ------------------------------------ | ---------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Output design selected               | Decision Control Node        | resolved                           | User selected design-first work.                                                                      |
+| Bounded generated output             | Evidence Control Node        | present with warnings              | Todo Search generated output exists; validator/CI and broad/full promotion repeatability remain open. |
+| Public-doc cleanup                   | Compatibility Control Node   | deferred / active warning          | ACEP cleanup remains separate and can still be required by user before implementation.                |
+| Scoped source authority change       | Impact / Change Control Node | not started                        | No source transition or scoped execution is performed.                                                |
+| Demo-support Acceptance with warning | Acceptance Control Node      | closed with warnings               | Demo-support acceptance remains separate from source-transition approval.                             |
+| Generated/manual mismatch handling   | Evidence / Decision Control  | design-defined / execution pending | Future mismatches may create Evidence, Impact, Compatibility, or Decision Control candidates.         |
 
 ## Gate Self-Check
 
-| Gate                                    | Result | Notes                                                                                             |
-| --------------------------------------- | ------ | ------------------------------------------------------------------------------------------------- |
-| Non-Implementation Gate                 | PASS   | No CLI, builder, parser, schema, validator, CI, or generated output is implemented.               |
-| Non-Promotion Gate                      | PASS   | This design does not promote Maintainability Graph or change source authority.                    |
-| Design / Implementation Separation Gate | PASS   | Output design is separated from later implementation approval.                                    |
-| Evidence Output Clarity Gate            | PASS   | Future output artifacts, fields, labels, comparison rules, and mismatch categories are described. |
-| Taxonomy / View Integrity Gate          | PASS   | Node/Edge/Tag, view membership, allowed role tags, and 7 Core Views remain explicit.              |
-| Source Authority Boundary Gate          | PASS   | Generated output remains Evidence unless a later explicit source transition approves otherwise.   |
-| User Approval Gate                      | PASS   | Implementation and scoped execution still require later explicit user decisions.                  |
+| Gate                                    | Result | Notes                                                                                                    |
+| --------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------- |
+| Bounded Implementation Gate             | PASS   | Todo Search bounded builder is implemented; parser/schema/validator/CI and broader builder work are not. |
+| Non-Promotion Gate                      | PASS   | This design does not promote Maintainability Graph or change source authority.                           |
+| Design / Implementation Separation Gate | PASS   | Bounded implementation is separated from scoped source-authority execution approval.                     |
+| Evidence Output Clarity Gate            | PASS   | Output artifacts, fields, labels, comparison rules, and mismatch categories are described.               |
+| Taxonomy / View Integrity Gate          | PASS   | Node/Edge/Tag, view membership, allowed role tags, and 7 Core Views remain explicit.                     |
+| Source Authority Boundary Gate          | PASS   | Generated output remains Evidence unless a later explicit source transition approves otherwise.          |
+| User Approval Gate                      | PASS   | Implementation and scoped execution still require later explicit user decisions.                         |
 
 ## Final Statement
 
-This design does not implement CLI-backed output.
+This design now has a bounded Todo Search CLI-backed Evidence implementation.
 
-It does not create generated Evidence.
+That generated Evidence remains Evidence only.
 
 It does not approve or execute scoped source-authority transition.
 
