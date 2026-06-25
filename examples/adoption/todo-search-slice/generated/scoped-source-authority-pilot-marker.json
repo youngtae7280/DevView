@@ -65,5 +65,22 @@
     "user acceptance authority appears replaced by Codex/PBE",
     "compatibility mismatch affects current scope, verification, acceptance, or authority judgment"
   ],
+  "review": {
+    "status": "scoped-pilot-review-pass-with-retained-warnings",
+    "reviewRecord": "docs/concept/scoped-source-authority-pilot-review.md",
+    "reviewDate": "2026-06-25",
+    "parityStatus": "comparison-pass",
+    "mismatchCount": 0,
+    "blockingCount": 0,
+    "decisionRequiredCount": 0,
+    "safeToKeepActive": true,
+    "nextDecisionSurface": [
+      "Keep scoped pilot active and observe longer",
+      "Require validator/CI-backed Evidence before broader execution or enforcement",
+      "Perform public-doc cleanup",
+      "Prepare broader Graph-source promotion review",
+      "Rollback or defer scoped pilot"
+    ]
+  },
   "nonPromotionStatement": "This marker records a bounded Todo Search scoped pilot only. It does not promote Maintainability Graph, change repository-wide source authority, retire tree-native artifacts, clean up public docs, or introduce validator/CI enforcement."
 }

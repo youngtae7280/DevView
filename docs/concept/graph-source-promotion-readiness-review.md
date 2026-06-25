@@ -101,6 +101,11 @@ generated Evidence and `comparison-pass` parity were recorded. That execution is
 [scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md). This readiness
 review still does not approve full Graph-source promotion or repository-wide source authority change.
 
+The subsequent scoped pilot review is documented in
+[scoped-source-authority-pilot-review.md](scoped-source-authority-pilot-review.md). It passes with retained warnings and
+keeps the pilot safe to observe in the bounded Todo Search scope, but it still does not authorize broader promotion,
+validator/CI enforcement, public-doc cleanup, or tree-native artifact retirement.
+
 Preparation outcome:
 
 ```text

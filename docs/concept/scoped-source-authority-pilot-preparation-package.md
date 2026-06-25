@@ -287,12 +287,13 @@ CLI-backed read-model output before authority-bearing execution.
 
 The user selected generated builder / CLI-backed read-model Evidence as a prerequisite, selected design-first work, and
 approved the bounded implementation task. Generated Evidence now exists for Todo Search, and the user approved the
-bounded scoped pilot execution. The next judgment is whether to observe/review the pilot, require validator/CI backing,
-require cleanup first, prepare broader promotion review, rollback/defer, or keep the pilot bounded.
+bounded scoped pilot execution. The scoped pilot review now passes with retained warnings. The next judgment is whether
+to keep observing the pilot, require validator/CI backing before broader use, require cleanup first, prepare broader
+promotion review, or rollback/defer.
 
 ### Approval Choice Candidates
 
-- `Observe / review scoped source-authority pilot`
+- `Keep scoped pilot active and observe longer`
 - `Require validator/CI-backed read-model Evidence before execution`
 - `Require public-doc cleanup before execution`
 - `Prepare broader Graph-source promotion review`
@@ -304,8 +305,9 @@ require cleanup first, prepare broader promotion review, rollback/defer, or keep
 Decision required
 ```
 
-Reason: preparation, output design, bounded generated Evidence, and scoped pilot execution are recorded, but next-phase
-review or broader promotion remains unapproved.
+Reason: preparation, output design, bounded generated Evidence, scoped pilot execution, and scoped pilot review are
+recorded, but next-phase observation length, broader use, cleanup, validator/CI backing, and broader promotion remain
+unapproved.
 
 ## Control Node Summary
 

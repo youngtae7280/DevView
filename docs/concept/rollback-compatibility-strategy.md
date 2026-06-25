@@ -298,6 +298,10 @@ later user-approved Todo Search scoped pilot execution with fallback ready. Beca
 artifact is retired, rollback is not a destructive command; fallback remains to the retained tree-native artifacts if
 parity, boundary, warning visibility, Check/Evidence separation, compatibility, or user-acceptance authority fails.
 
+[scoped-source-authority-pilot-review.md](scoped-source-authority-pilot-review.md) records that the bounded pilot remains
+safe to keep active with retained warnings. No rollback is recommended by the review, and fallback remains available if
+future parity, boundary, warning, compatibility, or acceptance-authority checks fail.
+
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) adds a source-transition safety constraint: durable
 semantic relationships must remain Edges, while Tags are view-scoped roles only. A future transition or parity artifact
 that encodes durable meaning as tags can become a projection/parity failure or compatibility-control trigger.

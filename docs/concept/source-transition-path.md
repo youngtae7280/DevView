@@ -258,6 +258,10 @@ later user-approved Todo Search scoped source-authority pilot execution. It is b
 `examples/adoption/todo-search-slice`, keeps tree-native selected-slice artifacts as fallback/reference, and does not
 promote Maintainability Graph as the repository-wide source model.
 
+[scoped-source-authority-pilot-review.md](scoped-source-authority-pilot-review.md) records the first review-only
+observation after that bounded execution. The review confirms source-authority containment and parity stability while
+leaving broader transition decisions open.
+
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) defines the target Graph-first responsibility split:
 Nodes are durable targets, Edges are durable semantic relationships, and Tags are temporary view-scoped roles.
 

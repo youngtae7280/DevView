@@ -146,6 +146,10 @@ read-model Evidence is accepted as the pilot-scoped Graph-first authority record
 Core View traversal, while tree-native selected-slice artifacts remain fallback/reference. This is not full
 Maintainability Graph promotion and does not make the graph the repository-wide source model.
 
+[scoped-source-authority-pilot-review.md](scoped-source-authority-pilot-review.md) records a later review-only
+observation of that bounded pilot. The review outcome is `scoped-pilot-review-pass-with-retained-warnings`; it confirms
+parity stability and fallback readiness without expanding source authority.
+
 [generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md) records the user's decision
 to require generated builder / CLI-backed read-model Evidence before actual scoped execution. It is an Evidence
 prerequisite, not builder implementation and not source authority change.

@@ -235,6 +235,15 @@ the pilot-scoped Graph-first authority record for Todo Search Node/Edge/Tag inte
 only. Tree-native selected-slice artifacts remain fallback/reference and are not retired. This record is not full
 Graph-source promotion, repository-wide source authority change, public-doc cleanup, or validator/CI enforcement.
 
+The scoped pilot review is:
+
+- [scoped-source-authority-pilot-review.md](scoped-source-authority-pilot-review.md)
+
+The review outcome is `scoped-pilot-review-pass-with-retained-warnings`. The pilot remains safe to keep active inside
+the Todo Search selected slice because parity stays `comparison-pass`, fallback/reference artifacts remain usable,
+retained warnings remain visible, and user acceptance authority remains user-controlled. Broader use still requires a
+separate decision surface.
+
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.

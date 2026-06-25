@@ -2,9 +2,9 @@
   "version": "0.1.0-generated-read-model-evidence",
   "metadata": {
     "artifactRole": "generated_read_model_evidence",
-    "generatedAt": "2026-06-25T04:20:13.572Z",
+    "generatedAt": "2026-06-25T04:31:27.362Z",
     "commandIdentity": "pbe graph read-model generate --slice examples/adoption/todo-search-slice",
-    "sourceCommit": "b28674d",
+    "sourceCommit": "47c5604",
     "sourceSlice": "examples/adoption/todo-search-slice",
     "inputArtifactList": [
       "examples/adoption/todo-search-slice/product-tree.json",
@@ -23,6 +23,7 @@
       "examples/adoption/todo-search-slice/evidence-exceptions.md",
       "examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json",
       "docs/concept/scoped-source-authority-pilot-execution-record.md",
+      "docs/concept/scoped-source-authority-pilot-review.md",
       "examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md"
     ],
     "generatedStatus": "generated-present",
@@ -111,6 +112,11 @@
     {
       "relativePath": "docs/concept/scoped-source-authority-pilot-execution-record.md",
       "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\docs\\concept\\scoped-source-authority-pilot-execution-record.md",
+      "status": "present"
+    },
+    {
+      "relativePath": "docs/concept/scoped-source-authority-pilot-review.md",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\docs\\concept\\scoped-source-authority-pilot-review.md",
       "status": "present"
     },
     {

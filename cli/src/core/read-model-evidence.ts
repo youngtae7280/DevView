@@ -1761,6 +1761,7 @@ function sourceArtifactList(root: string, slice: string): SourceArtifact[] {
     `${slice}/evidence-exceptions.md`,
     `${slice}/generated/scoped-source-authority-pilot-marker.json`,
     'docs/concept/scoped-source-authority-pilot-execution-record.md',
+    'docs/concept/scoped-source-authority-pilot-review.md',
     'examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
   ]
   return relativePaths.map((entry) => {

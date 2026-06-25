@@ -141,6 +141,21 @@ The pilot is executed only as a bounded source-authority record for the Todo Sea
 and `comparison-pass` parity are sufficient for this scoped pilot. Tree-native selected-slice artifacts remain retained
 as fallback/reference, and broader promotion remains unapproved.
 
+## Review Status
+
+The subsequent review is recorded in
+[scoped-source-authority-pilot-review.md](scoped-source-authority-pilot-review.md).
+
+Review outcome:
+
+```text
+scoped-pilot-review-pass-with-retained-warnings
+```
+
+The review confirms that generated authority remains bounded to the Todo Search selected slice, generated/manual parity
+remains `comparison-pass`, fallback/reference artifacts remain usable, retained warnings remain visible, and user
+acceptance authority remains user-controlled. The review does not expand the pilot or approve broader promotion.
+
 ## Control Node Summary
 
 | Control record                     | Family                       | Status                      | Notes                                                                                     |
