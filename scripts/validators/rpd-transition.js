@@ -241,7 +241,7 @@ function findBlockingDecisionProblems(queue) {
 
   return queue.decisions
     .filter((decision) => {
-      const open = !['resolved', 'closed', 'cancelled', 'superseded'].includes(decision.status)
+      const open = !['answered', 'resolved', 'closed', 'cancelled', 'superseded'].includes(decision.status)
       const blocking = ['gate', 'blocking'].includes(decision.blockingLevel)
       return open && blocking
     })

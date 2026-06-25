@@ -68,7 +68,12 @@ console.log('PBE validation passed.')
 function runCompatibilityCore(repoRoot, cwd) {
   try {
     execFileSync(process.execPath, [path.join(repoRoot, 'scripts', 'validators', 'legacy-core.js')], {
-      cwd,
+      cwd: repoRoot,
+      env: {
+        ...process.env,
+        PBE_REPO_ROOT: repoRoot,
+        PBE_TARGET_ROOT: cwd,
+      },
       encoding: 'utf8',
       stdio: 'pipe',
     })

@@ -4,7 +4,9 @@ import path from 'node:path'
 import process from 'node:process'
 import Ajv2020 from 'ajv/dist/2020.js'
 
-const root = process.cwd()
+const repoRoot = path.resolve(process.env.PBE_REPO_ROOT || process.cwd())
+const targetRoot = path.resolve(process.env.PBE_TARGET_ROOT || process.cwd())
+const root = repoRoot
 const errors = []
 const targetContext = {}
 const schemaIdByTargetLabel = new Map([
@@ -332,7 +334,7 @@ function validateStatusCardTemplates() {
 }
 
 function validateOptionalPbeTarget() {
-  const pbeRoot = path.join(root, '.pbe')
+  const pbeRoot = path.join(targetRoot, '.pbe')
   if (!existsSync(pbeRoot)) {
     return
   }
@@ -347,8 +349,8 @@ function validateOptionalPbeTarget() {
   const dependencyImpactAuditPath = path.join(blueprintRoot, 'dependency-impact-audit.json')
   const executionStrategyPath = path.join(blueprintRoot, 'execution-strategy.json')
   const blueprintTraceabilityPath = path.join(blueprintRoot, 'traceability-matrix.json')
-  const feedbackPath = path.join(root, '.pbe', 'review', 'feedback-items.json')
-  const controlRoot = path.join(root, '.pbe', 'control')
+  const feedbackPath = path.join(targetRoot, '.pbe', 'review', 'feedback-items.json')
+  const controlRoot = path.join(targetRoot, '.pbe', 'control')
   const legacyInventoryPath = path.join(controlRoot, 'legacy-control-inventory.json')
   const surfaceCompletionPath = path.join(controlRoot, 'surface-completion-ledger.json')
   const hardwareReadinessPath = path.join(controlRoot, 'hardware-readiness-ledger.json')
@@ -464,7 +466,7 @@ function parseOptionalControlJson(absolutePath, label) {
 }
 
 function validateOptionalAcepTarget() {
-  const acepRoot = path.join(root, '.pbe', 'codex-execution-pack')
+  const acepRoot = path.join(targetRoot, '.pbe', 'codex-execution-pack')
   if (!existsSync(acepRoot)) {
     return
   }
@@ -1169,7 +1171,7 @@ function validateParallelGroups(parallelGroups, taskById, taskIds, label, option
 }
 
 function validateOptionalReviewTarget() {
-  const reviewRoot = path.join(root, '.pbe', 'review')
+  const reviewRoot = path.join(targetRoot, '.pbe', 'review')
   if (!existsSync(reviewRoot)) {
     return
   }
@@ -1343,7 +1345,7 @@ function validateAcepCrossArtifacts(context) {
 }
 
 function validateOptionalRevisionTargets() {
-  const revisionsRoot = path.join(root, '.pbe', 'revisions')
+  const revisionsRoot = path.join(targetRoot, '.pbe', 'revisions')
   if (!existsSync(revisionsRoot)) {
     return
   }
@@ -1454,17 +1456,17 @@ function getGitChangedFiles() {
   try {
     const outputs = [
       execFileSync('git', ['diff', '--name-only'], {
-        cwd: root,
+        cwd: targetRoot,
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'],
       }),
       execFileSync('git', ['diff', '--name-only', '--cached'], {
-        cwd: root,
+        cwd: targetRoot,
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'],
       }),
       execFileSync('git', ['ls-files', '--others', '--exclude-standard'], {
-        cwd: root,
+        cwd: targetRoot,
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'],
       }),
@@ -1643,10 +1645,10 @@ function validateUiUxSpec(uiUxSpec) {
 
 function resolveAcepReference(acepRoot, reference) {
   if (reference.startsWith('.pbe/')) {
-    return path.join(root, reference)
+    return path.join(targetRoot, reference)
   }
   if (reference.startsWith('.pbe\\')) {
-    return path.join(root, reference)
+    return path.join(targetRoot, reference)
   }
   return path.join(acepRoot, reference)
 }

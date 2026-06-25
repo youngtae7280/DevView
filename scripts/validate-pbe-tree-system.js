@@ -1,9 +1,11 @@
 import { existsSync, readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import process from 'node:process'
 import Ajv2020 from 'ajv/dist/2020.js'
 
-const root = process.cwd()
+const pluginRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const targetRoot = process.cwd()
 const errors = []
 const ajv = new Ajv2020({ allErrors: true, strict: false })
 
@@ -190,12 +192,12 @@ function validateTemplates() {
 function validateOptionalTreeTargets() {
   const data = {}
   for (const [key, target] of schemaEntries) {
-    const absolutePath = path.join(root, target.target)
+    const absolutePath = path.join(targetRoot, target.target)
     if (!existsSync(absolutePath)) {
       data[key] = null
       continue
     }
-    const value = readJson(target.target, target.target)
+    const value = readJson(target.target, target.target, targetRoot)
     if (value) {
       validateWithSchema(value, key, target.target)
     }
@@ -1042,7 +1044,7 @@ function validateVisualDesignContractArtifacts(data) {
   if (!data.visualVerification) {
     errors.push('visual work requires .pbe/control/visual-verification-profile.json')
   }
-  if (!existsSync(path.join(root, '.pbe/blueprint/ui-theme-spec.md'))) {
+  if (!existsSync(path.join(targetRoot, '.pbe/blueprint/ui-theme-spec.md'))) {
     errors.push('visual work requires .pbe/blueprint/ui-theme-spec.md')
   }
 
@@ -1241,8 +1243,8 @@ function collectSchemaErrors(validate, value, label) {
   }
 }
 
-function readJson(relativePath, label) {
-  const absolutePath = path.join(root, relativePath)
+function readJson(relativePath, label, baseRoot = pluginRoot) {
+  const absolutePath = path.join(baseRoot, relativePath)
   if (!existsSync(absolutePath)) {
     errors.push(`Missing ${label}: ${relativePath}`)
     return null
