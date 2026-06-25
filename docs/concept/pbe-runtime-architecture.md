@@ -119,6 +119,9 @@ user-selected review-only dry-run as `usable-with-warnings`.
 [scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md) records the
 user-approved preparation package and recommends generated builder / CLI-backed read-model output before
 authority-bearing scoped execution. It still does not change runtime authority.
+[generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md) records that generated /
+CLI-backed read-model Evidence is now required before actual scoped execution can be reconsidered. It is a prerequisite
+record, not implementation approval and not a runtime authority change.
 
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) and
 [retrofit-graph-bootstrap.md](retrofit-graph-bootstrap.md) refine the target Graph-first architecture. They do not

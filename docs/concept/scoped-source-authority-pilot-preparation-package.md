@@ -99,6 +99,10 @@ Preparation finding in this package:
 requires-generated-builder-first
 ```
 
+The user selected that prerequisite after this package. The generated read-model Evidence requirement is recorded in
+[generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md). It is a requirement record
+only and does not implement generated output.
+
 Reason:
 
 - The dry-run result is `usable-with-warnings`, so the workflow is reviewable.
@@ -273,8 +277,9 @@ CLI-backed read-model output before authority-bearing execution.
 
 ### Remaining Judgment
 
-The user must decide whether to require generated builder output first, approve actual scoped source-authority pilot
-execution with warnings, require public-doc cleanup, strengthen Evidence, defer, or reject.
+The user selected generated builder / CLI-backed read-model Evidence as a prerequisite. The next judgment is whether to
+design the output surface first, move directly to a builder implementation task, require cleanup first, defer, accept
+manual-candidate risk, or reject the pilot path.
 
 ### Approval Choice Candidates
 

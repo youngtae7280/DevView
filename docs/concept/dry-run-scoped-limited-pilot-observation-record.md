@@ -208,6 +208,10 @@ The new next decision surface is:
 5. `Defer scoped source-authority pilot`
 6. `Reject scoped source-authority pilot`
 
+The user selected option 2, `Require generated builder / CLI-backed read-model before execution`. The requirement is
+recorded in [generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md). It does not
+authorize implementation or source authority change.
+
 Recommended next discussion:
 
 ```text

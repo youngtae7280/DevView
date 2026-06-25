@@ -66,6 +66,10 @@ The user also approved scoped source-authority pilot preparation. The preparatio
 recommends generated builder / CLI-backed read-model output before authority-bearing execution unless the user explicitly
 accepts manual-candidate risk for the bounded pilot.
 
+The user selected the generated builder / CLI-backed Evidence prerequisite. The requirement is recorded in
+[generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md). It is not builder or CLI
+implementation approval.
+
 ## Pilot Scope
 
 ### Primary Pilot Scope
@@ -263,8 +267,8 @@ This package does not decide:
 - Will the user require ACEP task-card public-doc cleanup before full promotion?
 - Will the user treat bounded fixture Evidence as enough for the limited pilot, while reserving full-product runtime
   proof for a later full promotion review?
-- Will the user approve actual scoped source-authority pilot execution with warnings, require generated builder output,
-  require public-doc cleanup, strengthen Evidence, defer, or reject the scoped pilot?
+- Will the user design the generated output surface first, approve a later builder implementation task, require
+  public-doc cleanup, defer, accept manual-candidate risk, or reject the scoped pilot path?
 
 ## Gate Self-Check
 

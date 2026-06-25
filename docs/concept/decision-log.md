@@ -47,6 +47,7 @@ This log is the source of truth for confirmed concept decisions in the PBE runti
 | DEC-039 | active | Actual scoped limited pilot transition requires an execution plan and explicit execution mode selection. Dry-run / review-only scoped pilot execution does not change source authority, while any scoped source-authority pilot execution requires separate user approval, source boundary definition, rollback/fallback handling, compatibility marking, and Evidence gates.                                            | Scoped Limited Pilot Transition Execution Plan                                    |
 | DEC-040 | active | The user selected `Run dry-run / review-only scoped pilot first` for the Todo Search selected slice. The dry-run observation records workflow Evidence without changing source authority and cannot by itself approve scoped source-authority pilot execution, full Graph-source promotion, tree-native artifact retirement, generated builder implementation, or public-doc cleanup.                                    | Dry-Run Scoped Limited Pilot Observation Record                                   |
 | DEC-041 | active | The user approved preparation of a scoped source-authority pilot package for the Todo Search selected slice. Preparation approval does not approve actual scoped source-authority execution, full Graph-source promotion, source authority change, tree-native artifact retirement, generated builder implementation, or public-doc cleanup; execution still requires a later explicit user decision.                    | Scoped Source-Authority Pilot Preparation Package                                 |
+| DEC-042 | active | The user requires generated builder / CLI-backed read-model Evidence before actual scoped source-authority pilot execution. This is a prerequisite decision only; it does not approve implementation, CLI command creation, validator/CI work, source authority change, tree-native artifact retirement, or Graph-source promotion.                                                                                      | Generated Read-Model Evidence Requirement                                         |
 
 ## Supersede Relationships
 
@@ -179,6 +180,11 @@ DEC-041 does not supersede DEC-020, DEC-021, DEC-030, DEC-031, DEC-038, DEC-039,
 surface for possible scoped authority execution, while source transition policy, rollback/fallback requirements, manual
 parity limits, limited pilot decision boundaries, the execution plan, dry-run observation, and actual execution approval
 remain separate.
+
+DEC-042 does not supersede DEC-016, DEC-020, DEC-021, DEC-030, DEC-039, DEC-040, or DEC-041. It strengthens the Evidence
+prerequisite before any authority-bearing scoped execution, while Check/Evidence policy, source transition policy,
+rollback/fallback gates, manual parity limits, execution-mode separation, dry-run observation, preparation-package
+boundaries, and future user approval remain active.
 
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in

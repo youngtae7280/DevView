@@ -30,6 +30,10 @@ The user then approved scoped source-authority pilot preparation. The preparatio
 [scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md). It does
 not approve actual scoped source-authority execution.
 
+The user then required generated builder / CLI-backed read-model Evidence before actual scoped execution. That
+requirement is recorded in [generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md)
+and does not approve implementation.
+
 ## Scope
 
 ### Primary Scope

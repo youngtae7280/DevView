@@ -171,3 +171,7 @@ does not change source authority and does not execute scoped source-authority pi
 The user later approved scoped source-authority pilot preparation. The preparation package is recorded in
 [scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md). It prepares
 the next execution decision surface, but actual scoped source-authority execution remains unapproved.
+
+The user then required generated builder / CLI-backed read-model Evidence before actual scoped execution. The requirement
+is recorded in [generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md). It does not
+implement generated output and does not change source authority.

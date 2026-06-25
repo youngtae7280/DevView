@@ -140,6 +140,10 @@ execution-mode choices. The user selected the dry-run / review-only path, and th
 user-approved preparation package for a possible scoped source-authority pilot. It recommends generated builder /
 CLI-backed read-model output before authority-bearing execution and keeps current source authority unchanged.
 
+[generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md) records the user's decision
+to require generated builder / CLI-backed read-model Evidence before actual scoped execution. It is an Evidence
+prerequisite, not builder implementation and not source authority change.
+
 The representative slice now includes manual equivalent read-model parity artifacts:
 
 - `examples/adoption/todo-search-slice/maintainability-graph-read-model.json`
@@ -189,10 +193,9 @@ traceability view.
 - OQ-026: Which existing tree-native artifacts are sufficient inputs for future generated/read-model support?
 - OQ-027: Should graph checks become validators, evidence reports, documentation-only review aids, or a combination?
 - OQ-052: Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?
-- OQ-060: Should generated builder / CLI-backed read-model output be required before scoped pilot execution, or only
-  before full promotion / CI repeatability?
 - OQ-064: Will the user approve actual scoped source-authority pilot execution with warnings, require prerequisites,
   defer, or reject execution?
+- OQ-066: What exact generated read-model output artifact format should be designed before implementation?
 - OQ-054: Should `task` and `view-instance` be first-class node kinds or durable records outside node kind?
 
 ## Related Gate

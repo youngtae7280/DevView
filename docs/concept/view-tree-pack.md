@@ -45,6 +45,11 @@ Cycle Tree -> Change Tree -> Impact Tree -> Evidence Tree -> Acceptance Tree
 
 The Graph-first target does not change that current authority until explicit user promotion approval.
 
+[generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md) records a later prerequisite
+for generated / CLI-backed read-model Evidence before actual scoped source-authority pilot execution. That requirement
+may produce stronger projection Evidence in a future task, but it does not make View Tree Pack source authority and does
+not implement a generator here.
+
 ## Relationship To Node / Edge / Tag Policy
 
 View Tree Pack follows [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md):

@@ -244,6 +244,11 @@ explicit user approval and rollback/fallback/compatibility boundary.
 user-approved preparation package. It defines the candidate source authority boundary, source/fallback matrix, and gates
 for a possible scoped execution, but it does not execute that transition.
 
+[generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md) records the user's decision
+to require generated builder / CLI-backed read-model Evidence before actual scoped execution. The requirement can
+strengthen Evidence and authority-readiness gates, but it does not close rollback/fallback, compatibility, or approval
+gates by itself.
+
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) defines the target Graph-first responsibility split:
 Nodes are durable targets, Edges are durable semantic relationships, and Tags are temporary view-scoped roles.
 
@@ -328,7 +333,8 @@ Those remain later concept or implementation questions.
   strengthen Evidence, defer, or reject execution?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
-- Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?
+- What exact generated read-model output artifact format and CLI-backed surface should be designed before generated work
+  starts?
 - How long should a post-promotion compatibility period last?
 - Where is the boundary between automatic recovery and manual judgment when tree-native artifacts and graph records
   conflict?

@@ -107,6 +107,16 @@ The preparation package is recorded in
 recommends generated builder / CLI-backed read-model output before actual authority-bearing execution and does not
 approve execution.
 
+Generated read-model prerequisite outcome:
+
+```text
+Require generated builder / CLI-backed read-model before execution
+```
+
+The requirement is recorded in
+[generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md). It is not implementation
+approval and does not create generated output.
+
 Meaning:
 
 - The representative lifecycle slice is demonstrated with retained warnings.
@@ -285,8 +295,8 @@ scoped transition execution remain separate.
 
 ### Decisions Needed Before Promotion Approval
 
-- Whether to approve actual scoped source-authority pilot execution with warnings, require generated builder output,
-  require public-doc cleanup, strengthen Evidence, defer, or reject execution.
+- Whether to design the generated output surface first, approve a later builder implementation task, require public-doc
+  cleanup before generated work, defer, accept manual-candidate risk, or reject the scoped pilot path.
 - Whether full promotion requires generated graph/read-model output as a future CLI-backed report or generated artifact.
 - Whether bounded fixture Evidence is enough for the pilot decision surface.
 - Whether ACEP task-card public-doc cleanup must happen before promotion approval or may remain deferred with an
