@@ -113,13 +113,15 @@ pilot active with retained warnings and leaves full-promotion readiness as a sep
 [validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md) now defines how
 validator-backed and CI-backed read-model Evidence could support broader execution/enforcement or full-promotion review
 later. The scoped Todo Search validator-backed Evidence command is now implemented and produces `validation-pass` for
-the current bounded pilot artifacts. Reviewed manual CI-backed Evidence now exists for run `28151296796`, while CI
-enforcement remains unimplemented and does not follow from this review automatically.
+the current bounded pilot artifacts. Reviewed manual CI-backed Evidence exists for Todo Search run `28151296796` and
+aggregate-enabled run `28156403793`, while CI enforcement remains unimplemented and does not follow from this review
+automatically.
 
 [ci-backed-read-model-evidence-workflow-design.md](ci-backed-read-model-evidence-workflow-design.md) now defines the
 CI workflow integration surface for read-model Evidence. The first implementation is a non-enforcing manual
-`workflow_dispatch` workflow for Todo Search only. It does not make CI required, add PR/push triggers, or change source
-authority. Run `28151296796` provides reviewed CI-backed Evidence for the Todo Search selected slice.
+`workflow_dispatch` workflow. It does not make CI required, add PR/push triggers, or change source authority. Run
+`28151296796` provides reviewed CI-backed Evidence for the Todo Search selected slice, and run `28156403793` provides
+reviewed aggregate-enabled CI-backed Evidence for the declared bundle.
 
 Preparation outcome:
 
@@ -337,9 +339,9 @@ cleanup remain separate.
 - Todo Search and Todo App PBE Run validation reports now carry per-slice independence metadata for future aggregation
   inputs.
 - The first multi-slice aggregate summary exists as Evidence-only output over existing per-slice validation reports.
-  The manual workflow now includes the aggregate summarize command for the next CI artifact bundle, but no
-  aggregate-enabled run has been reviewed yet. `validate --all`, CI enforcement, and full-promotion waiver policy remain
-  future questions.
+  The manual workflow now includes the aggregate summarize command, and run `28156403793` reviewed the aggregate-enabled
+  artifact bundle as non-enforcing CI-backed Evidence. `validate --all`, CI enforcement, and full-promotion waiver policy
+  remain future questions.
 
 ### Decisions Needed Before Promotion Approval
 

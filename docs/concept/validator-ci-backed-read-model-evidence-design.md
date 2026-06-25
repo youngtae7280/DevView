@@ -1,6 +1,6 @@
 # Validator / CI-Backed Read-Model Evidence Design
 
-Status: validator-ci-backed-read-model-evidence-design / scoped-validator-backed-evidence-implemented / aggregate-capable-non-enforcing-ci-workflow
+Status: validator-ci-backed-read-model-evidence-design / scoped-validator-backed-evidence-implemented / aggregate-ci-backed-run-reviewed
 
 ## Document Purpose
 
@@ -14,19 +14,19 @@ not enforce CI gates, does not expand source authority, and does not change prom
 
 ## Current Scoped Pilot Baseline
 
-| Baseline item                 | Current state                                                                |
-| ----------------------------- | ---------------------------------------------------------------------------- |
-| Scoped pilot                  | `examples/adoption/todo-search-slice` only                                   |
-| Active observation status     | `keep-active-with-retained-warnings`                                         |
-| Generated/manual parity       | `comparison-pass`                                                            |
-| Mismatch count                | 0                                                                            |
-| Blocking count                | 0                                                                            |
-| Decision-required count       | 0                                                                            |
-| Generated read-model Evidence | present for bounded Todo Search slice                                        |
-| Validator-backed Evidence     | present for bounded Todo Search slice                                        |
-| CI-backed Evidence            | Todo Search run `28151296796` reviewed; aggregate-enabled run review pending |
-| Tree-native fallback          | retained and usable                                                          |
-| Supplemental compatibility    | warning-only, not pilot source scope                                         |
+| Baseline item                 | Current state                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------ |
+| Scoped pilot                  | `examples/adoption/todo-search-slice` only                                     |
+| Active observation status     | `keep-active-with-retained-warnings`                                           |
+| Generated/manual parity       | `comparison-pass`                                                              |
+| Mismatch count                | 0                                                                              |
+| Blocking count                | 0                                                                              |
+| Decision-required count       | 0                                                                              |
+| Generated read-model Evidence | present for bounded Todo Search slice                                          |
+| Validator-backed Evidence     | present for bounded Todo Search slice                                          |
+| CI-backed Evidence            | Todo Search run `28151296796` and aggregate-enabled run `28156403793` reviewed |
+| Tree-native fallback          | retained and usable                                                            |
+| Supplemental compatibility    | warning-only, not pilot source scope                                           |
 
 This baseline is sufficient to keep the current scoped pilot active and now has local validator-backed Evidence. It is
 not enough by itself to enforce broader execution, make CI claims, retire fallback artifacts, or approve full
@@ -137,7 +137,12 @@ The CI-backed workflow integration design and first non-enforcing manual workflo
 defines CI trigger modes, command sequence, artifact outputs, status semantics, and waiver boundaries. The implemented
 workflow is `.github/workflows/read-model-evidence.yml` with manual `workflow_dispatch` only. The first worker run
 review records run `28151296796` as Todo Search `ci-evidence-pass` with `validation-pass` and `comparison-pass`. The
-aggregate-enabled workflow update has not yet been run and reviewed.
+later aggregate-enabled run `28156403793` is reviewed as `ci-evidence-pass` with Todo Search `validation-pass` /
+`comparison-pass`, Todo App PBE Run `validation-pass`, and aggregate `aggregate-pass`.
+
+Run `28156403793` also records a CI hygiene warning: GitHub Actions reports Node.js 20 deprecation for the current
+action versions. This warning does not fail validator-backed or CI-backed Evidence, but it should be handled before
+broader CI enforcement is considered.
 
 ## Report Field Expectations
 

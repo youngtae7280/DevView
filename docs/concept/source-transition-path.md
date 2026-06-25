@@ -277,6 +277,9 @@ non-enforcing CI-backed Evidence workflow shape for the same bounded read-model 
 Transition Path. Run `28151296796` now provides reviewed CI-backed Evidence for the Todo Search selected slice, but it
 does not change transition stage or source authority.
 
+The later aggregate-enabled manual run `28156403793` reviewed Todo Search, Todo App PBE Run structure-only, and
+aggregate summary artifacts as CI-backed Evidence. It also does not change transition stage or source authority.
+
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) defines the target Graph-first responsibility split:
 Nodes are durable targets, Edges are durable semantic relationships, and Tags are temporary view-scoped roles.
 
@@ -294,8 +297,9 @@ Manual equivalent read-model parity artifacts are now recorded for the represent
 After the Node/Edge/Tag refresh, the artifacts show durable node kinds, durable edge types, view-scoped tags,
 confidence/freshness separation, and 7 Core View coverage. Generated builder/CLI-backed output, scoped
 validator-backed Evidence, reviewed non-enforcing CI-backed Evidence, and an explicit Todo Search read-model profile now
-exist for the Todo Search pilot, but second-slice generation, broader/multi-slice validation, CI enforcement, and full
-promotion remain future questions. None of this is a repository-wide source authority change.
+exist for the Todo Search pilot. A second structure-only slice and aggregate CI-backed Evidence are also reviewed as
+Evidence-only. CI enforcement, `validate --all`, and full promotion remain future questions. None of this is a
+repository-wide source authority change.
 
 ### Rollback / Compatibility Strategy
 
@@ -342,15 +346,14 @@ that authority; it defines the conceptual path that would be required before a f
 
 ### Multi-Slice Follow-Up Status
 
-Todo Search remains the only scoped source-authority pilot and the only reviewed CI-backed slice. A second profile,
-`examples/valid/todo-app-pbe-run`, now exists at `structure-only` level with generated/validation Evidence from
-canonical `.pbe` inputs. That follow-up does not expand source authority, does not add a pilot marker, does not require
-manual parity, and does not implement `validate --all`. Both current validation reports carry per-slice independence
-metadata, and the first aggregate summary reads those reports as Evidence-only inputs while preserving slice-specific
-authority boundaries.
+Todo Search remains the only scoped source-authority pilot. A second profile, `examples/valid/todo-app-pbe-run`, now
+exists at `structure-only` level with generated/validation Evidence from canonical `.pbe` inputs. That follow-up does
+not expand source authority, does not add a pilot marker, does not require manual parity, and does not implement
+`validate --all`. Both current validation reports carry per-slice independence metadata, and the first aggregate summary
+reads those reports as Evidence-only inputs while preserving slice-specific authority boundaries.
 The manual `PBE Read-Model Evidence` workflow now includes Todo App structure-only generation/validation and aggregate
-summarize for the next manual CI run, but no aggregate-enabled run has been reviewed yet. This workflow update does not
-add enforcement, `validate --all`, or source authority expansion.
+summarize, and run `28156403793` reviewed the aggregate-enabled artifact bundle as non-enforcing CI-backed Evidence.
+This workflow review does not add enforcement, `validate --all`, or source authority expansion.
 
 ## Scope Boundaries
 

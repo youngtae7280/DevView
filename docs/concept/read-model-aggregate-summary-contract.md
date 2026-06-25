@@ -1,6 +1,6 @@
 # Read-Model Aggregate Summary Contract
 
-Status: read-model-aggregate-summary-contract / first-aggregate-summary-implemented / non-enforcing-ci-workflow-enabled
+Status: read-model-aggregate-summary-contract / first-aggregate-summary-implemented / aggregate-ci-backed-run-reviewed
 
 ## Purpose
 
@@ -37,8 +37,9 @@ slice-owned source artifact.
 | `examples/adoption/todo-search-slice` | `todo-search-selected-slice`      | `pilot-marker-backed` | `flat-demo-support` | `validation-pass`  |
 | `examples/valid/todo-app-pbe-run`     | `todo-app-pbe-run-structure-only` | `structure-only`      | `canonical-pbe`     | `validation-pass`  |
 
-Todo Search remains the only active scoped source-authority pilot and the only reviewed CI-backed slice. Todo App PBE
-Run remains structure-only and is not parity-backed, pilot-marker-backed, CI-backed, or authority-bearing.
+Todo Search remains the only active scoped source-authority pilot. Todo App PBE Run remains structure-only and is not
+parity-backed, pilot-marker-backed, or authority-bearing, even when included in the reviewed aggregate-enabled CI
+artifact bundle.
 
 ## Aggregate Decision Rule
 
@@ -114,8 +115,9 @@ node dist/cli/index.js graph read-model summarize --slices examples/adoption/tod
 
 The workflow is still `workflow_dispatch` only and non-enforcing. Running aggregate summarize in CI does not turn the
 aggregate into validation execution, does not implement `validate --all`, and does not expand source authority. A new
-aggregate-enabled workflow run has not yet been reviewed, so the current reviewed CI-backed Evidence remains the earlier
-Todo Search-only run `28151296796`.
+aggregate-enabled workflow run, `28156403793`, has now been reviewed as CI-backed Evidence with `ci-evidence-pass` and
+aggregate `aggregate-pass`. The earlier Todo Search-only run `28151296796` remains historical CI-backed Evidence for the
+first workflow shape.
 
 ## Tests
 
@@ -133,9 +135,10 @@ Recommended next work remains bounded:
 
 1. keep aggregate summary as Evidence-only and observe stability
 2. decide whether a future `validate --all` command is needed
-3. run the aggregate-enabled manual workflow once and review the uploaded artifact bundle
-4. decide whether to strengthen Todo App PBE Run beyond structure-only
-5. keep source authority expansion and full promotion as separate explicit decisions
+3. keep the aggregate-enabled manual workflow non-enforcing and observe
+4. plan Node.js/action version CI hygiene work for the deprecation annotation
+5. decide whether to strengthen Todo App PBE Run beyond structure-only
+6. keep source authority expansion and full promotion as separate explicit decisions
 
 ## Final Statement
 

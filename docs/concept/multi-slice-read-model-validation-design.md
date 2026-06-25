@@ -1,6 +1,6 @@
 # Multi-Slice Read-Model Validation Design
 
-Status: multi-slice-read-model-validation-design / aggregate-ci-workflow-enabled / validate-all-not-started
+Status: multi-slice-read-model-validation-design / aggregate-ci-backed-run-reviewed / validate-all-not-started
 
 ## Design Purpose
 
@@ -30,7 +30,7 @@ aggregate command. These remain Evidence-only and do not implement `validate --a
 | Manual parity artifact        | present for Todo Search                                                                             |
 | View Instance Manifest        | present for Todo Search                                                                             |
 | Local validator-backed status | `validation-pass`                                                                                   |
-| Reviewed CI-backed status     | run `28151296796` is `ci-evidence-pass`                                                             |
+| Reviewed CI-backed status     | Todo Search run `28151296796` and aggregate-enabled run `28156403793` are `ci-evidence-pass`        |
 | Generated/manual parity       | `comparison-pass`                                                                                   |
 | Mismatch/blocking/decision    | 0 / 0 / 0                                                                                           |
 | Active observation            | `keep-active-with-retained-warnings`                                                                |
@@ -38,8 +38,9 @@ aggregate command. These remain Evidence-only and do not implement `validate --a
 | Current authority boundary    | Scoped pilot only; no repository-wide source authority change, no full promotion, no CI enforcement |
 
 Reviewed CI-backed Evidence is recorded in
-[ci-backed-read-model-evidence-run-review.md](ci-backed-read-model-evidence-run-review.md). It is Evidence only. It does
-not approve a broader pilot, required checks, branch protection, PR/push triggers, source authority expansion, public-doc
+[ci-backed-read-model-evidence-run-review.md](ci-backed-read-model-evidence-run-review.md). Run `28156403793` reviews the
+aggregate-enabled bundle for Todo Search, Todo App PBE Run, and the aggregate summary. It is Evidence only. It does not
+approve a broader pilot, required checks, branch protection, PR/push triggers, source authority expansion, public-doc
 cleanup, tree-native retirement, or full Graph-source promotion.
 
 ## Multi-Slice Validation Is Not Source Authority Expansion
@@ -210,12 +211,12 @@ Recommended implementation sequence:
 
 ## Validation Policy Levels
 
-| Policy level          | Meaning                                                                                           | Required inputs / status                                                                                                 | Example current or future use                       |
-| --------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- |
-| `structure-only`      | Validate that a slice can be read structurally into Node/Edge/Tag and 7 Core View-shaped records. | Source artifacts exist; generated/manual parity may be absent; pilot marker may be absent; runtime fixture not required. | First target for `examples/valid/todo-app-pbe-run`. |
-| `parity-backed`       | Validate generated output against a manual parity artifact.                                       | Generated output plus manual parity artifact and comparison report.                                                      | Todo Search before scoped pilot execution.          |
-| `pilot-marker-backed` | Validate active scoped pilot boundaries and fallback/reference markers.                           | Generated output, parity pass, validation report, scoped pilot marker, fallback/reference status.                        | Current Todo Search active scoped pilot.            |
-| `ci-backed`           | Validate a reviewed CI run and uploaded artifact manifest for a declared slice.                   | CI run identity, artifact bundle, CI manifest, validator/parity summaries, source boundary and non-promotion statements. | Todo Search run `28151296796`.                      |
+| Policy level          | Meaning                                                                                                               | Required inputs / status                                                                                                           | Example current or future use                                       |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `structure-only`      | Validate that a slice can be read structurally into Node/Edge/Tag and 7 Core View-shaped records.                     | Source artifacts exist; generated/manual parity may be absent; pilot marker may be absent; runtime fixture not required.           | First target for `examples/valid/todo-app-pbe-run`.                 |
+| `parity-backed`       | Validate generated output against a manual parity artifact.                                                           | Generated output plus manual parity artifact and comparison report.                                                                | Todo Search before scoped pilot execution.                          |
+| `pilot-marker-backed` | Validate active scoped pilot boundaries and fallback/reference markers.                                               | Generated output, parity pass, validation report, scoped pilot marker, fallback/reference status.                                  | Current Todo Search active scoped pilot.                            |
+| `ci-backed`           | Validate a reviewed CI run and uploaded artifact manifest for a declared slice or declared aggregate Evidence bundle. | CI run identity, artifact bundle, CI manifest, validator/parity/aggregate summaries, source boundary and non-promotion statements. | Todo Search run `28151296796`; aggregate-enabled run `28156403793`. |
 
 Policy level is not source authority. It is an Evidence classification.
 
@@ -240,8 +241,9 @@ Implemented outputs:
 
 The command reads existing per-slice validation reports only. It does not run generation, comparison, validation,
 `validate --all`, source authority transition, or promotion readiness approval. The non-enforcing manual workflow now
-runs this command after producing the two per-slice validation reports, but that workflow remains `workflow_dispatch`
-only and the aggregate-enabled run has not yet been reviewed as CI-backed Evidence.
+runs this command after producing the two per-slice validation reports, and run `28156403793` reviewed the
+aggregate-enabled artifact bundle as CI-backed Evidence. The workflow remains `workflow_dispatch` only and
+non-enforcing.
 
 ## Per-Slice Validation Report Independence Contract
 
@@ -403,16 +405,16 @@ design, multi-slice scope redesign, or continued observation.
 
 ## Control Node Summary
 
-| Control record                      | Family                     | Status                       | Reason                                                                                               |
-| ----------------------------------- | -------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Multi-slice validation design       | Decision Control Node      | design-recorded              | The expansion strategy is documented; aggregation remains unimplemented.                             |
-| Todo Search hardcoding              | Evidence / Impact Control  | resolved for first profile   | Todo assumptions are isolated into an explicit profile/config.                                       |
-| `todo-app-pbe-run` candidate        | Evidence Control Node      | implemented / structure-only | It has canonical `.pbe` source inputs plus structure-only generated/validation output.               |
-| Compatibility mismatch supplemental | Compatibility Control Node | retained warning             | Public-doc cleanup remains deferred and warning-only.                                                |
-| Aggregate summary                   | Evidence Control Node      | implemented / Evidence-only  | First aggregate summary reads existing per-slice validation reports only.                            |
-| Aggregate CI-backed review          | Evidence Control Node      | pending manual run review    | Workflow can now produce aggregate CI artifacts, but no aggregate-enabled run has been reviewed yet. |
-| Aggregate validation                | Decision Control Node      | deferred                     | `validate --all`, aggregate validation execution, and enforcement remain separate.                   |
-| CI enforcement / PR triggers        | Decision Control Node      | not approved                 | Reviewed CI-backed Evidence exists, but enforcement and PR triggers remain future-only.              |
+| Control record                      | Family                     | Status                       | Reason                                                                                                |
+| ----------------------------------- | -------------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Multi-slice validation design       | Decision Control Node      | design-recorded              | The expansion strategy is documented; aggregation remains unimplemented.                              |
+| Todo Search hardcoding              | Evidence / Impact Control  | resolved for first profile   | Todo assumptions are isolated into an explicit profile/config.                                        |
+| `todo-app-pbe-run` candidate        | Evidence Control Node      | implemented / structure-only | It has canonical `.pbe` source inputs plus structure-only generated/validation output.                |
+| Compatibility mismatch supplemental | Compatibility Control Node | retained warning             | Public-doc cleanup remains deferred and warning-only.                                                 |
+| Aggregate summary                   | Evidence Control Node      | implemented / Evidence-only  | First aggregate summary reads existing per-slice validation reports only.                             |
+| Aggregate CI-backed review          | Evidence Control Node      | reviewed                     | Run `28156403793` reviewed the aggregate-enabled artifact bundle as non-enforcing CI-backed Evidence. |
+| Aggregate validation                | Decision Control Node      | deferred                     | `validate --all`, aggregate validation execution, and enforcement remain separate.                    |
+| CI enforcement / PR triggers        | Decision Control Node      | not approved                 | Reviewed CI-backed Evidence exists, but enforcement and PR triggers remain future-only.               |
 
 ## Gate Self-Check
 

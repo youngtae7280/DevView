@@ -1,6 +1,6 @@
 # CI-Backed Read-Model Evidence Workflow Design
 
-Status: ci-backed-read-model-evidence-workflow-design / non-enforcing-workflow-aggregate-enabled / manual-dispatch-only
+Status: ci-backed-read-model-evidence-workflow-design / aggregate-ci-backed-run-reviewed / manual-dispatch-only
 
 ## Document Purpose
 
@@ -18,24 +18,28 @@ retire tree-native artifacts, does not clean up public docs, and does not approv
 
 ## Current Local Validator-Backed Baseline
 
-| Baseline item              | Current state                                                                                      |
-| -------------------------- | -------------------------------------------------------------------------------------------------- |
-| Scoped pilot               | `examples/adoption/todo-search-slice` only                                                         |
-| Active observation status  | `keep-active-with-retained-warnings`                                                               |
-| Generated/manual parity    | `comparison-pass`                                                                                  |
-| Local validator command    | `pbe graph read-model validate --slice examples/adoption/todo-search-slice`                        |
-| Validator-backed status    | `validation-pass`                                                                                  |
-| Validator check count      | 20                                                                                                 |
-| Warning/blocking/decision  | 0 / 0 / 0                                                                                          |
-| CI-backed Evidence         | reviewed Todo Search run `28151296796` is `ci-evidence-pass`; aggregate-enabled run review pending |
-| Tree-native fallback       | retained and usable                                                                                |
-| Supplemental compatibility | warning-only, not pilot source scope                                                               |
-| Current authority boundary | bounded Todo Search scoped pilot; no repository-wide source authority change                       |
+| Baseline item              | Current state                                                                                        |
+| -------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Scoped pilot               | `examples/adoption/todo-search-slice` only                                                           |
+| Active observation status  | `keep-active-with-retained-warnings`                                                                 |
+| Generated/manual parity    | `comparison-pass`                                                                                    |
+| Local validator command    | `pbe graph read-model validate --slice examples/adoption/todo-search-slice`                          |
+| Validator-backed status    | `validation-pass`                                                                                    |
+| Validator check count      | 20                                                                                                   |
+| Warning/blocking/decision  | 0 / 0 / 0                                                                                            |
+| CI-backed Evidence         | Todo Search run `28151296796` and aggregate-enabled run `28156403793` reviewed as `ci-evidence-pass` |
+| Tree-native fallback       | retained and usable                                                                                  |
+| Supplemental compatibility | warning-only, not pilot source scope                                                                 |
+| Current authority boundary | bounded Todo Search scoped pilot; no repository-wide source authority change                         |
 
 The local validator baseline is enough to keep the scoped pilot active under observation. The non-enforcing manual CI
-workflow produced reviewed Todo Search CI-backed Evidence in run `28151296796`; the later aggregate-enabled workflow has
-not yet been manually run and reviewed. PR/push triggers, required checks, branch protection, and enforcement remain
-unimplemented.
+workflow produced reviewed Todo Search CI-backed Evidence in run `28151296796`; the later aggregate-enabled workflow run
+`28156403793` reviewed the Todo Search, Todo App PBE Run, and aggregate artifact bundle. PR/push triggers, required
+checks, branch protection, and enforcement remain unimplemented.
+
+Run `28156403793` also surfaced a GitHub Actions maintenance annotation that Node.js 20 is deprecated for
+`actions/checkout@v4`, `actions/setup-node@v4`, and `actions/upload-artifact@v4` execution. This is a retained CI hygiene
+warning, not a failed Evidence run.
 
 ## CI-Backed Evidence Definition
 
@@ -64,7 +68,7 @@ CI-backed Evidence is still Evidence. It is not source promotion, not user appro
 | Enforcement possibility | None unless separately wired               | Can be informational or enforcement, but enforcement requires separate approval |
 | User approval relation  | Evidence only; not user approval           | Evidence only; not user approval                                                |
 | Source authority effect | None by itself                             | None by itself                                                                  |
-| Current status          | implemented for Todo Search scoped slice   | Todo Search run `28151296796` is reviewed; aggregate-enabled run review pending |
+| Current status          | implemented for Todo Search scoped slice   | Todo Search run `28151296796` and aggregate-enabled run `28156403793` reviewed  |
 
 ## CI Trigger Modes
 
@@ -315,17 +319,18 @@ This implementation and design do not:
 
 ## Recommended Next Decision Surface
 
-After this aggregate-enabled workflow implementation, the next user decision should choose one of:
+After this aggregate-enabled workflow run review, the next user decision should choose one of:
 
-1. `Run the manual workflow and review the aggregate-enabled artifact bundle`
-2. `Keep workflow manual/non-enforcing and observe locally`
+1. `Keep aggregate-enabled workflow manual/non-enforcing and observe`
+2. `Plan Node.js/action version CI hygiene update`
 3. `Design CI enforcement / required check policy`
 4. `Require public-doc cleanup before broader CI or promotion work`
 5. `Prepare broader Graph-source promotion review`
-6. `Defer aggregate CI-backed Evidence review`
+6. `Defer broader CI mode changes`
 
-Recommended next step: run the manual workflow once and review the aggregate-enabled artifact bundle. Until that review
-exists, only the older Todo Search run `28151296796` is reviewed CI-backed Evidence.
+Recommended next step: plan Node.js/action version CI hygiene update or keep the aggregate-enabled workflow
+manual/non-enforcing and observe. The Node.js 20 deprecation annotation is a maintenance warning, not a failed Evidence
+run.
 
 ## Approval Brief Draft
 
@@ -349,7 +354,7 @@ Source Transition Path, rollback, and compatibility.
 | CI enforcement             | not approved | Enforcement mode remains future-only.                                                                                                             |
 | Source authority boundary  | preserved    | CI Evidence would remain Evidence only.                                                                                                           |
 | Retained warnings          | visible      | Bounded fixture, partial UI, enforcement gap, and ACEP cleanup remain visible.                                                                    |
-| Next user decision         | required     | User must choose whether to run/review the aggregate-enabled manual workflow or branch into enforcement, cleanup, promotion review, or defer.     |
+| Next user decision         | required     | User must choose whether to do CI hygiene work, keep observing, or branch into enforcement, cleanup, promotion review, or defer.                  |
 
 ### Remaining Judgment
 
@@ -364,8 +369,8 @@ Decision required
 ```
 
 Reason: non-enforcing manual CI workflow implementation exists, run `28151296796` has been reviewed as Todo Search
-CI-backed Evidence, and the workflow now includes Todo App structure-only Evidence plus aggregate summarize for the next
-manual run. PR triggers, enforcement, broader source authority, and full promotion remain unapproved.
+CI-backed Evidence, and run `28156403793` has been reviewed as aggregate-enabled CI-backed Evidence. PR triggers,
+enforcement, broader source authority, and full promotion remain unapproved.
 
 ## Gate Self-Check
 
@@ -376,7 +381,7 @@ manual run. PR triggers, enforcement, broader source authority, and full promoti
 | Non-CI-Enforcement Gate                | PASS   | Enforcement mode remains future-only.                                                                              |
 | Source Authority Boundary Gate         | PASS   | CI-backed Evidence is Evidence only and does not change source authority.                                          |
 | Non-Full-Promotion Gate                | PASS   | Full Graph-source promotion remains unapproved.                                                                    |
-| Local-vs-CI Evidence Separation Gate   | PASS   | Local validator pass, reviewed Todo Search CI Evidence, and pending aggregate CI review are separate.              |
+| Local-vs-CI Evidence Separation Gate   | PASS   | Local validator pass, reviewed Todo Search CI Evidence, and reviewed aggregate CI Evidence are separate.           |
 | User Approval Boundary Gate            | PASS   | CI pass is not user approval.                                                                                      |
 | Retained Warning Visibility Gate       | PASS   | Retained warnings remain explicit.                                                                                 |
 | Scope Strategy Gate                    | PASS   | Workflow includes two declared slices and an aggregate summary without broadening source authority or enforcement. |
@@ -386,5 +391,5 @@ manual run. PR triggers, enforcement, broader source authority, and full promoti
 
 This non-enforcing CI workflow implementation does not introduce enforcement, does not expand source authority, does not
 make Todo App PBE Run a pilot slice, does not retire tree-native or `.pbe` artifacts, and does not approve full
-Graph-source promotion. The aggregate-enabled workflow output still requires a real manual run and artifact review
-before it can be cited as reviewed aggregate CI-backed Evidence.
+Graph-source promotion. The aggregate-enabled workflow output is reviewed in run `28156403793`, but it remains
+non-enforcing Evidence only and does not approve source authority expansion.

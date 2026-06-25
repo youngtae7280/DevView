@@ -66,6 +66,7 @@ This log is the source of truth for confirmed concept decisions in the PBE runti
 | DEC-058 | active | Per-slice read-model validation reports are self-contained Evidence units before aggregation. Each report records profile, source slice, source layout, policy level, evidence level, expected counts, generated read-model path, parity requirement/status, pilot marker requirement/status, runtime fixture requirement/status, retained warnings, fallback/reference summary, source-authority boundary, non-promotion statement, and a cross-slice dependency rule. This prepares future aggregation but does not implement aggregation, `validate --all`, CI workflow changes, enforcement, source authority expansion, or promotion. | Per-Slice Read-Model Validation Report Independence Contract                      |
 | DEC-059 | active | The first aggregate read-model Evidence summary is implemented over existing per-slice validation reports only. `pbe graph read-model summarize --slices examples/adoption/todo-search-slice,examples/valid/todo-app-pbe-run` writes an Evidence-only aggregate summary outside either slice, preserves per-slice boundaries, and does not run generate/compare/validate, implement `validate --all`, change CI workflows, expand source authority, enforce CI, clean up public docs, or approve full Graph-source promotion.                                                                                                              | Read-Model Aggregate Summary Contract                                             |
 | DEC-060 | active | The non-enforcing manual `PBE Read-Model Evidence` workflow now runs Todo Search generate/compare/validate, Todo App PBE Run structure-only generate/validate, and aggregate summarize, and uploads the expanded Evidence bundle plus CI manifest. The workflow remains `workflow_dispatch` only and does not add PR/push triggers, required checks, branch protection, CI enforcement, `validate --all`, source authority expansion, public-doc cleanup, tree-native retirement, Todo App promotion beyond structure-only, or full Graph-source promotion.                                                                                | Non-Enforcing Aggregate CI Read-Model Evidence Workflow                           |
+| DEC-061 | active | GitHub Actions run `28156403793` reviewed the aggregate-enabled non-enforcing `PBE Read-Model Evidence` workflow on `main` via `workflow_dispatch`. The uploaded artifact bundle and CI manifest are reviewed as CI-backed Evidence with `ci-evidence-pass`, Todo Search `validation-pass` / `comparison-pass`, Todo App PBE Run `validation-pass`, aggregate `aggregate-pass`, retained warning visibility, and explicit non-enforcement/non-promotion/source-authority boundaries. The run surfaced a Node.js 20 deprecation annotation as a CI hygiene warning, not an Evidence failure.                                                | Aggregate-Enabled CI-Backed Evidence Run Review                                   |
 
 ## Supersede Relationships
 
@@ -257,7 +258,7 @@ DEC-055 does not supersede DEC-054. It uses the Todo Search local/CI-backed base
 multi-slice validation, but it does not broaden the active pilot or implement a second slice.
 
 DEC-057 does not supersede DEC-056. It adds a second structure-only fixture/profile after the Todo Search extraction,
-while keeping Todo Search as the only active scoped source-authority pilot and only reviewed CI-backed slice.
+while keeping Todo Search as the only active scoped source-authority pilot.
 
 DEC-058 does not supersede DEC-057. It strengthens the report contract for the existing two generated slices so they can
 be read independently before any later aggregate reporting.
@@ -268,7 +269,11 @@ per-slice validation reports only. The aggregate summary is Evidence-only and do
 
 DEC-060 does not supersede DEC-052, DEC-054, DEC-057, DEC-058, or DEC-059. It extends the existing manual workflow to
 produce Todo App structure-only and aggregate summary artifacts, but keeps the workflow non-enforcing and
-manual-dispatch only. Reviewed Todo Search CI Evidence remains separate from any future aggregate-enabled run review.
+manual-dispatch only. DEC-061 later records the aggregate-enabled run review without changing enforcement or authority.
+
+DEC-061 does not supersede DEC-060. It records the observed aggregate-enabled workflow run and artifact review, while
+PR/push triggers, required checks, branch protection, CI enforcement, `validate --all`, source authority expansion,
+public-doc cleanup, and full Graph-source promotion remain separate future decisions.
 
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
