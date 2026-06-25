@@ -167,3 +167,7 @@ pilot execution behind a separate explicit user approval gate.
 The user selected the dry-run / review-only scoped pilot option on 2026-06-25. The review-only observation is recorded in
 [dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md). That observation
 does not change source authority and does not execute scoped source-authority pilot transition.
+
+The user later approved scoped source-authority pilot preparation. The preparation package is recorded in
+[scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md). It prepares
+the next execution decision surface, but actual scoped source-authority execution remains unapproved.

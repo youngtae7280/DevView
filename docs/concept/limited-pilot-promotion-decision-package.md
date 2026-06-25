@@ -61,6 +61,11 @@ The user then selected the dry-run / review-only scoped pilot option. The observ
 [dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md) as
 `usable-with-warnings`; it does not change source authority or approve scoped source-authority pilot execution.
 
+The user also approved scoped source-authority pilot preparation. The preparation package is recorded in
+[scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md). It
+recommends generated builder / CLI-backed read-model output before authority-bearing execution unless the user explicitly
+accepts manual-candidate risk for the bounded pilot.
+
 ## Pilot Scope
 
 ### Primary Pilot Scope
@@ -258,8 +263,8 @@ This package does not decide:
 - Will the user require ACEP task-card public-doc cleanup before full promotion?
 - Will the user treat bounded fixture Evidence as enough for the limited pilot, while reserving full-product runtime
   proof for a later full promotion review?
-- After the usable-with-warnings dry-run, will the user proceed to scoped source-authority pilot preparation, require
-  generated builder output, require public-doc cleanup, strengthen Evidence, defer, or reject the scoped pilot?
+- Will the user approve actual scoped source-authority pilot execution with warnings, require generated builder output,
+  require public-doc cleanup, strengthen Evidence, defer, or reject the scoped pilot?
 
 ## Gate Self-Check
 
@@ -288,4 +293,4 @@ It does not change source authority.
 
 It does not supersede tree-native artifacts.
 
-The next step must be a separate user decision about scoped source-authority pilot preparation or prerequisites.
+The next step must be a separate user decision about actual scoped source-authority pilot execution or prerequisites.

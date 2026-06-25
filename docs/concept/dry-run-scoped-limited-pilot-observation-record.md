@@ -189,21 +189,30 @@ Warnings that remain:
 
 ## Next Decision Surface
 
-After this dry-run, the user must choose one of the following before any next step changes authority or proceeds toward
-execution:
+After this dry-run, the user chose:
 
-1. `Proceed to scoped source-authority pilot preparation`
-2. `Require generated builder / CLI-backed read-model first`
-3. `Require public-doc cleanup first`
-4. `Run another dry-run or strengthen evidence`
+```text
+Proceed to scoped source-authority pilot preparation
+```
+
+That choice is recorded in
+[scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md). It
+authorizes preparation only. It does not authorize actual scoped source-authority pilot execution.
+
+The new next decision surface is:
+
+1. `Approve actual scoped source-authority pilot execution with warnings`
+2. `Require generated builder / CLI-backed read-model before execution`
+3. `Require public-doc cleanup before execution`
+4. `Strengthen evidence / run another dry-run`
 5. `Defer scoped source-authority pilot`
 6. `Reject scoped source-authority pilot`
 
 Recommended next discussion:
 
 ```text
-Decide whether the usable-with-warnings dry-run is enough to begin scoped source-authority pilot preparation, or whether
-generated builder output / public-doc cleanup should be required first.
+Decide whether generated builder output, public-doc cleanup, stronger rollback/fallback Evidence, or explicit
+risk-accepted approval is required before actual scoped source-authority pilot execution.
 ```
 
 This is a user decision. Codex/PBE cannot infer or self-approve it.

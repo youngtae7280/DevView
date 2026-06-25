@@ -114,6 +114,12 @@ judgment surface for the limited pilot decision, and
 [limited-pilot-transition-record.md](limited-pilot-transition-record.md) records the bounded user-approved option. No
 runtime authority changes.
 
+[dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md) records the
+user-selected review-only dry-run as `usable-with-warnings`.
+[scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md) records the
+user-approved preparation package and recommends generated builder / CLI-backed read-model output before
+authority-bearing scoped execution. It still does not change runtime authority.
+
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) and
 [retrofit-graph-bootstrap.md](retrofit-graph-bootstrap.md) refine the target Graph-first architecture. They do not
 change current tree-native runtime authority, CLI behavior, validators, schemas, or generated builder support.

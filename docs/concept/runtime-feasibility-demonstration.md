@@ -349,8 +349,8 @@ Those remain later concept or implementation questions.
 
 - Should future demo results become a generated artifact?
 - How should future demo results connect to CI or validators?
-- After the usable-with-warnings dry-run, will the user proceed to scoped source-authority pilot preparation, require
-  prerequisites first, run another dry-run, defer, or reject the scoped pilot?
+- Will the user approve actual scoped source-authority pilot execution with warnings, require prerequisites first,
+  strengthen Evidence, defer, or reject execution?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
 - Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?

@@ -26,6 +26,10 @@ observation is recorded in
 [dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md). That record
 does not execute scoped source-authority transition and does not approve full Graph-source promotion.
 
+The user then approved scoped source-authority pilot preparation. The preparation package is recorded in
+[scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md). It does
+not approve actual scoped source-authority execution.
+
 ## Scope
 
 ### Primary Scope
@@ -276,5 +280,6 @@ This plan does not approve or execute full Graph-source promotion.
 
 This plan does not change source authority.
 
-The next step requires user selection of whether to prepare scoped source-authority pilot execution, require generated
-builder output, require public-doc cleanup, strengthen Evidence, defer, or reject the scoped pilot.
+The next step requires user selection of whether to approve actual scoped source-authority pilot execution with warnings,
+require generated builder output first, require public-doc cleanup first, strengthen Evidence, defer, or reject the
+scoped pilot.

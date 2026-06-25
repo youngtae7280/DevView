@@ -280,6 +280,10 @@ mode-selection boundary. The user selected dry-run / review-only first, and the 
 not need rollback because it does not change source authority. Scoped source-authority pilot execution would require
 rollback/fallback Evidence and compatibility marking before it can be approved.
 
+[scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md) records the
+preparation package. It classifies rollback as not needed for preparation and not yet ready for authority execution
+until fallback triggers, precedence, and user-visible rollback/fallback decisions are defined.
+
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) adds a source-transition safety constraint: durable
 semantic relationships must remain Edges, while Tags are view-scoped roles only. A future transition or parity artifact
 that encodes durable meaning as tags can become a projection/parity failure or compatibility-control trigger.
@@ -356,8 +360,8 @@ Those remain later concept or implementation questions.
 - How should a future validator or CI check rollback readiness without over-automating source authority decisions?
 - Does rollback review need a specialized Approval Brief template?
 - Who approves compatibility retirement, and at what review point?
-- After the usable-with-warnings dry-run, will the user proceed to scoped source-authority pilot preparation, require
-  rollback/fallback prerequisites first, run another dry-run, defer, or reject the scoped pilot?
+- Will the user approve actual scoped source-authority pilot execution, require rollback/fallback prerequisites first,
+  run another dry-run, defer, or reject execution?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
 - Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?

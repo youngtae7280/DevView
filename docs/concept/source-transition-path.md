@@ -240,6 +240,10 @@ execution modes. The user selected dry-run / review-only first, and
 review-only observation as `usable-with-warnings`. Any scoped source-authority pilot execution still requires a separate
 explicit user approval and rollback/fallback/compatibility boundary.
 
+[scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md) records the
+user-approved preparation package. It defines the candidate source authority boundary, source/fallback matrix, and gates
+for a possible scoped execution, but it does not execute that transition.
+
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) defines the target Graph-first responsibility split:
 Nodes are durable targets, Edges are durable semantic relationships, and Tags are temporary view-scoped roles.
 
@@ -320,8 +324,8 @@ Those remain later concept or implementation questions.
 
 - How formal should projection/parity expectations be before promotion review?
 - Does promotion review need a specialized Approval Brief template?
-- After the usable-with-warnings dry-run, will the user proceed to scoped source-authority pilot preparation, require
-  prerequisites first, run another dry-run, defer, or reject the scoped pilot?
+- Will the user approve actual scoped source-authority pilot execution with warnings, require prerequisites first,
+  strengthen Evidence, defer, or reject execution?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
 - Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?

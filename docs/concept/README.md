@@ -189,6 +189,14 @@ Graph-source promotion, and does not change current operational source. The next
 whether to prepare scoped source-authority pilot execution, require generated builder output, require public-doc cleanup,
 strengthen evidence, defer, or reject the scoped pilot.
 
+The following scoped source-authority pilot preparation package is recorded:
+
+- [scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md)
+
+The user approved preparation only. The package keeps actual scoped source-authority execution unapproved, recommends
+generated builder / CLI-backed read-model output before authority-bearing execution, and preserves tree-native
+selected-slice artifacts as current operational source.
+
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.
