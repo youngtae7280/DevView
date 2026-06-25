@@ -1,0 +1,69 @@
+{
+  "version": "0.1.0-scoped-source-authority-pilot",
+  "status": "scoped-pilot-executed-with-fallback-ready",
+  "approval": {
+    "source": "parent orchestration chat",
+    "date": "2026-06-25",
+    "approvedOption": "Approve actual scoped source-authority pilot execution with generated Evidence",
+    "scope": "examples/adoption/todo-search-slice only"
+  },
+  "pilotScope": {
+    "primary": "examples/adoption/todo-search-slice",
+    "supplementalWarningOnly": "examples/adoption/compatibility-mismatch-slice",
+    "nonScope": [
+      "full Graph-source promotion",
+      "repository-wide source authority change",
+      "tree-native artifact retirement",
+      "public-doc cleanup",
+      "validator/CI enforcement",
+      "full Todo app implementation"
+    ]
+  },
+  "pilotAuthority": {
+    "activePilotRecord": "examples/adoption/todo-search-slice/generated/generated-read-model.json",
+    "authorityMeaning": "Pilot-scoped Graph-first Node/Edge/Tag interpretation and 7 Core View traversal for the Todo Search selected slice only.",
+    "requiredParityReport": "examples/adoption/todo-search-slice/generated/read-model-parity-report.json",
+    "requiredParityStatus": "comparison-pass",
+    "fallbackReference": [
+      "examples/adoption/todo-search-slice/product-tree.json",
+      "examples/adoption/todo-search-slice/project-tree.json",
+      "examples/adoption/todo-search-slice/work-tree.json",
+      "examples/adoption/todo-search-slice/test-tree.json",
+      "examples/adoption/todo-search-slice/evidence-tree.json",
+      "examples/adoption/todo-search-slice/acceptance-tree.json",
+      "examples/adoption/todo-search-slice/maintainability-graph-read-model.json",
+      "examples/adoption/todo-search-slice/view-instance-manifest.json"
+    ]
+  },
+  "retainedWarnings": [
+    {
+      "id": "bounded-fixture-evidence",
+      "status": "accepted-for-scoped-pilot",
+      "summary": "Bounded fixture Evidence is not full Todo app implementation."
+    },
+    {
+      "id": "partial-ui-evidence",
+      "status": "accepted-warning-for-scoped-pilot",
+      "summary": "UI screenshot/manual visual Evidence remains partial."
+    },
+    {
+      "id": "validator-ci-backed-evidence",
+      "status": "future-strengthening",
+      "summary": "Validator/CI-backed Evidence is not introduced by this pilot."
+    },
+    {
+      "id": "acep-public-doc-cleanup",
+      "status": "deferred-cleanup",
+      "summary": "ACEP task-card public-doc cleanup remains deferred."
+    }
+  ],
+  "fallbackTriggers": [
+    "parity report becomes comparison-warning, comparison-blocked, or decision-required",
+    "source authority boundary text becomes missing or broader than Todo Search selected slice",
+    "retained warnings are hidden",
+    "Check/Evidence separation becomes ambiguous",
+    "user acceptance authority appears replaced by Codex/PBE",
+    "compatibility mismatch affects current scope, verification, acceptance, or authority judgment"
+  ],
+  "nonPromotionStatement": "This marker records a bounded Todo Search scoped pilot only. It does not promote Maintainability Graph, change repository-wide source authority, retire tree-native artifacts, clean up public docs, or introduce validator/CI enforcement."
+}

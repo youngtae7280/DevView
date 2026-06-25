@@ -26,7 +26,7 @@
         "AC-SEARCH-003",
         "PP-001",
         "AT-ROOT",
-        "DEC-LIMITED-PILOT-PENDING",
+        "DEC-SCOPED-PILOT-EXECUTION",
         "DOC-LIMITED-PILOT-PACKAGE",
         "DOC-LIMITED-PILOT-TRANSITION-RECORD"
       ],
@@ -45,7 +45,7 @@
         "AC-SEARCH-002": ["required"],
         "AC-SEARCH-003": ["required"],
         "DOC-LIMITED-PILOT-PACKAGE": ["output"],
-        "DEC-LIMITED-PILOT-PENDING": ["output"],
+        "DEC-SCOPED-PILOT-EXECUTION": ["output"],
         "DOC-LIMITED-PILOT-TRANSITION-RECORD": ["output"]
       },
       "coverageStatus": "present",
@@ -241,7 +241,7 @@
         "FIND-PARTIAL-UI",
         "FIND-GENERATED-BUILDER-MISSING",
         "FIND-ACEP-CLEANUP-DEFERRED",
-        "DEC-LIMITED-PILOT-PENDING",
+        "DEC-SCOPED-PILOT-EXECUTION",
         "DOC-LIMITED-PILOT-TRANSITION-RECORD"
       ],
       "includedEdgeIds": [
@@ -263,7 +263,7 @@
         "AB-TODO-SEARCH": ["output"],
         "FIND-PARTIAL-UI": ["stale"],
         "FIND-GENERATED-BUILDER-MISSING": ["stale"],
-        "DEC-LIMITED-PILOT-PENDING": ["output"],
+        "DEC-SCOPED-PILOT-EXECUTION": ["output"],
         "DOC-LIMITED-PILOT-TRANSITION-RECORD": ["output"]
       },
       "coverageStatus": "present",

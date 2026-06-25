@@ -253,6 +253,11 @@ gates by itself.
 design-first follow-up. The bounded Todo Search builder now creates generated read-model Evidence and a parity report.
 Those outputs support readiness review only; they do not execute or approve scoped authority transition.
 
+[scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md) records the
+later user-approved Todo Search scoped source-authority pilot execution. It is bounded to
+`examples/adoption/todo-search-slice`, keeps tree-native selected-slice artifacts as fallback/reference, and does not
+promote Maintainability Graph as the repository-wide source model.
+
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) defines the target Graph-first responsibility split:
 Nodes are durable targets, Edges are durable semantic relationships, and Tags are temporary view-scoped roles.
 
@@ -333,12 +338,11 @@ Those remain later concept or implementation questions.
 
 - How formal should projection/parity expectations be before promotion review?
 - Does promotion review need a specialized Approval Brief template?
-- Will the user approve actual scoped source-authority pilot execution with warnings, require prerequisites first,
-  strengthen Evidence, defer, or reject execution?
+- After Todo Search scoped pilot execution, should PBE observe the pilot, require validator/CI-backed Evidence, perform
+  public-doc cleanup, prepare broader promotion review, or rollback/defer the pilot?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
-- After generated read-model Evidence exists, will the user approve scoped source-authority pilot execution, require
-  validator/CI backing, require cleanup, defer, or reject the scoped pilot path?
+- What additional evidence is required before any broader source authority transition beyond Todo Search?
 - How long should a post-promotion compatibility period last?
 - Where is the boundary between automatic recovery and manual judgment when tree-native artifacts and graph records
   conflict?

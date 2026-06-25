@@ -293,6 +293,11 @@ design-first follow-up. The bounded Todo Search builder now creates a comparison
 support rollback/fallback review. Those outputs still do not make rollback-ready status true or approve scoped source
 authority execution by themselves.
 
+[scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md) records the
+later user-approved Todo Search scoped pilot execution with fallback ready. Because no tree-native selected-slice
+artifact is retired, rollback is not a destructive command; fallback remains to the retained tree-native artifacts if
+parity, boundary, warning visibility, Check/Evidence separation, compatibility, or user-acceptance authority fails.
+
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) adds a source-transition safety constraint: durable
 semantic relationships must remain Edges, while Tags are view-scoped roles only. A future transition or parity artifact
 that encodes durable meaning as tags can become a projection/parity failure or compatibility-control trigger.
@@ -369,8 +374,8 @@ Those remain later concept or implementation questions.
 - How should a future validator or CI check rollback readiness without over-automating source authority decisions?
 - Does rollback review need a specialized Approval Brief template?
 - Who approves compatibility retirement, and at what review point?
-- Will the user approve actual scoped source-authority pilot execution, require rollback/fallback prerequisites first,
-  run another dry-run, defer, or reject execution?
+- After Todo Search scoped pilot execution, should PBE observe the pilot, require validator/CI-backed Evidence, perform
+  public-doc cleanup, prepare broader promotion review, or rollback/defer the pilot?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
 - What rollback/fallback Evidence and generated/manual conflict handling is sufficient before actual scoped execution?

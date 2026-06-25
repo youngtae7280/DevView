@@ -130,6 +130,10 @@ Future scoped transition execution must:
 If a later pilot execution fails, is deferred, or discovers mismatch, fallback remains to the current tree-native
 selected-slice artifacts unless a separately approved transition record says otherwise.
 
+That later scoped execution has now been separately approved and recorded for Todo Search only in
+[scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md). The later record
+keeps this fallback rule active and does not retire tree-native artifacts.
+
 ## Control Node Summary
 
 | Control record                                 | Family                       | Status after approval                       | Notes                                                                                        |
@@ -170,8 +174,13 @@ does not change source authority and does not execute scoped source-authority pi
 
 The user later approved scoped source-authority pilot preparation. The preparation package is recorded in
 [scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md). It prepares
-the next execution decision surface, but actual scoped source-authority execution remains unapproved.
+the next execution decision surface.
 
 The user then required generated builder / CLI-backed read-model Evidence before actual scoped execution. The requirement
 is recorded in [generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md). It does not
 implement generated output and does not change source authority.
+
+The bounded generated Evidence builder was later implemented, comparison warnings were resolved to `comparison-pass`,
+and the user approved actual scoped source-authority pilot execution with generated Evidence. The execution is recorded
+in [scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md). Full
+Graph-source promotion remains unapproved.

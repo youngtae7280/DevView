@@ -14,7 +14,8 @@
     "coreViewBasis": "docs/concept/view-tree-pack.md 7 Core Views",
     "viewInstanceManifest": "examples/adoption/todo-search-slice/view-instance-manifest.json",
     "readinessUse": "Node/Edge/Tag parity evidence for limited pilot promotion decision review only.",
-    "viewMembershipBoundary": "View membership is represented by includedInViewIds and viewRoles. viewScopedTags contains only allowed role tags and never stores Core View ids."
+    "viewMembershipBoundary": "View membership is represented by includedInViewIds and viewRoles. viewScopedTags contains only allowed role tags and never stores Core View ids.",
+    "limitedPilotApprovalStatus": "scoped_pilot_executed_with_fallback_ready"
   },
   "sourceInputs": [
     "examples/adoption/todo-search-slice/product-tree.json",
@@ -80,7 +81,7 @@
       "legacyGraphType": "pilot_task",
       "sourceArtifact": "limited-pilot-promotion-decision-package.md",
       "title": "Todo Search limited pilot review task",
-      "status": "decision_required_after_graph_first_refresh",
+      "status": "scoped_pilot_executed_with_fallback_ready",
       "confidence": "inferred",
       "freshnessStatus": "fresh",
       "parityStatus": "present",
@@ -105,10 +106,7 @@
       "viewScopedTags": ["target", "context"],
       "notes": "Product meaning includes title + note/content search after PP-001.",
       "includedInViewIds": ["intent-view", "behavior-view"],
-      "viewRoles": {
-        "intent-view": ["target"],
-        "behavior-view": ["context"]
-      }
+      "viewRoles": { "intent-view": ["target"], "behavior-view": ["context"] }
     },
     {
       "id": "AC-SEARCH-001",
@@ -332,9 +330,7 @@
       "viewScopedTags": ["context"],
       "notes": "Fixture data includes title, note, content, tag, and dueDate; selected search targets are title/note/content only.",
       "includedInViewIds": ["structure-view"],
-      "viewRoles": {
-        "structure-view": ["context"]
-      }
+      "viewRoles": { "structure-view": ["context"] }
     },
     {
       "id": "TT-SEARCH-001",
@@ -348,9 +344,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["required"],
       "includedInViewIds": ["verification-view"],
-      "viewRoles": {
-        "verification-view": ["required"]
-      }
+      "viewRoles": { "verification-view": ["required"] }
     },
     {
       "id": "TT-SEARCH-002",
@@ -364,9 +358,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["required"],
       "includedInViewIds": ["verification-view"],
-      "viewRoles": {
-        "verification-view": ["required"]
-      }
+      "viewRoles": { "verification-view": ["required"] }
     },
     {
       "id": "TT-SEARCH-003",
@@ -415,9 +407,7 @@
       "viewScopedTags": ["stale"],
       "notes": "Historical title-only evidence is supplemented by fresh fixture evidence for the expanded scope.",
       "includedInViewIds": ["evidence-acceptance-view"],
-      "viewRoles": {
-        "evidence-acceptance-view": ["stale"]
-      }
+      "viewRoles": { "evidence-acceptance-view": ["stale"] }
     },
     {
       "id": "EV-SEARCH-REVIEW",
@@ -431,9 +421,7 @@
       "parityStatus": "partial",
       "viewScopedTags": ["stale"],
       "includedInViewIds": ["evidence-acceptance-view"],
-      "viewRoles": {
-        "evidence-acceptance-view": ["stale"]
-      }
+      "viewRoles": { "evidence-acceptance-view": ["stale"] }
     },
     {
       "id": "EV-SEARCH-NOTE-TEST",
@@ -464,9 +452,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["target"],
       "includedInViewIds": ["impact-view"],
-      "viewRoles": {
-        "impact-view": ["target"]
-      }
+      "viewRoles": { "impact-view": ["target"] }
     },
     {
       "id": "CH-001",
@@ -480,9 +466,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["target"],
       "includedInViewIds": ["impact-view"],
-      "viewRoles": {
-        "impact-view": ["target"]
-      }
+      "viewRoles": { "impact-view": ["target"] }
     },
     {
       "id": "IM-SEARCH-001",
@@ -497,9 +481,7 @@
       "viewScopedTags": ["output"],
       "notes": "Impact classification is a manual finding/control record derived from selected-slice artifacts.",
       "includedInViewIds": ["impact-view"],
-      "viewRoles": {
-        "impact-view": ["output"]
-      }
+      "viewRoles": { "impact-view": ["output"] }
     },
     {
       "id": "AT-ROOT",
@@ -513,9 +495,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["output"],
       "includedInViewIds": ["evidence-acceptance-view"],
-      "viewRoles": {
-        "evidence-acceptance-view": ["output"]
-      }
+      "viewRoles": { "evidence-acceptance-view": ["output"] }
     },
     {
       "id": "CYCLE-TODO-SEARCH",
@@ -529,9 +509,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["guard", "required"],
       "includedInViewIds": ["scope-execution-view"],
-      "viewRoles": {
-        "scope-execution-view": ["required", "guard"]
-      }
+      "viewRoles": { "scope-execution-view": ["required", "guard"] }
     },
     {
       "id": "NEC-WT-SEARCH-001",
@@ -545,9 +523,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["guard", "required"],
       "includedInViewIds": ["scope-execution-view"],
-      "viewRoles": {
-        "scope-execution-view": ["required", "guard"]
-      }
+      "viewRoles": { "scope-execution-view": ["required", "guard"] }
     },
     {
       "id": "AB-TODO-SEARCH",
@@ -561,9 +537,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["output"],
       "includedInViewIds": ["evidence-acceptance-view"],
-      "viewRoles": {
-        "evidence-acceptance-view": ["output"]
-      }
+      "viewRoles": { "evidence-acceptance-view": ["output"] }
     },
     {
       "id": "CCN-ACEP-TASK-CARD-AUTHORITY-001",
@@ -594,9 +568,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["stale"],
       "includedInViewIds": ["evidence-acceptance-view"],
-      "viewRoles": {
-        "evidence-acceptance-view": ["stale"]
-      }
+      "viewRoles": { "evidence-acceptance-view": ["stale"] }
     },
     {
       "id": "FIND-PARTIAL-UI",
@@ -610,9 +582,7 @@
       "parityStatus": "partial",
       "viewScopedTags": ["stale"],
       "includedInViewIds": ["evidence-acceptance-view"],
-      "viewRoles": {
-        "evidence-acceptance-view": ["stale"]
-      }
+      "viewRoles": { "evidence-acceptance-view": ["stale"] }
     },
     {
       "id": "FIND-GENERATED-BUILDER-MISSING",
@@ -643,9 +613,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["stale"],
       "includedInViewIds": ["impact-view"],
-      "viewRoles": {
-        "impact-view": ["stale"]
-      }
+      "viewRoles": { "impact-view": ["stale"] }
     },
     {
       "id": "DOC-READ-MODEL",
@@ -659,9 +627,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["output"],
       "includedInViewIds": ["evidence-acceptance-view"],
-      "viewRoles": {
-        "evidence-acceptance-view": ["output"]
-      }
+      "viewRoles": { "evidence-acceptance-view": ["output"] }
     },
     {
       "id": "DOC-PARITY-CHECK",
@@ -675,9 +641,7 @@
       "parityStatus": "present",
       "viewScopedTags": ["output"],
       "includedInViewIds": ["evidence-acceptance-view"],
-      "viewRoles": {
-        "evidence-acceptance-view": ["output"]
-      }
+      "viewRoles": { "evidence-acceptance-view": ["output"] }
     },
     {
       "id": "DOC-LIMITED-PILOT-PACKAGE",
@@ -691,17 +655,15 @@
       "parityStatus": "present",
       "viewScopedTags": ["output"],
       "includedInViewIds": ["intent-view"],
-      "viewRoles": {
-        "intent-view": ["output"]
-      }
+      "viewRoles": { "intent-view": ["output"] }
     },
     {
-      "id": "DEC-LIMITED-PILOT-PENDING",
+      "id": "DEC-SCOPED-PILOT-EXECUTION",
       "nodeKind": "decision",
       "legacyGraphType": "approved_user_decision",
-      "sourceArtifact": "docs/concept/limited-pilot-transition-record.md",
-      "title": "Limited pilot promotion decision approved for bounded Todo Search record",
-      "status": "approved_for_bounded_transition_record",
+      "sourceArtifact": "docs/concept/scoped-source-authority-pilot-execution-record.md",
+      "title": "Actual scoped source-authority pilot execution approved for Todo Search",
+      "status": "scoped_pilot_executed_with_fallback_ready",
       "confidence": "user-confirmed",
       "freshnessStatus": "fresh",
       "parityStatus": "present",
@@ -711,7 +673,8 @@
         "intent-view": ["output"],
         "evidence-acceptance-view": ["output"]
       },
-      "notes": "Legacy id retained for trace stability; the decision is now resolved by parent orchestration approval on 2026-06-25."
+      "notes": "Legacy id retained for trace stability; the decision is now resolved by parent orchestration approval on 2026-06-25.",
+      "summary": "User approved bounded Todo Search scoped source-authority pilot execution with generated Evidence."
     },
     {
       "id": "VIEW-TODO-SEARCH-CORE-VIEWS",
@@ -726,9 +689,7 @@
       "viewScopedTags": ["output"],
       "notes": "This manifest is a review artifact, not source authority.",
       "includedInViewIds": ["scope-execution-view"],
-      "viewRoles": {
-        "scope-execution-view": ["output"]
-      }
+      "viewRoles": { "scope-execution-view": ["output"] }
     },
     {
       "id": "DOC-LIMITED-PILOT-TRANSITION-RECORD",
@@ -1390,14 +1351,14 @@
     },
     {
       "id": "E-DEC-APPROVES-TRANSITION-RECORD",
-      "from": "DEC-LIMITED-PILOT-PENDING",
+      "from": "DEC-SCOPED-PILOT-EXECUTION",
       "to": "DOC-LIMITED-PILOT-TRANSITION-RECORD",
       "edgeType": "approves",
       "legacyRelationship": "approvedLimitedPilotDecisionRecordedByTransitionRecord",
       "confidence": "user-confirmed",
       "freshnessStatus": "fresh",
       "parityStatus": "present",
-      "source": "docs/concept/limited-pilot-transition-record.md",
+      "source": "docs/concept/scoped-source-authority-pilot-execution-record.md",
       "notes": "Approval is bounded to the Todo Search selected slice and does not approve full Graph-source promotion."
     }
   ],
@@ -1414,7 +1375,7 @@
         "AC-SEARCH-003",
         "PP-001",
         "AT-ROOT",
-        "DEC-LIMITED-PILOT-PENDING",
+        "DEC-SCOPED-PILOT-EXECUTION",
         "DOC-LIMITED-PILOT-PACKAGE",
         "DOC-LIMITED-PILOT-TRANSITION-RECORD"
       ],
@@ -1583,7 +1544,7 @@
         "FIND-PARTIAL-UI",
         "FIND-GENERATED-BUILDER-MISSING",
         "FIND-ACEP-CLEANUP-DEFERRED",
-        "DEC-LIMITED-PILOT-PENDING",
+        "DEC-SCOPED-PILOT-EXECUTION",
         "DOC-LIMITED-PILOT-TRANSITION-RECORD"
       ],
       "includedEdgeIds": [
@@ -1663,7 +1624,7 @@
     {
       "requirement": "Limited pilot approval is recorded as a bounded transition record after refresh",
       "status": "present",
-      "evidence": ["DOC-LIMITED-PILOT-PACKAGE", "DEC-LIMITED-PILOT-PENDING", "DOC-LIMITED-PILOT-TRANSITION-RECORD"]
+      "evidence": ["DOC-LIMITED-PILOT-PACKAGE", "DEC-SCOPED-PILOT-EXECUTION", "DOC-LIMITED-PILOT-TRANSITION-RECORD"]
     },
     {
       "requirement": "Full promotion repeatability / generated builder is demonstrated",

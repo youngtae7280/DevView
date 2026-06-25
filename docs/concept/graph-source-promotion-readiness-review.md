@@ -96,6 +96,11 @@ The dry-run observation result is recorded as `usable-with-warnings` in
 [dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md). It is
 review-only and does not approve scoped source-authority pilot execution.
 
+The user later approved actual scoped source-authority pilot execution for the Todo Search selected slice only after
+generated Evidence and `comparison-pass` parity were recorded. That execution is documented in
+[scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md). This readiness
+review still does not approve full Graph-source promotion or repository-wide source authority change.
+
 Preparation outcome:
 
 ```text

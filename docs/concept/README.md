@@ -225,6 +225,16 @@ The generated output is Evidence only. The first generated/manual comparison war
 execution, change source authority, retire tree-native artifacts, enforce validator/CI gates, clean up public docs, or
 promote Maintainability Graph.
 
+The user then approved actual scoped source-authority pilot execution for the Todo Search selected slice only. The
+execution record is:
+
+- [scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md)
+
+The scoped pilot status is `scoped-pilot-executed-with-fallback-ready`. The generated read-model Evidence is accepted as
+the pilot-scoped Graph-first authority record for Todo Search Node/Edge/Tag interpretation and 7 Core View traversal
+only. Tree-native selected-slice artifacts remain fallback/reference and are not retired. This record is not full
+Graph-source promotion, repository-wide source authority change, public-doc cleanup, or validator/CI enforcement.
+
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.

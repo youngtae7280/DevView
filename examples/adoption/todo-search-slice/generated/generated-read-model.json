@@ -2,9 +2,9 @@
   "version": "0.1.0-generated-read-model-evidence",
   "metadata": {
     "artifactRole": "generated_read_model_evidence",
-    "generatedAt": "2026-06-25T04:04:43.842Z",
+    "generatedAt": "2026-06-25T04:20:13.572Z",
     "commandIdentity": "pbe graph read-model generate --slice examples/adoption/todo-search-slice",
-    "sourceCommit": "7e80b31",
+    "sourceCommit": "b28674d",
     "sourceSlice": "examples/adoption/todo-search-slice",
     "inputArtifactList": [
       "examples/adoption/todo-search-slice/product-tree.json",
@@ -21,6 +21,8 @@
       "examples/adoption/todo-search-slice/runtime-evidence.md",
       "examples/adoption/todo-search-slice/approval-brief.md",
       "examples/adoption/todo-search-slice/evidence-exceptions.md",
+      "examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json",
+      "docs/concept/scoped-source-authority-pilot-execution-record.md",
       "examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md"
     ],
     "generatedStatus": "generated-present",
@@ -99,6 +101,16 @@
     {
       "relativePath": "examples/adoption/todo-search-slice/evidence-exceptions.md",
       "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\evidence-exceptions.md",
+      "status": "present"
+    },
+    {
+      "relativePath": "examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\generated\\scoped-source-authority-pilot-marker.json",
+      "status": "present"
+    },
+    {
+      "relativePath": "docs/concept/scoped-source-authority-pilot-execution-record.md",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\docs\\concept\\scoped-source-authority-pilot-execution-record.md",
       "status": "present"
     },
     {
@@ -625,11 +637,11 @@
       "viewRoles": { "intent-view": ["output"] }
     },
     {
-      "id": "DEC-LIMITED-PILOT-PENDING",
+      "id": "DEC-SCOPED-PILOT-EXECUTION",
       "nodeKind": "decision",
-      "sourceArtifact": "docs/concept/scoped-source-authority-pilot-preparation-package.md",
-      "title": "Actual scoped source-authority execution decision remains pending",
-      "status": "decision_required",
+      "sourceArtifact": "docs/concept/scoped-source-authority-pilot-execution-record.md",
+      "title": "Actual scoped source-authority pilot execution approved for Todo Search",
+      "status": "scoped_pilot_executed_with_fallback_ready",
       "confidence": "user-confirmed",
       "freshnessStatus": "fresh",
       "parityStatus": "present",
@@ -1263,13 +1275,13 @@
     },
     {
       "id": "E-DEC-APPROVES-TRANSITION-RECORD",
-      "from": "DEC-LIMITED-PILOT-PENDING",
+      "from": "DEC-SCOPED-PILOT-EXECUTION",
       "to": "DOC-LIMITED-PILOT-TRANSITION-RECORD",
       "edgeType": "approves",
       "confidence": "user-confirmed",
       "freshnessStatus": "fresh",
       "parityStatus": "present",
-      "source": "docs/concept/limited-pilot-transition-record.md"
+      "source": "docs/concept/scoped-source-authority-pilot-execution-record.md"
     }
   ],
   "coreViewCoverage": [

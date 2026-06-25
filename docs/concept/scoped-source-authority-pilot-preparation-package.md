@@ -1,6 +1,6 @@
 # Scoped Source-Authority Pilot Preparation Package
 
-Status: scoped-source-authority-pilot-preparation-package / preparation-approved / execution-not-approved
+Status: scoped-source-authority-pilot-preparation-package / preparation-approved / followed-by-scoped-execution-record
 
 ## Document Purpose
 
@@ -9,6 +9,11 @@ slice.
 
 It answers what would have to be true before source authority can change inside the bounded pilot scope. It does not
 execute that change.
+
+Follow-up status: the user later approved actual scoped source-authority pilot execution for the Todo Search selected
+slice with generated Evidence. The execution is recorded in
+[scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md). This preparation
+package remains the prerequisite decision surface and does not become full Graph-source promotion.
 
 This document is not:
 
@@ -276,22 +281,22 @@ CLI-backed read-model output before authority-bearing execution.
 | Generated/manual comparison warning review | complete         | The five freshness warnings were reviewed; the current parity report is `comparison-pass`.            |
 | Rollback/fallback readiness                | partial          | Not needed for preparation; not ready for authority execution without boundary and fallback Evidence. |
 | Compatibility cleanup                      | deferred warning | ACEP task-card public-doc cleanup remains deferred and visible.                                       |
-| Actual scoped authority execution approval | missing          | Requires next explicit user decision.                                                                 |
+| Actual scoped authority execution approval | resolved         | User approved bounded Todo Search scoped pilot execution; see the execution record.                   |
 
 ### Remaining Judgment
 
 The user selected generated builder / CLI-backed read-model Evidence as a prerequisite, selected design-first work, and
-approved the bounded implementation task. Generated Evidence now exists for Todo Search. The next judgment is whether to
-approve actual scoped source-authority pilot execution with generated Evidence, require validator/CI backing, require
-cleanup first, defer, or reject the scoped pilot path.
+approved the bounded implementation task. Generated Evidence now exists for Todo Search, and the user approved the
+bounded scoped pilot execution. The next judgment is whether to observe/review the pilot, require validator/CI backing,
+require cleanup first, prepare broader promotion review, rollback/defer, or keep the pilot bounded.
 
 ### Approval Choice Candidates
 
-- `Approve actual scoped source-authority pilot execution with generated Evidence`
+- `Observe / review scoped source-authority pilot`
 - `Require validator/CI-backed read-model Evidence before execution`
 - `Require public-doc cleanup before execution`
-- `Defer scoped source-authority pilot execution`
-- `Reject scoped source-authority pilot path`
+- `Prepare broader Graph-source promotion review`
+- `Rollback / defer scoped source-authority pilot`
 
 ### State Label
 
@@ -299,8 +304,8 @@ cleanup first, defer, or reject the scoped pilot path.
 Decision required
 ```
 
-Reason: preparation, output design, and bounded generated Evidence are recorded, but scoped source-authority execution
-is not approved.
+Reason: preparation, output design, bounded generated Evidence, and scoped pilot execution are recorded, but next-phase
+review or broader promotion remains unapproved.
 
 ## Control Node Summary
 
@@ -308,10 +313,10 @@ is not approved.
 | ------------------------------------- | ---------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------ |
 | Preparation selected                  | Decision Control Node        | resolved                        | User approved scoped source-authority pilot preparation on 2026-06-25.                     |
 | Output design selected                | Decision Control Node        | resolved                        | User selected CLI-backed Evidence output design first; the design is now recorded.         |
-| Actual execution decision             | Decision Control Node        | waiting for human               | User must approve execution, require prerequisites, defer, or reject.                      |
+| Actual execution decision             | Decision Control Node        | resolved                        | User approved bounded Todo Search scoped pilot execution on 2026-06-25.                    |
 | Manual parity / generated builder     | Evidence Control Node        | generated present with warnings | Bounded generated output supports review; validator/CI and execution approval remain open. |
 | Public-doc cleanup                    | Compatibility Control Node   | deferred / active warning       | ACEP task-card cleanup remains visible and may be prerequisite if user chooses.            |
-| Scoped source authority change        | Impact / Change Control Node | not started                     | No source authority boundary changes in this package.                                      |
+| Scoped source authority change        | Impact / Change Control Node | executed in bounded scope       | Recorded separately in the scoped pilot execution record.                                  |
 | Demo-support Acceptance with warnings | Acceptance Control Node      | closed with warnings            | It supports demo review but is not source-transition approval.                             |
 | Rollback/fallback readiness           | Evidence / Decision Control  | partial                         | No rollback is needed now; rollback-ready status is not established for execution.         |
 

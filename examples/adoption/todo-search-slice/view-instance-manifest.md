@@ -41,15 +41,15 @@ id. Its `viewScopedTags` map uses node ids as keys and allowed role tags as valu
 | Scope / Execution View     | Cycle/Node Contract scope, forbidden behavior, required checks, and execution boundaries      | present  |
 | Impact View                | PP-001 change, impact classification, stale/partial Evidence, and compatibility warning       | present  |
 | Verification View          | Checks, behavior targets, and observable Evidence links                                       | present  |
-| Evidence / Acceptance View | Evidence, renewed user Acceptance, retained warnings, and pending promotion decision          | present  |
+| Evidence / Acceptance View | Evidence, renewed user Acceptance, retained warnings, and scoped pilot execution boundary     | present  |
 
 ## View Notes
 
 ### Intent View
 
 The Intent View includes `TASK-TODO-SEARCH-PILOT`, `PT-SEARCH-001`, `AC-SEARCH-*`, `PP-001`, `AT-ROOT`,
-`DEC-LIMITED-PILOT-PENDING`, the limited pilot decision package, and the limited pilot transition record. It shows
-product meaning and the bounded user-approved pilot option without approving full promotion.
+`DEC-SCOPED-PILOT-EXECUTION`, the limited pilot decision package, and the limited pilot transition record. It shows
+product meaning and the bounded user-approved scoped pilot without approving full promotion.
 
 ### Behavior View
 

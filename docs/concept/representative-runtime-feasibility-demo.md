@@ -535,8 +535,8 @@ Those remain later concept or implementation questions.
 - Should the future demo result be a generated artifact or a manual Evidence pack?
 - How should future demo Evidence connect to CI or validators?
 - Does promotion review need a specialized Approval Brief template?
-- Will the user approve actual scoped source-authority pilot execution with warnings, require prerequisites first,
-  strengthen Evidence, defer, or reject execution?
+- After scoped Todo Search pilot execution, should PBE observe the pilot, require validator/CI-backed Evidence, perform
+  public-doc cleanup, prepare broader promotion review, or rollback/defer the pilot?
 - Will the user accept ACEP task-card public-doc cleanup as deferred cleanup, or require cleanup before promotion
   approval?
 - Does full Graph-source promotion require an actual generated graph builder or CLI-backed read-model output?

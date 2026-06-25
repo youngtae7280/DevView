@@ -615,11 +615,11 @@ function buildNodes(data: Record<string, unknown>): GraphNode[] {
       ['intent-view'],
     ),
     node(
-      'DEC-LIMITED-PILOT-PENDING',
+      'DEC-SCOPED-PILOT-EXECUTION',
       'decision',
-      'docs/concept/scoped-source-authority-pilot-preparation-package.md',
-      'Actual scoped source-authority execution decision remains pending',
-      'decision_required',
+      'docs/concept/scoped-source-authority-pilot-execution-record.md',
+      'Actual scoped source-authority pilot execution approved for Todo Search',
+      'scoped_pilot_executed_with_fallback_ready',
       'user-confirmed',
       'fresh',
       ['output'],
@@ -1133,10 +1133,10 @@ function buildEdges(): GraphEdge[] {
     ),
     edge(
       'E-DEC-APPROVES-TRANSITION-RECORD',
-      'DEC-LIMITED-PILOT-PENDING',
+      'DEC-SCOPED-PILOT-EXECUTION',
       'DOC-LIMITED-PILOT-TRANSITION-RECORD',
       'approves',
-      'docs/concept/limited-pilot-transition-record.md',
+      'docs/concept/scoped-source-authority-pilot-execution-record.md',
       'user-confirmed',
     ),
   ]
@@ -1759,6 +1759,8 @@ function sourceArtifactList(root: string, slice: string): SourceArtifact[] {
     `${slice}/runtime-evidence.md`,
     `${slice}/approval-brief.md`,
     `${slice}/evidence-exceptions.md`,
+    `${slice}/generated/scoped-source-authority-pilot-marker.json`,
+    'docs/concept/scoped-source-authority-pilot-execution-record.md',
     'examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
   ]
   return relativePaths.map((entry) => {

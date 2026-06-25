@@ -219,19 +219,19 @@ This design and bounded implementation result do not include:
 
 ## Recommended Next User Decision Surface
 
-After this design, the user approved and Codex implemented the bounded builder task. The next user decision surface is
-now:
+After this design, the user approved and Codex implemented the bounded builder task, then approved actual scoped
+source-authority pilot execution for Todo Search. The next user decision surface is now:
 
-1. `Approve actual scoped source-authority pilot execution with generated Evidence`
-2. `Require validator/CI-backed read-model Evidence before execution`
-3. `Require public-doc cleanup before execution`
-4. `Defer scoped source-authority pilot execution`
-5. `Reject scoped source-authority pilot path`
+1. `Observe / review scoped source-authority pilot`
+2. `Require validator/CI-backed read-model Evidence before broader execution or enforcement`
+3. `Require public-doc cleanup before broader promotion`
+4. `Prepare broader Graph-source promotion review`
+5. `Rollback / defer scoped source-authority pilot`
 
-Recommended option after bounded generated Evidence:
+Recommended option after scoped pilot execution:
 
 ```text
-Ask the user whether to proceed to scoped source-authority pilot execution review, with warnings retained.
+Observe / review scoped source-authority pilot before any broader promotion decision.
 ```
 
 Reason:
@@ -240,7 +240,12 @@ Reason:
 - The initial generated/manual freshness warnings were reviewed and resolved in
   `examples/adoption/todo-search-slice/generated/parity-warning-resolution.md`.
 - The current parity report is `comparison-pass` with no mismatch, blocking, or decision-required entries.
-- Source authority remains unchanged until a separate explicit user execution approval.
+- Scoped pilot execution is recorded for Todo Search only; broader source authority remains unchanged.
+
+The user later gave that explicit bounded execution approval for the Todo Search selected slice. The execution is
+recorded in [scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md). This
+does not expand the design into full promotion, validator/CI enforcement, public-doc cleanup, or repository-wide source
+authority change.
 
 If the user wants stricter repeatability, choose `Require validator/CI-backed read-model Evidence before execution`
 instead.
@@ -274,16 +279,17 @@ builder now creates generated output for Todo Search only.
 
 ### Remaining Judgment
 
-The user must decide whether generated Evidence is enough to review actual scoped source-authority pilot execution, or
-whether validator/CI backing, public-doc cleanup, deferral, or rejection is required first.
+The user approved bounded scoped source-authority pilot execution with generated Evidence. The remaining decision is
+whether to observe/review the pilot, require validator/CI backing, require public-doc cleanup, prepare broader promotion
+review, or rollback/defer the pilot.
 
 ### Approval Choice Candidates
 
-- `Approve actual scoped source-authority pilot execution with generated Evidence`
-- `Require validator/CI-backed read-model Evidence before execution`
-- `Require public-doc cleanup before execution`
-- `Defer scoped source-authority pilot execution`
-- `Reject scoped source-authority pilot path`
+- `Observe / review scoped source-authority pilot`
+- `Require validator/CI-backed read-model Evidence before broader execution or enforcement`
+- `Require public-doc cleanup before broader promotion`
+- `Prepare broader Graph-source promotion review`
+- `Rollback / defer scoped source-authority pilot`
 
 ### State Label
 
@@ -291,7 +297,8 @@ whether validator/CI backing, public-doc cleanup, deferral, or rejection is requ
 Decision required
 ```
 
-Reason: bounded generated Evidence exists, but scoped source-authority execution remains unapproved.
+Reason: bounded generated Evidence and scoped pilot execution are recorded, but next-phase review and broader promotion
+remain unapproved.
 
 ## Control Node Summary
 

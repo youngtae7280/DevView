@@ -193,6 +193,12 @@ The user approved that bounded implementation task. Todo Search generated read-m
 Outputs are written under `examples/adoption/todo-search-slice/generated/`. They satisfy this prerequisite for bounded
 Todo Search Evidence discussion only; they do not approve scoped source-authority execution.
 
+The user later approved actual scoped source-authority pilot execution for the Todo Search selected slice with this
+generated Evidence and `comparison-pass` parity. That execution is recorded in
+[scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md). The generated
+Evidence requirement remains bounded to the pilot and still does not approve full Graph-source promotion, public-doc
+cleanup, validator/CI enforcement, or tree-native artifact retirement.
+
 ### Original Requirement Choice Set
 
 After this requirement is recorded, the user must choose one of:
@@ -250,16 +256,17 @@ non-scope boundaries without implementing anything.
 
 ### Remaining Judgment
 
-The user must decide whether to proceed to scoped source-authority pilot execution review with generated Evidence,
-require validator/CI backing, require cleanup first, defer, or reject the scoped pilot path.
+The user approved scoped source-authority pilot execution with generated Evidence. The next decision is whether to
+observe/review the pilot, require validator/CI backing, require cleanup first, prepare broader promotion review,
+rollback/defer, or keep the pilot bounded.
 
 ### Approval Choice Candidates
 
-- `Approve actual scoped source-authority pilot execution with generated Evidence`
-- `Require validator/CI-backed read-model Evidence before execution`
-- `Require public-doc cleanup before execution`
-- `Defer scoped source-authority pilot execution`
-- `Reject scoped source-authority pilot path`
+- `Observe / review scoped source-authority pilot`
+- `Require validator/CI-backed read-model Evidence before broader execution or enforcement`
+- `Require public-doc cleanup before broader promotion`
+- `Prepare broader Graph-source promotion review`
+- `Rollback / defer scoped source-authority pilot`
 
 ### State Label
 
@@ -267,7 +274,8 @@ require validator/CI backing, require cleanup first, defer, or reject the scoped
 Decision required
 ```
 
-Reason: the prerequisite is selected, but implementation/design of generated Evidence is not approved or started.
+Reason: generated Evidence and scoped pilot execution are recorded, but next-phase review and broader promotion remain
+unapproved.
 
 ## Control Node Summary
 
