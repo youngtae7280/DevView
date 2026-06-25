@@ -257,8 +257,20 @@ The validator/CI-backed Evidence design is:
 - [validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md)
 
 This design separates CLI command success, validator-backed Evidence, and CI-backed Evidence. It defines future checks,
-report artifacts, status labels, and scope levels for broader execution/enforcement review without implementing a
-validator command, adding CI enforcement, expanding scope, or approving full Graph-source promotion.
+report artifacts, status labels, and scope levels for broader execution/enforcement review.
+
+The bounded scoped validator-backed Evidence command is now implemented for the Todo Search selected slice only:
+
+- command: `pbe graph read-model validate --slice examples/adoption/todo-search-slice`
+- output:
+  `examples/adoption/todo-search-slice/generated/read-model-validation-report.json`
+- output:
+  `examples/adoption/todo-search-slice/generated/read-model-validation-report.md`
+- current status: `validation-pass`
+- evidence level: `validator-backed`
+
+This validator-backed Evidence is local and scoped. It does not add CI enforcement, expand pilot scope, approve broader
+execution, change source authority, retire tree-native artifacts, or approve full Graph-source promotion.
 
 ## Outline-Only Later-Phase Docs
 

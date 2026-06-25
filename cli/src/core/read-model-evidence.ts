@@ -124,6 +124,46 @@ interface CompareResult {
   report: ParityReport
 }
 
+type ValidationStatus = 'validation-pass' | 'validation-warning' | 'validation-blocked' | 'decision-required'
+type ValidationEvidenceLevel = 'validator-backed'
+
+interface ValidationCheck {
+  id: string
+  title: string
+  severity: Severity
+  status: 'pass' | 'warning' | 'blocking' | 'decision-required'
+  message: string
+  sourceRefs: string[]
+}
+
+interface ValidationReport {
+  version: string
+  metadata: Record<string, unknown>
+  status: ValidationStatus
+  evidenceLevel: ValidationEvidenceLevel
+  scopeLevel: 'scoped-slice-validation'
+  sourceAuthorityBoundary: string
+  nonPromotionStatement: string
+  summary: {
+    checkCount: number
+    passCount: number
+    warningCount: number
+    blockingCount: number
+    decisionRequiredCount: number
+    status: ValidationStatus
+  }
+  checks: ValidationCheck[]
+  retainedWarnings: Array<Record<string, unknown>>
+  fallbackReferenceStatus: Array<Record<string, unknown>>
+  recommendedNextDecisionSurface: string[]
+}
+
+interface ValidateResult {
+  reportJsonPath: string
+  reportMarkdownPath: string
+  report: ValidationReport
+}
+
 interface TreeNode {
   id: string
   title?: string
@@ -212,6 +252,25 @@ export async function compareReadModelEvidence(
   const reportMarkdownPath = path.join(outputDir, 'read-model-parity-report.md')
   await writeFormattedJson(reportJsonPath, report)
   await writeFormattedMarkdown(reportMarkdownPath, renderParityReportMarkdown(report))
+  return { reportJsonPath, reportMarkdownPath, report }
+}
+
+export async function validateReadModelEvidence(root: string, slice: string): Promise<ValidateResult> {
+  const sliceDir = path.resolve(root, slice)
+  const outputDir = path.join(sliceDir, 'generated')
+  const generatedPath = path.join(outputDir, 'generated-read-model.json')
+  const parityPath = path.join(outputDir, 'read-model-parity-report.json')
+  const manifestPath = path.join(outputDir, 'read-model-evidence-manifest.json')
+  const markerPath = path.join(outputDir, 'scoped-source-authority-pilot-marker.json')
+  const generated = await readRequiredJson<GeneratedReadModel>(generatedPath, 'generated read-model')
+  const parity = await readRequiredJson<ParityReport>(parityPath, 'read-model parity report')
+  const manifest = await readRequiredJson<Record<string, unknown>>(manifestPath, 'read-model evidence manifest')
+  const marker = await readRequiredJson<Record<string, unknown>>(markerPath, 'scoped source-authority pilot marker')
+  const report = buildValidationReport(root, slice, generated, parity, manifest, marker)
+  const reportJsonPath = path.join(outputDir, 'read-model-validation-report.json')
+  const reportMarkdownPath = path.join(outputDir, 'read-model-validation-report.md')
+  await writeFormattedJson(reportJsonPath, report)
+  await writeFormattedMarkdown(reportMarkdownPath, renderValidationReportMarkdown(report))
   return { reportJsonPath, reportMarkdownPath, report }
 }
 
@@ -1329,7 +1388,7 @@ function buildRetainedWarnings(): Array<Record<string, unknown>> {
       findingNodeId: 'FIND-GENERATED-BUILDER-MISSING',
       status: 'generated-present-for-bounded-slice',
       summary:
-        'Generated read-model output now exists for the bounded Todo Search slice; validator/CI/full promotion repeatability remains later.',
+        'Generated read-model output and scoped validator-backed Evidence now exist for the bounded Todo Search slice; CI/full promotion repeatability remains later.',
     },
     {
       id: 'RW-ACEP-CLEANUP',
@@ -1451,6 +1510,341 @@ function buildParityReport(
       'Mismatch can create Evidence, Impact, Compatibility, or Decision Control Node candidates depending on severity.',
     ],
   }
+}
+
+function buildValidationReport(
+  root: string,
+  slice: string,
+  generated: GeneratedReadModel,
+  parity: ParityReport,
+  manifest: Record<string, unknown>,
+  marker: Record<string, unknown>,
+): ValidationReport {
+  const commandIdentity = `pbe graph read-model validate --slice ${slice}`
+  const checks = buildValidationChecks(root, slice, generated, parity, manifest, marker)
+  const blockingCount = checks.filter((entry) => entry.status === 'blocking').length
+  const decisionRequiredCount = checks.filter((entry) => entry.status === 'decision-required').length
+  const warningCount = checks.filter((entry) => entry.status === 'warning').length
+  const passCount = checks.filter((entry) => entry.status === 'pass').length
+  const status =
+    blockingCount > 0
+      ? 'validation-blocked'
+      : decisionRequiredCount > 0
+        ? 'decision-required'
+        : warningCount > 0
+          ? 'validation-warning'
+          : 'validation-pass'
+  return {
+    version: '0.1.0-read-model-validation-report',
+    metadata: {
+      validatedAt: new Date().toISOString(),
+      commandIdentity,
+      sourceCommit: resolveSourceCommit(root),
+      sourceSlice: slice,
+      scopeLevel: 'scoped-slice-validation',
+      generatedReadModel: `${slice}/generated/generated-read-model.json`,
+      parityReport: `${slice}/generated/read-model-parity-report.json`,
+      evidenceManifest: `${slice}/generated/read-model-evidence-manifest.json`,
+      pilotMarker: `${slice}/generated/scoped-source-authority-pilot-marker.json`,
+    },
+    status,
+    evidenceLevel: 'validator-backed',
+    scopeLevel: 'scoped-slice-validation',
+    sourceAuthorityBoundary:
+      'Validator-backed Evidence checks the bounded Todo Search read-model outputs only. It does not change source authority.',
+    nonPromotionStatement:
+      'Validation pass is Evidence only. It does not promote Maintainability Graph, expand pilot scope, retire tree-native artifacts, introduce CI enforcement, or replace user approval.',
+    summary: {
+      checkCount: checks.length,
+      passCount,
+      warningCount,
+      blockingCount,
+      decisionRequiredCount,
+      status,
+    },
+    checks,
+    retainedWarnings: generated.retainedWarnings,
+    fallbackReferenceStatus: buildFallbackReferenceStatus(root, marker),
+    recommendedNextDecisionSurface: [
+      'Continue active observation',
+      'Design CI workflow integration before broader enforcement',
+      'Apply scoped validator to another explicitly approved slice',
+      'Perform public-doc cleanup',
+      'Prepare broader Graph-source promotion review',
+      'Rollback or defer scoped pilot',
+    ],
+  }
+}
+
+function buildValidationChecks(
+  root: string,
+  slice: string,
+  generated: GeneratedReadModel,
+  parity: ParityReport,
+  manifest: Record<string, unknown>,
+  marker: Record<string, unknown>,
+): ValidationCheck[] {
+  const outputPrefix = `${slice}/generated`
+  const sourceInputs = generated.sourceInputs || []
+  const markerScope = getPath(marker, ['pilotScope', 'primary'])
+  const activeObservationScope = getPath(marker, ['activeObservation', 'scope'])
+  return [
+    check(
+      'generated-read-model-exists',
+      'Generated read-model exists and parses',
+      Boolean(generated.version && Array.isArray(generated.nodes) && Array.isArray(generated.edges)),
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+    ),
+    check(
+      'parity-report-exists',
+      'Parity report exists and parses',
+      Boolean(parity.version && parity.summary),
+      'blocking',
+      `${outputPrefix}/read-model-parity-report.json`,
+    ),
+    check(
+      'evidence-manifest-exists',
+      'Evidence manifest exists and parses',
+      Boolean(manifest.version && manifest.sourceInputs),
+      'blocking',
+      `${outputPrefix}/read-model-evidence-manifest.json`,
+    ),
+    check(
+      'pilot-marker-exists',
+      'Scoped pilot marker exists and parses',
+      Boolean(marker.version && marker.status),
+      'blocking',
+      `${outputPrefix}/scoped-source-authority-pilot-marker.json`,
+    ),
+    check(
+      'source-input-artifacts-present',
+      'Source input artifacts exist or are explicitly represented',
+      sourceInputs.length > 0 && sourceInputs.every((entry) => entry.status === 'present'),
+      'blocking',
+      'generated sourceInputs',
+    ),
+    check(
+      'parity-status-pass',
+      'Generated/manual parity is comparison-pass',
+      parity.summary.status === 'comparison-pass',
+      'blocking',
+      `${outputPrefix}/read-model-parity-report.json`,
+    ),
+    check(
+      'parity-counts-zero',
+      'Mismatch, blocking, and decision-required counts are zero',
+      parity.summary.mismatchCount === 0 && parity.summary.blockingCount === 0 && parity.summary.decisionRequiredCount === 0,
+      'blocking',
+      `${outputPrefix}/read-model-parity-report.json`,
+    ),
+    check(
+      'node-edge-tag-taxonomy-valid',
+      'Node/Edge/Tag taxonomy is valid',
+      hasTaxonomy(generated),
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+    ),
+    check(
+      'view-scoped-tags-allowed',
+      'viewScopedTags uses allowed role tags only',
+      invalidViewScopedTags(generated).length === 0,
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+      invalidViewScopedTags(generated),
+    ),
+    check(
+      'view-membership-separated',
+      'View membership is separated from tags',
+      viewMembershipSeparated(generated),
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+    ),
+    check(
+      'core-view-coverage-present',
+      '7 Core View coverage is present',
+      missingCoreViews(generated).length === 0,
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+      missingCoreViews(generated),
+    ),
+    check(
+      'confidence-freshness-separated',
+      'Confidence and freshness/status are separated',
+      confidenceFreshnessSeparated(generated),
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+    ),
+    check(
+      'check-evidence-mapping-present',
+      'Check/Evidence mapping is present',
+      Array.isArray(generated.checkEvidenceMapping) && generated.checkEvidenceMapping.length > 0,
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+    ),
+    check(
+      'source-authority-boundary-bounded',
+      'Source authority boundary is present and bounded',
+      /Tree-native selected-slice artifacts remain current operational source/i.test(generated.sourceAuthorityBoundary) &&
+        String(markerScope) === slice &&
+        String(activeObservationScope).includes(slice),
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+    ),
+    check(
+      'non-promotion-statement-present',
+      'Non-promotion statement is present',
+      /does not promote|cannot change source authority/i.test(generated.nonPromotionStatement) &&
+        /does not promote|does not change source authority/i.test(String(marker.nonPromotionStatement || '')),
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+    ),
+    check(
+      'retained-warnings-visible',
+      'Retained warnings are visible',
+      Array.isArray(generated.retainedWarnings) &&
+        generated.retainedWarnings.length >= 4 &&
+        Array.isArray(marker.retainedWarnings) &&
+        marker.retainedWarnings.length >= 4,
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+    ),
+    check(
+      'fallback-reference-artifacts-present',
+      'Fallback/reference artifacts are present',
+      buildFallbackReferenceStatus(root, marker).every((entry) => entry.status === 'present'),
+      'blocking',
+      `${outputPrefix}/scoped-source-authority-pilot-marker.json`,
+    ),
+    check(
+      'user-acceptance-authority-preserved',
+      'User acceptance authority is not replaced by Codex/PBE',
+      !/codex\/pbe self-acceptance|replace user acceptance/i.test(
+        `${generated.sourceAuthorityBoundary} ${generated.nonPromotionStatement} ${marker.nonPromotionStatement || ''}`,
+      ) && generated.nodes.some((entry) => entry.id === 'AT-ROOT' && entry.confidence === 'user-confirmed'),
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+    ),
+    check(
+      'compatibility-warning-boundary-preserved',
+      'Supplemental compatibility warning boundary is preserved',
+      generated.compatibilityWarnings.some((entry) => /supplemental warning only/i.test(String(entry.role || ''))) &&
+        String(getPath(marker, ['pilotScope', 'supplementalWarningOnly'])) ===
+          'examples/adoption/compatibility-mismatch-slice',
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+    ),
+    check(
+      'no-repo-wide-promotion-or-retirement',
+      'No statement implies repo-wide promotion or tree-native retirement',
+      noRepoWidePromotionOrRetirement(generated, marker),
+      'blocking',
+      `${outputPrefix}/generated-read-model.json`,
+    ),
+  ]
+}
+
+function check(
+  id: string,
+  title: string,
+  passed: boolean,
+  failureSeverity: Exclude<ValidationCheck['status'], 'pass'>,
+  sourceRef: string,
+  detail?: unknown,
+): ValidationCheck {
+  const severity = passed ? 'info' : failureSeverity === 'blocking' ? 'blocking' : failureSeverity
+  return {
+    id,
+    title,
+    severity,
+    status: passed ? 'pass' : failureSeverity,
+    message: passed ? 'Check passed.' : `Check failed.${detail ? ` Detail: ${JSON.stringify(detail)}` : ''}`,
+    sourceRefs: [sourceRef],
+  }
+}
+
+function buildFallbackReferenceStatus(root: string, marker: Record<string, unknown>): Array<Record<string, unknown>> {
+  const fallbackReferences = getPath(marker, ['pilotAuthority', 'fallbackReference'])
+  const paths = Array.isArray(fallbackReferences) ? fallbackReferences.map(String) : []
+  return paths.map((entry) => ({
+    path: entry,
+    status: existsSync(path.resolve(root, entry)) ? 'present' : 'missing',
+  }))
+}
+
+function hasTaxonomy(model: GeneratedReadModel): boolean {
+  return (
+    Array.isArray(model.taxonomy.nodeKindsUsed) &&
+    model.taxonomy.nodeKindsUsed.length > 0 &&
+    Array.isArray(model.taxonomy.edgeTypesUsed) &&
+    model.taxonomy.edgeTypesUsed.length > 0 &&
+    Array.isArray(model.taxonomy.viewScopedTagsAllowed) &&
+    allowedViewScopedTags.every((entry) => (model.taxonomy.viewScopedTagsAllowed as unknown[]).includes(entry))
+  )
+}
+
+function invalidViewScopedTags(model: GeneratedReadModel): string[] {
+  const allowed = new Set(allowedViewScopedTags)
+  return unique(
+    [
+      ...model.nodes.flatMap((entry) => entry.viewScopedTags),
+      ...model.coreViewCoverage.flatMap((entry) => entry.viewScopedTags),
+    ].filter((entry) => !allowed.has(entry)),
+  )
+}
+
+function viewMembershipSeparated(model: GeneratedReadModel): boolean {
+  return (
+    model.nodes.every(
+      (entry) =>
+        Array.isArray(entry.includedInViewIds) &&
+        entry.includedInViewIds.every((viewId) => /-view$/.test(viewId)) &&
+        entry.viewScopedTags.every((tag) => !/-view$/.test(tag)),
+    ) && model.coreViewCoverage.every((entry) => entry.viewScopedTags.every((tag) => !/-view$/.test(tag)))
+  )
+}
+
+function missingCoreViews(model: GeneratedReadModel): string[] {
+  const views = new Set(model.coreViewCoverage.map((entry) => entry.name))
+  return coreViewNames.filter((entry) => !views.has(entry))
+}
+
+function confidenceFreshnessSeparated(model: GeneratedReadModel): boolean {
+  const confidenceValues = new Set(['tool-confirmed', 'user-confirmed', 'inferred', 'low-confidence'])
+  const freshnessValues = new Set(['fresh', 'stale', 'invalidated', 'unknown'])
+  return [...model.nodes, ...model.edges].every(
+    (entry) =>
+      confidenceValues.has(entry.confidence) &&
+      freshnessValues.has(entry.freshnessStatus) &&
+      entry.confidence !== ('stale' as Confidence),
+  )
+}
+
+function noRepoWidePromotionOrRetirement(model: GeneratedReadModel, marker: Record<string, unknown>): boolean {
+  const text = JSON.stringify({
+    generatedBoundary: model.sourceAuthorityBoundary,
+    generatedNonPromotion: model.nonPromotionStatement,
+    markerStatus: marker.status,
+    markerNonPromotion: marker.nonPromotionStatement,
+    activeObservation: marker.activeObservation,
+  }).toLowerCase()
+  return ![
+    'full graph-source promotion approved',
+    'repository-wide source authority approved',
+    'tree-native artifacts retired',
+    'tree-native artifact retirement approved',
+  ].some((phrase) => text.includes(phrase))
+}
+
+function getPath(source: Record<string, unknown>, pathSegments: string[]): unknown {
+  let current: unknown = source
+  for (const segment of pathSegments) {
+    if (typeof current !== 'object' || current === null) {
+      return undefined
+    }
+    current = (current as Record<string, unknown>)[segment]
+  }
+  return current
 }
 
 function compareNodes(generated: GeneratedReadModel, manual: GeneratedReadModel, mismatches: Mismatch[]): void {
@@ -1740,6 +2134,55 @@ ${report.controlNodeCandidates.map((entry) => `- ${String(entry.family)}: ${Stri
 ## Treatment Rules
 
 ${report.treatmentRules.map((entry) => `- ${entry}`).join('\n')}
+`
+}
+
+function renderValidationReportMarkdown(report: ValidationReport): string {
+  return `# Read-Model Validation Report
+
+Status: ${report.status}
+
+Evidence level: ${report.evidenceLevel}
+
+## Run Identity
+
+- Validated at: ${String(report.metadata.validatedAt)}
+- Command identity: \`${String(report.metadata.commandIdentity)}\`
+- Source commit: ${String(report.metadata.sourceCommit)}
+- Source slice: \`${String(report.metadata.sourceSlice)}\`
+- Scope level: ${report.scopeLevel}
+
+## Boundary
+
+${report.sourceAuthorityBoundary}
+
+${report.nonPromotionStatement}
+
+## Summary
+
+- Checks: ${report.summary.checkCount}
+- Passed: ${report.summary.passCount}
+- Warnings: ${report.summary.warningCount}
+- Blocking: ${report.summary.blockingCount}
+- Decision required: ${report.summary.decisionRequiredCount}
+
+## Checks
+
+| Status | Severity | Check | Message |
+| ------ | -------- | ----- | ------- |
+${report.checks.map((entry) => `| ${entry.status} | ${entry.severity} | ${entry.title} | ${entry.message} |`).join('\n')}
+
+## Retained Warnings
+
+${report.retainedWarnings.map((entry) => `- ${String(entry.id)}: ${String(entry.status)} - ${String(entry.summary)}`).join('\n')}
+
+## Fallback / Reference Status
+
+${report.fallbackReferenceStatus.map((entry) => `- ${String(entry.path)}: ${String(entry.status)}`).join('\n')}
+
+## Recommended Next Decision Surface
+
+${report.recommendedNextDecisionSurface.map((entry) => `- ${entry}`).join('\n')}
 `
 }
 

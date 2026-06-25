@@ -6,9 +6,9 @@ Status: scoped-source-authority-pilot-active-observation / keep-active-with-reta
 
 This record keeps the Todo Search scoped source-authority pilot active under explicit observation criteria.
 
-This is not pilot expansion, not broader execution, not full Graph-source promotion, not validator/CI enforcement, not
-public-doc cleanup, and not tree-native artifact retirement. It only records how the already reviewed scoped pilot should
-be observed, when it should be re-reviewed, and which triggers require a new user decision.
+This is not pilot expansion, not broader execution, not full Graph-source promotion, not CI enforcement, not public-doc
+cleanup, and not tree-native artifact retirement. It only records how the already reviewed scoped pilot should be
+observed, when it should be re-reviewed, and which triggers require a new user decision.
 
 ## Current Active Status
 
@@ -35,6 +35,7 @@ examples/adoption/compatibility-mismatch-slice
 - Todo Search selected-slice generated read-model Evidence
 - Todo Search selected-slice pilot marker
 - Todo Search selected-slice generated/manual parity report
+- Todo Search selected-slice validator-backed Evidence report
 - Todo Search selected-slice tree-native fallback/reference artifacts
 - retained warnings and fallback triggers
 
@@ -44,7 +45,7 @@ examples/adoption/compatibility-mismatch-slice
 - repository-wide source authority change
 - pilot scope expansion beyond Todo Search selected slice
 - tree-native artifact retirement
-- validator/CI enforcement
+- CI enforcement
 - public-doc cleanup
 - Codex/PBE self-acceptance
 
@@ -55,6 +56,7 @@ examples/adoption/compatibility-mismatch-slice
 | Generated authority record for bounded pilot interpretation | `examples/adoption/todo-search-slice/generated/generated-read-model.json`                 |
 | Pilot marker                                                | `examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json` |
 | Required parity report                                      | `examples/adoption/todo-search-slice/generated/read-model-parity-report.json`             |
+| Validator-backed Evidence report                            | `examples/adoption/todo-search-slice/generated/read-model-validation-report.json`         |
 | Evidence manifest                                           | `examples/adoption/todo-search-slice/generated/read-model-evidence-manifest.json`         |
 | Review record                                               | `docs/concept/scoped-source-authority-pilot-review.md`                                    |
 
@@ -79,7 +81,7 @@ Tree-native selected-slice artifacts remain preserved and usable as fallback/ref
 | -------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | Bounded fixture Evidence                     | Retained. It is acceptable for this scoped pilot but not proof of full Todo app implementation.    |
 | Partial UI screenshot/manual visual Evidence | Retained. It does not block active observation, but broader UI confidence needs stronger Evidence. |
-| Validator/CI-backed Evidence missing         | Retained. It is the likely next strengthening decision before broader execution or enforcement.    |
+| CI-backed Evidence / enforcement missing     | Retained. Validator-backed Evidence is present locally; CI-backed repeatability is still future.   |
 | ACEP task-card public-doc cleanup deferred   | Retained. It is not cleaned up here and should be revisited before broader promotion planning.     |
 
 ## Observation Checks
@@ -92,13 +94,14 @@ Run or review these checks whenever the pilot is observed again:
 | Mismatch count                           | 0                                                         |
 | Blocking count                           | 0                                                         |
 | Decision-required count                  | 0                                                         |
+| Validator-backed Evidence status         | `validation-pass`                                         |
 | Generated authority boundary             | bounded to `examples/adoption/todo-search-slice`          |
 | Tree-native fallback/reference artifacts | present and usable                                        |
 | Retained warnings                        | visible in marker, review records, and concept docs       |
 | User acceptance authority                | remains user-controlled                                   |
 | Compatibility mismatch slice             | warning-only, not pilot source scope                      |
 | Public-doc cleanup                       | not performed silently                                    |
-| Validator/CI enforcement                 | not introduced silently                                   |
+| CI enforcement                           | not introduced silently                                   |
 | Broader promotion                        | not implied by marker, read-model, parity report, or docs |
 
 ## Triggers For Re-Review
@@ -108,6 +111,7 @@ Re-review the scoped pilot if any of these occur:
 - generated read-model output is regenerated after source artifacts change
 - tree-native selected-slice artifacts change
 - generated/manual parity report changes from `comparison-pass`
+- validator-backed Evidence report changes from `validation-pass`
 - retained warnings are edited, removed, or reclassified
 - user acceptance wording changes
 - supplemental compatibility evidence becomes relevant to current scope, verification, acceptance, or authority
@@ -118,6 +122,7 @@ Re-review the scoped pilot if any of these occur:
 Fallback to tree-native selected-slice artifacts, or defer the pilot pending user review, if any of these occur:
 
 - parity report becomes `comparison-warning`, `comparison-blocked`, or `decision-required`
+- validator-backed Evidence becomes `validation-warning`, `validation-blocked`, or `decision-required`
 - generated authority boundary widens beyond Todo Search selected slice
 - generated output or marker implies repository-wide promotion
 - tree-native fallback/reference artifacts become missing or unusable
@@ -128,19 +133,20 @@ Fallback to tree-native selected-slice artifacts, or defer the pilot pending use
 No rollback command is executed by this observation record. Because tree-native artifacts remain retained and not retired,
 fallback is a visible authority-precedence action rather than a destructive migration reversal.
 
-## Triggers For Validator / CI-Backed Evidence Decision
+## Triggers For CI-Backed Evidence Decision
 
-Escalate to a validator/CI-backed Evidence decision before:
+Validator-backed Evidence is now available for the Todo Search scoped slice. Escalate to a CI-backed Evidence or
+enforcement decision before:
 
 - using the pilot pattern for another slice
 - enforcing generated/manual parity as a gate
 - making broader source-authority claims
 - preparing full Graph-source promotion review
-- relying on repeatability beyond manual command execution
+- relying on repeatability beyond local validator execution
 
 The concept-level design for that decision is recorded in
-[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md). The design does
-not implement validator commands or CI enforcement.
+[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md). The scoped
+validator command is implemented for Todo Search only; CI workflows and enforcement remain unimplemented.
 
 ## Triggers For Public-Doc Cleanup Decision
 
@@ -157,7 +163,7 @@ Do not start broader Graph-source promotion review automatically. It requires a 
 of these is true:
 
 - scoped pilot has remained stable through observation
-- validator/CI-backed Evidence is available or explicitly waived by the user
+- validator-backed Evidence is available and CI-backed Evidence is available or explicitly waived by the user
 - public-doc cleanup is completed or explicitly accepted as a retained warning
 - broader source authority matrix and rollback/fallback expectations are updated
 
@@ -166,32 +172,32 @@ of these is true:
 The next major decision should be one of:
 
 1. `Continue active observation`
-2. `Require validator/CI-backed Evidence before broader execution or enforcement`
+2. `Design CI workflow integration before broader execution or enforcement`
 3. `Perform public-doc cleanup`
 4. `Prepare broader Graph-source promotion review`
 5. `Rollback or defer scoped pilot`
 
-Recommended current stance: continue active observation until the user wants broader use, enforcement, cleanup, or
-promotion review.
+Recommended current stance: continue active observation with validator-backed Evidence until the user wants CI
+integration, broader use, enforcement, cleanup, or promotion review.
 
 ## Gate Self-Check
 
-| Gate                              | Result | Notes                                                     |
-| --------------------------------- | ------ | --------------------------------------------------------- |
-| Active Observation Boundary Gate  | Pass   | This record observes an already executed scoped pilot.    |
-| Source Authority Containment Gate | Pass   | Authority remains bounded to Todo Search selected slice.  |
-| Parity Stability Gate             | Pass   | Expected state remains `comparison-pass`.                 |
-| Fallback Readiness Gate           | Pass   | Tree-native fallback/reference artifacts remain retained. |
-| Retained Warning Visibility Gate  | Pass   | Warnings remain explicit observation inputs.              |
-| User Acceptance Authority Gate    | Pass   | User acceptance remains user-controlled.                  |
-| Non-Expansion Gate                | Pass   | No scope expansion beyond Todo Search selected slice.     |
-| Non-Full-Promotion Gate           | Pass   | Full Graph-source promotion remains unapproved.           |
-| Validator/CI Boundary Gate        | Pass   | No enforcement introduced.                                |
-| Public-Doc Cleanup Boundary Gate  | Pass   | Cleanup remains deferred.                                 |
+| Gate                              | Result | Notes                                                           |
+| --------------------------------- | ------ | --------------------------------------------------------------- |
+| Active Observation Boundary Gate  | Pass   | This record observes an already executed scoped pilot.          |
+| Source Authority Containment Gate | Pass   | Authority remains bounded to Todo Search selected slice.        |
+| Parity Stability Gate             | Pass   | Expected state remains `comparison-pass`.                       |
+| Fallback Readiness Gate           | Pass   | Tree-native fallback/reference artifacts remain retained.       |
+| Retained Warning Visibility Gate  | Pass   | Warnings remain explicit observation inputs.                    |
+| User Acceptance Authority Gate    | Pass   | User acceptance remains user-controlled.                        |
+| Non-Expansion Gate                | Pass   | No scope expansion beyond Todo Search selected slice.           |
+| Non-Full-Promotion Gate           | Pass   | Full Graph-source promotion remains unapproved.                 |
+| Validator/CI Boundary Gate        | Pass   | Scoped validator Evidence exists; no CI enforcement introduced. |
+| Public-Doc Cleanup Boundary Gate  | Pass   | Cleanup remains deferred.                                       |
 
 ## Final Non-Promotion / Non-Expansion Statement
 
 This active observation record keeps the Todo Search scoped pilot observable and bounded. It does not expand source
 authority, does not promote Maintainability Graph as the repository-wide source model, does not retire tree-native
-artifacts, does not introduce validator/CI enforcement, does not perform public-doc cleanup, and does not let Codex/PBE
+artifacts, does not introduce CI enforcement, does not perform public-doc cleanup, and does not let Codex/PBE
 replace user acceptance authority.

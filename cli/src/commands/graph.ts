@@ -1,5 +1,9 @@
 import { relativePath } from '../core/fs.js'
-import { compareReadModelEvidence, generateReadModelEvidence } from '../core/read-model-evidence.js'
+import {
+  compareReadModelEvidence,
+  generateReadModelEvidence,
+  validateReadModelEvidence,
+} from '../core/read-model-evidence.js'
 import type { CommandResult } from '../core/types.js'
 import { ExitCode } from '../core/types.js'
 import { type CommandContext, invalidCommand } from './shared.js'
@@ -49,6 +53,35 @@ export async function graphReadModelCompareCommand(context: CommandContext): Pro
       paritySummary: relativePath(context.options.root, result.reportMarkdownPath),
       status: result.report.summary.status,
       mismatchCount: result.report.summary.mismatchCount,
+      blockingCount: result.report.summary.blockingCount,
+      decisionRequiredCount: result.report.summary.decisionRequiredCount,
+      sourceAuthorityBoundary: result.report.sourceAuthorityBoundary,
+      nonPromotionStatement: result.report.nonPromotionStatement,
+    },
+  }
+}
+
+export async function graphReadModelValidateCommand(context: CommandContext): Promise<CommandResult> {
+  const slice = context.options.slice
+  if (!slice) {
+    return invalidCommand('graph read-model validate requires --slice <path>.')
+  }
+  const result = await validateReadModelEvidence(context.options.root, slice)
+  const failed = result.report.status === 'validation-blocked' || result.report.status === 'decision-required'
+  return {
+    ok: !failed,
+    command: 'graph read-model validate',
+    exitCode: failed ? ExitCode.ValidationFailed : ExitCode.Success,
+    message: 'Validator-backed read-model Evidence created.',
+    issues: [],
+    data: {
+      validationReport: relativePath(context.options.root, result.reportJsonPath),
+      validationSummary: relativePath(context.options.root, result.reportMarkdownPath),
+      status: result.report.status,
+      evidenceLevel: result.report.evidenceLevel,
+      scopeLevel: result.report.scopeLevel,
+      checkCount: result.report.summary.checkCount,
+      warningCount: result.report.summary.warningCount,
       blockingCount: result.report.summary.blockingCount,
       decisionRequiredCount: result.report.summary.decisionRequiredCount,
       sourceAuthorityBoundary: result.report.sourceAuthorityBoundary,

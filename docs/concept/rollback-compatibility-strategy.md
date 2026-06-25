@@ -307,7 +307,8 @@ fallback conditions into active observation triggers. It still performs no rollb
 cleanup; tree-native selected-slice artifacts remain the visible fallback/reference set.
 
 [validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md) defines stronger
-future Evidence checks for broader use, but it does not make rollback-ready status automatic or retire fallback
+Evidence checks for broader use. The scoped Todo Search validator-backed report now gives local validation Evidence for
+the bounded pilot, but it does not make rollback-ready status automatic, add CI enforcement, or retire fallback
 artifacts.
 
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) adds a source-transition safety constraint: durable

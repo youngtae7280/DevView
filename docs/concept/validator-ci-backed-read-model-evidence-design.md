@@ -1,6 +1,6 @@
 # Validator / CI-Backed Read-Model Evidence Design
 
-Status: validator-ci-backed-read-model-evidence-design / design-recorded / implementation-not-started
+Status: validator-ci-backed-read-model-evidence-design / scoped-validator-backed-evidence-implemented / ci-not-started
 
 ## Document Purpose
 
@@ -8,8 +8,9 @@ This document defines the concept-level design for validator-backed and CI-backe
 considers broader execution, enforcement, or full Graph-source promotion review.
 
 It builds on the Todo Search scoped source-authority pilot, which is currently active under observation with retained
-warnings. The design does not implement a validator command, does not add a CI workflow, does not expand pilot scope, and
-does not change source authority.
+warnings. The bounded scoped validator command is now implemented for `examples/adoption/todo-search-slice` only. This
+does not add a CI workflow, does not enforce CI gates, does not expand pilot scope, and does not change source
+authority.
 
 ## Current Scoped Pilot Baseline
 
@@ -22,11 +23,14 @@ does not change source authority.
 | Blocking count                | 0                                          |
 | Decision-required count       | 0                                          |
 | Generated read-model Evidence | present for bounded Todo Search slice      |
+| Validator-backed Evidence     | present for bounded Todo Search slice      |
+| CI-backed Evidence            | not implemented                            |
 | Tree-native fallback          | retained and usable                        |
 | Supplemental compatibility    | warning-only, not pilot source scope       |
 
-This baseline is sufficient to keep the current scoped pilot active. It is not enough by itself to enforce broader
-execution, make CI claims, retire fallback artifacts, or approve full Graph-source promotion.
+This baseline is sufficient to keep the current scoped pilot active and now has local validator-backed Evidence. It is
+not enough by itself to enforce broader execution, make CI claims, retire fallback artifacts, or approve full
+Graph-source promotion.
 
 ## Evidence Levels
 
@@ -90,27 +94,40 @@ promotion readiness.
 
 ## Proposed Report Artifacts
 
-These are design targets only. They are not created by this document.
+The scoped Todo Search validator now creates the first two artifacts below under
+`examples/adoption/todo-search-slice/generated/`. The CI manifest remains a future design target.
 
 | Artifact                               | Role                                                                                                |
 | -------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `read-model-validation-report.json`    | Machine-readable validator-backed Evidence summary.                                                 |
-| `read-model-validation-report.md`      | Human-readable validation summary for review and Approval Brief use.                                |
+| `read-model-validation-report.json`    | Machine-readable validator-backed Evidence summary. Implemented for Todo Search scoped validation.  |
+| `read-model-validation-report.md`      | Human-readable validation summary for review and Approval Brief use. Implemented for Todo Search.   |
 | `read-model-ci-evidence-manifest.json` | Future CI-backed manifest linking commit, run identity, validation command, and produced artifacts. |
 | `read-model-validation-summary.md`     | Optional concise summary for promotion or scoped execution review packages.                         |
 
-## Future CLI / CI Surfaces
+## Implemented And Future CLI / CI Surfaces
 
-Conceptual future command candidates:
+Implemented scoped command:
 
 ```text
 pbe graph read-model validate --slice <path>
+```
+
+For the current bounded pilot this produces:
+
+```text
+examples/adoption/todo-search-slice/generated/read-model-validation-report.json
+examples/adoption/todo-search-slice/generated/read-model-validation-report.md
+```
+
+Future command candidates:
+
+```text
 pbe graph read-model validate --all
 pbe graph read-model validate --slice <path> --ci-manifest <file>
 ```
 
-These names are design candidates only. This document does not implement commands, parser behavior, validators, CI
-workflows, schema, or enforcement.
+The scoped command is local validator-backed Evidence only. This document and implementation do not add CI workflows,
+repo-wide `--all` enforcement, schema enforcement, source authority changes, or promotion approval.
 
 ## Report Field Expectations
 
@@ -161,8 +178,9 @@ These are concept labels, not schema enums.
 
 ### Current Todo Search Pilot
 
-Validator/CI-backed Evidence is not required to keep the current Todo Search scoped pilot active under observation.
-Current parity is `comparison-pass`, fallback is retained, and retained warnings remain visible.
+Validator-backed Evidence is now present for the current Todo Search scoped pilot. CI-backed Evidence is not required to
+keep the scoped pilot active under observation. Current parity is `comparison-pass`, validation status is
+`validation-pass`, fallback is retained, and retained warnings remain visible.
 
 ### Broader Execution / Enforcement
 
@@ -193,9 +211,8 @@ retirement, compatibility cleanup, and acceptance closure still require the appr
 
 ## Explicit Non-Scope
 
-This design does not:
+The scoped validator implementation does not:
 
-- implement a validator command
 - add a CI workflow
 - enforce validation gates
 - change source authority
@@ -208,34 +225,34 @@ This design does not:
 
 ## Next Decision Surface
 
-After this design, the next user decision should choose one of:
+After scoped validator-backed Evidence is available, the next user decision should choose one of:
 
-1. `Approve scoped read-model validator implementation`
-2. `Refine validator/CI Evidence design before implementation`
-3. `Design CI workflow integration before validator implementation`
+1. `Design CI workflow integration for read-model Evidence`
+2. `Keep scoped pilot active and observe with validator-backed Evidence`
+3. `Prepare broader promotion readiness review inputs`
 4. `Perform public-doc cleanup first`
-5. `Continue active observation without validator/CI work`
+5. `Require multi-slice validation design before CI`
 6. `Defer or reject broader execution/enforcement path`
 
-Recommended next step: approve scoped read-model validator implementation only if the user wants to move beyond active
-observation toward broader execution or enforcement. If the user wants to stay conservative, continue active observation.
+Recommended next step: design CI workflow integration only if the user wants to move toward broader
+execution/enforcement. If the user wants to stay conservative, keep the scoped pilot active and observe with
+validator-backed Evidence.
 
 ## Gate Self-Check
 
-| Gate                               | Result | Notes                                                                         |
-| ---------------------------------- | ------ | ----------------------------------------------------------------------------- |
-| Design-Only Boundary Gate          | Pass   | This document defines design only.                                            |
-| Non-Implementation Gate            | Pass   | No validator command, CI workflow, schema, or enforcement is implemented.     |
-| Non-CI-Enforcement Gate            | Pass   | CI-backed Evidence is designed, not introduced.                               |
-| Source Authority Boundary Gate     | Pass   | Source authority remains scoped and unchanged.                                |
-| Non-Full-Promotion Gate            | Pass   | Full Graph-source promotion remains unapproved.                               |
-| Validator/CI Evidence Clarity Gate | Pass   | CLI success, validator-backed Evidence, and CI-backed Evidence are separated. |
-| User Approval Boundary Gate        | Pass   | Validator/CI pass remains Evidence, not user approval.                        |
-| Retained Warning Visibility Gate   | Pass   | Warnings remain explicit.                                                     |
-| Scope-Level Separation Gate        | Pass   | Scoped, multi-slice, and repo-wide readiness levels are separated.            |
+| Gate                                  | Result | Notes                                                                                                         |
+| ------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------- |
+| Design / Implementation Boundary Gate | Pass   | Scoped validator-backed Evidence is implemented only for Todo Search; CI and enforcement remain out of scope. |
+| Non-CI-Enforcement Gate               | Pass   | No CI workflow or enforcement gate is introduced.                                                             |
+| Source Authority Boundary Gate        | Pass   | Source authority remains scoped and unchanged.                                                                |
+| Non-Full-Promotion Gate               | Pass   | Full Graph-source promotion remains unapproved.                                                               |
+| Validator/CI Evidence Clarity Gate    | Pass   | CLI success, validator-backed Evidence, and CI-backed Evidence are separated.                                 |
+| User Approval Boundary Gate           | Pass   | Validator/CI pass remains Evidence, not user approval.                                                        |
+| Retained Warning Visibility Gate      | Pass   | Warnings remain explicit.                                                                                     |
+| Scope-Level Separation Gate           | Pass   | Scoped, multi-slice, and repo-wide readiness levels are separated.                                            |
 
 ## Final Non-Implementation Statement
 
-This design records what validator-backed and CI-backed read-model Evidence should mean. It does not implement validator
-or CI support, does not change source authority, does not expand the Todo Search scoped pilot, and does not approve full
-Graph-source promotion.
+This design now records both the validator/CI Evidence model and the bounded Todo Search validator-backed Evidence
+implementation status. It does not implement CI support, does not change source authority, does not expand the Todo
+Search scoped pilot, and does not approve full Graph-source promotion.

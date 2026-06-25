@@ -1,8 +1,8 @@
 {
   "version": "0.1.0-read-model-evidence-manifest",
-  "generatedAt": "2026-06-25T04:36:36.541Z",
+  "generatedAt": "2026-06-25T05:05:32.212Z",
   "commandIdentity": "pbe graph read-model generate --slice examples/adoption/todo-search-slice",
-  "sourceCommit": "ce06861",
+  "sourceCommit": "3ee75c2",
   "sourceSlice": "examples/adoption/todo-search-slice",
   "generatedArtifacts": [
     "examples/adoption/todo-search-slice/generated/generated-read-model.json",
@@ -122,7 +122,7 @@
       "id": "RW-GENERATED-BUILDER",
       "findingNodeId": "FIND-GENERATED-BUILDER-MISSING",
       "status": "generated-present-for-bounded-slice",
-      "summary": "Generated read-model output now exists for the bounded Todo Search slice; validator/CI/full promotion repeatability remains later."
+      "summary": "Generated read-model output and scoped validator-backed Evidence now exist for the bounded Todo Search slice; CI/full promotion repeatability remains later."
     },
     {
       "id": "RW-ACEP-CLEANUP",

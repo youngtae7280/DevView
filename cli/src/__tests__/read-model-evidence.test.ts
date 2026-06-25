@@ -1,8 +1,8 @@
-import { cp, mkdtemp, readFile, rm } from 'node:fs/promises'
+import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { compareReadModelEvidence, generateReadModelEvidence } from '../core/read-model-evidence'
+import { compareReadModelEvidence, generateReadModelEvidence, validateReadModelEvidence } from '../core/read-model-evidence'
 
 const workspaces: string[] = []
 const allowedTags = new Set(['target', 'context', 'candidate', 'guard', 'required', 'stale', 'blocked', 'output'])
@@ -71,11 +71,123 @@ describe('read-model Evidence builder', () => {
     expect(report.severityLabels).toEqual(['info', 'warning', 'blocking', 'decision-required'])
     expect(report.nonPromotionStatement).toContain('does not promote Maintainability Graph')
   })
+
+  it('validates Todo Search generated read-model Evidence as validator-backed Evidence', async () => {
+    const workspace = await createExampleWorkspace()
+    const generated = await generateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')
+    await compareReadModelEvidence(
+      workspace,
+      generated.generatedJsonPath,
+      'examples/adoption/todo-search-slice/maintainability-graph-read-model.json',
+    )
+
+    const result = await validateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')
+    const report = JSON.parse(await readFile(result.reportJsonPath, 'utf8')) as {
+      status: string
+      evidenceLevel: string
+      summary: { blockingCount: number; decisionRequiredCount: number }
+      sourceAuthorityBoundary: string
+      nonPromotionStatement: string
+    }
+
+    expect(report.status).toBe('validation-pass')
+    expect(report.evidenceLevel).toBe('validator-backed')
+    expect(report.summary.blockingCount).toBe(0)
+    expect(report.summary.decisionRequiredCount).toBe(0)
+    expect(report.sourceAuthorityBoundary).toContain('does not change source authority')
+    expect(report.nonPromotionStatement).toContain('Validation pass is Evidence only')
+  })
+
+  it('blocks validation when viewScopedTags or Core View coverage are invalid', async () => {
+    const workspace = await createExampleWorkspace()
+    const generated = await generateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')
+    await compareReadModelEvidence(
+      workspace,
+      generated.generatedJsonPath,
+      'examples/adoption/todo-search-slice/maintainability-graph-read-model.json',
+    )
+    const generatedJson = JSON.parse(await readFile(generated.generatedJsonPath, 'utf8')) as {
+      nodes: Array<{ viewScopedTags?: string[] }>
+      coreViewCoverage: unknown[]
+    }
+    generatedJson.nodes[0].viewScopedTags = [...(generatedJson.nodes[0].viewScopedTags || []), 'intent-view']
+    generatedJson.coreViewCoverage = generatedJson.coreViewCoverage.slice(0, -1)
+    await writeFile(generated.generatedJsonPath, JSON.stringify(generatedJson, null, 2))
+
+    const result = await validateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')
+    const report = JSON.parse(await readFile(result.reportJsonPath, 'utf8')) as {
+      status: string
+      summary: { blockingCount: number }
+      checks: Array<{ id: string; status: string }>
+    }
+
+    expect(report.status).toBe('validation-blocked')
+    expect(report.summary.blockingCount).toBeGreaterThanOrEqual(2)
+    expect(report.checks.find((entry) => entry.id === 'view-scoped-tags-allowed')?.status).toBe('blocking')
+    expect(report.checks.find((entry) => entry.id === 'core-view-coverage-present')?.status).toBe('blocking')
+  })
+
+  it('blocks active scoped validation when parity is not comparison-pass', async () => {
+    const workspace = await createExampleWorkspace()
+    const generated = await generateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')
+    const parity = await compareReadModelEvidence(
+      workspace,
+      generated.generatedJsonPath,
+      'examples/adoption/todo-search-slice/maintainability-graph-read-model.json',
+    )
+    const parityJson = JSON.parse(await readFile(parity.reportJsonPath, 'utf8')) as {
+      summary: { status: string; mismatchCount: number }
+    }
+    parityJson.summary.status = 'comparison-warning'
+    parityJson.summary.mismatchCount = 1
+    await writeFile(parity.reportJsonPath, JSON.stringify(parityJson, null, 2))
+
+    const result = await validateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')
+    const report = JSON.parse(await readFile(result.reportJsonPath, 'utf8')) as {
+      status: string
+      checks: Array<{ id: string; status: string }>
+    }
+
+    expect(report.status).toBe('validation-blocked')
+    expect(report.checks.find((entry) => entry.id === 'parity-status-pass')?.status).toBe('blocking')
+    expect(report.checks.find((entry) => entry.id === 'parity-counts-zero')?.status).toBe('blocking')
+  })
+
+  it('does not mutate generated, manual, parity, manifest, or marker inputs while writing validation reports', async () => {
+    const workspace = await createExampleWorkspace()
+    const generated = await generateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')
+    const parity = await compareReadModelEvidence(
+      workspace,
+      generated.generatedJsonPath,
+      'examples/adoption/todo-search-slice/maintainability-graph-read-model.json',
+    )
+    const manifestPath = join(workspace, 'examples/adoption/todo-search-slice/generated/read-model-evidence-manifest.json')
+    const markerPath = join(
+      workspace,
+      'examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json',
+    )
+    const manualPath = join(workspace, 'examples/adoption/todo-search-slice/maintainability-graph-read-model.json')
+    const before = await Promise.all(
+      [generated.generatedJsonPath, parity.reportJsonPath, manifestPath, markerPath, manualPath].map((entry) =>
+        readFile(entry, 'utf8'),
+      ),
+    )
+
+    await validateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')
+    const after = await Promise.all(
+      [generated.generatedJsonPath, parity.reportJsonPath, manifestPath, markerPath, manualPath].map((entry) =>
+        readFile(entry, 'utf8'),
+      ),
+    )
+
+    expect(after).toEqual(before)
+  })
 })
 
 async function createExampleWorkspace(): Promise<string> {
   const workspace = await mkdtemp(join(tmpdir(), 'pbe-read-model-'))
   workspaces.push(workspace)
   await cp(resolve('examples'), join(workspace, 'examples'), { recursive: true })
+  await cp(resolve('docs'), join(workspace, 'docs'), { recursive: true })
   return workspace
 }

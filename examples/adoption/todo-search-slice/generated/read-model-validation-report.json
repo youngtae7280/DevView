@@ -1,0 +1,233 @@
+{
+  "version": "0.1.0-read-model-validation-report",
+  "metadata": {
+    "validatedAt": "2026-06-25T05:05:33.093Z",
+    "commandIdentity": "pbe graph read-model validate --slice examples/adoption/todo-search-slice",
+    "sourceCommit": "3ee75c2",
+    "sourceSlice": "examples/adoption/todo-search-slice",
+    "scopeLevel": "scoped-slice-validation",
+    "generatedReadModel": "examples/adoption/todo-search-slice/generated/generated-read-model.json",
+    "parityReport": "examples/adoption/todo-search-slice/generated/read-model-parity-report.json",
+    "evidenceManifest": "examples/adoption/todo-search-slice/generated/read-model-evidence-manifest.json",
+    "pilotMarker": "examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json"
+  },
+  "status": "validation-pass",
+  "evidenceLevel": "validator-backed",
+  "scopeLevel": "scoped-slice-validation",
+  "sourceAuthorityBoundary": "Validator-backed Evidence checks the bounded Todo Search read-model outputs only. It does not change source authority.",
+  "nonPromotionStatement": "Validation pass is Evidence only. It does not promote Maintainability Graph, expand pilot scope, retire tree-native artifacts, introduce CI enforcement, or replace user approval.",
+  "summary": {
+    "checkCount": 20,
+    "passCount": 20,
+    "warningCount": 0,
+    "blockingCount": 0,
+    "decisionRequiredCount": 0,
+    "status": "validation-pass"
+  },
+  "checks": [
+    {
+      "id": "generated-read-model-exists",
+      "title": "Generated read-model exists and parses",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "parity-report-exists",
+      "title": "Parity report exists and parses",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/read-model-parity-report.json"]
+    },
+    {
+      "id": "evidence-manifest-exists",
+      "title": "Evidence manifest exists and parses",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/read-model-evidence-manifest.json"]
+    },
+    {
+      "id": "pilot-marker-exists",
+      "title": "Scoped pilot marker exists and parses",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json"]
+    },
+    {
+      "id": "source-input-artifacts-present",
+      "title": "Source input artifacts exist or are explicitly represented",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["generated sourceInputs"]
+    },
+    {
+      "id": "parity-status-pass",
+      "title": "Generated/manual parity is comparison-pass",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/read-model-parity-report.json"]
+    },
+    {
+      "id": "parity-counts-zero",
+      "title": "Mismatch, blocking, and decision-required counts are zero",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/read-model-parity-report.json"]
+    },
+    {
+      "id": "node-edge-tag-taxonomy-valid",
+      "title": "Node/Edge/Tag taxonomy is valid",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "view-scoped-tags-allowed",
+      "title": "viewScopedTags uses allowed role tags only",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "view-membership-separated",
+      "title": "View membership is separated from tags",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "core-view-coverage-present",
+      "title": "7 Core View coverage is present",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "confidence-freshness-separated",
+      "title": "Confidence and freshness/status are separated",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "check-evidence-mapping-present",
+      "title": "Check/Evidence mapping is present",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "source-authority-boundary-bounded",
+      "title": "Source authority boundary is present and bounded",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "non-promotion-statement-present",
+      "title": "Non-promotion statement is present",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "retained-warnings-visible",
+      "title": "Retained warnings are visible",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "fallback-reference-artifacts-present",
+      "title": "Fallback/reference artifacts are present",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json"]
+    },
+    {
+      "id": "user-acceptance-authority-preserved",
+      "title": "User acceptance authority is not replaced by Codex/PBE",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "compatibility-warning-boundary-preserved",
+      "title": "Supplemental compatibility warning boundary is preserved",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    },
+    {
+      "id": "no-repo-wide-promotion-or-retirement",
+      "title": "No statement implies repo-wide promotion or tree-native retirement",
+      "severity": "info",
+      "status": "pass",
+      "message": "Check passed.",
+      "sourceRefs": ["examples/adoption/todo-search-slice/generated/generated-read-model.json"]
+    }
+  ],
+  "retainedWarnings": [
+    {
+      "id": "RW-BOUNDED-FIXTURE",
+      "findingNodeId": "FIND-BOUNDED-FIXTURE",
+      "status": "acceptable-warning",
+      "summary": "Bounded fixture Evidence is not full Todo app implementation."
+    },
+    {
+      "id": "RW-PARTIAL-UI",
+      "findingNodeId": "FIND-PARTIAL-UI",
+      "status": "acceptable-warning",
+      "summary": "UI screenshot/manual visual Evidence remains partial for the no-result empty state."
+    },
+    {
+      "id": "RW-GENERATED-BUILDER",
+      "findingNodeId": "FIND-GENERATED-BUILDER-MISSING",
+      "status": "generated-present-for-bounded-slice",
+      "summary": "Generated read-model output and scoped validator-backed Evidence now exist for the bounded Todo Search slice; CI/full promotion repeatability remains later."
+    },
+    {
+      "id": "RW-ACEP-CLEANUP",
+      "findingNodeId": "FIND-ACEP-CLEANUP-DEFERRED",
+      "status": "deferred-cleanup",
+      "summary": "ACEP task-card public-doc cleanup remains deferred."
+    }
+  ],
+  "fallbackReferenceStatus": [
+    { "path": "examples/adoption/todo-search-slice/product-tree.json", "status": "present" },
+    { "path": "examples/adoption/todo-search-slice/project-tree.json", "status": "present" },
+    { "path": "examples/adoption/todo-search-slice/work-tree.json", "status": "present" },
+    { "path": "examples/adoption/todo-search-slice/test-tree.json", "status": "present" },
+    { "path": "examples/adoption/todo-search-slice/evidence-tree.json", "status": "present" },
+    { "path": "examples/adoption/todo-search-slice/acceptance-tree.json", "status": "present" },
+    { "path": "examples/adoption/todo-search-slice/maintainability-graph-read-model.json", "status": "present" },
+    { "path": "examples/adoption/todo-search-slice/view-instance-manifest.json", "status": "present" }
+  ],
+  "recommendedNextDecisionSurface": [
+    "Continue active observation",
+    "Design CI workflow integration before broader enforcement",
+    "Apply scoped validator to another explicitly approved slice",
+    "Perform public-doc cleanup",
+    "Prepare broader Graph-source promotion review",
+    "Rollback or defer scoped pilot"
+  ]
+}

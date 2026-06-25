@@ -267,8 +267,9 @@ current active observation mode. It does not advance transition stages; it defin
 must be reviewed before any broader transition, rollback/defer, validator/CI, or cleanup decision.
 
 [validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md) defines the
-validator/CI-backed Evidence design that can support broader transition review later. It does not change transition stage
-or source authority.
+validator/CI-backed Evidence design that can support broader transition review later. The scoped Todo Search validator
+command now produces local validator-backed Evidence (`validation-pass`) for the bounded pilot. That Evidence does not
+change transition stage, expand source authority, add CI enforcement, or replace the user approval gate.
 
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) defines the target Graph-first responsibility split:
 Nodes are durable targets, Edges are durable semantic relationships, and Tags are temporary view-scoped roles.
@@ -285,8 +286,9 @@ Manual equivalent read-model parity artifacts are now recorded for the represent
 - `examples/adoption/todo-search-slice/view-instance-manifest.md`
 
 After the Node/Edge/Tag refresh, the artifacts show durable node kinds, durable edge types, view-scoped tags,
-confidence/freshness separation, and 7 Core View coverage. Generated builder/CLI-backed output remains a full-promotion
-or repeatability question. None of this is a current source authority change.
+confidence/freshness separation, and 7 Core View coverage. Generated builder/CLI-backed output and scoped
+validator-backed Evidence now exist for the Todo Search pilot, but CI-backed repeatability, broader validation, and full
+promotion remain future questions. None of this is a repository-wide source authority change.
 
 ### Rollback / Compatibility Strategy
 

@@ -139,6 +139,8 @@ Commands:
                        Generate bounded read-model Evidence from a selected slice
   graph read-model compare
                        Compare generated read-model Evidence with a manual parity artifact
+  graph read-model validate
+                       Validate scoped generated read-model Evidence and write validator-backed reports
 
 Options:
   --root <path>        Target project root. Defaults to current directory.

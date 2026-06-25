@@ -7,8 +7,9 @@ Status: generated-read-model-evidence-requirement / prerequisite-selected / boun
 This document defines the generated builder / CLI-backed read-model Evidence required before actual scoped
 source-authority pilot execution can be reconsidered for the Todo Search selected slice.
 
-It is a concept-level requirement. It does not implement a builder, CLI command, schema, validator, CI workflow, source
-transition, or generated output.
+It began as a concept-level requirement. Later bounded implementation work added Todo Search generated read-model
+Evidence and scoped validator-backed Evidence. Those outputs remain Evidence only; they do not implement CI workflow,
+source transition, or full Graph-source promotion.
 
 ## User Decision Trace
 
@@ -52,13 +53,15 @@ Generated Evidence is still Evidence. It is not automatic source authority.
 
 ## Evidence Requirement Levels
 
-| Level                             | Meaning                                                                                  | Sufficient for                                                                               | Not sufficient for                                                                |
-| --------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `manual-review-evidence`          | Current manual read-model parity artifacts, View Instance Manifest, and parity check.    | Concept review, dry-run observation, and preparation-package reasoning.                      | Default authority-bearing execution.                                              |
-| `generated-read-model-evidence`   | Repeatable generated output from declared source inputs, with source links and warnings. | Reopening scoped source-authority execution approval discussion for Todo Search pilot scope. | Automatic source authority change, full promotion, validator/CI repeatability.    |
-| `validator-or-ci-backed-evidence` | Future stronger level where generated output is checked by validator, CI, or both.       | Full promotion/repeatability discussion if later required.                                   | Current immediate requirement unless user later demands this stronger gate first. |
+| Level                           | Meaning                                                                                                                   | Sufficient for                                                                               | Not sufficient for                                                               |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `manual-review-evidence`        | Current manual read-model parity artifacts, View Instance Manifest, and parity check.                                     | Concept review, dry-run observation, and preparation-package reasoning.                      | Default authority-bearing execution.                                             |
+| `generated-read-model-evidence` | Repeatable generated output from declared source inputs, with source links and warnings.                                  | Reopening scoped source-authority execution approval discussion for Todo Search pilot scope. | Automatic source authority change, full promotion, validator/CI repeatability.   |
+| `validator-backed-evidence`     | Local scoped validator report checking generated read-model, parity, warnings, boundaries, and fallback/reference status. | Todo Search active observation and bounded scoped pilot review.                              | CI-backed repeatability, enforcement, source authority expansion, or promotion.  |
+| `ci-backed-evidence`            | Future stronger level where validator checks run in CI against a known commit or branch.                                  | Broader execution or full-promotion repeatability discussion if later required.              | Current scoped pilot operation unless the user demands this stronger gate first. |
 
-The selected prerequisite for the next scoped pilot discussion is `generated-read-model-evidence`.
+The selected prerequisite for the scoped pilot was `generated-read-model-evidence`; Todo Search now also has local
+`validator-backed-evidence`. CI-backed Evidence remains a future decision.
 
 ## Source Input Expectations
 
@@ -152,9 +155,9 @@ compatibility views.
 Generated read-model Evidence may reopen the scoped execution approval discussion. It does not approve execution.
 Codex/PBE cannot self-approve source authority change.
 
-## Non-Scope
+## Original Non-Scope
 
-This requirement does not include:
+The original requirement decision did not include:
 
 - builder implementation
 - CLI implementation
@@ -167,6 +170,10 @@ This requirement does not include:
 - tree-native artifact retirement
 - generated output claimed as already existing
 - scoped source-authority pilot execution
+
+Later records separately approve and implement bounded generated output, bounded scoped pilot execution, active
+observation, and local scoped validator-backed Evidence. They still do not approve CI enforcement, broader source
+authority expansion, public-doc cleanup, tree-native retirement, or full Graph-source promotion.
 
 ## Next User Decision Surface
 
@@ -197,11 +204,12 @@ The user later approved actual scoped source-authority pilot execution for the T
 generated Evidence and `comparison-pass` parity. That execution is recorded in
 [scoped-source-authority-pilot-execution-record.md](scoped-source-authority-pilot-execution-record.md). The generated
 Evidence requirement remains bounded to the pilot and still does not approve full Graph-source promotion, public-doc
-cleanup, validator/CI enforcement, or tree-native artifact retirement.
+cleanup, CI enforcement, or tree-native artifact retirement.
 
 The later validator/CI-backed Evidence design is recorded in
-[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md). That design is a
-stronger future Evidence layer and does not change the completed bounded generated Evidence prerequisite.
+[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md). Local scoped
+validator-backed Evidence is now implemented for Todo Search; CI-backed Evidence remains future and does not change the
+completed bounded generated Evidence prerequisite.
 
 ### Original Requirement Choice Set
 
@@ -260,14 +268,14 @@ non-scope boundaries without implementing anything.
 
 ### Remaining Judgment
 
-The user approved scoped source-authority pilot execution with generated Evidence. The next decision is whether to
-observe/review the pilot, require validator/CI backing, require cleanup first, prepare broader promotion review,
-rollback/defer, or keep the pilot bounded.
+The user approved scoped source-authority pilot execution with generated Evidence, and local validator-backed Evidence
+is now present. The next decision is whether to keep observing the pilot, design CI-backed Evidence, require cleanup
+first, prepare broader promotion review, rollback/defer, or keep the pilot bounded.
 
 ### Approval Choice Candidates
 
 - `Observe / review scoped source-authority pilot`
-- `Require validator/CI-backed read-model Evidence before broader execution or enforcement`
+- `Design CI-backed read-model Evidence before broader execution or enforcement`
 - `Require public-doc cleanup before broader promotion`
 - `Prepare broader Graph-source promotion review`
 - `Rollback / defer scoped source-authority pilot`
@@ -278,38 +286,38 @@ rollback/defer, or keep the pilot bounded.
 Decision required
 ```
 
-Reason: generated Evidence and scoped pilot execution are recorded, but next-phase review and broader promotion remain
-unapproved.
+Reason: generated Evidence, scoped pilot execution, review, active observation, and scoped validator-backed Evidence are
+recorded, but CI-backed Evidence and broader promotion remain unapproved.
 
 ## Control Node Summary
 
-| Control record                        | Family                       | Status                    | Reason                                                                                                 |
-| ------------------------------------- | ---------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Generated prerequisite selected       | Decision Control Node        | resolved                  | User required generated/CLI-backed Evidence before execution.                                          |
-| Output design selected                | Decision Control Node        | resolved                  | User selected design-first work, now recorded in the CLI-backed output design.                         |
-| Bounded generated output present      | Evidence Control Node        | present with warnings     | Generated read-model Evidence exists for Todo Search; validator/CI and execution approval remain open. |
-| Public-doc cleanup                    | Compatibility Control Node   | deferred / active warning | ACEP task-card cleanup remains visible and separate.                                                   |
-| Scoped source authority change        | Impact / Change Control Node | not started               | No source authority execution occurs from this requirement.                                            |
-| Demo-support Acceptance with warnings | Acceptance Control Node      | closed with warnings      | It remains demo-support acceptance, not source-transition approval.                                    |
-| Rollback/fallback readiness           | Evidence / Decision Control  | partial                   | Generated Evidence can help; rollback-ready conditions still require later definition.                 |
+| Control record                        | Family                       | Status                    | Reason                                                                                    |
+| ------------------------------------- | ---------------------------- | ------------------------- | ----------------------------------------------------------------------------------------- |
+| Generated prerequisite selected       | Decision Control Node        | resolved                  | User required generated/CLI-backed Evidence before execution.                             |
+| Output design selected                | Decision Control Node        | resolved                  | User selected design-first work, now recorded in the CLI-backed output design.            |
+| Bounded generated output present      | Evidence Control Node        | present with warnings     | Generated read-model Evidence exists for Todo Search.                                     |
+| Scoped validator-backed Evidence      | Evidence Control Node        | present                   | Local `validation-pass` Evidence exists for Todo Search; CI-backed Evidence remains open. |
+| Public-doc cleanup                    | Compatibility Control Node   | deferred / active warning | ACEP task-card cleanup remains visible and separate.                                      |
+| Scoped source authority change        | Impact / Change Control Node | not started               | No source authority execution occurs from this requirement.                               |
+| Demo-support Acceptance with warnings | Acceptance Control Node      | closed with warnings      | It remains demo-support acceptance, not source-transition approval.                       |
+| Rollback/fallback readiness           | Evidence / Decision Control  | partial                   | Generated Evidence can help; rollback-ready conditions still require later definition.    |
 
 ## Gate Self-Check
 
-| Gate                                         | Result | Notes                                                                                               |
-| -------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------- |
-| Non-Implementation Gate                      | PASS   | No builder, CLI, schema, validator, CI, or generated output is implemented.                         |
-| Non-Promotion Gate                           | PASS   | This requirement does not promote Maintainability Graph or change source authority.                 |
-| Requirement / Implementation Separation Gate | PASS   | The requirement is recorded separately from any future implementation task.                         |
-| Evidence Reality Gate                        | PASS   | Current manual Evidence remains visible; bounded generated Evidence is recorded under `generated/`. |
-| Source Authority Boundary Gate               | PASS   | Tree-native selected-slice artifacts remain current operational source.                             |
-| Taxonomy / View Integrity Gate               | PASS   | Generated output expectations preserve Node/Edge/Tag and 7 Core View constraints.                   |
-| User Approval Gate                           | PASS   | Execution and implementation still require later explicit user approval.                            |
+| Gate                                         | Result | Notes                                                                                                                       |
+| -------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------- |
+| Implementation Boundary Gate                 | PASS   | Bounded builder and scoped validator exist for Todo Search; no schema, CI, enforcement, or broader implementation is added. |
+| Non-Promotion Gate                           | PASS   | This requirement does not promote Maintainability Graph or change source authority.                                         |
+| Requirement / Implementation Separation Gate | PASS   | The requirement is recorded separately from any future implementation task.                                                 |
+| Evidence Reality Gate                        | PASS   | Current manual Evidence remains visible; bounded generated Evidence is recorded under `generated/`.                         |
+| Source Authority Boundary Gate               | PASS   | Tree-native selected-slice artifacts remain current operational source.                                                     |
+| Taxonomy / View Integrity Gate               | PASS   | Generated output expectations preserve Node/Edge/Tag and 7 Core View constraints.                                           |
+| User Approval Gate                           | PASS   | Execution and implementation still require later explicit user approval.                                                    |
 
 ## Final Statement
 
-This requirement document does not implement a generated builder or CLI-backed output.
-
-It does not create generated read-model Evidence.
+This requirement document now records that bounded generated read-model Evidence and scoped validator-backed Evidence
+exist for Todo Search.
 
 It does not execute scoped source-authority transition.
 

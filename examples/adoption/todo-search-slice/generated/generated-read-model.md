@@ -4,9 +4,9 @@ Status: generated-present / evidence-only / source-authority-unchanged
 
 ## Run Identity
 
-- Generated at: 2026-06-25T04:36:36.541Z
+- Generated at: 2026-06-25T05:05:32.212Z
 - Command identity: `pbe graph read-model generate --slice examples/adoption/todo-search-slice`
-- Source commit: ce06861
+- Source commit: 3ee75c2
 - Source slice: `examples/adoption/todo-search-slice`
 
 ## Boundary
@@ -74,8 +74,8 @@ View membership is separated from `viewScopedTags` through `includedInViewIds` a
 - RW-BOUNDED-FIXTURE: acceptable-warning - Bounded fixture Evidence is not full Todo app implementation.
 - RW-PARTIAL-UI: acceptable-warning - UI screenshot/manual visual Evidence remains partial for the no-result empty
   state.
-- RW-GENERATED-BUILDER: generated-present-for-bounded-slice - Generated read-model output now exists for the bounded
-  Todo Search slice; validator/CI/full promotion repeatability remains later.
+- RW-GENERATED-BUILDER: generated-present-for-bounded-slice - Generated read-model output and scoped validator-backed
+  Evidence now exist for the bounded Todo Search slice; CI/full promotion repeatability remains later.
 - RW-ACEP-CLEANUP: deferred-cleanup - ACEP task-card public-doc cleanup remains deferred.
 
 ## Compatibility Warning Carry-Forward
