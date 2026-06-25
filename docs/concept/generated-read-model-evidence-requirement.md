@@ -199,6 +199,10 @@ generated Evidence and `comparison-pass` parity. That execution is recorded in
 Evidence requirement remains bounded to the pilot and still does not approve full Graph-source promotion, public-doc
 cleanup, validator/CI enforcement, or tree-native artifact retirement.
 
+The later validator/CI-backed Evidence design is recorded in
+[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md). That design is a
+stronger future Evidence layer and does not change the completed bounded generated Evidence prerequisite.
+
 ### Original Requirement Choice Set
 
 After this requirement is recorded, the user must choose one of:

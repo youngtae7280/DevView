@@ -266,6 +266,10 @@ leaving broader transition decisions open.
 current active observation mode. It does not advance transition stages; it defines the checks and trigger conditions that
 must be reviewed before any broader transition, rollback/defer, validator/CI, or cleanup decision.
 
+[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md) defines the
+validator/CI-backed Evidence design that can support broader transition review later. It does not change transition stage
+or source authority.
+
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) defines the target Graph-first responsibility split:
 Nodes are durable targets, Edges are durable semantic relationships, and Tags are temporary view-scoped roles.
 

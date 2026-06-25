@@ -138,6 +138,10 @@ Escalate to a validator/CI-backed Evidence decision before:
 - preparing full Graph-source promotion review
 - relying on repeatability beyond manual command execution
 
+The concept-level design for that decision is recorded in
+[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md). The design does
+not implement validator commands or CI enforcement.
+
 ## Triggers For Public-Doc Cleanup Decision
 
 Escalate ACEP task-card/public-doc cleanup if:

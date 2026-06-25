@@ -250,6 +250,10 @@ authority change.
 If the user wants stricter repeatability, choose `Require validator/CI-backed read-model Evidence before execution`
 instead.
 
+That stricter repeatability design is now recorded in
+[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md). It defines future
+validator/CI Evidence expectations without implementing validator or CI enforcement.
+
 ## Approval Brief Draft
 
 ### Intent Understood

@@ -306,6 +306,10 @@ future parity, boundary, warning, compatibility, or acceptance-authority checks 
 fallback conditions into active observation triggers. It still performs no rollback command and makes no compatibility
 cleanup; tree-native selected-slice artifacts remain the visible fallback/reference set.
 
+[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md) defines stronger
+future Evidence checks for broader use, but it does not make rollback-ready status automatic or retire fallback
+artifacts.
+
 [graph-node-edge-tag-policy.md](graph-node-edge-tag-policy.md) adds a source-transition safety constraint: durable
 semantic relationships must remain Edges, while Tags are view-scoped roles only. A future transition or parity artifact
 that encodes durable meaning as tags can become a projection/parity failure or compatibility-control trigger.

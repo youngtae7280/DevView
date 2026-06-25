@@ -110,6 +110,10 @@ Active observation criteria are documented in
 [scoped-source-authority-pilot-active-observation.md](scoped-source-authority-pilot-active-observation.md). This keeps the
 pilot active with retained warnings and leaves full-promotion readiness as a separate future review.
 
+[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md) now defines how
+validator-backed and CI-backed read-model Evidence could support broader execution/enforcement or full-promotion review
+later. It is design-only and does not introduce enforcement.
+
 Preparation outcome:
 
 ```text

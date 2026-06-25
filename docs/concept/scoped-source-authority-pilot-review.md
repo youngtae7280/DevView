@@ -119,6 +119,10 @@ The active observation criteria are recorded in
 keeps the pilot active with retained warnings and defines re-review, fallback/defer, validator/CI, public-doc cleanup,
 and broader-promotion triggers without executing any next-phase action.
 
+[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md) defines the
+validator/CI-backed Evidence design for broader use. It does not introduce enforcement or change the current scoped pilot
+status.
+
 ## Gate Self-Check
 
 | Gate                                     | Result | Notes                                                      |

@@ -155,6 +155,10 @@ current `keep-active-with-retained-warnings` stance. The pilot remains bounded t
 observation triggers determine whether the next user decision is continued observation, validator/CI-backed Evidence,
 public-doc cleanup, broader promotion review, rollback, or deferral.
 
+[validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md) records the
+design for that validator/CI-backed Evidence branch. It keeps validation Evidence distinct from source authority and user
+approval.
+
 [generated-read-model-evidence-requirement.md](generated-read-model-evidence-requirement.md) records the user's decision
 to require generated builder / CLI-backed read-model Evidence before actual scoped execution. It is an Evidence
 prerequisite, not builder implementation and not source authority change.

@@ -54,6 +54,7 @@ This log is the source of truth for confirmed concept decisions in the PBE runti
 | DEC-046 | active | The user approved actual scoped source-authority pilot execution for the Todo Search selected slice with generated Evidence and `comparison-pass` parity. The pilot is bounded to `examples/adoption/todo-search-slice`, uses generated read-model Evidence as the pilot-scoped Graph-first authority record for Node/Edge/Tag interpretation and 7 Core View traversal, preserves tree-native artifacts as fallback/reference, and does not approve full Graph-source promotion, repository-wide source authority change, tree-native retirement, public-doc cleanup, or validator/CI enforcement. | Scoped Source-Authority Pilot Execution Record                                    |
 | DEC-047 | active | The Todo Search scoped source-authority pilot review passed with retained warnings. Generated authority remained bounded to the selected slice, generated/manual parity remained `comparison-pass`, tree-native fallback/reference artifacts remained usable, retained warnings remained visible, and user acceptance authority remained user-controlled. The review does not expand pilot scope, approve full Graph-source promotion, introduce validator/CI enforcement, perform public-doc cleanup, or retire tree-native artifacts.                                                             | Scoped Source-Authority Pilot Review                                              |
 | DEC-048 | active | The Todo Search scoped source-authority pilot remains active under observation with retained warnings. Active observation keeps authority bounded to `examples/adoption/todo-search-slice`, requires parity to remain `comparison-pass`, preserves tree-native fallback/reference artifacts, and defines triggers for re-review, fallback/defer, validator/CI-backed Evidence, public-doc cleanup, or broader promotion review without performing those next-phase actions.                                                                                                                         | Scoped Source-Authority Pilot Active Observation                                  |
+| DEC-049 | active | Validator/CI-backed read-model Evidence is designed as a stronger future Evidence layer before broader execution, enforcement, or full promotion review. The design separates CLI command success, validator-backed Evidence, and CI-backed Evidence; defines scope levels, checks, report artifacts, statuses, and severity labels; and does not implement validation, add CI enforcement, change source authority, expand pilot scope, or make validation pass equivalent to user approval.                                                                                                       | Validator / CI-Backed Read-Model Evidence Design                                  |
 
 ## Supersede Relationships
 
@@ -218,6 +219,10 @@ Todo Search selected slice only, fallback ready, retained warnings visible, and 
 DEC-048 does not supersede DEC-047. It records the observation mode after review: keep active with retained warnings,
 watch trigger conditions, and require a separate user decision before validator/CI enforcement, public-doc cleanup,
 broader promotion review, rollback/defer, or scope expansion.
+
+DEC-049 does not supersede DEC-048. It responds to one active-observation trigger by defining validator/CI-backed
+Evidence design only. It does not start validator implementation, add CI enforcement, or approve broader source
+authority.
 
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in

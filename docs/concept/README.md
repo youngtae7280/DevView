@@ -252,6 +252,14 @@ The active observation status is `keep-active-with-retained-warnings`. It keeps 
 and defines re-review, fallback/defer, validator/CI, public-doc cleanup, and broader promotion-review triggers without
 performing any of those next-phase actions.
 
+The validator/CI-backed Evidence design is:
+
+- [validator-ci-backed-read-model-evidence-design.md](validator-ci-backed-read-model-evidence-design.md)
+
+This design separates CLI command success, validator-backed Evidence, and CI-backed Evidence. It defines future checks,
+report artifacts, status labels, and scope levels for broader execution/enforcement review without implementing a
+validator command, adding CI enforcement, expanding scope, or approving full Graph-source promotion.
+
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.
