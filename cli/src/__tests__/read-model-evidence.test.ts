@@ -1,4 +1,4 @@
-import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -343,41 +343,46 @@ describe('read-model Evidence builder', () => {
     )
   })
 
-  it('calculates aggregate warning, blocked, and decision-required status from report summaries', async () => {
-    const cases = [
-      { validationStatus: 'validation-warning', field: 'warningCount', count: 1, aggregateStatus: 'aggregate-warning' },
-      {
-        validationStatus: 'validation-blocked',
-        field: 'blockingCount',
-        count: 1,
-        aggregateStatus: 'aggregate-blocked',
-      },
-      {
-        validationStatus: 'decision-required',
-        field: 'decisionRequiredCount',
-        count: 1,
-        aggregateStatus: 'decision-required',
-      },
-    ]
+  it('calculates aggregate warning status from report summaries', async () => {
+    const workspace = await createAggregateReportWorkspace()
+    await mutateValidationReport(workspace, 'examples/valid/todo-app-pbe-run', 'validation-warning', 'warningCount', 1)
 
-    for (const entry of cases) {
-      const workspace = await createExampleWorkspace()
-      await prepareTwoSliceValidationReports(workspace)
-      await mutateValidationReport(
-        workspace,
-        'examples/valid/todo-app-pbe-run',
-        entry.validationStatus,
-        entry.field,
-        entry.count,
-      )
+    const result = await summarizeReadModelEvidence(workspace, [
+      'examples/adoption/todo-search-slice',
+      'examples/valid/todo-app-pbe-run',
+    ])
 
-      const result = await summarizeReadModelEvidence(workspace, [
-        'examples/adoption/todo-search-slice',
-        'examples/valid/todo-app-pbe-run',
-      ])
+    expect(result.summary.status).toBe('aggregate-warning')
+  })
 
-      expect(result.summary.status).toBe(entry.aggregateStatus)
-    }
+  it('calculates aggregate blocked status from report summaries', async () => {
+    const workspace = await createAggregateReportWorkspace()
+    await mutateValidationReport(workspace, 'examples/valid/todo-app-pbe-run', 'validation-blocked', 'blockingCount', 1)
+
+    const result = await summarizeReadModelEvidence(workspace, [
+      'examples/adoption/todo-search-slice',
+      'examples/valid/todo-app-pbe-run',
+    ])
+
+    expect(result.summary.status).toBe('aggregate-blocked')
+  })
+
+  it('calculates aggregate decision-required status from report summaries', async () => {
+    const workspace = await createAggregateReportWorkspace()
+    await mutateValidationReport(
+      workspace,
+      'examples/valid/todo-app-pbe-run',
+      'decision-required',
+      'decisionRequiredCount',
+      1,
+    )
+
+    const result = await summarizeReadModelEvidence(workspace, [
+      'examples/adoption/todo-search-slice',
+      'examples/valid/todo-app-pbe-run',
+    ])
+
+    expect(result.summary.status).toBe('decision-required')
   })
 
   it('does not mutate per-slice validation reports while writing an aggregate summary', async () => {
@@ -416,8 +421,7 @@ describe('read-model Evidence builder', () => {
   })
 
   it('reports aggregate-blocked for missing or malformed per-slice validation reports', async () => {
-    const missingWorkspace = await createExampleWorkspace()
-    await prepareTwoSliceValidationReports(missingWorkspace)
+    const missingWorkspace = await createAggregateReportWorkspace()
     await rm(join(missingWorkspace, 'examples/valid/todo-app-pbe-run/generated/read-model-validation-report.json'), {
       force: true,
     })
@@ -433,8 +437,7 @@ describe('read-model Evidence builder', () => {
         ?.reportStatus,
     ).toBe('missing')
 
-    const malformedWorkspace = await createExampleWorkspace()
-    await prepareTwoSliceValidationReports(malformedWorkspace)
+    const malformedWorkspace = await createAggregateReportWorkspace()
     await writeFile(
       join(malformedWorkspace, 'examples/valid/todo-app-pbe-run/generated/read-model-validation-report.json'),
       '{not-json',
@@ -547,6 +550,120 @@ async function createExampleWorkspace(): Promise<string> {
   await cp(resolve('examples'), join(workspace, 'examples'), { recursive: true })
   await cp(resolve('docs'), join(workspace, 'docs'), { recursive: true })
   return workspace
+}
+
+async function createAggregateReportWorkspace(): Promise<string> {
+  const workspace = await mkdtemp(join(tmpdir(), 'pbe-read-model-aggregate-'))
+  workspaces.push(workspace)
+  await writeValidationReportFixture(
+    workspace,
+    'examples/adoption/todo-search-slice',
+    todoSearchReadModelProfile.profileId,
+    'pilot-marker-backed',
+    'flat-demo-support',
+    todoSearchReadModelProfile.expectedCounts.validationChecks,
+    {
+      parityRequirement: { required: true, status: 'pass' },
+      pilotMarkerRequirement: { required: true, status: 'present' },
+      runtimeFixtureRequirement: { required: true, status: 'present' },
+      retainedWarnings: [
+        {
+          id: 'RW-BOUNDED-FIXTURE',
+          status: 'acceptable-warning',
+          summary: 'Bounded fixture Evidence is not full Todo app implementation.',
+        },
+      ],
+    },
+  )
+  await writeValidationReportFixture(
+    workspace,
+    'examples/valid/todo-app-pbe-run',
+    todoAppPbeRunStructureOnlyProfile.profileId,
+    'structure-only',
+    'canonical-pbe',
+    todoAppPbeRunStructureOnlyProfile.expectedCounts.validationChecks,
+    {
+      parityRequirement: { required: false, status: 'not-required' },
+      pilotMarkerRequirement: { required: false, status: 'not-required' },
+      runtimeFixtureRequirement: { required: false, status: 'attached-evidence-only' },
+      retainedWarnings: [
+        {
+          id: 'RW-STRUCTURE-ONLY',
+          status: 'structure-only-limitation',
+          summary: 'Structure-only validation does not require parity or pilot marker artifacts.',
+        },
+      ],
+    },
+  )
+  return workspace
+}
+
+async function writeValidationReportFixture(
+  workspace: string,
+  slice: string,
+  profileId: string,
+  policyLevel: string,
+  sourceLayout: string,
+  checkCount: number,
+  options: {
+    parityRequirement: Record<string, unknown>
+    pilotMarkerRequirement: Record<string, unknown>
+    runtimeFixtureRequirement: Record<string, unknown>
+    retainedWarnings: Array<Record<string, unknown>>
+  },
+): Promise<void> {
+  const reportDir = join(workspace, slice, 'generated')
+  await mkdir(reportDir, { recursive: true })
+  const report = {
+    version: '0.1.0-read-model-validation-report',
+    metadata: {
+      sourceSlice: slice,
+      profileId,
+      sliceProfile: profileId,
+      sourceLayout,
+      policyLevel,
+      evidenceLevel: 'validator-backed',
+      scopeLevel: 'scoped-slice-validation',
+      parityRequirement: options.parityRequirement,
+      pilotMarkerRequirement: options.pilotMarkerRequirement,
+      runtimeFixtureRequirement: options.runtimeFixtureRequirement,
+    },
+    status: 'validation-pass',
+    evidenceLevel: 'validator-backed',
+    scopeLevel: 'scoped-slice-validation',
+    sourceAuthorityBoundary: `Validator-backed Evidence checks ${slice} only. It does not change source authority.`,
+    nonPromotionStatement: 'Validation pass is Evidence only and does not approve promotion or user acceptance.',
+    summary: {
+      checkCount,
+      passCount: checkCount,
+      warningCount: 0,
+      blockingCount: 0,
+      decisionRequiredCount: 0,
+      status: 'validation-pass',
+    },
+    checks: [],
+    retainedWarnings: options.retainedWarnings,
+    fallbackReferenceStatus: [],
+    sliceValidationContract: {
+      reportUnit: 'per-slice-validation-report',
+      sourceSlice: slice,
+      profileId,
+      sourceLayout,
+      policyLevel,
+      evidenceLevel: 'validator-backed',
+      scopeLevel: 'scoped-slice-validation',
+      parityRequirement: options.parityRequirement,
+      pilotMarkerRequirement: options.pilotMarkerRequirement,
+      runtimeFixtureRequirement: options.runtimeFixtureRequirement,
+      retainedWarnings: options.retainedWarnings,
+      sourceAuthorityBoundary: `Validator-backed Evidence checks ${slice} only. It does not change source authority.`,
+      nonPromotionStatement: 'Validation pass is Evidence only and does not approve promotion or user acceptance.',
+      crossSliceDependencyRule:
+        'Validation uses the target slice profile, generated artifacts, and declared source inputs only.',
+    },
+    recommendedNextDecisionSurface: [],
+  }
+  await writeFile(join(reportDir, 'read-model-validation-report.json'), JSON.stringify(report, null, 2))
 }
 
 async function prepareTwoSliceValidationReports(workspace: string): Promise<void> {

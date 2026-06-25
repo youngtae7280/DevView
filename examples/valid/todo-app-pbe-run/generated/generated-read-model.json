@@ -2,9 +2,9 @@
   "version": "0.1.0-generated-read-model-evidence",
   "metadata": {
     "artifactRole": "generated_read_model_evidence",
-    "generatedAt": "2026-06-25T07:51:13.649Z",
+    "generatedAt": "2026-06-25T07:57:33.141Z",
     "commandIdentity": "pbe graph read-model generate --slice examples/valid/todo-app-pbe-run",
-    "sourceCommit": "a98ecd8",
+    "sourceCommit": "16d15c1",
     "sourceSlice": "examples/valid/todo-app-pbe-run",
     "sliceProfile": "todo-app-pbe-run-structure-only",
     "sliceProfileDisplayName": "Todo App PBE Golden Run",
