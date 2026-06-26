@@ -30,6 +30,9 @@ Non-enforcing CI workflow integration of local `validate --all` is recorded in
 that switch is now reviewed as PR #2 / run `28210904900`.
 Registry fixture and test planning for that future path is tracked in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
+Negative fixture storage policy is tracked in
+[read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md); invalid fixtures are
+not part of current PR informational workflow runs.
 
 ## Current Baseline
 

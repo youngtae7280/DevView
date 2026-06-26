@@ -408,6 +408,16 @@ tests, per-policy tests, independence tests, aggregate tests, non-mutation tests
 readiness criteria. The later local `validate --all` implementation uses this test surface while preserving
 non-enforcement boundaries.
 
+The negative fixture storage decision surface is now recorded:
+
+- [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md)
+
+The decision surface compares inline/temp fixtures, durable `examples/invalid/read-model-*` fixtures,
+`examples/read-model-aggregate/invalid-fixtures`, docs-only examples, and inline JSON objects. It recommends keeping
+parser-shape failures inline/temp, using temp workspace copies for mutation and cross-slice leakage cases, and creating
+durable invalid fixtures only for stable behavior-level validate-all failures. No invalid fixtures, parser changes,
+test changes, workflow changes, generated artifacts, enforcement, or source-authority changes are introduced.
+
 The registry storage/location decision surface is now recorded:
 
 - [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md)

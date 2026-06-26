@@ -102,6 +102,10 @@ non-executing command-plan tests are now implemented; local `validate --all` com
 The storage/location decision surface is recorded in
 [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md), which records the
 candidate file location and strict JSON format.
+Negative fixture storage policy is recorded in
+[read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md). Negative fixtures are
+local test inputs only; current `validate --all` and CI runs remain positive-profile Evidence commands unless a later
+design explicitly includes invalid fixtures.
 
 ## Execution Modes
 
@@ -231,6 +235,7 @@ This contract does not:
 - dispatch GitHub Actions
 - create PRs
 - regenerate generated artifacts
+- create or run negative fixtures
 - add required checks
 - add branch protection
 - introduce CI enforcement

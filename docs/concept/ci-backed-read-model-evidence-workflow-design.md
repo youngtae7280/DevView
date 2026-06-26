@@ -364,6 +364,9 @@ The non-enforcing workflow switch to local `validate --all` is now implemented a
 [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md). Run `28210541509` confirms the switched
 manual workflow remains `ci-evidence-pass`, and PR #2 run `28210904900` confirms the switched PR informational workflow
 records `pull_request-informational` plus `validateAllStatus: aggregate-pass`.
+Negative fixture storage is designed separately in
+[read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md); current CI runs do
+not execute invalid fixtures.
 The future registry/test planning layer is recorded in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 The storage/location decision surface for the registry artifact is recorded in

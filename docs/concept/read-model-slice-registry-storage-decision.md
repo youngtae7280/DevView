@@ -234,3 +234,7 @@ This decision surface, candidate fixture, and parser tests do not:
 This document records the selected candidate registry location and strict JSON format. The candidate registry file is
 now present, covered by internal parser/normalization tests, and consumed by local non-enforcing `validate --all`.
 Workflow, enforcement, source-authority, promotion, and cleanup behavior still do not consume it.
+
+Negative fixture storage is decided separately in
+[read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md). That policy covers
+invalid registry/report/slice inputs and does not change this positive registry fixture location.

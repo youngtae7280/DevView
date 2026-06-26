@@ -379,9 +379,11 @@ The staged path is:
    fixtures, positive/negative fixture strategy, and non-mutation tests before any broader registry consumption.
 8. Use [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md) for the selected
    candidate registry location, now materialized as `examples/read-model-aggregate/read-model-slices.json`.
-9. Treat local `validate --all` as the only registry-consuming CLI command surface; existing single-slice commands remain
-   profile-config driven, and CI workflow usage is separately governed by the non-enforcing workflow records.
-10. Use [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md) for the implemented
+9. Use [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md) before creating
+   durable invalid read-model fixtures; negative fixture execution remains local test Evidence only.
+10. Treat local `validate --all` as the only registry-consuming CLI command surface; existing single-slice commands remain
+    profile-config driven, and CI workflow usage is separately governed by the non-enforcing workflow records.
+11. Use [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md) for the implemented
     non-enforcing workflow switch from explicit read-model commands to local `validate --all`, reviewed by manual run
     `28210541509` and PR informational run `28210904900`.
 
@@ -423,8 +425,8 @@ The user must decide the next implementation branch:
 add aggregate summary after per-slice validation reports remain stable
 ```
 
-or choose a different branch such as parity design for `todo-app-pbe-run`, negative fixtures, cleanup, enforcement
-design, multi-slice scope redesign, or continued observation.
+or choose a different branch such as parity design for `todo-app-pbe-run`, durable negative fixture implementation,
+cleanup, enforcement design, multi-slice scope redesign, or continued observation.
 
 ## Control Node Summary
 

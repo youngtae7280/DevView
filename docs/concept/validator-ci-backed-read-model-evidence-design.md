@@ -284,6 +284,9 @@ Registry storage/location tradeoffs are recorded in
 The candidate registry fixture now exists at `examples/read-model-aggregate/read-model-slices.json`. Local
 `validate --all` consumes it after comparing entries against the in-code profiles; existing single-slice validator
 behavior still uses the implemented profile configuration directly.
+Negative fixture storage policy is recorded in
+[read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md). Invalid fixtures
+remain local test inputs only and are not part of current validator-backed or CI-backed positive Evidence runs.
 
 ## Gate Self-Check
 

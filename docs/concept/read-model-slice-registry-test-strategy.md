@@ -26,6 +26,11 @@ The storage and file-format decision surface for the registry fixture is recorde
 now reviewable metadata only; this strategy should not be treated as approval for parser, planner, `validate --all`, or
 workflow consumption beyond the bounded local `validate --all` implementation recorded later.
 
+The negative fixture storage decision surface is recorded in
+[read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md). It keeps parser-shape
+failures inline/temp first, recommends temp workspace copies for mutation and leakage cases, and reserves durable
+`examples/invalid/read-model-*` fixtures for stable behavior-level validate-all failures.
+
 ## Relationship To Validate-All Contract
 
 The validate-all contract defines the policy surface:
@@ -145,8 +150,11 @@ Required profile fields:
 
 ## Future Negative Fixture Categories
 
-Negative fixtures should be lightweight and isolated. Prefer temp fixtures or `examples/invalid` only after the storage
-policy is approved. Do not mutate current positive slice artifacts to produce negative cases.
+Negative fixtures should be lightweight and isolated. The storage policy is now recorded in
+[read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md): keep parser-shape
+failures inline/temp, use temp workspace copies for mutation and leakage cases, and add durable
+`examples/invalid/read-model-*` fixtures only for stable behavior-level failures. Do not mutate current positive slice
+artifacts to produce negative cases.
 
 | Category                                      | Expected result                                                                  |
 | --------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -274,7 +282,8 @@ This strategy was enough to request creation of the candidate registry fixture w
   [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md)
 - the file format is selected through the storage decision surface
 - positive fixture expectations above are accepted
-- negative fixture storage policy is selected
+- negative fixture storage policy is selected in
+  [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md)
 - parser/normalization behavior is agreed
 - all-slice execution mode default is chosen
 - report output location is chosen

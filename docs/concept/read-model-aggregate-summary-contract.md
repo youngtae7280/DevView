@@ -130,6 +130,10 @@ Manual validate-all run `28210541509` and PR validate-all run `28210904900` revi
 `validateAllStatus: aggregate-pass`. The earlier Todo Search-only run `28151296796` remains historical CI-backed
 Evidence for the first workflow shape.
 
+Malformed aggregate input and other invalid read-model scenarios are covered by the storage policy in
+[read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md). They are future local
+test inputs, not current CI workflow inputs.
+
 ## Tests
 
 Focused tests cover:

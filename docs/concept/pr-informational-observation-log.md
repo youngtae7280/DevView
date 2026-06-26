@@ -24,6 +24,10 @@ Evidence without changing workflow behavior.
 | Target before refinement  | At least 3 real PR informational runs or 1 week of normal PR flow, unless immediate re-review is triggered. |
 | Enforcement / authority   | Not approved. PR Evidence is informational only and does not change source authority.                       |
 
+Negative fixture policy is documented separately in
+[read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md). Current PR
+informational observations run positive configured profiles only.
+
 ## Baseline Entries
 
 ### Baseline Entry 1: Manual Dispatch Run

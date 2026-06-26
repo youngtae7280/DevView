@@ -172,6 +172,10 @@ The CI manifest preserves current fields and adds validate-all specific fields:
 - non-enforcement statement
 - non-promotion statement
 
+Negative fixtures are not part of this workflow mode. Storage policy for future invalid read-model fixtures is recorded
+in [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md); running invalid
+fixtures in CI would require a separate non-enforcing or enforcement design.
+
 ## Step Summary Requirements
 
 The Step Summary remains readable without opening artifacts:
