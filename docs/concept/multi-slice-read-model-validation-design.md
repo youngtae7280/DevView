@@ -374,6 +374,8 @@ The staged path is:
 6. Use [read-model-validate-all-contract.md](read-model-validate-all-contract.md) as the design-only contract for any
    future all-slice validation implementation. It defines slice registry fields, execution modes, and aggregate
    semantics without implementing `validate --all`.
+7. Use [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md) to design registry
+   fixtures, positive/negative fixtures, and non-mutation tests before implementing registry parsing or `validate --all`.
 
 Do not move next to `validate --all`, required checks, enforcement, or broad CI changes without a separate user
 decision.
@@ -428,6 +430,7 @@ design, multi-slice scope redesign, or continued observation.
 | Aggregate CI-backed review          | Evidence Control Node      | reviewed                     | Runs `28156403793` and `28157938343` reviewed the aggregate-enabled artifact bundle as non-enforcing CI-backed Evidence. |
 | Aggregate validation                | Decision Control Node      | deferred                     | `validate --all`, aggregate validation execution, and enforcement remain separate.                                       |
 | Validate-all contract               | Decision Control Node      | design-recorded              | The all-slice registry and execution-mode contract is documented, but no CLI implementation exists.                      |
+| Slice registry test strategy        | Evidence / Decision Node   | design-recorded              | Future registry fixtures and tests are specified before implementation.                                                  |
 | PR informational trigger            | Decision Control Node      | implemented / reviewed       | PR visibility is implemented as non-enforcing informational Evidence and reviewed in PR run `28207822252`.               |
 | CI enforcement / required checks    | Decision Control Node      | not approved                 | Reviewed CI-backed Evidence exists, but enforcement and required checks remain future-only.                              |
 

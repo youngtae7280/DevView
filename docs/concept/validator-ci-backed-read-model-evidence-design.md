@@ -272,6 +272,8 @@ cleanup, broader promotion review, and rollback/defer remain separate decisions.
 Future all-slice validation should follow
 [read-model-validate-all-contract.md](read-model-validate-all-contract.md) before any `validate --all` command, workflow
 change, or enforcement mode is implemented.
+Registry fixture and test planning for that path is recorded in
+[read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 
 ## Gate Self-Check
 

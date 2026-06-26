@@ -189,13 +189,14 @@ Record changed paths by category instead of only listing filenames:
 
 ## Observation Counter
 
-| Counter                                   | Current value                                                                                         |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Real PR informational runs reviewed       | 1                                                                                                     |
-| Manual dispatch runs reviewed after PR CI | 1                                                                                                     |
-| Target before filter refinement           | 3 real PR informational runs or 1 week of normal PR flow, unless immediate re-review is triggered.    |
-| Enforcement discussion state              | Closed until a separate user decision reopens it.                                                     |
-| All-slice validation state                | Contract design only; see [read-model-validate-all-contract.md](read-model-validate-all-contract.md). |
+| Counter                                   | Current value                                                                                              |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Real PR informational runs reviewed       | 1                                                                                                          |
+| Manual dispatch runs reviewed after PR CI | 1                                                                                                          |
+| Target before filter refinement           | 3 real PR informational runs or 1 week of normal PR flow, unless immediate re-review is triggered.         |
+| Enforcement discussion state              | Closed until a separate user decision reopens it.                                                          |
+| All-slice validation state                | Contract design only; see [read-model-validate-all-contract.md](read-model-validate-all-contract.md).      |
+| Registry test strategy state              | Design only; see [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md). |
 
 ## Decision Thresholds
 
@@ -231,6 +232,9 @@ Neither a green PR informational run nor this log can approve enforcement or sou
 All-slice validation implementation is governed by
 [read-model-validate-all-contract.md](read-model-validate-all-contract.md) and remains separate from this observation
 log.
+Registry fixture/test implementation is governed by
+[read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md) and also remains separate from
+this log.
 
 ## Gate Self-Check
 

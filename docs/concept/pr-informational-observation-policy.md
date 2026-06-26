@@ -25,6 +25,8 @@ there before path-filter, failure-semantics, enforcement, or validation-scope ch
 All-slice validation is tracked separately in
 [read-model-validate-all-contract.md](read-model-validate-all-contract.md). This PR observation policy does not approve
 `validate --all` implementation or workflow changes.
+Registry fixture and test planning for that future path is tracked in
+[read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 
 ## Current Baseline
 

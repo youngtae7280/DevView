@@ -395,6 +395,14 @@ failure semantics, and boundaries for a future `pbe graph read-model validate --
 no CLI command, workflow change, GitHub Action run, enforcement, source-authority expansion, public-doc cleanup, or
 promotion is implemented by this document.
 
+The slice registry fixture and test strategy is now recorded:
+
+- [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md)
+
+The strategy defines the proposed registry fixture shape, positive fixtures, negative fixture categories, parser/planner
+tests, per-policy tests, independence tests, aggregate tests, non-mutation tests, boundary tests, and implementation
+readiness criteria. It does not create a registry file or implement `validate --all`.
+
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.

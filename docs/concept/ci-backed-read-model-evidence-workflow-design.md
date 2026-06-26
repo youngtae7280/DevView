@@ -354,6 +354,8 @@ enforcement, or validation-scope changes are proposed.
 Future all-slice validation should use
 [read-model-validate-all-contract.md](read-model-validate-all-contract.md) as a design-only contract before any
 `validate --all`, CI workflow change, or enforcement mode is implemented.
+The future registry/test planning layer is recorded in
+[read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 
 ## Approval Brief Draft
 
