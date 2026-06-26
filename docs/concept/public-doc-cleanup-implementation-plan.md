@@ -1,15 +1,16 @@
 # Public-Doc Cleanup Implementation Plan
 
-Status: implementation-plan / batch-a-b-c-implemented / no-waiver-approved
+Status: implementation-plan / batch-a-b-c-implemented / batch-d-reviewed-implemented-if-needed / no-waiver-approved
 
 ## Purpose
 
 This plan turns the public-doc cleanup or waiver decision package into a small, staged cleanup implementation plan.
 
 Batch A is now implemented in `docs/source-of-truth-matrix.md`, Batch B is now implemented in `README.md`,
-`docs/acep.md`, and `docs/workflow.md`, and Batch C is now implemented in the examples, usage, traceability, and audit
-docs. This plan still does not approve a waiver, Graph-source promotion, source authority expansion, workflow behavior
-changes, CLI behavior changes, or tree-native artifact retirement.
+`docs/acep.md`, and `docs/workflow.md`, Batch C is now implemented in the examples, usage, traceability, and audit
+docs, and optional Batch D has now been reviewed. Batch D required one small `AGENTS.md` wording clarification and no
+`docs/file-format.md` edit. This plan still does not approve a waiver, Graph-source promotion, source authority
+expansion, workflow behavior changes, CLI behavior changes, or tree-native artifact retirement.
 
 ## Cleanup Goal
 
@@ -27,17 +28,17 @@ language to the current authority model.
 
 ## Batch Plan
 
-| Batch   | Scope                          | Likely files                                                                                                        | Goal                                                                                                               |
-| ------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Batch A | High-signal blocker cleanup    | `docs/source-of-truth-matrix.md`                                                                                    | Implemented: ACEP no longer owns `executable task cards`; task cards are framed as execution/compatibility views.  |
-| Batch B | Task-card shorthand docs       | `README.md`, `docs/acep.md`, `docs/workflow.md`                                                                     | Implemented: task-card shorthand is retained but framed as execution/compatibility views under contract authority. |
-| Batch C | Examples, usage, audit wording | `docs/examples.md`, `docs/usage.md`, `docs/traceability-rules.md`, `docs/ux-auditor.md`, `docs/coverage-auditor.md` | Implemented: examples, usage, traceability, and audit wording now frame task cards as projections/views/carriers.  |
-| Batch D | Optional review-only docs      | `docs/file-format.md`, `AGENTS.md`                                                                                  | Review labels and examples only; edit if future cleanup finds ambiguous authority wording.                         |
+| Batch   | Scope                          | Likely files                                                                                                        | Goal                                                                                                                                                                   |
+| ------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Batch A | High-signal blocker cleanup    | `docs/source-of-truth-matrix.md`                                                                                    | Implemented: ACEP no longer owns `executable task cards`; task cards are framed as execution/compatibility views.                                                      |
+| Batch B | Task-card shorthand docs       | `README.md`, `docs/acep.md`, `docs/workflow.md`                                                                     | Implemented: task-card shorthand is retained but framed as execution/compatibility views under contract authority.                                                     |
+| Batch C | Examples, usage, audit wording | `docs/examples.md`, `docs/usage.md`, `docs/traceability-rules.md`, `docs/ux-auditor.md`, `docs/coverage-auditor.md` | Implemented: examples, usage, traceability, and audit wording now frame task cards as projections/views/carriers.                                                      |
+| Batch D | Optional review-only docs      | `docs/file-format.md`, `AGENTS.md`                                                                                  | Reviewed: `AGENTS.md` now frames visual task-card wording as task-card views that project Node Execution Contract obligations; `docs/file-format.md` required no edit. |
 
-Batch A/B/C implementation result:
+Batch A/B/C/D implementation result:
 
 ```text
-Batch A, Batch B, and Batch C implemented and ready for review. Batch D remains optional/review-only and unimplemented.
+Batch A, Batch B, and Batch C implemented and ready for review. Batch D reviewed and implemented only where needed.
 ```
 
 ## Cleanup Wording Principles
@@ -64,15 +65,16 @@ Batch A, Batch B, and Batch C implemented and ready for review. Batch D remains 
 | `docs/traceability-rules.md`     | Resolved in Batch C: task-card views now carry IDs as projections of WorkGraph and execution-contract obligations.          | Review traceability wording and confirm ownership remains with source artifacts.                                   | C        | Confirm traceability obligations remain complete.                                  |
 | `docs/ux-auditor.md`             | Resolved in Batch C: UI task-card view checks now verify projected UI/UX obligations without granting authority.            | Review strict UX audit coverage.                                                                                   | C        | Confirm UX audit coverage remains strict.                                          |
 | `docs/coverage-auditor.md`       | Resolved in Batch C: coverage checks now treat task-card views as traceability carriers, not source authority.              | Review strict coverage audit behavior.                                                                             | C        | Confirm coverage audit remains actionable.                                         |
-| `docs/file-format.md`            | Mentions task-card paths and compatibility views mostly as layout.                                                          | Review only; edit labels if they imply authority.                                                                  | D        | Confirm no layout examples become misleading.                                      |
-| `AGENTS.md`                      | Mostly canonical; one visual section mentions ACEP task cards and Node Execution Contracts together.                        | Optional clarification only if cleanup wants every task-card mention to carry projection wording.                  | D        | Confirm agent instructions remain concise and operational.                         |
+| `docs/file-format.md`            | Reviewed in Batch D: mentions task-card paths only as file layout.                                                          | No public-doc edit needed.                                                                                         | D        | Confirm layout examples remain non-authoritative.                                  |
+| `AGENTS.md`                      | Resolved in Batch D: visual task-card wording now says task-card views project Node Execution Contract obligations.         | Review that agent instructions remain concise and operational.                                                     | D        | Confirm operational meaning is unchanged.                                          |
 
 ## Implementation Sequencing Recommendation
 
 Recommended sequence:
 
-1. Review Batch A, Batch B, and Batch C wording and confirm they resolve the strongest authority ambiguities.
-2. Treat Batch D as optional review-only cleanup unless a concrete ambiguity is found.
+1. Review Batch A, Batch B, Batch C, and Batch D wording and confirm they resolve the strongest authority ambiguities.
+2. Keep any remaining public-doc cleanup or waiver question as an explicit promotion-decision caveat, not an implicit
+   approval.
 
 Do not combine cleanup with source authority expansion, workflow changes, or promotion approval.
 

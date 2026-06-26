@@ -345,7 +345,7 @@ When selected UI work changes visual appearance:
 9. Component Style Contract must cover relevant shared components, including Button and Panel as base contracts, and Input, Select, Checkbox/Switch, Card, Modal/Dialog, Tabs, Sidebar/Header/Toolbar, Table/List, Expand/Collapse, Empty, Loading, and Error when present.
 10. WPD must create or update `.pbe/control/ui-surface-inventory.json` and `.pbe/control/component-style-inventory.json` for selected visual UI work.
 11. VD must convert required UI surface states into screenshot/manual visual evidence requirements.
-12. ACEP task cards and Node Execution Contracts for visual UI work must include Visual Design Contract refs, token source, component contract, visual non-scope, required visual states, screenshot evidence, forbidden visual changes, and deviation rules.
+12. ACEP task-card views for visual UI work must project Node Execution Contract obligations, including Visual Design Contract refs, token source, component contract, visual non-scope, required visual states, screenshot evidence, forbidden visual changes, and deviation rules.
 13. Run Visual Implementation Audit before review result when visual UI work changed.
 14. Missing or stale required screenshot/manual evidence blocks UI closure.
 15. Visual deviations must be recorded and resolved by user acceptance, revision, deferral, out-of-scope classification, or waiver before closure.
