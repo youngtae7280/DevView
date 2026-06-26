@@ -63,6 +63,7 @@ This review uses the following observable sources:
 - [scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md)
 - [broader-graph-source-promotion-review-inputs.md](broader-graph-source-promotion-review-inputs.md)
 - [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md)
+- [public-doc-cleanup-implementation-plan.md](public-doc-cleanup-implementation-plan.md)
 
 AI self-report is not Evidence for this review. Readiness findings are based on reviewable files, linked records,
 passing fixture command Evidence, and explicit exception or warning records.
@@ -134,6 +135,8 @@ Its status is `promotion-review-inputs-ready-with-caveats`, not `promotion-ready
 [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md) now records the public
 documentation cleanup or explicit waiver decision package for one of those caveats. It inventories public/user-facing
 docs and recommends cleanup before actual full promotion unless the user explicitly approves a visible waiver.
+[public-doc-cleanup-implementation-plan.md](public-doc-cleanup-implementation-plan.md) breaks that cleanup into staged
+batches, with Batch A focused on the `docs/source-of-truth-matrix.md` authority wording risk.
 
 Preparation outcome:
 

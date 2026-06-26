@@ -92,6 +92,8 @@ future review input surface only. It does not move the project beyond `current t
 One remaining caveat is public-doc cleanup or explicit waiver. The decision package is recorded in
 [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md), but no cleanup or waiver
 is implemented by this transition path.
+[public-doc-cleanup-implementation-plan.md](public-doc-cleanup-implementation-plan.md) records the docs-only cleanup
+sequence for that caveat; it does not change the transition stage or source authority.
 
 ## Source Authority Matrix
 

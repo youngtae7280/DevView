@@ -104,6 +104,13 @@ Current waiver status:
 no-waiver-approved
 ```
 
+## Implementation Plan
+
+The cleanup implementation plan is recorded in
+[public-doc-cleanup-implementation-plan.md](public-doc-cleanup-implementation-plan.md). It recommends implementing Batch
+A first, focused on `docs/source-of-truth-matrix.md`, before broader task-card shorthand cleanup. The plan does not edit
+public docs or approve a waiver.
+
 ## Non-Scope
 
 This package does not:
