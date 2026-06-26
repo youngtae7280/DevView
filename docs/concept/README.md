@@ -392,6 +392,15 @@ threshold is now satisfied, so path-filter or failure-semantics refinement can b
 surface. The log is a recording surface only; it does not change workflow triggers, dispatch Actions, add enforcement,
 expand source authority, or approve promotion.
 
+The PR informational path-filter and failure-semantics refinement surface is now recorded:
+
+- [pr-informational-path-filter-refinement.md](pr-informational-path-filter-refinement.md)
+
+The refinement design reviews PR #1, PR #2, and PR #3, records that all three were `ci-evidence-pass` without blocker or
+confirmed noise, and recommends keeping the current broad informational filters and current failure semantics unchanged
+for now. Actual workflow path-filter changes, failure-semantics changes, invalid-fixture CI, required checks,
+enforcement, source authority expansion, and promotion remain separate decisions.
+
 The future all-slice read-model validation contract is now recorded:
 
 - [read-model-validate-all-contract.md](read-model-validate-all-contract.md)

@@ -17,6 +17,12 @@ reviewed through `pull_request` informational smoke runs `28210904900` and `2821
 does not add required checks, add branch protection, expand source authority, perform public-doc cleanup, promote Todo
 App PBE Run beyond `structure-only`, or approve full Graph-source promotion.
 
+After PR #1, PR #2, and PR #3 satisfied the initial observation run-count threshold, the path-filter and
+failure-semantics refinement decision surface was recorded in
+[pr-informational-path-filter-refinement.md](pr-informational-path-filter-refinement.md). The recommendation is to keep
+the current validate-all-centered PR informational workflow unchanged until observed noise, cost, missed drift, or
+blocked Evidence behavior justifies a separate implementation decision.
+
 ## Prior CI Mode
 
 Prior workflow triggers:

@@ -52,6 +52,10 @@ user acceptance replacement.
 The follow-up observation policy is recorded in
 [pr-informational-observation-policy.md](pr-informational-observation-policy.md). It defines observation metrics,
 minimum observation window, path-filter refinement criteria, and escalation criteria without changing the workflow.
+After PR #1, PR #2, and PR #3 were reviewed successfully, the dedicated refinement decision surface is recorded in
+[pr-informational-path-filter-refinement.md](pr-informational-path-filter-refinement.md). It recommends keeping the
+current PR informational path filters and failure semantics unchanged until real noise, cost, missed drift, or blocked
+Evidence behavior is observed.
 
 Invalid read-model fixture CI inclusion is intentionally separate and is recorded in
 [read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md). The current workflow runs positive

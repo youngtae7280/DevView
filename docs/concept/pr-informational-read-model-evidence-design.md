@@ -23,23 +23,28 @@ triggers, introduce CI enforcement, expand source authority, or approve full Gra
 
 ## Current Baseline
 
-| Baseline item                | Current state                                                                                                 |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Workflow                     | `PBE Read-Model Evidence`                                                                                     |
-| Implemented trigger          | `workflow_dispatch`; `pull_request` informational with path filters                                           |
-| Latest reviewed manual run   | `28210541509`                                                                                                 |
-| Latest reviewed PR run       | `28210904900`                                                                                                 |
-| Latest run status            | `success` / `ci-evidence-pass`                                                                                |
-| Todo Search profile          | `todo-search-selected-slice`, `pilot-marker-backed`                                                           |
-| Todo Search generated output | 40 nodes / 59 edges                                                                                           |
-| Todo Search parity           | `comparison-pass`, 0 blocking, 0 decision-required                                                            |
-| Todo Search validation       | `validation-pass`, 20 checks                                                                                  |
-| Todo App PBE Run profile     | `todo-app-pbe-run-structure-only`, `structure-only`                                                           |
-| Todo App generated output    | 22 nodes / 38 edges                                                                                           |
-| Todo App validation          | `validation-pass`, 16 checks                                                                                  |
-| Aggregate summary            | `aggregate-pass`, 2 slices, 0 warning / 0 blocking / 0 decision-required                                      |
-| Workflow runtime             | Node 24 action/runtime settings reviewed in run `28157938343`; validate-all PR mode reviewed in `28210904900` |
-| Authority boundary           | CI-backed Evidence is Evidence only; no source authority expansion, enforcement, or promotion approval        |
+| Baseline item                | Current state                                                                                                                 |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Workflow                     | `PBE Read-Model Evidence`                                                                                                     |
+| Implemented trigger          | `workflow_dispatch`; `pull_request` informational with path filters                                                           |
+| Latest reviewed manual run   | `28210541509`                                                                                                                 |
+| Latest reviewed PR run       | `28213236499`                                                                                                                 |
+| Latest run status            | `success` / `ci-evidence-pass`                                                                                                |
+| Todo Search profile          | `todo-search-selected-slice`, `pilot-marker-backed`                                                                           |
+| Todo Search generated output | 40 nodes / 59 edges                                                                                                           |
+| Todo Search parity           | `comparison-pass`, 0 blocking, 0 decision-required                                                                            |
+| Todo Search validation       | `validation-pass`, 20 checks                                                                                                  |
+| Todo App PBE Run profile     | `todo-app-pbe-run-structure-only`, `structure-only`                                                                           |
+| Todo App generated output    | 22 nodes / 38 edges                                                                                                           |
+| Todo App validation          | `validation-pass`, 16 checks                                                                                                  |
+| Aggregate summary            | `aggregate-pass`, 2 slices, 0 warning / 0 blocking / 0 decision-required                                                      |
+| Workflow runtime             | Node 24 action/runtime settings reviewed in run `28157938343`; validate-all PR mode reviewed in `28210904900` / `28213236499` |
+| Authority boundary           | CI-backed Evidence is Evidence only; no source authority expansion, enforcement, or promotion approval                        |
+
+PR #1, PR #2, and PR #3 are now reviewed as successful PR informational Evidence runs. The path-filter and
+failure-semantics refinement surface is recorded in
+[pr-informational-path-filter-refinement.md](pr-informational-path-filter-refinement.md), and it recommends no workflow
+path-filter or failure-semantics change yet because no blocker or confirmed noise has been observed.
 
 ## Mode Comparison
 

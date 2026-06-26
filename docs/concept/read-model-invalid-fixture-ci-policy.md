@@ -17,6 +17,10 @@ Keep invalid read-model fixtures local-only for now.
 Do not add invalid fixtures to the current manual or PR CI workflow until a separate explicit decision defines runtime
 cost, noise handling, artifact reporting, and failure semantics.
 
+The PR informational path-filter and failure-semantics refinement surface is recorded in
+[pr-informational-path-filter-refinement.md](pr-informational-path-filter-refinement.md). It keeps invalid-fixture
+expected-blocking behavior separate from the current positive registry-backed PR workflow.
+
 ## Current Baseline
 
 Current positive CI / validate-all path:

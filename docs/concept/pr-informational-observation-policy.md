@@ -30,6 +30,10 @@ Non-enforcing CI workflow integration of local `validate --all` is recorded in
 that switch is now reviewed as PR #2 / run `28210904900`.
 The third PR informational observation is now reviewed as PR #3 / run `28213236499`; the recommended run-count
 observation threshold is satisfied, but path-filter or failure-semantics changes still require a separate decision.
+That separate decision surface is recorded in
+[pr-informational-path-filter-refinement.md](pr-informational-path-filter-refinement.md). It recommends keeping the
+current filters and failure semantics unchanged for now because no blocker, false positive, repeated noise, or hidden
+boundary issue has been observed.
 Registry fixture and test planning for that future path is tracked in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 Negative fixture storage policy is tracked in

@@ -20,6 +20,7 @@ Evidence without changing workflow behavior.
 | Included slices           | `examples/adoption/todo-search-slice`; `examples/valid/todo-app-pbe-run`; aggregate summary             |
 | Workflow command mode     | registry-backed `validate --all` after manual run `28210541509`                                         |
 | Observation policy        | [pr-informational-observation-policy.md](pr-informational-observation-policy.md)                        |
+| Refinement design         | [pr-informational-path-filter-refinement.md](pr-informational-path-filter-refinement.md)                |
 | Current real PR run count | 3 reviewed real PR informational runs                                                                   |
 | Target before refinement  | Run-count threshold satisfied; refinement may be considered but is not automatic.                       |
 | Enforcement / authority   | Not approved. PR Evidence is informational only and does not change source authority.                   |
@@ -30,6 +31,9 @@ informational observations run positive configured profiles only.
 Invalid fixture CI inclusion policy is documented in
 [read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md); no invalid-fixture PR observation
 entries are expected unless a separate future mode is approved.
+The path-filter and failure-semantics refinement design is documented in
+[pr-informational-path-filter-refinement.md](pr-informational-path-filter-refinement.md); it keeps the current workflow
+unchanged after three successful PR observations.
 
 ## Baseline Entries
 
