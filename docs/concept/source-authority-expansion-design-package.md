@@ -127,10 +127,10 @@ It does not execute rollback, expand source authority, approve promotion, or ret
 
 ## Recommended Next Decision Surface
 
-Recommended next step:
+Follow-on decision surface:
 
 ```text
-Prepare broader Graph-source promotion decision package.
+broader Graph-source promotion decision package prepared
 ```
 
 Rationale:
@@ -138,5 +138,7 @@ Rationale:
 - public-doc cleanup batches A/B/C/D are now mostly addressed as review inputs
 - the candidate authority matrix is now explicit
 - the concrete rollback/fallback review surface is now explicit
-- actual promotion still needs a user-facing decision package and explicit user approval before any authority change can
-  execute
+- [broader-graph-source-promotion-decision-package.md](broader-graph-source-promotion-decision-package.md) now collects
+  this design, the rollback/fallback plan, Evidence inventory, and decision options into a user-facing decision surface
+- actual promotion still needs explicit user approval and a separate scoped execution step before any authority change
+  can execute

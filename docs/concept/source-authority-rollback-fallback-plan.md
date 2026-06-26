@@ -158,12 +158,15 @@ This plan does not:
 
 ## Recommended Next Decision Surface
 
-Recommended next step:
+Follow-on decision surface:
 
 ```text
-Prepare broader Graph-source promotion decision package.
+broader Graph-source promotion decision package prepared
 ```
 
-That package should combine the matured Evidence stack, public-doc cleanup status, candidate authority matrix, this
-rollback/fallback plan, enforcement status, retained caveats, and explicit user approval choices without executing
-promotion.
+[broader-graph-source-promotion-decision-package.md](broader-graph-source-promotion-decision-package.md) now combines
+the matured Evidence stack, public-doc cleanup status, candidate authority matrix, this rollback/fallback plan,
+enforcement status, retained caveats, and explicit user approval choices without executing promotion.
+
+Any actual rollback, fallback, source authority expansion, promotion, artifact retirement, or enforcement change still
+requires a later explicit user decision and a separate scoped execution package.

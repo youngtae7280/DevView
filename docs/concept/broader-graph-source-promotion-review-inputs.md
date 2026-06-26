@@ -55,6 +55,13 @@ promotion-review-inputs-ready-with-caveats
 This means the current Evidence stack is coherent enough to support a future broader promotion review package. It does
 not mean `promotion-ready`, `promotion-approved`, `graph-source-promoted`, or `source-authority-expanded`.
 
+The follow-on user decision surface is now recorded in
+[broader-graph-source-promotion-decision-package.md](broader-graph-source-promotion-decision-package.md). That package
+uses these review inputs together with the public-doc cleanup status, source-authority expansion design, and
+rollback/fallback plan. Its readiness label is
+`promotion-decision-package-ready / preparation-complete-with-user-decision-required`; it still does not execute
+promotion or change source authority.
+
 ## Remaining Blockers And Caveats Before Actual Full Promotion
 
 The following remain unresolved before any full Graph-source promotion decision:
@@ -75,16 +82,16 @@ The following remain unresolved before any full Graph-source promotion decision:
 
 Possible next steps are separate choices:
 
-| Decision surface                    | Meaning                                                                                                                                                                    |
-| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Continue observation                | Keep the scoped pilot, manual CI, PR informational workflow, local negative fixtures, and current path filters unchanged.                                                  |
-| Public-doc cleanup preparation      | Review Batch A/B/C/D cleanup results and decide whether public-doc cleanup is sufficient for a broader promotion decision or whether an explicit waiver is still required. |
-| Source authority expansion design   | Review the candidate authority matrix and concrete fallback plan before any promotion package.                                                                             |
-| Rollback/fallback plan review       | Decide whether the fallback precedence, triggers, actions, and snapshot requirements are sufficient for a broader promotion package.                                       |
-| Enforcement / required-check design | Decide whether CI-backed read-model Evidence should ever become required, and under what warning/waiver semantics.                                                         |
-| Broader promotion decision package  | Assemble Approval Brief or equivalent user judgment surface for a future explicit promotion decision.                                                                      |
-| Defer or rollback scoped pilot      | If retained warnings become unacceptable, decide whether to keep observing, defer, or roll back the bounded Todo Search pilot.                                             |
-| Invalid-fixture CI mode             | Separately decide whether expected-blocking invalid fixture checks should run in manual or PR CI without polluting positive aggregate CI.                                  |
+| Decision surface                    | Meaning                                                                                                                                                                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Continue observation                | Keep the scoped pilot, manual CI, PR informational workflow, local negative fixtures, and current path filters unchanged.                                                                                          |
+| Public-doc cleanup preparation      | Review Batch A/B/C/D cleanup results and decide whether public-doc cleanup is sufficient for a broader promotion decision or whether an explicit waiver is still required.                                         |
+| Source authority expansion design   | Review the candidate authority matrix and concrete fallback plan before any promotion package.                                                                                                                     |
+| Rollback/fallback plan review       | Decide whether the fallback precedence, triggers, actions, and snapshot requirements are sufficient for a broader promotion package.                                                                               |
+| Enforcement / required-check design | Decide whether CI-backed read-model Evidence should ever become required, and under what warning/waiver semantics.                                                                                                 |
+| Broader promotion decision package  | Prepared in [broader-graph-source-promotion-decision-package.md](broader-graph-source-promotion-decision-package.md); user must choose approve, observe, revise, defer/rollback, or design enforcement separately. |
+| Defer or rollback scoped pilot      | If retained warnings become unacceptable, decide whether to keep observing, defer, or roll back the bounded Todo Search pilot.                                                                                     |
+| Invalid-fixture CI mode             | Separately decide whether expected-blocking invalid fixture checks should run in manual or PR CI without polluting positive aggregate CI.                                                                          |
 
 ## Non-Scope
 

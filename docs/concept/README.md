@@ -426,6 +426,16 @@ The plan defines fallback precedence, rollback triggers, trigger-specific action
 compatibility-retirement guardrails for the candidate authority matrix. It is docs-only and does not execute rollback,
 change source authority, approve promotion, or retire artifacts.
 
+The broader Graph-source promotion decision package is now recorded:
+
+- [broader-graph-source-promotion-decision-package.md](broader-graph-source-promotion-decision-package.md)
+
+The package collects the matured Evidence stack, public-doc cleanup status, candidate authority matrix, and
+rollback/fallback plan into a single user decision surface. Its readiness label is
+`promotion-decision-package-ready / preparation-complete-with-user-decision-required`. This means pre-promotion
+preparation is complete for user judgment only; no promotion, source authority expansion, tree-native retirement,
+enforcement, or user acceptance change is executed.
+
 The public-doc cleanup or waiver decision package is now recorded:
 
 - [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md)

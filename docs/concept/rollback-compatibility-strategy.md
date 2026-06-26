@@ -55,6 +55,10 @@ fallback precedence, rollback triggers, trigger-specific actions, snapshot/refer
 compatibility-retirement guardrails for that candidate matrix. It is still docs-only: no rollback is executed, no source
 authority changes, and no compatibility retirement is approved.
 
+[broader-graph-source-promotion-decision-package.md](broader-graph-source-promotion-decision-package.md) now records the
+prepared user decision surface for broader Graph-source promotion. It consumes this rollback/fallback planning as input
+only. It does not execute rollback, approve fallback, change source authority, or retire compatibility views.
+
 [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md) records the cleanup or
 explicit waiver decision surface for public compatibility wording. Deferring cleanup without an explicit waiver would
 leave a compatibility caveat unresolved for broader promotion review.
@@ -440,7 +444,10 @@ Those remain later concept or implementation questions.
 - How long should a post-promotion compatibility period last, and what default exit criteria should it use?
 - Which compatibility views must remain maintained after promotion?
 - How should a future validator or CI check rollback readiness without over-automating source authority decisions?
-- Are the documented fallback precedence, snapshots, and recovery paths sufficient for a promotion decision package?
+- Are the documented fallback precedence, snapshots, and recovery paths sufficient for a user-approved promotion execution
+  branch, or do they need revision?
+- Which option will the user choose from the broader Graph-source promotion decision package, and does that choice require
+  rollback/fallback revision?
 - Does rollback review need a specialized Approval Brief template?
 - Who approves compatibility retirement, and at what review point?
 - During Todo Search scoped pilot active observation, what trigger should cause validator/CI-backed Evidence,

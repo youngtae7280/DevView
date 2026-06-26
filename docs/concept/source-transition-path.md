@@ -89,6 +89,18 @@ The current read-model Evidence stack is packaged in
 future review input surface only. It does not move the project beyond `current tree-native source`, does not approve
 `graph-source promoted`, and does not change the source authority matrix below.
 
+Current decision-package note:
+
+```text
+promotion-decision-package-ready / preparation-complete-with-user-decision-required
+```
+
+The broader decision surface is packaged in
+[broader-graph-source-promotion-decision-package.md](broader-graph-source-promotion-decision-package.md). That package
+means the pre-promotion preparation materials are collected for user judgment. It still does not move the project beyond
+`current tree-native source`, approve `graph-source promoted`, retire tree-native artifacts, add enforcement, or replace
+user acceptance.
+
 One remaining caveat is public-doc cleanup sufficiency or explicit waiver. The decision package is recorded in
 [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md). Batch A, Batch B, and
 Batch C cleanup are now implemented as review candidates, and optional Batch D is reviewed and implemented only where
@@ -263,6 +275,11 @@ fallback, compatibility, and user approval decisions before any promotion packag
 rollback/fallback review surface. It still leaves promotion approval, rollback execution, compatibility retirement, and
 artifact snapshot mechanics as future decisions.
 
+[broader-graph-source-promotion-decision-package.md](broader-graph-source-promotion-decision-package.md) is the current
+user decision surface for the broader promotion question. It packages the review inputs, authority matrix, public-doc
+cleanup state, rollback/fallback plan, and decision options without executing promotion or changing this source
+transition stage.
+
 [limited-pilot-promotion-decision-package.md](limited-pilot-promotion-decision-package.md) records the user judgment
 surface for that limited pilot decision. The package is refreshed for the Node/Edge/Tag baseline, and the user approved
 the bounded `Approve limited pilot promotion decision` option for the Todo Search selected slice. The resulting record is
@@ -416,7 +433,9 @@ Those remain later concept or implementation questions.
 ## Remaining Open Questions
 
 - How formal should projection/parity expectations be before promotion review?
-- Are the candidate authority matrix and rollback/fallback plan sufficient to prepare a promotion decision package?
+- Are the candidate authority matrix and rollback/fallback plan sufficient for a user-approved promotion execution branch,
+  or do they need revision?
+- Which option will the user choose from the broader Graph-source promotion decision package?
 - Does promotion review need a specialized Approval Brief template?
 - During Todo Search scoped pilot active observation, what trigger should cause validator/CI-backed Evidence,
   public-doc cleanup, broader promotion review, rollback/defer, or continued observation?

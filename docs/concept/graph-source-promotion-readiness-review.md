@@ -62,6 +62,7 @@ This review uses the following observable sources:
 - [dry-run-scoped-limited-pilot-observation-record.md](dry-run-scoped-limited-pilot-observation-record.md)
 - [scoped-source-authority-pilot-preparation-package.md](scoped-source-authority-pilot-preparation-package.md)
 - [broader-graph-source-promotion-review-inputs.md](broader-graph-source-promotion-review-inputs.md)
+- [broader-graph-source-promotion-decision-package.md](broader-graph-source-promotion-decision-package.md)
 - [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md)
 - [public-doc-cleanup-implementation-plan.md](public-doc-cleanup-implementation-plan.md)
 
@@ -140,6 +141,13 @@ change user acceptance boundaries.
 [source-authority-rollback-fallback-plan.md](source-authority-rollback-fallback-plan.md) now defines fallback precedence,
 rollback triggers, trigger-specific actions, snapshot/reference requirements, and compatibility-retirement guardrails for
 that candidate matrix. It does not execute rollback, change source authority, or approve promotion.
+
+[broader-graph-source-promotion-decision-package.md](broader-graph-source-promotion-decision-package.md) now packages the
+matured Evidence inventory, public-doc cleanup status, candidate authority matrix, and rollback/fallback plan into the
+user-facing decision surface for broader Graph-source promotion. Its readiness label is
+`promotion-decision-package-ready / preparation-complete-with-user-decision-required`. This is a preparation-complete
+state for user judgment only; no source authority expansion, Graph-source promotion, enforcement, tree-native
+retirement, or user acceptance change is executed.
 
 [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md) now records the public
 documentation cleanup or explicit waiver decision package for one of those caveats. It inventories public/user-facing
@@ -318,8 +326,9 @@ concerns whether to:
 3. require full-product/runtime/UI Evidence before full promotion or only before full product parity claims, and
 4. use [broader-graph-source-promotion-review-inputs.md](broader-graph-source-promotion-review-inputs.md) to choose
    the next review branch, review the candidate authority matrix in
-   [source-authority-expansion-design-package.md](source-authority-expansion-design-package.md), or keep observing the
-   scoped pilot.
+   [source-authority-expansion-design-package.md](source-authority-expansion-design-package.md), use
+   [broader-graph-source-promotion-decision-package.md](broader-graph-source-promotion-decision-package.md) for the
+   explicit user choice, or keep observing the scoped pilot.
 
 ### Approval Choice Candidates
 
@@ -339,8 +348,9 @@ Decision required
 ```
 
 Reason: the Graph-first Node/Edge/Tag baseline refresh, bounded scoped execution, active observation, local
-validator-backed Evidence, and Batch A/B/C/D public-doc cleanup review are recorded. Full promotion, broad source
-authority change, CI enforcement, and waiver judgment remain separate.
+validator-backed Evidence, Batch A/B/C/D public-doc cleanup review, source-authority expansion design, rollback/fallback
+plan, and broader promotion decision package are recorded. Full promotion, broad source authority change, CI
+enforcement, waiver judgment, and any actual execution still require explicit user approval.
 
 ## Control Node / Risk Classification
 
