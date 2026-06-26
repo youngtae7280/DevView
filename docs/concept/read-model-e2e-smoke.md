@@ -17,6 +17,8 @@ Manual workflow run `28223860233` reviewed the CI observation path after integra
 with `projection-contract-pass`, Todo App 22/38/7 with `candidate-projection-contract-pass`, validate-all
 `aggregate-pass`, and separate candidate observation `candidate-observation-pass`.
 
+Temporary PR smoke reviews should use this document only as a path-filter trigger and must close without merge.
+
 The smoke checks:
 
 - Todo Search graph-source-backed generation, 40 nodes / 59 edges / 7 Core Views
