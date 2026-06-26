@@ -220,8 +220,8 @@ The PR observation policy and log remain active:
 - [pr-informational-observation-log.md](pr-informational-observation-log.md)
 
 CI usage of `validate --all` is now implemented for the non-enforcing manual/PR informational workflow and reviewed by
-manual run `28210541509`. PR observation still does not approve enforcement. The workflow switch record is
-[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md).
+manual run `28210541509` plus PR informational run `28210904900`. PR observation still does not approve enforcement. The
+workflow switch record is [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md).
 
 ## Non-Scope
 

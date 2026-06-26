@@ -267,13 +267,14 @@ and validation Evidence, both validation reports now carry self-contained per-sl
 `pbe graph read-model summarize --slices ...` can write the first aggregate summary. The second fixture is not
 parity-backed, pilot-marker-backed, CI-backed, or source-authority bearing. PR informational trigger behavior is now
 implemented and reviewed in PR run `28207822252` as a non-enforcing visibility signal. Local registry-backed
-`validate --all` is now implemented as non-enforcing Evidence; CI workflow consumption, enforcement, cleanup, broader
-promotion review, and rollback/defer remain separate decisions. Further PR observation should follow
+`validate --all` is now implemented as non-enforcing Evidence and consumed by the non-enforcing CI workflow; PR run
+`28210904900` reviewed the validate-all-centered PR informational path. Enforcement, cleanup, broader promotion review,
+and rollback/defer remain separate decisions. Further PR observation should follow
 [pr-informational-observation-policy.md](pr-informational-observation-policy.md).
 All-slice validation follows
 [read-model-validate-all-contract.md](read-model-validate-all-contract.md); workflow changes or enforcement mode remain
 future decisions.
-The non-enforcing workflow switch to local validate-all is implemented and manually reviewed in
+The non-enforcing workflow switch to local validate-all is implemented and reviewed in
 [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md); enforcement and required checks remain
 future decisions.
 Registry fixture and test planning for that path is recorded in

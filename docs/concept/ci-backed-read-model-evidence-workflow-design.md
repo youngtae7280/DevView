@@ -1,7 +1,7 @@
 # CI-Backed Read-Model Evidence Workflow Design
 
 Status: ci-backed-read-model-evidence-workflow-design / pr-informational-implemented /
-ci-validate-all-integration-designed / non-enforcing
+ci-validate-all-integration-reviewed / non-enforcing
 
 ## Document Purpose
 
@@ -20,26 +20,28 @@ Graph-source promotion.
 
 ## Current Local Validator-Backed Baseline
 
-| Baseline item              | Current state                                                                                                                    |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Scoped pilot               | `examples/adoption/todo-search-slice` only                                                                                       |
-| Active observation status  | `keep-active-with-retained-warnings`                                                                                             |
-| Generated/manual parity    | `comparison-pass`                                                                                                                |
-| Local validator command    | `pbe graph read-model validate --slice examples/adoption/todo-search-slice`                                                      |
-| Validator-backed status    | `validation-pass`                                                                                                                |
-| Validator check count      | 20                                                                                                                               |
-| Warning/blocking/decision  | 0 / 0 / 0                                                                                                                        |
-| CI-backed Evidence         | Todo Search run `28151296796`, aggregate-enabled run `28156403793`, and Node 24 run `28157938343` reviewed as `ci-evidence-pass` |
-| Tree-native fallback       | retained and usable                                                                                                              |
-| Supplemental compatibility | warning-only, not pilot source scope                                                                                             |
-| Current authority boundary | bounded Todo Search scoped pilot; no repository-wide source authority change                                                     |
+| Baseline item              | Current state                                                                                                                                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Scoped pilot               | `examples/adoption/todo-search-slice` only                                                                                                                                                                 |
+| Active observation status  | `keep-active-with-retained-warnings`                                                                                                                                                                       |
+| Generated/manual parity    | `comparison-pass`                                                                                                                                                                                          |
+| Local validator command    | `pbe graph read-model validate --slice examples/adoption/todo-search-slice`                                                                                                                                |
+| Validator-backed status    | `validation-pass`                                                                                                                                                                                          |
+| Validator check count      | 20                                                                                                                                                                                                         |
+| Warning/blocking/decision  | 0 / 0 / 0                                                                                                                                                                                                  |
+| CI-backed Evidence         | Todo Search run `28151296796`, aggregate-enabled run `28156403793`, Node 24 run `28157938343`, validate-all manual run `28210541509`, and validate-all PR run `28210904900` reviewed as `ci-evidence-pass` |
+| Tree-native fallback       | retained and usable                                                                                                                                                                                        |
+| Supplemental compatibility | warning-only, not pilot source scope                                                                                                                                                                       |
+| Current authority boundary | bounded Todo Search scoped pilot; no repository-wide source authority change                                                                                                                               |
 
 The local validator baseline is enough to keep the scoped pilot active under observation. The non-enforcing manual CI
 workflow produced reviewed Todo Search CI-backed Evidence in run `28151296796`; the later aggregate-enabled workflow run
 `28156403793` reviewed the Todo Search, Todo App PBE Run, and aggregate artifact bundle. The post-update Node 24 run
-`28157938343` reviewed the same aggregate-enabled workflow after the action/runtime hygiene update. PR #1 then reviewed
-run `28207822252` as a non-enforcing `pull_request-informational` Evidence run. Push/schedule triggers, required checks,
-branch protection, and enforcement remain unimplemented.
+`28157938343` reviewed the same aggregate-enabled workflow after the action/runtime hygiene update. PR #1 reviewed run
+`28207822252` as a non-enforcing `pull_request-informational` Evidence run. The workflow later switched to
+registry-backed local `validate --all`; manual run `28210541509` and PR #2 run `28210904900` reviewed that switched
+workflow as `ci-evidence-pass`. Push/schedule triggers, required checks, branch protection, and enforcement remain
+unimplemented.
 
 The PR informational trigger design and first run review are recorded in
 [pr-informational-read-model-evidence-design.md](pr-informational-read-model-evidence-design.md) and
@@ -358,9 +360,10 @@ enforcement, or validation-scope changes are proposed.
 Local all-slice validation uses
 [read-model-validate-all-contract.md](read-model-validate-all-contract.md). Any CI workflow switch to that command or
 any enforcement mode remains a separate future decision.
-The candidate non-enforcing workflow switch to local `validate --all` is now implemented and manually reviewed in
+The non-enforcing workflow switch to local `validate --all` is now implemented and reviewed in
 [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md). Run `28210541509` confirms the switched
-manual workflow remains `ci-evidence-pass`.
+manual workflow remains `ci-evidence-pass`, and PR #2 run `28210904900` confirms the switched PR informational workflow
+records `pull_request-informational` plus `validateAllStatus: aggregate-pass`.
 The future registry/test planning layer is recorded in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 The storage/location decision surface for the registry artifact is recorded in
@@ -405,9 +408,10 @@ Decision required
 
 Reason: non-enforcing manual CI workflow implementation exists, run `28151296796` has been reviewed as Todo Search
 CI-backed Evidence, run `28156403793` has been reviewed as aggregate-enabled CI-backed Evidence, run `28157938343` has
-been reviewed after the Node 24 action/runtime update, and PR informational mode is now implemented as non-enforcing.
-PR #1 run `28207822252` has been reviewed as `pull_request-informational` / `ci-evidence-pass`. Enforcement, broader
-source authority, and full promotion remain unapproved.
+been reviewed after the Node 24 action/runtime update, PR #1 run `28207822252` has been reviewed as
+`pull_request-informational` / `ci-evidence-pass`, and validate-all workflow runs `28210541509` and `28210904900` have
+been reviewed for manual and PR informational modes. Enforcement, broader source authority, and full promotion remain
+unapproved.
 
 ## Gate Self-Check
 

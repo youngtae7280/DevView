@@ -17,29 +17,29 @@ trigger: pull_request informational with path filters
 The design purpose is to define how the `pull_request` trigger provides visible read-model Evidence status on PRs
 without making the workflow a required check, branch protection rule, source-authority expansion, or promotion gate.
 
-The implementation adds only the non-enforcing PR informational trigger. It does not add `push` or `schedule` triggers,
-does not introduce CI enforcement, does not implement `validate --all`, does not expand source authority, and does not
-approve full Graph-source promotion.
+The PR trigger implementation adds only the non-enforcing PR informational trigger. The workflow later switched its
+read-model production step to local registry-backed `validate --all`, but still does not add `push` or `schedule`
+triggers, introduce CI enforcement, expand source authority, or approve full Graph-source promotion.
 
 ## Current Baseline
 
-| Baseline item                | Current state                                                                                          |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Workflow                     | `PBE Read-Model Evidence`                                                                              |
-| Implemented trigger          | `workflow_dispatch`; `pull_request` informational with path filters                                    |
-| Latest reviewed manual run   | `28157938343`                                                                                          |
-| Latest reviewed PR run       | `28207822252`                                                                                          |
-| Latest run status            | `success` / `ci-evidence-pass`                                                                         |
-| Todo Search profile          | `todo-search-selected-slice`, `pilot-marker-backed`                                                    |
-| Todo Search generated output | 40 nodes / 59 edges                                                                                    |
-| Todo Search parity           | `comparison-pass`, 0 blocking, 0 decision-required                                                     |
-| Todo Search validation       | `validation-pass`, 20 checks                                                                           |
-| Todo App PBE Run profile     | `todo-app-pbe-run-structure-only`, `structure-only`                                                    |
-| Todo App generated output    | 22 nodes / 38 edges                                                                                    |
-| Todo App validation          | `validation-pass`, 16 checks                                                                           |
-| Aggregate summary            | `aggregate-pass`, 2 slices, 0 warning / 0 blocking / 0 decision-required                               |
-| Workflow runtime             | Node 24 action/runtime settings reviewed in run `28157938343`                                          |
-| Authority boundary           | CI-backed Evidence is Evidence only; no source authority expansion, enforcement, or promotion approval |
+| Baseline item                | Current state                                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Workflow                     | `PBE Read-Model Evidence`                                                                                     |
+| Implemented trigger          | `workflow_dispatch`; `pull_request` informational with path filters                                           |
+| Latest reviewed manual run   | `28210541509`                                                                                                 |
+| Latest reviewed PR run       | `28210904900`                                                                                                 |
+| Latest run status            | `success` / `ci-evidence-pass`                                                                                |
+| Todo Search profile          | `todo-search-selected-slice`, `pilot-marker-backed`                                                           |
+| Todo Search generated output | 40 nodes / 59 edges                                                                                           |
+| Todo Search parity           | `comparison-pass`, 0 blocking, 0 decision-required                                                            |
+| Todo Search validation       | `validation-pass`, 20 checks                                                                                  |
+| Todo App PBE Run profile     | `todo-app-pbe-run-structure-only`, `structure-only`                                                           |
+| Todo App generated output    | 22 nodes / 38 edges                                                                                           |
+| Todo App validation          | `validation-pass`, 16 checks                                                                                  |
+| Aggregate summary            | `aggregate-pass`, 2 slices, 0 warning / 0 blocking / 0 decision-required                                      |
+| Workflow runtime             | Node 24 action/runtime settings reviewed in run `28157938343`; validate-all PR mode reviewed in `28210904900` |
+| Authority boundary           | CI-backed Evidence is Evidence only; no source authority expansion, enforcement, or promotion approval        |
 
 ## Mode Comparison
 
@@ -229,20 +229,21 @@ This design does not:
 - retire tree-native or `.pbe` artifacts
 - make CI pass equivalent to user acceptance
 
-## Reviewed PR Informational Run
+## Reviewed PR Informational Runs
 
-The first real PR informational run is reviewed in
+The first real PR informational run and the first validate-all-centered PR informational run are reviewed in
 [ci-backed-read-model-evidence-run-review.md](ci-backed-read-model-evidence-run-review.md).
 
-| Field        | Observed value                                                                          |
-| ------------ | --------------------------------------------------------------------------------------- |
-| PR           | `#1`, temporary smoke PR closed without merge                                           |
-| Run ID       | `28207822252`                                                                           |
-| Event        | `pull_request`                                                                          |
-| Trigger mode | `pull_request-informational`                                                            |
-| Result       | `success` / `ci-evidence-pass`                                                          |
-| Cleanup      | temporary PR closed without merge; remote smoke branch deleted                          |
-| Boundary     | informational only; no required check, branch protection, enforcement, or source change |
+| Field        | PR #1 observed value                                                                    | PR #2 observed value                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| PR           | `#1`, temporary smoke PR closed without merge                                           | `#2`, draft temporary smoke PR closed without merge                                                       |
+| Run ID       | `28207822252`                                                                           | `28210904900`                                                                                             |
+| Event        | `pull_request`                                                                          | `pull_request`                                                                                            |
+| Trigger mode | `pull_request-informational`                                                            | `pull_request-informational`                                                                              |
+| Source mode  | explicit workflow command sequence                                                      | `registry-backed validate-all`                                                                            |
+| Result       | `success` / `ci-evidence-pass`                                                          | `success` / `ci-evidence-pass`, `validateAllStatus: aggregate-pass`                                       |
+| Cleanup      | temporary PR closed without merge; remote smoke branch deleted                          | temporary PR closed without merge; remote smoke branch deleted                                            |
+| Boundary     | informational only; no required check, branch protection, enforcement, or source change | informational only; no required check, branch protection, enforcement, source change, or promotion change |
 
 ## Recommended Next Decision Surface
 
@@ -251,7 +252,8 @@ The observation policy for this implemented trigger is recorded in
 The append-only observation log and review runbook for future PR runs is recorded in
 [pr-informational-observation-log.md](pr-informational-observation-log.md).
 
-After this implementation, first PR run review, and observation-policy definition, the next choices are:
+After this implementation, first PR run review, validate-all PR run review, and observation-policy definition, the next
+choices are:
 
 1. `Keep PR informational mode non-enforcing and observe`
 2. `Refine PR path filters after observing more PRs`

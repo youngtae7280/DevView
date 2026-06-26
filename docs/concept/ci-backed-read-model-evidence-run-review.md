@@ -1,12 +1,12 @@
 # CI-Backed Read-Model Evidence Run Review
 
-Status: ci-backed-read-model-evidence-run-review / validate-all-ci-evidence-pass-reviewed /
-non-enforcing-manual-run
+Status: ci-backed-read-model-evidence-run-review / validate-all-pr-ci-evidence-pass-reviewed /
+non-enforcing-pr-run
 
 ## Review Purpose
 
 This document records reviewed GitHub Actions runs for read-model Evidence, with the latest review covering the
-validate-all-switched manual workflow run:
+validate-all-switched PR informational workflow run:
 
 ```text
 PBE Read-Model Evidence
@@ -21,8 +21,8 @@ authenticated. User-authenticated manual workflow runs are now available and rev
 
 The aggregate-enabled manual workflow run is reviewed in this document. A later Node 24 CI hygiene run confirms that the
 workflow action/runtime update still produces the same aggregate Evidence result without the prior Node.js 20
-deprecation annotation. The PR informational run confirms that the non-enforcing `pull_request` trigger records PR
-metadata and preserves Evidence-only boundaries. The latest manual run confirms that the workflow can use local
+deprecation annotation. The PR informational runs confirm that the non-enforcing `pull_request` trigger records PR
+metadata and preserves Evidence-only boundaries. The latest manual and PR runs confirm that the workflow can use local
 registry-backed `validate --all` while preserving the same artifact and boundary surface. The older Todo Search-only run
 remains as historical CI-backed Evidence for the first workflow shape.
 
@@ -671,6 +671,119 @@ read-model-aggregate/generated/read-model-aggregate-summary.json
 | Source mode note in aggregate artifact  | existing validation reports only | pass          |
 | Source mode note in CI manifest wrapper | `registry-backed validate-all`   | pass          |
 
+## Reviewed Validate-All PR Informational Run
+
+Run identity:
+
+| Field             | Value                                                                                                      |
+| ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| Workflow          | `PBE Read-Model Evidence`                                                                                  |
+| PR                | `#2`; draft smoke PR; closed without merge                                                                 |
+| PR URL            | <https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin/pull/2>                                   |
+| Run ID            | `28210904900`                                                                                              |
+| Run URL           | <https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin/actions/runs/28210904900>                 |
+| Event             | `pull_request`                                                                                             |
+| Head branch       | `pbe/pr-info-validate-all-smoke-20260626`                                                                  |
+| Base branch       | `main`                                                                                                     |
+| Head SHA          | `dadc1fd415a57342e7e1084c561868e242b39c54`                                                                 |
+| Base SHA          | `ffad659d620e034bce0a24c18c6b41298e376451`                                                                 |
+| Manifest ref      | `refs/pull/2/merge`                                                                                        |
+| Manifest commit   | `88affca60d9f5081c848c03e65a2801f90733968`                                                                 |
+| Job ID            | `83571819410`                                                                                              |
+| Job URL           | <https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin/actions/runs/28210904900/job/83571819410> |
+| Conclusion        | `success`                                                                                                  |
+| Duration          | about 28 seconds                                                                                           |
+| Changed path type | `docs/concept/**` smoke change                                                                             |
+
+The run executed the validate-all-centered workflow through the `pull_request` trigger. All relevant steps completed
+successfully, including `Validate all registry-backed read-model Evidence`, focused tests, runtime fixture tests, PBE
+validation, CI manifest writing, Step Summary writing, and artifact upload.
+
+### Validate-All PR Artifact Review Result
+
+Artifact:
+
+```text
+pbe-todo-search-read-model-evidence
+```
+
+Reviewed files included:
+
+- `adoption/todo-search-slice/generated/generated-read-model.json`
+- `adoption/todo-search-slice/generated/generated-read-model.md`
+- `adoption/todo-search-slice/generated/read-model-ci-evidence-manifest.json`
+- `adoption/todo-search-slice/generated/read-model-evidence-manifest.json`
+- `adoption/todo-search-slice/generated/read-model-parity-report.json`
+- `adoption/todo-search-slice/generated/read-model-parity-report.md`
+- `adoption/todo-search-slice/generated/read-model-validation-report.json`
+- `adoption/todo-search-slice/generated/read-model-validation-report.md`
+- `adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json`
+- `valid/todo-app-pbe-run/generated/generated-read-model.json`
+- `valid/todo-app-pbe-run/generated/generated-read-model.md`
+- `valid/todo-app-pbe-run/generated/read-model-evidence-manifest.json`
+- `valid/todo-app-pbe-run/generated/read-model-validation-report.json`
+- `valid/todo-app-pbe-run/generated/read-model-validation-report.md`
+- `read-model-aggregate/generated/read-model-aggregate-summary.json`
+- `read-model-aggregate/generated/read-model-aggregate-summary.md`
+
+Downloaded review artifacts were removed from `.tmp/` after inspection.
+
+### Validate-All PR CI Manifest Review Result
+
+Reviewed file:
+
+```text
+adoption/todo-search-slice/generated/read-model-ci-evidence-manifest.json
+```
+
+| Manifest field                    | Observed value                             | Review status |
+| --------------------------------- | ------------------------------------------ | ------------- |
+| `status`                          | `ci-evidence-pass`                         | pass          |
+| `evidenceLevel`                   | `ci-backed`                                | pass          |
+| `eventName`                       | `pull_request`                             | pass          |
+| `triggerMode`                     | `pull_request-informational`               | pass          |
+| `pullRequest.number`              | `2`                                        | pass          |
+| `pullRequest.headRef`             | `pbe/pr-info-validate-all-smoke-20260626`  | pass          |
+| `pullRequest.baseRef`             | `main`                                     | pass          |
+| `pullRequest.headSha`             | `dadc1fd415a57342e7e1084c561868e242b39c54` | pass          |
+| `pullRequest.baseSha`             | `ffad659d620e034bce0a24c18c6b41298e376451` | pass          |
+| `runId`                           | `28210904900`                              | pass          |
+| `runAttempt`                      | `1`                                        | pass          |
+| `sourceCommit`                    | `88affca60d9f5081c848c03e65a2801f90733968` | pass          |
+| `sourceRef`                       | `refs/pull/2/merge`                        | pass          |
+| `sourceMode`                      | `registry-backed validate-all`             | pass          |
+| `validateAllStatus`               | `aggregate-pass`                           | pass          |
+| `aggregateStatus`                 | `aggregate-pass`                           | pass          |
+| `includedSlices`                  | Todo Search; Todo App PBE Run              | pass          |
+| Todo Search validator/parity      | `validation-pass` / `comparison-pass`      | pass          |
+| Todo Search node/edge/check count | 40 nodes / 59 edges / 20 checks            | pass          |
+| Todo App validator/parity         | `validation-pass` / `not-required`         | pass          |
+| Todo App node/edge/check count    | 22 nodes / 38 edges / 16 checks            | pass          |
+| aggregate warning/blocking/DR     | 0 / 0 / 0                                  | pass          |
+| retained warnings visible         | `true`                                     | pass          |
+| source authority boundary         | present                                    | pass          |
+| non-enforcement statement         | present                                    | pass          |
+| non-promotion statement           | present                                    | pass          |
+
+### Validate-All PR Aggregate Review Result
+
+Reviewed file:
+
+```text
+read-model-aggregate/generated/read-model-aggregate-summary.json
+```
+
+| Aggregate field                    | Observed value               | Review status |
+| ---------------------------------- | ---------------------------- | ------------- |
+| `status`                           | `aggregate-pass`             | pass          |
+| `summary.sliceCount`               | 2                            | pass          |
+| `summary.warningCount`             | 0                            | pass          |
+| `summary.blockingCount`            | 0                            | pass          |
+| `summary.decisionRequiredCount`    | 0                            | pass          |
+| `summary.retainedWarningCount`     | 6                            | pass          |
+| Todo Search per-slice summary      | `validation-pass`, 20 checks | pass          |
+| Todo App PBE Run per-slice summary | `validation-pass`, 16 checks | pass          |
+
 ## Retained Warnings
 
 The retained warnings remain active and visible:
@@ -681,46 +794,46 @@ The retained warnings remain active and visible:
 - push/schedule triggers, required checks, branch protection, and CI enforcement remain unapproved
 - Node.js 20 deprecation annotation is resolved for the manual workflow by the Node 24 action/runtime update and
   successful post-update run `28157938343`; future GitHub Actions runtime changes remain ordinary CI hygiene
-- first PR informational run after the validate-all workflow switch remains unreviewed
+- PR #2 was a smoke PR and should not be over-read as stable long-term path-filter signal
 - CI pass is Evidence only and does not approve source authority change or user acceptance
 
 ## Source Authority Boundary
 
 Tree-native selected-slice artifacts remain current operational source.
 
-The reviewed validate-all CI-backed Evidence confirms a non-enforcing manual workflow run over the declared registry
-profiles and read-model Evidence artifacts. The earlier reviewed PR informational run confirms that the non-enforcing
-`pull_request` trigger records PR metadata and preserves Evidence boundaries; the first PR informational run after the
-validate-all switch is still pending. Todo Search remains the only scoped source-authority pilot. Todo App PBE Run
-remains structure-only. The aggregate summary is Evidence-only over produced per-slice validation reports. This review
-does not change source authority, approve full Graph-source promotion, retire tree-native or `.pbe` artifacts, replace
-user acceptance, add branch protection, add push/schedule triggers, or make the workflow a required check.
+The reviewed validate-all CI-backed Evidence confirms both a non-enforcing manual workflow run and a non-enforcing
+`pull_request` informational run over the declared registry profiles and read-model Evidence artifacts. PR #2 confirms
+that the validate-all-centered workflow records PR metadata, `pull_request-informational` trigger mode,
+`validateAllStatus: aggregate-pass`, and Evidence boundaries. Todo Search remains the only scoped source-authority
+pilot. Todo App PBE Run remains structure-only. The aggregate summary is Evidence-only over produced per-slice validation
+reports. This review does not change source authority, approve full Graph-source promotion, retire tree-native or `.pbe`
+artifacts, replace user acceptance, add branch protection, add push/schedule triggers, or make the workflow a required
+check.
 
 ## Next Decision Surface
 
 The next step should be one of:
 
-1. `Review first PR informational run after validate-all workflow switch`
-2. `Keep PR informational workflow non-enforcing and observe`
-3. `Refine PR informational path filters after observing more PRs`
-4. `Design CI enforcement / required check policy`
-5. `Require public-doc cleanup before broader promotion`
-6. `Prepare broader Graph-source promotion review`
-7. `Rollback / defer scoped source-authority pilot`
+1. `Keep PR informational workflow non-enforcing and observe`
+2. `Refine PR informational path filters after observing more PRs`
+3. `Design CI enforcement / required check policy`
+4. `Require public-doc cleanup before broader promotion`
+5. `Prepare broader Graph-source promotion review`
+6. `Rollback / defer scoped source-authority pilot`
 
 Recommended next step:
 
 ```text
-Review the first PR informational run after the validate-all workflow switch, then keep observing before deciding
-whether path filters need refinement. Enforcement policy, cleanup, broader promotion review, and rollback/defer remain
-separate major branches.
+Keep the PR informational workflow non-enforcing and observe at least one more real PR run or one week of normal PR flow
+before deciding whether path filters need refinement. Enforcement policy, cleanup, broader promotion review, and
+rollback/defer remain separate major branches.
 ```
 
 Follow-up status: multi-slice validation design, Todo Search profile extraction, Todo App structure-only profile,
 per-slice independence, aggregate summary, aggregate-enabled CI-backed run review, PR informational trigger
 implementation, local validate-all, and validate-all-switched manual CI review are now recorded. This does not add
 enforcement, source authority expansion, or full promotion; the first PR informational run after the validate-all switch
-remains open.
+is now reviewed as PR #2 / run `28210904900`.
 
 The observation policy for later PR informational runs is recorded in
 [pr-informational-observation-policy.md](pr-informational-observation-policy.md). Future PR run notes should use that
@@ -728,8 +841,8 @@ policy before changing path filters, failure semantics, required-check policy, o
 
 The append-only observation log and runbook for repeatable future PR run review is recorded in
 [pr-informational-observation-log.md](pr-informational-observation-log.md). It records the manual baseline run
-`28207696557`, PR `#1` run `28207822252`, and the template/checklist for future observations without changing workflow
-triggers or enforcement.
+`28207696557`, PR `#1` run `28207822252`, PR `#2` run `28210904900`, and the template/checklist for future observations
+without changing workflow triggers or enforcement.
 
 ## Gate Self-Check
 
@@ -737,13 +850,14 @@ triggers or enforcement.
 | -------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------ |
 | Manual Workflow Run Gate         | pass   | Run `28156403793` completed successfully on `workflow_dispatch`.                                             |
 | Validate-All Manual Run Gate     | pass   | Run `28210541509` completed successfully on `workflow_dispatch` after the workflow switched to validate-all. |
-| PR Informational Run Gate        | pass   | PR #1 triggered run `28207822252` on `pull_request` and completed successfully.                              |
+| PR Informational Run Gate        | pass   | PR #1 and PR #2 triggered `pull_request` runs and completed successfully.                                    |
 | CI-Backed Artifact Review Gate   | pass   | Expanded artifact bundle `pbe-todo-search-read-model-evidence` was downloaded and inspected.                 |
 | CI Manifest Integrity Gate       | pass   | Manifest is `ci-backed` / `ci-evidence-pass` and includes Todo Search, Todo App, aggregate, and boundaries.  |
 | Validation Report Gate           | pass   | Todo Search and Todo App validation reports are `validation-pass` with 20 and 16 checks.                     |
 | Parity Report Gate               | pass   | Todo Search parity is `comparison-pass`; Todo App parity remains `not-required`.                             |
 | Aggregate Report Gate            | pass   | Aggregate summary is `aggregate-pass`, 2 slices, 0 warning/blocking/decision-required.                       |
 | Validate-All Manifest Gate       | pass   | Manifest records `sourceMode: registry-backed validate-all` and `validateAllStatus: aggregate-pass`.         |
+| Validate-All PR Run Gate         | pass   | PR #2 run `28210904900` records `pull_request-informational` and `validateAllStatus: aggregate-pass`.        |
 | Non-Enforcing CI Gate            | pass   | Workflow remains informational only for manual and PR runs.                                                  |
 | Non-Required-Check Gate          | pass   | No required check or branch protection was added.                                                            |
 | Source Authority Boundary Gate   | pass   | Source authority remains unchanged; Todo App remains structure-only.                                         |

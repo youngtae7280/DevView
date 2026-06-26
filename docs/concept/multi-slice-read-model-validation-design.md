@@ -369,7 +369,7 @@ The staged path is:
    CI-backed Evidence.
 3. Add aggregate summary only after per-slice validation is stable. This is now implemented as Evidence-only output.
 4. Add PR informational visibility only after manual and aggregate Evidence are stable. This is now implemented and
-   reviewed in PR run `28207822252` as non-enforcing PR informational Evidence.
+   reviewed in PR run `28207822252`, then reviewed again after the validate-all workflow switch in PR run `28210904900`.
 5. Observe more PR informational runs under [pr-informational-observation-policy.md](pr-informational-observation-policy.md)
    before changing filters, failure semantics, or enforcement policy.
 6. Use [read-model-validate-all-contract.md](read-model-validate-all-contract.md) as the contract for local
@@ -379,11 +379,11 @@ The staged path is:
    fixtures, positive/negative fixture strategy, and non-mutation tests before any broader registry consumption.
 8. Use [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md) for the selected
    candidate registry location, now materialized as `examples/read-model-aggregate/read-model-slices.json`.
-9. Treat local `validate --all` as the only registry-consuming command surface; existing single-slice commands and CI
-   workflow command sequences remain separately governed.
+9. Treat local `validate --all` as the only registry-consuming CLI command surface; existing single-slice commands remain
+   profile-config driven, and CI workflow usage is separately governed by the non-enforcing workflow records.
 10. Use [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md) for the implemented
     non-enforcing workflow switch from explicit read-model commands to local `validate --all`, reviewed by manual run
-    `28210541509`.
+    `28210541509` and PR informational run `28210904900`.
 
 Do not move next to required checks, enforcement, or broader CI changes without a separate user decision.
 
@@ -413,7 +413,7 @@ defines validation policy levels, and defines conservative aggregation rules.
 | Public-doc cleanup        | deferred        | Not required before design; prerequisite/caveat before broader promotion.                        |
 | Second structure fixture  | implemented     | `examples/valid/todo-app-pbe-run` now has structure-only generated/validation Evidence.          |
 | Aggregation               | implemented     | First Evidence-only summary command exists; no CI change or enforcement.                         |
-| Local validate-all        | implemented     | Registry-backed local Evidence command exists; CI workflow integration remains separate.         |
+| Local validate-all        | implemented     | Registry-backed local Evidence command exists and is now used by the non-enforcing CI workflow.  |
 
 ### Remaining Judgment
 
@@ -428,20 +428,20 @@ design, multi-slice scope redesign, or continued observation.
 
 ## Control Node Summary
 
-| Control record                      | Family                     | Status                       | Reason                                                                                                                   |
-| ----------------------------------- | -------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Multi-slice validation design       | Decision Control Node      | design-recorded              | The expansion strategy is documented; aggregation remains unimplemented.                                                 |
-| Todo Search hardcoding              | Evidence / Impact Control  | resolved for first profile   | Todo assumptions are isolated into an explicit profile/config.                                                           |
-| `todo-app-pbe-run` candidate        | Evidence Control Node      | implemented / structure-only | It has canonical `.pbe` source inputs plus structure-only generated/validation output.                                   |
-| Compatibility mismatch supplemental | Compatibility Control Node | retained warning             | Public-doc cleanup remains deferred and warning-only.                                                                    |
-| Aggregate summary                   | Evidence Control Node      | implemented / Evidence-only  | First aggregate summary reads existing per-slice validation reports only.                                                |
-| Aggregate CI-backed review          | Evidence Control Node      | reviewed                     | Runs `28156403793` and `28157938343` reviewed the aggregate-enabled artifact bundle as non-enforcing CI-backed Evidence. |
-| Aggregate validation                | Decision Control Node      | local-implemented            | Local `validate --all` exists; CI-backed all-slice validation and enforcement remain separate.                           |
-| Validate-all contract               | Decision Control Node      | implemented-locally          | The all-slice registry and execution-mode contract is implemented as a non-enforcing local CLI surface.                  |
-| Slice registry test strategy        | Evidence / Decision Node   | design-recorded              | Future registry fixtures and tests are specified before implementation.                                                  |
-| Slice registry parser tests         | Evidence / Decision Node   | parser-tests-implemented     | The candidate file is parsed and compared to in-code profiles by tests before local `validate --all` consumes it.        |
-| PR informational trigger            | Decision Control Node      | implemented / reviewed       | PR visibility is implemented as non-enforcing informational Evidence and reviewed in PR run `28207822252`.               |
-| CI enforcement / required checks    | Decision Control Node      | not approved                 | Reviewed CI-backed Evidence exists, but enforcement and required checks remain future-only.                              |
+| Control record                      | Family                     | Status                       | Reason                                                                                                                        |
+| ----------------------------------- | -------------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Multi-slice validation design       | Decision Control Node      | design-recorded              | The expansion strategy is documented; aggregation remains unimplemented.                                                      |
+| Todo Search hardcoding              | Evidence / Impact Control  | resolved for first profile   | Todo assumptions are isolated into an explicit profile/config.                                                                |
+| `todo-app-pbe-run` candidate        | Evidence Control Node      | implemented / structure-only | It has canonical `.pbe` source inputs plus structure-only generated/validation output.                                        |
+| Compatibility mismatch supplemental | Compatibility Control Node | retained warning             | Public-doc cleanup remains deferred and warning-only.                                                                         |
+| Aggregate summary                   | Evidence Control Node      | implemented / Evidence-only  | First aggregate summary reads existing per-slice validation reports only.                                                     |
+| Aggregate CI-backed review          | Evidence Control Node      | reviewed                     | Runs `28156403793` and `28157938343` reviewed the aggregate-enabled artifact bundle as non-enforcing CI-backed Evidence.      |
+| Aggregate validation                | Decision Control Node      | local-implemented            | Local `validate --all` exists; CI-backed all-slice validation and enforcement remain separate.                                |
+| Validate-all contract               | Decision Control Node      | implemented-locally          | The all-slice registry and execution-mode contract is implemented as a non-enforcing local CLI surface.                       |
+| Slice registry test strategy        | Evidence / Decision Node   | design-recorded              | Future registry fixtures and tests are specified before implementation.                                                       |
+| Slice registry parser tests         | Evidence / Decision Node   | parser-tests-implemented     | The candidate file is parsed and compared to in-code profiles by tests before local `validate --all` consumes it.             |
+| PR informational trigger            | Decision Control Node      | implemented / reviewed       | PR visibility is implemented as non-enforcing informational Evidence and reviewed in PR runs `28207822252` and `28210904900`. |
+| CI enforcement / required checks    | Decision Control Node      | not approved                 | Reviewed CI-backed Evidence exists, but enforcement and required checks remain future-only.                                   |
 
 ## Gate Self-Check
 

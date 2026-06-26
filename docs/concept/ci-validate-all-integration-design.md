@@ -1,6 +1,7 @@
 # CI Validate-All Integration Design
 
-Status: ci-validate-all-integration-design / workflow-switch-implemented / manual-review-completed / non-enforcing
+Status: ci-validate-all-integration-design / workflow-switch-implemented / manual-and-pr-review-completed /
+non-enforcing
 
 ## Design Purpose
 
@@ -11,9 +12,10 @@ workflow switched from an explicit command sequence to the local registry-backed
 node dist/cli/index.js graph read-model validate --all --json
 ```
 
-The switch is implemented in `.github/workflows/read-model-evidence.yml` and manually reviewed in run `28210541509`.
-It remains non-enforcing. It does not add required checks, add branch protection, expand source authority, perform
-public-doc cleanup, promote Todo App PBE Run beyond `structure-only`, or approve full Graph-source promotion.
+The switch is implemented in `.github/workflows/read-model-evidence.yml`, manually reviewed in run `28210541509`, and
+reviewed through a `pull_request` informational smoke run `28210904900`. It remains non-enforcing. It does not add
+required checks, add branch protection, expand source authority, perform public-doc cleanup, promote Todo App PBE Run
+beyond `structure-only`, or approve full Graph-source promotion.
 
 ## Prior CI Mode
 
@@ -69,6 +71,19 @@ Reviewed manual run after switch:
 | Conclusion   | `success`                                                                                              |
 | Manifest     | `ci-evidence-pass`; `validateAllStatus: aggregate-pass`; `aggregateStatus: aggregate-pass`             |
 | Review state | recorded in [ci-backed-read-model-evidence-run-review.md](ci-backed-read-model-evidence-run-review.md) |
+
+Reviewed PR informational run after switch:
+
+| Field        | Value                                                                                                   |
+| ------------ | ------------------------------------------------------------------------------------------------------- |
+| PR           | `#2`; draft smoke PR; closed without merge                                                              |
+| Run ID       | `28210904900`                                                                                           |
+| Run URL      | <https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin/actions/runs/28210904900>              |
+| Event        | `pull_request`                                                                                          |
+| Head SHA     | `dadc1fd415a57342e7e1084c561868e242b39c54`                                                              |
+| Manifest ref | `refs/pull/2/merge`                                                                                     |
+| Manifest     | `ci-evidence-pass`; `pull_request-informational`; `validateAllStatus: aggregate-pass`; `aggregate-pass` |
+| Review state | recorded in [ci-backed-read-model-evidence-run-review.md](ci-backed-read-model-evidence-run-review.md)  |
 
 ## Command Sequence Comparison
 
@@ -241,32 +256,33 @@ This design and implementation do not:
 Recommended next action:
 
 ```text
-Review first PR informational run after validate-all workflow switch.
+Keep PR informational workflow non-enforcing and observe.
 ```
 
 Alternative choices:
 
-1. Review first PR informational run after validate-all workflow switch.
-2. Continue non-enforcing PR observation.
-3. Refine output-equivalence checklist only if the post-switch PR run differs from manual review.
-4. Defer additional workflow simplification until another slice is added.
-5. Reopen path-filter refinement after observation data supports it.
+1. Continue non-enforcing PR observation.
+2. Refine output-equivalence checklist only if future post-switch PR runs differ from manual/PR review.
+3. Defer additional workflow simplification until another slice is added.
+4. Reopen path-filter refinement after observation data supports it.
+5. Design required-check / enforcement policy only after explicit user approval.
 6. Reject further validate-all workflow integration and return to explicit CI commands.
 
 ## Gate Self-Check
 
-| Gate                               | Result | Notes                                                                   |
-| ---------------------------------- | ------ | ----------------------------------------------------------------------- |
-| Non-Enforcing Implementation Gate  | PASS   | Workflow switch is implemented without enforcement or trigger change.   |
-| Manual Review Gate                 | PASS   | Run `28210541509` reviewed the switched workflow as `ci-evidence-pass`. |
-| Workflow Boundary Gate             | PASS   | Existing manual and PR informational triggers are preserved.            |
-| Validate-All Coverage Gate         | PASS   | Defines what validate-all covers and what remains outside it.           |
-| Artifact Bundle Preservation Gate  | PASS   | Existing uploaded artifact families remain present.                     |
-| Manifest / Summary Continuity Gate | PASS   | Trigger/run/PR/status/boundary metadata remains visible.                |
-| Failure Semantics Gate             | PASS   | Distinguishes command failure, aggregate status, and PR visibility.     |
-| Source Authority Boundary Gate     | PASS   | Validate-all CI integration remains Evidence-only.                      |
-| Non-Full-Promotion Gate            | PASS   | Full Graph-source promotion remains separate.                           |
-| User Approval Boundary Gate        | PASS   | CI pass remains non-acceptance and non-promotion.                       |
+| Gate                               | Result | Notes                                                                     |
+| ---------------------------------- | ------ | ------------------------------------------------------------------------- |
+| Non-Enforcing Implementation Gate  | PASS   | Workflow switch is implemented without enforcement or trigger change.     |
+| Manual Review Gate                 | PASS   | Run `28210541509` reviewed the switched workflow as `ci-evidence-pass`.   |
+| PR Informational Review Gate       | PASS   | PR #2 run `28210904900` reviewed the switched workflow on `pull_request`. |
+| Workflow Boundary Gate             | PASS   | Existing manual and PR informational triggers are preserved.              |
+| Validate-All Coverage Gate         | PASS   | Defines what validate-all covers and what remains outside it.             |
+| Artifact Bundle Preservation Gate  | PASS   | Existing uploaded artifact families remain present.                       |
+| Manifest / Summary Continuity Gate | PASS   | Trigger/run/PR/status/boundary metadata remains visible.                  |
+| Failure Semantics Gate             | PASS   | Distinguishes command failure, aggregate status, and PR visibility.       |
+| Source Authority Boundary Gate     | PASS   | Validate-all CI integration remains Evidence-only.                        |
+| Non-Full-Promotion Gate            | PASS   | Full Graph-source promotion remains separate.                             |
+| User Approval Boundary Gate        | PASS   | CI pass remains non-acceptance and non-promotion.                         |
 
 ## Final Statement
 

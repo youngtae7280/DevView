@@ -24,10 +24,10 @@ there before path-filter, failure-semantics, enforcement, or validation-scope ch
 
 All-slice validation is tracked separately in
 [read-model-validate-all-contract.md](read-model-validate-all-contract.md). This PR observation policy does not approve
-`validate --all` workflow changes.
+enforcement or source-authority consequences from `validate --all` workflow results.
 Non-enforcing CI workflow integration of local `validate --all` is recorded in
 [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md). The first PR informational run after
-that switch remains an observation target.
+that switch is now reviewed as PR #2 / run `28210904900`.
 Registry fixture and test planning for that future path is tracked in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 
@@ -37,6 +37,7 @@ Registry fixture and test planning for that future path is tracked in
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | Manual dispatch review        | Run `28207696557`, `workflow_dispatch`, `success`, `ci-evidence-pass`                                                |
 | First PR informational review | PR #1, run `28207822252`, `pull_request`, `pull_request-informational`, `success`, `ci-evidence-pass`                |
+| Validate-all PR review        | PR #2, run `28210904900`, `pull_request`, `pull_request-informational`, `success`, `ci-evidence-pass`                |
 | Workflow mode                 | `workflow_dispatch` + non-enforcing `pull_request` informational trigger                                             |
 | Included slices               | `examples/adoption/todo-search-slice`; `examples/valid/todo-app-pbe-run`; aggregate summary                          |
 | Todo Search status            | `validation-pass`, `comparison-pass`, 40 nodes / 59 edges / 20 checks                                                |
@@ -220,9 +221,10 @@ Reopen broader validation scope or `validate --all` workflow integration only af
 - Todo App PBE Run remains correctly classified unless separately strengthened
 - source authority boundaries remain unambiguous
 
-The non-enforcing CI workflow switch to local `validate --all` is implemented and manually reviewed in
-[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md). The first post-switch PR informational
-run should be recorded under this policy before enforcement or filter changes are discussed.
+The non-enforcing CI workflow switch to local `validate --all` is implemented and reviewed in
+[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md). PR #2 / run `28210904900` is the first
+post-switch PR informational observation; at least one more real PR run or one week of normal PR flow should be observed
+before enforcement or filter changes are discussed.
 
 ## Observation Record Template
 

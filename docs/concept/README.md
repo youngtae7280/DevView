@@ -368,9 +368,10 @@ The PR informational read-model Evidence design is now recorded:
 The workflow now implements `workflow_dispatch` and a non-enforcing `pull_request` informational trigger with path
 filters. The PR mode records `pull_request-informational` trigger metadata, PR head/base fields, artifact/manifest
 fields, GitHub Step Summary wording, and conservative failure semantics. Required checks, branch protection, CI
-enforcement, source authority expansion, public-doc cleanup, `validate --all`, and full Graph-source promotion remain
-unimplemented in the workflow. PR #1 triggered run `28207822252`, which is reviewed as `pull_request-informational` /
-`ci-evidence-pass`; the temporary PR was closed without merge and its remote branch was deleted.
+enforcement, source authority expansion, public-doc cleanup, and full Graph-source promotion remain unimplemented in the
+workflow. PR #1 triggered run `28207822252`, and PR #2 triggered run `28210904900` after the workflow switched to local
+`validate --all`; both are reviewed as `pull_request-informational` / `ci-evidence-pass`. Both temporary PRs were closed
+without merge and their remote branches were deleted.
 
 The PR informational observation policy is now recorded:
 
@@ -384,9 +385,10 @@ The append-only observation log and review runbook is now recorded:
 
 - [pr-informational-observation-log.md](pr-informational-observation-log.md)
 
-The log records the manual baseline run `28207696557`, first PR informational run `28207822252` / PR `#1`, a reusable
-future-entry template, review checklist, observation counters, and decision thresholds. It is a recording surface only;
-it does not change workflow triggers, dispatch Actions, add enforcement, expand source authority, or approve promotion.
+The log records the manual baseline run `28207696557`, first PR informational run `28207822252` / PR `#1`, validate-all
+PR informational run `28210904900` / PR `#2`, a reusable future-entry template, review checklist, observation counters,
+and decision thresholds. It is a recording surface only; it does not change workflow triggers, dispatch Actions, add
+enforcement, expand source authority, or approve promotion.
 
 The future all-slice read-model validation contract is now recorded:
 
@@ -445,9 +447,10 @@ The CI validate-all integration design is now recorded:
 
 The record explains how the non-enforcing manual/PR informational workflow now replaces its explicit read-model command
 sequence with local registry-backed `validate --all`. It compares command coverage, artifact bundle requirements,
-manifest and Step Summary fields, failure semantics, and migration review expectations. Manual run `28210541509`
-reviewed the switched workflow as `ci-evidence-pass` with `validateAllStatus: aggregate-pass`. No required check,
-enforcement, source authority, public-doc cleanup, or promotion change is made.
+manifest and Step Summary fields, failure semantics, and migration review expectations. Manual run `28210541509` and PR
+informational run `28210904900` reviewed the switched workflow as `ci-evidence-pass` with
+`validateAllStatus: aggregate-pass`. No required check, enforcement, source authority, public-doc cleanup, or promotion
+change is made.
 
 ## Outline-Only Later-Phase Docs
 

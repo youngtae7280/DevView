@@ -123,11 +123,12 @@ node dist/cli/index.js graph read-model summarize --slices examples/adoption/tod
 The workflow is still non-enforcing manual/PR informational Evidence. Running aggregate summarize in CI does not turn
 the aggregate into enforcement and does not expand source authority. The workflow now reaches aggregate output through
 local `validate --all`; the switch is recorded in
-[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md). A new
-aggregate-enabled workflow run, `28156403793`, has now been reviewed as CI-backed Evidence with `ci-evidence-pass` and
-aggregate `aggregate-pass`. Post-update run `28157938343` reviewed the same aggregate-enabled workflow after the Node 24
-action/runtime update. The earlier Todo Search-only run `28151296796` remains historical CI-backed Evidence for the
-first workflow shape.
+[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md). Aggregate-enabled workflow run
+`28156403793` has been reviewed as CI-backed Evidence with `ci-evidence-pass` and aggregate `aggregate-pass`.
+Post-update run `28157938343` reviewed the same aggregate-enabled workflow after the Node 24 action/runtime update.
+Manual validate-all run `28210541509` and PR validate-all run `28210904900` reviewed the switched workflow with
+`validateAllStatus: aggregate-pass`. The earlier Todo Search-only run `28151296796` remains historical CI-backed
+Evidence for the first workflow shape.
 
 ## Tests
 

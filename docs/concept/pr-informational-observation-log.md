@@ -15,11 +15,12 @@ Evidence without changing workflow behavior.
 | ------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | Manual dispatch baseline  | Run `28207696557`, `workflow_dispatch`, `success`, `ci-evidence-pass`                                       |
 | First real PR run         | PR `#1`, run `28207822252`, `pull_request`, `pull_request-informational`, `success`, `ci-evidence-pass`     |
+| Latest PR run             | PR `#2`, run `28210904900`, `pull_request`, `pull_request-informational`, `success`, `ci-evidence-pass`     |
 | Current workflow mode     | `workflow_dispatch` plus non-enforcing `pull_request-informational`                                         |
 | Included slices           | `examples/adoption/todo-search-slice`; `examples/valid/todo-app-pbe-run`; aggregate summary                 |
 | Workflow command mode     | registry-backed `validate --all` after manual run `28210541509`                                             |
 | Observation policy        | [pr-informational-observation-policy.md](pr-informational-observation-policy.md)                            |
-| Current real PR run count | 1 reviewed real PR informational run                                                                        |
+| Current real PR run count | 2 reviewed real PR informational runs                                                                       |
 | Target before refinement  | At least 3 real PR informational runs or 1 week of normal PR flow, unless immediate re-review is triggered. |
 | Enforcement / authority   | Not approved. PR Evidence is informational only and does not change source authority.                       |
 
@@ -71,6 +72,33 @@ Evidence without changing workflow behavior.
 | Failure / noise class        | No failure; docs-only trigger was intentional smoke signal rather than confirmed long-term filter evidence                            |
 | Interpretation               | Continue observation. Do not refine filters, discuss enforcement, or broaden validation scope until more real PR signal is collected. |
 | Cleanup                      | PR closed without merge; remote smoke branch deleted                                                                                  |
+
+### Baseline Entry 3: Validate-All PR Informational Run
+
+| Field                        | Value                                                                                                                                        |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Entry type                   | First validate-all-centered PR informational smoke review                                                                                    |
+| PR                           | `#2`; draft temporary smoke PR; closed without merge                                                                                         |
+| Run ID                       | `28210904900`                                                                                                                                |
+| Run URL                      | `https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin/actions/runs/28210904900`                                                   |
+| Job ID / URL                 | `83571819410`; `https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin/actions/runs/28210904900/job/83571819410`                    |
+| Event / trigger mode         | `pull_request` / `pull_request-informational`                                                                                                |
+| Head SHA / base SHA          | `dadc1fd415a57342e7e1084c561868e242b39c54` / `ffad659d620e034bce0a24c18c6b41298e376451`                                                      |
+| Head ref / base ref          | `pbe/pr-info-validate-all-smoke-20260626` / `main`                                                                                           |
+| Source ref / manifest commit | `refs/pull/2/merge` / `88affca60d9f5081c848c03e65a2801f90733968`                                                                             |
+| Changed path categories      | `docs/concept/**` smoke change                                                                                                               |
+| Artifact bundle              | Present and reviewed                                                                                                                         |
+| Manifest status              | `ci-evidence-pass`                                                                                                                           |
+| Evidence level               | `ci-backed`                                                                                                                                  |
+| Source mode                  | `registry-backed validate-all`; `validateAllStatus: aggregate-pass`                                                                          |
+| Todo Search status           | `validation-pass`, `comparison-pass`, 40 nodes / 59 edges, 20 checks                                                                         |
+| Todo App PBE Run status      | `validation-pass`, `not-required` parity, 22 nodes / 38 edges, 16 checks                                                                     |
+| Aggregate status             | `aggregate-pass`, 2 included slices, 0 warnings / 0 blocking / 0 decision-required                                                           |
+| Retained warning visibility  | Present; `retainedWarningsRemainVisible: true`                                                                                               |
+| Boundary visibility          | Source-authority boundary, non-enforcement statement, and non-promotion statement present                                                    |
+| Failure / noise class        | No failure; docs-only trigger was intentional smoke signal for the validate-all workflow switch, not enough long-term filter evidence alone  |
+| Interpretation               | Continue observation. One more real PR run or one week of normal PR flow is recommended before path-filter refinement or enforcement design. |
+| Cleanup                      | PR closed without merge; remote smoke branch deleted                                                                                         |
 
 ## Future Observation Entry Template
 
