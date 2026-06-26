@@ -3,9 +3,12 @@ import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import {
+  buildReadModelRegistryCommandPlans,
   compareReadModelEvidence,
   generateReadModelEvidence,
   getSliceReadModelProfile,
+  loadReadModelSliceRegistry,
+  normalizeReadModelSliceRegistry,
   summarizeReadModelEvidence,
   todoAppPbeRunStructureOnlyProfile,
   todoSearchReadModelProfile,
@@ -43,6 +46,106 @@ describe('read-model Evidence builder', () => {
     expect(profile.policyLevel).toBe('structure-only')
     expect(profile.sourceLayout).toBe('canonical-pbe')
     expect(profile.expectedCounts).toEqual({ nodes: 22, edges: 38, validationChecks: 16 })
+  })
+
+  it('parses and normalizes the candidate read-model slice registry fixture', async () => {
+    const registry = await loadReadModelSliceRegistry(resolve('.'))
+
+    expect(registry.schemaVersion).toBe(1)
+    expect(registry.registryRole).toBe('read-model-slice-registry-fixture')
+    expect(registry.status).toBe('candidate-not-consumed-by-cli')
+    expect(registry.sourceAuthorityBoundary).toContain('execution metadata')
+    expect(registry.nonPromotionStatement).toContain('not Graph-source promotion')
+    expect(registry.mutationBoundary).toContain('must not silently mutate')
+    expect(registry.profiles.map((entry) => entry.profileId)).toEqual([
+      todoSearchReadModelProfile.profileId,
+      todoAppPbeRunStructureOnlyProfile.profileId,
+    ])
+    expect(registry.profiles.every((entry) => entry.includedInValidateAll)).toBe(true)
+  })
+
+  it('keeps registry entries aligned with current in-code profile expectations', async () => {
+    const registry = await loadReadModelSliceRegistry(resolve('.'))
+    const entries = new Map(registry.profiles.map((entry) => [entry.profileId, entry]))
+
+    const todoSearch = entries.get(todoSearchReadModelProfile.profileId)
+    const todoApp = entries.get(todoAppPbeRunStructureOnlyProfile.profileId)
+
+    expect(todoSearch).toMatchObject({
+      sourceSlice: todoSearchReadModelProfile.supportedSlice,
+      sourceLayout: todoSearchReadModelProfile.sourceLayout,
+      policyLevel: todoSearchReadModelProfile.policyLevel,
+      expectedCounts: todoSearchReadModelProfile.expectedCounts,
+      requiredCommands: ['generate', 'compare', 'validate'],
+    })
+    expect(todoSearch?.requiredArtifacts).toMatchObject({
+      generatedReadModel: todoSearchReadModelProfile.artifacts.generatedReadModel,
+      evidenceManifest: todoSearchReadModelProfile.artifacts.evidenceManifest,
+      parityReport: todoSearchReadModelProfile.artifacts.generatedParityReport,
+      validationReport: todoSearchReadModelProfile.artifacts.validationReport,
+      scopedPilotMarker: todoSearchReadModelProfile.artifacts.scopedPilotMarker,
+    })
+
+    expect(todoApp).toMatchObject({
+      sourceSlice: todoAppPbeRunStructureOnlyProfile.supportedSlice,
+      sourceLayout: todoAppPbeRunStructureOnlyProfile.sourceLayout,
+      policyLevel: todoAppPbeRunStructureOnlyProfile.policyLevel,
+      expectedCounts: todoAppPbeRunStructureOnlyProfile.expectedCounts,
+      requiredCommands: ['generate', 'validate'],
+    })
+    expect(todoApp?.requiredArtifacts).toMatchObject({
+      generatedReadModel: todoAppPbeRunStructureOnlyProfile.artifacts.generatedReadModel,
+      validationReport: todoAppPbeRunStructureOnlyProfile.artifacts.validationReport,
+      evidenceManifest: todoAppPbeRunStructureOnlyProfile.artifacts.evidenceManifest,
+    })
+  })
+
+  it('builds command plans from registry metadata without executing commands', async () => {
+    const registry = await loadReadModelSliceRegistry(resolve('.'))
+
+    const plans = buildReadModelRegistryCommandPlans(registry)
+
+    expect(plans).toEqual([
+      {
+        profileId: todoSearchReadModelProfile.profileId,
+        sourceSlice: todoSearchReadModelProfile.supportedSlice,
+        policyLevel: 'pilot-marker-backed',
+        commands: ['generate', 'compare', 'validate'],
+      },
+      {
+        profileId: todoAppPbeRunStructureOnlyProfile.profileId,
+        sourceSlice: todoAppPbeRunStructureOnlyProfile.supportedSlice,
+        policyLevel: 'structure-only',
+        commands: ['generate', 'validate'],
+      },
+    ])
+  })
+
+  it('rejects duplicate profile IDs, missing top-level boundaries, and unknown policy levels', async () => {
+    const source = await readRegistryFixtureObject()
+    const duplicate = cloneJson(source)
+    duplicate.profiles[1].profileId = duplicate.profiles[0].profileId
+    expect(() => normalizeReadModelSliceRegistry(duplicate)).toThrow(/duplicates/)
+
+    const missingBoundary = cloneJson(source)
+    delete missingBoundary.sourceAuthorityBoundary
+    expect(() => normalizeReadModelSliceRegistry(missingBoundary)).toThrow(/sourceAuthorityBoundary/)
+
+    const unknownPolicy = cloneJson(source)
+    unknownPolicy.profiles[0].policyLevel = 'repo-wide'
+    expect(() => normalizeReadModelSliceRegistry(unknownPolicy)).toThrow(/policyLevel/)
+  })
+
+  it('does not mutate the registry fixture while parsing or planning', async () => {
+    const workspace = await createExampleWorkspace()
+    const registryPath = join(workspace, 'examples/read-model-aggregate/read-model-slices.json')
+    const before = await readFile(registryPath, 'utf8')
+
+    const registry = await loadReadModelSliceRegistry(workspace)
+    buildReadModelRegistryCommandPlans(registry)
+    const after = await readFile(registryPath, 'utf8')
+
+    expect(after).toBe(before)
   })
 
   afterEach(async () => {
@@ -550,6 +653,20 @@ async function createExampleWorkspace(): Promise<string> {
   await cp(resolve('examples'), join(workspace, 'examples'), { recursive: true })
   await cp(resolve('docs'), join(workspace, 'docs'), { recursive: true })
   return workspace
+}
+
+async function readRegistryFixtureObject(): Promise<{
+  sourceAuthorityBoundary?: string
+  profiles: Array<{ profileId: string; policyLevel: string }>
+}> {
+  return JSON.parse(await readFile(resolve('examples/read-model-aggregate/read-model-slices.json'), 'utf8')) as {
+    sourceAuthorityBoundary?: string
+    profiles: Array<{ profileId: string; policyLevel: string }>
+  }
+}
+
+function cloneJson<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
 }
 
 async function createAggregateReportWorkspace(): Promise<string> {

@@ -416,9 +416,14 @@ The candidate registry fixture is now present:
 - `examples/read-model-aggregate/read-model-slices.json`
 
 It includes only the current Todo Search `pilot-marker-backed` profile and Todo App PBE Run `structure-only` profile.
-The file is strict JSON, non-generated execution metadata, and is not consumed by CLI/parser behavior yet. Registry
+The file is strict JSON, non-generated execution metadata, and is not consumed by CLI command behavior yet. Registry
 inclusion does not expand source authority, change CI enforcement, promote Todo App PBE Run, or approve full
 Graph-source promotion.
+
+The registry parser/normalization and focused comparison tests are now implemented internally. They prove the candidate
+registry can be parsed, normalized, compared to the current in-code profiles, and converted into a command plan without
+mutating the registry file. Existing `generate`, `compare`, `validate`, and `summarize` command behavior remains driven
+by the current in-code profiles; `validate --all` remains unimplemented.
 
 ## Outline-Only Later-Phase Docs
 

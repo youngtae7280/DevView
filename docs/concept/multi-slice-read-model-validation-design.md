@@ -378,7 +378,8 @@ The staged path is:
    fixtures, positive/negative fixtures, and non-mutation tests before implementing registry parsing or `validate --all`.
 8. Use [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md) for the selected
    candidate registry location, now materialized as `examples/read-model-aggregate/read-model-slices.json`.
-9. Treat the candidate registry as reviewable metadata only until a separate parser/planner implementation is approved.
+9. Treat the candidate registry as reviewable and parser-tested metadata until a separate command-consumption
+   implementation is approved.
 
 Do not move next to `validate --all`, required checks, enforcement, or broad CI changes without a separate user
 decision.
@@ -434,7 +435,7 @@ design, multi-slice scope redesign, or continued observation.
 | Aggregate validation                | Decision Control Node      | deferred                     | `validate --all`, aggregate validation execution, and enforcement remain separate.                                       |
 | Validate-all contract               | Decision Control Node      | design-recorded              | The all-slice registry and execution-mode contract is documented, but no CLI implementation exists.                      |
 | Slice registry test strategy        | Evidence / Decision Node   | design-recorded              | Future registry fixtures and tests are specified before implementation.                                                  |
-| Slice registry storage decision     | Decision Control Node      | candidate-fixture-created    | Registry location and file format are selected; the candidate file exists but parser/CLI consumption remains unapproved. |
+| Slice registry parser tests         | Evidence / Decision Node   | parser-tests-implemented     | The candidate file is parsed and compared to in-code profiles by tests; CLI command consumption remains unapproved.      |
 | PR informational trigger            | Decision Control Node      | implemented / reviewed       | PR visibility is implemented as non-enforcing informational Evidence and reviewed in PR run `28207822252`.               |
 | CI enforcement / required checks    | Decision Control Node      | not approved                 | Reviewed CI-backed Evidence exists, but enforcement and required checks remain future-only.                              |
 

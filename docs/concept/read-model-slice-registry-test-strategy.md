@@ -1,6 +1,6 @@
 # Read-Model Slice Registry Test Strategy
 
-Status: read-model-slice-registry-test-strategy / candidate-registry-file-created / no-implementation / non-enforcing
+Status: read-model-slice-registry-test-strategy / parser-normalization-tests-implemented / non-enforcing
 
 This document defines the registry fixture and test strategy needed before implementing a future all-slice read-model
 validation surface such as `pbe graph read-model validate --all`.
@@ -9,9 +9,10 @@ It extends [read-model-validate-all-contract.md](read-model-validate-all-contrac
 registry fixture should look like, what positive and negative fixtures should prove, and which focused tests should
 protect source-authority, aggregate, and non-mutation boundaries.
 
-The candidate registry file now exists at `examples/read-model-aggregate/read-model-slices.json`. This strategy does
-not implement parser or CLI code, change workflows, regenerate generated artifacts, dispatch GitHub Actions, create PRs,
-introduce enforcement, expand source authority, perform public-doc cleanup, or approve full Graph-source promotion.
+The candidate registry file now exists at `examples/read-model-aggregate/read-model-slices.json`, and internal
+parser/normalization plus profile-comparison tests now cover it. This strategy does not make existing CLI commands
+registry-driven, change workflows, regenerate generated artifacts, dispatch GitHub Actions, create PRs, introduce
+enforcement, expand source authority, perform public-doc cleanup, or approve full Graph-source promotion.
 
 The storage and file-format decision surface for the registry fixture is recorded in
 [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md). The candidate fixture is
@@ -37,8 +38,8 @@ The intended sequence is:
 1. design registry fixture shape
 2. design positive and negative fixture expectations
 3. keep the approved candidate registry fixture reviewable outside `generated/`
-4. implement parser/normalization tests
-5. implement command-plan tests
+4. implement parser/normalization tests. Completed by DEC-072.
+5. implement command-plan tests. Completed by DEC-072 for non-executing plans.
 6. implement all-slice validation behavior only after registry behavior is stable
 
 ## Proposed Registry Fixture Shape
@@ -160,25 +161,26 @@ policy is approved. Do not mutate current positive slice artifacts to produce ne
 
 ### Registry Parsing / Normalization Tests
 
-Validate that a future registry parser:
+Current parser/normalization tests validate that the candidate registry parser:
 
 - accepts the two current positive profiles
 - rejects duplicate `profileId`
-- rejects missing `sourceSlice`, `sourceLayout`, or `policyLevel`
+- rejects missing top-level boundary statements
 - normalizes slash direction without changing semantic paths
 - rejects unknown `policyLevel`
 - preserves boundary statements and retained-warning declarations
 
 ### Command Plan Construction Tests
 
-Validate that future planning:
+Current command-plan tests validate non-executing plans:
 
 - builds `generate + compare + validate` for Todo Search
 - builds `generate + validate` for Todo App PBE Run
 - does not plan compare for `structure-only`
 - does not plan pilot-marker checks for `structure-only`
-- does not run unregistered slices by discovery
-- reports unsupported profiles instead of guessing commands
+- does not run any generated commands while constructing the plan
+
+Future command-behavior tests still need to prove unsupported profiles are reported instead of guessed.
 
 ### Per-Policy Requirement Tests
 
@@ -271,20 +273,19 @@ This strategy was enough to request creation of the candidate registry fixture w
 - report output location is chosen
 - mutation boundary is clear
 
-Before parser, planner, or `validate --all` CLI implementation begins:
+Before CLI command behavior consumes the registry or `validate --all` implementation begins:
 
 - the candidate registry fixture must stay aligned with current in-code profiles
-- parser and planner tests should be implemented first
+- parser and non-executing planner tests should remain passing
 - positive and negative fixture behavior should be testable without changing current source artifacts
 - aggregate summary behavior should remain compatible with existing report-only command
 - PR informational workflow should not be changed unless separately approved
 
 ## Non-Scope
 
-This strategy and candidate fixture do not:
+This strategy, candidate fixture, and parser tests do not:
 
-- implement a registry parser
-- implement command planning
+- make existing CLI commands registry-driven
 - implement `validate --all`
 - modify `.github/workflows/read-model-evidence.yml`
 - regenerate generated artifacts
@@ -300,22 +301,23 @@ This strategy and candidate fixture do not:
 
 ## Gate Self-Check
 
-| Gate                           | Result | Notes                                                                                 |
-| ------------------------------ | ------ | ------------------------------------------------------------------------------------- |
-| Candidate Fixture Gate         | PASS   | The candidate registry file exists as reviewable metadata only.                       |
-| Non-Implementation Gate        | PASS   | Defines test strategy only; no code, parser, CLI, workflow, PR, or Actions changes.   |
-| Registry Fixture Shape Gate    | PASS   | Proposed fields are explicit and profile-driven.                                      |
-| Positive Fixture Clarity Gate  | PASS   | Todo Search and Todo App PBE Run expected policy levels and counts are declared.      |
-| Negative Fixture Honesty Gate  | PASS   | Failure categories are visible and should not mutate positive source artifacts.       |
-| Test Class Coverage Gate       | PASS   | Parser, planning, policy, independence, aggregate, non-mutation, boundary, and drift. |
-| Non-Mutation Gate              | PASS   | Future tests must prove source/manual/pilot/report-only inputs remain unchanged.      |
-| Aggregate Boundary Gate        | PASS   | Aggregate tests remain Evidence-only and do not imply source authority.               |
-| Non-CI-Enforcement Gate        | PASS   | CI enforcement and workflow changes remain separate.                                  |
-| Source Authority Boundary Gate | PASS   | Registry inclusion is not source authority or promotion.                              |
-| User Approval Boundary Gate    | PASS   | Implementation and enforcement remain separate user decisions.                        |
+| Gate                           | Result | Notes                                                                                  |
+| ------------------------------ | ------ | -------------------------------------------------------------------------------------- |
+| Candidate Fixture Gate         | PASS   | The candidate registry file exists as reviewable metadata.                             |
+| Parser / Normalization Gate    | PASS   | Internal tests parse, normalize, reject invalid registry shapes, and compare profiles. |
+| Non-Consumption Gate           | PASS   | Existing CLI command behavior is not registry-driven yet.                              |
+| Registry Fixture Shape Gate    | PASS   | Proposed fields are explicit and profile-driven.                                       |
+| Positive Fixture Clarity Gate  | PASS   | Todo Search and Todo App PBE Run expected policy levels and counts are declared.       |
+| Negative Fixture Honesty Gate  | PASS   | Failure categories are visible and should not mutate positive source artifacts.        |
+| Test Class Coverage Gate       | PASS   | Parser, planning, policy, independence, aggregate, non-mutation, boundary, and drift.  |
+| Non-Mutation Gate              | PASS   | Future tests must prove source/manual/pilot/report-only inputs remain unchanged.       |
+| Aggregate Boundary Gate        | PASS   | Aggregate tests remain Evidence-only and do not imply source authority.                |
+| Non-CI-Enforcement Gate        | PASS   | CI enforcement and workflow changes remain separate.                                   |
+| Source Authority Boundary Gate | PASS   | Registry inclusion is not source authority or promotion.                               |
+| User Approval Boundary Gate    | PASS   | Implementation and enforcement remain separate user decisions.                         |
 
 ## Final Statement
 
-This strategy makes the candidate registry and test surface reviewable before implementation. It does not implement a
-parser, command planner, `validate --all`, CI workflow change, enforcement, source authority expansion, or Graph-source
-promotion.
+This strategy makes the candidate registry and test surface reviewable before command consumption. It does not make CLI
+commands registry-driven, implement `validate --all`, change CI workflow behavior, introduce enforcement, expand source
+authority, or approve Graph-source promotion.

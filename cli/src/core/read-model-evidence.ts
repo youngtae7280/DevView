@@ -299,6 +299,52 @@ export interface SliceReadModelConfig {
   compatibilityWarnings: Array<Record<string, unknown>>
 }
 
+type RegistryCommand = 'generate' | 'compare' | 'validate'
+
+export interface ReadModelSliceRegistryProfile {
+  profileId: string
+  sourceSlice: string
+  sourceLayout: SliceReadModelConfig['sourceLayout']
+  policyLevel: SliceReadModelConfig['policyLevel']
+  includedInValidateAll: boolean
+  requiredCommands: RegistryCommand[]
+  requiredArtifacts: Record<string, string>
+  optionalArtifacts: Record<string, string>
+  expectedCounts: {
+    nodes: number
+    edges: number
+    validationChecks: number
+  }
+  parityRequirement: Record<string, unknown>
+  pilotMarkerRequirement: Record<string, unknown>
+  runtimeFixtureRequirement: Record<string, unknown>
+  retainedWarnings: string[]
+  fallbackReferences: string[]
+  ciInclusion: string
+  boundaryStatements: {
+    sourceAuthorityBoundary: string
+    nonPromotionStatement: string
+    userAcceptanceBoundary: string
+  }
+}
+
+export interface ReadModelSliceRegistry {
+  schemaVersion: 1
+  registryRole: 'read-model-slice-registry-fixture'
+  status: string
+  sourceAuthorityBoundary: string
+  nonPromotionStatement: string
+  mutationBoundary: string
+  profiles: ReadModelSliceRegistryProfile[]
+}
+
+export interface ReadModelRegistryCommandPlan {
+  profileId: string
+  sourceSlice: string
+  policyLevel: SliceReadModelConfig['policyLevel']
+  commands: RegistryCommand[]
+}
+
 export const todoSearchReadModelProfile: SliceReadModelConfig = {
   profileId: 'todo-search-selected-slice',
   displayName: 'Todo Search Adoption + Product Meaning Feedback',
@@ -340,6 +386,8 @@ export const todoSearchReadModelProfile: SliceReadModelConfig = {
     viewManifest: 'view-instance-manifest.json',
     generatedReadModel: 'generated/generated-read-model.json',
     generatedParityReport: 'generated/read-model-parity-report.json',
+    validationReport: 'generated/read-model-validation-report.json',
+    evidenceManifest: 'generated/read-model-evidence-manifest.json',
     scopedPilotMarker: 'generated/scoped-source-authority-pilot-marker.json',
     limitedPilotTransitionRecord: 'docs/concept/limited-pilot-transition-record.md',
     limitedPilotPackage: 'docs/concept/limited-pilot-promotion-decision-package.md',
@@ -498,6 +546,83 @@ export function getSliceReadModelProfile(slice: string): SliceReadModelConfig {
       todoAppPbeRunStructureOnlyProfile.supportedSlice,
     ].join(', ')}`,
   )
+}
+
+export async function loadReadModelSliceRegistry(
+  root: string,
+  registryPath = 'examples/read-model-aggregate/read-model-slices.json',
+): Promise<ReadModelSliceRegistry> {
+  const absoluteRegistryPath = path.resolve(root, registryPath)
+  const parsed = await readJsonSafe<unknown>(absoluteRegistryPath)
+  if (!parsed.ok) {
+    throw new Error(`Unable to read read-model slice registry at ${registryPath}: ${parsed.error}`)
+  }
+  return normalizeReadModelSliceRegistry(parsed.value, registryPath)
+}
+
+export function normalizeReadModelSliceRegistry(
+  value: unknown,
+  registryPath = 'read-model-slices.json',
+): ReadModelSliceRegistry {
+  const errors: string[] = []
+  const source = asRecord(value, 'registry', errors)
+  const schemaVersion = source.schemaVersion
+  const registryRole = source.registryRole
+  const status = requiredString(source, 'status', errors)
+  const sourceAuthorityBoundary = requiredString(source, 'sourceAuthorityBoundary', errors)
+  const nonPromotionStatement = requiredString(source, 'nonPromotionStatement', errors)
+  const mutationBoundary = requiredString(source, 'mutationBoundary', errors)
+  const profilesValue = source.profiles
+
+  if (schemaVersion !== 1) {
+    errors.push('registry.schemaVersion must be 1')
+  }
+  if (registryRole !== 'read-model-slice-registry-fixture') {
+    errors.push('registry.registryRole must be read-model-slice-registry-fixture')
+  }
+  if (!Array.isArray(profilesValue)) {
+    errors.push('registry.profiles must be an array')
+  }
+
+  const profiles: ReadModelSliceRegistryProfile[] = []
+  const seenProfileIds = new Set<string>()
+  if (Array.isArray(profilesValue)) {
+    for (const [index, profileValue] of profilesValue.entries()) {
+      const profile = normalizeReadModelSliceRegistryProfile(profileValue, index, errors)
+      if (profile) {
+        if (seenProfileIds.has(profile.profileId)) {
+          errors.push(`registry.profiles[${index}].profileId duplicates ${profile.profileId}`)
+        }
+        seenProfileIds.add(profile.profileId)
+        profiles.push(profile)
+      }
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`Invalid read-model slice registry ${registryPath}: ${errors.join('; ')}`)
+  }
+
+  return {
+    schemaVersion: 1,
+    registryRole: 'read-model-slice-registry-fixture',
+    status,
+    sourceAuthorityBoundary,
+    nonPromotionStatement,
+    mutationBoundary,
+    profiles,
+  }
+}
+
+export function buildReadModelRegistryCommandPlans(registry: ReadModelSliceRegistry): ReadModelRegistryCommandPlan[] {
+  return registry.profiles
+    .filter((profile) => profile.includedInValidateAll)
+    .map((profile) => ({
+      profileId: profile.profileId,
+      sourceSlice: profile.sourceSlice,
+      policyLevel: profile.policyLevel,
+      commands: [...profile.requiredCommands],
+    }))
 }
 
 export async function generateReadModelEvidence(root: string, slice: string): Promise<GenerateResult> {
@@ -4059,6 +4184,228 @@ function getArray<T>(source: unknown, key: string): T[] {
 
 function unique<T>(values: T[]): T[] {
   return [...new Set(values)]
+}
+
+function normalizeReadModelSliceRegistryProfile(
+  value: unknown,
+  index: number,
+  errors: string[],
+): ReadModelSliceRegistryProfile | null {
+  const prefix = `registry.profiles[${index}]`
+  const source = asRecord(value, prefix, errors)
+  if (Object.keys(source).length === 0) {
+    return null
+  }
+
+  const profileId = requiredString(source, 'profileId', errors, prefix)
+  const sourceSlice = normalizePath(requiredString(source, 'sourceSlice', errors, prefix))
+  const sourceLayout = requiredEnum<SliceReadModelConfig['sourceLayout']>(
+    source,
+    'sourceLayout',
+    ['flat-demo-support', 'canonical-pbe'],
+    errors,
+    prefix,
+  )
+  const policyLevel = requiredEnum<SliceReadModelConfig['policyLevel']>(
+    source,
+    'policyLevel',
+    ['pilot-marker-backed', 'structure-only'],
+    errors,
+    prefix,
+  )
+  const includedInValidateAll = requiredBoolean(source, 'includedInValidateAll', errors, prefix)
+  const requiredCommands = requiredStringEnumArray<RegistryCommand>(
+    source,
+    'requiredCommands',
+    ['generate', 'compare', 'validate'],
+    errors,
+    prefix,
+  )
+  const requiredArtifacts = requiredStringRecord(source, 'requiredArtifacts', errors, prefix)
+  const optionalArtifacts = optionalStringRecord(source, 'optionalArtifacts', errors, prefix)
+  const expectedCounts = requiredExpectedCounts(source, errors, prefix)
+  const parityRequirement = requiredPlainRecord(source, 'parityRequirement', errors, prefix)
+  const pilotMarkerRequirement = requiredPlainRecord(source, 'pilotMarkerRequirement', errors, prefix)
+  const runtimeFixtureRequirement = requiredPlainRecord(source, 'runtimeFixtureRequirement', errors, prefix)
+  const retainedWarnings = requiredStringArray(source, 'retainedWarnings', errors, prefix)
+  const fallbackReferences = requiredStringArray(source, 'fallbackReferences', errors, prefix)
+  const ciInclusion = requiredString(source, 'ciInclusion', errors, prefix)
+  const boundarySource = requiredPlainRecord(source, 'boundaryStatements', errors, prefix)
+  const boundaryStatements = {
+    sourceAuthorityBoundary: requiredString(
+      boundarySource,
+      'sourceAuthorityBoundary',
+      errors,
+      `${prefix}.boundaryStatements`,
+    ),
+    nonPromotionStatement: requiredString(
+      boundarySource,
+      'nonPromotionStatement',
+      errors,
+      `${prefix}.boundaryStatements`,
+    ),
+    userAcceptanceBoundary: requiredString(
+      boundarySource,
+      'userAcceptanceBoundary',
+      errors,
+      `${prefix}.boundaryStatements`,
+    ),
+  }
+
+  return {
+    profileId,
+    sourceSlice,
+    sourceLayout,
+    policyLevel,
+    includedInValidateAll,
+    requiredCommands,
+    requiredArtifacts,
+    optionalArtifacts,
+    expectedCounts,
+    parityRequirement,
+    pilotMarkerRequirement,
+    runtimeFixtureRequirement,
+    retainedWarnings,
+    fallbackReferences,
+    ciInclusion,
+    boundaryStatements,
+  }
+}
+
+function asRecord(value: unknown, label: string, errors: string[]): Record<string, unknown> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    errors.push(`${label} must be an object`)
+    return {}
+  }
+  return value as Record<string, unknown>
+}
+
+function requiredString(source: Record<string, unknown>, key: string, errors: string[], prefix = 'registry'): string {
+  const value = source[key]
+  if (typeof value !== 'string' || value.length === 0) {
+    errors.push(`${prefix}.${key} must be a non-empty string`)
+    return ''
+  }
+  return value
+}
+
+function requiredBoolean(source: Record<string, unknown>, key: string, errors: string[], prefix: string): boolean {
+  const value = source[key]
+  if (typeof value !== 'boolean') {
+    errors.push(`${prefix}.${key} must be a boolean`)
+    return false
+  }
+  return value
+}
+
+function requiredEnum<T extends string>(
+  source: Record<string, unknown>,
+  key: string,
+  allowed: readonly T[],
+  errors: string[],
+  prefix: string,
+): T {
+  const value = source[key]
+  if (typeof value !== 'string' || !allowed.includes(value as T)) {
+    errors.push(`${prefix}.${key} must be one of ${allowed.join(', ')}`)
+    return allowed[0]
+  }
+  return value as T
+}
+
+function requiredStringArray(source: Record<string, unknown>, key: string, errors: string[], prefix: string): string[] {
+  const value = source[key]
+  if (!Array.isArray(value) || !value.every((entry) => typeof entry === 'string' && entry.length > 0)) {
+    errors.push(`${prefix}.${key} must be an array of non-empty strings`)
+    return []
+  }
+  return value
+}
+
+function requiredStringEnumArray<T extends string>(
+  source: Record<string, unknown>,
+  key: string,
+  allowed: readonly T[],
+  errors: string[],
+  prefix: string,
+): T[] {
+  const values = requiredStringArray(source, key, errors, prefix)
+  const invalid = values.filter((entry) => !allowed.includes(entry as T))
+  if (invalid.length > 0) {
+    errors.push(`${prefix}.${key} contains unsupported values: ${invalid.join(', ')}`)
+  }
+  return values.filter((entry) => allowed.includes(entry as T)) as T[]
+}
+
+function requiredStringRecord(
+  source: Record<string, unknown>,
+  key: string,
+  errors: string[],
+  prefix: string,
+): Record<string, string> {
+  const value = source[key]
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    errors.push(`${prefix}.${key} must be an object with string values`)
+    return {}
+  }
+  const record = value as Record<string, unknown>
+  const output: Record<string, string> = {}
+  for (const [entryKey, entryValue] of Object.entries(record)) {
+    if (typeof entryValue !== 'string' || entryValue.length === 0) {
+      errors.push(`${prefix}.${key}.${entryKey} must be a non-empty string`)
+      continue
+    }
+    output[entryKey] = normalizePath(entryValue)
+  }
+  return output
+}
+
+function optionalStringRecord(
+  source: Record<string, unknown>,
+  key: string,
+  errors: string[],
+  prefix: string,
+): Record<string, string> {
+  if (!(key in source)) {
+    return {}
+  }
+  return requiredStringRecord(source, key, errors, prefix)
+}
+
+function requiredPlainRecord(
+  source: Record<string, unknown>,
+  key: string,
+  errors: string[],
+  prefix: string,
+): Record<string, unknown> {
+  const value = source[key]
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    errors.push(`${prefix}.${key} must be an object`)
+    return {}
+  }
+  return value as Record<string, unknown>
+}
+
+function requiredExpectedCounts(
+  source: Record<string, unknown>,
+  errors: string[],
+  prefix: string,
+): ReadModelSliceRegistryProfile['expectedCounts'] {
+  const counts = requiredPlainRecord(source, 'expectedCounts', errors, prefix)
+  return {
+    nodes: requiredNumber(counts, 'nodes', errors, `${prefix}.expectedCounts`),
+    edges: requiredNumber(counts, 'edges', errors, `${prefix}.expectedCounts`),
+    validationChecks: requiredNumber(counts, 'validationChecks', errors, `${prefix}.expectedCounts`),
+  }
+}
+
+function requiredNumber(source: Record<string, unknown>, key: string, errors: string[], prefix: string): number {
+  const value = source[key]
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    errors.push(`${prefix}.${key} must be a finite number`)
+    return 0
+  }
+  return value
 }
 
 function isString(value: unknown): value is string {

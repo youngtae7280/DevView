@@ -90,12 +90,14 @@ Suggested registry fields:
 | `promotionBoundary`       | Explicit statement that validation pass is not source promotion or user approval.                       |
 
 The candidate registry now exists at `examples/read-model-aggregate/read-model-slices.json` and includes only the two
-current profiles above. It is strict JSON, non-generated execution metadata, and is not consumed by CLI/parser behavior
-yet. A separate implementation decision is still required before any command reads it.
+current profiles above. It is strict JSON, non-generated execution metadata. Internal parser/normalization and
+profile-comparison tests can read it, but existing CLI command behavior is not registry-driven yet. A separate
+implementation decision is still required before generate/compare/validate/summarize or a future `validate --all`
+surface consumes it.
 
 The fixture and test strategy for this registry is recorded in
-[read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md). That strategy should be used
-before implementing parser/planner behavior.
+[read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md). Parser/normalization and
+non-executing command-plan tests are now implemented; command behavior consumption remains future work.
 The storage/location decision surface is recorded in
 [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md), which records the
 candidate file location and strict JSON format.
@@ -224,7 +226,7 @@ This contract does not:
 
 - implement a CLI command
 - implement `validate --all`
-- implement parser/planner consumption of the candidate slice registry fixture
+- make CLI command behavior consume the candidate slice registry fixture
 - modify `.github/workflows/read-model-evidence.yml`
 - dispatch GitHub Actions
 - create PRs
@@ -245,7 +247,7 @@ This contract does not:
 | -------------------------------- | ------ | ---------------------------------------------------------------------------------- |
 | Design-Only Gate                 | PASS   | Defines contract only; no CLI, workflow, PR, or Actions changes.                   |
 | Slice Registry Clarity Gate      | PASS   | Declares the first two known profiles and the candidate registry fixture path.     |
-| Registry Test Strategy Gate      | PASS   | Registry fixture and test strategy are recorded separately before parser work.     |
+| Registry Test Strategy Gate      | PASS   | Parser/normalization and non-executing command-plan tests are recorded separately. |
 | Execution Mode Separation Gate   | PASS   | Separates report-only, regenerate-and-validate, CI informational, and enforcement. |
 | Aggregate Boundary Gate          | PASS   | Aggregate pass remains Evidence-only.                                              |
 | Source Authority Boundary Gate   | PASS   | No source authority expansion or artifact retirement.                              |

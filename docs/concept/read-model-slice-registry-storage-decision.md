@@ -1,6 +1,7 @@
 # Read-Model Slice Registry Storage Decision
 
 Status: read-model-slice-registry-storage-decision / decision-surface / candidate-registry-file-created /
+parser-tests-implemented /
 non-enforcing
 
 This document records the storage-location and file-format decision surface for a future read-model slice registry
@@ -11,10 +12,11 @@ It follows:
 - [read-model-validate-all-contract.md](read-model-validate-all-contract.md)
 - [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md)
 
-The approved candidate registry file now exists at `examples/read-model-aggregate/read-model-slices.json`. This document
-still does not implement parser or CLI behavior, modify workflows, regenerate generated artifacts, dispatch GitHub
-Actions, create PRs, introduce CI enforcement, expand source authority, perform public-doc cleanup, or approve full
-Graph-source promotion.
+The approved candidate registry file now exists at `examples/read-model-aggregate/read-model-slices.json`, and internal
+parser/normalization plus profile-comparison tests now cover it. This document still does not connect command behavior
+to the registry, implement `validate --all`, modify workflows, regenerate generated artifacts, dispatch GitHub Actions,
+create PRs, introduce CI enforcement, expand source authority, perform public-doc cleanup, or approve full Graph-source
+promotion.
 
 ## Decision Context
 
@@ -25,7 +27,7 @@ fixture shape and tests. Before and after creating the candidate registry file, 
 - which file format should be used
 - what artifact role the registry has
 - what may mutate it
-- how existing in-code profile configuration remains compatible until parser support exists
+- how existing in-code profile configuration remains compatible until command behavior consumes registry metadata
 
 The registry is execution metadata for future read-model validation. It is not product source, not graph source, and not
 promotion approval.
@@ -129,7 +131,7 @@ Registry file changes should be ordinary reviewed source changes, not side effec
 
 ## Compatibility And Fallback
 
-Until parser support is implemented, the existing in-code profile list remains the behavior fallback:
+Until command behavior consumes registry metadata, the existing in-code profile list remains the behavior fallback:
 
 - `todo-search-selected-slice`
 - `todo-app-pbe-run-structure-only`
@@ -167,15 +169,17 @@ The fixture is strict JSON, outside `generated/`, and contains only:
 - `todo-search-selected-slice`
 - `todo-app-pbe-run-structure-only`
 
-The candidate file is not consumed by parser, planner, CLI, workflow, or CI behavior yet. Existing in-code profiles
-remain the behavior fallback until a separate parser/planner implementation decision is approved.
+The candidate file is parsed by focused tests and can be converted into a non-executing command plan. It is not consumed
+by CLI command behavior, workflows, or CI behavior yet. Existing in-code profiles remain the behavior fallback until a
+separate command-consumption implementation decision is approved.
 
 ## Recommended Next Action
 
 Recommended next action:
 
 ```text
-Implement parser/planner consumption tests for the candidate registry fixture, without changing command behavior first.
+Implement command behavior consumption of the candidate registry only after parser/normalization and profile-comparison
+tests remain stable.
 ```
 
 Conditions for that next step:
@@ -183,18 +187,17 @@ Conditions for that next step:
 - keep the file non-generated and strict JSON
 - keep `registryRole`, `sourceAuthorityBoundary`, and `nonPromotionStatement`
 - continue including only the two current profiles unless a separate profile-addition decision is approved
-- add parser/planner tests before changing `validate --all` or existing commands
+- keep parser/planner tests in place before changing `validate --all` or existing commands
 - do not change workflow triggers or CI enforcement
 
-If parser/planner tests are considered too soon, Option C remains the safest fallback: continue hardcoded profiles while
-the candidate registry is reviewable metadata.
+If command consumption is considered too soon, Option C remains the safest fallback: continue hardcoded profiles while
+the candidate registry is reviewable and test-covered metadata.
 
 ## Non-Scope
 
-This decision surface and candidate fixture do not:
+This decision surface, candidate fixture, and parser tests do not:
 
-- implement parser behavior
-- implement command planning
+- make CLI command behavior registry-driven
 - implement `validate --all`
 - modify `.github/workflows/read-model-evidence.yml`
 - regenerate generated artifacts
@@ -210,20 +213,22 @@ This decision surface and candidate fixture do not:
 
 ## Gate Self-Check
 
-| Gate                           | Result | Notes                                                                                |
-| ------------------------------ | ------ | ------------------------------------------------------------------------------------ |
-| Decision-Surface Gate          | PASS   | Defines location/format tradeoffs and records the approved candidate file location.  |
-| Non-Generated Location Gate    | PASS   | Recommends a non-generated path and rejects `generated/` as config storage.          |
-| Format Clarity Gate            | PASS   | Uses strict JSON for the candidate and records JSONC/YAML/TS/Markdown tradeoffs.     |
-| Artifact Role Gate             | PASS   | Registry is execution metadata, not source authority or promotion.                   |
-| Mutation Boundary Gate         | PASS   | Future validation may not silently rewrite registry/source/manual/pilot artifacts.   |
-| Compatibility Fallback Gate    | PASS   | In-code profiles remain fallback until parser support exists.                        |
-| Non-Implementation Gate        | PASS   | No code, parser, CLI, workflow, PR, or Actions changes are introduced.               |
-| Source Authority Boundary Gate | PASS   | Registry inclusion does not expand source authority or retire tree-native artifacts. |
-| Todo App Structure-Only Gate   | PASS   | Todo App PBE Run remains structure-only.                                             |
-| User Approval Boundary Gate    | PASS   | Parser/CLI consumption remains a later decision.                                     |
+| Gate                           | Result | Notes                                                                                    |
+| ------------------------------ | ------ | ---------------------------------------------------------------------------------------- |
+| Decision-Surface Gate          | PASS   | Defines location/format tradeoffs and records the approved candidate file location.      |
+| Non-Generated Location Gate    | PASS   | Recommends a non-generated path and rejects `generated/` as config storage.              |
+| Format Clarity Gate            | PASS   | Uses strict JSON for the candidate and records JSONC/YAML/TS/Markdown tradeoffs.         |
+| Artifact Role Gate             | PASS   | Registry is execution metadata, not source authority or promotion.                       |
+| Mutation Boundary Gate         | PASS   | Future validation may not silently rewrite registry/source/manual/pilot artifacts.       |
+| Parser Test Gate               | PASS   | Registry parsing, normalization, duplicate rejection, and profile comparison are tested. |
+| Compatibility Fallback Gate    | PASS   | In-code profiles remain command-behavior fallback until registry consumption exists.     |
+| Non-Command-Consumption Gate   | PASS   | CLI commands are not registry-driven yet.                                                |
+| Source Authority Boundary Gate | PASS   | Registry inclusion does not expand source authority or retire tree-native artifacts.     |
+| Todo App Structure-Only Gate   | PASS   | Todo App PBE Run remains structure-only.                                                 |
+| User Approval Boundary Gate    | PASS   | Parser/CLI consumption remains a later decision.                                         |
 
 ## Final Statement
 
 This document records the selected candidate registry location and strict JSON format. The candidate registry file is
-now present, but no parser, CLI, workflow, enforcement, source-authority, promotion, or cleanup behavior consumes it.
+now present and covered by internal parser/normalization tests, but no CLI command, workflow, enforcement,
+source-authority, promotion, or cleanup behavior consumes it.
