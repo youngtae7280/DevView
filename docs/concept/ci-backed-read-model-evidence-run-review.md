@@ -946,27 +946,47 @@ policy before changing path filters, failure semantics, required-check policy, o
 
 The append-only observation log and runbook for repeatable future PR run review is recorded in
 [pr-informational-observation-log.md](pr-informational-observation-log.md). It records the manual baseline run
-`28207696557`, PR `#1` run `28207822252`, PR `#2` run `28210904900`, PR `#3` run `28213236499`, and the
-template/checklist for future observations without changing workflow triggers or enforcement.
+`28207696557`, PR `#1` run `28207822252`, PR `#2` run `28210904900`, PR `#3` run `28213236499`, PR `#4` run
+`28218854329`, and the template/checklist for future observations without changing workflow triggers or enforcement.
 
 ## Projection-Contract CI Capture Review
 
 Manual run `28218687289` reviewed the validate-all workflow after CI began capturing graph-source projection contract
 status.
 
-| Field         | Value                                                                                        |
-| ------------- | -------------------------------------------------------------------------------------------- |
-| Run ID        | `28218687289`                                                                                |
-| Run URL       | <https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin/actions/runs/28218687289>   |
-| Event         | `workflow_dispatch`                                                                          |
-| Commit        | `a968d3661f22f7c06647080310e8ea1f87e79d0a`                                                   |
-| Conclusion    | `success`                                                                                    |
-| Job ID        | `83595024984`                                                                                |
-| Manifest      | `ci-evidence-pass`; `validateAllStatus: aggregate-pass`; `aggregateStatus: aggregate-pass`   |
-| Projection    | Todo Search `projection-contract-pass`; Todo App PBE Run `not-configured`                    |
-| Artifact      | `read-model-validate-all-output.json` and `graph-source-read-model-projection.json` present  |
-| Boundary      | Non-enforcing Evidence only; no source authority expansion or Todo App promotion             |
-| Review result | Manual projection-status observation reviewed; PR projection-status observation remains open |
+| Field         | Value                                                                                                               |
+| ------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Run ID        | `28218687289`                                                                                                       |
+| Run URL       | <https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin/actions/runs/28218687289>                          |
+| Event         | `workflow_dispatch`                                                                                                 |
+| Commit        | `a968d3661f22f7c06647080310e8ea1f87e79d0a`                                                                          |
+| Conclusion    | `success`                                                                                                           |
+| Job ID        | `83595024984`                                                                                                       |
+| Manifest      | `ci-evidence-pass`; `validateAllStatus: aggregate-pass`; `aggregateStatus: aggregate-pass`                          |
+| Projection    | Todo Search `projection-contract-pass`; Todo App PBE Run `not-configured`                                           |
+| Artifact      | `read-model-validate-all-output.json` and `graph-source-read-model-projection.json` present                         |
+| Boundary      | Non-enforcing Evidence only; no source authority expansion or Todo App promotion                                    |
+| Review result | Manual projection-status observation reviewed; PR projection-status observation later reviewed by run `28218854329` |
+
+PR run `28218854329` then reviewed the same projection-status capture path through the non-enforcing
+`pull_request-informational` trigger.
+
+| Field         | Value                                                                                       |
+| ------------- | ------------------------------------------------------------------------------------------- |
+| PR            | `#4`; draft temporary smoke PR; closed without merge                                        |
+| Run ID        | `28218854329`                                                                               |
+| Run URL       | <https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin/actions/runs/28218854329>  |
+| Event         | `pull_request`                                                                              |
+| Trigger mode  | `pull_request-informational`                                                                |
+| Head SHA      | `38c8ef4b0a631b9a1e95fca55c171d3a58abc58a`                                                  |
+| Base SHA      | `417f5d06166d8e9c062dc46de479af19e586681e`                                                  |
+| Manifest ref  | `refs/pull/4/merge`                                                                         |
+| Manifest      | `ci-evidence-pass`; `validateAllStatus: aggregate-pass`; `aggregateStatus: aggregate-pass`  |
+| Projection    | Todo Search `projection-contract-pass`; Todo App PBE Run `not-configured`                   |
+| Artifact      | `read-model-validate-all-output.json` and `graph-source-read-model-projection.json` present |
+| Boundary      | Non-enforcing Evidence only; no source authority expansion or Todo App promotion            |
+| Cleanup       | Artifact temp directory removed; PR closed without merge; remote smoke branch deleted       |
+| Review result | Projection-status capture reviewed in both manual and PR informational modes                |
 
 ## Gate Self-Check
 
@@ -975,7 +995,7 @@ status.
 | Manual Workflow Run Gate         | pass   | Run `28156403793` completed successfully on `workflow_dispatch`.                                             |
 | Validate-All Manual Run Gate     | pass   | Run `28210541509` completed successfully on `workflow_dispatch` after the workflow switched to validate-all. |
 | Projection-Status Manual Gate    | pass   | Run `28218687289` captured Todo Search `projection-contract-pass` in manifest and validate-all output.       |
-| PR Informational Run Gate        | pass   | PR #1, PR #2, and PR #3 triggered `pull_request` runs and completed successfully.                            |
+| PR Informational Run Gate        | pass   | PR #1, PR #2, PR #3, and PR #4 triggered `pull_request` runs and completed successfully.                     |
 | CI-Backed Artifact Review Gate   | pass   | Expanded artifact bundle `pbe-todo-search-read-model-evidence` was downloaded and inspected.                 |
 | CI Manifest Integrity Gate       | pass   | Manifest is `ci-backed` / `ci-evidence-pass` and includes Todo Search, Todo App, aggregate, and boundaries.  |
 | Validation Report Gate           | pass   | Todo Search and Todo App validation reports are `validation-pass` with 20 and 16 checks.                     |
@@ -983,6 +1003,7 @@ status.
 | Aggregate Report Gate            | pass   | Aggregate summary is `aggregate-pass`, 2 slices, 0 warning/blocking/decision-required.                       |
 | Validate-All Manifest Gate       | pass   | Manifest records `sourceMode: registry-backed validate-all` and `validateAllStatus: aggregate-pass`.         |
 | Validate-All PR Run Gate         | pass   | PR #2 run `28210904900` and PR #3 run `28213236499` record validate-all `pull_request` success.              |
+| Projection-Status PR Gate        | pass   | PR #4 run `28218854329` captured Todo Search `projection-contract-pass` in PR informational artifacts.       |
 | Observation Threshold Gate       | pass   | Three real PR informational runs are reviewed; refinement may be considered but is not automatic.            |
 | Non-Enforcing CI Gate            | pass   | Workflow remains informational only for manual and PR runs.                                                  |
 | Non-Required-Check Gate          | pass   | No required check or branch protection was added.                                                            |

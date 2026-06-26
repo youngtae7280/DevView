@@ -74,8 +74,7 @@ Current projection-contract observation:
 - Todo Search is expected to report `projection-contract-pass`; Todo App PBE Run remains `not-configured`.
 - Missing or corrupt projection artifacts can block the non-enforcing CI Evidence status without adding required checks,
   branch protection, or merge enforcement.
-- Manual run `28218687289` reviewed this capture path as `ci-evidence-pass`; PR informational review of the same field
-  remains a future observation step.
+- Manual run `28218687289` and PR #4 run `28218854329` reviewed this capture path as `ci-evidence-pass`.
 
 Reviewed manual run after switch:
 
@@ -126,6 +125,20 @@ Projection-contract manual observation:
 | Manifest     | `ci-evidence-pass`; `projectionContractStatus` present; Todo Search `projection-contract-pass`; Todo App `not-configured` |
 | Artifacts    | `read-model-validate-all-output.json` and `graph-source-read-model-projection.json` present                               |
 | Review state | recorded in [ci-backed-read-model-evidence-run-review.md](ci-backed-read-model-evidence-run-review.md)                    |
+
+Projection-contract PR informational observation:
+
+| Field        | Value                                                                                                               |
+| ------------ | ------------------------------------------------------------------------------------------------------------------- |
+| PR           | `#4`; draft smoke PR; closed without merge                                                                          |
+| Run ID       | `28218854329`                                                                                                       |
+| Run URL      | <https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin/actions/runs/28218854329>                          |
+| Event        | `pull_request`                                                                                                      |
+| Head SHA     | `38c8ef4b0a631b9a1e95fca55c171d3a58abc58a`                                                                          |
+| Manifest ref | `refs/pull/4/merge`                                                                                                 |
+| Manifest     | `ci-evidence-pass`; `pull_request-informational`; Todo Search `projection-contract-pass`; Todo App `not-configured` |
+| Artifacts    | `read-model-validate-all-output.json` and `graph-source-read-model-projection.json` present                         |
+| Review state | recorded in [ci-backed-read-model-evidence-run-review.md](ci-backed-read-model-evidence-run-review.md)              |
 
 ## Command Sequence Comparison
 
