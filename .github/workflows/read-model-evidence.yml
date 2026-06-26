@@ -237,6 +237,7 @@ jobs:
               `${todoAppGeneratedDir}/read-model-evidence-manifest.json`,
               `${todoAppGeneratedDir}/read-model-validation-report.json`,
               `${todoAppGeneratedDir}/read-model-validation-report.md`,
+              `${todoAppGeneratedDir}/graph-source-candidate-read-model-projection.json`,
               `${aggregateDir}/read-model-aggregate-summary.json`,
               `${aggregateDir}/read-model-aggregate-summary.md`,
               validateAllOutputPath,
