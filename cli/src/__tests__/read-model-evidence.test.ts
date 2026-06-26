@@ -7,8 +7,11 @@ import {
   compareReadModelEvidence,
   generateReadModelEvidence,
   getSliceReadModelProfile,
+  loadGraphSourceArtifact,
   loadReadModelSliceRegistry,
   normalizeReadModelSliceRegistry,
+  normalizeGraphSourceArtifact,
+  projectGraphSourceReadModel,
   summarizeReadModelEvidence,
   todoAppPbeRunStructureOnlyProfile,
   todoSearchReadModelProfile,
@@ -54,6 +57,57 @@ describe('read-model Evidence builder', () => {
     expect(profile.policyLevel).toBe('structure-only')
     expect(profile.sourceLayout).toBe('canonical-pbe')
     expect(profile.expectedCounts).toEqual({ nodes: 22, edges: 38, validationChecks: 16 })
+  })
+
+  it('parses the limited Todo Search graph source artifact without promoting other scopes', async () => {
+    const graphSource = await loadGraphSourceArtifact(resolve('.'))
+
+    expect(graphSource.schemaVersion).toBe(1)
+    expect(graphSource.artifactRole).toBe('limited-graph-source')
+    expect(graphSource.status).toBe('limited-source-active')
+    expect(graphSource.promotionScope).toBe('todo-search-selected-slice')
+    expect(graphSource.sourceSlice).toBe(todoSearchReadModelProfile.supportedSlice)
+    expect(graphSource.sourceProfile).toBe(todoSearchReadModelProfile.profileId)
+    expect(graphSource.sourceAuthorityBoundary).toContain('Todo Search selected-slice')
+    expect(graphSource.sourceAuthorityBoundary).toContain('repository-wide source authority remains unchanged')
+    expect(graphSource.projectionBoundary).toContain('do not replace user acceptance')
+    expect(graphSource.sourceRecords.nodes).toHaveLength(todoSearchReadModelProfile.expectedCounts.nodes)
+    expect(graphSource.sourceRecords.edges).toHaveLength(todoSearchReadModelProfile.expectedCounts.edges)
+    expect(graphSource.sourceRecords.coreViewCoverage.map((entry) => entry.name)).toEqual(coreViews)
+    expect(graphSource.projectionTargets.map((entry) => entry.path)).toContain(
+      'examples/adoption/todo-search-slice/generated/generated-read-model.json',
+    )
+  })
+
+  it('projects graph source records to the current Todo Search read-model shape', async () => {
+    const graphSource = await loadGraphSourceArtifact(resolve('.'))
+    const generated = JSON.parse(
+      await readFile('examples/adoption/todo-search-slice/generated/generated-read-model.json', 'utf8'),
+    ) as {
+      nodes: unknown[]
+      edges: unknown[]
+      coreViewCoverage: unknown[]
+    }
+
+    const result = projectGraphSourceReadModel(graphSource)
+
+    expect(result.graphSourcePath).toBe('examples/adoption/todo-search-slice/graph-source.json')
+    expect(result.projection.nodes).toEqual(generated.nodes)
+    expect(result.projection.edges).toEqual(generated.edges)
+    expect(result.projection.coreViewCoverage).toEqual(generated.coreViewCoverage)
+    expect(result.projection.metadata.artifactRole).toBe('graph_source_read_model_projection')
+    expect(result.projection.sourceAuthorityBoundary).toContain('limited source model')
+    expect(result.projection.nonPromotionStatement).toContain('repo-wide promotion')
+  })
+
+  it('rejects malformed graph source artifacts and does not mutate the positive artifact', async () => {
+    const graphSourcePath = 'examples/adoption/todo-search-slice/graph-source.json'
+    const before = await readFile(graphSourcePath, 'utf8')
+    const source = JSON.parse(before) as Record<string, unknown>
+    delete source.sourceAuthorityBoundary
+
+    expect(() => normalizeGraphSourceArtifact(source, graphSourcePath)).toThrow(/sourceAuthorityBoundary/)
+    expect(await readFile(graphSourcePath, 'utf8')).toBe(before)
   })
 
   it('parses and normalizes the candidate read-model slice registry fixture', async () => {

@@ -463,9 +463,10 @@ The next implementation branch decision surface is now recorded:
 
 - [graph-source-artifact-storage-projection-design.md](graph-source-artifact-storage-projection-design.md)
 
-It recommends Graph source artifact/storage plus projection generation as the next branch, starting with a non-generated
-Todo Search slice-local graph source artifact and generated projections. It does not create artifacts, implement
-generators, modify CLI/workflow behavior, or expand source authority.
+It records the first Graph source artifact/storage step for the promoted Todo Search scope:
+`examples/adoption/todo-search-slice/graph-source.json` plus internal parser/projection tests. It does not add a CLI
+projection command, modify workflow behavior, regenerate generated artifacts, retire fallback artifacts, or expand source
+authority.
 
 The public-doc cleanup or waiver decision package is now recorded:
 

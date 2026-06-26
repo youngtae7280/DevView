@@ -91,6 +91,10 @@ available, and how validation proves projection health.
 The first decision surface for that branch is
 [graph-source-artifact-storage-projection-design.md](graph-source-artifact-storage-projection-design.md).
 
+The first concrete step is now implemented as `examples/adoption/todo-search-slice/graph-source.json` plus internal
+parser/projection tests. The next branch is whether to expose projection generation as a CLI output path or keep it
+internal while schema hardening continues.
+
 ## Non-Scope
 
 This runbook does not:

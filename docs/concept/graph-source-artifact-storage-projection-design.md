@@ -1,6 +1,6 @@
 # Graph Source Artifact Storage And Projection Generation Design
 
-Status: implementation-branch-decision-surface / docs-only / no-artifact-created
+Status: first-artifact-implemented / internal-projection-helper / no-cli-surface-change
 
 ## Purpose
 
@@ -10,9 +10,10 @@ This document defines the next implementation branch after limited Graph-source 
 Graph source artifact/storage + projection generation
 ```
 
-It prepares the storage and generation decision surface for the promoted Todo Search selected-slice scope. It does not
-create the artifact, implement generators, modify CLI behavior, change workflows, retire tree-native artifacts, or expand
-source authority.
+It prepares and now records the first storage and projection step for the promoted Todo Search selected-slice scope. The
+first non-generated graph source artifact exists, and focused tests prove internal projection preserves the current Todo
+Search read-model shape. This does not modify CLI behavior, change workflows, retire tree-native artifacts, or expand
+source authority beyond the executed limited scope.
 
 ## Current Baseline
 
@@ -21,6 +22,7 @@ source authority.
 | Promoted scope        | Todo Search selected-slice authority surface.                                                                                                   |
 | Source model in scope | Maintainability Graph, as recorded by [broader-graph-source-promotion-execution-record.md](broader-graph-source-promotion-execution-record.md). |
 | Fallback/reference    | Tree-native selected-slice artifacts retained as maintained compatibility / fallback / reference artifacts.                                     |
+| Graph source artifact | `examples/adoption/todo-search-slice/graph-source.json` exists as non-generated limited source artifact.                                        |
 | Generated projections | Existing generated read-model artifacts remain Evidence/projection outputs, not independent source authority.                                   |
 | Positive registry     | `examples/read-model-aggregate/read-model-slices.json` includes Todo Search and Todo App PBE Run only.                                          |
 | Todo App PBE Run      | `structure-only`, not source-bearing.                                                                                                           |
@@ -38,9 +40,13 @@ source authority.
 
 ## Recommended First Artifact Shape
 
-If implemented, the first graph source artifact should be strict JSON, non-generated, and located outside `generated/`.
+The first graph source artifact is strict JSON, non-generated, and located outside `generated/`:
 
-Minimum shape:
+```text
+examples/adoption/todo-search-slice/graph-source.json
+```
+
+Implemented shape:
 
 ```json
 {
@@ -60,7 +66,16 @@ The artifact should store durable graph source records. It should not store gene
 
 ## Projection Generation Expectations
 
-Future projection generation should:
+Current internal projection helper:
+
+```text
+loadGraphSourceArtifact -> projectGraphSourceReadModel
+```
+
+Focused tests prove that projection from `graph-source.json` preserves the current Todo Search generated read-model
+nodes, edges, and Core View coverage.
+
+Future CLI-facing projection generation should:
 
 1. Read the promoted graph source artifact.
 2. Generate read-model / view projection artifacts into `generated/`.
@@ -72,9 +87,9 @@ Future projection generation should:
 
 Recommended sequence:
 
-1. Add the non-generated graph source artifact for Todo Search selected slice.
-2. Add parser/schema checks for the artifact.
-3. Add projection generation from graph source to the existing read-model Evidence shape.
+1. Review the internal graph source projection helper and artifact shape.
+2. Decide whether projection generation needs a CLI surface or should remain internal until schema hardening.
+3. If approved, generate read-model / view projection artifacts from graph source into `generated/`.
 4. Add parity/validation tests proving projection output still matches the current Todo Search baseline.
 5. Keep `validate --all` positive registry behavior stable until the projection path is reviewed.
 
@@ -82,8 +97,8 @@ Recommended sequence:
 
 This design does not:
 
-- create the graph source artifact
-- implement parser/schema/projection generation
+- create a repo-wide graph source artifact
+- add a CLI projection command
 - modify CLI commands
 - modify workflow or CI
 - regenerate generated artifacts

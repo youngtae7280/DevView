@@ -78,6 +78,35 @@ interface GeneratedReadModel {
   nonPromotionStatement: string
 }
 
+export interface GraphSourceArtifact {
+  schemaVersion: 1
+  artifactRole: 'limited-graph-source'
+  status: 'limited-source-active'
+  promotionScope: 'todo-search-selected-slice'
+  sourceSlice: string
+  sourceProfile: string
+  sourceAuthorityBoundary: string
+  projectionBoundary: string
+  fallbackReferences: string[]
+  retainedCompatibilityArtifacts: string[]
+  sourceRecords: {
+    nodes: GraphNode[]
+    edges: GraphEdge[]
+    coreViewCoverage: CoreViewCoverage[]
+  }
+  projectionTargets: Array<Record<string, string>>
+  userAcceptanceBoundary: string
+}
+
+export interface GraphSourceProjectionResult {
+  graphSourcePath: string
+  projection: Pick<GeneratedReadModel, 'taxonomy' | 'nodes' | 'edges' | 'coreViewCoverage'> & {
+    metadata: Record<string, unknown>
+    sourceAuthorityBoundary: string
+    nonPromotionStatement: string
+  }
+}
+
 interface Mismatch {
   category: string
   severity: Severity
@@ -312,6 +341,7 @@ export interface SliceReadModelConfig {
     compatibilitySlice?: string
     compatibilityControlNode?: string
     compatibilityEvidenceExceptions?: string
+    graphSource?: string
     workGraph?: string
     sourceOfTruthMatrix?: string
     evidenceOutput?: string
@@ -421,6 +451,7 @@ export const todoSearchReadModelProfile: SliceReadModelConfig = {
     compatibilitySlice: 'examples/adoption/compatibility-mismatch-slice',
     compatibilityControlNode: 'examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
     compatibilityEvidenceExceptions: 'examples/adoption/compatibility-mismatch-slice/evidence-exceptions.md',
+    graphSource: 'graph-source.json',
   },
   sourceArtifactRelativePaths: [
     'product-tree.json',
@@ -647,6 +678,139 @@ export function buildReadModelRegistryCommandPlans(registry: ReadModelSliceRegis
       policyLevel: profile.policyLevel,
       commands: [...profile.requiredCommands],
     }))
+}
+
+export async function loadGraphSourceArtifact(
+  root: string,
+  graphSourcePath = `${todoSearchReadModelProfile.supportedSlice}/graph-source.json`,
+): Promise<GraphSourceArtifact> {
+  const absoluteGraphSourcePath = path.resolve(root, graphSourcePath)
+  const parsed = await readJsonSafe<unknown>(absoluteGraphSourcePath)
+  if (!parsed.ok) {
+    throw new Error(`Unable to read graph source artifact at ${graphSourcePath}: ${parsed.error}`)
+  }
+  return normalizeGraphSourceArtifact(parsed.value, graphSourcePath)
+}
+
+export function projectGraphSourceReadModel(
+  graphSource: GraphSourceArtifact,
+  graphSourcePath = `${todoSearchReadModelProfile.supportedSlice}/graph-source.json`,
+): GraphSourceProjectionResult {
+  return {
+    graphSourcePath: normalizePath(graphSourcePath),
+    projection: {
+      metadata: {
+        artifactRole: 'graph_source_read_model_projection',
+        sourceArtifact: normalizePath(graphSourcePath),
+        sourceSlice: graphSource.sourceSlice,
+        sourceProfile: graphSource.sourceProfile,
+        promotionScope: graphSource.promotionScope,
+        projectionBoundary: graphSource.projectionBoundary,
+      },
+      taxonomy: {
+        nodeKindsUsed: unique(graphSource.sourceRecords.nodes.map((node) => node.nodeKind)),
+        edgeTypesUsed: unique(graphSource.sourceRecords.edges.map((edge) => edge.edgeType)),
+        viewScopedTagsAllowed: allowedViewScopedTags,
+        tagBoundary:
+          'Tags describe temporary roles inside a View Instance only. Durable semantic meaning is represented by edges, not tags.',
+      },
+      nodes: cloneJson(graphSource.sourceRecords.nodes),
+      edges: cloneJson(graphSource.sourceRecords.edges),
+      coreViewCoverage: cloneJson(graphSource.sourceRecords.coreViewCoverage),
+      sourceAuthorityBoundary: graphSource.sourceAuthorityBoundary,
+      nonPromotionStatement:
+        'Projection from graph-source artifact is Evidence/projection output. It does not replace user acceptance, CI enforcement, or repo-wide promotion.',
+    },
+  }
+}
+
+export function normalizeGraphSourceArtifact(
+  value: unknown,
+  graphSourcePath = `${todoSearchReadModelProfile.supportedSlice}/graph-source.json`,
+): GraphSourceArtifact {
+  const errors: string[] = []
+  const source = asRecord(value, 'graphSource', errors)
+  const schemaVersion = source.schemaVersion
+  const artifactRole = source.artifactRole
+  const status = source.status
+  const promotionScope = source.promotionScope
+  const sourceSlice = requiredString(source, 'sourceSlice', errors, 'graphSource')
+  const sourceProfile = requiredString(source, 'sourceProfile', errors, 'graphSource')
+  const sourceAuthorityBoundary = requiredString(source, 'sourceAuthorityBoundary', errors, 'graphSource')
+  const projectionBoundary = requiredString(source, 'projectionBoundary', errors, 'graphSource')
+  const fallbackReferences = requiredStringArray(source, 'fallbackReferences', errors, 'graphSource')
+  const retainedCompatibilityArtifacts = requiredStringArray(
+    source,
+    'retainedCompatibilityArtifacts',
+    errors,
+    'graphSource',
+  )
+  const sourceRecords = normalizeGraphSourceRecords(source.sourceRecords, errors)
+  const projectionTargets = normalizeProjectionTargets(source.projectionTargets, errors)
+  const userAcceptanceBoundary = requiredString(source, 'userAcceptanceBoundary', errors, 'graphSource')
+
+  if (schemaVersion !== 1) {
+    errors.push('graphSource.schemaVersion must be 1')
+  }
+  if (artifactRole !== 'limited-graph-source') {
+    errors.push('graphSource.artifactRole must be limited-graph-source')
+  }
+  if (status !== 'limited-source-active') {
+    errors.push('graphSource.status must be limited-source-active')
+  }
+  if (promotionScope !== 'todo-search-selected-slice') {
+    errors.push('graphSource.promotionScope must be todo-search-selected-slice')
+  }
+  if (normalizePath(sourceSlice) !== todoSearchReadModelProfile.supportedSlice) {
+    errors.push(`graphSource.sourceSlice must be ${todoSearchReadModelProfile.supportedSlice}`)
+  }
+  if (sourceProfile !== todoSearchReadModelProfile.profileId) {
+    errors.push(`graphSource.sourceProfile must be ${todoSearchReadModelProfile.profileId}`)
+  }
+  if (sourceRecords.nodes.length !== todoSearchReadModelProfile.expectedCounts.nodes) {
+    errors.push(`graphSource.sourceRecords.nodes must contain ${todoSearchReadModelProfile.expectedCounts.nodes} nodes`)
+  }
+  if (sourceRecords.edges.length !== todoSearchReadModelProfile.expectedCounts.edges) {
+    errors.push(`graphSource.sourceRecords.edges must contain ${todoSearchReadModelProfile.expectedCounts.edges} edges`)
+  }
+  if (sourceRecords.coreViewCoverage.length !== coreViewNames.length) {
+    errors.push(`graphSource.sourceRecords.coreViewCoverage must contain ${coreViewNames.length} Core Views`)
+  }
+
+  const graphSource: GraphSourceArtifact = {
+    schemaVersion: 1,
+    artifactRole: 'limited-graph-source',
+    status: 'limited-source-active',
+    promotionScope: 'todo-search-selected-slice',
+    sourceSlice: normalizePath(sourceSlice),
+    sourceProfile,
+    sourceAuthorityBoundary,
+    projectionBoundary,
+    fallbackReferences: fallbackReferences.map(normalizePath),
+    retainedCompatibilityArtifacts: retainedCompatibilityArtifacts.map(normalizePath),
+    sourceRecords,
+    projectionTargets,
+    userAcceptanceBoundary,
+  }
+  assertAllowedTags({
+    version: 'graph-source-normalization',
+    metadata: {},
+    sourceInputs: [],
+    taxonomy: {},
+    nodes: graphSource.sourceRecords.nodes,
+    edges: graphSource.sourceRecords.edges,
+    coreViewCoverage: graphSource.sourceRecords.coreViewCoverage,
+    checkEvidenceMapping: [],
+    retainedWarnings: [],
+    compatibilityWarnings: [],
+    sourceAuthorityBoundary,
+    nonPromotionStatement: projectionBoundary,
+  })
+
+  if (errors.length > 0) {
+    throw new Error(`Invalid graph source artifact ${graphSourcePath}: ${errors.join('; ')}`)
+  }
+  return graphSource
 }
 
 function validateReadModelRegistryPolicyConsistency(
@@ -4478,6 +4642,84 @@ function normalizeReadModelSliceRegistryProfile(
   }
 }
 
+function normalizeGraphSourceRecords(value: unknown, errors: string[]): GraphSourceArtifact['sourceRecords'] {
+  const records = asRecord(value, 'graphSource.sourceRecords', errors)
+  const nodes = requiredRecordArray<GraphNode>(records, 'nodes', errors, 'graphSource.sourceRecords')
+  const edges = requiredRecordArray<GraphEdge>(records, 'edges', errors, 'graphSource.sourceRecords')
+  const coreViewCoverage = requiredRecordArray<CoreViewCoverage>(
+    records,
+    'coreViewCoverage',
+    errors,
+    'graphSource.sourceRecords',
+  )
+
+  const nodeIds = new Set<string>()
+  for (const [index, node] of nodes.entries()) {
+    if (!isString(node.id) || node.id.length === 0) {
+      errors.push(`graphSource.sourceRecords.nodes[${index}].id must be a non-empty string`)
+    }
+    if (!isString(node.nodeKind) || node.nodeKind.length === 0) {
+      errors.push(`graphSource.sourceRecords.nodes[${index}].nodeKind must be a non-empty string`)
+    }
+    nodeIds.add(String(node.id))
+  }
+
+  for (const [index, edge] of edges.entries()) {
+    if (!isString(edge.id) || edge.id.length === 0) {
+      errors.push(`graphSource.sourceRecords.edges[${index}].id must be a non-empty string`)
+    }
+    if (!isString(edge.from) || !nodeIds.has(edge.from)) {
+      errors.push(`graphSource.sourceRecords.edges[${index}].from must reference a source node`)
+    }
+    if (!isString(edge.to) || !nodeIds.has(edge.to)) {
+      errors.push(`graphSource.sourceRecords.edges[${index}].to must reference a source node`)
+    }
+    if (!isString(edge.edgeType) || edge.edgeType.length === 0) {
+      errors.push(`graphSource.sourceRecords.edges[${index}].edgeType must be a non-empty string`)
+    }
+  }
+
+  const coreViewNamesFound = new Set(coreViewCoverage.map((view) => view.name))
+  for (const name of coreViewNames) {
+    if (!coreViewNamesFound.has(name)) {
+      errors.push(`graphSource.sourceRecords.coreViewCoverage missing ${name}`)
+    }
+  }
+
+  return { nodes, edges, coreViewCoverage }
+}
+
+function normalizeProjectionTargets(value: unknown, errors: string[]): Array<Record<string, string>> {
+  if (!Array.isArray(value)) {
+    errors.push('graphSource.projectionTargets must be an array')
+    return []
+  }
+  return value.map((entry, index) => {
+    const record = asRecord(entry, `graphSource.projectionTargets[${index}]`, errors)
+    const output: Record<string, string> = {}
+    for (const [key, entryValue] of Object.entries(record)) {
+      if (typeof entryValue !== 'string' || entryValue.length === 0) {
+        errors.push(`graphSource.projectionTargets[${index}].${key} must be a non-empty string`)
+      } else {
+        output[key] = normalizePath(entryValue)
+      }
+    }
+    return output
+  })
+}
+
+function requiredRecordArray<T>(source: Record<string, unknown>, key: string, errors: string[], prefix: string): T[] {
+  const value = source[key]
+  if (
+    !Array.isArray(value) ||
+    !value.every((entry) => typeof entry === 'object' && entry !== null && !Array.isArray(entry))
+  ) {
+    errors.push(`${prefix}.${key} must be an array of objects`)
+    return []
+  }
+  return value as T[]
+}
+
 function asRecord(value: unknown, label: string, errors: string[]): Record<string, unknown> {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) {
     errors.push(`${label} must be an object`)
@@ -4628,6 +4870,10 @@ function stringArray(value: unknown): string[] {
 
 function normalizePath(value: string): string {
   return value.replace(/\\/g, '/').replace(/\/+$/, '')
+}
+
+function cloneJson<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
 }
 
 async function writeFormattedJson(filePath: string, value: unknown): Promise<void> {
