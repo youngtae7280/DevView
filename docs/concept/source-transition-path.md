@@ -359,6 +359,9 @@ CI-backed Evidence. PR informational trigger behavior is implemented as a non-en
 [pr-informational-observation-policy.md](pr-informational-observation-policy.md) defines when to revisit filters,
 failure semantics, or enforcement discussion. These workflow reviews and implementation records do not add enforcement,
 `validate --all`, or source authority expansion.
+[read-model-validate-all-contract.md](read-model-validate-all-contract.md) defines the design-only registry and
+execution-mode contract for any future all-slice validation path; it does not implement that path or change transition
+authority.
 
 ## Scope Boundaries
 

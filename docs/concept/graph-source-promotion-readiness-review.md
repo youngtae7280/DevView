@@ -345,7 +345,9 @@ cleanup remain separate.
   The manual workflow now includes the aggregate summarize command, and runs `28156403793` / `28157938343` reviewed the
   aggregate-enabled artifact bundle as non-enforcing CI-backed Evidence. PR informational trigger behavior is
   implemented and PR run `28207822252` reviewed it as a non-enforcing `pull_request-informational` Evidence signal.
-  `validate --all`, CI enforcement, and full-promotion waiver policy remain future questions.
+  [read-model-validate-all-contract.md](read-model-validate-all-contract.md) now records the design-only all-slice
+  validation contract. `validate --all` implementation, CI enforcement, and full-promotion waiver policy remain future
+  questions.
 
 ### Decisions Needed Before Promotion Approval
 

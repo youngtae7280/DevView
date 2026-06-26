@@ -138,7 +138,8 @@ Recommended next work remains bounded:
 2. keep the aggregate-enabled manual/PR informational workflow non-enforcing and observe
 3. use [pr-informational-observation-policy.md](pr-informational-observation-policy.md) before refining PR filters or
    failure semantics
-4. decide whether a future `validate --all` command is needed
+4. use [read-model-validate-all-contract.md](read-model-validate-all-contract.md) as the design-only contract before any
+   future `validate --all` implementation decision
 5. decide whether to strengthen Todo App PBE Run beyond structure-only
 6. keep source authority expansion and full promotion as separate explicit decisions
 

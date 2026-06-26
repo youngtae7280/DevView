@@ -393,6 +393,8 @@ and runs `28156403793` / `28157938343` reviewed that aggregate-enabled bundle as
 [pr-informational-observation-policy.md](pr-informational-observation-policy.md) governs later PR observation before
 filter, failure-semantics, or enforcement changes. These do not change fallback precedence, create rollback enforcement,
 retire fallback artifacts, or expand source authority.
+[read-model-validate-all-contract.md](read-model-validate-all-contract.md) defines future all-slice validation semantics
+at concept level only; it does not introduce rollback enforcement, fallback retirement, or source-authority expansion.
 
 ## Scope Boundaries
 

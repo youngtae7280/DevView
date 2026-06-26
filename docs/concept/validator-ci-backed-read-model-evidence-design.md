@@ -269,6 +269,9 @@ parity-backed, pilot-marker-backed, CI-backed, or source-authority bearing. PR i
 implemented and reviewed in PR run `28207822252` as a non-enforcing visibility signal. `validate --all`, enforcement,
 cleanup, broader promotion review, and rollback/defer remain separate decisions. Further PR observation should follow
 [pr-informational-observation-policy.md](pr-informational-observation-policy.md).
+Future all-slice validation should follow
+[read-model-validate-all-contract.md](read-model-validate-all-contract.md) before any `validate --all` command, workflow
+change, or enforcement mode is implemented.
 
 ## Gate Self-Check
 

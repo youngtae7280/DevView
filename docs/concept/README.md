@@ -386,6 +386,15 @@ The log records the manual baseline run `28207696557`, first PR informational ru
 future-entry template, review checklist, observation counters, and decision thresholds. It is a recording surface only;
 it does not change workflow triggers, dispatch Actions, add enforcement, expand source authority, or approve promotion.
 
+The future all-slice read-model validation contract is now recorded:
+
+- [read-model-validate-all-contract.md](read-model-validate-all-contract.md)
+
+The contract defines current slice profiles, a proposed explicit slice registry, execution modes, aggregate relation,
+failure semantics, and boundaries for a future `pbe graph read-model validate --all` or equivalent. It is design-only:
+no CLI command, workflow change, GitHub Action run, enforcement, source-authority expansion, public-doc cleanup, or
+promotion is implemented by this document.
+
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.

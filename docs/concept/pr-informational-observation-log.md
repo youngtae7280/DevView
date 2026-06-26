@@ -189,12 +189,13 @@ Record changed paths by category instead of only listing filenames:
 
 ## Observation Counter
 
-| Counter                                   | Current value                                                                                      |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Real PR informational runs reviewed       | 1                                                                                                  |
-| Manual dispatch runs reviewed after PR CI | 1                                                                                                  |
-| Target before filter refinement           | 3 real PR informational runs or 1 week of normal PR flow, unless immediate re-review is triggered. |
-| Enforcement discussion state              | Closed until a separate user decision reopens it.                                                  |
+| Counter                                   | Current value                                                                                         |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Real PR informational runs reviewed       | 1                                                                                                     |
+| Manual dispatch runs reviewed after PR CI | 1                                                                                                     |
+| Target before filter refinement           | 3 real PR informational runs or 1 week of normal PR flow, unless immediate re-review is triggered.    |
+| Enforcement discussion state              | Closed until a separate user decision reopens it.                                                     |
+| All-slice validation state                | Contract design only; see [read-model-validate-all-contract.md](read-model-validate-all-contract.md). |
 
 ## Decision Thresholds
 
@@ -226,6 +227,10 @@ pattern:
 
 Required checks, branch protection, CI enforcement, or `validate --all` discussion remains a separate user decision.
 Neither a green PR informational run nor this log can approve enforcement or source promotion.
+
+All-slice validation implementation is governed by
+[read-model-validate-all-contract.md](read-model-validate-all-contract.md) and remains separate from this observation
+log.
 
 ## Gate Self-Check
 

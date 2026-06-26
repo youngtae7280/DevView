@@ -22,6 +22,10 @@ The operational append-only log and runbook for applying this policy is
 [pr-informational-observation-log.md](pr-informational-observation-log.md). Future PR run reviews should record entries
 there before path-filter, failure-semantics, enforcement, or validation-scope changes are considered.
 
+All-slice validation is tracked separately in
+[read-model-validate-all-contract.md](read-model-validate-all-contract.md). This PR observation policy does not approve
+`validate --all` implementation or workflow changes.
+
 ## Current Baseline
 
 | Baseline item                 | Current state                                                                                                        |

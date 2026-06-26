@@ -371,6 +371,9 @@ The staged path is:
    reviewed in PR run `28207822252` as non-enforcing PR informational Evidence.
 5. Observe more PR informational runs under [pr-informational-observation-policy.md](pr-informational-observation-policy.md)
    before changing filters, failure semantics, or enforcement policy.
+6. Use [read-model-validate-all-contract.md](read-model-validate-all-contract.md) as the design-only contract for any
+   future all-slice validation implementation. It defines slice registry fields, execution modes, and aggregate
+   semantics without implementing `validate --all`.
 
 Do not move next to `validate --all`, required checks, enforcement, or broad CI changes without a separate user
 decision.
@@ -424,6 +427,7 @@ design, multi-slice scope redesign, or continued observation.
 | Aggregate summary                   | Evidence Control Node      | implemented / Evidence-only  | First aggregate summary reads existing per-slice validation reports only.                                                |
 | Aggregate CI-backed review          | Evidence Control Node      | reviewed                     | Runs `28156403793` and `28157938343` reviewed the aggregate-enabled artifact bundle as non-enforcing CI-backed Evidence. |
 | Aggregate validation                | Decision Control Node      | deferred                     | `validate --all`, aggregate validation execution, and enforcement remain separate.                                       |
+| Validate-all contract               | Decision Control Node      | design-recorded              | The all-slice registry and execution-mode contract is documented, but no CLI implementation exists.                      |
 | PR informational trigger            | Decision Control Node      | implemented / reviewed       | PR visibility is implemented as non-enforcing informational Evidence and reviewed in PR run `28207822252`.               |
 | CI enforcement / required checks    | Decision Control Node      | not approved                 | Reviewed CI-backed Evidence exists, but enforcement and required checks remain future-only.                              |
 

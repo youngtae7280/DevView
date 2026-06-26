@@ -351,6 +351,9 @@ broader promotion review, and defer remain separate major branches. The Node.js 
 Future PR observations should be recorded in
 [pr-informational-observation-log.md](pr-informational-observation-log.md) before path-filter, failure-semantics,
 enforcement, or validation-scope changes are proposed.
+Future all-slice validation should use
+[read-model-validate-all-contract.md](read-model-validate-all-contract.md) as a design-only contract before any
+`validate --all`, CI workflow change, or enforcement mode is implemented.
 
 ## Approval Brief Draft
 
