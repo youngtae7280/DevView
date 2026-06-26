@@ -287,6 +287,9 @@ behavior still uses the implemented profile configuration directly.
 Negative fixture storage policy is recorded in
 [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md). Invalid fixtures
 remain local test inputs only and are not part of current validator-backed or CI-backed positive Evidence runs.
+The first durable candidate plan is recorded in
+[read-model-negative-fixture-candidate-plan.md](read-model-negative-fixture-candidate-plan.md); invalid tag and missing
+Core View fixtures remain planned but unimplemented.
 
 ## Gate Self-Check
 

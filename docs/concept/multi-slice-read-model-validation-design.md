@@ -381,9 +381,11 @@ The staged path is:
    candidate registry location, now materialized as `examples/read-model-aggregate/read-model-slices.json`.
 9. Use [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md) before creating
    durable invalid read-model fixtures; negative fixture execution remains local test Evidence only.
-10. Treat local `validate --all` as the only registry-consuming CLI command surface; existing single-slice commands remain
+10. Use [read-model-negative-fixture-candidate-plan.md](read-model-negative-fixture-candidate-plan.md) for the selected
+    first durable candidates, currently invalid `viewScopedTags` and missing Core View coverage.
+11. Treat local `validate --all` as the only registry-consuming CLI command surface; existing single-slice commands remain
     profile-config driven, and CI workflow usage is separately governed by the non-enforcing workflow records.
-11. Use [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md) for the implemented
+12. Use [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md) for the implemented
     non-enforcing workflow switch from explicit read-model commands to local `validate --all`, reviewed by manual run
     `28210541509` and PR informational run `28210904900`.
 

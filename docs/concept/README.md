@@ -418,6 +418,14 @@ parser-shape failures inline/temp, using temp workspace copies for mutation and 
 durable invalid fixtures only for stable behavior-level validate-all failures. No invalid fixtures, parser changes,
 test changes, workflow changes, generated artifacts, enforcement, or source-authority changes are introduced.
 
+The first durable negative fixture candidate plan is now recorded:
+
+- [read-model-negative-fixture-candidate-plan.md](read-model-negative-fixture-candidate-plan.md)
+
+The plan narrows first durable candidates to `examples/invalid/read-model-invalid-view-scoped-tags` and
+`examples/invalid/read-model-core-view-missing`, while keeping pilot-marker-missing and structure-only policy conflict as
+later or inline/temp candidates. It does not create fixtures, tests, code, workflow changes, or generated artifacts.
+
 The registry storage/location decision surface is now recorded:
 
 - [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md)

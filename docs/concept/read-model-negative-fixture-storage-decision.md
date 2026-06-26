@@ -193,6 +193,11 @@ Recommended first durable candidates, if implementation is later approved:
 3. `examples/invalid/read-model-core-view-missing`
 4. `examples/invalid/read-model-structure-only-policy-conflict`
 
+The first candidate narrowing plan is recorded in
+[read-model-negative-fixture-candidate-plan.md](read-model-negative-fixture-candidate-plan.md). It recommends starting
+with invalid `viewScopedTags` and missing Core View coverage, while keeping pilot-marker-missing and structure-only
+policy conflict as later or inline/temp candidates.
+
 Recommended cases to keep inline/temp:
 
 - duplicate profile ID

@@ -106,6 +106,9 @@ Negative fixture storage policy is recorded in
 [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md). Negative fixtures are
 local test inputs only; current `validate --all` and CI runs remain positive-profile Evidence commands unless a later
 design explicitly includes invalid fixtures.
+The first durable candidate plan is recorded in
+[read-model-negative-fixture-candidate-plan.md](read-model-negative-fixture-candidate-plan.md); selected candidates remain
+future local test inputs and are not part of current `validate --all`.
 
 ## Execution Modes
 
