@@ -415,3 +415,5 @@ this log.
 This log/runbook records and standardizes observation of future PR informational read-model Evidence runs. It does not
 modify the workflow, dispatch GitHub Actions, create PRs, introduce enforcement, expand source authority, approve full
 Graph-source promotion, perform public-doc cleanup, or promote Todo App PBE Run beyond `structure-only`.
+
+Temporary smoke note: verify Todo App positive projection contract PR artifact capture.
