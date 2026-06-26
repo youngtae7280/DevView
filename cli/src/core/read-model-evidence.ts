@@ -744,9 +744,9 @@ export async function validateReadModelEvidence(root: string, slice: string): Pr
       : undefined
   const marker =
     profile.policyLevel === 'pilot-marker-backed'
-      ? await readRequiredJson<Record<string, unknown>>(
+      ? await readOptionalJson<Record<string, unknown> | undefined>(
           path.join(outputDir, 'scoped-source-authority-pilot-marker.json'),
-          'scoped source-authority pilot marker',
+          undefined,
         )
       : undefined
   const report = buildValidationReport(root, slice, profile, generated, parity, manifest, marker)
@@ -3188,13 +3188,13 @@ function buildValidationChecks(
   if (profile.policyLevel === 'structure-only') {
     return buildStructureOnlyValidationChecks(root, slice, profile, generated, manifest)
   }
-  if (!parity || !marker) {
-    throw new Error(`Profile ${profile.profileId} requires parity report and scoped pilot marker validation inputs.`)
+  if (!parity) {
+    throw new Error(`Profile ${profile.profileId} requires parity report validation input.`)
   }
   const outputPrefix = `${slice}/generated`
   const sourceInputs = generated.sourceInputs || []
-  const markerScope = getPath(marker, ['pilotScope', 'primary'])
-  const activeObservationScope = getPath(marker, ['activeObservation', 'scope'])
+  const markerScope = marker ? getPath(marker, ['pilotScope', 'primary']) : undefined
+  const activeObservationScope = marker ? getPath(marker, ['activeObservation', 'scope']) : undefined
   return [
     check(
       'generated-read-model-exists',
@@ -3220,7 +3220,7 @@ function buildValidationChecks(
     check(
       'pilot-marker-exists',
       'Scoped pilot marker exists and parses',
-      Boolean(marker.version && marker.status),
+      Boolean(marker?.version && marker.status),
       'blocking',
       `${outputPrefix}/scoped-source-authority-pilot-marker.json`,
     ),
@@ -3306,7 +3306,7 @@ function buildValidationChecks(
       'non-promotion-statement-present',
       'Non-promotion statement is present',
       /does not promote|cannot change source authority/i.test(generated.nonPromotionStatement) &&
-        /does not promote|does not change source authority/i.test(String(marker.nonPromotionStatement || '')),
+        /does not promote|does not change source authority/i.test(String(marker?.nonPromotionStatement || '')),
       'blocking',
       `${outputPrefix}/generated-read-model.json`,
     ),
@@ -3315,8 +3315,8 @@ function buildValidationChecks(
       'Retained warnings are visible',
       Array.isArray(generated.retainedWarnings) &&
         generated.retainedWarnings.length >= 4 &&
-        Array.isArray(marker.retainedWarnings) &&
-        marker.retainedWarnings.length >= 4,
+        Array.isArray(marker?.retainedWarnings) &&
+        (marker?.retainedWarnings?.length ?? 0) >= 4,
       'blocking',
       `${outputPrefix}/generated-read-model.json`,
     ),
@@ -3331,7 +3331,7 @@ function buildValidationChecks(
       'user-acceptance-authority-preserved',
       'User acceptance authority is not replaced by Codex/PBE',
       !/codex\/pbe self-acceptance|replace user acceptance/i.test(
-        `${generated.sourceAuthorityBoundary} ${generated.nonPromotionStatement} ${marker.nonPromotionStatement || ''}`,
+        `${generated.sourceAuthorityBoundary} ${generated.nonPromotionStatement} ${marker?.nonPromotionStatement || ''}`,
       ) &&
         generated.nodes.some(
           (entry) => entry.id === profile.ids.acceptanceRoot && entry.confidence === 'user-confirmed',
@@ -3343,7 +3343,8 @@ function buildValidationChecks(
       'compatibility-warning-boundary-preserved',
       'Supplemental compatibility warning boundary is preserved',
       generated.compatibilityWarnings.some((entry) => /supplemental warning only/i.test(String(entry.role || ''))) &&
-        String(getPath(marker, ['pilotScope', 'supplementalWarningOnly'])) === profile.artifacts.compatibilitySlice,
+        String(marker ? getPath(marker, ['pilotScope', 'supplementalWarningOnly']) : undefined) ===
+          profile.artifacts.compatibilitySlice,
       'blocking',
       `${outputPrefix}/generated-read-model.json`,
     ),

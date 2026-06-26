@@ -1,6 +1,6 @@
 # Read-Model Negative Fixture Storage Decision
 
-Status: read-model-negative-fixture-storage-decision / decision-surface / first-two-fixtures-implemented /
+Status: read-model-negative-fixture-storage-decision / decision-surface / first-three-fixtures-implemented /
 non-enforcing
 
 ## Purpose
@@ -198,13 +198,15 @@ The first candidate narrowing plan is recorded in
 with invalid `viewScopedTags` and missing Core View coverage, while keeping pilot-marker-missing and structure-only
 policy conflict as later or inline/temp candidates.
 
-The first two durable fixtures are now implemented:
+The first three durable fixtures are now implemented:
 
 - `examples/invalid/read-model-invalid-view-scoped-tags`
 - `examples/invalid/read-model-core-view-missing`
+- `examples/invalid/read-model-pilot-marker-missing`
 
 They follow this storage decision by staying outside `generated/`, declaring their non-authority boundaries in README
-files, and remaining outside the positive validate-all registry and CI workflow.
+files, and remaining outside the positive validate-all registry and CI workflow. The pilot marker fixture is
+absence-based and stores only small metadata because the missing marker artifact is the test case.
 
 Recommended cases to keep inline/temp:
 
@@ -312,5 +314,6 @@ behavior-level validate-all failures.
 
 ## Final Statement
 
-This document records the negative fixture storage decision surface only. It does not create invalid fixtures, implement
-tests, change workflow behavior, introduce enforcement, expand source authority, or approve promotion.
+This document records the negative fixture storage decision surface and the current durable fixture storage status. The
+implemented invalid fixtures remain local focused test inputs only; this document does not change workflow behavior,
+introduce enforcement, expand source authority, or approve promotion.

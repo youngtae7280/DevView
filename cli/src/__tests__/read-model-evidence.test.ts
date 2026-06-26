@@ -767,6 +767,53 @@ describe('read-model Evidence builder', () => {
     expect(report.checks.find((entry) => entry.id === 'parity-counts-zero')?.status).toBe('blocking')
   })
 
+  it('blocks pilot-marker-backed validation when the scoped pilot marker is missing', async () => {
+    const workspace = await createExampleWorkspace()
+    const registryPath = resolve('examples/read-model-aggregate/read-model-slices.json')
+    const markerPath = resolve(
+      'examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json',
+    )
+    const registryBefore = await readFile(registryPath, 'utf8')
+    const markerBefore = await readFile(markerPath, 'utf8')
+
+    const generated = await generateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')
+    const parity = await compareReadModelEvidence(
+      workspace,
+      generated.generatedJsonPath,
+      'examples/adoption/todo-search-slice/maintainability-graph-read-model.json',
+    )
+    const workspaceMarkerPath = join(
+      workspace,
+      'examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json',
+    )
+    await rm(workspaceMarkerPath)
+
+    const result = await validateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')
+    const report = JSON.parse(await readFile(result.reportJsonPath, 'utf8')) as {
+      status: string
+      summary: { blockingCount: number }
+      checks: Array<{ id: string; status: string; sourceRefs: string[] }>
+    }
+    const parityReport = JSON.parse(await readFile(parity.reportJsonPath, 'utf8')) as {
+      summary: { status: string }
+    }
+    const workspaceRegistry = JSON.parse(
+      await readFile(join(workspace, 'examples/read-model-aggregate/read-model-slices.json'), 'utf8'),
+    ) as { profiles: Array<{ sourceSlice: string }> }
+
+    expect(parityReport.summary.status).toBe('comparison-pass')
+    expect(report.status).toBe('validation-blocked')
+    expect(report.summary.blockingCount).toBeGreaterThanOrEqual(1)
+    expect(report.checks.find((entry) => entry.id === 'parity-status-pass')).toMatchObject({ status: 'pass' })
+    expect(report.checks.find((entry) => entry.id === 'pilot-marker-exists')).toMatchObject({
+      status: 'blocking',
+      sourceRefs: ['examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json'],
+    })
+    expect(workspaceRegistry.profiles.some((entry) => entry.sourceSlice.startsWith('examples/invalid/'))).toBe(false)
+    expect(await readFile(registryPath, 'utf8')).toBe(registryBefore)
+    expect(await readFile(markerPath, 'utf8')).toBe(markerBefore)
+  })
+
   it('does not mutate generated, manual, parity, manifest, or marker inputs while writing validation reports', async () => {
     const workspace = await createExampleWorkspace()
     const generated = await generateReadModelEvidence(workspace, 'examples/adoption/todo-search-slice')

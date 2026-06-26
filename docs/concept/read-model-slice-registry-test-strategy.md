@@ -34,7 +34,9 @@ The first durable candidate plan is recorded in
 [read-model-negative-fixture-candidate-plan.md](read-model-negative-fixture-candidate-plan.md); it selects invalid
 `viewScopedTags` and missing Core View coverage as the first candidate pair. The invalid `viewScopedTags` fixture is now
 implemented at `examples/invalid/read-model-invalid-view-scoped-tags` as local focused test input, and the missing Core
-View fixture is implemented at `examples/invalid/read-model-core-view-missing` as local focused test input.
+View fixture is implemented at `examples/invalid/read-model-core-view-missing` as local focused test input. The missing
+pilot marker fixture is also implemented at `examples/invalid/read-model-pilot-marker-missing` as a local
+authority-boundary test fixture.
 
 ## Relationship To Validate-All Contract
 
@@ -160,8 +162,9 @@ Negative fixtures should be lightweight and isolated. The storage policy is now 
 failures inline/temp, use temp workspace copies for mutation and leakage cases, and add durable
 `examples/invalid/read-model-*` fixtures only for stable behavior-level failures. Do not mutate current positive slice
 artifacts to produce negative cases.
-The candidate plan narrows the first durable fixtures to invalid `viewScopedTags` and missing Core View coverage. Both
-fixtures are now durable and local-test-only; they are not part of the validate-all registry or CI workflow.
+The candidate plan narrows the first durable fixtures to invalid `viewScopedTags`, missing Core View coverage, and
+missing pilot marker coverage. These fixtures are durable and local-test-only; they are not part of the validate-all
+registry or CI workflow.
 
 | Category                                      | Expected result                                                                  |
 | --------------------------------------------- | -------------------------------------------------------------------------------- |

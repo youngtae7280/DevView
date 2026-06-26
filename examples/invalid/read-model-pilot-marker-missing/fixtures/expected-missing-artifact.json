@@ -1,0 +1,18 @@
+{
+  "fixtureRole": "missing-required-artifact",
+  "status": "invalid-local-test-input",
+  "sourceSlice": "examples/adoption/todo-search-slice",
+  "profileId": "todo-search-selected-slice",
+  "policyLevel": "pilot-marker-backed",
+  "intentionallyMissingArtifact": "examples/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json",
+  "expectedFailure": {
+    "validationStatus": "validation-blocked",
+    "blockingCheckId": "pilot-marker-exists",
+    "parityStatusShouldRemain": "comparison-pass"
+  },
+  "boundary": {
+    "sourceAuthorityBoundary": "This fixture is local negative test metadata only and does not change source authority.",
+    "nonPromotionStatement": "This fixture does not promote Graph source authority, does not change source authority, and does not approve user acceptance.",
+    "ciBoundary": "This fixture is not included in validate-all or CI."
+  }
+}

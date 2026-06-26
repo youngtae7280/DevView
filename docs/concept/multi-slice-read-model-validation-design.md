@@ -382,8 +382,8 @@ The staged path is:
 9. Use [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md) before creating
    durable invalid read-model fixtures; negative fixture execution remains local test Evidence only.
 10. Use [read-model-negative-fixture-candidate-plan.md](read-model-negative-fixture-candidate-plan.md) for the selected
-    first durable candidates. The invalid `viewScopedTags` and missing Core View fixtures are now implemented as local
-    focused test inputs.
+    first durable candidates. The invalid `viewScopedTags`, missing Core View, and missing pilot marker fixtures are now
+    implemented as local focused test inputs.
 11. Treat local `validate --all` as the only registry-consuming CLI command surface; existing single-slice commands remain
     profile-config driven, and CI workflow usage is separately governed by the non-enforcing workflow records.
 12. Use [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md) for the implemented
