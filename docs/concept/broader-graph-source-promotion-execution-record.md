@@ -111,6 +111,11 @@ This execution remains healthy only while these checks pass:
 
 If these checks fail, the rollback/fallback plan defines the stop, fallback, review, or recovery path.
 
+Post-promotion observation details are recorded in
+[post-promotion-observation-runbook.md](post-promotion-observation-runbook.md). That runbook defines the observation log
+fields, escalation criteria, and the initial health window before the next graph source artifact/storage branch should
+be treated as stable enough to begin.
+
 ## Non-Scope
 
 This execution record does not:

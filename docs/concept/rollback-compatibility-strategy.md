@@ -59,6 +59,10 @@ prepared user decision surface for broader Graph-source promotion. The selected 
 [broader-graph-source-promotion-execution-record.md](broader-graph-source-promotion-execution-record.md). This strategy
 continues to govern fallback and compatibility behavior after that limited execution.
 
+[post-promotion-observation-runbook.md](post-promotion-observation-runbook.md) applies this strategy to the executed
+limited Todo Search promotion. It names the health checks and escalation triggers that should route back to fallback,
+regeneration, documentation correction, rollback review, or user judgment.
+
 [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md) records the cleanup or
 explicit waiver decision surface for public compatibility wording. Deferring cleanup without an explicit waiver would
 leave a compatibility caveat unresolved for broader promotion review.

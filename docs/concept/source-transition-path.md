@@ -110,6 +110,14 @@ moves the Todo Search selected-slice authority surface into `limited graph-sourc
 selected-slice artifacts as maintained compatibility / fallback / reference artifacts, and leaves repo-wide promotion,
 tree-native retirement, CI enforcement, invalid-fixture CI, and Todo App promotion out of scope.
 
+The post-promotion observation runbook is packaged in
+[post-promotion-observation-runbook.md](post-promotion-observation-runbook.md). It defines health criteria, observation
+records, escalation triggers, and the initial observation window for this limited promoted scope.
+
+The next implementation branch decision surface is packaged in
+[graph-source-artifact-storage-projection-design.md](graph-source-artifact-storage-projection-design.md). It recommends
+Graph source artifact/storage plus projection generation, without creating artifacts or changing CLI/workflow behavior.
+
 One remaining caveat is public-doc cleanup sufficiency or explicit waiver. The decision package is recorded in
 [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md). Batch A, Batch B, and
 Batch C cleanup are now implemented as review candidates, and optional Batch D is reviewed and implemented only where
@@ -454,7 +462,8 @@ Those remain later concept or implementation questions.
 ## Remaining Open Questions
 
 - How formal should projection/parity expectations be before promotion review?
-- What follow-up observation should apply to the executed limited Graph-source promotion branch?
+- When is the executed limited Graph-source promotion branch healthy enough to start the graph source artifact/storage
+  implementation branch?
 - What additional approval, evidence, or migration mechanics are required before any repo-wide promotion branch?
 - Does promotion review need a specialized Approval Brief template?
 - During Todo Search scoped pilot active observation, what trigger should cause validator/CI-backed Evidence,

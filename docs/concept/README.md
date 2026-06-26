@@ -452,6 +452,21 @@ Graph is now the source model for that bounded scope, while tree-native selected
 compatibility / fallback / reference artifacts. Repo-wide promotion, tree-native retirement, CI enforcement, invalid
 fixture CI inclusion, and Todo App promotion beyond `structure-only` remain out of scope.
 
+The post-promotion observation runbook is now recorded:
+
+- [post-promotion-observation-runbook.md](post-promotion-observation-runbook.md)
+
+The runbook defines health criteria, observation log fields, escalation triggers, and the initial observation window for
+the executed limited Todo Search Graph-source promoted scope.
+
+The next implementation branch decision surface is now recorded:
+
+- [graph-source-artifact-storage-projection-design.md](graph-source-artifact-storage-projection-design.md)
+
+It recommends Graph source artifact/storage plus projection generation as the next branch, starting with a non-generated
+Todo Search slice-local graph source artifact and generated projections. It does not create artifacts, implement
+generators, modify CLI/workflow behavior, or expand source authority.
+
 The public-doc cleanup or waiver decision package is now recorded:
 
 - [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md)
