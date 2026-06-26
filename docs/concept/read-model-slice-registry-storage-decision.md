@@ -1,7 +1,7 @@
 # Read-Model Slice Registry Storage Decision
 
 Status: read-model-slice-registry-storage-decision / decision-surface / candidate-registry-file-created /
-parser-tests-implemented /
+parser-tests-implemented / local-validate-all-implemented /
 non-enforcing
 
 This document records the storage-location and file-format decision surface for a future read-model slice registry
@@ -13,10 +13,10 @@ It follows:
 - [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md)
 
 The approved candidate registry file now exists at `examples/read-model-aggregate/read-model-slices.json`, and internal
-parser/normalization plus profile-comparison tests now cover it. This document still does not connect command behavior
-to the registry, implement `validate --all`, modify workflows, regenerate generated artifacts, dispatch GitHub Actions,
-create PRs, introduce CI enforcement, expand source authority, perform public-doc cleanup, or approve full Graph-source
-promotion.
+parser/normalization plus profile-comparison tests now cover it. The local non-enforcing `pbe graph read-model validate
+--all` command now consumes it for configured profile execution and aggregate Evidence. This document still does not
+modify workflows, dispatch GitHub Actions, create PRs, introduce CI enforcement, expand source authority, perform
+public-doc cleanup, or approve full Graph-source promotion.
 
 ## Decision Context
 
@@ -131,21 +131,23 @@ Registry file changes should be ordinary reviewed source changes, not side effec
 
 ## Compatibility And Fallback
 
-Until command behavior consumes registry metadata, the existing in-code profile list remains the behavior fallback:
+For existing single-slice commands, the in-code profile list remains the behavior source:
 
 - `todo-search-selected-slice`
 - `todo-app-pbe-run-structure-only`
 
-The candidate registry file is introduced first as a fixture that can be compared against current in-code profiles.
-Parser support can then consume it later after separate approval.
+The candidate registry file was introduced first as a fixture and is still compared against current in-code profiles.
+Local `validate --all` consumes the registry after checking it against those in-code profile expectations. The existing
+generate/compare/validate/summarize command surfaces remain compatible with the in-code profile fallback.
 
 Recommended compatibility sequence:
 
 1. Create candidate registry file at the approved location. Completed by DEC-071.
-2. Add tests that compare registry entries to current in-code profiles.
-3. Implement parser/normalization against the registry fixture.
-4. Implement command planner using parsed registry data.
-5. Only then consider a `validate --all` command surface.
+2. Add tests that compare registry entries to current in-code profiles. Completed by DEC-072.
+3. Implement parser/normalization against the registry fixture. Completed by DEC-072.
+4. Implement command planner using parsed registry data. Completed by DEC-072.
+5. Implement local non-enforcing `validate --all` against the registry. Completed by DEC-073.
+6. Consider CI workflow consumption only after separate approval.
 
 ## Decision Options
 
@@ -169,17 +171,16 @@ The fixture is strict JSON, outside `generated/`, and contains only:
 - `todo-search-selected-slice`
 - `todo-app-pbe-run-structure-only`
 
-The candidate file is parsed by focused tests and can be converted into a non-executing command plan. It is not consumed
-by CLI command behavior, workflows, or CI behavior yet. Existing in-code profiles remain the behavior fallback until a
-separate command-consumption implementation decision is approved.
+The candidate file is parsed by focused tests and is consumed by local `validate --all` only. It is not consumed by CI
+workflow behavior, and existing in-code profiles remain the behavior source for the existing single-slice commands.
 
 ## Recommended Next Action
 
 Recommended next action:
 
 ```text
-Implement command behavior consumption of the candidate registry only after parser/normalization and profile-comparison
-tests remain stable.
+Decide whether CI workflow Evidence should keep the explicit command sequence or call the local registry-backed
+`validate --all` command after more PR informational observation.
 ```
 
 Conditions for that next step:
@@ -187,18 +188,19 @@ Conditions for that next step:
 - keep the file non-generated and strict JSON
 - keep `registryRole`, `sourceAuthorityBoundary`, and `nonPromotionStatement`
 - continue including only the two current profiles unless a separate profile-addition decision is approved
-- keep parser/planner tests in place before changing `validate --all` or existing commands
+- keep parser/planner tests in place before changing CI workflow command sequence or existing single-slice commands
 - do not change workflow triggers or CI enforcement
 
-If command consumption is considered too soon, Option C remains the safest fallback: continue hardcoded profiles while
-the candidate registry is reviewable and test-covered metadata.
+If CI consumption is considered too soon, the safest fallback is the current manual/PR workflow command sequence:
+explicit generate/compare/validate/summarize calls with the registry-backed local command available for manual local
+Evidence.
 
 ## Non-Scope
 
 This decision surface, candidate fixture, and parser tests do not:
 
-- make CLI command behavior registry-driven
-- implement `validate --all`
+- make existing single-slice CLI command behavior registry-driven
+- implement CI-backed `validate --all`
 - modify `.github/workflows/read-model-evidence.yml`
 - regenerate generated artifacts
 - create PRs
@@ -221,8 +223,8 @@ This decision surface, candidate fixture, and parser tests do not:
 | Artifact Role Gate             | PASS   | Registry is execution metadata, not source authority or promotion.                       |
 | Mutation Boundary Gate         | PASS   | Future validation may not silently rewrite registry/source/manual/pilot artifacts.       |
 | Parser Test Gate               | PASS   | Registry parsing, normalization, duplicate rejection, and profile comparison are tested. |
-| Compatibility Fallback Gate    | PASS   | In-code profiles remain command-behavior fallback until registry consumption exists.     |
-| Non-Command-Consumption Gate   | PASS   | CLI commands are not registry-driven yet.                                                |
+| Compatibility Fallback Gate    | PASS   | In-code profiles remain fallback for existing single-slice commands.                     |
+| Local Validate-All Gate        | PASS   | Local `validate --all` consumes the registry without changing workflow behavior.         |
 | Source Authority Boundary Gate | PASS   | Registry inclusion does not expand source authority or retire tree-native artifacts.     |
 | Todo App Structure-Only Gate   | PASS   | Todo App PBE Run remains structure-only.                                                 |
 | User Approval Boundary Gate    | PASS   | Parser/CLI consumption remains a later decision.                                         |
@@ -230,5 +232,5 @@ This decision surface, candidate fixture, and parser tests do not:
 ## Final Statement
 
 This document records the selected candidate registry location and strict JSON format. The candidate registry file is
-now present and covered by internal parser/normalization tests, but no CLI command, workflow, enforcement,
-source-authority, promotion, or cleanup behavior consumes it.
+now present, covered by internal parser/normalization tests, and consumed by local non-enforcing `validate --all`.
+Workflow, enforcement, source-authority, promotion, and cleanup behavior still do not consume it.

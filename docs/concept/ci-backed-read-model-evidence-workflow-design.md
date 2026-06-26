@@ -134,14 +134,16 @@ npm run validate:pbe
 npm run validate:pbe:v2
 ```
 
-Future-only command surfaces:
+Local command surfaces not currently used by the CI workflow:
 
 ```text
 pbe graph read-model validate --all
 pbe graph read-model validate --slice <path> --ci-manifest <file>
 ```
 
-Those future surfaces are not implemented by this design.
+`pbe graph read-model validate --all` is now implemented as a local non-enforcing registry-backed Evidence command.
+This workflow design still keeps the CI sequence explicit unless a later workflow-integration decision replaces it with
+`validate --all`.
 
 ## Implemented And Proposed CI Artifact Outputs
 
@@ -323,7 +325,7 @@ This implementation and design do not:
 - add PR/push/scheduled workflows beyond the manual workflow
 - commit CI runtime-generated manifests to the repository
 - introduce CI enforcement
-- implement `validate --all`
+- switch the CI workflow to `validate --all`
 - change source authority
 - expand pilot scope
 - declare full Graph-source promotion
@@ -351,14 +353,14 @@ broader promotion review, and defer remain separate major branches. The Node.js 
 Future PR observations should be recorded in
 [pr-informational-observation-log.md](pr-informational-observation-log.md) before path-filter, failure-semantics,
 enforcement, or validation-scope changes are proposed.
-Future all-slice validation should use
-[read-model-validate-all-contract.md](read-model-validate-all-contract.md) as a design-only contract before any
-`validate --all`, CI workflow change, or enforcement mode is implemented.
+Local all-slice validation uses
+[read-model-validate-all-contract.md](read-model-validate-all-contract.md). Any CI workflow switch to that command or
+any enforcement mode remains a separate future decision.
 The future registry/test planning layer is recorded in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
-The storage/location decision surface for any future registry artifact is recorded in
-[read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md). This CI design does not
-create or consume that registry.
+The storage/location decision surface for the registry artifact is recorded in
+[read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md). Local `validate --all`
+consumes that registry; this CI workflow design still does not.
 
 ## Approval Brief Draft
 

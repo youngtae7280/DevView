@@ -220,6 +220,29 @@ interface AggregateResult {
   summary: AggregateReadModelSummary
 }
 
+interface ValidateAllProfileResult {
+  profileId: string
+  sourceSlice: string
+  policyLevel: SliceReadModelConfig['policyLevel']
+  commands: Array<Record<string, unknown>>
+  status: 'pass' | 'blocked' | 'decision-required'
+}
+
+interface ValidateAllResult {
+  registryPath: string
+  includedProfiles: Array<{
+    profileId: string
+    sourceSlice: string
+    policyLevel: SliceReadModelConfig['policyLevel']
+    requiredCommands: RegistryCommand[]
+  }>
+  perSliceResults: ValidateAllProfileResult[]
+  aggregateResult: AggregateResult
+  sourceAuthorityBoundary: string
+  nonPromotionStatement: string
+  nonEnforcementStatement: string
+}
+
 interface TreeNode {
   id: string
   title?: string
@@ -784,6 +807,162 @@ export async function summarizeReadModelEvidence(root: string, slices: string[])
   await writeFormattedJson(summaryJsonPath, summary)
   await writeFormattedMarkdown(summaryMarkdownPath, renderAggregateSummaryMarkdown(summary))
   return { summaryJsonPath, summaryMarkdownPath, summary }
+}
+
+export async function validateAllReadModelEvidence(
+  root: string,
+  registryPath = 'examples/read-model-aggregate/read-model-slices.json',
+): Promise<ValidateAllResult> {
+  const registry = await loadReadModelSliceRegistry(root, registryPath)
+  const plans = buildReadModelRegistryCommandPlans(registry)
+  if (plans.length === 0) {
+    throw new Error(`Read-model registry ${registryPath} has no profiles included in validate-all.`)
+  }
+
+  const perSliceResults: ValidateAllProfileResult[] = []
+  for (const plan of plans) {
+    const profile = getSliceReadModelProfile(plan.sourceSlice)
+    assertRegistryProfileMatchesConfig(registryPath, registry.profiles, profile)
+    perSliceResults.push(await runValidateAllProfilePlan(root, profile, plan.commands))
+  }
+
+  const aggregateResult = await summarizeReadModelEvidence(
+    root,
+    plans.map((plan) => plan.sourceSlice),
+  )
+
+  return {
+    registryPath,
+    includedProfiles: plans.map((plan) => ({
+      profileId: plan.profileId,
+      sourceSlice: plan.sourceSlice,
+      policyLevel: plan.policyLevel,
+      requiredCommands: [...plan.commands],
+    })),
+    perSliceResults,
+    aggregateResult,
+    sourceAuthorityBoundary:
+      'Registry-backed validate-all is local Evidence over configured read-model slices only. It does not expand source authority.',
+    nonPromotionStatement:
+      'validate-all pass is not user acceptance, source-authority expansion, CI enforcement, or full Graph-source promotion.',
+    nonEnforcementStatement:
+      'This local validate-all command is non-enforcing and is not wired to required checks, branch protection, or CI enforcement.',
+  }
+}
+
+async function runValidateAllProfilePlan(
+  root: string,
+  profile: SliceReadModelConfig,
+  commands: RegistryCommand[],
+): Promise<ValidateAllProfileResult> {
+  const commandResults: Array<Record<string, unknown>> = []
+  let status: ValidateAllProfileResult['status'] = 'pass'
+
+  for (const command of commands) {
+    if (command === 'generate') {
+      const result = await generateReadModelEvidence(root, profile.supportedSlice)
+      commandResults.push({
+        command,
+        status: 'pass',
+        generatedReadModel: relativePath(root, result.generatedJsonPath),
+        evidenceManifest: relativePath(root, result.manifestPath),
+        nodeCount: result.model.nodes.length,
+        edgeCount: result.model.edges.length,
+      })
+    } else if (command === 'compare') {
+      const result = await compareReadModelEvidence(
+        root,
+        `${profile.supportedSlice}/generated/generated-read-model.json`,
+        manualParityArtifactForProfile(profile),
+      )
+      const comparisonStatus = result.report.summary.status
+      if (comparisonStatus === 'comparison-blocked') {
+        status = 'blocked'
+      } else if (comparisonStatus === 'decision-required') {
+        status = 'decision-required'
+      }
+      commandResults.push({
+        command,
+        status: comparisonStatus,
+        parityReport: relativePath(root, result.reportJsonPath),
+        mismatchCount: result.report.summary.mismatchCount,
+        blockingCount: result.report.summary.blockingCount,
+        decisionRequiredCount: result.report.summary.decisionRequiredCount,
+      })
+    } else if (command === 'validate') {
+      const result = await validateReadModelEvidence(root, profile.supportedSlice)
+      if (result.report.status === 'validation-blocked') {
+        status = 'blocked'
+      } else if (result.report.status === 'decision-required') {
+        status = 'decision-required'
+      }
+      commandResults.push({
+        command,
+        status: result.report.status,
+        validationReport: relativePath(root, result.reportJsonPath),
+        checkCount: result.report.summary.checkCount,
+        warningCount: result.report.summary.warningCount,
+        blockingCount: result.report.summary.blockingCount,
+        decisionRequiredCount: result.report.summary.decisionRequiredCount,
+      })
+    } else {
+      throw new Error(`Unsupported read-model registry command "${command}" for ${profile.profileId}.`)
+    }
+  }
+
+  return {
+    profileId: profile.profileId,
+    sourceSlice: profile.supportedSlice,
+    policyLevel: profile.policyLevel,
+    commands: commandResults,
+    status,
+  }
+}
+
+function assertRegistryProfileMatchesConfig(
+  registryPath: string,
+  registryProfiles: ReadModelSliceRegistryProfile[],
+  profile: SliceReadModelConfig,
+): void {
+  const registryProfile = registryProfiles.find((entry) => entry.sourceSlice === profile.supportedSlice)
+  if (!registryProfile) {
+    throw new Error(`Read-model registry ${registryPath} does not include configured slice ${profile.supportedSlice}.`)
+  }
+
+  const mismatches: string[] = []
+  if (registryProfile.profileId !== profile.profileId) {
+    mismatches.push(`profileId ${registryProfile.profileId} != ${profile.profileId}`)
+  }
+  if (registryProfile.sourceLayout !== profile.sourceLayout) {
+    mismatches.push(`sourceLayout ${registryProfile.sourceLayout} != ${profile.sourceLayout}`)
+  }
+  if (registryProfile.policyLevel !== profile.policyLevel) {
+    mismatches.push(`policyLevel ${registryProfile.policyLevel} != ${profile.policyLevel}`)
+  }
+  if (registryProfile.expectedCounts.nodes !== profile.expectedCounts.nodes) {
+    mismatches.push(`nodes ${registryProfile.expectedCounts.nodes} != ${profile.expectedCounts.nodes}`)
+  }
+  if (registryProfile.expectedCounts.edges !== profile.expectedCounts.edges) {
+    mismatches.push(`edges ${registryProfile.expectedCounts.edges} != ${profile.expectedCounts.edges}`)
+  }
+  if (registryProfile.expectedCounts.validationChecks !== profile.expectedCounts.validationChecks) {
+    mismatches.push(
+      `validationChecks ${registryProfile.expectedCounts.validationChecks} != ${profile.expectedCounts.validationChecks}`,
+    )
+  }
+
+  if (mismatches.length > 0) {
+    throw new Error(
+      `Read-model registry ${registryPath} does not match in-code profile ${profile.profileId}: ${mismatches.join('; ')}`,
+    )
+  }
+}
+
+function manualParityArtifactForProfile(profile: SliceReadModelConfig): string {
+  if (profile.profileId === todoSearchReadModelProfile.profileId) {
+    return `${profile.supportedSlice}/maintainability-graph-read-model.json`
+  }
+  throw new Error(`Read-model profile ${profile.profileId} does not declare a manual parity artifact for compare.`)
 }
 
 async function buildPerSliceAggregateSummary(root: string, slice: string): Promise<PerSliceAggregateSummary> {

@@ -8,8 +8,11 @@ This contract defines the first cross-slice read-model Evidence summary after pe
 self-contained Evidence units.
 
 The aggregate summary reads existing per-slice validation reports and writes one cross-slice Evidence summary. It does
-not run read-model generation, parity comparison, validation, `validate --all`, CI enforcement, source authority
-expansion, public-doc cleanup, tree-native retirement, or full Graph-source promotion.
+not run read-model generation, parity comparison, validation, CI enforcement, source authority expansion, public-doc
+cleanup, tree-native retirement, or full Graph-source promotion.
+
+The local registry-backed command `pbe graph read-model validate --all` now runs configured per-slice commands first and
+then reuses this aggregate summary behavior. The standalone `summarize --slices ...` command remains report-only.
 
 ## Implemented Command
 
@@ -52,6 +55,10 @@ artifact bundle.
 
 Missing or malformed per-slice reports are visible as aggregate blockers. The aggregate summary does not silently
 repair, regenerate, compare, validate, or reinterpret the source slice.
+
+When invoked through local `validate --all`, generation/comparison/validation happen before aggregation because the
+registry plan explicitly requested them. The aggregate writer itself still consumes only the produced per-slice
+validation reports.
 
 ## Required Per-Slice Summary Fields
 

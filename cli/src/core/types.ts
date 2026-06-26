@@ -53,6 +53,7 @@ export interface CliOptions {
   verbose: boolean
   noColor: boolean
   force: boolean
+  all: boolean
   profile?: 'full' | 'lite' | 'bypass'
   brief?: string
   maxChars?: number

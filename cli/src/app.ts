@@ -92,6 +92,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     verbose: false,
     noColor: false,
     force: false,
+    all: false,
     profile: undefined as 'full' | 'lite' | 'bypass' | undefined,
     brief: undefined as string | undefined,
     maxChars: undefined as number | undefined,
@@ -125,6 +126,8 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       options.noColor = true
     } else if (arg === '--force') {
       options.force = true
+    } else if (arg === '--all') {
+      options.all = true
     } else if (arg === '--root') {
       const value = argv[index + 1]
       if (!value) {

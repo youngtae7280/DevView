@@ -266,19 +266,20 @@ is complete, `examples/valid/todo-app-pbe-run` is implemented as a second `struc
 and validation Evidence, both validation reports now carry self-contained per-slice independence metadata, and
 `pbe graph read-model summarize --slices ...` can write the first aggregate summary. The second fixture is not
 parity-backed, pilot-marker-backed, CI-backed, or source-authority bearing. PR informational trigger behavior is now
-implemented and reviewed in PR run `28207822252` as a non-enforcing visibility signal. `validate --all`, enforcement,
-cleanup, broader promotion review, and rollback/defer remain separate decisions. Further PR observation should follow
+implemented and reviewed in PR run `28207822252` as a non-enforcing visibility signal. Local registry-backed
+`validate --all` is now implemented as non-enforcing Evidence; CI workflow consumption, enforcement, cleanup, broader
+promotion review, and rollback/defer remain separate decisions. Further PR observation should follow
 [pr-informational-observation-policy.md](pr-informational-observation-policy.md).
-Future all-slice validation should follow
-[read-model-validate-all-contract.md](read-model-validate-all-contract.md) before any `validate --all` command, workflow
-change, or enforcement mode is implemented.
+All-slice validation follows
+[read-model-validate-all-contract.md](read-model-validate-all-contract.md); workflow changes or enforcement mode remain
+future decisions.
 Registry fixture and test planning for that path is recorded in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 Registry storage/location tradeoffs are recorded in
 [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md).
-The candidate registry fixture now exists at `examples/read-model-aggregate/read-model-slices.json`, but current
-validator behavior still uses the implemented profile configuration rather than consuming that fixture. Focused tests
-parse and compare the fixture against the in-code profiles without changing validation behavior.
+The candidate registry fixture now exists at `examples/read-model-aggregate/read-model-slices.json`. Local
+`validate --all` consumes it after comparing entries against the in-code profiles; existing single-slice validator
+behavior still uses the implemented profile configuration directly.
 
 ## Gate Self-Check
 

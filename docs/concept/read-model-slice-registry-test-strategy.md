@@ -1,23 +1,30 @@
 # Read-Model Slice Registry Test Strategy
 
-Status: read-model-slice-registry-test-strategy / parser-normalization-tests-implemented / non-enforcing
+Status: read-model-slice-registry-test-strategy / parser-normalization-tests-implemented /
+local-validate-all-implemented / non-enforcing
 
-This document defines the registry fixture and test strategy needed before implementing a future all-slice read-model
-validation surface such as `pbe graph read-model validate --all`.
+This document defines the registry fixture and test strategy used before implementing the local all-slice read-model
+validation surface:
+
+```text
+pbe graph read-model validate --all
+```
 
 It extends [read-model-validate-all-contract.md](read-model-validate-all-contract.md) by specifying what the future
 registry fixture should look like, what positive and negative fixtures should prove, and which focused tests should
 protect source-authority, aggregate, and non-mutation boundaries.
 
 The candidate registry file now exists at `examples/read-model-aggregate/read-model-slices.json`, and internal
-parser/normalization plus profile-comparison tests now cover it. This strategy does not make existing CLI commands
-registry-driven, change workflows, regenerate generated artifacts, dispatch GitHub Actions, create PRs, introduce
-enforcement, expand source authority, perform public-doc cleanup, or approve full Graph-source promotion.
+parser/normalization plus profile-comparison tests now cover it. The local `validate --all` command is the first
+registry-consuming CLI surface and remains non-enforcing Evidence only. This strategy does not make the existing
+single-slice generate/compare/validate/summarize commands registry-driven, change workflows, dispatch GitHub Actions,
+create PRs, introduce enforcement, expand source authority, perform public-doc cleanup, or approve full Graph-source
+promotion.
 
 The storage and file-format decision surface for the registry fixture is recorded in
 [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md). The candidate fixture is
 now reviewable metadata only; this strategy should not be treated as approval for parser, planner, `validate --all`, or
-workflow consumption.
+workflow consumption beyond the bounded local `validate --all` implementation recorded later.
 
 ## Relationship To Validate-All Contract
 
@@ -273,10 +280,11 @@ This strategy was enough to request creation of the candidate registry fixture w
 - report output location is chosen
 - mutation boundary is clear
 
-Before CLI command behavior consumes the registry or `validate --all` implementation begins:
+Before broader command behavior or CI workflow behavior consumes the registry:
 
 - the candidate registry fixture must stay aligned with current in-code profiles
-- parser and non-executing planner tests should remain passing
+- parser and planner tests should remain passing
+- local `validate --all` behavior should remain non-enforcing and registry-scoped
 - positive and negative fixture behavior should be testable without changing current source artifacts
 - aggregate summary behavior should remain compatible with existing report-only command
 - PR informational workflow should not be changed unless separately approved
@@ -285,8 +293,8 @@ Before CLI command behavior consumes the registry or `validate --all` implementa
 
 This strategy, candidate fixture, and parser tests do not:
 
-- make existing CLI commands registry-driven
-- implement `validate --all`
+- make existing single-slice CLI commands registry-driven
+- implement CI-backed `validate --all`
 - modify `.github/workflows/read-model-evidence.yml`
 - regenerate generated artifacts
 - create PRs
@@ -305,7 +313,7 @@ This strategy, candidate fixture, and parser tests do not:
 | ------------------------------ | ------ | -------------------------------------------------------------------------------------- |
 | Candidate Fixture Gate         | PASS   | The candidate registry file exists as reviewable metadata.                             |
 | Parser / Normalization Gate    | PASS   | Internal tests parse, normalize, reject invalid registry shapes, and compare profiles. |
-| Non-Consumption Gate           | PASS   | Existing CLI command behavior is not registry-driven yet.                              |
+| Local Validate-All Gate        | PASS   | Local `validate --all` consumes the registry without changing existing slice commands. |
 | Registry Fixture Shape Gate    | PASS   | Proposed fields are explicit and profile-driven.                                       |
 | Positive Fixture Clarity Gate  | PASS   | Todo Search and Todo App PBE Run expected policy levels and counts are declared.       |
 | Negative Fixture Honesty Gate  | PASS   | Failure categories are visible and should not mutate positive source artifacts.        |
@@ -318,6 +326,6 @@ This strategy, candidate fixture, and parser tests do not:
 
 ## Final Statement
 
-This strategy makes the candidate registry and test surface reviewable before command consumption. It does not make CLI
-commands registry-driven, implement `validate --all`, change CI workflow behavior, introduce enforcement, expand source
-authority, or approve Graph-source promotion.
+This strategy made the candidate registry and test surface reviewable before bounded local command consumption. Local
+`validate --all` now consumes the registry as non-enforcing Evidence, but existing single-slice commands, CI workflow
+behavior, enforcement, source authority, and Graph-source promotion remain separate.

@@ -141,6 +141,8 @@ Commands:
                        Compare generated read-model Evidence with a manual parity artifact
   graph read-model validate
                        Validate scoped generated read-model Evidence and write validator-backed reports
+  graph read-model validate --all
+                       Run configured registry-backed read-model Evidence validation and aggregate summary
   graph read-model summarize
                        Summarize existing per-slice read-model validation reports without running validation
 
@@ -150,6 +152,7 @@ Options:
   --verbose            Include validator details where available.
   --no-color           Disable colored output. Reserved for compatibility.
   --force              Allow init to overwrite existing PBE files.
+  --all                Run all configured read-model registry profiles for graph read-model validate.
   --profile <value>    init profile: full, lite, or bypass. Defaults to full.
   --brief <text>       init project brief.
   --max-chars <n>      Maximum context pack bundle characters. Defaults to 12000.

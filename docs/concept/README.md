@@ -331,13 +331,15 @@ The second profile/fixture is now implemented at structure-only level:
 This second fixture reads the canonical `.pbe` layout and creates reviewable structure-only Evidence. It is not
 parity-backed, pilot-marker-backed, CI-backed, source-authority bearing, or a scoped pilot. Todo Search remains the only
 active scoped source-authority pilot. The manual workflow now has a reviewed aggregate-enabled run that includes Todo
-App structure-only Evidence, but that does not promote the fixture beyond structure-only. `validate --all`, CI
-enforcement, public-doc cleanup, and full Graph-source promotion remain unimplemented.
+App structure-only Evidence, but that does not promote the fixture beyond structure-only. Local `validate --all` is
+implemented as non-enforcing Evidence; CI enforcement, public-doc cleanup, and full Graph-source promotion remain
+unimplemented.
 
 The per-slice validation report independence contract is now implemented for both generated slices. Each validation
 report carries self-contained profile, source layout, policy level, expected counts, parity requirement, pilot marker
 requirement, runtime fixture requirement, retained-warning, fallback/reference, source-authority, and non-promotion
-metadata. This prepares future aggregation inputs without implementing aggregation or `validate --all`.
+metadata. This prepared future aggregation inputs and now supports the implemented aggregate summary and local
+`validate --all` path.
 
 The first aggregate read-model Evidence summary contract is now implemented:
 
@@ -367,7 +369,7 @@ The workflow now implements `workflow_dispatch` and a non-enforcing `pull_reques
 filters. The PR mode records `pull_request-informational` trigger metadata, PR head/base fields, artifact/manifest
 fields, GitHub Step Summary wording, and conservative failure semantics. Required checks, branch protection, CI
 enforcement, source authority expansion, public-doc cleanup, `validate --all`, and full Graph-source promotion remain
-unimplemented. PR #1 triggered run `28207822252`, which is reviewed as `pull_request-informational` /
+unimplemented in the workflow. PR #1 triggered run `28207822252`, which is reviewed as `pull_request-informational` /
 `ci-evidence-pass`; the temporary PR was closed without merge and its remote branch was deleted.
 
 The PR informational observation policy is now recorded:
@@ -390,10 +392,10 @@ The future all-slice read-model validation contract is now recorded:
 
 - [read-model-validate-all-contract.md](read-model-validate-all-contract.md)
 
-The contract defines current slice profiles, a proposed explicit slice registry, execution modes, aggregate relation,
-failure semantics, and boundaries for a future `pbe graph read-model validate --all` or equivalent. It is design-only:
-no CLI command, workflow change, GitHub Action run, enforcement, source-authority expansion, public-doc cleanup, or
-promotion is implemented by this document.
+The contract defines current slice profiles, an explicit slice registry, execution modes, aggregate relation, failure
+semantics, and boundaries for `pbe graph read-model validate --all`. The local command is now implemented as
+non-enforcing Evidence; no workflow change, GitHub Action run, enforcement, source-authority expansion, public-doc
+cleanup, or promotion is implemented by the contract.
 
 The slice registry fixture and test strategy is now recorded:
 
@@ -401,29 +403,41 @@ The slice registry fixture and test strategy is now recorded:
 
 The strategy defines the proposed registry fixture shape, positive fixtures, negative fixture categories, parser/planner
 tests, per-policy tests, independence tests, aggregate tests, non-mutation tests, boundary tests, and implementation
-readiness criteria. It does not create a registry file or implement `validate --all`.
+readiness criteria. The later local `validate --all` implementation uses this test surface while preserving
+non-enforcement boundaries.
 
 The registry storage/location decision surface is now recorded:
 
 - [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md)
 
-The decision surface recommends a future non-generated JSON registry fixture at
+The decision surface selected the non-generated JSON registry fixture at
 `examples/read-model-aggregate/read-model-slices.json`, compares alternatives, defines artifact role and mutation
-boundaries, and keeps actual registry creation/parser work as a later decision.
+boundaries, and keeps CI/workflow consumption as a later decision.
 
 The candidate registry fixture is now present:
 
 - `examples/read-model-aggregate/read-model-slices.json`
 
 It includes only the current Todo Search `pilot-marker-backed` profile and Todo App PBE Run `structure-only` profile.
-The file is strict JSON, non-generated execution metadata, and is not consumed by CLI command behavior yet. Registry
-inclusion does not expand source authority, change CI enforcement, promote Todo App PBE Run, or approve full
+The file is strict JSON and non-generated execution metadata. It is consumed by the local `validate --all` command only;
+registry inclusion does not expand source authority, change CI enforcement, promote Todo App PBE Run, or approve full
 Graph-source promotion.
 
 The registry parser/normalization and focused comparison tests are now implemented internally. They prove the candidate
 registry can be parsed, normalized, compared to the current in-code profiles, and converted into a command plan without
-mutating the registry file. Existing `generate`, `compare`, `validate`, and `summarize` command behavior remains driven
-by the current in-code profiles; `validate --all` remains unimplemented.
+mutating the registry file. That test step did not make existing commands registry-driven; the later local
+`validate --all` command is the first registry-consuming CLI surface.
+
+The local non-enforcing registry-backed validate-all command is now implemented:
+
+- command: `pbe graph read-model validate --all`
+- registry: `examples/read-model-aggregate/read-model-slices.json`
+- included profiles: Todo Search `pilot-marker-backed`, Todo App PBE Run `structure-only`
+- current status: `aggregate-pass`
+
+This command reads the candidate registry, runs each included profile's declared generate/compare/validate commands,
+then writes the aggregate summary. It is local Evidence only. It does not change the PR/manual CI workflow, introduce
+required checks, expand source authority, promote Todo App PBE Run, or approve full Graph-source promotion.
 
 ## Outline-Only Later-Phase Docs
 

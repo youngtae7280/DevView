@@ -3,10 +3,11 @@ import {
   compareReadModelEvidence,
   generateReadModelEvidence,
   summarizeReadModelEvidence,
+  validateAllReadModelEvidence,
   validateReadModelEvidence,
 } from '../core/read-model-evidence.js'
 import type { CommandResult } from '../core/types.js'
-import { ExitCode } from '../core/types.js'
+import { ExitCode, issue } from '../core/types.js'
 import { type CommandContext, invalidCommand } from './shared.js'
 
 export async function graphReadModelGenerateCommand(context: CommandContext): Promise<CommandResult> {
@@ -63,9 +64,57 @@ export async function graphReadModelCompareCommand(context: CommandContext): Pro
 }
 
 export async function graphReadModelValidateCommand(context: CommandContext): Promise<CommandResult> {
+  if (context.options.all) {
+    try {
+      const result = await validateAllReadModelEvidence(context.options.root)
+      const aggregate = result.aggregateResult.summary
+      const failed = aggregate.status === 'aggregate-blocked' || aggregate.status === 'decision-required'
+      return {
+        ok: !failed,
+        command: 'graph read-model validate --all',
+        exitCode: failed ? ExitCode.ValidationFailed : ExitCode.Success,
+        message: 'Registry-backed read-model validate-all Evidence created.',
+        issues: [],
+        data: {
+          status: aggregate.status,
+          aggregateStatus: aggregate.status,
+          registryPath: result.registryPath,
+          includedProfiles: result.includedProfiles,
+          perSliceResults: result.perSliceResults,
+          aggregateSummary: relativePath(context.options.root, result.aggregateResult.summaryJsonPath),
+          aggregateSummaryMarkdown: relativePath(context.options.root, result.aggregateResult.summaryMarkdownPath),
+          sliceCount: aggregate.summary.sliceCount,
+          warningCount: aggregate.summary.warningCount,
+          blockingCount: aggregate.summary.blockingCount,
+          decisionRequiredCount: aggregate.summary.decisionRequiredCount,
+          sourceAuthorityBoundary: result.sourceAuthorityBoundary,
+          nonPromotionStatement: result.nonPromotionStatement,
+          nonEnforcementStatement: result.nonEnforcementStatement,
+        },
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      return {
+        ok: false,
+        command: 'graph read-model validate --all',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'Registry-backed read-model validate-all failed.',
+        issues: [
+          issue({
+            validator: 'ReadModelRegistry',
+            code: 'READ_MODEL_VALIDATE_ALL_FAILED',
+            severity: 'error',
+            message,
+            suggestedFix: 'Fix the registry/profile mismatch or run scoped read-model commands for the affected slice.',
+          }),
+        ],
+      }
+    }
+  }
+
   const slice = context.options.slice
   if (!slice) {
-    return invalidCommand('graph read-model validate requires --slice <path>.')
+    return invalidCommand('graph read-model validate requires --slice <path> or --all.')
   }
   const result = await validateReadModelEvidence(context.options.root, slice)
   const failed = result.report.status === 'validation-blocked' || result.report.status === 'decision-required'

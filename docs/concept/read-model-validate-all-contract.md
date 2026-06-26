@@ -1,21 +1,23 @@
 # Read-Model Validate All Contract
 
-Status: read-model-validate-all-contract / design-only / non-enforcing / no-implementation
+Status: read-model-validate-all-contract / local-implementation-present / non-enforcing / no-ci-enforcement
 
-This document defines the concept contract for a future all-slice read-model validation command such as
-`pbe graph read-model validate --all` or an equivalent explicitly named all-slice validation surface.
+This document defines the concept contract for the local all-slice read-model validation command:
 
-It is design-only. It does not implement CLI behavior, change `.github/workflows/read-model-evidence.yml`, dispatch
-GitHub Actions, create PRs, add required checks, introduce enforcement, expand source authority, perform public-doc
-cleanup, promote Todo App PBE Run beyond `structure-only`, or approve full Graph-source promotion.
+```text
+pbe graph read-model validate --all
+```
+
+The command is now implemented as local non-enforcing Evidence. It does not change `.github/workflows/read-model-evidence.yml`,
+dispatch GitHub Actions, create PRs, add required checks, introduce enforcement, expand source authority, perform
+public-doc cleanup, promote Todo App PBE Run beyond `structure-only`, or approve full Graph-source promotion.
 
 ## Purpose
 
-The purpose is to define how a future all-slice validation path should read a configured slice registry, execute or
-review per-slice Evidence, and produce an aggregate summary without confusing Evidence with source authority or user
-approval.
+The purpose is to define how all-slice validation reads a configured slice registry, executes or reviews per-slice
+Evidence, and produces an aggregate summary without confusing Evidence with source authority or user approval.
 
-The future command must answer:
+The local command answers:
 
 - which slice profiles are configured for all-slice validation
 - whether it reads existing validation reports or regenerates per-slice Evidence
@@ -67,11 +69,11 @@ Not required for `todo-app-pbe-run-structure-only`:
 - source-authority-bearing status
 - CI-backed status beyond inclusion in the current informational bundle
 
-## Proposed Slice Registry Concept
+## Slice Registry Concept
 
-A future registry should be explicit rather than discovered by scanning arbitrary directories.
+The registry is explicit rather than discovered by scanning arbitrary directories.
 
-Suggested registry fields:
+Registry fields:
 
 | Field                     | Meaning                                                                                                 |
 | ------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -91,13 +93,12 @@ Suggested registry fields:
 
 The candidate registry now exists at `examples/read-model-aggregate/read-model-slices.json` and includes only the two
 current profiles above. It is strict JSON, non-generated execution metadata. Internal parser/normalization and
-profile-comparison tests can read it, but existing CLI command behavior is not registry-driven yet. A separate
-implementation decision is still required before generate/compare/validate/summarize or a future `validate --all`
-surface consumes it.
+profile-comparison tests read it, and local `validate --all` is the first registry-consuming CLI surface. Existing
+individual generate/compare/validate/summarize commands still keep their existing behavior.
 
 The fixture and test strategy for this registry is recorded in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md). Parser/normalization and
-non-executing command-plan tests are now implemented; command behavior consumption remains future work.
+non-executing command-plan tests are now implemented; local `validate --all` command behavior now consumes the registry.
 The storage/location decision surface is recorded in
 [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md), which records the
 candidate file location and strict JSON format.
@@ -122,11 +123,11 @@ Current related implementation:
 pbe graph read-model summarize --slices examples/adoption/todo-search-slice,examples/valid/todo-app-pbe-run
 ```
 
-This is not `validate --all`; it is existing-report aggregation.
+This is not `validate --all`; it remains existing-report aggregation.
 
 ### Mode 2: Regenerate-And-Validate Configured Slices
 
-Purpose: future all-slice validation could run configured per-slice commands in registry order, then summarize results.
+Purpose: local all-slice validation runs configured per-slice commands in registry order, then summarizes results.
 
 Rules:
 
@@ -137,7 +138,8 @@ Rules:
 - never infer source authority from generated output
 - never run unsupported or unregistered slices by discovery
 
-This mode is the most likely semantic target for a future `validate --all`, but it is not implemented by this document.
+This mode is implemented locally by `pbe graph read-model validate --all`. CI workflow integration and enforcement
+remain separate decisions.
 
 ### Mode 3: CI Informational All-Slice Validation
 
@@ -209,24 +211,21 @@ Todo Search remains the only scoped source-authority pilot. Todo App PBE Run rem
 
 ## Relation To PR Informational Observation
 
-The current PR informational workflow is in observation mode. It should not be changed to run a future all-slice
-validation surface until a separate implementation decision is made.
+The current PR informational workflow is in observation mode. It has not been changed to run `validate --all`; workflow
+integration remains a separate decision.
 
 The PR observation policy and log remain active:
 
 - [pr-informational-observation-policy.md](pr-informational-observation-policy.md)
 - [pr-informational-observation-log.md](pr-informational-observation-log.md)
 
-Future `validate --all` design should learn from PR observation data, but PR observation does not approve all-slice
-implementation or enforcement.
+Future CI usage of `validate --all` should learn from PR observation data, but PR observation does not approve CI
+integration or enforcement.
 
 ## Non-Scope
 
 This contract does not:
 
-- implement a CLI command
-- implement `validate --all`
-- make CLI command behavior consume the candidate slice registry fixture
 - modify `.github/workflows/read-model-evidence.yml`
 - dispatch GitHub Actions
 - create PRs
@@ -245,7 +244,7 @@ This contract does not:
 
 | Gate                             | Result | Notes                                                                              |
 | -------------------------------- | ------ | ---------------------------------------------------------------------------------- |
-| Design-Only Gate                 | PASS   | Defines contract only; no CLI, workflow, PR, or Actions changes.                   |
+| Local Implementation Gate        | PASS   | Local `validate --all` exists and is non-enforcing Evidence only.                  |
 | Slice Registry Clarity Gate      | PASS   | Declares the first two known profiles and the candidate registry fixture path.     |
 | Registry Test Strategy Gate      | PASS   | Parser/normalization and non-executing command-plan tests are recorded separately. |
 | Execution Mode Separation Gate   | PASS   | Separates report-only, regenerate-and-validate, CI informational, and enforcement. |
@@ -259,6 +258,6 @@ This contract does not:
 
 ## Final Statement
 
-This contract defines the policy surface for a future all-slice read-model validation command. It does not implement
-`validate --all`, change workflow triggers, introduce enforcement, expand source authority, approve full Graph-source
-promotion, perform public-doc cleanup, or change the policy level of any current slice.
+This contract defines and records the local all-slice read-model validation command. It does not change workflow
+triggers, introduce enforcement, expand source authority, approve full Graph-source promotion, perform public-doc
+cleanup, or change the policy level of any current slice.

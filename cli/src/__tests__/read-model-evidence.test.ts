@@ -12,6 +12,7 @@ import {
   summarizeReadModelEvidence,
   todoAppPbeRunStructureOnlyProfile,
   todoSearchReadModelProfile,
+  validateAllReadModelEvidence,
   validateReadModelEvidence,
 } from '../core/read-model-evidence'
 
@@ -143,6 +144,84 @@ describe('read-model Evidence builder', () => {
 
     const registry = await loadReadModelSliceRegistry(workspace)
     buildReadModelRegistryCommandPlans(registry)
+    const after = await readFile(registryPath, 'utf8')
+
+    expect(after).toBe(before)
+  })
+
+  it('runs registry-backed validate-all for the current two profiles as aggregate-pass Evidence', async () => {
+    const workspace = await createExampleWorkspace()
+
+    const result = await validateAllReadModelEvidence(workspace)
+
+    expect(result.includedProfiles.map((entry) => entry.profileId)).toEqual([
+      todoSearchReadModelProfile.profileId,
+      todoAppPbeRunStructureOnlyProfile.profileId,
+    ])
+    expect(result.aggregateResult.summary.status).toBe('aggregate-pass')
+    expect(result.aggregateResult.summary.summary).toMatchObject({
+      sliceCount: 2,
+      warningCount: 0,
+      blockingCount: 0,
+      decisionRequiredCount: 0,
+    })
+    expect(result.sourceAuthorityBoundary).toContain('does not expand source authority')
+    expect(result.nonPromotionStatement).toContain('not user acceptance')
+    expect(result.nonEnforcementStatement).toContain('non-enforcing')
+  })
+
+  it('uses registry command plans without directory discovery or policy promotion', async () => {
+    const workspace = await createExampleWorkspace()
+    await mkdir(join(workspace, 'examples/unregistered-slice/generated'), { recursive: true })
+
+    const result = await validateAllReadModelEvidence(workspace)
+    const todoSearch = result.perSliceResults.find((entry) => entry.profileId === todoSearchReadModelProfile.profileId)
+    const todoApp = result.perSliceResults.find(
+      (entry) => entry.profileId === todoAppPbeRunStructureOnlyProfile.profileId,
+    )
+
+    expect(result.includedProfiles).toHaveLength(2)
+    expect(result.aggregateResult.summary.includedSlices).not.toContain('examples/unregistered-slice')
+    expect(todoSearch?.commands.map((entry) => entry.command)).toEqual(['generate', 'compare', 'validate'])
+    expect(todoSearch?.commands.find((entry) => entry.command === 'compare')).toMatchObject({
+      status: 'comparison-pass',
+      mismatchCount: 0,
+    })
+    expect(todoApp?.commands.map((entry) => entry.command)).toEqual(['generate', 'validate'])
+    expect(todoApp?.commands.some((entry) => entry.command === 'compare')).toBe(false)
+    expect(todoApp?.policyLevel).toBe('structure-only')
+  })
+
+  it('blocks validate-all when registry entries are unsupported or drift from in-code profiles', async () => {
+    const unknownProfileWorkspace = await createExampleWorkspace()
+    await mutateRegistry(unknownProfileWorkspace, (registry) => {
+      registry.profiles.push({
+        ...cloneJson(registry.profiles[1]),
+        profileId: 'unknown-structure-only',
+        sourceSlice: 'examples/unknown-slice',
+      })
+    })
+    await expect(validateAllReadModelEvidence(unknownProfileWorkspace)).rejects.toThrow(/No read-model profile/)
+
+    const unsupportedCommandWorkspace = await createExampleWorkspace()
+    await mutateRegistry(unsupportedCommandWorkspace, (registry) => {
+      registry.profiles[0].requiredCommands = ['generate', 'lint', 'validate']
+    })
+    await expect(validateAllReadModelEvidence(unsupportedCommandWorkspace)).rejects.toThrow(/unsupported values: lint/)
+
+    const profileDriftWorkspace = await createExampleWorkspace()
+    await mutateRegistry(profileDriftWorkspace, (registry) => {
+      registry.profiles[0].expectedCounts.nodes = 41
+    })
+    await expect(validateAllReadModelEvidence(profileDriftWorkspace)).rejects.toThrow(/does not match in-code profile/)
+  })
+
+  it('does not mutate the registry while running validate-all', async () => {
+    const workspace = await createExampleWorkspace()
+    const registryPath = join(workspace, 'examples/read-model-aggregate/read-model-slices.json')
+    const before = await readFile(registryPath, 'utf8')
+
+    await validateAllReadModelEvidence(workspace)
     const after = await readFile(registryPath, 'utf8')
 
     expect(after).toBe(before)
@@ -667,6 +746,34 @@ async function readRegistryFixtureObject(): Promise<{
 
 function cloneJson<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
+}
+
+async function mutateRegistry(
+  workspace: string,
+  mutate: (registry: {
+    profiles: Array<{
+      profileId: string
+      sourceSlice: string
+      requiredCommands: string[]
+      expectedCounts: { nodes: number; edges: number; validationChecks: number }
+      [key: string]: unknown
+    }>
+    [key: string]: unknown
+  }) => void,
+): Promise<void> {
+  const registryPath = join(workspace, 'examples/read-model-aggregate/read-model-slices.json')
+  const registry = JSON.parse(await readFile(registryPath, 'utf8')) as {
+    profiles: Array<{
+      profileId: string
+      sourceSlice: string
+      requiredCommands: string[]
+      expectedCounts: { nodes: number; edges: number; validationChecks: number }
+      [key: string]: unknown
+    }>
+    [key: string]: unknown
+  }
+  mutate(registry)
+  await writeFile(registryPath, JSON.stringify(registry, null, 2))
 }
 
 async function createAggregateReportWorkspace(): Promise<string> {
