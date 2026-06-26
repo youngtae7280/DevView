@@ -505,6 +505,11 @@ candidate projection contracts outside positive validate-all semantics. The comm
 drift, but it does not modify the positive registry, aggregate summary, CI workflow, enforcement policy, or Todo App
 source-authority status.
 
+DEC-110 does not supersede DEC-097 through DEC-109. It captures `graph read-model observe-candidates` output in the
+non-enforcing read-model Evidence workflow as separate CI artifact metadata and Step Summary fields only. Candidate
+observation remains separate from `validateAllStatus`, `aggregateStatus`, the positive registry, enforcement, and Todo
+App source-authority status.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

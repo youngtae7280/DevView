@@ -62,6 +62,10 @@ Invalid read-model fixture CI inclusion is intentionally separate and is recorde
 [read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md). The current workflow runs positive
 registry-backed `validate --all` only; invalid fixtures remain local focused test inputs.
 
+Todo App graph-source candidate observation is also separate from positive validation. The workflow captures
+`graph read-model observe-candidates --json` as artifact metadata and Step Summary fields, but it does not enroll the
+Todo App candidate in the positive registry, aggregate status, source authority, or promotion scope.
+
 Run `28156403793` also surfaced a GitHub Actions maintenance annotation that Node.js 20 is deprecated for
 `actions/checkout@v4`, `actions/setup-node@v4`, and `actions/upload-artifact@v4` execution. This is a retained CI hygiene
 warning for that historical run, not a failed Evidence run. The workflow now uses `actions/checkout@v7`,
@@ -160,20 +164,22 @@ This workflow design still keeps the CI sequence explicit unless a later workflo
 
 ## Implemented And Proposed CI Artifact Outputs
 
-| Artifact output                              | Role                                                                                | Required now?          |
-| -------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------- |
-| `generated-read-model.json`                  | Generated Graph-first read-model Evidence.                                          | yes                    |
-| `generated-read-model.md`                    | Human-readable generated read-model summary.                                        | yes                    |
-| `read-model-parity-report.json`              | Machine-readable generated/manual comparison report.                                | yes                    |
-| `read-model-parity-report.md`                | Human-readable parity summary.                                                      | yes                    |
-| `read-model-validation-report.json`          | Machine-readable validator-backed Evidence report.                                  | yes                    |
-| `read-model-validation-report.md`            | Human-readable validation report.                                                   | yes                    |
-| Todo App PBE Run `generated-read-model.*`    | Structure-only generated read-model Evidence for the canonical `.pbe` fixture.      | yes                    |
-| Todo App PBE Run validation report           | Structure-only validator-backed Evidence for the second fixture.                    | yes                    |
-| `read-model-aggregate-summary.*`             | Cross-slice Evidence summary over existing per-slice validation reports.            | yes                    |
-| `read-model-ci-evidence-manifest.json`       | CI manifest linking workflow, run id, source commit, commands, outputs, and status. | runtime artifact in CI |
-| GitHub Step Summary                          | CI run summary for review.                                                          | yes                    |
-| uploaded read-model Evidence artifact bundle | CI artifact containing generated outputs and reports.                               | yes                    |
+| Artifact output                                | Role                                                                                        | Required now?          |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------- |
+| `generated-read-model.json`                    | Generated Graph-first read-model Evidence.                                                  | yes                    |
+| `generated-read-model.md`                      | Human-readable generated read-model summary.                                                | yes                    |
+| `read-model-parity-report.json`                | Machine-readable generated/manual comparison report.                                        | yes                    |
+| `read-model-parity-report.md`                  | Human-readable parity summary.                                                              | yes                    |
+| `read-model-validation-report.json`            | Machine-readable validator-backed Evidence report.                                          | yes                    |
+| `read-model-validation-report.md`              | Human-readable validation report.                                                           | yes                    |
+| Todo App PBE Run `generated-read-model.*`      | Structure-only generated read-model Evidence for the canonical `.pbe` fixture.              | yes                    |
+| Todo App PBE Run validation report             | Structure-only validator-backed Evidence for the second fixture.                            | yes                    |
+| `read-model-aggregate-summary.*`               | Cross-slice Evidence summary over existing per-slice validation reports.                    | yes                    |
+| `read-model-candidate-observation-output.json` | Separate Todo App candidate projection observation output; not positive aggregate Evidence. | yes                    |
+| Todo App candidate projection artifact         | Structure-only candidate projection uploaded for observation only.                          | yes                    |
+| `read-model-ci-evidence-manifest.json`         | CI manifest linking workflow, run id, source commit, commands, outputs, and status.         | runtime artifact in CI |
+| GitHub Step Summary                            | CI run summary for review.                                                                  | yes                    |
+| uploaded read-model Evidence artifact bundle   | CI artifact containing generated outputs and reports.                                       | yes                    |
 
 CI artifacts should preserve:
 

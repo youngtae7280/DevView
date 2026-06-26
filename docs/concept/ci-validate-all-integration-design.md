@@ -76,6 +76,14 @@ Current projection-contract observation:
   branch protection, or merge enforcement.
 - Manual run `28218687289` and PR #4 run `28218854329` reviewed this capture path as `ci-evidence-pass`.
 
+Current candidate-observation capture:
+
+- The workflow also runs `graph read-model observe-candidates --json` after positive validate-all.
+- Output is captured at `examples/read-model-aggregate/generated/read-model-candidate-observation-output.json`.
+- CI manifest and Step Summary expose `candidateObservationStatus` and the Todo App candidate projection status.
+- This is separate from `validateAllStatus`, `aggregateStatus`, and the positive registry. It does not promote Todo App
+  PBE Run, add source authority, or enroll the candidate in positive aggregate semantics.
+
 Reviewed manual run after switch:
 
 | Field        | Value                                                                                                  |

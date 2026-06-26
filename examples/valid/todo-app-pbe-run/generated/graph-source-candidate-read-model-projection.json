@@ -822,5 +822,5 @@
   "sourceAuthorityBoundary": "This Todo App PBE Run graph source candidate is structure-only review input. Canonical .pbe artifacts remain source/reference, and this candidate does not create source authority, parity backing, pilot marker backing, or CI enforcement.",
   "nonPromotionStatement": "This candidate does not promote Todo App PBE Run beyond structure-only, does not add parity or pilot marker requirements, does not approve repo-wide Graph-source promotion, and does not replace user acceptance.",
   "userAcceptanceBoundary": "User acceptance remains user-controlled. Candidate graph-source records and generated Evidence cannot accept product results.",
-  "validateAllBoundary": "This candidate is not consumed by validate-all, the positive read-model registry, or CI until a separate explicit decision changes that boundary."
+  "validateAllBoundary": "This candidate is not consumed by validate-all, the positive read-model registry, or aggregate status. Non-enforcing CI may capture it as candidate-observation metadata only."
 }

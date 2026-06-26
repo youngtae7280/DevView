@@ -1,7 +1,7 @@
 # Graph Source Artifact Storage And Projection Generation Design
 
 Status: first-artifact-implemented / minimal-cli-projection-path / graph-source-backed-generation /
-structure-only-candidate-projection / no-workflow-change
+structure-only-candidate-projection / candidate-observation-ci-artifact-capture
 
 ## Purpose
 
@@ -151,7 +151,19 @@ pbe graph read-model observe-candidates
 It reports `candidate-observation-pass` when the Todo App candidate projection contract passes, or
 `candidate-observation-blocked` when the candidate projection is missing, malformed, or claims source authority /
 validate-all consumption. This command is local and non-promotional; it does not enroll the candidate in the positive
-registry, aggregate summary, or CI workflow.
+registry or aggregate summary.
+
+The non-enforcing read-model Evidence workflow now runs the same observation command after positive validate-all and
+uploads:
+
+```text
+examples/read-model-aggregate/generated/read-model-candidate-observation-output.json
+examples/valid/todo-app-pbe-run/generated/graph-source-candidate-read-model-projection.json
+```
+
+The CI manifest and Step Summary expose `candidateObservationStatus` and the Todo App candidate projection status as
+separate observation metadata. These fields do not change `validateAllStatus`, `aggregateStatus`, the positive registry,
+source authority, or Todo App promotion status.
 
 ## Initial Implementation Sequence
 
@@ -167,11 +179,11 @@ Recommended sequence:
 This design does not:
 
 - create a repo-wide graph source artifact
-- modify workflow or CI
+- modify workflow trigger mode, required checks, or enforcement
 - regenerate unrelated generated artifacts
 - add enforcement or required checks
 - promote Todo App PBE Run beyond `structure-only`
-- enroll the Todo App candidate artifact in validate-all or CI
+- enroll the Todo App candidate artifact in positive validate-all, aggregate status, source authority, or promotion
 - execute repo-wide Graph-source promotion
 - retire tree-native artifacts
 - replace user acceptance

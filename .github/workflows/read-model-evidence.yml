@@ -26,6 +26,7 @@ jobs:
       PBE_TODO_APP_GENERATED_DIR: examples/valid/todo-app-pbe-run/generated
       PBE_AGGREGATE_DIR: examples/read-model-aggregate/generated
       PBE_VALIDATE_ALL_OUTPUT: examples/read-model-aggregate/generated/read-model-validate-all-output.json
+      PBE_CANDIDATE_OBSERVATION_OUTPUT: examples/read-model-aggregate/generated/read-model-candidate-observation-output.json
       PBE_AGGREGATE_SLICES: examples/adoption/todo-search-slice,examples/valid/todo-app-pbe-run
     steps:
       - name: Checkout
@@ -47,6 +48,10 @@ jobs:
         run: |
           mkdir -p "$PBE_AGGREGATE_DIR"
           node dist/cli/index.js graph read-model validate --all --json 2>&1 | tee "$PBE_VALIDATE_ALL_OUTPUT"
+
+      - name: Observe read-model candidate projections
+        run: |
+          node dist/cli/index.js graph read-model observe-candidates --json 2>&1 | tee "$PBE_CANDIDATE_OBSERVATION_OUTPUT"
 
       - name: Focused read-model Evidence tests
         run: npx vitest run cli/src/__tests__/read-model-evidence.test.ts
@@ -73,6 +78,7 @@ jobs:
           const todoAppGeneratedDir = process.env.PBE_TODO_APP_GENERATED_DIR
           const aggregateDir = process.env.PBE_AGGREGATE_DIR
           const validateAllOutputPath = process.env.PBE_VALIDATE_ALL_OUTPUT
+          const candidateObservationOutputPath = process.env.PBE_CANDIDATE_OBSERVATION_OUTPUT
           const aggregateSlices = (process.env.PBE_AGGREGATE_SLICES || '')
             .split(',')
             .map((slice) => slice.trim())
@@ -88,6 +94,7 @@ jobs:
           const todoAppValidation = readJson(path.join(todoAppGeneratedDir, 'read-model-validation-report.json'))
           const aggregateSummary = readJson(path.join(aggregateDir, 'read-model-aggregate-summary.json'))
           const validateAllOutput = readJson(validateAllOutputPath)
+          const candidateObservationOutput = readJson(candidateObservationOutputPath)
           const eventName = process.env.GITHUB_EVENT_NAME || 'workflow_dispatch'
           const eventPayload = readJson(process.env.GITHUB_EVENT_PATH || '') || {}
           const pullRequest = eventPayload.pull_request || null
@@ -103,8 +110,22 @@ jobs:
           const todoSearchProjectionContract =
             projectionContractStatus.find((entry) => entry.profileId === 'todo-search-selected-slice') || null
           const todoSearchProjectionPass = todoSearchProjectionContract?.status === 'projection-contract-pass'
+          const candidateObservationStatus =
+            candidateObservationOutput?.candidateObservationStatus || candidateObservationOutput?.status || 'missing'
+          const todoAppCandidateObservation =
+            candidateObservationOutput?.observedCandidates?.find(
+              (entry) => entry.profileId === 'todo-app-pbe-run-structure-only',
+            ) || null
+          const todoAppCandidateObservationPass =
+            candidateObservationStatus === 'candidate-observation-pass' &&
+            todoAppCandidateObservation?.status === 'candidate-projection-contract-pass'
           const status =
-            todoSearchPass && todoAppPass && aggregatePass && validateAllStatus === 'aggregate-pass' && todoSearchProjectionPass
+            todoSearchPass &&
+            todoAppPass &&
+            aggregatePass &&
+            validateAllStatus === 'aggregate-pass' &&
+            todoSearchProjectionPass &&
+            todoAppCandidateObservationPass
               ? 'ci-evidence-pass'
               : 'ci-evidence-blocked'
 
@@ -131,6 +152,7 @@ jobs:
             sourceMode: 'registry-backed validate-all',
             includedSlices: aggregateSlices,
             validateAllStatus,
+            candidateObservationStatus,
             generatedAt: new Date().toISOString(),
             status,
             todoSearch: {
@@ -151,6 +173,13 @@ jobs:
               sourceSlice: todoAppSlice,
               validatorStatus: todoAppValidation?.status || 'missing',
               parityStatus: todoAppValidation?.sliceValidationContract?.requirements?.parity?.status || 'not-required',
+              candidateObservationStatus: todoAppCandidateObservation?.status || 'missing',
+              candidateProjection: {
+                graphSourceCandidate: `${todoAppSlice}/graph-source-candidate.json`,
+                projection: `${todoAppGeneratedDir}/graph-source-candidate-read-model-projection.json`,
+                status: todoAppCandidateObservation?.status || 'missing',
+                observationMode: 'candidate-only',
+              },
               checkCount: todoAppValidation?.summary?.checkCount ?? null,
               nodeCount: todoAppValidation?.sliceValidationContract?.expectedCounts?.nodes ?? null,
               edgeCount: todoAppValidation?.sliceValidationContract?.expectedCounts?.edges ?? null,
@@ -168,6 +197,15 @@ jobs:
             validatorStatus: todoSearchValidation?.status || 'missing',
             parityStatus: todoSearchParity?.summary?.status || 'missing',
             validateAllStatus,
+            candidateObservationStatus,
+            candidateObservation: {
+              status: candidateObservationStatus,
+              sourceMode: 'candidate-observation-only',
+              observedCandidates: candidateObservationOutput?.observedCandidates || [],
+              artifactPath: candidateObservationOutputPath,
+              positiveValidateAllBoundary:
+                'Candidate observation is captured as separate CI artifact metadata and does not enroll candidates in the positive validate-all registry, aggregate status, source authority, or promotion scope.',
+            },
             projectionContractStatus,
             aggregateStatus: aggregateSummary?.status || 'missing',
             counts: {
@@ -202,9 +240,10 @@ jobs:
               `${aggregateDir}/read-model-aggregate-summary.json`,
               `${aggregateDir}/read-model-aggregate-summary.md`,
               validateAllOutputPath,
+              candidateObservationOutputPath,
             ],
             sourceAuthorityBoundary:
-              'CI-backed Evidence is Evidence only for declared read-model reports and aggregate summary. Todo Search remains the only scoped pilot; Todo App PBE Run remains structure-only. This workflow does not expand source authority.',
+              'CI-backed Evidence is Evidence only for declared read-model reports, aggregate summary, and separate candidate-observation metadata. Todo Search remains the only scoped pilot; Todo App PBE Run remains structure-only. This workflow does not expand source authority.',
             nonEnforcementStatement:
               'This workflow is non-enforcing Evidence only. workflow_dispatch runs are manual Evidence runs; pull_request runs, when present, are informational signals only. It is not configured as a required check, branch protection rule, merge gate, or CI enforcement mode.',
             nonPromotionStatement:
@@ -245,6 +284,8 @@ jobs:
           const aggregateStatus = manifest?.aggregate?.status || 'missing'
           const validateAllStatus = manifest?.validateAllStatus || 'missing'
           const todoSearchProjection = manifest?.todoSearch?.projectionContractStatus || 'missing'
+          const candidateObservationStatus = manifest?.candidateObservationStatus || 'missing'
+          const todoAppCandidateObservation = manifest?.todoAppPbeRun?.candidateObservationStatus || 'missing'
           const includedSlices = manifest?.includedSlices || []
 
           const markdown = [
@@ -259,8 +300,11 @@ jobs:
             `- Todo App PBE Run validator status: \`${todoAppStatus}\``,
             `- Validate-all status: \`${validateAllStatus}\``,
             `- Todo Search projection contract status: \`${todoSearchProjection}\``,
+            `- Candidate observation status: \`${candidateObservationStatus}\``,
+            `- Todo App candidate projection status: \`${todoAppCandidateObservation}\``,
             `- Aggregate status: \`${aggregateStatus}\``,
             '- Boundary: CI-backed Evidence is Evidence only.',
+            '- Candidate observation is separate from positive validate-all and aggregate status.',
             '- Informational only for pull requests.',
             '- Not a required check or branch protection rule.',
             '- No source authority change.',
@@ -296,6 +340,8 @@ jobs:
             examples/valid/todo-app-pbe-run/generated/read-model-evidence-manifest.json
             examples/valid/todo-app-pbe-run/generated/read-model-validation-report.json
             examples/valid/todo-app-pbe-run/generated/read-model-validation-report.md
+            examples/valid/todo-app-pbe-run/generated/graph-source-candidate-read-model-projection.json
             examples/read-model-aggregate/generated/read-model-aggregate-summary.json
             examples/read-model-aggregate/generated/read-model-aggregate-summary.md
             examples/read-model-aggregate/generated/read-model-validate-all-output.json
+            examples/read-model-aggregate/generated/read-model-candidate-observation-output.json

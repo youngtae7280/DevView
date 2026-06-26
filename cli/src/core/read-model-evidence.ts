@@ -860,7 +860,7 @@ export async function observeReadModelCandidateProjections(root: string): Promis
       nonPromotionStatement:
         'Candidate observation pass does not promote Todo App PBE Run, approve repo-wide Graph-source promotion, or replace user acceptance.',
       validateAllBoundary:
-        'Candidate observation is separate from positive validate-all, the positive registry, and CI workflow semantics.',
+        'Candidate observation is separate from positive validate-all, the positive registry, aggregate status, and source authority; non-enforcing CI may capture it as observation metadata only.',
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
@@ -888,7 +888,7 @@ export async function observeReadModelCandidateProjections(root: string): Promis
       nonPromotionStatement:
         'Candidate observation block does not promote Todo App PBE Run, approve repo-wide Graph-source promotion, or replace user acceptance.',
       validateAllBoundary:
-        'Candidate observation is separate from positive validate-all, the positive registry, and CI workflow semantics.',
+        'Candidate observation is separate from positive validate-all, the positive registry, aggregate status, and source authority; non-enforcing CI may capture it as observation metadata only.',
     }
   }
 }
