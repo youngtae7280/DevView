@@ -2,6 +2,7 @@ import { relativePath } from '../core/fs.js'
 import {
   compareReadModelEvidence,
   generateReadModelEvidence,
+  observeReadModelCandidateProjections,
   projectGraphSourceReadModelToFile,
   summarizeReadModelEvidence,
   validateAllReadModelEvidence,
@@ -87,6 +88,30 @@ export async function graphReadModelProjectCommand(context: CommandContext): Pro
       userAcceptanceBoundary: result.projection.userAcceptanceBoundary,
       fallbackReferences: result.projection.fallbackReferences,
     },
+  }
+}
+
+export async function graphReadModelObserveCandidatesCommand(context: CommandContext): Promise<CommandResult> {
+  const result = await observeReadModelCandidateProjections(context.options.root)
+  const failed = result.status === 'candidate-observation-blocked'
+  return {
+    ok: !failed,
+    command: 'graph read-model observe-candidates',
+    exitCode: failed ? ExitCode.ValidationFailed : ExitCode.Success,
+    message: 'Read-model candidate projection observation completed.',
+    issues: failed
+      ? [
+          issue({
+            validator: 'ReadModelCandidateObservation',
+            code: 'READ_MODEL_CANDIDATE_OBSERVATION_BLOCKED',
+            severity: 'error',
+            message: result.observedCandidates.find((entry) => entry.error)?.error || 'Candidate observation blocked.',
+            suggestedFix:
+              'Refresh or fix the candidate graph-source projection artifact without enrolling it in validate-all or CI.',
+          }),
+        ]
+      : [],
+    data: { ...result },
   }
 }
 

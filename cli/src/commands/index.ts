@@ -10,6 +10,7 @@ import { gateAssessCommand, gateCommand } from './gate.js'
 import {
   graphReadModelCompareCommand,
   graphReadModelGenerateCommand,
+  graphReadModelObserveCandidatesCommand,
   graphReadModelProjectCommand,
   graphReadModelSummarizeCommand,
   graphReadModelValidateCommand,
@@ -160,6 +161,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'project') {
     return graphReadModelProjectCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'observe-candidates') {
+    return graphReadModelObserveCandidatesCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'validate') {
     return graphReadModelValidateCommand(context)

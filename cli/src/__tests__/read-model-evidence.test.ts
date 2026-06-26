@@ -259,6 +259,80 @@ describe('read-model Evidence builder', () => {
     )
   })
 
+  it('observes Todo App candidate projection contracts outside positive validate-all semantics', async () => {
+    const result = await runPbeCli(['graph', 'read-model', 'observe-candidates', '--json'], {
+      cwd: resolve('.'),
+      pluginRoot: resolve('.'),
+    })
+
+    expect(result.exitCode).toBe(0)
+    const payload = JSON.parse(result.stdout) as {
+      status: string
+      observedCandidates: Array<{
+        profileId: string
+        status: string
+        nodeCount: number
+        edgeCount: number
+        coreViewCount: number
+        validateAllBoundary: string
+      }>
+      validateAllBoundary: string
+    }
+    expect(payload.status).toBe('candidate-observation-pass')
+    expect(payload.observedCandidates).toEqual([
+      expect.objectContaining({
+        profileId: todoAppPbeRunStructureOnlyProfile.profileId,
+        status: 'candidate-projection-contract-pass',
+        nodeCount: todoAppPbeRunStructureOnlyProfile.expectedCounts.nodes,
+        edgeCount: todoAppPbeRunStructureOnlyProfile.expectedCounts.edges,
+        coreViewCount: coreViews.length,
+        validateAllBoundary: expect.stringContaining('not consumed by validate-all'),
+      }),
+    ])
+    expect(payload.validateAllBoundary).toContain('separate from positive validate-all')
+  })
+
+  it('blocks candidate observation without changing positive validate-all when candidate projection drifts', async () => {
+    const workspace = await createExampleWorkspace()
+    const projectionPath = join(
+      workspace,
+      'examples/valid/todo-app-pbe-run/generated/graph-source-candidate-read-model-projection.json',
+    )
+    const projection = JSON.parse(await readFile(projectionPath, 'utf8')) as {
+      sourceAuthorityBoundary: string
+      validateAllBoundary: string
+    }
+    projection.sourceAuthorityBoundary = 'This projection is source authority.'
+    projection.validateAllBoundary = 'This projection is consumed by validate-all.'
+    await writeFile(projectionPath, JSON.stringify(projection, null, 2))
+
+    const result = await runPbeCli(['graph', 'read-model', 'observe-candidates', '--json'], {
+      cwd: workspace,
+      pluginRoot: resolve('.'),
+    })
+    const validateAllResult = await validateAllReadModelEvidence(workspace)
+
+    expect(result.exitCode).toBe(1)
+    const payload = JSON.parse(result.stderr) as {
+      ok: boolean
+      status: string
+      observedCandidates: Array<{ status: string; error: string }>
+    }
+    expect(payload.ok).toBe(false)
+    expect(payload.status).toBe('candidate-observation-blocked')
+    expect(payload.observedCandidates[0]).toMatchObject({
+      status: 'candidate-projection-contract-blocked',
+      error: expect.stringContaining('deny source-authority creation'),
+    })
+    expect(payload.observedCandidates[0].error).toContain('keep validate-all separate')
+    expect(validateAllResult.status).toBe('aggregate-pass')
+    expect(
+      validateAllResult.perSliceResults
+        .find((entry) => entry.profileId === todoAppPbeRunStructureOnlyProfile.profileId)
+        ?.commands.some((entry) => entry.command === 'project-contract'),
+    ).toBe(false)
+  })
+
   it('writes graph source projection output through the CLI without changing default generation', async () => {
     const workspace = await createExampleWorkspace()
     const outputPath = 'examples/adoption/todo-search-slice/generated/graph-source-read-model-projection.json'

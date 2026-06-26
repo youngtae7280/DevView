@@ -500,6 +500,11 @@ App PBE Run candidate projection only. The check preserves candidate/structure-o
 source-authority creation or validate-all enrollment claims, while leaving positive validate-all, CI workflow behavior,
 enforcement, and Todo App promotion unchanged.
 
+DEC-109 does not supersede DEC-097 through DEC-108. It adds local `graph read-model observe-candidates` reporting for
+candidate projection contracts outside positive validate-all semantics. The command can block on candidate projection
+drift, but it does not modify the positive registry, aggregate summary, CI workflow, enforcement policy, or Todo App
+source-authority status.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

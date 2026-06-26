@@ -141,6 +141,8 @@ Commands:
                        Compare generated read-model Evidence with a manual parity artifact
   graph read-model project
                        Project a bounded Graph source artifact into read-model projection output
+  graph read-model observe-candidates
+                       Check non-promotional read-model candidate projection contracts outside validate-all
   graph read-model validate
                        Validate scoped generated read-model Evidence and write validator-backed reports
   graph read-model validate --all

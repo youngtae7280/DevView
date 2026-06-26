@@ -338,6 +338,28 @@ interface ValidateAllResult {
   nonEnforcementStatement: string
 }
 
+interface CandidateObservationResult {
+  status: 'candidate-observation-pass' | 'candidate-observation-blocked'
+  observedCandidates: Array<{
+    profileId: string
+    sourceSlice: string
+    graphSourceCandidate: string
+    projection: string
+    status: 'candidate-projection-contract-pass' | 'candidate-projection-contract-blocked'
+    nodeCount: number
+    edgeCount: number
+    coreViewCount: number
+    policyLevel: 'structure-only'
+    nonPromotionStatement: string
+    sourceAuthorityBoundary: string
+    validateAllBoundary: string
+    error?: string
+  }>
+  sourceAuthorityBoundary: string
+  nonPromotionStatement: string
+  validateAllBoundary: string
+}
+
 interface TreeNode {
   id: string
   title?: string
@@ -804,6 +826,71 @@ export async function loadGraphSourceProjectionArtifact(
     throw new Error(`Unable to read graph source projection artifact at ${projectionPath}: ${parsed.error}`)
   }
   return normalizeGraphSourceProjectionArtifact(parsed.value, graphSource, projectionPath, graphSourcePath)
+}
+
+export async function observeReadModelCandidateProjections(root: string): Promise<CandidateObservationResult> {
+  const graphSourceCandidatePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source-candidate.json`
+  const projectionPath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/generated/graph-source-candidate-read-model-projection.json`
+  try {
+    const projection = await loadStructureOnlyGraphSourceCandidateProjectionArtifact(
+      root,
+      projectionPath,
+      graphSourceCandidatePath,
+    )
+    return {
+      status: 'candidate-observation-pass',
+      observedCandidates: [
+        {
+          profileId: projection.metadata.sourceProfile,
+          sourceSlice: projection.metadata.sourceSlice,
+          graphSourceCandidate: graphSourceCandidatePath,
+          projection: projectionPath,
+          status: 'candidate-projection-contract-pass',
+          nodeCount: projection.nodes.length,
+          edgeCount: projection.edges.length,
+          coreViewCount: projection.coreViewCoverage.length,
+          policyLevel: 'structure-only',
+          nonPromotionStatement: projection.nonPromotionStatement,
+          sourceAuthorityBoundary: projection.sourceAuthorityBoundary,
+          validateAllBoundary: projection.validateAllBoundary,
+        },
+      ],
+      sourceAuthorityBoundary:
+        'Candidate observation checks structure-only graph-source candidate projections only. It does not create source authority.',
+      nonPromotionStatement:
+        'Candidate observation pass does not promote Todo App PBE Run, approve repo-wide Graph-source promotion, or replace user acceptance.',
+      validateAllBoundary:
+        'Candidate observation is separate from positive validate-all, the positive registry, and CI workflow semantics.',
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      status: 'candidate-observation-blocked',
+      observedCandidates: [
+        {
+          profileId: todoAppPbeRunStructureOnlyProfile.profileId,
+          sourceSlice: todoAppPbeRunStructureOnlyProfile.supportedSlice,
+          graphSourceCandidate: graphSourceCandidatePath,
+          projection: projectionPath,
+          status: 'candidate-projection-contract-blocked',
+          nodeCount: 0,
+          edgeCount: 0,
+          coreViewCount: 0,
+          policyLevel: 'structure-only',
+          nonPromotionStatement: 'Blocked candidate observation does not imply promotion.',
+          sourceAuthorityBoundary: 'Blocked candidate observation does not create source authority.',
+          validateAllBoundary: 'Blocked candidate observation remains separate from positive validate-all.',
+          error: message,
+        },
+      ],
+      sourceAuthorityBoundary:
+        'Candidate observation checks structure-only graph-source candidate projections only. It does not create source authority.',
+      nonPromotionStatement:
+        'Candidate observation block does not promote Todo App PBE Run, approve repo-wide Graph-source promotion, or replace user acceptance.',
+      validateAllBoundary:
+        'Candidate observation is separate from positive validate-all, the positive registry, and CI workflow semantics.',
+    }
+  }
 }
 
 export function projectGraphSourceReadModel(

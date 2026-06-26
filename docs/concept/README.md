@@ -480,6 +480,8 @@ writes `examples/valid/todo-app-pbe-run/generated/graph-source-candidate-read-mo
 projection with the same 22/38/7 shape and structure-only boundaries. Focused tests now load the committed candidate
 projection and reject source-authority creation or validate-all enrollment drift. It is not consumed by `validate --all`,
 not in the positive registry, not in CI, and does not promote Todo App beyond `structure-only`.
+The local `graph read-model observe-candidates` command now reports this candidate projection contract separately from
+positive validate-all semantics.
 
 The public-doc cleanup or waiver decision package is now recorded:
 

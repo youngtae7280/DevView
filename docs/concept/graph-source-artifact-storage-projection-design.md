@@ -142,6 +142,17 @@ App PBE Run, does not add parity or pilot marker requirements, and is not consum
 registry, or CI. Focused tests now validate the committed candidate projection contract directly and reject projection
 boundary drift, including source-authority creation claims.
 
+The local observation command checks this candidate projection outside positive validate-all semantics:
+
+```bash
+pbe graph read-model observe-candidates
+```
+
+It reports `candidate-observation-pass` when the Todo App candidate projection contract passes, or
+`candidate-observation-blocked` when the candidate projection is missing, malformed, or claims source authority /
+validate-all consumption. This command is local and non-promotional; it does not enroll the candidate in the positive
+registry, aggregate summary, or CI workflow.
+
 ## Initial Implementation Sequence
 
 Recommended sequence:
