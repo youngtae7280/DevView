@@ -9,9 +9,11 @@ import {
   generateReadModelEvidence,
   getSliceReadModelProfile,
   loadGraphSourceArtifact,
+  loadGraphSourceProjectionArtifact,
   loadReadModelSliceRegistry,
   normalizeReadModelSliceRegistry,
   normalizeGraphSourceArtifact,
+  normalizeGraphSourceProjectionArtifact,
   projectGraphSourceReadModel,
   summarizeReadModelEvidence,
   todoAppPbeRunStructureOnlyProfile,
@@ -159,6 +161,42 @@ describe('read-model Evidence builder', () => {
     expect(projection.coreViewCoverage).toEqual(generated.coreViewCoverage)
     expect(projection.fallbackReferences).toContain('examples/adoption/todo-search-slice/product-tree.json')
     expect(projection.userAcceptanceBoundary).toContain('cannot accept product results')
+  })
+
+  it('validates the committed graph source projection artifact contract', async () => {
+    const projection = await loadGraphSourceProjectionArtifact(resolve('.'))
+
+    expect(projection.metadata.artifactRole).toBe('graph_source_read_model_projection')
+    expect(projection.metadata.sourceArtifact).toBe('examples/adoption/todo-search-slice/graph-source.json')
+    expect(projection.metadata.sourceSlice).toBe(todoSearchReadModelProfile.supportedSlice)
+    expect(projection.metadata.sourceProfile).toBe(todoSearchReadModelProfile.profileId)
+    expect(projection.nodes).toHaveLength(todoSearchReadModelProfile.expectedCounts.nodes)
+    expect(projection.edges).toHaveLength(todoSearchReadModelProfile.expectedCounts.edges)
+    expect(projection.coreViewCoverage.map((entry) => entry.name)).toEqual(coreViews)
+    expect(projection.fallbackReferences).toContain('examples/adoption/todo-search-slice/acceptance-tree.json')
+    expect(projection.retainedCompatibilityArtifacts).toContain(
+      'examples/adoption/todo-search-slice/view-instance-manifest.json',
+    )
+    expect(projection.sourceAuthorityBoundary).toContain('limited source model')
+    expect(projection.nonPromotionStatement).toContain('repo-wide promotion')
+    expect(projection.userAcceptanceBoundary).toContain('User acceptance remains user-controlled')
+  })
+
+  it('rejects projection artifacts with missing boundaries or source drift', async () => {
+    const graphSource = await loadGraphSourceArtifact(resolve('.'))
+    const projectionPath = 'examples/adoption/todo-search-slice/generated/graph-source-read-model-projection.json'
+    const projection = JSON.parse(await readFile(projectionPath, 'utf8')) as Record<string, unknown>
+
+    delete projection.userAcceptanceBoundary
+    expect(() => normalizeGraphSourceProjectionArtifact(projection, graphSource, projectionPath)).toThrow(
+      /userAcceptanceBoundary/,
+    )
+
+    const drifted = JSON.parse(await readFile(projectionPath, 'utf8')) as {
+      metadata: { sourceProfile: string }
+    }
+    drifted.metadata.sourceProfile = 'todo-app-pbe-run-structure-only'
+    expect(() => normalizeGraphSourceProjectionArtifact(drifted, graphSource, projectionPath)).toThrow(/sourceProfile/)
   })
 
   it('rejects malformed graph source artifacts and does not mutate the positive artifact', async () => {

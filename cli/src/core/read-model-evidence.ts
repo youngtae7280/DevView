@@ -100,18 +100,28 @@ export interface GraphSourceArtifact {
 
 export interface GraphSourceProjectionResult {
   graphSourcePath: string
-  projection: Pick<GeneratedReadModel, 'taxonomy' | 'nodes' | 'edges' | 'coreViewCoverage'> & {
-    metadata: Record<string, unknown>
-    fallbackReferences: string[]
-    retainedCompatibilityArtifacts: string[]
-    sourceAuthorityBoundary: string
-    nonPromotionStatement: string
-    userAcceptanceBoundary: string
-  }
+  projection: GraphSourceProjectionArtifact
 }
 
 export interface GraphSourceProjectionFileResult extends GraphSourceProjectionResult {
   projectionJsonPath: string
+}
+
+export interface GraphSourceProjectionArtifact
+  extends Pick<GeneratedReadModel, 'taxonomy' | 'nodes' | 'edges' | 'coreViewCoverage'> {
+  metadata: {
+    artifactRole: 'graph_source_read_model_projection'
+    sourceArtifact: string
+    sourceSlice: string
+    sourceProfile: string
+    promotionScope: 'todo-search-selected-slice'
+    projectionBoundary: string
+  }
+  fallbackReferences: string[]
+  retainedCompatibilityArtifacts: string[]
+  sourceAuthorityBoundary: string
+  nonPromotionStatement: string
+  userAcceptanceBoundary: string
 }
 
 interface Mismatch {
@@ -699,6 +709,20 @@ export async function loadGraphSourceArtifact(
   return normalizeGraphSourceArtifact(parsed.value, graphSourcePath)
 }
 
+export async function loadGraphSourceProjectionArtifact(
+  root: string,
+  projectionPath = `${todoSearchReadModelProfile.supportedSlice}/generated/graph-source-read-model-projection.json`,
+  graphSourcePath = `${todoSearchReadModelProfile.supportedSlice}/graph-source.json`,
+): Promise<GraphSourceProjectionArtifact> {
+  const graphSource = await loadGraphSourceArtifact(root, graphSourcePath)
+  const absoluteProjectionPath = path.resolve(root, projectionPath)
+  const parsed = await readJsonSafe<unknown>(absoluteProjectionPath)
+  if (!parsed.ok) {
+    throw new Error(`Unable to read graph source projection artifact at ${projectionPath}: ${parsed.error}`)
+  }
+  return normalizeGraphSourceProjectionArtifact(parsed.value, graphSource, projectionPath, graphSourcePath)
+}
+
 export function projectGraphSourceReadModel(
   graphSource: GraphSourceArtifact,
   graphSourcePath = `${todoSearchReadModelProfile.supportedSlice}/graph-source.json`,
@@ -747,6 +771,144 @@ export async function projectGraphSourceReadModelToFile(
     ...result,
     projectionJsonPath,
   }
+}
+
+export function normalizeGraphSourceProjectionArtifact(
+  value: unknown,
+  graphSource: GraphSourceArtifact,
+  projectionPath = `${todoSearchReadModelProfile.supportedSlice}/generated/graph-source-read-model-projection.json`,
+  graphSourcePath = `${todoSearchReadModelProfile.supportedSlice}/graph-source.json`,
+): GraphSourceProjectionArtifact {
+  const errors: string[] = []
+  const projection = asRecord(value, 'graphSourceProjection', errors)
+  const metadata = asRecord(projection.metadata, 'graphSourceProjection.metadata', errors)
+  const expectedProjection = projectGraphSourceReadModel(graphSource, graphSourcePath).projection
+  const nodes = requiredRecordArray<GraphNode>(projection, 'nodes', errors, 'graphSourceProjection')
+  const edges = requiredRecordArray<GraphEdge>(projection, 'edges', errors, 'graphSourceProjection')
+  const coreViewCoverage = requiredRecordArray<CoreViewCoverage>(
+    projection,
+    'coreViewCoverage',
+    errors,
+    'graphSourceProjection',
+  )
+  const fallbackReferences = requiredStringArray(projection, 'fallbackReferences', errors, 'graphSourceProjection')
+  const retainedCompatibilityArtifacts = requiredStringArray(
+    projection,
+    'retainedCompatibilityArtifacts',
+    errors,
+    'graphSourceProjection',
+  )
+  const sourceAuthorityBoundary = requiredString(projection, 'sourceAuthorityBoundary', errors, 'graphSourceProjection')
+  const nonPromotionStatement = requiredString(projection, 'nonPromotionStatement', errors, 'graphSourceProjection')
+  const userAcceptanceBoundary = requiredString(projection, 'userAcceptanceBoundary', errors, 'graphSourceProjection')
+  const taxonomy = asRecord(projection.taxonomy, 'graphSourceProjection.taxonomy', errors)
+  const viewScopedTagsAllowed = Array.isArray(taxonomy.viewScopedTagsAllowed)
+    ? taxonomy.viewScopedTagsAllowed.map(String)
+    : []
+
+  if (metadata.artifactRole !== 'graph_source_read_model_projection') {
+    errors.push('graphSourceProjection.metadata.artifactRole must be graph_source_read_model_projection')
+  }
+  if (normalizePath(String(metadata.sourceArtifact || '')) !== normalizePath(graphSourcePath)) {
+    errors.push(`graphSourceProjection.metadata.sourceArtifact must be ${normalizePath(graphSourcePath)}`)
+  }
+  if (normalizePath(String(metadata.sourceSlice || '')) !== graphSource.sourceSlice) {
+    errors.push(`graphSourceProjection.metadata.sourceSlice must be ${graphSource.sourceSlice}`)
+  }
+  if (metadata.sourceProfile !== graphSource.sourceProfile) {
+    errors.push(`graphSourceProjection.metadata.sourceProfile must be ${graphSource.sourceProfile}`)
+  }
+  if (metadata.promotionScope !== graphSource.promotionScope) {
+    errors.push(`graphSourceProjection.metadata.promotionScope must be ${graphSource.promotionScope}`)
+  }
+  if (metadata.projectionBoundary !== graphSource.projectionBoundary) {
+    errors.push('graphSourceProjection.metadata.projectionBoundary must match graph source projectionBoundary')
+  }
+  if (nodes.length !== todoSearchReadModelProfile.expectedCounts.nodes) {
+    errors.push(`graphSourceProjection.nodes must contain ${todoSearchReadModelProfile.expectedCounts.nodes} nodes`)
+  }
+  if (edges.length !== todoSearchReadModelProfile.expectedCounts.edges) {
+    errors.push(`graphSourceProjection.edges must contain ${todoSearchReadModelProfile.expectedCounts.edges} edges`)
+  }
+  if (coreViewCoverage.length !== coreViewNames.length) {
+    errors.push(`graphSourceProjection.coreViewCoverage must contain ${coreViewNames.length} Core Views`)
+  }
+  if (JSON.stringify(nodes) !== JSON.stringify(expectedProjection.nodes)) {
+    errors.push('graphSourceProjection.nodes must match graph source projection nodes')
+  }
+  if (JSON.stringify(edges) !== JSON.stringify(expectedProjection.edges)) {
+    errors.push('graphSourceProjection.edges must match graph source projection edges')
+  }
+  if (JSON.stringify(coreViewCoverage) !== JSON.stringify(expectedProjection.coreViewCoverage)) {
+    errors.push('graphSourceProjection.coreViewCoverage must match graph source projection Core Views')
+  }
+  if (sourceAuthorityBoundary !== graphSource.sourceAuthorityBoundary) {
+    errors.push('graphSourceProjection.sourceAuthorityBoundary must match graph source sourceAuthorityBoundary')
+  }
+  if (!nonPromotionStatement.includes('repo-wide promotion')) {
+    errors.push('graphSourceProjection.nonPromotionStatement must preserve repo-wide promotion boundary')
+  }
+  if (userAcceptanceBoundary !== graphSource.userAcceptanceBoundary) {
+    errors.push('graphSourceProjection.userAcceptanceBoundary must match graph source userAcceptanceBoundary')
+  }
+  for (const fallback of graphSource.fallbackReferences) {
+    if (!fallbackReferences.map(normalizePath).includes(fallback)) {
+      errors.push(`graphSourceProjection.fallbackReferences missing ${fallback}`)
+    }
+  }
+  for (const retained of graphSource.retainedCompatibilityArtifacts) {
+    if (!retainedCompatibilityArtifacts.map(normalizePath).includes(retained)) {
+      errors.push(`graphSourceProjection.retainedCompatibilityArtifacts missing ${retained}`)
+    }
+  }
+  for (const allowedTag of allowedViewScopedTags) {
+    if (!viewScopedTagsAllowed.includes(allowedTag)) {
+      errors.push(`graphSourceProjection.taxonomy.viewScopedTagsAllowed missing ${allowedTag}`)
+    }
+  }
+
+  const normalizedProjection: GraphSourceProjectionArtifact = {
+    metadata: {
+      artifactRole: 'graph_source_read_model_projection',
+      sourceArtifact: normalizePath(String(metadata.sourceArtifact || '')),
+      sourceSlice: normalizePath(String(metadata.sourceSlice || '')),
+      sourceProfile: String(metadata.sourceProfile || ''),
+      promotionScope: 'todo-search-selected-slice',
+      projectionBoundary: String(metadata.projectionBoundary || ''),
+    },
+    taxonomy: expectedProjection.taxonomy,
+    nodes,
+    edges,
+    coreViewCoverage,
+    fallbackReferences: fallbackReferences.map(normalizePath),
+    retainedCompatibilityArtifacts: retainedCompatibilityArtifacts.map(normalizePath),
+    sourceAuthorityBoundary,
+    nonPromotionStatement,
+    userAcceptanceBoundary,
+  }
+  assertAllowedTags({
+    version: 'graph-source-projection-normalization',
+    metadata: {},
+    sourceInputs: [],
+    taxonomy: {},
+    nodes: normalizedProjection.nodes,
+    edges: normalizedProjection.edges,
+    coreViewCoverage: normalizedProjection.coreViewCoverage,
+    checkEvidenceMapping: [],
+    retainedWarnings: [],
+    compatibilityWarnings: [],
+    sourceAuthorityBoundary,
+    nonPromotionStatement,
+  })
+
+  const declaredProjectionTargets = graphSource.projectionTargets.map((target) => target.path).filter(Boolean)
+  if (!declaredProjectionTargets.includes(normalizePath(projectionPath))) {
+    errors.push(`graphSource.projectionTargets must include ${normalizePath(projectionPath)}`)
+  }
+  if (errors.length > 0) {
+    throw new Error(`Invalid graph source projection artifact ${projectionPath}: ${errors.join('; ')}`)
+  }
+  return normalizedProjection
 }
 
 export function normalizeGraphSourceArtifact(

@@ -75,7 +75,9 @@ pbe graph read-model project --graph-source examples/adoption/todo-search-slice/
 ```
 
 Focused tests prove that projection from `graph-source.json` preserves the current Todo Search generated read-model
-nodes, edges, and Core View coverage. The generated projection artifact is:
+nodes, edges, and Core View coverage. Contract tests now also validate the committed source/projection artifact pair for
+metadata, source scope, projection role, fallback/reference retention, user-acceptance boundary, non-promotion wording,
+expected counts, Core Views, and source-record parity. The generated projection artifact is:
 
 ```text
 examples/adoption/todo-search-slice/generated/graph-source-read-model-projection.json
@@ -93,9 +95,9 @@ Future projection generation hardening should:
 
 Recommended sequence:
 
-1. Review the graph source projection helper, CLI surface, and artifact shape.
-2. Decide whether schema hardening should happen before any broader generated projection refresh.
-3. Add parity/validation tests proving projection output still matches the current Todo Search baseline.
+1. Review the graph source projection helper, CLI surface, artifact shape, and contract hardening tests.
+2. Decide whether schema hardening should extend into validate-all planning or remain standalone for another observation pass.
+3. Add parity/validation tests for any new projection output shape before broadening its use.
 4. Keep `validate --all` positive registry behavior stable until the projection path is reviewed.
 
 ## Non-Scope
