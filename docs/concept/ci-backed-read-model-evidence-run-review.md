@@ -988,6 +988,27 @@ PR run `28218854329` then reviewed the same projection-status capture path throu
 | Cleanup       | Artifact temp directory removed; PR closed without merge; remote smoke branch deleted       |
 | Review result | Projection-status capture reviewed in both manual and PR informational modes                |
 
+Manual run `28219396764` reviewed the workflow after Todo Search default read-model generation became graph-source-backed
+for the limited promoted scope.
+
+| Field                 | Value                                                                                               |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
+| Run ID                | `28219396764`                                                                                       |
+| Run URL               | <https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin/actions/runs/28219396764>          |
+| Event                 | `workflow_dispatch`                                                                                 |
+| Commit                | `e2456e3338c55f0390a426af8179082f8bba1629`                                                          |
+| Conclusion            | `success`                                                                                           |
+| Job ID                | `83597142022`                                                                                       |
+| Manifest              | `ci-evidence-pass`; `validateAllStatus: aggregate-pass`; `aggregateStatus: aggregate-pass`          |
+| Todo Search           | 40 nodes / 59 edges; `comparison-pass`; `validation-pass`; 20 checks                                |
+| Generation source     | Generated read-model metadata records `readModelSourceMode: graph-source-backed`                    |
+| Graph source metadata | Generated read-model metadata records `examples/adoption/todo-search-slice/graph-source.json`       |
+| Projection            | Todo Search `projection-contract-pass`; Todo App PBE Run `not-configured`                           |
+| Artifact              | Generated read-model, evidence manifest, validate-all output, and graph projection present          |
+| Boundary              | Non-enforcing Evidence only; no repo-wide promotion, enforcement, retirement, or Todo App promotion |
+| Cleanup               | Artifact temp directory removed                                                                     |
+| Review result         | Manual CI confirms graph-source-backed Todo Search generation health                                |
+
 ## Gate Self-Check
 
 | Gate                             | Status | Result                                                                                                       |
@@ -995,6 +1016,7 @@ PR run `28218854329` then reviewed the same projection-status capture path throu
 | Manual Workflow Run Gate         | pass   | Run `28156403793` completed successfully on `workflow_dispatch`.                                             |
 | Validate-All Manual Run Gate     | pass   | Run `28210541509` completed successfully on `workflow_dispatch` after the workflow switched to validate-all. |
 | Projection-Status Manual Gate    | pass   | Run `28218687289` captured Todo Search `projection-contract-pass` in manifest and validate-all output.       |
+| Graph-Source-Backed Manual Gate  | pass   | Run `28219396764` confirmed graph-source-backed Todo Search generation in CI artifacts.                      |
 | PR Informational Run Gate        | pass   | PR #1, PR #2, PR #3, and PR #4 triggered `pull_request` runs and completed successfully.                     |
 | CI-Backed Artifact Review Gate   | pass   | Expanded artifact bundle `pbe-todo-search-read-model-evidence` was downloaded and inspected.                 |
 | CI Manifest Integrity Gate       | pass   | Manifest is `ci-backed` / `ci-evidence-pass` and includes Todo Search, Todo App, aggregate, and boundaries.  |

@@ -89,6 +89,8 @@ examples/adoption/todo-search-slice/generated/graph-source-read-model-projection
 Todo Search `graph read-model generate --slice examples/adoption/todo-search-slice` now uses the same bounded graph
 source records for generated nodes, edges, and Core View coverage while preserving the existing generated Evidence role,
 manual parity pass, validation pass, and 40-node / 59-edge / 7-Core-View shape.
+Manual CI run `28219396764` reviewed this graph-source-backed generation path with `ci-evidence-pass`,
+`comparison-pass`, `validation-pass`, and `projection-contract-pass`.
 
 Future projection generation hardening should:
 
