@@ -32,6 +32,10 @@ This baseline is sufficient to keep the current scoped pilot active and now has 
 not enough by itself to enforce broader execution, make CI claims, retire fallback artifacts, or approve full
 Graph-source promotion.
 
+Invalid read-model fixtures are currently local focused test inputs only. Their CI inclusion decision surface is
+recorded in [read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md); current validator-backed
+and CI-backed Evidence runs continue to cover positive configured profiles only.
+
 ## Evidence Levels
 
 ### CLI Command Success

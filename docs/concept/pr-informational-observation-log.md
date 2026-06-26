@@ -27,6 +27,9 @@ Evidence without changing workflow behavior.
 Negative fixture policy is documented separately in
 [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md). Current PR
 informational observations run positive configured profiles only.
+Invalid fixture CI inclusion policy is documented in
+[read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md); no invalid-fixture PR observation
+entries are expected unless a separate future mode is approved.
 
 ## Baseline Entries
 

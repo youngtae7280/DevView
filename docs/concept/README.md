@@ -440,6 +440,14 @@ change source authority or promotion state.
 Structure-only policy conflict coverage is now inline/temp rather than durable fixture based: focused registry tests
 reject a `structure-only` profile that requires compare/parity/pilot marker artifacts.
 
+The invalid fixture CI inclusion policy is now recorded:
+
+- [read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md)
+
+The policy recommends keeping invalid read-model fixtures local-only for now. It compares optional manual CI,
+PR-informational CI, and future required/enforcing modes, but does not change workflows, `validate --all`, the positive
+registry, generated artifacts, source authority, or promotion state.
+
 The registry storage/location decision surface is now recorded:
 
 - [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md)

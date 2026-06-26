@@ -32,6 +32,9 @@ Current read-model baseline:
 - the invalid `viewScopedTags`, missing Core View, and missing pilot marker fixtures are implemented as local focused
   test fixtures only
 - invalid fixtures remain outside the validate-all registry and CI workflow
+- CI inclusion for invalid fixtures is covered by
+  [read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md), which recommends keeping them
+  local-only until a separate runtime/noise/reporting decision is approved
 
 ## Candidate Comparison
 

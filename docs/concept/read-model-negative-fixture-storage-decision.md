@@ -19,6 +19,10 @@ The current baseline already has:
 Negative fixture storage remains open because future robustness work needs invalid inputs without mutating the positive
 slice fixtures, changing source authority, or turning invalid fixtures into CI enforcement policy.
 
+CI inclusion policy for these invalid fixtures is recorded in
+[read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md). The current recommendation is
+local-only invalid fixture coverage; manual or PR CI execution remains a separate future decision.
+
 ## Current Context
 
 Current positive fixtures:

@@ -33,6 +33,9 @@ Registry fixture and test planning for that future path is tracked in
 Negative fixture storage policy is tracked in
 [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md); invalid fixtures are
 not part of current PR informational workflow runs.
+The CI inclusion decision surface for invalid fixtures is tracked in
+[read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md). It recommends keeping invalid
+fixtures local-only for now, so PR informational observation continues to cover positive configured profiles only.
 
 ## Current Baseline
 

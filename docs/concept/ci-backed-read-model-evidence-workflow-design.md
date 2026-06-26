@@ -53,6 +53,10 @@ The follow-up observation policy is recorded in
 [pr-informational-observation-policy.md](pr-informational-observation-policy.md). It defines observation metrics,
 minimum observation window, path-filter refinement criteria, and escalation criteria without changing the workflow.
 
+Invalid read-model fixture CI inclusion is intentionally separate and is recorded in
+[read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md). The current workflow runs positive
+registry-backed `validate --all` only; invalid fixtures remain local focused test inputs.
+
 Run `28156403793` also surfaced a GitHub Actions maintenance annotation that Node.js 20 is deprecated for
 `actions/checkout@v4`, `actions/setup-node@v4`, and `actions/upload-artifact@v4` execution. This is a retained CI hygiene
 warning for that historical run, not a failed Evidence run. The workflow now uses `actions/checkout@v7`,

@@ -30,6 +30,9 @@ The negative fixture storage decision surface is recorded in
 [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md). It keeps parser-shape
 failures inline/temp first, recommends temp workspace copies for mutation and leakage cases, and reserves durable
 `examples/invalid/read-model-*` fixtures for stable behavior-level validate-all failures.
+The invalid fixture CI inclusion policy is recorded in
+[read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md). It keeps invalid fixtures local-only
+for now and preserves the positive validate-all / CI aggregate path.
 The first durable candidate plan is recorded in
 [read-model-negative-fixture-candidate-plan.md](read-model-negative-fixture-candidate-plan.md); it selects invalid
 `viewScopedTags` and missing Core View coverage as the first candidate pair. The invalid `viewScopedTags` fixture is now

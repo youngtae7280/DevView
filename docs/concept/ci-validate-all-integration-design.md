@@ -175,6 +175,9 @@ The CI manifest preserves current fields and adds validate-all specific fields:
 Negative fixtures are not part of this workflow mode. Storage policy for future invalid read-model fixtures is recorded
 in [read-model-negative-fixture-storage-decision.md](read-model-negative-fixture-storage-decision.md); running invalid
 fixtures in CI would require a separate non-enforcing or enforcement design.
+That separate decision surface is now recorded in
+[read-model-invalid-fixture-ci-policy.md](read-model-invalid-fixture-ci-policy.md), with a current recommendation to
+keep invalid fixtures local-only.
 
 ## Step Summary Requirements
 
