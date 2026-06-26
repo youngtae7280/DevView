@@ -120,8 +120,10 @@ the Todo Search and Todo App PBE Run per-slice reports:
 node dist/cli/index.js graph read-model summarize --slices examples/adoption/todo-search-slice,examples/valid/todo-app-pbe-run --json
 ```
 
-The workflow is still `workflow_dispatch` only and non-enforcing. Running aggregate summarize in CI does not turn the
-aggregate into validation execution, does not implement `validate --all`, and does not expand source authority. A new
+The workflow is still non-enforcing manual/PR informational Evidence. Running aggregate summarize in CI does not turn
+the aggregate into enforcement and does not expand source authority. Local `validate --all` now exists, but the workflow
+has not switched to it; that future switch is designed in
+[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md). A new
 aggregate-enabled workflow run, `28156403793`, has now been reviewed as CI-backed Evidence with `ci-evidence-pass` and
 aggregate `aggregate-pass`. Post-update run `28157938343` reviewed the same aggregate-enabled workflow after the Node 24
 action/runtime update. The earlier Todo Search-only run `28151296796` remains historical CI-backed Evidence for the

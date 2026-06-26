@@ -273,6 +273,9 @@ promotion review, and rollback/defer remain separate decisions. Further PR obser
 All-slice validation follows
 [read-model-validate-all-contract.md](read-model-validate-all-contract.md); workflow changes or enforcement mode remain
 future decisions.
+The non-enforcing workflow switch to local validate-all is designed in
+[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md), but no workflow change is made by that
+design.
 Registry fixture and test planning for that path is recorded in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 Registry storage/location tradeoffs are recorded in

@@ -1,20 +1,22 @@
 # CI-Backed Read-Model Evidence Workflow Design
 
-Status: ci-backed-read-model-evidence-workflow-design / pr-informational-design-recorded / manual-dispatch-only
+Status: ci-backed-read-model-evidence-workflow-design / pr-informational-implemented /
+ci-validate-all-integration-designed / non-enforcing
 
 ## Document Purpose
 
 This document defines the CI workflow design for read-model Evidence after the Todo Search scoped read-model validator
-became available. The bounded non-enforcing workflow is implemented as manual dispatch only and now includes Todo App
-PBE Run structure-only Evidence plus the first aggregate read-model summary command.
+became available. The bounded non-enforcing workflow is implemented as manual dispatch plus PR informational mode and
+now includes Todo App PBE Run structure-only Evidence plus the first aggregate read-model summary command.
 
 It explains how CI-backed Evidence can be produced by the manual workflow, how that differs from local
 validator-backed Evidence, what commands and artifacts the workflow uses, and how CI results should relate to Approval
 Briefs, Control Nodes, Source Transition Path, rollback/fallback, and user judgment.
 
-This document records that `.github/workflows/read-model-evidence.yml` exists for non-enforcing manual CI-backed
-Evidence. It does not implement CI enforcement, does not expand pilot scope, does not change source authority, does not
-retire tree-native artifacts, does not clean up public docs, and does not approve full Graph-source promotion.
+This document records that `.github/workflows/read-model-evidence.yml` exists for non-enforcing manual and PR
+informational CI-backed Evidence. It does not implement CI enforcement, does not expand pilot scope, does not change
+source authority, does not retire tree-native artifacts, does not clean up public docs, and does not approve full
+Graph-source promotion.
 
 ## Current Local Validator-Backed Baseline
 
@@ -356,6 +358,9 @@ enforcement, or validation-scope changes are proposed.
 Local all-slice validation uses
 [read-model-validate-all-contract.md](read-model-validate-all-contract.md). Any CI workflow switch to that command or
 any enforcement mode remains a separate future decision.
+The candidate non-enforcing workflow switch to local `validate --all` is now designed in
+[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md); this workflow file remains unchanged
+until a separate implementation task.
 The future registry/test planning layer is recorded in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 The storage/location decision surface for the registry artifact is recorded in

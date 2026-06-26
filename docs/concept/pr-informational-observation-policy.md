@@ -24,7 +24,9 @@ there before path-filter, failure-semantics, enforcement, or validation-scope ch
 
 All-slice validation is tracked separately in
 [read-model-validate-all-contract.md](read-model-validate-all-contract.md). This PR observation policy does not approve
-`validate --all` implementation or workflow changes.
+`validate --all` workflow changes.
+Future non-enforcing CI workflow integration of local `validate --all` is designed in
+[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md).
 Registry fixture and test planning for that future path is tracked in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 
@@ -209,13 +211,17 @@ Required checks remain a separate decision and cannot be inferred from `ci-evide
 
 ### Broader Validation / `validate --all` Discussion
 
-Reopen broader validation scope or `validate --all` design only after:
+Reopen broader validation scope or `validate --all` workflow integration only after:
 
 - per-slice reports stay independent
 - aggregate summary remains stable
 - additional slice profiles have clear policy levels
 - Todo App PBE Run remains correctly classified unless separately strengthened
 - source authority boundaries remain unambiguous
+
+The non-enforcing CI workflow switch to local `validate --all` is designed in
+[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md). Implementing that switch should be
+recorded as a workflow-mode change and observed under this policy before enforcement or filter changes are discussed.
 
 ## Observation Record Template
 

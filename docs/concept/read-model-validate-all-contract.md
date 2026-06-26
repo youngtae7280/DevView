@@ -220,7 +220,8 @@ The PR observation policy and log remain active:
 - [pr-informational-observation-log.md](pr-informational-observation-log.md)
 
 Future CI usage of `validate --all` should learn from PR observation data, but PR observation does not approve CI
-integration or enforcement.
+integration or enforcement. The non-enforcing workflow switch design is recorded in
+[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md).
 
 ## Non-Scope
 

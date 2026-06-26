@@ -226,12 +226,16 @@ pattern:
 
 ### Enforcement Discussion Boundary
 
-Required checks, branch protection, CI enforcement, or `validate --all` discussion remains a separate user decision.
+Required checks, branch protection, CI enforcement, or `validate --all` workflow integration remains a separate user
+decision.
 Neither a green PR informational run nor this log can approve enforcement or source promotion.
 
 All-slice validation implementation is governed by
 [read-model-validate-all-contract.md](read-model-validate-all-contract.md) and remains separate from this observation
 log.
+The future non-enforcing CI workflow switch to local `validate --all` is designed in
+[ci-validate-all-integration-design.md](ci-validate-all-integration-design.md). If implemented later, the first manual
+and PR runs after the switch should be appended here as workflow-mode observations.
 Registry fixture/test implementation is governed by
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md) and also remains separate from
 this log.

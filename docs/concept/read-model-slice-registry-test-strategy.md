@@ -288,6 +288,8 @@ Before broader command behavior or CI workflow behavior consumes the registry:
 - positive and negative fixture behavior should be testable without changing current source artifacts
 - aggregate summary behavior should remain compatible with existing report-only command
 - PR informational workflow should not be changed unless separately approved
+- CI workflow switch design should follow
+  [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md)
 
 ## Non-Scope
 

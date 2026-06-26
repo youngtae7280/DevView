@@ -439,6 +439,16 @@ This command reads the candidate registry, runs each included profile's declared
 then writes the aggregate summary. It is local Evidence only. It does not change the PR/manual CI workflow, introduce
 required checks, expand source authority, promote Todo App PBE Run, or approve full Graph-source promotion.
 
+The CI validate-all integration design is now recorded:
+
+- [ci-validate-all-integration-design.md](ci-validate-all-integration-design.md)
+
+The design explains how the non-enforcing manual/PR informational workflow could later replace its explicit read-model
+command sequence with local registry-backed `validate --all`. It compares command coverage, artifact bundle
+requirements, manifest and Step Summary fields, failure semantics, and migration review expectations. It is design-only:
+no workflow file, GitHub Action run, PR, required check, enforcement, source authority, public-doc cleanup, or promotion
+change is made.
+
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.
