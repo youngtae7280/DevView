@@ -1,6 +1,6 @@
 # Read-Model Slice Registry Test Strategy
 
-Status: read-model-slice-registry-test-strategy / design-only / no-implementation / non-enforcing
+Status: read-model-slice-registry-test-strategy / candidate-registry-file-created / no-implementation / non-enforcing
 
 This document defines the registry fixture and test strategy needed before implementing a future all-slice read-model
 validation surface such as `pbe graph read-model validate --all`.
@@ -9,13 +9,14 @@ It extends [read-model-validate-all-contract.md](read-model-validate-all-contrac
 registry fixture should look like, what positive and negative fixtures should prove, and which focused tests should
 protect source-authority, aggregate, and non-mutation boundaries.
 
-This document does not create an actual registry file, implement parser or CLI code, change workflows, regenerate
-generated artifacts, dispatch GitHub Actions, create PRs, introduce enforcement, expand source authority, perform
-public-doc cleanup, or approve full Graph-source promotion.
+The candidate registry file now exists at `examples/read-model-aggregate/read-model-slices.json`. This strategy does
+not implement parser or CLI code, change workflows, regenerate generated artifacts, dispatch GitHub Actions, create PRs,
+introduce enforcement, expand source authority, perform public-doc cleanup, or approve full Graph-source promotion.
 
-The storage and file-format decision surface for the future registry fixture is recorded in
-[read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md). This strategy should not
-be treated as approval to create that file.
+The storage and file-format decision surface for the registry fixture is recorded in
+[read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md). The candidate fixture is
+now reviewable metadata only; this strategy should not be treated as approval for parser, planner, `validate --all`, or
+workflow consumption.
 
 ## Relationship To Validate-All Contract
 
@@ -35,15 +36,15 @@ The intended sequence is:
 
 1. design registry fixture shape
 2. design positive and negative fixture expectations
-3. implement a registry fixture only after explicit approval
+3. keep the approved candidate registry fixture reviewable outside `generated/`
 4. implement parser/normalization tests
 5. implement command-plan tests
 6. implement all-slice validation behavior only after registry behavior is stable
 
 ## Proposed Registry Fixture Shape
 
-Prefer a small explicit registry fixture over directory discovery. A future file could be JSON, JSONC, or another
-repo-native structured format, but this task intentionally does not create the file.
+Prefer a small explicit registry fixture over directory discovery. The current candidate file uses strict JSON at
+`examples/read-model-aggregate/read-model-slices.json`; future schema changes should be explicit reviewed changes.
 
 Conceptual shape:
 
@@ -258,7 +259,7 @@ Report-only mode should skip command execution steps and start from existing val
 
 ## Implementation Readiness Criteria
 
-This strategy is enough to request implementation of a registry fixture when:
+This strategy was enough to request creation of the candidate registry fixture when:
 
 - the registry fixture storage location is approved through
   [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md)
@@ -270,9 +271,9 @@ This strategy is enough to request implementation of a registry fixture when:
 - report output location is chosen
 - mutation boundary is clear
 
-Before `validate --all` CLI implementation begins:
+Before parser, planner, or `validate --all` CLI implementation begins:
 
-- a registry fixture or equivalent profile source must exist
+- the candidate registry fixture must stay aligned with current in-code profiles
 - parser and planner tests should be implemented first
 - positive and negative fixture behavior should be testable without changing current source artifacts
 - aggregate summary behavior should remain compatible with existing report-only command
@@ -280,9 +281,8 @@ Before `validate --all` CLI implementation begins:
 
 ## Non-Scope
 
-This strategy does not:
+This strategy and candidate fixture do not:
 
-- create an actual registry file
 - implement a registry parser
 - implement command planning
 - implement `validate --all`
@@ -302,7 +302,8 @@ This strategy does not:
 
 | Gate                           | Result | Notes                                                                                 |
 | ------------------------------ | ------ | ------------------------------------------------------------------------------------- |
-| Design-Only Gate               | PASS   | Defines test strategy only; no code, registry file, workflow, PR, or Actions changes. |
+| Candidate Fixture Gate         | PASS   | The candidate registry file exists as reviewable metadata only.                       |
+| Non-Implementation Gate        | PASS   | Defines test strategy only; no code, parser, CLI, workflow, PR, or Actions changes.   |
 | Registry Fixture Shape Gate    | PASS   | Proposed fields are explicit and profile-driven.                                      |
 | Positive Fixture Clarity Gate  | PASS   | Todo Search and Todo App PBE Run expected policy levels and counts are declared.      |
 | Negative Fixture Honesty Gate  | PASS   | Failure categories are visible and should not mutate positive source artifacts.       |
@@ -315,6 +316,6 @@ This strategy does not:
 
 ## Final Statement
 
-This strategy makes the future registry and test surface reviewable before implementation. It does not implement a
-registry, parser, command planner, `validate --all`, CI workflow change, enforcement, source authority expansion, or
-Graph-source promotion.
+This strategy makes the candidate registry and test surface reviewable before implementation. It does not implement a
+parser, command planner, `validate --all`, CI workflow change, enforcement, source authority expansion, or Graph-source
+promotion.

@@ -376,8 +376,9 @@ The staged path is:
    semantics without implementing `validate --all`.
 7. Use [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md) to design registry
    fixtures, positive/negative fixtures, and non-mutation tests before implementing registry parsing or `validate --all`.
-8. Use [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md) before creating the
-   actual registry fixture file or selecting parser input location.
+8. Use [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md) for the selected
+   candidate registry location, now materialized as `examples/read-model-aggregate/read-model-slices.json`.
+9. Treat the candidate registry as reviewable metadata only until a separate parser/planner implementation is approved.
 
 Do not move next to `validate --all`, required checks, enforcement, or broad CI changes without a separate user
 decision.
@@ -433,7 +434,7 @@ design, multi-slice scope redesign, or continued observation.
 | Aggregate validation                | Decision Control Node      | deferred                     | `validate --all`, aggregate validation execution, and enforcement remain separate.                                       |
 | Validate-all contract               | Decision Control Node      | design-recorded              | The all-slice registry and execution-mode contract is documented, but no CLI implementation exists.                      |
 | Slice registry test strategy        | Evidence / Decision Node   | design-recorded              | Future registry fixtures and tests are specified before implementation.                                                  |
-| Slice registry storage decision     | Decision Control Node      | decision-surface-recorded    | Future registry location and file format are compared; actual file creation remains unapproved.                          |
+| Slice registry storage decision     | Decision Control Node      | candidate-fixture-created    | Registry location and file format are selected; the candidate file exists but parser/CLI consumption remains unapproved. |
 | PR informational trigger            | Decision Control Node      | implemented / reviewed       | PR visibility is implemented as non-enforcing informational Evidence and reviewed in PR run `28207822252`.               |
 | CI enforcement / required checks    | Decision Control Node      | not approved                 | Reviewed CI-backed Evidence exists, but enforcement and required checks remain future-only.                              |
 

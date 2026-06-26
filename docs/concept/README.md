@@ -411,6 +411,15 @@ The decision surface recommends a future non-generated JSON registry fixture at
 `examples/read-model-aggregate/read-model-slices.json`, compares alternatives, defines artifact role and mutation
 boundaries, and keeps actual registry creation/parser work as a later decision.
 
+The candidate registry fixture is now present:
+
+- `examples/read-model-aggregate/read-model-slices.json`
+
+It includes only the current Todo Search `pilot-marker-backed` profile and Todo App PBE Run `structure-only` profile.
+The file is strict JSON, non-generated execution metadata, and is not consumed by CLI/parser behavior yet. Registry
+inclusion does not expand source authority, change CI enforcement, promote Todo App PBE Run, or approve full
+Graph-source promotion.
+
 ## Outline-Only Later-Phase Docs
 
 No `docs/concept` policy file remains outline-only after Representative Runtime Feasibility Demo slice selection.

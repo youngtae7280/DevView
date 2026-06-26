@@ -276,6 +276,8 @@ Registry fixture and test planning for that path is recorded in
 [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md).
 Registry storage/location tradeoffs are recorded in
 [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md).
+The candidate registry fixture now exists at `examples/read-model-aggregate/read-model-slices.json`, but current
+validator behavior still uses the implemented profile configuration rather than parsing that fixture.
 
 ## Gate Self-Check
 

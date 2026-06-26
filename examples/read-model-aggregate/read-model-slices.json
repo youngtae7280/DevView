@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "registryRole": "read-model-slice-registry-fixture",
+  "status": "candidate-not-consumed-by-cli",
+  "sourceAuthorityBoundary": "This registry is execution metadata for future read-model validation only. Tree-native selected-slice artifacts and canonical .pbe artifacts remain current operational source unless a separate source-authority decision changes that boundary.",
+  "nonPromotionStatement": "Registry inclusion is not Graph-source promotion, source authority expansion, CI enforcement, or user acceptance.",
+  "mutationBoundary": "Future parsers may read and normalize this registry, but validation commands must not silently mutate it. Registry edits require an explicit reviewed config update.",
+  "profiles": [
+    {
+      "profileId": "todo-search-selected-slice",
+      "sourceSlice": "examples/adoption/todo-search-slice",
+      "sourceLayout": "flat-demo-support",
+      "policyLevel": "pilot-marker-backed",
+      "includedInValidateAll": true,
+      "requiredCommands": ["generate", "compare", "validate"],
+      "requiredArtifacts": {
+        "generatedReadModel": "generated/generated-read-model.json",
+        "evidenceManifest": "generated/read-model-evidence-manifest.json",
+        "parityReport": "generated/read-model-parity-report.json",
+        "validationReport": "generated/read-model-validation-report.json",
+        "scopedPilotMarker": "generated/scoped-source-authority-pilot-marker.json"
+      },
+      "optionalArtifacts": {
+        "generatedReadModelSummary": "generated/generated-read-model.md",
+        "parityReportSummary": "generated/read-model-parity-report.md",
+        "validationReportSummary": "generated/read-model-validation-report.md",
+        "ciEvidenceManifest": "generated/read-model-ci-evidence-manifest.json"
+      },
+      "expectedCounts": {
+        "nodes": 40,
+        "edges": 59,
+        "validationChecks": 20
+      },
+      "parityRequirement": {
+        "required": true,
+        "expectedStatus": "comparison-pass"
+      },
+      "pilotMarkerRequirement": {
+        "required": true,
+        "expectedStatus": "present"
+      },
+      "runtimeFixtureRequirement": {
+        "required": true,
+        "expectedStatus": "present",
+        "command": "npx vitest run examples/adoption/todo-search-slice/runtime-fixture"
+      },
+      "retainedWarnings": [
+        "bounded fixture Evidence is not a full Todo application implementation",
+        "partial UI screenshot/manual visual Evidence remains partial",
+        "ACEP task-card public-doc cleanup remains deferred"
+      ],
+      "fallbackReferences": [
+        "tree-native selected-slice artifacts",
+        "maintainability-graph-read-model.json",
+        "view-instance-manifest.json"
+      ],
+      "ciInclusion": "manual-and-pr-informational",
+      "boundaryStatements": {
+        "sourceAuthorityBoundary": "Todo Search registry inclusion is scoped read-model validation metadata only; tree-native selected-slice artifacts remain fallback/reference and current operational source.",
+        "nonPromotionStatement": "This profile does not approve full Graph-source promotion or repo-wide source authority change.",
+        "userAcceptanceBoundary": "Validation, parity, CI Evidence, aggregate status, and registry inclusion do not replace user acceptance authority."
+      }
+    },
+    {
+      "profileId": "todo-app-pbe-run-structure-only",
+      "sourceSlice": "examples/valid/todo-app-pbe-run",
+      "sourceLayout": "canonical-pbe",
+      "policyLevel": "structure-only",
+      "includedInValidateAll": true,
+      "requiredCommands": ["generate", "validate"],
+      "requiredArtifacts": {
+        "generatedReadModel": "generated/generated-read-model.json",
+        "evidenceManifest": "generated/read-model-evidence-manifest.json",
+        "validationReport": "generated/read-model-validation-report.json"
+      },
+      "optionalArtifacts": {
+        "generatedReadModelSummary": "generated/generated-read-model.md",
+        "validationReportSummary": "generated/read-model-validation-report.md"
+      },
+      "expectedCounts": {
+        "nodes": 22,
+        "edges": 38,
+        "validationChecks": 16
+      },
+      "parityRequirement": {
+        "required": false,
+        "expectedStatus": "not-required"
+      },
+      "pilotMarkerRequirement": {
+        "required": false,
+        "expectedStatus": "not-required"
+      },
+      "runtimeFixtureRequirement": {
+        "required": false,
+        "expectedStatus": "not-required",
+        "note": "Runtime fixture Evidence is attached-evidence-only if added later; it is not required for structure-only validation."
+      },
+      "retainedWarnings": [
+        "structure-only profile has no manual parity artifact",
+        "structure-only profile has no scoped pilot marker",
+        "structure-only output is not source-authority bearing"
+      ],
+      "fallbackReferences": ["canonical .pbe artifacts under examples/valid/todo-app-pbe-run"],
+      "ciInclusion": "manual-and-pr-informational",
+      "boundaryStatements": {
+        "sourceAuthorityBoundary": "Todo App PBE Run registry inclusion is structure-only validation metadata; canonical .pbe artifacts remain source/reference.",
+        "nonPromotionStatement": "This profile does not promote Todo App PBE Run to parity-backed, pilot-marker-backed, CI-authoritative, or source-authority-bearing status.",
+        "userAcceptanceBoundary": "Validation, aggregate status, CI Evidence, and registry inclusion do not replace user acceptance authority."
+      }
+    }
+  ]
+}

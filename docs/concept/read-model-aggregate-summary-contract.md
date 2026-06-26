@@ -140,10 +140,10 @@ Recommended next work remains bounded:
    failure semantics
 4. use [read-model-validate-all-contract.md](read-model-validate-all-contract.md) as the design-only contract before any
    future `validate --all` implementation decision
-5. use [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md) before creating a
-   registry fixture or parser/planner tests
-6. use [read-model-slice-registry-storage-decision.md](read-model-slice-registry-storage-decision.md) before adding a
-   real registry file
+5. use [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md) before implementing
+   parser/planner tests against the candidate registry fixture
+6. use `examples/read-model-aggregate/read-model-slices.json` only as reviewable metadata until parser consumption is
+   separately approved
 7. decide whether to strengthen Todo App PBE Run beyond structure-only
 8. keep source authority expansion and full promotion as separate explicit decisions
 

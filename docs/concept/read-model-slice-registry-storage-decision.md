@@ -1,6 +1,6 @@
 # Read-Model Slice Registry Storage Decision
 
-Status: read-model-slice-registry-storage-decision / decision-surface / design-only / no-registry-file-yet /
+Status: read-model-slice-registry-storage-decision / decision-surface / candidate-registry-file-created /
 non-enforcing
 
 This document records the storage-location and file-format decision surface for a future read-model slice registry
@@ -11,14 +11,15 @@ It follows:
 - [read-model-validate-all-contract.md](read-model-validate-all-contract.md)
 - [read-model-slice-registry-test-strategy.md](read-model-slice-registry-test-strategy.md)
 
-It does not create the registry file, implement parser or CLI behavior, modify workflows, regenerate generated
-artifacts, dispatch GitHub Actions, create PRs, introduce CI enforcement, expand source authority, perform public-doc
-cleanup, or approve full Graph-source promotion.
+The approved candidate registry file now exists at `examples/read-model-aggregate/read-model-slices.json`. This document
+still does not implement parser or CLI behavior, modify workflows, regenerate generated artifacts, dispatch GitHub
+Actions, create PRs, introduce CI enforcement, expand source authority, perform public-doc cleanup, or approve full
+Graph-source promotion.
 
 ## Decision Context
 
 The validate-all contract defines the future all-slice validation policy. The registry test strategy defines the desired
-fixture shape and tests. Before creating an actual registry file, PBE needs a decision surface for:
+fixture shape and tests. Before and after creating the candidate registry file, PBE needs a decision surface for:
 
 - where the registry should live
 - which file format should be used
@@ -42,7 +43,7 @@ promotion approval.
 
 ## Recommendation
 
-Recommended next storage location if the actual registry file is approved:
+Approved candidate registry location:
 
 ```text
 examples/read-model-aggregate/read-model-slices.json
@@ -70,7 +71,7 @@ metadata, while `generated/` is output Evidence. Mixing them would make mutation
 | TS module | Type-safe and can share constants                                         | Blurs config with implementation; harder to treat as reviewable artifact                       | Not recommended for evidence/config fixture    |
 | Markdown  | Human-friendly                                                            | Poor executable config format; parser would be fragile                                         | Documentation only, not future execution input |
 
-Recommended first format:
+Approved first candidate format:
 
 ```text
 JSON
@@ -86,7 +87,7 @@ Rationale:
 
 ## Artifact Role
 
-The future registry file should be classified as:
+The candidate registry file is classified as:
 
 ```text
 execution metadata / validation target registry / not source authority
@@ -133,12 +134,12 @@ Until parser support is implemented, the existing in-code profile list remains t
 - `todo-search-selected-slice`
 - `todo-app-pbe-run-structure-only`
 
-The future registry file can be introduced first as a candidate fixture and compared against current in-code profiles.
-Parser support can then consume it later.
+The candidate registry file is introduced first as a fixture that can be compared against current in-code profiles.
+Parser support can then consume it later after separate approval.
 
 Recommended compatibility sequence:
 
-1. Create candidate registry file at the approved location.
+1. Create candidate registry file at the approved location. Completed by DEC-071.
 2. Add tests that compare registry entries to current in-code profiles.
 3. Implement parser/normalization against the registry fixture.
 4. Implement command planner using parsed registry data.
@@ -148,36 +149,50 @@ Recommended compatibility sequence:
 
 | Option | Choice                                              | Meaning                                                                         | Tradeoff                                                                                      |
 | ------ | --------------------------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| A      | Create actual registry file next                    | Add `examples/read-model-aggregate/read-model-slices.json` as candidate fixture | Best transparency; adds a real config artifact before parser exists                           |
+| A      | Create actual registry file as candidate fixture    | Add `examples/read-model-aggregate/read-model-slices.json` as candidate fixture | Completed by DEC-071; adds a real config artifact before parser exists                        |
 | B      | Implement parser against in-code fixture first      | Keep fixture data in tests/code before adding a repo artifact                   | Reduces artifact churn, but hides review surface and delays registry-as-artifact verification |
 | C      | Continue hardcoded profiles until more slices exist | Avoid registry work while only two profiles exist                               | Lowest immediate cost, but delays `validate --all` readiness                                  |
 | D      | Defer registry work                                 | Keep current aggregate/report-only path and PR observation only                 | Safe, but no progress toward all-slice validation implementation                              |
+
+## Current Candidate Fixture State
+
+Current candidate fixture:
+
+```text
+examples/read-model-aggregate/read-model-slices.json
+```
+
+The fixture is strict JSON, outside `generated/`, and contains only:
+
+- `todo-search-selected-slice`
+- `todo-app-pbe-run-structure-only`
+
+The candidate file is not consumed by parser, planner, CLI, workflow, or CI behavior yet. Existing in-code profiles
+remain the behavior fallback until a separate parser/planner implementation decision is approved.
 
 ## Recommended Next Action
 
 Recommended next action:
 
 ```text
-Option A: create actual registry file next as a candidate fixture at examples/read-model-aggregate/read-model-slices.json
+Implement parser/planner consumption tests for the candidate registry fixture, without changing command behavior first.
 ```
 
 Conditions for that next step:
 
-- keep the file non-generated
-- use strict JSON
-- mark `registryRole`, `sourceAuthorityBoundary`, and `nonPromotionStatement`
-- include only the two current profiles
-- do not wire the parser or CLI to consume it yet unless separately approved
+- keep the file non-generated and strict JSON
+- keep `registryRole`, `sourceAuthorityBoundary`, and `nonPromotionStatement`
+- continue including only the two current profiles unless a separate profile-addition decision is approved
+- add parser/planner tests before changing `validate --all` or existing commands
 - do not change workflow triggers or CI enforcement
 
-If the next step is considered too soon, Option C is the safest fallback: continue hardcoded profiles until another
-slice is ready.
+If parser/planner tests are considered too soon, Option C remains the safest fallback: continue hardcoded profiles while
+the candidate registry is reviewable metadata.
 
 ## Non-Scope
 
-This decision surface does not:
+This decision surface and candidate fixture do not:
 
-- create the registry file
 - implement parser behavior
 - implement command planning
 - implement `validate --all`
@@ -195,20 +210,20 @@ This decision surface does not:
 
 ## Gate Self-Check
 
-| Gate                           | Result | Notes                                                                                 |
-| ------------------------------ | ------ | ------------------------------------------------------------------------------------- |
-| Decision-Surface Gate          | PASS   | Defines location/format tradeoffs without creating the registry file.                 |
-| Non-Generated Location Gate    | PASS   | Recommends a non-generated path and rejects `generated/` as config storage.           |
-| Format Clarity Gate            | PASS   | Recommends JSON and records JSONC/YAML/TS/Markdown tradeoffs.                         |
-| Artifact Role Gate             | PASS   | Registry is execution metadata, not source authority or promotion.                    |
-| Mutation Boundary Gate         | PASS   | Future validation may not silently rewrite registry/source/manual/pilot artifacts.    |
-| Compatibility Fallback Gate    | PASS   | In-code profiles remain fallback until parser support exists.                         |
-| Non-Implementation Gate        | PASS   | No code, parser, CLI, workflow, registry file, PR, or Actions changes are introduced. |
-| Source Authority Boundary Gate | PASS   | Registry inclusion does not expand source authority or retire tree-native artifacts.  |
-| Todo App Structure-Only Gate   | PASS   | Todo App PBE Run remains structure-only.                                              |
-| User Approval Boundary Gate    | PASS   | Creating or consuming the registry remains a later decision.                          |
+| Gate                           | Result | Notes                                                                                |
+| ------------------------------ | ------ | ------------------------------------------------------------------------------------ |
+| Decision-Surface Gate          | PASS   | Defines location/format tradeoffs and records the approved candidate file location.  |
+| Non-Generated Location Gate    | PASS   | Recommends a non-generated path and rejects `generated/` as config storage.          |
+| Format Clarity Gate            | PASS   | Uses strict JSON for the candidate and records JSONC/YAML/TS/Markdown tradeoffs.     |
+| Artifact Role Gate             | PASS   | Registry is execution metadata, not source authority or promotion.                   |
+| Mutation Boundary Gate         | PASS   | Future validation may not silently rewrite registry/source/manual/pilot artifacts.   |
+| Compatibility Fallback Gate    | PASS   | In-code profiles remain fallback until parser support exists.                        |
+| Non-Implementation Gate        | PASS   | No code, parser, CLI, workflow, PR, or Actions changes are introduced.               |
+| Source Authority Boundary Gate | PASS   | Registry inclusion does not expand source authority or retire tree-native artifacts. |
+| Todo App Structure-Only Gate   | PASS   | Todo App PBE Run remains structure-only.                                             |
+| User Approval Boundary Gate    | PASS   | Parser/CLI consumption remains a later decision.                                     |
 
 ## Final Statement
 
-This document recommends a future registry location and JSON format, but it does not create the registry file and does
-not implement any parser, CLI, workflow, enforcement, source-authority, promotion, or cleanup behavior.
+This document records the selected candidate registry location and strict JSON format. The candidate registry file is
+now present, but no parser, CLI, workflow, enforcement, source-authority, promotion, or cleanup behavior consumes it.
