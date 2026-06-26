@@ -528,6 +528,11 @@ enrollment in local positive `validate --all` only. Todo App remains `structure-
 not pilot-marker-backed, not source-authority-bearing, and not promoted. Workflow behavior, CI review, repo-wide
 promotion, tree retirement, enforcement, invalid-fixture CI, and required checks remain future decisions.
 
+DEC-115 does not supersede DEC-097 through DEC-114. It updates the main README to describe the current mixed
+Graph-source transition state: Todo Search selected scope is limited Graph-source promoted and graph-source-backed,
+tree-native artifacts remain source/fallback as applicable, Todo App remains structure-only/non-authority, and
+repo-wide promotion, tree retirement, enforcement, and required checks remain incomplete.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

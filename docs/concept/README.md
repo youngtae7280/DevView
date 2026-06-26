@@ -498,6 +498,11 @@ beyond structure-only, and deferral. The bounded non-authority enrollment is now
 validate-all reports `candidate-projection-contract-pass` while preserving `structure-only` and no source-authority
 promotion. Manual and PR CI review of this new status remains next.
 
+The main README now includes a short current-state note for the mixed Graph-source transition: Todo Search selected scope
+is limited promoted and graph-source-backed, tree-native artifacts remain source/fallback as applicable, Todo App remains
+structure-only/non-authority, and repo-wide promotion, tree retirement, enforcement, and required checks are still
+incomplete.
+
 The public-doc cleanup or waiver decision package is now recorded:
 
 - [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md)
