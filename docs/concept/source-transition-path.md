@@ -89,6 +89,10 @@ The current read-model Evidence stack is packaged in
 future review input surface only. It does not move the project beyond `current tree-native source`, does not approve
 `graph-source promoted`, and does not change the source authority matrix below.
 
+One remaining caveat is public-doc cleanup or explicit waiver. The decision package is recorded in
+[public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md), but no cleanup or waiver
+is implemented by this transition path.
+
 ## Source Authority Matrix
 
 This matrix is conceptual. It does not define files, generators, validators, or migration behavior.

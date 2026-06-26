@@ -410,6 +410,14 @@ manual and PR CI-backed Evidence, local negative fixture coverage, and path-filt
 recommended status is `promotion-review-inputs-ready-with-caveats`; it is not promotion approval, source authority
 expansion, enforcement approval, public-doc cleanup, tree-native retirement, or user acceptance.
 
+The public-doc cleanup or waiver decision package is now recorded:
+
+- [public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md)
+
+The package inventories public/user-facing docs for task-card authority, source-authority, compatibility-view, and
+generated-Evidence wording risks. It recommends preparing cleanup before actual full Graph-source promotion unless the
+user explicitly approves a visible waiver. It does not implement cleanup or approve a waiver.
+
 The future all-slice read-model validation contract is now recorded:
 
 - [read-model-validate-all-contract.md](read-model-validate-all-contract.md)

@@ -46,6 +46,10 @@ Evidence stack as `promotion-review-inputs-ready-with-caveats`. That status is n
 authority change. Any actual Graph-source promotion still needs explicit rollback/fallback decisions, compatibility
 retirement conditions, and user approval before source authority can change.
 
+[public-doc-cleanup-waiver-decision-package.md](public-doc-cleanup-waiver-decision-package.md) records the cleanup or
+explicit waiver decision surface for public compatibility wording. Deferring cleanup without an explicit waiver would
+leave a compatibility caveat unresolved for broader promotion review.
+
 After any future promotion, these boundaries must still hold:
 
 - only the user can accept product results
