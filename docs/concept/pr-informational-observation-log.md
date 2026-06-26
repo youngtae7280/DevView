@@ -23,6 +23,8 @@ Evidence without changing workflow behavior.
 | Target before refinement  | At least 3 real PR informational runs or 1 week of normal PR flow, unless immediate re-review is triggered. |
 | Enforcement / authority   | Not approved. PR Evidence is informational only and does not change source authority.                       |
 
+Temporary smoke note: validate-all PR informational workflow verification branch only; do not merge this note.
+
 ## Baseline Entries
 
 ### Baseline Entry 1: Manual Dispatch Run
