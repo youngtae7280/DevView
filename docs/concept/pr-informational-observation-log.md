@@ -323,6 +323,8 @@ Record changed paths by category instead of only listing filenames:
 | All-slice validation state                | Local and CI validate-all are implemented as non-enforcing Evidence only.                                |
 | Registry test strategy state              | Implemented for registry parser/planner tests; invalid fixtures remain local-only.                       |
 
+Temporary smoke note: candidate-observation PR artifact capture review is in progress; this branch must not be merged.
+
 ## Decision Thresholds
 
 ### Immediate Re-Review Triggers
