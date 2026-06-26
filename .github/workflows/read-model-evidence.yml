@@ -28,6 +28,7 @@ jobs:
       PBE_VALIDATE_ALL_OUTPUT: examples/read-model-aggregate/generated/read-model-validate-all-output.json
       PBE_CANDIDATE_OBSERVATION_OUTPUT: examples/read-model-aggregate/generated/read-model-candidate-observation-output.json
       PBE_AGGREGATE_SLICES: examples/adoption/todo-search-slice,examples/valid/todo-app-pbe-run
+      PBE_E2E_SMOKE_OUTPUT: examples/read-model-aggregate/generated/read-model-e2e-smoke-output.json
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -52,6 +53,11 @@ jobs:
       - name: Observe read-model candidate projections
         run: |
           node dist/cli/index.js graph read-model observe-candidates --json 2>&1 | tee "$PBE_CANDIDATE_OBSERVATION_OUTPUT"
+
+      - name: Read-model E2E smoke
+        run: |
+          mkdir -p "$PBE_AGGREGATE_DIR"
+          node scripts/read-model-e2e-smoke.js --output "$PBE_E2E_SMOKE_OUTPUT"
 
       - name: Focused read-model Evidence tests
         run: npx vitest run cli/src/__tests__/read-model-evidence.test.ts
@@ -79,6 +85,7 @@ jobs:
           const aggregateDir = process.env.PBE_AGGREGATE_DIR
           const validateAllOutputPath = process.env.PBE_VALIDATE_ALL_OUTPUT
           const candidateObservationOutputPath = process.env.PBE_CANDIDATE_OBSERVATION_OUTPUT
+          const e2eSmokeOutputPath = process.env.PBE_E2E_SMOKE_OUTPUT
           const aggregateSlices = (process.env.PBE_AGGREGATE_SLICES || '')
             .split(',')
             .map((slice) => slice.trim())
@@ -95,6 +102,7 @@ jobs:
           const aggregateSummary = readJson(path.join(aggregateDir, 'read-model-aggregate-summary.json'))
           const validateAllOutput = readJson(validateAllOutputPath)
           const candidateObservationOutput = readJson(candidateObservationOutputPath)
+          const e2eSmokeOutput = readJson(e2eSmokeOutputPath)
           const eventName = process.env.GITHUB_EVENT_NAME || 'workflow_dispatch'
           const eventPayload = readJson(process.env.GITHUB_EVENT_PATH || '') || {}
           const pullRequest = eventPayload.pull_request || null
@@ -109,7 +117,10 @@ jobs:
           const projectionContractStatus = validateAllOutput?.projectionContractStatus || []
           const todoSearchProjectionContract =
             projectionContractStatus.find((entry) => entry.profileId === 'todo-search-selected-slice') || null
+          const todoAppProjectionContract =
+            projectionContractStatus.find((entry) => entry.profileId === 'todo-app-pbe-run-structure-only') || null
           const todoSearchProjectionPass = todoSearchProjectionContract?.status === 'projection-contract-pass'
+          const todoAppProjectionPass = todoAppProjectionContract?.status === 'candidate-projection-contract-pass'
           const candidateObservationStatus =
             candidateObservationOutput?.candidateObservationStatus || candidateObservationOutput?.status || 'missing'
           const todoAppCandidateObservation =
@@ -119,13 +130,17 @@ jobs:
           const todoAppCandidateObservationPass =
             candidateObservationStatus === 'candidate-observation-pass' &&
             todoAppCandidateObservation?.status === 'candidate-projection-contract-pass'
+          const e2eSmokeStatus = e2eSmokeOutput?.status || 'missing'
+          const e2eSmokePass = e2eSmokeStatus === 'e2e-smoke-pass'
           const status =
             todoSearchPass &&
             todoAppPass &&
             aggregatePass &&
             validateAllStatus === 'aggregate-pass' &&
             todoSearchProjectionPass &&
-            todoAppCandidateObservationPass
+            todoAppProjectionPass &&
+            todoAppCandidateObservationPass &&
+            e2eSmokePass
               ? 'ci-evidence-pass'
               : 'ci-evidence-blocked'
 
@@ -153,6 +168,7 @@ jobs:
             includedSlices: aggregateSlices,
             validateAllStatus,
             candidateObservationStatus,
+            e2eSmokeStatus,
             generatedAt: new Date().toISOString(),
             status,
             todoSearch: {
@@ -173,12 +189,14 @@ jobs:
               sourceSlice: todoAppSlice,
               validatorStatus: todoAppValidation?.status || 'missing',
               parityStatus: todoAppValidation?.sliceValidationContract?.requirements?.parity?.status || 'not-required',
+              projectionContractStatus: todoAppProjectionContract?.status || 'missing',
               candidateObservationStatus: todoAppCandidateObservation?.status || 'missing',
               candidateProjection: {
                 graphSourceCandidate: `${todoAppSlice}/graph-source-candidate.json`,
                 projection: `${todoAppGeneratedDir}/graph-source-candidate-read-model-projection.json`,
-                status: todoAppCandidateObservation?.status || 'missing',
-                observationMode: 'candidate-only',
+                status: todoAppProjectionContract?.status || 'missing',
+                observationStatus: todoAppCandidateObservation?.status || 'missing',
+                contractMode: 'structure-only-candidate',
               },
               checkCount: todoAppValidation?.summary?.checkCount ?? null,
               nodeCount: todoAppValidation?.sliceValidationContract?.expectedCounts?.nodes ?? null,
@@ -198,13 +216,19 @@ jobs:
             parityStatus: todoSearchParity?.summary?.status || 'missing',
             validateAllStatus,
             candidateObservationStatus,
+            e2eSmokeStatus,
+            e2eSmoke: {
+              status: e2eSmokeStatus,
+              artifactPath: e2eSmokeOutputPath,
+              summary: e2eSmokeOutput || null,
+            },
             candidateObservation: {
               status: candidateObservationStatus,
               sourceMode: 'candidate-observation-only',
               observedCandidates: candidateObservationOutput?.observedCandidates || [],
               artifactPath: candidateObservationOutputPath,
               positiveValidateAllBoundary:
-                'Candidate observation is captured as separate CI artifact metadata and does not enroll candidates in the positive validate-all registry, aggregate status, source authority, or promotion scope.',
+                'Candidate observation is captured as separate CI artifact metadata. The Todo App candidate projection is also checked by positive validate-all only as non-authority structure-only Evidence.',
             },
             projectionContractStatus,
             aggregateStatus: aggregateSummary?.status || 'missing',
@@ -242,6 +266,7 @@ jobs:
               `${aggregateDir}/read-model-aggregate-summary.md`,
               validateAllOutputPath,
               candidateObservationOutputPath,
+              e2eSmokeOutputPath,
             ],
             sourceAuthorityBoundary:
               'CI-backed Evidence is Evidence only for declared read-model reports, aggregate summary, and separate candidate-observation metadata. Todo Search remains the only scoped pilot; Todo App PBE Run remains structure-only. This workflow does not expand source authority.',
@@ -284,7 +309,9 @@ jobs:
           const todoAppStatus = manifest?.todoAppPbeRun?.validatorStatus || 'missing'
           const aggregateStatus = manifest?.aggregate?.status || 'missing'
           const validateAllStatus = manifest?.validateAllStatus || 'missing'
+          const e2eSmokeStatus = manifest?.e2eSmokeStatus || 'missing'
           const todoSearchProjection = manifest?.todoSearch?.projectionContractStatus || 'missing'
+          const todoAppProjection = manifest?.todoAppPbeRun?.projectionContractStatus || 'missing'
           const candidateObservationStatus = manifest?.candidateObservationStatus || 'missing'
           const todoAppCandidateObservation = manifest?.todoAppPbeRun?.candidateObservationStatus || 'missing'
           const includedSlices = manifest?.includedSlices || []
@@ -300,7 +327,9 @@ jobs:
             `- Todo Search parity status: \`${todoSearchParity}\``,
             `- Todo App PBE Run validator status: \`${todoAppStatus}\``,
             `- Validate-all status: \`${validateAllStatus}\``,
+            `- E2E smoke status: \`${e2eSmokeStatus}\``,
             `- Todo Search projection contract status: \`${todoSearchProjection}\``,
+            `- Todo App positive projection contract status: \`${todoAppProjection}\``,
             `- Candidate observation status: \`${candidateObservationStatus}\``,
             `- Todo App candidate projection status: \`${todoAppCandidateObservation}\``,
             `- Aggregate status: \`${aggregateStatus}\``,
@@ -346,3 +375,4 @@ jobs:
             examples/read-model-aggregate/generated/read-model-aggregate-summary.md
             examples/read-model-aggregate/generated/read-model-validate-all-output.json
             examples/read-model-aggregate/generated/read-model-candidate-observation-output.json
+            examples/read-model-aggregate/generated/read-model-e2e-smoke-output.json

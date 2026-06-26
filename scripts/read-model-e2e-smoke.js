@@ -1,4 +1,4 @@
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -7,6 +7,8 @@ import { spawnSync } from 'node:child_process'
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const cliPath = join(repoRoot, 'dist/cli/index.js')
 const tempRoot = mkdtempSync(join(tmpdir(), 'pbe-read-model-e2e-'))
+const outputArgIndex = process.argv.indexOf('--output')
+const outputPath = outputArgIndex >= 0 ? process.argv[outputArgIndex + 1] : null
 
 function copyPath(relativePath) {
   const from = join(repoRoot, relativePath)
@@ -176,45 +178,46 @@ try {
     throw new Error('Candidate observation boundary must remain separate report-only command')
   }
 
-  console.log(
-    JSON.stringify(
-      {
-        ok: true,
-        command: 'test:read-model:e2e',
-        status: 'e2e-smoke-pass',
-        tempWorkspaceRemovedAfterRun: true,
-        todoSearch: {
-          sourceMode: todoSearchGenerated.metadata.readModelSourceMode,
-          nodes: todoSearchGenerate.nodeCount,
-          edges: todoSearchGenerate.edgeCount,
-          coreViews: todoSearchGenerated.coreViewCoverage.length,
-          parity: todoSearchCompare.status,
-          validation: todoSearchValidate.status,
-          projection: todoSearchProjection.status,
-        },
-        todoApp: {
-          policyLevel: 'structure-only',
-          nodes: todoAppGenerate.nodeCount,
-          edges: todoAppGenerate.edgeCount,
-          coreViews: todoAppGenerated.coreViewCoverage.length,
-          validation: todoAppValidate.status,
-          projection: todoAppProjection.status,
-          projectionMode: todoAppProjection.contractMode,
-        },
-        validateAll: {
-          status: validateAll.status,
-          aggregateStatus: validateAll.aggregateStatus,
-          sliceCount: validateAll.sliceCount,
-        },
-        candidateObservation: {
-          status: candidateObservation.status,
-          separated: true,
-        },
-      },
-      null,
-      2,
-    ),
-  )
+  const payload = {
+    ok: true,
+    command: 'test:read-model:e2e',
+    status: 'e2e-smoke-pass',
+    tempWorkspaceRemovedAfterRun: true,
+    todoSearch: {
+      sourceMode: todoSearchGenerated.metadata.readModelSourceMode,
+      nodes: todoSearchGenerate.nodeCount,
+      edges: todoSearchGenerate.edgeCount,
+      coreViews: todoSearchGenerated.coreViewCoverage.length,
+      parity: todoSearchCompare.status,
+      validation: todoSearchValidate.status,
+      projection: todoSearchProjection.status,
+    },
+    todoApp: {
+      policyLevel: 'structure-only',
+      nodes: todoAppGenerate.nodeCount,
+      edges: todoAppGenerate.edgeCount,
+      coreViews: todoAppGenerated.coreViewCoverage.length,
+      validation: todoAppValidate.status,
+      projection: todoAppProjection.status,
+      projectionMode: todoAppProjection.contractMode,
+    },
+    validateAll: {
+      status: validateAll.status,
+      aggregateStatus: validateAll.aggregateStatus,
+      sliceCount: validateAll.sliceCount,
+    },
+    candidateObservation: {
+      status: candidateObservation.status,
+      separated: true,
+    },
+  }
+
+  if (outputPath) {
+    mkdirSync(dirname(resolve(outputPath)), { recursive: true })
+    writeFileSync(resolve(outputPath), `${JSON.stringify(payload, null, 2)}\n`)
+  }
+
+  console.log(JSON.stringify(payload, null, 2))
 } finally {
   rmSync(tempRoot, { recursive: true, force: true })
 }

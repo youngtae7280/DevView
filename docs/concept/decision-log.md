@@ -549,6 +549,11 @@ generate/compare/validate/projection, Todo App structure-only generate/validate/
 aggregate pass, and separate candidate observation without CI enforcement, required checks, repo-wide promotion, tree
 retirement, or Todo App source-authority promotion.
 
+DEC-119 does not supersede DEC-097 through DEC-118. It integrates the E2E smoke into the non-enforcing read-model
+Evidence workflow as observation metadata and uploads `read-model-e2e-smoke-output.json`. The integration records
+`e2eSmokeStatus` in the CI manifest and Step Summary without adding required checks, enforcement, repo-wide promotion,
+tree retirement, or Todo App source-authority promotion.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

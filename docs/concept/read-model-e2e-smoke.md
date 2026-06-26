@@ -1,12 +1,15 @@
 # Read-Model E2E Smoke
 
-Status: local-smoke-implemented / non-enforcing / no-promotion-change
+Status: local-smoke-implemented / ci-observation-integrated / non-enforcing / no-promotion-change
 
 ## Purpose
 
 `npm run test:read-model:e2e` is a local dogfood smoke for the current mixed Graph-source transition. It copies the
 read-model examples into a temporary workspace, runs the CLI against that workspace, and removes the temporary files after
 the run so the repository's generated artifacts do not churn.
+
+The non-enforcing `PBE Read-Model Evidence` workflow now also runs the smoke and writes
+`examples/read-model-aggregate/generated/read-model-e2e-smoke-output.json` as an uploaded observation artifact.
 
 The smoke checks:
 
