@@ -100,9 +100,9 @@ export interface GraphSourceArtifact {
 
 export interface StructureOnlyGraphSourceCandidateArtifact {
   schemaVersion: 1
-  artifactRole: 'candidate-graph-source'
-  status: 'candidate-not-promoted'
-  candidateScope: 'todo-app-pbe-run-structure-only'
+  artifactRole: 'structure-only-graph-source'
+  status: 'confirmed-graph-source-backed'
+  graphSourceScope: 'todo-app-pbe-run-structure-only'
   sourceSlice: string
   sourceProfile: string
   policyLevel: 'structure-only'
@@ -111,7 +111,7 @@ export interface StructureOnlyGraphSourceCandidateArtifact {
   fallbackReferences: string[]
   retainedCompatibilityArtifacts: string[]
   sourceRecords: GraphSourceArtifact['sourceRecords']
-  candidateBoundaries: {
+  graphSourceBoundaries: {
     nonPromotionStatement: string
     userAcceptanceBoundary: string
     validateAllBoundary: string
@@ -126,11 +126,11 @@ export interface GraphSourceProjectionResult {
 export interface StructureOnlyGraphSourceCandidateProjectionArtifact
   extends Pick<GeneratedReadModel, 'taxonomy' | 'nodes' | 'edges' | 'coreViewCoverage'> {
   metadata: {
-    artifactRole: 'candidate_graph_source_read_model_projection'
+    artifactRole: 'structure_only_graph_source_read_model_projection'
     sourceArtifact: string
     sourceSlice: string
     sourceProfile: string
-    candidateScope: 'todo-app-pbe-run-structure-only'
+    graphSourceScope: 'todo-app-pbe-run-structure-only'
     policyLevel: 'structure-only'
     projectionBoundary: string
   }
@@ -343,9 +343,9 @@ interface CandidateObservationResult {
   observedCandidates: Array<{
     profileId: string
     sourceSlice: string
-    graphSourceCandidate: string
+    graphSource: string
     projection: string
-    status: 'candidate-projection-contract-pass' | 'candidate-projection-contract-blocked'
+    status: 'projection-contract-pass' | 'projection-contract-blocked'
     nodeCount: number
     edgeCount: number
     coreViewCount: number
@@ -430,7 +430,6 @@ export interface SliceReadModelConfig {
     compatibilityControlNode?: string
     compatibilityEvidenceExceptions?: string
     graphSource?: string
-    graphSourceCandidate?: string
     workGraph?: string
     sourceOfTruthMatrix?: string
     evidenceOutput?: string
@@ -640,7 +639,7 @@ export const todoAppPbeRunStructureOnlyProfile: SliceReadModelConfig = {
     sourceOfTruthMatrix: '.pbe/blueprint/source-of-truth-matrix.md',
     evidenceOutput: '.pbe/evidence/test-results/todo-add.txt',
     pbeState: '.pbe/blueprint/pbe-state.json',
-    graphSourceCandidate: 'graph-source-candidate.json',
+    graphSource: 'graph-source.json',
   },
   sourceArtifactRelativePaths: [
     '.pbe/tree/product-tree.json',
@@ -657,7 +656,7 @@ export const todoAppPbeRunStructureOnlyProfile: SliceReadModelConfig = {
     '.pbe/blueprint/source-of-truth-matrix.md',
     '.pbe/evidence/test-results/todo-add.txt',
     '.pbe/blueprint/pbe-state.json',
-    'graph-source-candidate.json',
+    'graph-source.json',
   ],
   retainedWarnings: [
     {
@@ -786,28 +785,26 @@ export async function loadGraphSourceArtifact(
 
 export async function loadStructureOnlyGraphSourceCandidateArtifact(
   root: string,
-  graphSourcePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source-candidate.json`,
+  graphSourcePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source.json`,
 ): Promise<StructureOnlyGraphSourceCandidateArtifact> {
   const absoluteGraphSourcePath = path.resolve(root, graphSourcePath)
   const parsed = await readJsonSafe<unknown>(absoluteGraphSourcePath)
   if (!parsed.ok) {
-    throw new Error(`Unable to read structure-only graph source candidate at ${graphSourcePath}: ${parsed.error}`)
+    throw new Error(`Unable to read structure-only graph source at ${graphSourcePath}: ${parsed.error}`)
   }
   return normalizeStructureOnlyGraphSourceCandidateArtifact(parsed.value, graphSourcePath)
 }
 
 export async function loadStructureOnlyGraphSourceCandidateProjectionArtifact(
   root: string,
-  projectionPath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/generated/graph-source-candidate-read-model-projection.json`,
-  graphSourcePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source-candidate.json`,
+  projectionPath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/generated/graph-source-read-model-projection.json`,
+  graphSourcePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source.json`,
 ): Promise<StructureOnlyGraphSourceCandidateProjectionArtifact> {
   const graphSource = await loadStructureOnlyGraphSourceCandidateArtifact(root, graphSourcePath)
   const absoluteProjectionPath = path.resolve(root, projectionPath)
   const parsed = await readJsonSafe<unknown>(absoluteProjectionPath)
   if (!parsed.ok) {
-    throw new Error(
-      `Unable to read structure-only graph source candidate projection at ${projectionPath}: ${parsed.error}`,
-    )
+    throw new Error(`Unable to read structure-only graph source projection at ${projectionPath}: ${parsed.error}`)
   }
   return normalizeStructureOnlyGraphSourceCandidateProjectionArtifact(
     parsed.value,
@@ -832,8 +829,8 @@ export async function loadGraphSourceProjectionArtifact(
 }
 
 export async function observeReadModelCandidateProjections(root: string): Promise<CandidateObservationResult> {
-  const graphSourceCandidatePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source-candidate.json`
-  const projectionPath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/generated/graph-source-candidate-read-model-projection.json`
+  const graphSourceCandidatePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source.json`
+  const projectionPath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/generated/graph-source-read-model-projection.json`
   try {
     const projection = await loadStructureOnlyGraphSourceCandidateProjectionArtifact(
       root,
@@ -846,9 +843,9 @@ export async function observeReadModelCandidateProjections(root: string): Promis
         {
           profileId: projection.metadata.sourceProfile,
           sourceSlice: projection.metadata.sourceSlice,
-          graphSourceCandidate: graphSourceCandidatePath,
+          graphSource: graphSourceCandidatePath,
           projection: projectionPath,
-          status: 'candidate-projection-contract-pass',
+          status: 'projection-contract-pass',
           nodeCount: projection.nodes.length,
           edgeCount: projection.edges.length,
           coreViewCount: projection.coreViewCoverage.length,
@@ -859,11 +856,11 @@ export async function observeReadModelCandidateProjections(root: string): Promis
         },
       ],
       sourceAuthorityBoundary:
-        'Candidate observation checks structure-only graph-source candidate projections only. It does not create source authority.',
+        'Graph-source observation checks confirmed structure-only graph-source projections only. It does not create enforcement or promotion beyond structure-only.',
       nonPromotionStatement:
-        'Candidate observation pass does not promote Todo App PBE Run, approve repo-wide Graph-source promotion, or replace user acceptance.',
+        'Graph-source observation pass does not promote Todo App PBE Run beyond structure-only, approve repo-wide Graph-source promotion, or replace user acceptance.',
       validateAllBoundary:
-        'Candidate observation remains a separate report-only command. The Todo App candidate projection may also be checked by positive validate-all only as non-authority structure-only Evidence.',
+        'Graph-source observation remains a separate report-only command. The Todo App graph-source projection is also checked by positive validate-all as confirmed structure-only Evidence.',
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
@@ -873,26 +870,26 @@ export async function observeReadModelCandidateProjections(root: string): Promis
         {
           profileId: todoAppPbeRunStructureOnlyProfile.profileId,
           sourceSlice: todoAppPbeRunStructureOnlyProfile.supportedSlice,
-          graphSourceCandidate: graphSourceCandidatePath,
+          graphSource: graphSourceCandidatePath,
           projection: projectionPath,
-          status: 'candidate-projection-contract-blocked',
+          status: 'projection-contract-blocked',
           nodeCount: 0,
           edgeCount: 0,
           coreViewCount: 0,
           policyLevel: 'structure-only',
-          nonPromotionStatement: 'Blocked candidate observation does not imply promotion.',
-          sourceAuthorityBoundary: 'Blocked candidate observation does not create source authority.',
+          nonPromotionStatement: 'Blocked graph-source observation does not imply promotion beyond structure-only.',
+          sourceAuthorityBoundary: 'Blocked graph-source observation does not create enforcement or user acceptance.',
           validateAllBoundary:
-            'Blocked candidate observation remains report-only; positive validate-all may also block on the same non-authority structure-only projection contract.',
+            'Blocked graph-source observation remains report-only; positive validate-all may also block on the same structure-only projection contract.',
           error: message,
         },
       ],
       sourceAuthorityBoundary:
-        'Candidate observation checks structure-only graph-source candidate projections only. It does not create source authority.',
+        'Graph-source observation checks confirmed structure-only graph-source projections only. It does not create enforcement or promotion beyond structure-only.',
       nonPromotionStatement:
-        'Candidate observation block does not promote Todo App PBE Run, approve repo-wide Graph-source promotion, or replace user acceptance.',
+        'Graph-source observation block does not promote Todo App PBE Run beyond structure-only, approve repo-wide Graph-source promotion, or replace user acceptance.',
       validateAllBoundary:
-        'Candidate observation remains a separate report-only command. The Todo App candidate projection may also be checked by positive validate-all only as non-authority structure-only Evidence.',
+        'Graph-source observation remains a separate report-only command. The Todo App graph-source projection is also checked by positive validate-all as confirmed structure-only Evidence.',
     }
   }
 }
@@ -934,17 +931,17 @@ export function projectGraphSourceReadModel(
 
 export function projectStructureOnlyGraphSourceCandidateReadModel(
   graphSource: StructureOnlyGraphSourceCandidateArtifact,
-  graphSourcePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source-candidate.json`,
+  graphSourcePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source.json`,
 ): StructureOnlyGraphSourceCandidateProjectionResult {
   return {
     graphSourcePath: normalizePath(graphSourcePath),
     projection: {
       metadata: {
-        artifactRole: 'candidate_graph_source_read_model_projection',
+        artifactRole: 'structure_only_graph_source_read_model_projection',
         sourceArtifact: normalizePath(graphSourcePath),
         sourceSlice: graphSource.sourceSlice,
         sourceProfile: graphSource.sourceProfile,
-        candidateScope: graphSource.candidateScope,
+        graphSourceScope: graphSource.graphSourceScope,
         policyLevel: 'structure-only',
         projectionBoundary: graphSource.projectionBoundary,
       },
@@ -961,9 +958,9 @@ export function projectStructureOnlyGraphSourceCandidateReadModel(
       fallbackReferences: cloneJson(graphSource.fallbackReferences),
       retainedCompatibilityArtifacts: cloneJson(graphSource.retainedCompatibilityArtifacts),
       sourceAuthorityBoundary: graphSource.sourceAuthorityBoundary,
-      nonPromotionStatement: graphSource.candidateBoundaries.nonPromotionStatement,
-      userAcceptanceBoundary: graphSource.candidateBoundaries.userAcceptanceBoundary,
-      validateAllBoundary: graphSource.candidateBoundaries.validateAllBoundary,
+      nonPromotionStatement: graphSource.graphSourceBoundaries.nonPromotionStatement,
+      userAcceptanceBoundary: graphSource.graphSourceBoundaries.userAcceptanceBoundary,
+      validateAllBoundary: graphSource.graphSourceBoundaries.validateAllBoundary,
     },
   }
 }
@@ -981,7 +978,7 @@ export async function projectGraphSourceReadModelToFile(
   }
   const source = asRecord(parsed.value, 'graphSource', [])
   const result =
-    source.artifactRole === 'candidate-graph-source'
+    source.artifactRole === 'structure-only-graph-source'
       ? projectStructureOnlyGraphSourceCandidateReadModel(
           normalizeStructureOnlyGraphSourceCandidateArtifact(parsed.value, normalizedGraphSourcePath),
           normalizedGraphSourcePath,
@@ -991,8 +988,8 @@ export async function projectGraphSourceReadModelToFile(
           normalizedGraphSourcePath,
         )
   const defaultOutput =
-    source.artifactRole === 'candidate-graph-source'
-      ? `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/generated/graph-source-candidate-read-model-projection.json`
+    source.artifactRole === 'structure-only-graph-source'
+      ? `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/generated/graph-source-read-model-projection.json`
       : `${todoSearchReadModelProfile.supportedSlice}/generated/graph-source-read-model-projection.json`
   const projectionJsonPath = path.resolve(root, outputPath || defaultOutput)
   await writeFormattedJson(projectionJsonPath, result.projection)
@@ -1143,146 +1140,122 @@ export function normalizeGraphSourceProjectionArtifact(
 export function normalizeStructureOnlyGraphSourceCandidateProjectionArtifact(
   value: unknown,
   graphSource: StructureOnlyGraphSourceCandidateArtifact,
-  projectionPath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/generated/graph-source-candidate-read-model-projection.json`,
-  graphSourcePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source-candidate.json`,
+  projectionPath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/generated/graph-source-read-model-projection.json`,
+  graphSourcePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source.json`,
 ): StructureOnlyGraphSourceCandidateProjectionArtifact {
   const errors: string[] = []
-  const projection = asRecord(value, 'structureOnlyGraphSourceCandidateProjection', errors)
-  const metadata = asRecord(projection.metadata, 'structureOnlyGraphSourceCandidateProjection.metadata', errors)
+  const projection = asRecord(value, 'structureOnlyGraphSourceProjection', errors)
+  const metadata = asRecord(projection.metadata, 'structureOnlyGraphSourceProjection.metadata', errors)
   const expectedProjection = projectStructureOnlyGraphSourceCandidateReadModel(graphSource, graphSourcePath).projection
-  const nodes = requiredRecordArray<GraphNode>(
-    projection,
-    'nodes',
-    errors,
-    'structureOnlyGraphSourceCandidateProjection',
-  )
-  const edges = requiredRecordArray<GraphEdge>(
-    projection,
-    'edges',
-    errors,
-    'structureOnlyGraphSourceCandidateProjection',
-  )
+  const nodes = requiredRecordArray<GraphNode>(projection, 'nodes', errors, 'structureOnlyGraphSourceProjection')
+  const edges = requiredRecordArray<GraphEdge>(projection, 'edges', errors, 'structureOnlyGraphSourceProjection')
   const coreViewCoverage = requiredRecordArray<CoreViewCoverage>(
     projection,
     'coreViewCoverage',
     errors,
-    'structureOnlyGraphSourceCandidateProjection',
+    'structureOnlyGraphSourceProjection',
   )
   const fallbackReferences = requiredStringArray(
     projection,
     'fallbackReferences',
     errors,
-    'structureOnlyGraphSourceCandidateProjection',
+    'structureOnlyGraphSourceProjection',
   )
   const retainedCompatibilityArtifacts = requiredStringArray(
     projection,
     'retainedCompatibilityArtifacts',
     errors,
-    'structureOnlyGraphSourceCandidateProjection',
+    'structureOnlyGraphSourceProjection',
   )
   const sourceAuthorityBoundary = requiredString(
     projection,
     'sourceAuthorityBoundary',
     errors,
-    'structureOnlyGraphSourceCandidateProjection',
+    'structureOnlyGraphSourceProjection',
   )
   const nonPromotionStatement = requiredString(
     projection,
     'nonPromotionStatement',
     errors,
-    'structureOnlyGraphSourceCandidateProjection',
+    'structureOnlyGraphSourceProjection',
   )
   const userAcceptanceBoundary = requiredString(
     projection,
     'userAcceptanceBoundary',
     errors,
-    'structureOnlyGraphSourceCandidateProjection',
+    'structureOnlyGraphSourceProjection',
   )
   const validateAllBoundary = requiredString(
     projection,
     'validateAllBoundary',
     errors,
-    'structureOnlyGraphSourceCandidateProjection',
+    'structureOnlyGraphSourceProjection',
   )
 
-  if (metadata.artifactRole !== 'candidate_graph_source_read_model_projection') {
+  if (metadata.artifactRole !== 'structure_only_graph_source_read_model_projection') {
     errors.push(
-      'structureOnlyGraphSourceCandidateProjection.metadata.artifactRole must be candidate_graph_source_read_model_projection',
+      'structureOnlyGraphSourceProjection.metadata.artifactRole must be structure_only_graph_source_read_model_projection',
     )
   }
   if (normalizePath(String(metadata.sourceArtifact || '')) !== normalizePath(graphSourcePath)) {
-    errors.push(
-      `structureOnlyGraphSourceCandidateProjection.metadata.sourceArtifact must be ${normalizePath(graphSourcePath)}`,
-    )
+    errors.push(`structureOnlyGraphSourceProjection.metadata.sourceArtifact must be ${normalizePath(graphSourcePath)}`)
   }
   if (metadata.sourceProfile !== graphSource.sourceProfile) {
-    errors.push(
-      `structureOnlyGraphSourceCandidateProjection.metadata.sourceProfile must be ${graphSource.sourceProfile}`,
-    )
+    errors.push(`structureOnlyGraphSourceProjection.metadata.sourceProfile must be ${graphSource.sourceProfile}`)
   }
-  if (metadata.candidateScope !== graphSource.candidateScope) {
-    errors.push(
-      `structureOnlyGraphSourceCandidateProjection.metadata.candidateScope must be ${graphSource.candidateScope}`,
-    )
+  if (metadata.graphSourceScope !== graphSource.graphSourceScope) {
+    errors.push(`structureOnlyGraphSourceProjection.metadata.graphSourceScope must be ${graphSource.graphSourceScope}`)
   }
   if (metadata.policyLevel !== 'structure-only') {
-    errors.push('structureOnlyGraphSourceCandidateProjection.metadata.policyLevel must be structure-only')
+    errors.push('structureOnlyGraphSourceProjection.metadata.policyLevel must be structure-only')
   }
   if (nodes.length !== todoAppPbeRunStructureOnlyProfile.expectedCounts.nodes) {
     errors.push(
-      `structureOnlyGraphSourceCandidateProjection.nodes must contain ${todoAppPbeRunStructureOnlyProfile.expectedCounts.nodes} nodes`,
+      `structureOnlyGraphSourceProjection.nodes must contain ${todoAppPbeRunStructureOnlyProfile.expectedCounts.nodes} nodes`,
     )
   }
   if (edges.length !== todoAppPbeRunStructureOnlyProfile.expectedCounts.edges) {
     errors.push(
-      `structureOnlyGraphSourceCandidateProjection.edges must contain ${todoAppPbeRunStructureOnlyProfile.expectedCounts.edges} edges`,
+      `structureOnlyGraphSourceProjection.edges must contain ${todoAppPbeRunStructureOnlyProfile.expectedCounts.edges} edges`,
     )
   }
   if (coreViewCoverage.length !== coreViewNames.length) {
-    errors.push(
-      `structureOnlyGraphSourceCandidateProjection.coreViewCoverage must contain ${coreViewNames.length} Core Views`,
-    )
+    errors.push(`structureOnlyGraphSourceProjection.coreViewCoverage must contain ${coreViewNames.length} Core Views`)
   }
   if (JSON.stringify(nodes) !== JSON.stringify(expectedProjection.nodes)) {
-    errors.push('structureOnlyGraphSourceCandidateProjection.nodes must match candidate source records')
+    errors.push('structureOnlyGraphSourceProjection.nodes must match graph source records')
   }
   if (JSON.stringify(edges) !== JSON.stringify(expectedProjection.edges)) {
-    errors.push('structureOnlyGraphSourceCandidateProjection.edges must match candidate source records')
+    errors.push('structureOnlyGraphSourceProjection.edges must match graph source records')
   }
   if (JSON.stringify(coreViewCoverage) !== JSON.stringify(expectedProjection.coreViewCoverage)) {
-    errors.push('structureOnlyGraphSourceCandidateProjection.coreViewCoverage must match candidate source records')
+    errors.push('structureOnlyGraphSourceProjection.coreViewCoverage must match graph source records')
   }
   if (!sourceAuthorityBoundary.includes('structure-only')) {
-    errors.push(
-      'structureOnlyGraphSourceCandidateProjection.sourceAuthorityBoundary must preserve structure-only boundary',
-    )
+    errors.push('structureOnlyGraphSourceProjection.sourceAuthorityBoundary must preserve structure-only boundary')
   }
-  if (!sourceAuthorityBoundary.includes('does not create source authority')) {
-    errors.push(
-      'structureOnlyGraphSourceCandidateProjection.sourceAuthorityBoundary must deny source-authority creation',
-    )
+  if (!sourceAuthorityBoundary.includes('does not create') && !sourceAuthorityBoundary.includes('does not add')) {
+    errors.push('structureOnlyGraphSourceProjection.sourceAuthorityBoundary must deny broader authority creation')
   }
   if (!nonPromotionStatement.includes('not promote Todo App')) {
-    errors.push('structureOnlyGraphSourceCandidateProjection.nonPromotionStatement must block Todo App promotion')
+    errors.push('structureOnlyGraphSourceProjection.nonPromotionStatement must block Todo App promotion')
   }
-  if (!validateAllBoundary.includes('positive validate-all') || !validateAllBoundary.includes('non-authority')) {
-    errors.push(
-      'structureOnlyGraphSourceCandidateProjection.validateAllBoundary must keep positive validate-all non-authority',
-    )
+  if (!validateAllBoundary.includes('positive validate-all') || !validateAllBoundary.includes('structure-only')) {
+    errors.push('structureOnlyGraphSourceProjection.validateAllBoundary must keep positive validate-all structure-only')
   }
-  if (userAcceptanceBoundary !== graphSource.candidateBoundaries.userAcceptanceBoundary) {
+  if (userAcceptanceBoundary !== graphSource.graphSourceBoundaries.userAcceptanceBoundary) {
     errors.push(
-      'structureOnlyGraphSourceCandidateProjection.userAcceptanceBoundary must match candidate userAcceptanceBoundary',
+      'structureOnlyGraphSourceProjection.userAcceptanceBoundary must match graph source userAcceptanceBoundary',
     )
   }
 
   const normalizedProjection: StructureOnlyGraphSourceCandidateProjectionArtifact = {
     metadata: {
-      artifactRole: 'candidate_graph_source_read_model_projection',
+      artifactRole: 'structure_only_graph_source_read_model_projection',
       sourceArtifact: normalizePath(String(metadata.sourceArtifact || '')),
       sourceSlice: normalizePath(String(metadata.sourceSlice || '')),
       sourceProfile: String(metadata.sourceProfile || ''),
-      candidateScope: 'todo-app-pbe-run-structure-only',
+      graphSourceScope: 'todo-app-pbe-run-structure-only',
       policyLevel: 'structure-only',
       projectionBoundary: String(metadata.projectionBoundary || ''),
     },
@@ -1298,7 +1271,7 @@ export function normalizeStructureOnlyGraphSourceCandidateProjectionArtifact(
     validateAllBoundary,
   }
   assertAllowedTags({
-    version: 'structure-only-graph-source-candidate-projection-normalization',
+    version: 'structure-only-graph-source-projection-normalization',
     metadata: {},
     sourceInputs: [],
     taxonomy: {},
@@ -1409,120 +1382,104 @@ export function normalizeGraphSourceArtifact(
 
 export function normalizeStructureOnlyGraphSourceCandidateArtifact(
   value: unknown,
-  graphSourcePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source-candidate.json`,
+  graphSourcePath = `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/graph-source.json`,
 ): StructureOnlyGraphSourceCandidateArtifact {
   const errors: string[] = []
-  const source = asRecord(value, 'structureOnlyGraphSourceCandidate', errors)
+  const source = asRecord(value, 'structureOnlyGraphSource', errors)
   const schemaVersion = source.schemaVersion
   const artifactRole = source.artifactRole
   const status = source.status
-  const candidateScope = source.candidateScope
-  const sourceSlice = requiredString(source, 'sourceSlice', errors, 'structureOnlyGraphSourceCandidate')
-  const sourceProfile = requiredString(source, 'sourceProfile', errors, 'structureOnlyGraphSourceCandidate')
+  const graphSourceScope = source.graphSourceScope
+  const sourceSlice = requiredString(source, 'sourceSlice', errors, 'structureOnlyGraphSource')
+  const sourceProfile = requiredString(source, 'sourceProfile', errors, 'structureOnlyGraphSource')
   const policyLevel = source.policyLevel
-  const sourceAuthorityBoundary = requiredString(
-    source,
-    'sourceAuthorityBoundary',
-    errors,
-    'structureOnlyGraphSourceCandidate',
-  )
-  const projectionBoundary = requiredString(source, 'projectionBoundary', errors, 'structureOnlyGraphSourceCandidate')
-  const fallbackReferences = requiredStringArray(
-    source,
-    'fallbackReferences',
-    errors,
-    'structureOnlyGraphSourceCandidate',
-  )
+  const sourceAuthorityBoundary = requiredString(source, 'sourceAuthorityBoundary', errors, 'structureOnlyGraphSource')
+  const projectionBoundary = requiredString(source, 'projectionBoundary', errors, 'structureOnlyGraphSource')
+  const fallbackReferences = requiredStringArray(source, 'fallbackReferences', errors, 'structureOnlyGraphSource')
   const retainedCompatibilityArtifacts = requiredStringArray(
     source,
     'retainedCompatibilityArtifacts',
     errors,
-    'structureOnlyGraphSourceCandidate',
+    'structureOnlyGraphSource',
   )
   const sourceRecords = normalizeGraphSourceRecords(source.sourceRecords, errors)
-  const candidateBoundaries = asRecord(
-    source.candidateBoundaries,
-    'structureOnlyGraphSourceCandidate.candidateBoundaries',
+  const graphSourceBoundaries = asRecord(
+    source.graphSourceBoundaries,
+    'structureOnlyGraphSource.graphSourceBoundaries',
     errors,
   )
   const nonPromotionStatement = requiredString(
-    candidateBoundaries,
+    graphSourceBoundaries,
     'nonPromotionStatement',
     errors,
-    'structureOnlyGraphSourceCandidate.candidateBoundaries',
+    'structureOnlyGraphSource.graphSourceBoundaries',
   )
   const userAcceptanceBoundary = requiredString(
-    candidateBoundaries,
+    graphSourceBoundaries,
     'userAcceptanceBoundary',
     errors,
-    'structureOnlyGraphSourceCandidate.candidateBoundaries',
+    'structureOnlyGraphSource.graphSourceBoundaries',
   )
   const validateAllBoundary = requiredString(
-    candidateBoundaries,
+    graphSourceBoundaries,
     'validateAllBoundary',
     errors,
-    'structureOnlyGraphSourceCandidate.candidateBoundaries',
+    'structureOnlyGraphSource.graphSourceBoundaries',
   )
 
   if (schemaVersion !== 1) {
-    errors.push('structureOnlyGraphSourceCandidate.schemaVersion must be 1')
+    errors.push('structureOnlyGraphSource.schemaVersion must be 1')
   }
-  if (artifactRole !== 'candidate-graph-source') {
-    errors.push('structureOnlyGraphSourceCandidate.artifactRole must be candidate-graph-source')
+  if (artifactRole !== 'structure-only-graph-source') {
+    errors.push('structureOnlyGraphSource.artifactRole must be structure-only-graph-source')
   }
-  if (status !== 'candidate-not-promoted') {
-    errors.push('structureOnlyGraphSourceCandidate.status must be candidate-not-promoted')
+  if (status !== 'confirmed-graph-source-backed') {
+    errors.push('structureOnlyGraphSource.status must be confirmed-graph-source-backed')
   }
-  if (candidateScope !== 'todo-app-pbe-run-structure-only') {
-    errors.push('structureOnlyGraphSourceCandidate.candidateScope must be todo-app-pbe-run-structure-only')
+  if (graphSourceScope !== 'todo-app-pbe-run-structure-only') {
+    errors.push('structureOnlyGraphSource.graphSourceScope must be todo-app-pbe-run-structure-only')
   }
   if (normalizePath(sourceSlice) !== todoAppPbeRunStructureOnlyProfile.supportedSlice) {
-    errors.push(
-      `structureOnlyGraphSourceCandidate.sourceSlice must be ${todoAppPbeRunStructureOnlyProfile.supportedSlice}`,
-    )
+    errors.push(`structureOnlyGraphSource.sourceSlice must be ${todoAppPbeRunStructureOnlyProfile.supportedSlice}`)
   }
   if (sourceProfile !== todoAppPbeRunStructureOnlyProfile.profileId) {
-    errors.push(
-      `structureOnlyGraphSourceCandidate.sourceProfile must be ${todoAppPbeRunStructureOnlyProfile.profileId}`,
-    )
+    errors.push(`structureOnlyGraphSource.sourceProfile must be ${todoAppPbeRunStructureOnlyProfile.profileId}`)
   }
   if (policyLevel !== 'structure-only') {
-    errors.push('structureOnlyGraphSourceCandidate.policyLevel must be structure-only')
+    errors.push('structureOnlyGraphSource.policyLevel must be structure-only')
   }
   if (sourceRecords.nodes.length !== todoAppPbeRunStructureOnlyProfile.expectedCounts.nodes) {
     errors.push(
-      `structureOnlyGraphSourceCandidate.sourceRecords.nodes must contain ${todoAppPbeRunStructureOnlyProfile.expectedCounts.nodes} nodes`,
+      `structureOnlyGraphSource.sourceRecords.nodes must contain ${todoAppPbeRunStructureOnlyProfile.expectedCounts.nodes} nodes`,
     )
   }
   if (sourceRecords.edges.length !== todoAppPbeRunStructureOnlyProfile.expectedCounts.edges) {
     errors.push(
-      `structureOnlyGraphSourceCandidate.sourceRecords.edges must contain ${todoAppPbeRunStructureOnlyProfile.expectedCounts.edges} edges`,
+      `structureOnlyGraphSource.sourceRecords.edges must contain ${todoAppPbeRunStructureOnlyProfile.expectedCounts.edges} edges`,
     )
   }
   if (sourceRecords.coreViewCoverage.length !== coreViewNames.length) {
     errors.push(
-      `structureOnlyGraphSourceCandidate.sourceRecords.coreViewCoverage must contain ${coreViewNames.length} Core Views`,
+      `structureOnlyGraphSource.sourceRecords.coreViewCoverage must contain ${coreViewNames.length} Core Views`,
     )
   }
   if (!sourceAuthorityBoundary.includes('structure-only')) {
-    errors.push('structureOnlyGraphSourceCandidate.sourceAuthorityBoundary must preserve structure-only boundary')
+    errors.push('structureOnlyGraphSource.sourceAuthorityBoundary must preserve structure-only boundary')
   }
   if (!nonPromotionStatement.includes('not promote Todo App')) {
-    errors.push(
-      'structureOnlyGraphSourceCandidate.candidateBoundaries.nonPromotionStatement must block Todo App promotion',
-    )
+    errors.push('structureOnlyGraphSource.graphSourceBoundaries.nonPromotionStatement must block Todo App promotion')
   }
-  if (!validateAllBoundary.includes('positive validate-all') || !validateAllBoundary.includes('non-authority')) {
+  if (!validateAllBoundary.includes('positive validate-all') || !validateAllBoundary.includes('structure-only')) {
     errors.push(
-      'structureOnlyGraphSourceCandidate.candidateBoundaries.validateAllBoundary must keep positive validate-all non-authority',
+      'structureOnlyGraphSource.graphSourceBoundaries.validateAllBoundary must keep positive validate-all structure-only',
     )
   }
 
   const graphSourceCandidate: StructureOnlyGraphSourceCandidateArtifact = {
     schemaVersion: 1,
-    artifactRole: 'candidate-graph-source',
-    status: 'candidate-not-promoted',
-    candidateScope: 'todo-app-pbe-run-structure-only',
+    artifactRole: 'structure-only-graph-source',
+    status: 'confirmed-graph-source-backed',
+    graphSourceScope: 'todo-app-pbe-run-structure-only',
     sourceSlice: normalizePath(sourceSlice),
     sourceProfile,
     policyLevel: 'structure-only',
@@ -1531,14 +1488,14 @@ export function normalizeStructureOnlyGraphSourceCandidateArtifact(
     fallbackReferences: fallbackReferences.map(normalizePath),
     retainedCompatibilityArtifacts: retainedCompatibilityArtifacts.map(normalizePath),
     sourceRecords,
-    candidateBoundaries: {
+    graphSourceBoundaries: {
       nonPromotionStatement,
       userAcceptanceBoundary,
       validateAllBoundary,
     },
   }
   assertAllowedTags({
-    version: 'structure-only-graph-source-candidate-normalization',
+    version: 'structure-only-graph-source-normalization',
     metadata: {},
     sourceInputs: [],
     taxonomy: {},
@@ -1553,7 +1510,7 @@ export function normalizeStructureOnlyGraphSourceCandidateArtifact(
   })
 
   if (errors.length > 0) {
-    throw new Error(`Invalid structure-only graph source candidate ${graphSourcePath}: ${errors.join('; ')}`)
+    throw new Error(`Invalid structure-only graph source ${graphSourcePath}: ${errors.join('; ')}`)
   }
   return graphSourceCandidate
 }
@@ -1654,7 +1611,7 @@ async function buildGeneratedReadModelRecords(
     metadata: Record<string, unknown>
   }
 > {
-  if (profile.artifacts.graphSource) {
+  if (profile.policyLevel === 'pilot-marker-backed' && profile.artifacts.graphSource) {
     const graphSourcePath = `${profile.supportedSlice}/${profile.artifacts.graphSource}`
     const graphSource = await loadGraphSourceArtifact(root, graphSourcePath)
     const projection = projectGraphSourceReadModel(graphSource, graphSourcePath).projection
@@ -1673,8 +1630,8 @@ async function buildGeneratedReadModelRecords(
     }
   }
 
-  if (profile.policyLevel === 'structure-only' && profile.artifacts.graphSourceCandidate) {
-    const graphSourceCandidatePath = `${profile.supportedSlice}/${profile.artifacts.graphSourceCandidate}`
+  if (profile.policyLevel === 'structure-only' && profile.artifacts.graphSource) {
+    const graphSourceCandidatePath = `${profile.supportedSlice}/${profile.artifacts.graphSource}`
     const graphSourceCandidate = await loadStructureOnlyGraphSourceCandidateArtifact(root, graphSourceCandidatePath)
     const projection = projectStructureOnlyGraphSourceCandidateReadModel(
       graphSourceCandidate,
@@ -1688,13 +1645,13 @@ async function buildGeneratedReadModelRecords(
         readModelSourceMode: 'graph-source-backed',
         graphSourceArtifact: graphSourceCandidatePath,
         graphSourceProjectionRole: projection.metadata.artifactRole,
-        graphSourceCandidateStatus: graphSourceCandidate.status,
-        graphSourceCandidateScope: graphSourceCandidate.candidateScope,
-        graphSourceCandidatePolicyLevel: graphSourceCandidate.policyLevel,
-        graphSourceCandidateBoundary: graphSourceCandidate.sourceAuthorityBoundary,
+        graphSourceStatus: graphSourceCandidate.status,
+        graphSourceScope: graphSourceCandidate.graphSourceScope,
+        graphSourcePolicyLevel: graphSourceCandidate.policyLevel,
+        graphSourceBoundary: graphSourceCandidate.sourceAuthorityBoundary,
         graphSourceProjectionBoundary: projection.metadata.projectionBoundary,
-        graphSourcePromotionStatus: 'not-promoted',
-        graphSourceAuthorityStatus: 'non-authority-structure-only',
+        graphSourcePromotionStatus: 'structure-only-confirmed',
+        graphSourceAuthorityStatus: 'confirmed-structure-only-graph-source',
         fallbackReferences: cloneJson(projection.fallbackReferences),
       },
     }
@@ -1843,9 +1800,7 @@ export async function validateAllReadModelEvidence(
       requiredCommands: [...plan.commands],
       projectionContractRequired: Boolean(
         registry.profiles.find((entry) => entry.sourceSlice === plan.sourceSlice)?.optionalArtifacts
-          .graphSourceProjection ||
-          registry.profiles.find((entry) => entry.sourceSlice === plan.sourceSlice)?.optionalArtifacts
-            .graphSourceCandidateProjection,
+          .graphSourceProjection,
       ),
     })),
     perSliceResults,
@@ -1921,7 +1876,7 @@ async function runValidateAllProfilePlan(
   }
 
   const graphSourceProjectionPath = registryProfile.optionalArtifacts.graphSourceProjection
-  if (profile.artifacts.graphSource && graphSourceProjectionPath) {
+  if (profile.policyLevel === 'pilot-marker-backed' && profile.artifacts.graphSource && graphSourceProjectionPath) {
     try {
       const projection = await loadGraphSourceProjectionArtifact(
         root,
@@ -1953,8 +1908,8 @@ async function runValidateAllProfilePlan(
     }
   }
 
-  const graphSourceCandidateProjectionPath = registryProfile.optionalArtifacts.graphSourceCandidateProjection
-  const graphSourceCandidatePath = registryProfile.optionalArtifacts.graphSourceCandidate
+  const graphSourceCandidateProjectionPath = registryProfile.optionalArtifacts.graphSourceProjection
+  const graphSourceCandidatePath = registryProfile.optionalArtifacts.graphSource
   if (profile.policyLevel === 'structure-only' && graphSourceCandidateProjectionPath && graphSourceCandidatePath) {
     try {
       const projection = await loadStructureOnlyGraphSourceCandidateProjectionArtifact(
@@ -1964,13 +1919,13 @@ async function runValidateAllProfilePlan(
       )
       commandResults.push({
         command: 'project-contract',
-        status: 'candidate-projection-contract-pass',
-        graphSourceCandidate: `${profile.supportedSlice}/${graphSourceCandidatePath}`,
+        status: 'projection-contract-pass',
+        graphSource: `${profile.supportedSlice}/${graphSourceCandidatePath}`,
         projection: `${profile.supportedSlice}/${graphSourceCandidateProjectionPath}`,
         nodeCount: projection.nodes.length,
         edgeCount: projection.edges.length,
         coreViewCount: projection.coreViewCoverage.length,
-        contractMode: 'structure-only-candidate',
+        contractMode: 'structure-only-confirmed',
         sourceAuthorityBoundary: projection.sourceAuthorityBoundary,
         nonPromotionStatement: projection.nonPromotionStatement,
         validateAllBoundary: projection.validateAllBoundary,
@@ -1979,10 +1934,10 @@ async function runValidateAllProfilePlan(
       status = 'blocked'
       commandResults.push({
         command: 'project-contract',
-        status: 'candidate-projection-contract-blocked',
-        graphSourceCandidate: `${profile.supportedSlice}/${graphSourceCandidatePath}`,
+        status: 'projection-contract-blocked',
+        graphSource: `${profile.supportedSlice}/${graphSourceCandidatePath}`,
         projection: `${profile.supportedSlice}/${graphSourceCandidateProjectionPath}`,
-        contractMode: 'structure-only-candidate',
+        contractMode: 'structure-only-confirmed',
         blockingCount: 1,
         message: error instanceof Error ? error.message : String(error),
       })

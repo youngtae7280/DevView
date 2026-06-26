@@ -122,9 +122,9 @@ describe('read-model Evidence builder', () => {
     const registry = await loadReadModelSliceRegistry(resolve('.'))
 
     expect(candidate.schemaVersion).toBe(1)
-    expect(candidate.artifactRole).toBe('candidate-graph-source')
-    expect(candidate.status).toBe('candidate-not-promoted')
-    expect(candidate.candidateScope).toBe(todoAppPbeRunStructureOnlyProfile.profileId)
+    expect(candidate.artifactRole).toBe('structure-only-graph-source')
+    expect(candidate.status).toBe('confirmed-graph-source-backed')
+    expect(candidate.graphSourceScope).toBe(todoAppPbeRunStructureOnlyProfile.profileId)
     expect(candidate.sourceSlice).toBe(todoAppPbeRunStructureOnlyProfile.supportedSlice)
     expect(candidate.sourceProfile).toBe(todoAppPbeRunStructureOnlyProfile.profileId)
     expect(candidate.policyLevel).toBe('structure-only')
@@ -132,44 +132,42 @@ describe('read-model Evidence builder', () => {
     expect(candidate.sourceRecords.edges).toEqual(generated.edges)
     expect(candidate.sourceRecords.coreViewCoverage).toEqual(generated.coreViewCoverage)
     expect(candidate.sourceAuthorityBoundary).toContain('structure-only')
-    expect(candidate.candidateBoundaries.nonPromotionStatement).toContain('not promote Todo App')
-    expect(candidate.candidateBoundaries.validateAllBoundary).toContain('positive validate-all')
-    expect(candidate.candidateBoundaries.validateAllBoundary).toContain('non-authority')
+    expect(candidate.graphSourceBoundaries.nonPromotionStatement).toContain('not promote Todo App')
+    expect(candidate.graphSourceBoundaries.validateAllBoundary).toContain('positive validate-all')
+    expect(candidate.graphSourceBoundaries.validateAllBoundary).toContain('structure-only')
     const registryTodoAppProfile = registry.profiles.find(
       (entry) => entry.profileId === todoAppPbeRunStructureOnlyProfile.profileId,
     )
-    expect(registryTodoAppProfile?.optionalArtifacts.graphSourceCandidate).toBe('graph-source-candidate.json')
+    expect(registryTodoAppProfile?.optionalArtifacts.graphSource).toBe('graph-source.json')
   })
 
   it('rejects Todo App graph source candidates that claim promotion or validate-all consumption', async () => {
-    const candidate = JSON.parse(
-      await readFile('examples/valid/todo-app-pbe-run/graph-source-candidate.json', 'utf8'),
-    ) as {
+    const candidate = JSON.parse(await readFile('examples/valid/todo-app-pbe-run/graph-source.json', 'utf8')) as {
       status: string
-      candidateBoundaries: {
+      graphSourceBoundaries: {
         nonPromotionStatement: string
         validateAllBoundary: string
       }
     }
     candidate.status = 'limited-source-active'
-    candidate.candidateBoundaries.nonPromotionStatement = 'This candidate promotes Todo App.'
-    candidate.candidateBoundaries.validateAllBoundary = 'This candidate is source authority.'
+    candidate.graphSourceBoundaries.nonPromotionStatement = 'This candidate promotes Todo App.'
+    candidate.graphSourceBoundaries.validateAllBoundary = 'This candidate is source authority.'
 
     expect(() => normalizeStructureOnlyGraphSourceCandidateArtifact(candidate)).toThrow(
-      /candidate-not-promoted.*block Todo App promotion.*positive validate-all non-authority/s,
+      /confirmed-graph-source-backed.*block Todo App promotion.*positive validate-all structure-only/s,
     )
   })
 
   it('writes a Todo App graph source candidate projection without promoting the structure-only profile', async () => {
     const workspace = await createExampleWorkspace()
-    const outputPath = 'examples/valid/todo-app-pbe-run/generated/graph-source-candidate-read-model-projection.json'
+    const outputPath = 'examples/valid/todo-app-pbe-run/generated/graph-source-read-model-projection.json'
     const result = await runPbeCli(
       [
         'graph',
         'read-model',
         'project',
         '--graph-source',
-        'examples/valid/todo-app-pbe-run/graph-source-candidate.json',
+        'examples/valid/todo-app-pbe-run/graph-source.json',
         '--output',
         outputPath,
         '--json',
@@ -210,14 +208,14 @@ describe('read-model Evidence builder', () => {
       outputPath,
     )
 
-    expect(projection.metadata.artifactRole).toBe('candidate_graph_source_read_model_projection')
+    expect(projection.metadata.artifactRole).toBe('structure_only_graph_source_read_model_projection')
     expect(projection.metadata.policyLevel).toBe('structure-only')
     expect(projection.nodes).toEqual(generated.nodes)
     expect(projection.edges).toEqual(generated.edges)
     expect(projection.coreViewCoverage).toEqual(generated.coreViewCoverage)
     expect(projection.validateAllBoundary).toContain('positive validate-all')
-    expect(projection.validateAllBoundary).toContain('non-authority')
-    expect(normalizedProjection.metadata.candidateScope).toBe(todoAppPbeRunStructureOnlyProfile.profileId)
+    expect(projection.validateAllBoundary).toContain('structure-only')
+    expect(normalizedProjection.metadata.graphSourceScope).toBe(todoAppPbeRunStructureOnlyProfile.profileId)
   })
 
   it('validates the committed Todo App candidate projection contract outside validate-all semantics', async () => {
@@ -227,8 +225,8 @@ describe('read-model Evidence builder', () => {
       await readFile('examples/valid/todo-app-pbe-run/generated/generated-read-model.json', 'utf8'),
     ) as { nodes: unknown[]; edges: unknown[]; coreViewCoverage: unknown[] }
 
-    expect(projection.metadata.artifactRole).toBe('candidate_graph_source_read_model_projection')
-    expect(projection.metadata.sourceArtifact).toBe('examples/valid/todo-app-pbe-run/graph-source-candidate.json')
+    expect(projection.metadata.artifactRole).toBe('structure_only_graph_source_read_model_projection')
+    expect(projection.metadata.sourceArtifact).toBe('examples/valid/todo-app-pbe-run/graph-source.json')
     expect(projection.metadata.sourceSlice).toBe(todoAppPbeRunStructureOnlyProfile.supportedSlice)
     expect(projection.metadata.sourceProfile).toBe(todoAppPbeRunStructureOnlyProfile.profileId)
     expect(projection.metadata.policyLevel).toBe('structure-only')
@@ -238,15 +236,15 @@ describe('read-model Evidence builder', () => {
     expect(projection.nodes).toHaveLength(todoAppPbeRunStructureOnlyProfile.expectedCounts.nodes)
     expect(projection.edges).toHaveLength(todoAppPbeRunStructureOnlyProfile.expectedCounts.edges)
     expect(projection.coreViewCoverage).toHaveLength(coreViews.length)
-    expect(projection.sourceAuthorityBoundary).toContain('does not create source authority')
+    expect(projection.sourceAuthorityBoundary).toContain('does not create')
     expect(projection.nonPromotionStatement).toContain('not promote Todo App')
     expect(projection.validateAllBoundary).toContain('positive validate-all')
-    expect(projection.validateAllBoundary).toContain('non-authority')
+    expect(projection.validateAllBoundary).toContain('structure-only')
     const registryTodoAppProfile = registry.profiles.find(
       (entry) => entry.profileId === todoAppPbeRunStructureOnlyProfile.profileId,
     )
-    expect(registryTodoAppProfile?.optionalArtifacts.graphSourceCandidateProjection).toBe(
-      'generated/graph-source-candidate-read-model-projection.json',
+    expect(registryTodoAppProfile?.optionalArtifacts.graphSourceProjection).toBe(
+      'generated/graph-source-read-model-projection.json',
     )
   })
 
@@ -260,7 +258,7 @@ describe('read-model Evidence builder', () => {
     }
 
     expect(() => normalizeStructureOnlyGraphSourceCandidateProjectionArtifact(projection, candidate)).toThrow(
-      /deny source-authority creation.*block Todo App promotion.*positive validate-all non-authority/s,
+      /deny broader authority creation.*block Todo App promotion.*positive validate-all structure-only/s,
     )
   })
 
@@ -287,7 +285,7 @@ describe('read-model Evidence builder', () => {
     expect(payload.observedCandidates).toEqual([
       expect.objectContaining({
         profileId: todoAppPbeRunStructureOnlyProfile.profileId,
-        status: 'candidate-projection-contract-pass',
+        status: 'projection-contract-pass',
         nodeCount: todoAppPbeRunStructureOnlyProfile.expectedCounts.nodes,
         edgeCount: todoAppPbeRunStructureOnlyProfile.expectedCounts.edges,
         coreViewCount: coreViews.length,
@@ -295,14 +293,14 @@ describe('read-model Evidence builder', () => {
       }),
     ])
     expect(payload.validateAllBoundary).toContain('separate report-only command')
-    expect(payload.validateAllBoundary).toContain('positive validate-all only as non-authority')
+    expect(payload.validateAllBoundary).toContain('positive validate-all as confirmed structure-only Evidence')
   })
 
   it('blocks candidate observation and positive validate-all when enrolled candidate projection drifts', async () => {
     const workspace = await createExampleWorkspace()
     const projectionPath = join(
       workspace,
-      'examples/valid/todo-app-pbe-run/generated/graph-source-candidate-read-model-projection.json',
+      'examples/valid/todo-app-pbe-run/generated/graph-source-read-model-projection.json',
     )
     const projection = JSON.parse(await readFile(projectionPath, 'utf8')) as {
       sourceAuthorityBoundary: string
@@ -327,17 +325,17 @@ describe('read-model Evidence builder', () => {
     expect(payload.ok).toBe(false)
     expect(payload.status).toBe('candidate-observation-blocked')
     expect(payload.observedCandidates[0]).toMatchObject({
-      status: 'candidate-projection-contract-blocked',
-      error: expect.stringContaining('deny source-authority creation'),
+      status: 'projection-contract-blocked',
+      error: expect.stringContaining('deny broader authority creation'),
     })
-    expect(payload.observedCandidates[0].error).toContain('positive validate-all non-authority')
+    expect(payload.observedCandidates[0].error).toContain('positive validate-all structure-only')
     const todoApp = validateAllResult.perSliceResults.find(
       (entry) => entry.profileId === todoAppPbeRunStructureOnlyProfile.profileId,
     )
     expect(validateAllResult.status).toBe('aggregate-blocked')
     expect(validateAllResult.aggregateResult.summary.status).toBe('aggregate-pass')
     expect(todoApp?.commands.find((entry) => entry.command === 'project-contract')).toMatchObject({
-      status: 'candidate-projection-contract-blocked',
+      status: 'projection-contract-blocked',
       blockingCount: 1,
     })
   })
@@ -499,10 +497,8 @@ describe('read-model Evidence builder', () => {
       validationReport: todoAppPbeRunStructureOnlyProfile.artifacts.validationReport,
       evidenceManifest: todoAppPbeRunStructureOnlyProfile.artifacts.evidenceManifest,
     })
-    expect(todoApp?.optionalArtifacts.graphSourceCandidate).toBe('graph-source-candidate.json')
-    expect(todoApp?.optionalArtifacts.graphSourceCandidateProjection).toBe(
-      'generated/graph-source-candidate-read-model-projection.json',
-    )
+    expect(todoApp?.optionalArtifacts.graphSource).toBe('graph-source.json')
+    expect(todoApp?.optionalArtifacts.graphSourceProjection).toBe('generated/graph-source-read-model-projection.json')
   })
 
   it('builds command plans from registry metadata without executing commands', async () => {
@@ -599,11 +595,11 @@ describe('read-model Evidence builder', () => {
       coreViewCount: 7,
     })
     expect(todoApp?.commands.find((entry) => entry.command === 'project-contract')).toMatchObject({
-      status: 'candidate-projection-contract-pass',
+      status: 'projection-contract-pass',
       nodeCount: 22,
       edgeCount: 38,
       coreViewCount: 7,
-      contractMode: 'structure-only-candidate',
+      contractMode: 'structure-only-confirmed',
     })
   })
 
@@ -679,7 +675,7 @@ describe('read-model Evidence builder', () => {
     await rm(
       join(
         missingCandidateProjectionWorkspace,
-        'examples/valid/todo-app-pbe-run/generated/graph-source-candidate-read-model-projection.json',
+        'examples/valid/todo-app-pbe-run/generated/graph-source-read-model-projection.json',
       ),
       { force: true },
     )
@@ -690,7 +686,7 @@ describe('read-model Evidence builder', () => {
     )
     expect(missingCandidateResult.status).toBe('aggregate-blocked')
     expect(missingCandidateTodoApp?.commands.find((entry) => entry.command === 'project-contract')).toMatchObject({
-      status: 'candidate-projection-contract-blocked',
+      status: 'projection-contract-blocked',
       blockingCount: 1,
     })
   })
@@ -894,7 +890,7 @@ describe('read-model Evidence builder', () => {
         graphSourceProjectionRole?: string
         graphSourcePromotionStatus?: string
         graphSourceAuthorityStatus?: string
-        graphSourceCandidatePolicyLevel?: string
+        graphSourcePolicyLevel?: string
       }
       coreViewCoverage: Array<{ name: string; viewScopedTags?: string[] }>
       sourceInputs: Array<{ relativePath: string }>
@@ -905,15 +901,13 @@ describe('read-model Evidence builder', () => {
     expect(generatedJson.metadata.sliceProfile).toBe(todoAppPbeRunStructureOnlyProfile.profileId)
     expect(generatedJson.metadata.slicePolicyLevel).toBe('structure-only')
     expect(generatedJson.metadata.readModelSourceMode).toBe('graph-source-backed')
-    expect(generatedJson.metadata.graphSourceArtifact).toBe(
-      'examples/valid/todo-app-pbe-run/graph-source-candidate.json',
-    )
-    expect(generatedJson.metadata.graphSourceProjectionRole).toBe('candidate_graph_source_read_model_projection')
-    expect(generatedJson.metadata.graphSourcePromotionStatus).toBe('not-promoted')
-    expect(generatedJson.metadata.graphSourceAuthorityStatus).toBe('non-authority-structure-only')
-    expect(generatedJson.metadata.graphSourceCandidatePolicyLevel).toBe('structure-only')
+    expect(generatedJson.metadata.graphSourceArtifact).toBe('examples/valid/todo-app-pbe-run/graph-source.json')
+    expect(generatedJson.metadata.graphSourceProjectionRole).toBe('structure_only_graph_source_read_model_projection')
+    expect(generatedJson.metadata.graphSourcePromotionStatus).toBe('structure-only-confirmed')
+    expect(generatedJson.metadata.graphSourceAuthorityStatus).toBe('confirmed-structure-only-graph-source')
+    expect(generatedJson.metadata.graphSourcePolicyLevel).toBe('structure-only')
     expect(generatedJson.sourceInputs.map((entry) => entry.relativePath)).toContain(
-      'examples/valid/todo-app-pbe-run/graph-source-candidate.json',
+      'examples/valid/todo-app-pbe-run/graph-source.json',
     )
     expect(generatedJson.nodes).toHaveLength(todoAppPbeRunStructureOnlyProfile.expectedCounts.nodes)
     expect(generatedJson.edges).toHaveLength(todoAppPbeRunStructureOnlyProfile.expectedCounts.edges)
@@ -971,7 +965,7 @@ describe('read-model Evidence builder', () => {
 
   it('uses Todo App graph-source candidate records for structure-only generated read-model output', async () => {
     const workspace = await createExampleWorkspace()
-    const graphSourcePath = join(workspace, 'examples/valid/todo-app-pbe-run/graph-source-candidate.json')
+    const graphSourcePath = join(workspace, 'examples/valid/todo-app-pbe-run/graph-source.json')
     const graphSource = JSON.parse(await readFile(graphSourcePath, 'utf8')) as {
       sourceRecords: { nodes: Array<{ id: string; title: string }> }
     }
@@ -995,10 +989,8 @@ describe('read-model Evidence builder', () => {
     }
 
     expect(generatedJson.metadata.readModelSourceMode).toBe('graph-source-backed')
-    expect(generatedJson.metadata.graphSourceArtifact).toBe(
-      'examples/valid/todo-app-pbe-run/graph-source-candidate.json',
-    )
-    expect(generatedJson.metadata.graphSourceAuthorityStatus).toBe('non-authority-structure-only')
+    expect(generatedJson.metadata.graphSourceArtifact).toBe('examples/valid/todo-app-pbe-run/graph-source.json')
+    expect(generatedJson.metadata.graphSourceAuthorityStatus).toBe('confirmed-structure-only-graph-source')
     expect(generatedJson.nodes.find((entry) => entry.id === 'PT-1')?.title).toBe(
       'Todo App candidate graph source backed smoke title',
     )

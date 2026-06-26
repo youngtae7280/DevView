@@ -2,9 +2,9 @@
   "version": "0.1.0-generated-read-model-evidence",
   "metadata": {
     "artifactRole": "generated_read_model_evidence",
-    "generatedAt": "2026-06-26T07:43:03.746Z",
+    "generatedAt": "2026-06-26T08:16:20.328Z",
     "commandIdentity": "pbe graph read-model generate --slice examples/valid/todo-app-pbe-run",
-    "sourceCommit": "329d1c2",
+    "sourceCommit": "4cef42d",
     "sourceSlice": "examples/valid/todo-app-pbe-run",
     "sliceProfile": "todo-app-pbe-run-structure-only",
     "sliceProfileDisplayName": "Todo App PBE Golden Run",
@@ -25,7 +25,7 @@
       "examples/valid/todo-app-pbe-run/.pbe/blueprint/source-of-truth-matrix.md",
       "examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt",
       "examples/valid/todo-app-pbe-run/.pbe/blueprint/pbe-state.json",
-      "examples/valid/todo-app-pbe-run/graph-source-candidate.json"
+      "examples/valid/todo-app-pbe-run/graph-source.json"
     ],
     "generatedStatus": "generated-present",
     "sourceAuthority": "Canonical .pbe tree/control/execution/evidence artifacts remain current operational source for this structure-only fixture.",
@@ -34,15 +34,15 @@
     "coreViewBasis": "docs/concept/view-tree-pack.md 7 Core Views",
     "viewMembershipBoundary": "View membership is represented by includedInViewIds and coreViewCoverage. viewScopedTags contains only role tags.",
     "readModelSourceMode": "graph-source-backed",
-    "graphSourceArtifact": "examples/valid/todo-app-pbe-run/graph-source-candidate.json",
-    "graphSourceProjectionRole": "candidate_graph_source_read_model_projection",
-    "graphSourceCandidateStatus": "candidate-not-promoted",
-    "graphSourceCandidateScope": "todo-app-pbe-run-structure-only",
-    "graphSourceCandidatePolicyLevel": "structure-only",
-    "graphSourceCandidateBoundary": "This Todo App PBE Run graph source candidate is structure-only review input. Canonical .pbe artifacts remain source/reference, and this candidate does not create source authority, parity backing, pilot marker backing, or CI enforcement.",
-    "graphSourceProjectionBoundary": "Candidate graph-source records may support future projection experiments only. Generated read-model, validation, aggregate, and CI artifacts remain Evidence and do not replace user acceptance or promote Todo App PBE Run.",
-    "graphSourcePromotionStatus": "not-promoted",
-    "graphSourceAuthorityStatus": "non-authority-structure-only",
+    "graphSourceArtifact": "examples/valid/todo-app-pbe-run/graph-source.json",
+    "graphSourceProjectionRole": "structure_only_graph_source_read_model_projection",
+    "graphSourceStatus": "confirmed-graph-source-backed",
+    "graphSourceScope": "todo-app-pbe-run-structure-only",
+    "graphSourcePolicyLevel": "structure-only",
+    "graphSourceBoundary": "This Todo App PBE Run graph source is confirmed for structure-only graph-source-backed generation. Canonical .pbe artifacts remain compatibility/fallback/reference, and this graph source does not create parity backing, pilot marker backing, CI enforcement, or broader source authority.",
+    "graphSourceProjectionBoundary": "Confirmed structure-only graph-source records support generated read-model projection for Todo App PBE Run. Generated read-model, validation, aggregate, and CI artifacts remain Evidence and do not replace user acceptance or promote beyond structure-only.",
+    "graphSourcePromotionStatus": "structure-only-confirmed",
+    "graphSourceAuthorityStatus": "confirmed-structure-only-graph-source",
     "fallbackReferences": [
       "examples/valid/todo-app-pbe-run/.pbe/tree/product-tree.json",
       "examples/valid/todo-app-pbe-run/.pbe/tree/project-tree.json",
@@ -132,8 +132,8 @@
       "status": "present"
     },
     {
-      "relativePath": "examples/valid/todo-app-pbe-run/graph-source-candidate.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\valid\\todo-app-pbe-run\\graph-source-candidate.json",
+      "relativePath": "examples/valid/todo-app-pbe-run/graph-source.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\valid\\todo-app-pbe-run\\graph-source.json",
       "status": "present"
     }
   ],

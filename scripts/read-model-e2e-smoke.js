@@ -124,12 +124,12 @@ try {
   assertEqual(todoAppGenerated.metadata.readModelSourceMode, 'graph-source-backed', 'Todo App source mode')
   assertEqual(
     todoAppGenerated.metadata.graphSourceArtifact,
-    'examples/valid/todo-app-pbe-run/graph-source-candidate.json',
+    'examples/valid/todo-app-pbe-run/graph-source.json',
     'Todo App graph source candidate artifact',
   )
   assertEqual(
     todoAppGenerated.metadata.graphSourceAuthorityStatus,
-    'non-authority-structure-only',
+    'confirmed-structure-only-graph-source',
     'Todo App graph source authority status',
   )
   assertEqual(todoAppGenerated.coreViewCoverage.length, 7, 'Todo App Core View count')
@@ -164,25 +164,21 @@ try {
   assertEqual(todoSearchProjection.coreViewCount, 7, 'Todo Search projection Core View count')
 
   const todoAppProjection = commandResult(todoAppProfile, 'project-contract')
-  assertEqual(
-    todoAppProjection.status,
-    'candidate-projection-contract-pass',
-    'Todo App candidate projection contract status',
-  )
-  assertEqual(todoAppProjection.contractMode, 'structure-only-candidate', 'Todo App projection contract mode')
+  assertEqual(todoAppProjection.status, 'projection-contract-pass', 'Todo App candidate projection contract status')
+  assertEqual(todoAppProjection.contractMode, 'structure-only-confirmed', 'Todo App projection contract mode')
   assertEqual(todoAppProjection.nodeCount, 22, 'Todo App projection node count')
   assertEqual(todoAppProjection.edgeCount, 38, 'Todo App projection edge count')
   assertEqual(todoAppProjection.coreViewCount, 7, 'Todo App projection Core View count')
 
   const projectionStatuses = validateAll.projectionContractStatus.map((entry) => entry.status)
   assertIncludes(projectionStatuses, 'projection-contract-pass', 'validate-all projection statuses')
-  assertIncludes(projectionStatuses, 'candidate-projection-contract-pass', 'validate-all projection statuses')
+  assertIncludes(projectionStatuses, 'projection-contract-pass', 'validate-all projection statuses')
 
   const candidateObservation = runCli(['graph', 'read-model', 'observe-candidates', '--json'])
   assertEqual(candidateObservation.status, 'candidate-observation-pass', 'candidate observation status')
   assertEqual(
     candidateObservation.observedCandidates[0].status,
-    'candidate-projection-contract-pass',
+    'projection-contract-pass',
     'candidate observation Todo App status',
   )
   if (!candidateObservation.validateAllBoundary.includes('separate report-only command')) {

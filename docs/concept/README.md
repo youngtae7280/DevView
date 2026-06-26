@@ -472,15 +472,13 @@ fallback artifacts, Todo App structure-only status, or source authority beyond t
 Manual CI run `28219396764` and PR #5 run `28219583619` reviewed this graph-source-backed generation path as
 `ci-evidence-pass`.
 
-The next bounded expansion surface is now candidate-only for Todo App PBE Run:
-`examples/valid/todo-app-pbe-run/graph-source-candidate.json`. It is a non-generated structure-only graph-source
-candidate that mirrors the current 22-node / 38-edge / 7-Core-View Todo App read-model records for future review.
-Focused tests parse it and reject promotion or source-authority claims. The same explicit projection command now
-writes `examples/valid/todo-app-pbe-run/generated/graph-source-candidate-read-model-projection.json` as a candidate
-projection with the same 22/38/7 shape and structure-only boundaries. Focused tests now load the committed candidate
-projection and reject source-authority creation or authority-bearing enrollment drift. It is now consumed by local
-positive `validate --all` only as a non-authority structure-only projection-contract check, and does not promote Todo App
-beyond `structure-only`.
+The next bounded expansion surface is now confirmed for Todo App PBE Run:
+`examples/valid/todo-app-pbe-run/graph-source.json`. It is a non-generated structure-only graph-source artifact that
+mirrors the current 22-node / 38-edge / 7-Core-View Todo App read-model records. Focused tests parse it and reject
+promotion or broader-authority claims. The same explicit projection command now writes
+`examples/valid/todo-app-pbe-run/generated/graph-source-read-model-projection.json` with the same 22/38/7 shape and
+structure-only boundaries. It is consumed by local positive `validate --all` as a confirmed structure-only
+projection-contract check, and does not promote Todo App beyond `structure-only`.
 The local `graph read-model observe-candidates` command now reports this candidate projection contract separately from
 positive validate-all semantics. The non-enforcing read-model Evidence workflow now captures that observation output as
 separate CI artifact metadata without enrolling the Todo App candidate in positive validate-all, source authority, or
@@ -493,15 +491,15 @@ The Todo App graph-source enrollment decision package is now recorded:
 
 - [todo-app-graph-source-enrollment-decision-package.md](todo-app-graph-source-enrollment-decision-package.md)
 
-It compares keeping Todo App candidate-only, bounded non-authority enrollment in positive validate-all, later promotion
-beyond structure-only, and deferral. The bounded non-authority enrollment is now implemented locally: Todo App positive
-validate-all reports `candidate-projection-contract-pass` while preserving `structure-only` and no source-authority
-promotion. Manual and PR CI review of this new status remains next.
+It compares keeping Todo App candidate-only, bounded enrollment in positive validate-all, later promotion beyond
+structure-only, and deferral. The bounded enrollment is now implemented locally and confirmed as graph-source-backed:
+Todo App positive validate-all reports `projection-contract-pass` while preserving `structure-only` and no promotion
+beyond that profile. Manual and PR CI review of this confirmed label remains next.
 
 The main README now includes a short current-state note for the mixed Graph-source transition: Todo Search selected scope
-is limited promoted and graph-source-backed, tree-native artifacts remain source/fallback as applicable, Todo App remains
-structure-only/non-authority, and repo-wide promotion, tree retirement, enforcement, and required checks are still
-incomplete.
+is limited promoted and graph-source-backed, Todo App PBE Run is confirmed graph-source-backed for its `structure-only`
+slice, tree-native artifacts remain fallback/reference/compatibility where applicable, and repo-wide promotion, tree
+retirement, enforcement, and required checks are still incomplete.
 
 Manual workflow run `28222731063` reviewed the Todo App bounded non-authority positive validate-all projection status:
 Todo App reports `candidate-projection-contract-pass`, Todo Search remains `projection-contract-pass`, aggregate remains
@@ -509,19 +507,20 @@ Todo App reports `candidate-projection-contract-pass`, Todo Search remains `proj
 PR #7 run `28223010185` reviewed the same fields in `pull_request-informational` mode, then the temporary PR was closed
 without merge and the smoke branch was deleted.
 
-Todo App PBE Run generation is now graph-source-candidate-backed for the structure-only profile: `graph read-model
-generate --slice examples/valid/todo-app-pbe-run` reads `graph-source-candidate.json` and emits `readModelSourceMode:
-graph-source-backed` with `graphSourceAuthorityStatus: non-authority-structure-only`. This remains non-promotional and
-does not make Todo App source-authority-bearing. Manual run `28224636333` reviewed the generated metadata in CI
-artifacts; PR #9 run `28224878648` reviewed the same metadata in `pull_request-informational` mode.
+Todo App PBE Run generation is now confirmed graph-source-backed for the structure-only profile: `graph read-model
+generate --slice examples/valid/todo-app-pbe-run` reads `graph-source.json` and emits `readModelSourceMode:
+graph-source-backed` with `graphSourceAuthorityStatus: confirmed-structure-only-graph-source`. This remains bounded to
+structure-only and does not add parity, pilot-marker backing, enforcement, or tree retirement. Earlier manual/PR CI
+reviews covered the generated metadata while it was candidate-labeled; a fresh CI review of the confirmed label remains a
+next observation step.
 
 The local read-model E2E smoke is now recorded:
 
 - [read-model-e2e-smoke.md](read-model-e2e-smoke.md)
 
 `npm run test:read-model:e2e` dogfoods the current mixed Graph-source flow in a temporary workspace: Todo Search
-graph-source-backed generation/parity/validation/projection, Todo App structure-only generation/validation/non-authority
-projection contract, validate-all aggregate pass, and separate candidate observation.
+graph-source-backed generation/parity/validation/projection, Todo App confirmed structure-only graph-source-backed
+generation/validation/projection contract, validate-all aggregate pass, and separate candidate observation.
 The non-enforcing read-model Evidence workflow now runs the same smoke and uploads
 `read-model-e2e-smoke-output.json` as observation metadata; manual run `28223860233` reviewed
 `e2eSmokeStatus: e2e-smoke-pass`, and PR #8 run `28224088829` reviewed the same status through

@@ -4,9 +4,9 @@ Status: generated-present / evidence-only / source-authority-unchanged
 
 ## Run Identity
 
-- Generated at: 2026-06-26T07:43:03.746Z
+- Generated at: 2026-06-26T08:16:20.328Z
 - Command identity: `pbe graph read-model generate --slice examples/valid/todo-app-pbe-run`
-- Source commit: 329d1c2
+- Source commit: 4cef42d
 - Source slice: `examples/valid/todo-app-pbe-run`
 
 ## Boundary
@@ -33,7 +33,7 @@ require parity, introduce CI enforcement, retire .pbe artifacts, or approve prom
 - examples/valid/todo-app-pbe-run/.pbe/blueprint/source-of-truth-matrix.md: present
 - examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt: present
 - examples/valid/todo-app-pbe-run/.pbe/blueprint/pbe-state.json: present
-- examples/valid/todo-app-pbe-run/graph-source-candidate.json: present
+- examples/valid/todo-app-pbe-run/graph-source.json: present
 
 ## Node / Edge / Tag Summary
 

@@ -1,8 +1,8 @@
 # Graph Source Artifact Storage And Projection Generation Design
 
 Status: first-artifact-implemented / minimal-cli-projection-path / graph-source-backed-generation /
-structure-only-candidate-projection / candidate-observation-ci-artifact-capture /
-todo-app-non-authority-validate-all-enrollment-local-first
+todo-app-confirmed-structure-only-graph-source / candidate-observation-ci-artifact-capture /
+todo-app-positive-validate-all-enrollment-local-first
 
 ## Purpose
 
@@ -19,15 +19,15 @@ now also backs Todo Search default read-model generation from the bounded graph 
 workflows, retained fallback artifacts, Todo App structure-only behavior, or source authority beyond the executed limited
 scope.
 
-The next bounded expansion surface is now present as a candidate-only artifact for the Todo App PBE Run:
+The next bounded expansion surface is now confirmed as a structure-only graph-source artifact for the Todo App PBE Run:
 
 ```text
-examples/valid/todo-app-pbe-run/graph-source-candidate.json
+examples/valid/todo-app-pbe-run/graph-source.json
 ```
 
-This candidate mirrors the current structure-only generated read-model records for reviewability. It is now consumed by
-local positive `validate --all` only as a non-authority structure-only projection-contract check; it is not uploaded as CI
-authority, not parity-backed, not pilot-marker-backed, and not promoted.
+This graph source backs the current structure-only generated read-model records and is consumed by local positive
+`validate --all` as a confirmed structure-only projection-contract check. It is not parity-backed, not
+pilot-marker-backed, not enforcement, and not promotion beyond `structure-only`.
 
 ## Current Baseline
 
@@ -39,7 +39,7 @@ authority, not parity-backed, not pilot-marker-backed, and not promoted.
 | Graph source artifact | `examples/adoption/todo-search-slice/graph-source.json` exists as non-generated limited source artifact.                                             |
 | Generated projections | Existing generated read-model artifacts and the graph-source projection output remain Evidence/projection outputs, not independent source authority. |
 | Positive registry     | `examples/read-model-aggregate/read-model-slices.json` includes Todo Search and Todo App PBE Run only.                                               |
-| Todo App PBE Run      | `structure-only`, with a non-authority candidate projection contract in local positive validate-all; not source-bearing.                             |
+| Todo App PBE Run      | `structure-only`, graph-source-backed with a confirmed projection contract in local positive validate-all; not parity-backed or pilot-marker-backed. |
 | CI                    | Manual and PR informational, non-enforcing.                                                                                                          |
 
 ## Candidate Storage Locations
@@ -112,38 +112,38 @@ Future projection generation hardening should:
 4. Preserve source, projection, Evidence, fallback, and user-acceptance boundaries in every output manifest.
 5. Keep Todo App PBE Run structure-only unless a separate authority package promotes it.
 
-## Todo App Candidate Artifact
+## Todo App Structure-Only Graph Source
 
-The Todo App candidate artifact is strict JSON, non-generated, and located outside `generated/`:
+The Todo App structure-only graph source is strict JSON, non-generated, and located outside `generated/`:
 
 ```text
-examples/valid/todo-app-pbe-run/graph-source-candidate.json
+examples/valid/todo-app-pbe-run/graph-source.json
 ```
 
 Implemented boundary:
 
-- `artifactRole: candidate-graph-source`
-- `status: candidate-not-promoted`
-- `candidateScope: todo-app-pbe-run-structure-only`
+- `artifactRole: structure-only-graph-source`
+- `status: confirmed-graph-source-backed`
+- `graphSourceScope: todo-app-pbe-run-structure-only`
 - `policyLevel: structure-only`
 - source records preserve the current 22-node / 38-edge / 7-Core-View structure-only projection
-- candidate boundaries state that the artifact may be consumed by positive validate-all only as a non-authority
+- graph-source boundaries state that the artifact is consumed by positive validate-all only as a confirmed
   structure-only projection contract
 
-Focused tests parse the candidate, compare its records to the existing Todo App structure-only generated read-model, and
-reject attempts to mark the candidate as promoted or source-authority-bearing.
+Focused tests parse the graph source, compare its records to the existing Todo App structure-only generated read-model,
+and reject attempts to mark the structure-only source as promoted beyond its bounded role.
 
-The same `graph read-model project --graph-source ... --output ...` CLI surface now projects this candidate into:
+The same `graph read-model project --graph-source ... --output ...` CLI surface now projects this source into:
 
 ```text
-examples/valid/todo-app-pbe-run/generated/graph-source-candidate-read-model-projection.json
+examples/valid/todo-app-pbe-run/generated/graph-source-read-model-projection.json
 ```
 
-The candidate projection preserves 22 nodes, 38 edges, and 7 Core Views. Its metadata uses
-`candidate_graph_source_read_model_projection` and `structure-only`; its boundaries state that it does not promote Todo
-App PBE Run, does not add parity or pilot marker requirements, and may participate in positive validate-all only as a
-non-authority structure-only projection contract. Focused tests now validate the committed candidate projection contract
-directly and reject projection boundary drift, including source-authority creation claims.
+The projection preserves 22 nodes, 38 edges, and 7 Core Views. Its metadata uses
+`structure_only_graph_source_read_model_projection` and `structure-only`; its boundaries state that it does not promote
+Todo App PBE Run beyond structure-only, does not add parity or pilot marker requirements, and participates in positive
+validate-all only as a confirmed structure-only projection contract. Focused tests validate the committed projection
+contract directly and reject projection boundary drift, including broader authority creation claims.
 
 The local observation command checks this candidate projection outside positive validate-all semantics:
 
@@ -151,17 +151,17 @@ The local observation command checks this candidate projection outside positive 
 pbe graph read-model observe-candidates
 ```
 
-It reports `candidate-observation-pass` when the Todo App candidate projection contract passes, or
-`candidate-observation-blocked` when the candidate projection is missing, malformed, or claims source authority. This
-command remains local and non-promotional; positive validate-all enrollment is handled separately as a bounded
-non-authority structure-only projection-contract check.
+It reports `candidate-observation-pass` for backward-compatible observation output when the Todo App projection contract
+passes, or `candidate-observation-blocked` when the projection is missing, malformed, or claims broader authority. This
+command remains local and non-promotional; positive validate-all now checks the same confirmed structure-only projection
+contract.
 
 The non-enforcing read-model Evidence workflow now runs the same observation command after positive validate-all and
 uploads:
 
 ```text
 examples/read-model-aggregate/generated/read-model-candidate-observation-output.json
-examples/valid/todo-app-pbe-run/generated/graph-source-candidate-read-model-projection.json
+examples/valid/todo-app-pbe-run/generated/graph-source-read-model-projection.json
 ```
 
 The CI manifest and Step Summary expose `candidateObservationStatus` and the Todo App candidate projection status as
@@ -176,20 +176,21 @@ aggregate-pass`. The artifact bundle included both `read-model-candidate-observa
 `graph-source-candidate-read-model-projection.json`.
 PR #6 run `28221326457` reviewed the same fields in `pull_request-informational` mode with PR metadata present.
 
-The next decision surface is now recorded in
-[todo-app-graph-source-enrollment-decision-package.md](todo-app-graph-source-enrollment-decision-package.md). It
-records the local-first bounded non-authority enrollment into positive validate-all. Manual and PR CI review of the new
-Todo App positive projection status remains pending.
+The next decision surface was recorded in
+[todo-app-graph-source-enrollment-decision-package.md](todo-app-graph-source-enrollment-decision-package.md), and the
+local-first bounded enrollment has now advanced to confirmed structure-only graph-source-backed generation. Fresh
+manual/PR CI review of the confirmed label remains the next observation step.
 
-Todo App structure-only generation now uses the same candidate source records for generated read-model output:
+Todo App structure-only generation now uses the confirmed graph-source records for generated read-model output:
 
 ```bash
 pbe graph read-model generate --slice examples/valid/todo-app-pbe-run
 ```
 
 The generated read-model preserves 22 nodes, 38 edges, and 7 Core Views, records `readModelSourceMode:
-graph-source-backed`, and keeps `graphSourceAuthorityStatus: non-authority-structure-only`. This is still a
-structure-only candidate-backed generation path, not Todo App source-authority promotion.
+graph-source-backed`, and keeps `graphSourceAuthorityStatus: confirmed-structure-only-graph-source`. This is a
+structure-only graph-source-backed generation path, not parity backing, pilot-marker backing, enforcement, or promotion
+beyond structure-only.
 
 Manual workflow run `28224636333` reviewed this metadata in uploaded CI artifacts: Todo App generation recorded
 `graph-source-backed` and `non-authority-structure-only`, validation stayed `validation-pass`, positive projection stayed

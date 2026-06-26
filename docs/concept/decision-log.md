@@ -583,6 +583,13 @@ the branch was deleted; the reviewed artifact confirms PR metadata plus the same
 statuses without Todo App source-authority promotion, repo-wide promotion, tree retirement, enforcement, or required
 checks.
 
+DEC-125 does not supersede DEC-097 through DEC-124. It confirms Todo App PBE Run as a graph-source-backed
+`structure-only` slice: `graph read-model generate --slice examples/valid/todo-app-pbe-run` reads
+`examples/valid/todo-app-pbe-run/graph-source.json`, positive `validate --all` checks
+`generated/graph-source-read-model-projection.json` as `projection-contract-pass`, and E2E smoke records
+`confirmed-structure-only-graph-source`. This is graph-source confirmation only and does not add enforcement, required
+checks, tree retirement, invalid-fixture CI, parity backing, pilot-marker backing, or promotion beyond `structure-only`.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

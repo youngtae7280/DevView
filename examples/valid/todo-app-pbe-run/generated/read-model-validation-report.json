@@ -1,9 +1,9 @@
 {
   "version": "0.1.0-read-model-validation-report",
   "metadata": {
-    "validatedAt": "2026-06-26T07:43:03.951Z",
+    "validatedAt": "2026-06-26T08:16:20.475Z",
     "commandIdentity": "pbe graph read-model validate --slice examples/valid/todo-app-pbe-run",
-    "sourceCommit": "329d1c2",
+    "sourceCommit": "4cef42d",
     "sourceSlice": "examples/valid/todo-app-pbe-run",
     "profileId": "todo-app-pbe-run-structure-only",
     "sliceProfile": "todo-app-pbe-run-structure-only",
@@ -209,7 +209,7 @@
     { "path": "examples/valid/todo-app-pbe-run/.pbe/blueprint/source-of-truth-matrix.md", "status": "present" },
     { "path": "examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt", "status": "present" },
     { "path": "examples/valid/todo-app-pbe-run/.pbe/blueprint/pbe-state.json", "status": "present" },
-    { "path": "examples/valid/todo-app-pbe-run/graph-source-candidate.json", "status": "present" }
+    { "path": "examples/valid/todo-app-pbe-run/graph-source.json", "status": "present" }
   ],
   "sliceValidationContract": {
     "version": "0.1.0-per-slice-validation-report-independence",

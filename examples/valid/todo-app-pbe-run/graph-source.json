@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "artifactRole": "candidate-graph-source",
-  "status": "candidate-not-promoted",
-  "candidateScope": "todo-app-pbe-run-structure-only",
+  "artifactRole": "structure-only-graph-source",
+  "status": "confirmed-graph-source-backed",
+  "graphSourceScope": "todo-app-pbe-run-structure-only",
   "sourceSlice": "examples/valid/todo-app-pbe-run",
   "sourceProfile": "todo-app-pbe-run-structure-only",
   "policyLevel": "structure-only",
-  "sourceAuthorityBoundary": "This Todo App PBE Run graph source candidate is structure-only review input. Canonical .pbe artifacts remain source/reference, and this candidate does not create source authority, parity backing, pilot marker backing, or CI enforcement.",
-  "projectionBoundary": "Candidate graph-source records may support future projection experiments only. Generated read-model, validation, aggregate, and CI artifacts remain Evidence and do not replace user acceptance or promote Todo App PBE Run.",
+  "sourceAuthorityBoundary": "This Todo App PBE Run graph source is confirmed for structure-only graph-source-backed generation. Canonical .pbe artifacts remain compatibility/fallback/reference, and this graph source does not create parity backing, pilot marker backing, CI enforcement, or broader source authority.",
+  "projectionBoundary": "Confirmed structure-only graph-source records support generated read-model projection for Todo App PBE Run. Generated read-model, validation, aggregate, and CI artifacts remain Evidence and do not replace user acceptance or promote beyond structure-only.",
   "fallbackReferences": [
     "examples/valid/todo-app-pbe-run/.pbe/tree/product-tree.json",
     "examples/valid/todo-app-pbe-run/.pbe/tree/project-tree.json",
@@ -845,9 +845,9 @@
       }
     ]
   },
-  "candidateBoundaries": {
-    "nonPromotionStatement": "This candidate does not promote Todo App PBE Run beyond structure-only, does not add parity or pilot marker requirements, does not approve repo-wide Graph-source promotion, and does not replace user acceptance.",
-    "userAcceptanceBoundary": "User acceptance remains user-controlled. Candidate graph-source records and generated Evidence cannot accept product results.",
-    "validateAllBoundary": "This candidate may be consumed by positive validate-all only as a non-authority structure-only projection contract. It does not create source authority, parity backing, pilot marker backing, promotion, or user acceptance."
+  "graphSourceBoundaries": {
+    "nonPromotionStatement": "This confirmed structure-only graph source does not promote Todo App PBE Run beyond structure-only, does not add parity or pilot marker requirements, does not approve repo-wide Graph-source promotion, and does not replace user acceptance.",
+    "userAcceptanceBoundary": "User acceptance remains user-controlled. Confirmed structure-only graph-source records and generated Evidence cannot accept product results.",
+    "validateAllBoundary": "This graph source is consumed by positive validate-all as a confirmed structure-only projection contract. It does not create parity backing, pilot marker backing, promotion beyond structure-only, enforcement, or user acceptance."
   }
 }

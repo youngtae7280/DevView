@@ -6,9 +6,9 @@ Evidence level: validator-backed
 
 ## Run Identity
 
-- Validated at: 2026-06-26T07:43:03.951Z
+- Validated at: 2026-06-26T08:16:20.475Z
 - Command identity: `pbe graph read-model validate --slice examples/valid/todo-app-pbe-run`
-- Source commit: 329d1c2
+- Source commit: 4cef42d
 - Source slice: `examples/valid/todo-app-pbe-run`
 - Profile id: `todo-app-pbe-run-structure-only`
 - Source layout: canonical-pbe
@@ -92,7 +92,7 @@ declared by this profile.
 - examples/valid/todo-app-pbe-run/.pbe/blueprint/source-of-truth-matrix.md: present
 - examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt: present
 - examples/valid/todo-app-pbe-run/.pbe/blueprint/pbe-state.json: present
-- examples/valid/todo-app-pbe-run/graph-source-candidate.json: present
+- examples/valid/todo-app-pbe-run/graph-source.json: present
 
 ## Recommended Next Decision Surface
 
