@@ -564,6 +564,7 @@ export interface SliceReadModelConfig {
     runtimeHelper?: string
     runtimeTest?: string
     viewManifest?: string
+    manualReadModel?: string
     generatedReadModel: string
     generatedParityReport?: string
     validationReport?: string
@@ -633,6 +634,9 @@ export interface ReadModelRegistryCommandPlan {
   sourceSlice: string
   policyLevel: SliceReadModelConfig['policyLevel']
   commands: RegistryCommand[]
+  requiredArtifacts: Record<string, string>
+  optionalArtifacts: Record<string, string>
+  expectedCounts: ReadModelSliceRegistryProfile['expectedCounts']
 }
 
 export const todoSearchReadModelProfile: SliceReadModelConfig = {
@@ -674,6 +678,7 @@ export const todoSearchReadModelProfile: SliceReadModelConfig = {
     runtimeHelper: 'runtime-fixture/todo-search.js',
     runtimeTest: 'runtime-fixture/todo-search.test.js',
     viewManifest: 'view-instance-manifest.json',
+    manualReadModel: 'maintainability-graph-read-model.json',
     generatedReadModel: 'generated/generated-read-model.json',
     generatedParityReport: 'generated/read-model-parity-report.json',
     validationReport: 'generated/read-model-validation-report.json',
@@ -917,6 +922,9 @@ export function buildReadModelRegistryCommandPlans(registry: ReadModelSliceRegis
       sourceSlice: profile.sourceSlice,
       policyLevel: profile.policyLevel,
       commands: [...profile.requiredCommands],
+      requiredArtifacts: { ...profile.requiredArtifacts },
+      optionalArtifacts: { ...profile.optionalArtifacts },
+      expectedCounts: { ...profile.expectedCounts },
     }))
 }
 
@@ -2216,6 +2224,12 @@ function validateReadModelRegistryPolicyConsistency(
   errors: string[],
 ): void {
   const prefix = `registry.profiles[${index}]`
+  if (profile.requiredCommands.includes('compare') && !profile.requiredArtifacts.manualReadModel) {
+    errors.push(`${prefix}.requiredArtifacts.manualReadModel is required when requiredCommands includes compare`)
+  }
+  if (profile.optionalArtifacts.graphSourceProjection && !profile.optionalArtifacts.graphSource) {
+    errors.push(`${prefix}.optionalArtifacts.graphSource is required when graphSourceProjection is declared`)
+  }
   if (profile.policyLevel === 'structure-only') {
     if (profile.requiredCommands.includes('compare')) {
       errors.push(`${prefix}.requiredCommands must not include compare for structure-only policy`)
@@ -2521,19 +2535,29 @@ async function runValidateAllProfilePlan(
   for (const command of commands) {
     if (command === 'generate') {
       const result = await generateReadModelEvidence(root, profile.supportedSlice)
+      const generatedReadModelPath = registrySliceArtifact(
+        registryProfile,
+        requiredRegistryArtifact(registryProfile, 'generatedReadModel'),
+      )
+      const evidenceManifestPath = registrySliceArtifact(
+        registryProfile,
+        requiredRegistryArtifact(registryProfile, 'evidenceManifest'),
+      )
       commandResults.push({
         command,
         status: 'pass',
-        generatedReadModel: relativePath(root, result.generatedJsonPath),
-        evidenceManifest: relativePath(root, result.manifestPath),
+        generatedReadModel: generatedReadModelPath,
+        evidenceManifest: evidenceManifestPath,
+        generatedReadModelMatchesRegistry: relativePath(root, result.generatedJsonPath) === generatedReadModelPath,
+        evidenceManifestMatchesRegistry: relativePath(root, result.manifestPath) === evidenceManifestPath,
         nodeCount: result.model.nodes.length,
         edgeCount: result.model.edges.length,
       })
     } else if (command === 'compare') {
       const result = await compareReadModelEvidence(
         root,
-        `${profile.supportedSlice}/generated/generated-read-model.json`,
-        manualParityArtifactForProfile(profile),
+        registrySliceArtifact(registryProfile, requiredRegistryArtifact(registryProfile, 'generatedReadModel')),
+        registrySliceArtifact(registryProfile, requiredRegistryArtifact(registryProfile, 'manualReadModel')),
       )
       const comparisonStatus = result.report.summary.status
       if (comparisonStatus === 'comparison-blocked') {
@@ -2544,7 +2568,10 @@ async function runValidateAllProfilePlan(
       commandResults.push({
         command,
         status: comparisonStatus,
-        parityReport: relativePath(root, result.reportJsonPath),
+        parityReport: registrySliceArtifact(registryProfile, requiredRegistryArtifact(registryProfile, 'parityReport')),
+        parityReportMatchesRegistry:
+          relativePath(root, result.reportJsonPath) ===
+          registrySliceArtifact(registryProfile, requiredRegistryArtifact(registryProfile, 'parityReport')),
         mismatchCount: result.report.summary.mismatchCount,
         blockingCount: result.report.summary.blockingCount,
         decisionRequiredCount: result.report.summary.decisionRequiredCount,
@@ -2559,7 +2586,13 @@ async function runValidateAllProfilePlan(
       commandResults.push({
         command,
         status: result.report.status,
-        validationReport: relativePath(root, result.reportJsonPath),
+        validationReport: registrySliceArtifact(
+          registryProfile,
+          requiredRegistryArtifact(registryProfile, 'validationReport'),
+        ),
+        validationReportMatchesRegistry:
+          relativePath(root, result.reportJsonPath) ===
+          registrySliceArtifact(registryProfile, requiredRegistryArtifact(registryProfile, 'validationReport')),
         checkCount: result.report.summary.checkCount,
         warningCount: result.report.summary.warningCount,
         blockingCount: result.report.summary.blockingCount,
@@ -2571,18 +2604,19 @@ async function runValidateAllProfilePlan(
   }
 
   const graphSourceProjectionPath = registryProfile.optionalArtifacts.graphSourceProjection
-  if (profile.policyLevel === 'pilot-marker-backed' && profile.artifacts.graphSource && graphSourceProjectionPath) {
+  const graphSourcePath = registryProfile.optionalArtifacts.graphSource
+  if (profile.policyLevel === 'pilot-marker-backed' && graphSourcePath && graphSourceProjectionPath) {
     try {
       const projection = await loadGraphSourceProjectionArtifact(
         root,
-        `${profile.supportedSlice}/${graphSourceProjectionPath}`,
-        `${profile.supportedSlice}/${profile.artifacts.graphSource}`,
+        registrySliceArtifact(registryProfile, graphSourceProjectionPath),
+        registrySliceArtifact(registryProfile, graphSourcePath),
       )
       commandResults.push({
         command: 'project-contract',
         status: 'projection-contract-pass',
-        graphSource: `${profile.supportedSlice}/${profile.artifacts.graphSource}`,
-        projection: `${profile.supportedSlice}/${graphSourceProjectionPath}`,
+        graphSource: registrySliceArtifact(registryProfile, graphSourcePath),
+        projection: registrySliceArtifact(registryProfile, graphSourceProjectionPath),
         nodeCount: projection.nodes.length,
         edgeCount: projection.edges.length,
         coreViewCount: projection.coreViewCoverage.length,
@@ -2595,8 +2629,8 @@ async function runValidateAllProfilePlan(
       commandResults.push({
         command: 'project-contract',
         status: 'projection-contract-blocked',
-        graphSource: `${profile.supportedSlice}/${profile.artifacts.graphSource}`,
-        projection: `${profile.supportedSlice}/${graphSourceProjectionPath}`,
+        graphSource: registrySliceArtifact(registryProfile, graphSourcePath),
+        projection: registrySliceArtifact(registryProfile, graphSourceProjectionPath),
         blockingCount: 1,
         message: error instanceof Error ? error.message : String(error),
       })
@@ -2609,14 +2643,14 @@ async function runValidateAllProfilePlan(
     try {
       const projection = await loadStructureOnlyGraphSourceCandidateProjectionArtifact(
         root,
-        `${profile.supportedSlice}/${graphSourceCandidateProjectionPath}`,
-        `${profile.supportedSlice}/${graphSourceCandidatePath}`,
+        registrySliceArtifact(registryProfile, graphSourceCandidateProjectionPath),
+        registrySliceArtifact(registryProfile, graphSourceCandidatePath),
       )
       commandResults.push({
         command: 'project-contract',
         status: 'projection-contract-pass',
-        graphSource: `${profile.supportedSlice}/${graphSourceCandidatePath}`,
-        projection: `${profile.supportedSlice}/${graphSourceCandidateProjectionPath}`,
+        graphSource: registrySliceArtifact(registryProfile, graphSourceCandidatePath),
+        projection: registrySliceArtifact(registryProfile, graphSourceCandidateProjectionPath),
         nodeCount: projection.nodes.length,
         edgeCount: projection.edges.length,
         coreViewCount: projection.coreViewCoverage.length,
@@ -2630,8 +2664,8 @@ async function runValidateAllProfilePlan(
       commandResults.push({
         command: 'project-contract',
         status: 'projection-contract-blocked',
-        graphSource: `${profile.supportedSlice}/${graphSourceCandidatePath}`,
-        projection: `${profile.supportedSlice}/${graphSourceCandidateProjectionPath}`,
+        graphSource: registrySliceArtifact(registryProfile, graphSourceCandidatePath),
+        projection: registrySliceArtifact(registryProfile, graphSourceCandidateProjectionPath),
         contractMode: 'structure-only-confirmed',
         blockingCount: 1,
         message: error instanceof Error ? error.message : String(error),
@@ -2679,6 +2713,29 @@ function assertRegistryProfileMatchesConfig(
       `validationChecks ${registryProfile.expectedCounts.validationChecks} != ${profile.expectedCounts.validationChecks}`,
     )
   }
+  for (const key of ['generatedReadModel', 'evidenceManifest', 'validationReport'] as const) {
+    const registryArtifact = registryProfile.requiredArtifacts[key]
+    const configuredArtifact = profile.artifacts[key]
+    if (configuredArtifact && registryArtifact !== configuredArtifact) {
+      mismatches.push(`requiredArtifacts.${key} ${registryArtifact || 'missing'} != ${configuredArtifact}`)
+    }
+  }
+  for (const key of ['manualReadModel', 'generatedParityReport', 'scopedPilotMarker'] as const) {
+    const registryKey = key === 'generatedParityReport' ? 'parityReport' : key
+    const registryArtifact = registryProfile.requiredArtifacts[registryKey]
+    const configuredArtifact = profile.artifacts[key]
+    if (configuredArtifact && registryArtifact !== configuredArtifact) {
+      mismatches.push(`requiredArtifacts.${registryKey} ${registryArtifact || 'missing'} != ${configuredArtifact}`)
+    }
+  }
+  if (profile.artifacts.graphSource) {
+    const registryGraphSource = registryProfile.optionalArtifacts.graphSource
+    if (registryGraphSource !== profile.artifacts.graphSource) {
+      mismatches.push(
+        `optionalArtifacts.graphSource ${registryGraphSource || 'missing'} != ${profile.artifacts.graphSource}`,
+      )
+    }
+  }
 
   if (mismatches.length > 0) {
     throw new Error(
@@ -2686,6 +2743,20 @@ function assertRegistryProfileMatchesConfig(
     )
   }
   return registryProfile
+}
+
+function requiredRegistryArtifact(registryProfile: ReadModelSliceRegistryProfile, artifactKey: string): string {
+  const artifact = registryProfile.requiredArtifacts[artifactKey]
+  if (!artifact) {
+    throw new Error(
+      `Read-model registry profile ${registryProfile.profileId} must declare requiredArtifacts.${artifactKey}.`,
+    )
+  }
+  return artifact
+}
+
+function registrySliceArtifact(registryProfile: ReadModelSliceRegistryProfile, artifactPath: string): string {
+  return `${registryProfile.sourceSlice}/${artifactPath}`
 }
 
 function validateAllAggregateStatus(
@@ -2699,13 +2770,6 @@ function validateAllAggregateStatus(
     return 'decision-required'
   }
   return aggregateStatusValue
-}
-
-function manualParityArtifactForProfile(profile: SliceReadModelConfig): string {
-  if (profile.profileId === todoSearchReadModelProfile.profileId) {
-    return `${profile.supportedSlice}/maintainability-graph-read-model.json`
-  }
-  throw new Error(`Read-model profile ${profile.profileId} does not declare a manual parity artifact for compare.`)
 }
 
 async function buildPerSliceAggregateSummary(root: string, slice: string): Promise<PerSliceAggregateSummary> {

@@ -477,11 +477,13 @@ describe('read-model Evidence builder', () => {
     })
     expect(todoSearch?.requiredArtifacts).toMatchObject({
       generatedReadModel: todoSearchReadModelProfile.artifacts.generatedReadModel,
+      manualReadModel: todoSearchReadModelProfile.artifacts.manualReadModel,
       evidenceManifest: todoSearchReadModelProfile.artifacts.evidenceManifest,
       parityReport: todoSearchReadModelProfile.artifacts.generatedParityReport,
       validationReport: todoSearchReadModelProfile.artifacts.validationReport,
       scopedPilotMarker: todoSearchReadModelProfile.artifacts.scopedPilotMarker,
     })
+    expect(todoSearch?.optionalArtifacts.graphSource).toBe(todoSearchReadModelProfile.artifacts.graphSource)
     expect(todoSearch?.optionalArtifacts.graphSourceProjection).toBe(
       'generated/graph-source-read-model-projection.json',
     )
@@ -507,18 +509,37 @@ describe('read-model Evidence builder', () => {
 
     const plans = buildReadModelRegistryCommandPlans(registry)
 
-    expect(plans).toEqual([
+    expect(plans).toMatchObject([
       {
         profileId: todoSearchReadModelProfile.profileId,
         sourceSlice: todoSearchReadModelProfile.supportedSlice,
         policyLevel: 'pilot-marker-backed',
         commands: ['generate', 'compare', 'validate'],
+        requiredArtifacts: {
+          generatedReadModel: todoSearchReadModelProfile.artifacts.generatedReadModel,
+          manualReadModel: todoSearchReadModelProfile.artifacts.manualReadModel,
+          parityReport: todoSearchReadModelProfile.artifacts.generatedParityReport,
+        },
+        optionalArtifacts: {
+          graphSource: todoSearchReadModelProfile.artifacts.graphSource,
+          graphSourceProjection: 'generated/graph-source-read-model-projection.json',
+        },
+        expectedCounts: todoSearchReadModelProfile.expectedCounts,
       },
       {
         profileId: todoAppPbeRunStructureOnlyProfile.profileId,
         sourceSlice: todoAppPbeRunStructureOnlyProfile.supportedSlice,
         policyLevel: 'structure-only',
         commands: ['generate', 'validate'],
+        requiredArtifacts: {
+          generatedReadModel: todoAppPbeRunStructureOnlyProfile.artifacts.generatedReadModel,
+          validationReport: todoAppPbeRunStructureOnlyProfile.artifacts.validationReport,
+        },
+        optionalArtifacts: {
+          graphSource: todoAppPbeRunStructureOnlyProfile.artifacts.graphSource,
+          graphSourceProjection: 'generated/graph-source-read-model-projection.json',
+        },
+        expectedCounts: todoAppPbeRunStructureOnlyProfile.expectedCounts,
       },
     ])
   })
@@ -551,6 +572,17 @@ describe('read-model Evidence builder', () => {
     expect(() => normalizeReadModelSliceRegistry(structureOnlyConflict)).toThrow(
       /compare for structure-only policy.*parityRequirement\.required.*pilotMarkerRequirement\.required.*parityReport.*scopedPilotMarker/s,
     )
+  })
+
+  it('requires registry-declared compare and projection inputs instead of hidden sample defaults', async () => {
+    const source = await readRegistryFixtureObject()
+    const missingManual = cloneJson(source)
+    delete missingManual.profiles[0].requiredArtifacts.manualReadModel
+    expect(() => normalizeReadModelSliceRegistry(missingManual)).toThrow(/manualReadModel/)
+
+    const missingGraphSource = cloneJson(source)
+    delete missingGraphSource.profiles[0].optionalArtifacts.graphSource
+    expect(() => normalizeReadModelSliceRegistry(missingGraphSource)).toThrow(/optionalArtifacts\.graphSource/)
   })
 
   it('does not mutate the registry fixture while parsing or planning', async () => {
@@ -591,6 +623,8 @@ describe('read-model Evidence builder', () => {
     )
     expect(todoSearch?.commands.find((entry) => entry.command === 'project-contract')).toMatchObject({
       status: 'projection-contract-pass',
+      graphSource: 'examples/adoption/todo-search-slice/graph-source.json',
+      projection: 'examples/adoption/todo-search-slice/generated/graph-source-read-model-projection.json',
       nodeCount: 40,
       edgeCount: 59,
       coreViewCount: 7,
@@ -624,6 +658,8 @@ describe('read-model Evidence builder', () => {
     ])
     expect(todoSearch?.commands.find((entry) => entry.command === 'compare')).toMatchObject({
       status: 'comparison-pass',
+      parityReport: 'examples/adoption/todo-search-slice/generated/read-model-parity-report.json',
+      parityReportMatchesRegistry: true,
       mismatchCount: 0,
     })
     expect(todoApp?.commands.map((entry) => entry.command)).toEqual(['generate', 'validate', 'project-contract'])

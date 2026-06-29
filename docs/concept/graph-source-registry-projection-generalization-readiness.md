@@ -1,6 +1,6 @@
 # Graph-Source Registry / Projection Generalization Readiness
 
-Status: readiness package / no implementation / no registry expansion
+Status: readiness package / narrow registry-driven mechanics implemented / no registry expansion
 
 ## Purpose
 
@@ -35,8 +35,9 @@ Generalization should start by acknowledging the current fixed points:
 - `cli/src/core/read-model-evidence.ts` declares in-code profiles for Todo Search and Todo App.
 - `getSliceReadModelProfile()` only accepts the two configured supported slice paths.
 - `assertRegistryProfileMatchesConfig()` requires the registry profile to match the in-code profile id, source layout,
-  policy level, and expected counts.
-- `manualParityArtifactForProfile()` only declares manual parity for the Todo Search profile.
+  policy level, expected counts, and the configured required/optional artifact paths used by the current profiles.
+- Todo Search manual parity is now declared as registry/profile artifact metadata, not as a hidden validate-all helper
+  default.
 - Projection loaders include Todo Search-specific `limited-graph-source` expectations and Todo App-specific
   `structure-only-graph-source` expectations.
 - `scripts/read-model-e2e-smoke.js` copies and checks Todo Search, Todo App, aggregate, and intent-critical fixture
@@ -48,6 +49,22 @@ Generalization should start by acknowledging the current fixed points:
 
 These fixed points are acceptable for the current internal transition, but they are the audit surface before external
 dogfooding.
+
+## Implemented Narrow Mechanics
+
+The first implementation pass keeps the two positive profiles fixed, but reduces hidden sample-specific defaults in the
+validate-all path:
+
+- registry command plans now carry required artifacts, optional artifacts, and expected counts from
+  `examples/read-model-aggregate/read-model-slices.json`;
+- compare input paths are resolved from registry-declared artifacts, including the Todo Search manual read-model;
+- projection contract inputs use registry-declared `graphSource` and `graphSourceProjection` paths;
+- registry parsing rejects compare plans without `requiredArtifacts.manualReadModel`;
+- registry parsing rejects projection contracts that declare `graphSourceProjection` without `graphSource`;
+- validate-all still requires registry entries to match the current in-code profile boundary before execution.
+
+This is a mechanics cleanup only. It does not add profiles, loosen positive validate-all enrollment, or promote any
+additional source authority.
 
 ## What Is Already Stable Enough
 
@@ -113,9 +130,8 @@ should be explicit:
 This package does not:
 
 - add external registry entries;
-- modify `examples/read-model-aggregate/read-model-slices.json`;
 - remove in-code Todo Search / Todo App profiles;
-- change projection loaders;
+- change projection loader semantics;
 - change E2E smoke behavior;
 - change CI workflow behavior;
 - add required checks or branch protection;

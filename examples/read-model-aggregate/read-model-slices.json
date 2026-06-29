@@ -15,6 +15,7 @@
       "requiredCommands": ["generate", "compare", "validate"],
       "requiredArtifacts": {
         "generatedReadModel": "generated/generated-read-model.json",
+        "manualReadModel": "maintainability-graph-read-model.json",
         "evidenceManifest": "generated/read-model-evidence-manifest.json",
         "parityReport": "generated/read-model-parity-report.json",
         "validationReport": "generated/read-model-validation-report.json",
@@ -24,6 +25,7 @@
         "generatedReadModelSummary": "generated/generated-read-model.md",
         "parityReportSummary": "generated/read-model-parity-report.md",
         "validationReportSummary": "generated/read-model-validation-report.md",
+        "graphSource": "graph-source.json",
         "graphSourceProjection": "generated/graph-source-read-model-projection.json",
         "ciEvidenceManifest": "generated/read-model-ci-evidence-manifest.json"
       },
