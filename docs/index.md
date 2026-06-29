@@ -40,6 +40,8 @@
   verification result, and adoption-safe validation blockers.
 - [Graph-first cleanup audit and compatibility boundary](concept/graph-first-cleanup-audit-and-compatibility-boundary.md)
   - Cleanup boundary for graph-source core, tree-based compatibility layers, and future retirement candidates.
+- [Tree-native artifact retirement candidates](concept/tree-native-artifact-retirement-candidates.md) - Non-destructive
+  retirement-candidate boundary for tree-native, blueprint, ACEP, profile, docs, and validator compatibility surfaces.
 
 ## Workflow Guides
 
