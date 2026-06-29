@@ -1367,6 +1367,73 @@ export async function reportGraphSourceHealth(root: string): Promise<GraphSource
   }
 }
 
+export async function writeGraphSourceHealthMarkdownReport(
+  root: string,
+  report: GraphSourceHealthReport,
+  outputPath: string,
+): Promise<string> {
+  const absoluteOutputPath = path.resolve(root, outputPath)
+  await writeFormattedMarkdown(absoluteOutputPath, renderGraphSourceHealthMarkdown(report))
+  return absoluteOutputPath
+}
+
+export function renderGraphSourceHealthMarkdown(report: GraphSourceHealthReport): string {
+  const blockingReasons =
+    report.blockingReasons.length === 0 ? '- None.' : report.blockingReasons.map((reason) => `- ${reason}`).join('\n')
+
+  return `# Graph-Source Health Report
+
+Status: \`${report.status}\`
+
+## Source Status
+
+| Slice | Source status | Projection | Counts | Retirement |
+| --- | --- | --- | --- | --- |
+| Todo Search | \`${report.todoSearch.sourceMode}\` | \`${report.todoSearch.projectionContractStatus}\` | ${report.todoSearch.nodeCount} nodes / ${report.todoSearch.edgeCount} edges / ${report.todoSearch.coreViewCount} Core Views | \`${report.todoSearch.retirementReadinessStatus}\`; package \`${report.todoSearch.retirementApprovalStatus}\` |
+| Todo App PBE Run | \`${report.todoApp.sourceMode}\` / \`${report.todoApp.graphSourceAuthorityStatus}\` | \`${report.todoApp.projectionContractStatus}\` | ${report.todoApp.nodeCount} nodes / ${report.todoApp.edgeCount} edges / ${report.todoApp.coreViewCount} Core Views | \`${report.todoApp.retirementReadinessStatus}\`; package \`${report.todoApp.retirementApprovalStatus}\` |
+
+## Evidence Status
+
+| Surface | Status |
+| --- | --- |
+| Validate-all aggregate | \`${report.validateAll.aggregateStatus}\` (${report.validateAll.sliceCount} slices) |
+| E2E smoke | \`${report.e2eSmoke.status}\`; command \`${report.e2eSmoke.command}\` |
+| edgeIntent report | \`${report.edgeIntent.status}\`; ${report.edgeIntent.edgeIntentCount} edgeIntents / ${report.edgeIntent.claimCount} claims / ${report.edgeIntent.classificationCount} classifications / ${report.edgeIntent.anchorCount} anchors |
+| Missing edgeIntent classifications | \`${report.edgeIntent.missingClassificationCount}\` |
+| Missing edgeIntent anchors | \`${report.edgeIntent.missingAnchorCount}\` |
+
+## Retirement And Enforcement
+
+| Field | Status |
+| --- | --- |
+| Tree-native retirement readiness | \`${report.treeNativeRetirement.readinessStatus}\` |
+| Todo Search retirement package | \`${report.treeNativeRetirement.todoSearchApprovalStatus}\` |
+| Todo App retirement package | \`${report.treeNativeRetirement.todoAppApprovalStatus}\` |
+| Repo-wide retirement package | \`${report.treeNativeRetirement.repoWideApprovalStatus}\` |
+| Explicit retirement approval | \`${report.treeNativeRetirement.explicitRetirementApproval}\` |
+| Retirement action | \`${report.treeNativeRetirement.retirementAction}\` |
+| Enforcement status | \`${report.enforcementStatus}\` |
+
+## Blocking Reasons
+
+${blockingReasons}
+
+## Boundaries
+
+- ${report.nonEnforcementStatement}
+- ${report.requiredCheckBoundary}
+
+## Reproduce
+
+\`\`\`bash
+npm run build:cli
+node dist/cli/index.js graph read-model validate --all --json
+npm run test:read-model:e2e
+node dist/cli/index.js graph read-model report-health --json --markdown examples/read-model-aggregate/generated/read-model-health-report-output.md
+\`\`\`
+`
+}
+
 async function readGeneratedReadModelHealth(
   root: string,
   generatedPath: string,

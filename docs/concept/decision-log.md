@@ -708,6 +708,13 @@ edgeIntent records, retirement readiness `retirement-not-ready`, and enforcement
 was closed unmerged and its branch/temp artifacts were removed. This remains PR health CI observation only and does not
 add actual retirement, enforcement, or required checks.
 
+DEC-144 does not supersede DEC-097 through DEC-143. It adds a human-readable Markdown companion output for
+`graph read-model report-health --json --markdown <path>` and includes `read-model-health-report-output.md` in the
+non-enforcing read-model Evidence workflow artifact bundle, manifest, and Step Summary. The Markdown summary improves
+review discoverability for overall health, source status, validate-all/E2E/edgeIntent status, retirement readiness,
+retirement package status, boundaries, and reproduction commands. It does not add actual retirement, enforcement,
+required checks, or source authority changes.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

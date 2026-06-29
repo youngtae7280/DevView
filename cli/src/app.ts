@@ -116,6 +116,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     graphSource: undefined as string | undefined,
     manual: undefined as string | undefined,
     output: undefined as string | undefined,
+    markdown: undefined as string | undefined,
   }
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -291,6 +292,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--output requires a file path.' }
       }
       options.output = value
+      index += 1
+    } else if (arg === '--markdown') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--markdown requires a file path.' }
+      }
+      options.markdown = value
       index += 1
     } else if (arg === '--stage') {
       const value = argv[index + 1]

@@ -77,15 +77,16 @@ The registry still has exactly two positive validate-all profiles:
 
 ## Local Health Report
 
-`graph read-model report-health --json` provides a non-enforcing local summary over the current Graph-source transition
-state. It reads existing validate-all aggregate output, projection contracts, edgeIntent report health, transition
-status, retirement readiness, and retirement approval package statuses. It does not rerun E2E, mutate generated
-artifacts, create required checks, or approve tree-native retirement.
+`graph read-model report-health --json --markdown <path>` provides a non-enforcing local summary over the current
+Graph-source transition state. It reads existing validate-all aggregate output, projection contracts, edgeIntent report
+health, transition status, retirement readiness, and retirement approval package statuses. The optional Markdown output
+is a human-readable companion summary for artifact review; it does not rerun E2E, mutate generated source artifacts,
+create required checks, or approve tree-native retirement.
 
 The non-enforcing read-model Evidence workflow now captures the same health report as
-`read-model-health-report-output.json`; manual run `28350824272` reviewed the artifact and manifest fields as
-`graph-source-health-pass`. PR #13 run `28351078223` reviewed the same health report in
-`pull_request-informational` mode with PR metadata present.
+`read-model-health-report-output.json` and `read-model-health-report-output.md`; manual run `28350824272` reviewed the
+JSON artifact and manifest fields as `graph-source-health-pass`. PR #13 run `28351078223` reviewed the same health
+report in `pull_request-informational` mode with PR metadata present.
 
 ## Boundaries
 

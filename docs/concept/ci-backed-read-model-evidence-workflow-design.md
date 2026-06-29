@@ -80,6 +80,12 @@ The workflow also observes intent-critical native and retrofit edgeIntent projec
 Manual run `28346777344` and PR #11 run `28346897073` reviewed this capture as `ci-evidence-pass` with native and
 retrofit projection pass. This is report-only visibility and does not add broad validate-all intent enforcement.
 
+The workflow also captures graph-source health as both machine-readable JSON and a human-readable Markdown summary:
+`read-model-health-report-output.json` and `read-model-health-report-output.md`. The Markdown summary mirrors the local
+`graph read-model report-health --json --markdown <path>` output so reviewers can scan overall health, source status,
+validate-all/E2E/edgeIntent status, retirement readiness, retirement approval package status, non-enforcement
+boundaries, and reproduction commands without reading the JSON artifact first.
+
 Run `28156403793` also surfaced a GitHub Actions maintenance annotation that Node.js 20 is deprecated for
 `actions/checkout@v4`, `actions/setup-node@v4`, and `actions/upload-artifact@v4` execution. This is a retained CI hygiene
 warning for that historical run, not a failed Evidence run. The workflow now uses `actions/checkout@v7`,

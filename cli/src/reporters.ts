@@ -187,5 +187,6 @@ Options:
                        Graph source artifact for graph read-model projection, project-intent, or single-fixture report-intent.
   --manual <file>      Manual parity artifact for graph read-model comparison.
   --output <file>      Output file for graph read-model projection or project-intent.
+  --markdown <file>    Optional Markdown summary output for graph read-model report-health.
 `
 }

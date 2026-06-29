@@ -37,6 +37,7 @@ jobs:
       PBE_INTENT_RETROFIT_OUTPUT: examples/read-model-aggregate/generated/read-model-edge-intent-retrofit-output.json
       PBE_EDGE_INTENT_OBSERVATION_OUTPUT: examples/read-model-aggregate/generated/read-model-edge-intent-observation-output.json
       PBE_HEALTH_REPORT_OUTPUT: examples/read-model-aggregate/generated/read-model-health-report-output.json
+      PBE_HEALTH_REPORT_MARKDOWN: examples/read-model-aggregate/generated/read-model-health-report-output.md
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -116,7 +117,7 @@ jobs:
 
       - name: Report graph-source transition health
         run: |
-          node dist/cli/index.js graph read-model report-health --json 2>&1 | tee "$PBE_HEALTH_REPORT_OUTPUT"
+          node dist/cli/index.js graph read-model report-health --json --markdown "$PBE_HEALTH_REPORT_MARKDOWN" 2>&1 | tee "$PBE_HEALTH_REPORT_OUTPUT"
 
       - name: Focused read-model Evidence tests
         run: npx vitest run cli/src/__tests__/read-model-evidence.test.ts
@@ -147,6 +148,7 @@ jobs:
           const e2eSmokeOutputPath = process.env.PBE_E2E_SMOKE_OUTPUT
           const edgeIntentObservationOutputPath = process.env.PBE_EDGE_INTENT_OBSERVATION_OUTPUT
           const healthReportOutputPath = process.env.PBE_HEALTH_REPORT_OUTPUT
+          const healthReportMarkdownPath = process.env.PBE_HEALTH_REPORT_MARKDOWN
           const aggregateSlices = (process.env.PBE_AGGREGATE_SLICES || '')
             .split(',')
             .map((slice) => slice.trim())
@@ -308,6 +310,7 @@ jobs:
             healthReport: {
               status: healthReportStatus,
               artifactPath: healthReportOutputPath,
+              markdownArtifactPath: healthReportMarkdownPath,
               validateAll: healthReportOutput?.validateAll || null,
               edgeIntent: healthReportOutput?.edgeIntent || null,
               treeNativeRetirement: healthReportOutput?.treeNativeRetirement || null,
@@ -366,6 +369,7 @@ jobs:
               process.env.PBE_INTENT_RETROFIT_OUTPUT,
               process.env.PBE_INTENT_RETROFIT_PROJECTION,
               healthReportOutputPath,
+              healthReportMarkdownPath,
             ],
             sourceAuthorityBoundary:
               'CI-backed Evidence is Evidence only for declared read-model reports, aggregate summary, and separate candidate-observation metadata. Todo Search remains the only scoped pilot; Todo App PBE Run remains structure-only. This workflow does not expand source authority.',
@@ -415,6 +419,7 @@ jobs:
           const todoAppCandidateObservation = manifest?.todoAppPbeRun?.candidateObservationStatus || 'missing'
           const edgeIntentProjectionObservationStatus = manifest?.edgeIntentProjectionObservationStatus || 'missing'
           const healthReportStatus = manifest?.healthReportStatus || 'missing'
+          const healthReportMarkdown = manifest?.healthReport?.markdownArtifactPath || 'missing'
           const healthValidateAll = manifest?.healthReport?.validateAll?.aggregateStatus || 'missing'
           const healthEdgeIntent = manifest?.healthReport?.edgeIntent?.status || 'missing'
           const healthEdgeIntentCount = manifest?.healthReport?.edgeIntent?.edgeIntentCount ?? 'missing'
@@ -440,6 +445,7 @@ jobs:
             `- Todo App observed projection status: \`${todoAppCandidateObservation}\``,
             `- edgeIntent projection observation status: \`${edgeIntentProjectionObservationStatus}\``,
             `- Graph-source health report status: \`${healthReportStatus}\``,
+            `- Graph-source health report Markdown: \`${healthReportMarkdown}\``,
             `- Health validate-all aggregate: \`${healthValidateAll}\``,
             `- Health edgeIntent status/count: \`${healthEdgeIntent}\` / \`${healthEdgeIntentCount}\``,
             `- Health retirement readiness: \`${healthRetirement}\``,
@@ -493,5 +499,6 @@ jobs:
             examples/read-model-aggregate/generated/read-model-edge-intent-native-output.json
             examples/read-model-aggregate/generated/read-model-edge-intent-retrofit-output.json
             examples/read-model-aggregate/generated/read-model-health-report-output.json
+            examples/read-model-aggregate/generated/read-model-health-report-output.md
             examples/intent-critical/native-pbe-maintenance/generated/edge-intent-read-model-projection.json
             examples/intent-critical/retrofit-pbe-maintenance/generated/edge-intent-read-model-projection.json

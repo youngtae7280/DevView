@@ -10,6 +10,7 @@ import {
   summarizeReadModelEvidence,
   validateAllReadModelEvidence,
   validateReadModelEvidence,
+  writeGraphSourceHealthMarkdownReport,
 } from '../core/read-model-evidence.js'
 import type { CommandResult } from '../core/types.js'
 import { ExitCode, issue } from '../core/types.js'
@@ -173,6 +174,9 @@ export async function graphReadModelReportIntentCommand(context: CommandContext)
 
 export async function graphReadModelReportHealthCommand(context: CommandContext): Promise<CommandResult> {
   const result = await reportGraphSourceHealth(context.options.root)
+  const markdownReportPath = context.options.markdown
+    ? await writeGraphSourceHealthMarkdownReport(context.options.root, result, context.options.markdown)
+    : undefined
   const failed = result.status === 'graph-source-health-blocked'
   return {
     ok: !failed,
@@ -191,7 +195,10 @@ export async function graphReadModelReportHealthCommand(context: CommandContext)
           }),
         )
       : [],
-    data: { ...result },
+    data: {
+      ...result,
+      ...(markdownReportPath ? { markdownReport: relativePath(context.options.root, markdownReportPath) } : {}),
+    },
   }
 }
 

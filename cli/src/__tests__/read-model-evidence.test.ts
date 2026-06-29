@@ -781,8 +781,9 @@ describe('read-model Evidence builder', () => {
   it('exposes graph-source health through the CLI without creating enforcement', async () => {
     const workspace = await createExampleWorkspace()
     await copyWorkspacePath('examples/intent-critical', workspace)
+    const markdownPath = join(workspace, 'examples/read-model-aggregate/generated/read-model-health-report-output.md')
 
-    const result = await runPbeCli(['graph', 'read-model', 'report-health', '--json'], {
+    const result = await runPbeCli(['graph', 'read-model', 'report-health', '--json', '--markdown', markdownPath], {
       cwd: workspace,
       pluginRoot: resolve('.'),
     })
@@ -790,15 +791,27 @@ describe('read-model Evidence builder', () => {
       ok: boolean
       status: string
       enforcementStatus: string
+      markdownReport: string
       treeNativeRetirement: { todoSearchApprovalStatus: string; repoWideApprovalStatus: string }
     }
+    const markdown = await readFile(markdownPath, 'utf8')
 
     expect(result.exitCode).toBe(0)
     expect(output.ok).toBe(true)
     expect(output.status).toBe('graph-source-health-pass')
+    expect(output.markdownReport).toBe('examples/read-model-aggregate/generated/read-model-health-report-output.md')
     expect(output.enforcementStatus).toBe('non-enforcing')
     expect(output.treeNativeRetirement.todoSearchApprovalStatus).toBe('approval-candidate-not-approved')
     expect(output.treeNativeRetirement.repoWideApprovalStatus).toBe('not-ready')
+    expect(markdown).toContain('# Graph-Source Health Report')
+    expect(markdown).toContain('Status: `graph-source-health-pass`')
+    expect(markdown).toContain('Todo Search')
+    expect(markdown).toContain('Todo App PBE Run')
+    expect(markdown).toContain('`aggregate-pass`')
+    expect(markdown).toContain('`intent-report-pass`')
+    expect(markdown).toContain('`retirement-not-ready`')
+    expect(markdown).toContain('`non-enforcing`')
+    expect(markdown).toContain('node dist/cli/index.js graph read-model report-health --json --markdown')
   })
 
   it('blocks graph-source health when retirement approval package status drifts', async () => {

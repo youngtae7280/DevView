@@ -77,6 +77,7 @@ export interface CliOptions {
   graphSource?: string
   manual?: string
   output?: string
+  markdown?: string
 }
 
 export interface CliEnvironment {
