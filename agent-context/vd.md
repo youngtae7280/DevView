@@ -1,5 +1,9 @@
 # VD Context
 
+VD is tree-control compatibility context for Test Tree derivation and verification planning. For
+Graph-source/read-model source-authority work, treat VD/Test Tree artifacts as compatibility/fallback/reference unless
+the configured graph-source registry or a separate approval gives them source-authority role.
+
 Use when:
 
 - Work nodes need Test Tree coverage.

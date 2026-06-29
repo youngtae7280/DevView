@@ -13,6 +13,10 @@ Use this skill to generate `.pbe/codex-execution-pack/` from completed blueprint
 
 ACEP is not only a task-card bundle. It is a Codex execution contract that links Product, Project, Work, Test, Cycle, traceability, UI/UX expectations, evidence, and final coverage checks.
 
+Graph-first boundary: ACEP and `.pbe/codex-execution-pack/*` are compatibility/execution views over selected cycle
+obligations. They are not Graph-source authority, do not retire tree-native artifacts, and do not replace user
+acceptance or read-model projection evidence.
+
 In PBE v2, ACEP generation packages the selected Cycle Slice. It does not package the whole product unless the user selected the whole product as the active cycle.
 
 ACEP generation is deterministic in Autoflow. Run it automatically after Coverage Audit and UX Audit pass.

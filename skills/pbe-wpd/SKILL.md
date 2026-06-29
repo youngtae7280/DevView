@@ -11,6 +11,8 @@ Use PBE CLI transition commands for workflow state changes. Do not edit `.pbe/bl
 
 Use this skill to create Work Process Design from completed RPD output.
 
+Graph-first boundary: WPD, Project Tree, Work Tree, WorkGraph, and WorkDesign artifacts remain tree-control compatibility layers. They do not promote Graph-source authority, retire tree-native artifacts, or replace read-model projection evidence.
+
 In PBE v2, WPD derives `.pbe/tree/project-tree.json` and `.pbe/tree/work-tree.json` from confirmed Product Tree branches. Existing `.pbe/blueprint/work-design.json` and `.pbe/blueprint/work-graph.json` remain compatibility views and must be generated from the tree-native output, not the other way around.
 
 During migration, legacy Product status `accepted` may be read as confirmed requirement intent. It must not be confused with final product acceptance.

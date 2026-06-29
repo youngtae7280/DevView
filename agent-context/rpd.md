@@ -1,5 +1,9 @@
 # RPD Context
 
+RPD is tree-control compatibility context for Product Tree growth. For Graph-source/read-model source-authority work,
+use graph-source concept docs first and treat Product Tree artifacts as compatibility/fallback/reference unless a
+separate decision says otherwise.
+
 Use when:
 
 - The task is about user intent, Product Tree growth, ambiguity, or Root confirmation.

@@ -10,7 +10,7 @@ Start/init:
 
 - [start.md](start.md)
 
-Lite:
+Compact depth / compatibility `lite` metadata:
 
 - [lite.md](lite.md)
 
@@ -64,6 +64,14 @@ Start with the smallest matching card.
 Load full docs only when the card says to.
 
 If the task is unclear, ask one question instead of scanning all docs.
+
+## Graph-First Boundary
+
+RPD, WPD, VD, ACEP, `.pbe/blueprint/*`, and `.pbe/codex-execution-pack/*` remain valid compatibility context for
+tree-control closure. They are not the source-authority direction for Graph-source/read-model work.
+
+When a task is about Graph-source, read-model projection, source authority, structure-only status, registry-backed
+validate-all, or tree-native retirement, prefer the graph-source concept docs over tree-stage context cards.
 
 ## CLI Support
 

@@ -11,6 +11,8 @@ Use PBE CLI transition commands for workflow state changes. Do not edit `.pbe/bl
 
 Use this skill to create Verification Design from WPD output.
 
+Graph-first boundary: VD, Test Tree, VerificationDesign, and verification-plan artifacts remain tree-control compatibility layers. They do not promote Graph-source authority, retire tree-native artifacts, or replace read-model projection evidence.
+
 In PBE v2, VD derives `.pbe/tree/test-tree.json` from Product, Project, and Work Trees. Existing `.pbe/blueprint/verification-design.json` and `.pbe/blueprint/verification-plan.md` remain compatibility views and must be generated from the Test Tree.
 
 VD is deterministic in Autoflow. Run it automatically after WPD succeeds.

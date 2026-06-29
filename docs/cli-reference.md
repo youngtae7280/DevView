@@ -46,6 +46,24 @@ PBE/Codex should inspect the current repo and ask which task or slice to manage 
 The underlying `pbe` CLI commands are primarily for Codex internals, manual CLI control, debugging, CI, and advanced
 users.
 
+## Graph-First Positioning
+
+PBE's current forward direction is graph-source-backed read-model projection and evidence. The RPD/WPD/VD/ACEP command
+surface remains supported because existing skills, examples, validators, and initialized projects still depend on it.
+
+Treat these stage commands as the tree-control compatibility layer:
+
+- `pbe rpd ...`
+- `pbe wpd ...`
+- `pbe vd ...`
+- `pbe acep ...`
+- `.pbe/blueprint/*`
+- `.pbe/codex-execution-pack/*`
+
+They are still valid for deterministic transitions and compatibility closure, but they are not a reversal of the
+graph-first direction. Do not interpret a stage command pass as Graph-source promotion, tree-native retirement, CI
+enforcement, or user acceptance.
+
 Run local verification commands sequentially, especially on Windows, because validation commands that rebuild the CLI
 can touch `clean-dist` / `dist`.
 
@@ -517,7 +535,10 @@ pbe context pack --brief "docs/known-limits.md 한 줄 수정" --profile lite --
   blocking issues.
 - Next command: Fix visual artifacts/evidence, then rerun the blocked stage command.
 
-## Recommended Full Workflow
+## Compatibility Closure Workflow
+
+This workflow is the supported tree-control compatibility closure path. It remains useful for initialized `.pbe`
+projects and existing skills, but it is not a repo-wide Graph-source promotion path.
 
 ```text
 pbe status

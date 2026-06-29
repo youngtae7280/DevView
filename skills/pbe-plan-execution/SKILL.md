@@ -13,6 +13,10 @@ Use this skill after WPD and VD, and before ACEP generation.
 
 Execution planning is deterministic in Autoflow. Run it automatically after VD succeeds, dependency impact is audited, implementation scope is selected, and architecture runway is approved when required.
 
+Graph-first boundary: Plan Execution, Cycle Tree, Cycle Contract, execution strategy, and ACEP packaging remain
+tree-control compatibility/execution layers. They do not promote Graph-source authority, retire tree-native artifacts,
+or replace read-model projection evidence.
+
 In PBE v2, Plan Execution selects the active Cycle Slice. It must write `.pbe/execution/cycle-tree.json` and `.pbe/execution/cycle-contract.md` before ACEP generation. Existing `.pbe/blueprint/execution-strategy.json` and `.pbe/blueprint/execution-strategy.md` remain compatibility strategy views for ACEP and older workflows.
 
 The execution planner does not reinterpret RPD/Product Tree nodes as coding tasks. It reads Product, Project, Work, and Test Trees plus the WPD WorkGraph, then creates a staged execution strategy with sequential foundation work, safe parallel groups, required integration tasks, and final validation.

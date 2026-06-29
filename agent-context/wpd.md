@@ -1,5 +1,9 @@
 # WPD Context
 
+WPD is tree-control compatibility context for deriving Project/Work shape from Product Tree intent. For
+Graph-source/read-model source-authority work, do not treat WPD output as the primary graph source unless a later
+approved transition explicitly promotes it.
+
 Use when:
 
 - RPD/Product Tree is confirmed and selected scope needs Work nodes.

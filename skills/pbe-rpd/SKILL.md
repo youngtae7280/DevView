@@ -11,6 +11,8 @@ Use PBE CLI transition commands for workflow state changes. Do not edit `.pbe/bl
 
 Run Recursive Program Designer as RPD Tree Walk Mode.
 
+Graph-first boundary: RPD/Product Tree artifacts remain valid tree-control compatibility inputs during graph-source migration. For Graph-source/read-model source-authority work, treat Product Tree files as compatibility/fallback/reference unless a configured graph-source registry entry or explicit user-approved transition gives them source-authority role.
+
 In PBE v2, RPD means Product Tree growth. RPD owns product meaning, user intent, scope, non-scope, UX intent, risk, and acceptance language. It writes `.pbe/tree/product-tree.json` as the source of truth and keeps `.pbe/blueprint/requirement-tree.json` as the backward-compatible view.
 
 RPD participates in Autoflow. The user may invoke it directly for backward
