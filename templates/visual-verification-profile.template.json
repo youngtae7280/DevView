@@ -11,72 +11,37 @@
     {
       "checkId": "visual-contract-exists",
       "description": "Selected visual UI work has a Visual Design Contract or explicit waiver.",
-      "required": true,
-      "status": "pending",
-      "evidenceRefs": []
+      "required": false,
+      "status": "not_required",
+      "evidenceRefs": [],
+      "reason": "No selected visual UI work is configured yet."
     },
     {
       "checkId": "screenshots-required-states",
       "description": "Required selected UI states have screenshot or manual visual evidence.",
-      "required": true,
-      "status": "pending",
-      "evidenceRefs": []
+      "required": false,
+      "status": "not_required",
+      "evidenceRefs": [],
+      "reason": "No selected visual UI work is configured yet."
     },
     {
       "checkId": "component-contract-compliance",
       "description": "Shared components changed visually follow the Component Style Contract or have recorded exceptions.",
-      "required": true,
-      "status": "pending",
-      "evidenceRefs": []
+      "required": false,
+      "status": "not_required",
+      "evidenceRefs": [],
+      "reason": "No selected visual UI work is configured yet."
     },
     {
       "checkId": "visual-deviation-log",
       "description": "Visual deviations are recorded and resolved before acceptance.",
-      "required": true,
-      "status": "pending",
-      "evidenceRefs": []
+      "required": false,
+      "status": "not_required",
+      "evidenceRefs": [],
+      "reason": "No selected visual UI work is configured yet."
     }
   ],
   "blockingIssues": [],
   "waivers": [],
-  "profiles": [
-    {
-      "id": "VVP-001",
-      "surfaceId": "SURFACE-001",
-      "title": "Primary surface visual verification",
-      "applicability": "required",
-      "productNodeIds": ["PT-UI-001"],
-      "projectNodeIds": ["PJ-SURFACE-001"],
-      "workNodeIds": ["WT-SURFACE-001"],
-      "testNodeIds": ["TT-SURFACE-001"],
-      "evidenceNodeIds": [],
-      "checks": [
-        {
-          "id": "VVC-001",
-          "type": "screenshot_review",
-          "status": "planned",
-          "evidenceRequired": ["screenshot or manual-not-runnable explanation"],
-          "evidenceNodeIds": [],
-          "reason": "Visual parity requires evidence beyond build/open smoke."
-        },
-        {
-          "id": "VVC-002",
-          "type": "popup_visual_review",
-          "status": "planned",
-          "evidenceRequired": ["popup screenshot or manual-not-runnable explanation"],
-          "evidenceNodeIds": [],
-          "reason": "Popups belong to the same surface when parity is claimed."
-        },
-        {
-          "id": "VVC-003",
-          "type": "runtime_coordinate_check",
-          "status": "planned",
-          "evidenceRequired": ["coordinate comparison or manual-not-runnable explanation"],
-          "evidenceNodeIds": [],
-          "reason": "Layout parity cannot be inferred from static source alone."
-        }
-      ],
-      "notRunnableReason": ""
-    }
-  ]
+  "profiles": []
 }

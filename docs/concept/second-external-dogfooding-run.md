@@ -184,3 +184,14 @@ Recommended answer:
 Yes. Keep the fix narrow: missing optional/draft visual profile references should not block a fresh initialized external
 project unless selected visual work or current state requires them.
 ```
+
+## Follow-up Fix
+
+Step 1 of the next sequence fixed this blocker narrowly: fresh init now writes the visual verification profile as
+unconfigured / `not_required` instead of materializing placeholder Product, Project, Work, and Test node references.
+
+The boundary remains strict for real artifacts:
+
+- a fresh initialized external project should pass validation when no visual work is selected;
+- malformed present visual verification profiles still fail when they reference missing required tree nodes;
+- selected visual work can still require visual contract, inventory, screenshot/manual evidence, and review closure.

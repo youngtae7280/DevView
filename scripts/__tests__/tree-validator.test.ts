@@ -308,6 +308,19 @@ describe('PBE v2 tree validator', () => {
     expect(result.output).toContain('evidence EV-1 references missing acceptance criteria: AC-MISSING')
   })
 
+  it('rejects present visual verification profiles that reference missing tree nodes', () => {
+    const workspace = createTreeValidatorWorkspace()
+    writeProductTree(workspace)
+    writeVisualVerificationProfile(workspace, {
+      productNodeIds: ['PT-MISSING'],
+    })
+
+    const result = runTreeValidator(workspace)
+
+    expect(result.status).toBe(1)
+    expect(result.output).toContain('visual profile VVP-INVALID references missing product node: PT-MISSING')
+  })
+
   it('rejects Work nodes without Test Tree coverage once tests exist', () => {
     const workspace = createTreeValidatorWorkspace()
     writeProductTree(workspace)
@@ -936,6 +949,41 @@ function writeVerificationMissLog(workspace: string) {
         promotedEvidenceNodeIds: [],
         promotedContractRefs: [],
         status: 'resolved',
+      },
+    ],
+  })
+}
+
+function writeVisualVerificationProfile(
+  workspace: string,
+  options: {
+    productNodeIds?: string[]
+    projectNodeIds?: string[]
+    workNodeIds?: string[]
+    testNodeIds?: string[]
+    evidenceNodeIds?: string[]
+  } = {},
+) {
+  writeJson(join(workspace, '.pbe', 'control', 'visual-verification-profile.json'), {
+    version: '0.2.1-parity-completeness',
+    schemaVersion: '1.0.0',
+    artifactType: 'visual_verification_profile',
+    status: 'draft',
+    contractChecks: [],
+    blockingIssues: [],
+    waivers: [],
+    profiles: [
+      {
+        id: 'VVP-INVALID',
+        surfaceId: 'SURFACE-INVALID',
+        title: 'Invalid visual verification profile',
+        applicability: 'required',
+        productNodeIds: options.productNodeIds ?? [],
+        projectNodeIds: options.projectNodeIds ?? [],
+        workNodeIds: options.workNodeIds ?? [],
+        testNodeIds: options.testNodeIds ?? [],
+        evidenceNodeIds: options.evidenceNodeIds ?? [],
+        checks: [],
       },
     ],
   })

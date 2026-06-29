@@ -476,6 +476,34 @@ describe('PBE CLI', () => {
     expect(legacyReport.output).not.toContain('✓ Examples')
   })
 
+  it('validates a freshly initialized external project without visual placeholder reference failures', async () => {
+    const workspace = createWorkspace()
+    writeText(join(workspace, 'README.md'), '# External app\n\nOrdinary project README.\n')
+
+    const init = await runPbeCli(
+      ['init', '--profile', 'lite', '--brief', 'Fresh external validation smoke', '--json'],
+      {
+        cwd: workspace,
+        pluginRoot,
+      },
+    )
+
+    expect(init.exitCode).toBe(ExitCode.Success)
+    const visualProfile = JSON.parse(
+      readFileSync(join(workspace, '.pbe', 'control', 'visual-verification-profile.json'), 'utf8'),
+    )
+    expect(visualProfile.profiles).toEqual([])
+    expect(visualProfile.contractChecks.every((check: { status: string }) => check.status === 'not_required')).toBe(
+      true,
+    )
+
+    const result = await runPbeCli(['validate', '--json'], { cwd: workspace, pluginRoot })
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const payload = JSON.parse(result.stdout)
+    expect(JSON.stringify(payload)).not.toContain('visual profile VVP-001 references missing product node')
+  })
+
   it('allows missing full ACEP package in an external project when state does not require ACEP', async () => {
     const workspace = createWorkspace()
     writeExternalInitializedProject(workspace)
