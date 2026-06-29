@@ -77,6 +77,9 @@ The pilot is blocked because the existing artifacts explicitly retain these limi
 
 Changing labels without resolving these blockers would be a paper promotion, not a real pilot.
 
+The sharper evidence package for these blockers is recorded in
+[Todo App Source-Authority Evidence Package](todo-app-source-authority-evidence-package.md).
+
 ## Retry After Graph-Native Execution Contract Surface
 
 After the first graph-native execution contract report surface was added, the retry evaluated the configured Todo Search
@@ -179,6 +182,14 @@ This evaluation preserves:
 ## Decision
 
 Todo App limited source-authority pilot is blocked for now.
+
+Current evidence package decision:
+
+```text
+Todo App remains confirmed graph-source-backed structure-only. The next implementation branch should add or explicitly
+waive scoped pilot marker, parity, runtime evidence, and user approval requirements before changing registry policy
+level.
+```
 
 Recommended next decision:
 

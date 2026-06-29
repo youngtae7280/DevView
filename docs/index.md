@@ -54,6 +54,8 @@
   retirement-candidate boundary for tree-native, blueprint, ACEP, profile, docs, and validator compatibility surfaces.
 - [Todo App limited source-authority pilot](concept/todo-app-limited-source-authority-pilot.md) - Evaluation showing why
   Todo App remains `structure-only` until pilot evidence is explicitly added or waived.
+- [Todo App source-authority evidence package](concept/todo-app-source-authority-evidence-package.md) - Missing-evidence
+  checklist for a future Todo App limited pilot while keeping the current profile structure-only.
 - [Graph-first primary workflow](concept/graph-first-primary-workflow.md) - Current source-authority, projection,
   Evidence, validation, compatibility, and user-acceptance boundaries for Graph-first PBE.
 - [Adoption-safe validation path design](concept/adoption-safe-validation-path-design.md) - Design package for
