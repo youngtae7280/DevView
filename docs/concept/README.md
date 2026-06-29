@@ -523,7 +523,8 @@ critical context. The edge-level design keeps Graph-source as the single source 
 as short project-specific edge `claim` text, while vocabulary/table values stay limited to repeatable classifications
 such as type, intent kind, risk kind, signal kind, confidence, enforcement, source role, and lifecycle status.
 The first native/retrofit fixture projections now expose that edgeIntent in
-`generated/edge-intent-read-model-projection.json` without integrating it into broad validate-all semantics.
+`generated/edge-intent-read-model-projection.json` without integrating it into broad validate-all semantics. The
+projection can be regenerated through `graph read-model project-intent --graph-source <path> --output <path> --json`.
 
 Manual workflow run `28222731063` reviewed the Todo App bounded non-authority positive validate-all projection status:
 Todo App reports `candidate-projection-contract-pass`, Todo Search remains `projection-contract-pass`, aggregate remains

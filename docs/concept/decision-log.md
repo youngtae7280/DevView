@@ -626,6 +626,12 @@ projection against the source `edgeIntent` and prove the claim is not replaced b
 intent projection surface only and is not integrated into broad validate-all, enforcement, required checks, or tree
 retirement.
 
+DEC-131 does not supersede DEC-097 through DEC-130. It adds the small `graph read-model project-intent --graph-source
+<path> --output <path> --json` CLI/report surface for intent-critical native/retrofit fixtures. The command regenerates
+the existing edge-intent read-model projection shape, preserves project-specific claims and vocabulary classifications,
+and reports clear validation failures when required classifications or anchors are missing. It remains separate from
+broad validate-all, enforcement, required checks, and tree retirement.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

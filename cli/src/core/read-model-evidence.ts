@@ -360,6 +360,62 @@ interface CandidateObservationResult {
   validateAllBoundary: string
 }
 
+interface IntentCriticalGraphSourceExample {
+  schemaVersion: 1
+  artifactRole: 'intent-critical-graph-source-example'
+  exampleKind: 'native-pbe' | 'retrofit-pbe'
+  status: 'intent-preservation-fixture'
+  sourceSlice: string
+  intentRecords: IntentCriticalRecord[]
+}
+
+interface IntentCriticalRecord {
+  id: string
+  edgeIntent: EdgeIntentAnnotation
+}
+
+interface EdgeIntentAnnotation {
+  edgeType: string
+  intentKind: string
+  riskKind: string
+  claim: string
+  confidence: string
+  enforcement: string
+  anchors: EdgeIntentAnchor[]
+}
+
+interface EdgeIntentAnchor {
+  signalKind: string
+  sourceRole: string
+  artifact: string
+}
+
+interface EdgeIntentReadModelProjection {
+  schemaVersion: 1
+  artifactRole: 'edge-intent-read-model-projection'
+  projectionStatus: 'intent-projection-pass'
+  sourceArtifact: string
+  sourceExampleKind: 'native-pbe' | 'retrofit-pbe'
+  projectionBoundary: string
+  edgeIntentProjections: Array<
+    EdgeIntentAnnotation & {
+      sourceIntentRecordId: string
+      humanReadableSummary: string
+    }
+  >
+  vocabularyBoundary: {
+    classificationFields: string[]
+    projectSpecificClaimField: 'claim'
+    claimBoundary: string
+  }
+}
+
+interface EdgeIntentProjectionFileResult {
+  graphSourcePath: string
+  projectionJsonPath: string
+  projection: EdgeIntentReadModelProjection
+}
+
 interface TreeNode {
   id: string
   title?: string
@@ -996,6 +1052,182 @@ export async function projectGraphSourceReadModelToFile(
   return {
     ...result,
     projectionJsonPath,
+  }
+}
+
+export async function projectIntentCriticalGraphSourceToFile(
+  root: string,
+  graphSourcePath: string,
+  outputPath?: string,
+): Promise<EdgeIntentProjectionFileResult> {
+  const normalizedGraphSourcePath = normalizePath(graphSourcePath)
+  const absoluteGraphSourcePath = path.resolve(root, normalizedGraphSourcePath)
+  const parsed = await readJsonSafe<unknown>(absoluteGraphSourcePath)
+  if (!parsed.ok) {
+    throw new Error(`Unable to read intent graph source artifact at ${normalizedGraphSourcePath}: ${parsed.error}`)
+  }
+  const graphSource = normalizeIntentCriticalGraphSourceExample(parsed.value, normalizedGraphSourcePath)
+  const projection = projectIntentCriticalGraphSource(graphSource, normalizedGraphSourcePath)
+  const defaultOutput = `${path.dirname(normalizedGraphSourcePath)}/generated/edge-intent-read-model-projection.json`
+  const projectionJsonPath = path.resolve(root, outputPath || defaultOutput)
+  await writeFormattedJson(projectionJsonPath, projection)
+  return {
+    graphSourcePath: normalizedGraphSourcePath,
+    projectionJsonPath,
+    projection,
+  }
+}
+
+export function projectIntentCriticalGraphSource(
+  graphSource: IntentCriticalGraphSourceExample,
+  graphSourcePath: string,
+): EdgeIntentReadModelProjection {
+  return {
+    schemaVersion: 1,
+    artifactRole: 'edge-intent-read-model-projection',
+    projectionStatus: 'intent-projection-pass',
+    sourceArtifact: normalizePath(graphSourcePath),
+    sourceExampleKind: graphSource.exampleKind,
+    projectionBoundary:
+      graphSource.exampleKind === 'retrofit-pbe'
+        ? 'This projection exposes edge-level maintenance intent for human review. It does not create a separate intent ledger, replace graph source, add enforcement, or approve compatibility retirement.'
+        : 'This projection exposes edge-level maintenance intent for human review. It does not create a separate intent ledger, replace graph source, add enforcement, or replace user acceptance.',
+    edgeIntentProjections: graphSource.intentRecords.map((record) => ({
+      sourceIntentRecordId: record.id,
+      ...cloneJson(record.edgeIntent),
+      humanReadableSummary: renderEdgeIntentSummary(record.edgeIntent),
+    })),
+    vocabularyBoundary: {
+      classificationFields: ['edgeType', 'intentKind', 'riskKind', 'confidence', 'enforcement', 'anchors.signalKind'],
+      projectSpecificClaimField: 'claim',
+      claimBoundary:
+        'The claim is preserved as short project-specific language and is not replaced by a global enum or table.',
+    },
+  }
+}
+
+function renderEdgeIntentSummary(edgeIntent: EdgeIntentAnnotation): string {
+  const label =
+    edgeIntent.intentKind === 'ux-acceptance'
+      ? 'UX acceptance intent'
+      : edgeIntent.intentKind === 'compatibility-retention'
+        ? 'Compatibility-retention intent'
+        : `${edgeIntent.intentKind} intent`
+  return `${label}: ${edgeIntent.claim}. Risk: ${edgeIntent.riskKind}. Confidence: ${edgeIntent.confidence}. Enforcement: ${edgeIntent.enforcement}.`
+}
+
+export function normalizeIntentCriticalGraphSourceExample(
+  value: unknown,
+  graphSourcePath = 'graph-source-intent.json',
+): IntentCriticalGraphSourceExample {
+  const errors: string[] = []
+  const source = asRecord(value, 'intentGraphSource', errors)
+  const schemaVersion = source.schemaVersion
+  const artifactRole = source.artifactRole
+  const exampleKind = requiredEnum(
+    source,
+    'exampleKind',
+    ['native-pbe', 'retrofit-pbe'] as const,
+    errors,
+    'intentGraphSource',
+  )
+  const status = source.status
+  const sourceSlice = requiredString(source, 'sourceSlice', errors, 'intentGraphSource')
+  const intentRecords = requiredRecordArray<Record<string, unknown>>(
+    source,
+    'intentRecords',
+    errors,
+    'intentGraphSource',
+  ).map((record, index) => normalizeIntentCriticalRecord(record, index, errors))
+
+  if (schemaVersion !== 1) {
+    errors.push('intentGraphSource.schemaVersion must be 1')
+  }
+  if (artifactRole !== 'intent-critical-graph-source-example') {
+    errors.push('intentGraphSource.artifactRole must be intent-critical-graph-source-example')
+  }
+  if (status !== 'intent-preservation-fixture') {
+    errors.push('intentGraphSource.status must be intent-preservation-fixture')
+  }
+  if (intentRecords.length === 0) {
+    errors.push('intentGraphSource.intentRecords must include at least one edgeIntent record')
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`Invalid intent graph source ${graphSourcePath}: ${errors.join('; ')}`)
+  }
+
+  return {
+    schemaVersion: 1,
+    artifactRole: 'intent-critical-graph-source-example',
+    exampleKind,
+    status: 'intent-preservation-fixture',
+    sourceSlice: normalizePath(sourceSlice),
+    intentRecords,
+  }
+}
+
+function normalizeIntentCriticalRecord(
+  value: Record<string, unknown>,
+  index: number,
+  errors: string[],
+): IntentCriticalRecord {
+  const prefix = `intentGraphSource.intentRecords[${index}]`
+  const id = requiredString(value, 'id', errors, prefix)
+  const edgeIntent = normalizeEdgeIntentAnnotation(
+    asRecord(value.edgeIntent, `${prefix}.edgeIntent`, errors),
+    prefix,
+    errors,
+  )
+  return { id, edgeIntent }
+}
+
+function normalizeEdgeIntentAnnotation(
+  value: Record<string, unknown>,
+  prefix: string,
+  errors: string[],
+): EdgeIntentAnnotation {
+  const edgePrefix = `${prefix}.edgeIntent`
+  const edgeType = requiredString(value, 'edgeType', errors, edgePrefix)
+  const intentKind = requiredString(value, 'intentKind', errors, edgePrefix)
+  const riskKind = requiredString(value, 'riskKind', errors, edgePrefix)
+  const claim = requiredString(value, 'claim', errors, edgePrefix)
+  const confidence = requiredString(value, 'confidence', errors, edgePrefix)
+  const enforcement = requiredString(value, 'enforcement', errors, edgePrefix)
+  const anchors = requiredRecordArray<Record<string, unknown>>(value, 'anchors', errors, edgePrefix).map(
+    (anchor, index) => ({
+      signalKind: requiredString(anchor, 'signalKind', errors, `${edgePrefix}.anchors[${index}]`),
+      sourceRole: requiredString(anchor, 'sourceRole', errors, `${edgePrefix}.anchors[${index}]`),
+      artifact: requiredString(anchor, 'artifact', errors, `${edgePrefix}.anchors[${index}]`),
+    }),
+  )
+
+  if (edgeType !== 'preserves-intent') {
+    errors.push(`${edgePrefix}.edgeType must be preserves-intent`)
+  }
+  for (const [key, valueToCheck] of Object.entries({ intentKind, riskKind, confidence, enforcement })) {
+    if (!/^[a-z-]+$/.test(valueToCheck)) {
+      errors.push(`${edgePrefix}.${key} must be vocabulary-style kebab-case`)
+    }
+  }
+  if (claim.length < 20) {
+    errors.push(`${edgePrefix}.claim must preserve short project-specific text`)
+  }
+  if (claim === intentKind || claim === riskKind) {
+    errors.push(`${edgePrefix}.claim must not be replaced by vocabulary enum values`)
+  }
+  if (anchors.length === 0) {
+    errors.push(`${edgePrefix}.anchors must include at least one source signal anchor`)
+  }
+
+  return {
+    edgeType,
+    intentKind,
+    riskKind,
+    claim,
+    confidence,
+    enforcement,
+    anchors,
   }
 }
 

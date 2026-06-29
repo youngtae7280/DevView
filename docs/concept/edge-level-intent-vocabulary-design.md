@@ -84,6 +84,14 @@ The first fixture projection surface is intentionally small:
 Each projection keeps classification fields (`edgeType`, `intentKind`, `riskKind`, `confidence`, `enforcement`, and
 anchor signal kinds) as vocabulary-style values while preserving `claim` as short project-specific text.
 
+The projection can now be regenerated with:
+
+```bash
+node dist/cli/index.js graph read-model project-intent --graph-source <path> --output <path> --json
+```
+
+This command is intentionally separate from broad `validate --all` semantics.
+
 ## Fixture Alignment
 
 The current fixture alignment is:
@@ -104,7 +112,7 @@ Both fixtures use `edgeIntent` with:
 Both fixture projections expose the same fields under `edgeIntentProjections` for human-readable read-model review.
 
 Focused tests verify that native and retrofit examples use the same edge-intent shape while differing by signal
-origin/confidence.
+origin/confidence, and that the `project-intent` CLI preserves committed projection shape.
 
 ## Non-Scope
 

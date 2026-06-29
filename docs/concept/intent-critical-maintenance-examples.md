@@ -54,6 +54,7 @@ Captured intent:
 
 - edge-level `intent.kind`, `risk`, `claim`, `confidence`, `enforcement`, and anchors
 - projection preservation through `generated/edge-intent-read-model-projection.json`
+- regeneration through `graph read-model project-intent --graph-source <path> --output <path> --json`
 - claim text preserved as project-specific text rather than replaced by enum/table values
 - maintenance scenario and vibe-coding risk
 - intent statement

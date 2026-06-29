@@ -119,7 +119,7 @@ explicit compatibility and fallback boundaries.
   records preserve UX, non-goal, fallback, evidence, and compatibility intent so AI-assisted maintenance does not
   silently change behavior. Intent is modeled primarily as graph edge annotation with a short project-specific `claim`;
   PBE does not create a separate intent ledger as another source. The first intent-critical projections expose that
-  edgeIntent for human-readable review without broad validate-all enforcement.
+  edgeIntent for human-readable review through `graph read-model project-intent` without broad validate-all enforcement.
 
 ## What Gets Created
 

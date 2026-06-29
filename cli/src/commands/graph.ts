@@ -4,6 +4,7 @@ import {
   generateReadModelEvidence,
   observeReadModelCandidateProjections,
   projectGraphSourceReadModelToFile,
+  projectIntentCriticalGraphSourceToFile,
   summarizeReadModelEvidence,
   validateAllReadModelEvidence,
   validateReadModelEvidence,
@@ -88,6 +89,55 @@ export async function graphReadModelProjectCommand(context: CommandContext): Pro
       userAcceptanceBoundary: result.projection.userAcceptanceBoundary,
       fallbackReferences: result.projection.fallbackReferences,
     },
+  }
+}
+
+export async function graphReadModelProjectIntentCommand(context: CommandContext): Promise<CommandResult> {
+  const graphSource = context.options.graphSource
+  if (!graphSource) {
+    return invalidCommand('graph read-model project-intent requires --graph-source <file>.')
+  }
+  try {
+    const result = await projectIntentCriticalGraphSourceToFile(
+      context.options.root,
+      graphSource,
+      context.options.output,
+    )
+    return {
+      ok: true,
+      command: 'graph read-model project-intent',
+      exitCode: ExitCode.Success,
+      message: 'Edge intent read-model projection created.',
+      issues: [],
+      data: {
+        graphSource: result.graphSourcePath,
+        projection: relativePath(context.options.root, result.projectionJsonPath),
+        status: result.projection.projectionStatus,
+        sourceExampleKind: result.projection.sourceExampleKind,
+        projectedIntentCount: result.projection.edgeIntentProjections.length,
+        edgeIntentProjections: result.projection.edgeIntentProjections,
+        projectionBoundary: result.projection.projectionBoundary,
+        vocabularyBoundary: result.projection.vocabularyBoundary,
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model project-intent',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Edge intent read-model projection failed.',
+      issues: [
+        issue({
+          validator: 'EdgeIntentProjection',
+          code: 'EDGE_INTENT_PROJECTION_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Restore required edgeIntent vocabulary classifications, project-specific claim text, and source signal anchors.',
+        }),
+      ],
+    }
   }
 }
 

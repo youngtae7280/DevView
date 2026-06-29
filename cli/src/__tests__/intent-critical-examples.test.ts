@@ -1,6 +1,8 @@
-import { readFile } from 'node:fs/promises'
-import { resolve } from 'node:path'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { runPbeCli } from '../app.js'
 
 interface IntentCriticalExample {
   schemaVersion: number
@@ -81,6 +83,22 @@ async function readIntentExample(path: string): Promise<IntentCriticalExample> {
 
 async function readProjection(path: string): Promise<EdgeIntentProjection> {
   return JSON.parse(await readFile(resolve(path), 'utf8')) as EdgeIntentProjection
+}
+
+async function runProjectIntentCli(graphSource: string, output: string): Promise<EdgeIntentProjection> {
+  const result = await runPbeCli(
+    ['graph', 'read-model', 'project-intent', '--graph-source', graphSource, '--output', output, '--json'],
+    { cwd: resolve('.') },
+  )
+  expect(result.stderr).toBe('')
+  expect(result.exitCode).toBe(0)
+  const payload = JSON.parse(result.stdout) as {
+    projection: string
+    status: string
+    edgeIntentProjections: EdgeIntentProjection['edgeIntentProjections']
+  }
+  expect(payload.status).toBe('intent-projection-pass')
+  return readProjection(payload.projection)
 }
 
 function expectIntentPreservationFixture(example: IntentCriticalExample): void {
@@ -221,5 +239,72 @@ describe('intent-critical Graph-source examples', () => {
     expect(example.intentRecords[0].statement).toContain('compatibility export')
     expect(example.intentRecords[0].preservationRule).toContain('explicit retirement decision')
     expect(example.intentRecords[0].nonGoal).toContain('permission to delete')
+  })
+
+  it('projects native and retrofit edgeIntent fixtures through the CLI without changing claim text', async () => {
+    const tempRoot = await mkdtemp(join(tmpdir(), 'pbe-intent-projection-'))
+    try {
+      const nativeGraphSource = 'examples/intent-critical/native-pbe-maintenance/graph-source-intent.json'
+      const retrofitGraphSource = 'examples/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json'
+      const nativeCommittedProjection = await readProjection(
+        'examples/intent-critical/native-pbe-maintenance/generated/edge-intent-read-model-projection.json',
+      )
+      const retrofitCommittedProjection = await readProjection(
+        'examples/intent-critical/retrofit-pbe-maintenance/generated/edge-intent-read-model-projection.json',
+      )
+
+      const nativeProjected = await runProjectIntentCli(
+        nativeGraphSource,
+        join(tempRoot, 'native-edge-intent-read-model-projection.json'),
+      )
+      const retrofitProjected = await runProjectIntentCli(
+        retrofitGraphSource,
+        join(tempRoot, 'retrofit-edge-intent-read-model-projection.json'),
+      )
+
+      expect(nativeProjected).toEqual(nativeCommittedProjection)
+      expect(retrofitProjected).toEqual(retrofitCommittedProjection)
+      expect(nativeProjected.edgeIntentProjections[0].claim).toBe(
+        'empty search restores the full list after clearing a query',
+      )
+      expect(retrofitProjected.edgeIntentProjections[0].claim).toBe(
+        'compatibility export stays until explicit retirement approval',
+      )
+    } finally {
+      await rm(tempRoot, { recursive: true, force: true })
+    }
+  })
+
+  it('blocks project-intent when vocabulary classification or anchors are missing', async () => {
+    const tempRoot = await mkdtemp(join(tmpdir(), 'pbe-intent-projection-invalid-'))
+    try {
+      const source = await readIntentExample('examples/intent-critical/native-pbe-maintenance/graph-source-intent.json')
+      delete (
+        source.intentRecords[0].edgeIntent as Partial<IntentCriticalExample['intentRecords'][number]['edgeIntent']>
+      ).riskKind
+      source.intentRecords[0].edgeIntent.anchors = []
+      const invalidPath = join(tempRoot, 'invalid-graph-source-intent.json')
+      await writeFile(invalidPath, `${JSON.stringify(source, null, 2)}\n`, 'utf8')
+
+      const result = await runPbeCli(
+        [
+          'graph',
+          'read-model',
+          'project-intent',
+          '--graph-source',
+          invalidPath,
+          '--output',
+          join(tempRoot, 'projection.json'),
+          '--json',
+        ],
+        { cwd: resolve('.') },
+      )
+      expect(result.exitCode).not.toBe(0)
+      expect(result.stdout).toBe('')
+      expect(result.stderr).toContain('riskKind')
+      expect(result.stderr).toContain('anchors')
+    } finally {
+      await rm(tempRoot, { recursive: true, force: true })
+    }
   })
 })

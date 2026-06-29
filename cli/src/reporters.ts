@@ -141,6 +141,8 @@ Commands:
                        Compare generated read-model Evidence with a manual parity artifact
   graph read-model project
                        Project a bounded Graph source artifact into read-model projection output
+  graph read-model project-intent
+                       Project an intent-critical Graph source fixture into edge-intent read-model projection output
   graph read-model observe-candidates
                        Check non-promotional read-model candidate projection contracts outside validate-all
   graph read-model validate
@@ -178,8 +180,8 @@ Options:
   --slices <paths>     Slice paths for graph read-model summarize, comma-separated.
   --generated <file>   Generated read-model file for graph read-model comparison.
   --graph-source <file>
-                       Graph source artifact for graph read-model projection.
+                       Graph source artifact for graph read-model projection or project-intent.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for graph read-model projection.
+  --output <file>      Output file for graph read-model projection or project-intent.
 `
 }
