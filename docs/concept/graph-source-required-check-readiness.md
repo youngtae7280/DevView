@@ -46,6 +46,22 @@ Recommended sequence:
 Candidate C should wait until Candidate B is reviewed or the user explicitly accepts broader read-model blocking
 semantics.
 
+## Candidate B Soft-Required Package
+
+Candidate B is prepared as a policy candidate in
+[graph-source-soft-required-candidate-b-package.md](graph-source-soft-required-candidate-b-package.md).
+
+Candidate B is the narrow command pair:
+
+```text
+node dist/cli/index.js graph read-model report-health --json
+npm.cmd run test:read-model:e2e
+```
+
+The package separates false positive handling, infrastructure failure handling, retained warning handling, and temporary
+GitHub Actions failure handling. It is still not approved as a required check, branch protection rule, merge gate, or CI
+enforcement mode.
+
 ## Required Approval Before Implementation
 
 The following actions require explicit user approval and a separate implementation step:
@@ -61,7 +77,7 @@ The following actions require explicit user approval and a separate implementati
 Current blockers:
 
 - no explicit user approval for required checks;
-- no waiver/failure policy for false positives, retained warnings, or temporary infrastructure failure;
+- waiver/failure policy exists only as an unapproved Candidate B package and is not active;
 - tree-native retirement remains not approved and must not be bundled into enforcement readiness;
 - Candidate B has not been run as a named soft-required package with review signoff.
 
