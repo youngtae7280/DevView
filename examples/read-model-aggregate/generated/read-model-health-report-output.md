@@ -4,10 +4,10 @@ Status: `graph-source-health-pass`
 
 ## Source Status
 
-| Slice            | Source status                                                   | Projection                 | Counts                             | Retirement                                                                   |
-| ---------------- | --------------------------------------------------------------- | -------------------------- | ---------------------------------- | ---------------------------------------------------------------------------- |
-| Todo Search      | `graph-source-backed`                                           | `projection-contract-pass` | 40 nodes / 59 edges / 7 Core Views | `closer-but-not-retirement-ready`; package `approval-candidate-not-approved` |
-| Todo App PBE Run | `graph-source-backed` / `confirmed-structure-only-graph-source` | `projection-contract-pass` | 22 nodes / 38 edges / 7 Core Views | `not-retirement-ready`; package `not-ready-structure-only`                   |
+| Slice            | Source status                                                   | Projection                 | Counts                             | Retirement                                                                              |
+| ---------------- | --------------------------------------------------------------- | -------------------------- | ---------------------------------- | --------------------------------------------------------------------------------------- |
+| Todo Search      | `graph-source-backed`                                           | `projection-contract-pass` | 40 nodes / 59 edges / 7 Core Views | `deprecated-fallback-reference-not-deleted`; package `retirement-candidate-not-deleted` |
+| Todo App PBE Run | `graph-source-backed` / `confirmed-structure-only-graph-source` | `projection-contract-pass` | 22 nodes / 38 edges / 7 Core Views | `not-retirement-ready`; package `not-ready-structure-only`                              |
 
 ## Evidence Status
 
@@ -21,15 +21,15 @@ Status: `graph-source-health-pass`
 
 ## Retirement And Enforcement
 
-| Field                            | Status                            |
-| -------------------------------- | --------------------------------- |
-| Tree-native retirement readiness | `retirement-not-ready`            |
-| Todo Search retirement package   | `approval-candidate-not-approved` |
-| Todo App retirement package      | `not-ready-structure-only`        |
-| Repo-wide retirement package     | `not-ready`                       |
-| Explicit retirement approval     | `not-approved`                    |
-| Retirement action                | `not-in-scope`                    |
-| Enforcement status               | `non-enforcing`                   |
+| Field                            | Status                                        |
+| -------------------------------- | --------------------------------------------- |
+| Tree-native retirement readiness | `retirement-not-ready`                        |
+| Todo Search retirement package   | `retirement-candidate-not-deleted`            |
+| Todo App retirement package      | `not-ready-structure-only`                    |
+| Repo-wide retirement package     | `not-ready`                                   |
+| Explicit retirement approval     | `not-approved`                                |
+| Retirement action                | `todo-search-fallback-deprecated-not-deleted` |
+| Enforcement status               | `non-enforcing`                               |
 
 ## Blocking Reasons
 

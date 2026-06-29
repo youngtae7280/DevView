@@ -1295,7 +1295,7 @@ export async function reportGraphSourceHealth(root: string): Promise<GraphSource
   const todoAppPackage = findByField(retirementApprovalPackages, 'scope', 'todo-app-pbe-run-structure-only')
   const repoWidePackage = findByField(retirementApprovalPackages, 'scope', 'repo-wide')
 
-  if (todoSearchPackage.status !== 'approval-candidate-not-approved') {
+  if (todoSearchPackage.status !== 'retirement-candidate-not-deleted') {
     blockingReasons.push(`Todo Search retirement approval package status is ${String(todoSearchPackage.status)}`)
   }
   if (todoAppPackage.status !== 'not-ready-structure-only') {

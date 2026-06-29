@@ -749,7 +749,8 @@ describe('read-model Evidence builder', () => {
       nodeCount: 40,
       edgeCount: 59,
       coreViewCount: 7,
-      retirementApprovalStatus: 'approval-candidate-not-approved',
+      retirementApprovalStatus: 'retirement-candidate-not-deleted',
+      retirementReadinessStatus: 'deprecated-fallback-reference-not-deleted',
     })
     expect(report.todoApp).toMatchObject({
       sourceMode: 'graph-source-backed',
@@ -768,11 +769,11 @@ describe('read-model Evidence builder', () => {
     expect(report.edgeIntent.edgeIntentCount).toBeGreaterThan(0)
     expect(report.treeNativeRetirement).toMatchObject({
       readinessStatus: 'retirement-not-ready',
-      todoSearchApprovalStatus: 'approval-candidate-not-approved',
+      todoSearchApprovalStatus: 'retirement-candidate-not-deleted',
       todoAppApprovalStatus: 'not-ready-structure-only',
       repoWideApprovalStatus: 'not-ready',
       explicitRetirementApproval: 'not-approved',
-      retirementAction: 'not-in-scope',
+      retirementAction: 'todo-search-fallback-deprecated-not-deleted',
     })
     expect(report.enforcementStatus).toBe('non-enforcing')
     expect(report.blockingReasons).toEqual([])
@@ -801,7 +802,7 @@ describe('read-model Evidence builder', () => {
     expect(output.status).toBe('graph-source-health-pass')
     expect(output.markdownReport).toBe('examples/read-model-aggregate/generated/read-model-health-report-output.md')
     expect(output.enforcementStatus).toBe('non-enforcing')
-    expect(output.treeNativeRetirement.todoSearchApprovalStatus).toBe('approval-candidate-not-approved')
+    expect(output.treeNativeRetirement.todoSearchApprovalStatus).toBe('retirement-candidate-not-deleted')
     expect(output.treeNativeRetirement.repoWideApprovalStatus).toBe('not-ready')
     expect(markdown).toContain('# Graph-Source Health Report')
     expect(markdown).toContain('Status: `graph-source-health-pass`')

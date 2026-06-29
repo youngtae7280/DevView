@@ -37,11 +37,11 @@ The smoke checks:
 - Todo App PBE Run structure-only generation and validation, 22 nodes / 38 edges / 7 Core Views
 - Todo App positive validate-all projection status `projection-contract-pass`
 - registry-backed `graph read-model validate --all --json` status `aggregate-pass`
-- `examples/read-model-aggregate/graph-source-transition-status.json` source roles and no-retirement/no-enforcement
+- `examples/read-model-aggregate/graph-source-transition-status.json` source roles and no-deletion/no-enforcement
   boundaries
 - tree-native retirement readiness criteria/status: overall `retirement-not-ready`, Todo Search
-  `closer-but-not-retirement-ready`, and Todo App `not-retirement-ready`
-- tree-native retirement approval package statuses: Todo Search `approval-candidate-not-approved`, Todo App
+  `deprecated-fallback-reference-not-deleted`, and Todo App `not-retirement-ready`
+- tree-native retirement approval package statuses: Todo Search `retirement-candidate-not-deleted`, Todo App
   `not-ready-structure-only`, and repo-wide `not-ready`
 - candidate observation status `candidate-observation-pass` as separate report-only metadata
 - local `graph read-model report-intent --json` status `intent-report-pass`, with native/retrofit fixture summaries,

@@ -1,0 +1,62 @@
+﻿{
+  "ok": true,
+  "command": "graph read-model report-health",
+  "exitCode": 0,
+  "message": "Graph-source health report passed.",
+  "issues": [],
+  "status": "graph-source-health-pass",
+  "validateAll": {
+    "status": "aggregate-pass",
+    "aggregateStatus": "aggregate-pass",
+    "sliceCount": 2,
+    "source": "examples/read-model-aggregate/generated/read-model-aggregate-summary.json"
+  },
+  "e2eSmoke": {
+    "status": "referenced-by-transition-status",
+    "command": "npm run test:read-model:e2e",
+    "intentReportExpected": true
+  },
+  "todoSearch": {
+    "sourceMode": "graph-source-backed",
+    "graphSourceArtifact": "examples/adoption/todo-search-slice/graph-source.json",
+    "projectionContractStatus": "projection-contract-pass",
+    "nodeCount": 40,
+    "edgeCount": 59,
+    "coreViewCount": 7,
+    "retirementApprovalStatus": "retirement-candidate-not-deleted",
+    "retirementReadinessStatus": "deprecated-fallback-reference-not-deleted"
+  },
+  "todoApp": {
+    "sourceMode": "graph-source-backed",
+    "graphSourceAuthorityStatus": "confirmed-structure-only-graph-source",
+    "projectionContractStatus": "projection-contract-pass",
+    "nodeCount": 22,
+    "edgeCount": 38,
+    "coreViewCount": 7,
+    "retirementApprovalStatus": "not-ready-structure-only",
+    "retirementReadinessStatus": "not-retirement-ready"
+  },
+  "edgeIntent": {
+    "status": "intent-report-pass",
+    "projectedFixtureCount": 2,
+    "edgeIntentCount": 2,
+    "claimCount": 2,
+    "classificationCount": 12,
+    "anchorCount": 4,
+    "missingClassificationCount": 0,
+    "missingAnchorCount": 0
+  },
+  "treeNativeRetirement": {
+    "readinessStatus": "retirement-not-ready",
+    "todoSearchApprovalStatus": "retirement-candidate-not-deleted",
+    "todoAppApprovalStatus": "not-ready-structure-only",
+    "repoWideApprovalStatus": "not-ready",
+    "explicitRetirementApproval": "not-approved",
+    "retirementAction": "todo-search-fallback-deprecated-not-deleted"
+  },
+  "enforcementStatus": "non-enforcing",
+  "nonEnforcementStatement": "Graph-source health report is local/non-enforcing summary only. It does not create required checks, branch protection, merge enforcement, or user acceptance.",
+  "requiredCheckBoundary": "Health pass is not a required check and does not approve tree-native retirement, source authority expansion, or enforcement.",
+  "blockingReasons": [],
+  "markdownReport": "examples/read-model-aggregate/generated/read-model-health-report-output.md"
+}

@@ -71,8 +71,10 @@ Current boundaries:
 
 - Graph-source read-model examples are observable and testable.
 - `validate-all` evidence exists for configured slices, but it is non-enforcing.
+- Todo Search tree-native selected-slice artifacts are deprecated fallback/reference records, not source, and remain
+  available for rollback.
 - CI artifacts are informational unless a future approved change makes them required.
-- Tree-native retirement is not complete.
+- Todo App and repo-wide tree-native retirement are not ready; no tree-native files have been deleted.
 - No required check, enforcement behavior, source-authority expansion, or tree retirement should be introduced without
   explicit approval.
 

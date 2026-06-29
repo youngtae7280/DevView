@@ -1,15 +1,15 @@
 # Tree-Native Retirement Approval Package
 
-Status: approval-package / no-retirement-executed / no-enforcement-change
+Status: narrow-todo-search-deprecation-applied / no-file-deletion / no-enforcement-change
 
 ## Purpose
 
 This package prepares the user decision surface for moving tree-native artifacts from
 compatibility/fallback/reference toward retired or deprecated status.
 
-It does not retire, delete, deprecate, migrate, or enforce any artifact. It only records what would need approval,
-what would remain fallback/reference, and why current readiness is different for Todo Search, Todo App PBE Run, and
-repo-wide scope.
+It does not delete, migrate, or enforce any artifact. It now records the narrow Todo Search fallback/reference
+deprecation mechanics that were applied without file deletion, plus what would still need approval before any physical
+retirement/deletion. Todo App PBE Run and repo-wide scope remain not ready.
 
 The machine-readable counterpart is
 `examples/read-model-aggregate/graph-source-transition-status.json`.
@@ -32,10 +32,12 @@ A retirement approval package is not actionable unless all required criteria are
 
 ## Todo Search Selected Slice
 
-Current readiness: `approval-candidate-not-approved`
+Current readiness: `retirement-candidate-not-deleted`
 
 Todo Search is the closest configured slice because it is limited graph-source promoted and graph-source-backed for the
-selected scope. Its readiness remains blocked by the missing explicit retirement approval.
+selected scope. Its tree-native selected-slice artifacts are now marked as deprecated fallback/reference records, not
+source for graph-source-backed read-model generation. They are still retained on disk, rollback-capable, and not
+physically retired or deleted.
 
 | Field             | Status                                                                                        |
 | ----------------- | --------------------------------------------------------------------------------------------- |
@@ -45,12 +47,15 @@ selected scope. Its readiness remains blocked by the missing explicit retirement
 | E2E               | E2E smoke passes and includes `intentReport`                                                  |
 | manual/PR CI      | reviewed in manual and PR informational CI after graph-source-backed generation and E2E smoke |
 | rollback path     | source-authority rollback/fallback plan restores tree-native selected-slice operational role  |
-| user approval     | required before any tree-native selected-slice retirement/deprecation                         |
+| narrow mechanics  | deprecated fallback/reference, not source, not deleted                                        |
+| user approval     | required before any file retirement, deletion, or destructive migration                       |
 
-If approved later, the candidate action would retire or deprecate only the tree-native selected-slice
-operational-source role for Todo Search read-model generation. The tree-native selected-slice artifacts, manual parity
-records, CI/E2E evidence, and user acceptance records would remain retained fallback/reference unless the approval
-explicitly says otherwise.
+Applied action: only the tree-native selected-slice operational-source role for Todo Search read-model generation is
+deprecated. The tree-native selected-slice artifacts, manual parity records, CI/E2E evidence, and user acceptance
+records remain retained fallback/reference unless a later explicit approval says otherwise.
+
+Rollback path: use the source-authority rollback/fallback plan to restore the tree-native selected-slice artifacts from
+deprecated fallback/reference to operational source if graph-source interpretation is blocked or rejected.
 
 ## Todo App PBE Run Structure-Only
 
@@ -106,7 +111,8 @@ Any future retirement action must name:
 
 ## Current Recommendation
 
-- Todo Search: approval candidate for a future narrowly scoped retirement/deprecation decision, but not approved now.
+- Todo Search: narrow fallback/reference deprecation mechanics are applied; files are retained and deletion remains
+  unapproved.
 - Todo App: keep compatibility/fallback/reference; do not request retirement while it remains `structure-only`.
 - Repo-wide: keep compatibility/fallback/reference; prepare a broader migration/retirement package only after separate
   source-authority and rollback mechanics are complete.

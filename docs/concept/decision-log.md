@@ -729,6 +729,12 @@ summary artifact visibility in `pull_request-informational` mode. The reviewed a
 smoke PR was closed unmerged and its branch/temp artifacts were removed. This remains PR health Markdown observation
 only and does not add actual retirement, enforcement, or required checks.
 
+DEC-147 does not supersede DEC-097 through DEC-146. It applies narrow Todo Search fallback/reference deprecation
+mechanics only: tree-native selected-slice artifacts are now marked `deprecated-fallback-reference-not-deleted`, not
+source for graph-source-backed Todo Search read-model generation, and still retained for rollback. Todo App remains
+`not-ready-structure-only`, repo-wide retirement remains `not-ready`, no files are deleted, and no required check,
+branch protection, or enforcement setting is enabled.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

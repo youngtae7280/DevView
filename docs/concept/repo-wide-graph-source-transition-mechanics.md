@@ -7,8 +7,9 @@ Status: implementation-mechanics / bounded / non-enforcing
 This record captures the first repo-wide transition mechanics after Todo Search and Todo App PBE Run both became
 graph-source-backed configured read-model slices.
 
-It does not retire tree-native artifacts, enable enforcement, enroll invalid fixtures in CI, or promote Todo App beyond
-`structure-only`.
+It does not delete tree-native artifacts, enable enforcement, enroll invalid fixtures in CI, or promote Todo App beyond
+`structure-only`. Todo Search tree-native selected-slice artifacts are deprecated fallback/reference records only; they
+remain present and rollback-capable.
 
 ## Machine-Readable Status
 
@@ -19,7 +20,7 @@ The transition status artifact is:
 The artifact records:
 
 - `sourceDirection: graph-source-confirmed-for-configured-read-model-slices`
-- `treeNativeRole: compatibility-fallback-reference`
+- `treeNativeRole: compatibility-fallback-reference-with-todo-search-deprecated-fallback`
 - `retirementReadinessSummary.status: retirement-not-ready`
 - Todo Search source role: `limited-graph-source-promoted`
 - Todo App source role: `confirmed-structure-only-graph-source`
@@ -42,16 +43,16 @@ operation:
 - no stale Evidence or hidden warning is concealed
 - explicit user-approved retirement action is in scope
 
-Current readiness remains `retirement-not-ready`.
+Repo-wide readiness remains `retirement-not-ready`.
 
-| Slice                             | Current readiness                 | Why retirement is not executed                                                                                               |
-| --------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `todo-search-selected-slice`      | `closer-but-not-retirement-ready` | Health criteria are mostly passing, but explicit tree-native retirement approval is missing and retirement is out of scope.  |
-| `todo-app-pbe-run-structure-only` | `not-retirement-ready`            | The slice is confirmed graph-source-backed for `structure-only`, but source authority beyond structure-only is not approved. |
+| Slice                             | Current readiness                           | Boundary                                                                                                                        |
+| --------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `todo-search-selected-slice`      | `deprecated-fallback-reference-not-deleted` | Tree-native selected-slice artifacts are deprecated fallback/reference, not source, and remain present with rollback available. |
+| `todo-app-pbe-run-structure-only` | `not-retirement-ready`                      | The slice is confirmed graph-source-backed for `structure-only`, but source authority beyond structure-only is not approved.    |
 
 The approval decision surface is prepared in
 [tree-native-retirement-approval-package.md](tree-native-retirement-approval-package.md). It classifies Todo Search as
-`approval-candidate-not-approved`, Todo App as `not-ready-structure-only`, and repo-wide retirement as `not-ready`.
+`retirement-candidate-not-deleted`, Todo App as `not-ready-structure-only`, and repo-wide retirement as `not-ready`.
 
 ## Registry Alignment
 
@@ -71,9 +72,10 @@ The registry still has exactly two positive validate-all profiles:
 
 - Todo Search remains 40 nodes / 59 edges / 7 Core Views with source-backed projection contract.
 - Todo App remains 22 nodes / 38 edges / 7 Core Views with confirmed structure-only projection contract.
-- tree-native artifacts remain compatibility/fallback/reference.
+- Todo Search tree-native selected-slice artifacts remain present as deprecated fallback/reference, not source.
+- Todo App and repo-wide tree-native artifacts remain compatibility/fallback/reference.
 - repo-wide promotion, tree-native retirement, and CI enforcement remain incomplete.
-- retirement readiness remains criteria/readiness only, with Todo Search closer-but-not-ready and Todo App not-ready.
+- retirement readiness remains non-destructive, with Todo Search deprecated-not-deleted and Todo App not-ready.
 
 ## Local Health Report
 
@@ -94,7 +96,7 @@ summary artifact path and human-readable health content. PR #14 run `28351775566
 
 This mechanics step is intentionally not:
 
-- tree-native retirement
+- file deletion or physical tree-native retirement
 - required check or branch protection configuration
 - CI enforcement
 - invalid fixture CI inclusion

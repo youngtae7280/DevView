@@ -165,7 +165,7 @@ try {
   )
   assertEqual(
     transitionStatus.treeNativeRole,
-    'compatibility-fallback-reference',
+    'compatibility-fallback-reference-with-todo-search-deprecated-fallback',
     'Tree-native compatibility/fallback role',
   )
   assertEqual(
@@ -186,7 +186,7 @@ try {
   )
   assertEqual(
     transitionStatus.retirementReadinessSummary?.retirementAction,
-    'not-in-scope',
+    'todo-search-fallback-deprecated-not-deleted',
     'Tree-native retirement action boundary',
   )
   if (
@@ -212,7 +212,7 @@ try {
   )
   assertEqual(
     todoSearchRetirementPackage?.status,
-    'approval-candidate-not-approved',
+    'retirement-candidate-not-deleted',
     'Todo Search retirement approval package status',
   )
   assertEqual(
@@ -241,13 +241,18 @@ try {
   assertEqual(todoSearchTransition?.expectedCounts?.coreViews, 7, 'Todo Search transition Core View count')
   assertEqual(
     todoSearchTransition?.retirementReadiness?.status,
-    'closer-but-not-retirement-ready',
+    'deprecated-fallback-reference-not-deleted',
     'Todo Search retirement readiness status',
   )
   assertEqual(
-    todoSearchTransition?.retirementReadiness?.criteriaStatus?.explicitRetirementApprovalPresent,
+    todoSearchTransition?.retirementReadiness?.criteriaStatus?.narrowFallbackDeprecationMechanicsApproved,
+    'present',
+    'Todo Search narrow fallback deprecation mechanics readiness',
+  )
+  assertEqual(
+    todoSearchTransition?.retirementReadiness?.criteriaStatus?.explicitFileRetirementOrDeletionApprovalPresent,
     'missing',
-    'Todo Search explicit retirement approval readiness',
+    'Todo Search explicit file retirement/deletion approval readiness',
   )
   assertEqual(todoAppTransition?.sourceRole, 'confirmed-structure-only-graph-source', 'Todo App transition source role')
   assertEqual(todoAppTransition?.generationMode, 'graph-source-backed', 'Todo App transition generation mode')

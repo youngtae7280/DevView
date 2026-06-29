@@ -4,8 +4,8 @@
   "status": "confirmed-graph-source-transition-mechanics",
   "transitionScope": "repo-wide-mechanics",
   "sourceDirection": "graph-source-confirmed-for-configured-read-model-slices",
-  "treeNativeRole": "compatibility-fallback-reference",
-  "nonRetirementStatement": "Tree-native artifacts are not deleted, retired, or treated as obsolete by this status artifact. They remain compatibility, fallback, and reference records unless a later explicit retirement decision changes that role.",
+  "treeNativeRole": "compatibility-fallback-reference-with-todo-search-deprecated-fallback",
+  "nonRetirementStatement": "Tree-native artifacts are not deleted or physically retired by this status artifact. Todo Search selected-slice tree-native artifacts are now deprecated fallback/reference records, not source for graph-source-backed read-model generation; Todo App and repo-wide tree-native artifacts remain compatibility, fallback, and reference records unless a later explicit retirement decision changes that role.",
   "nonEnforcementStatement": "This status artifact supports local validation and CI observation only. It does not create required checks, branch protection, merge enforcement, or user acceptance.",
   "enforcementReadiness": {
     "status": "soft-required-candidate-not-approved",
@@ -123,17 +123,18 @@
   ],
   "retirementReadinessSummary": {
     "status": "retirement-not-ready",
-    "treeNativeRole": "compatibility-fallback-reference",
+    "treeNativeRole": "compatibility-fallback-reference-with-todo-search-deprecated-fallback",
     "explicitRetirementApproval": "not-approved",
-    "retirementAction": "not-in-scope",
-    "boundary": "Criteria/readiness only; no tree-native artifact is retired, deleted, or deprecated by this status artifact."
+    "retirementAction": "todo-search-fallback-deprecated-not-deleted",
+    "boundary": "Narrow Todo Search fallback/reference deprecation mechanics only; no tree-native artifact is deleted, no file is retired, Todo App remains structure-only not-ready, and repo-wide retirement remains not-ready."
   },
   "retirementApprovalPackages": [
     {
       "scope": "todo-search-selected-slice",
       "packageDocument": "docs/concept/tree-native-retirement-approval-package.md#todo-search-selected-slice",
-      "status": "approval-candidate-not-approved",
-      "readinessStatus": "closer-but-not-retirement-ready",
+      "status": "retirement-candidate-not-deleted",
+      "readinessStatus": "deprecated-fallback-reference-not-deleted",
+      "deprecationMechanicsStatus": "applied-narrow-todo-search-only",
       "wouldRetireOrDeprecateIfApproved": [
         "tree-native selected-slice operational-source role for Todo Search read-model generation"
       ],
@@ -143,7 +144,7 @@
         "CI/E2E evidence records",
         "user acceptance records"
       ],
-      "rollbackPath": "Use source-authority rollback/fallback plan; restore tree-native selected-slice artifacts as operational source if graph-source interpretation is blocked or rejected.",
+      "rollbackPath": "Use source-authority rollback/fallback plan; tree-native selected-slice artifacts remain present and can be restored from deprecated fallback/reference to operational source if graph-source interpretation is blocked or rejected.",
       "evidenceReferences": [
         "graph-source-backed generation 40/59/7",
         "comparison-pass parity",
@@ -152,7 +153,7 @@
         "E2E smoke pass with intentReport",
         "manual and PR CI observation pass"
       ],
-      "userApprovalRequirement": "explicit-retirement-approval-required-before-action"
+      "userApprovalRequirement": "explicit-file-retirement-or-deletion-approval-still-required-before-any-destructive-action"
     },
     {
       "scope": "todo-app-pbe-run-structure-only",
@@ -214,9 +215,9 @@
         "validationChecks": 20
       },
       "positiveValidateAllRole": "source-backed-projection-contract",
-      "fallbackRole": "tree-native-selected-slice-artifacts-maintained-as-compatibility-fallback-reference",
+      "fallbackRole": "tree-native-selected-slice-artifacts-deprecated-fallback-reference-not-source-not-deleted",
       "retirementReadiness": {
-        "status": "closer-but-not-retirement-ready",
+        "status": "deprecated-fallback-reference-not-deleted",
         "criteriaStatus": {
           "graphSourceBackedGenerationStable": "pass",
           "projectionOrParityAccepted": "pass",
@@ -226,10 +227,11 @@
           "rollbackFallbackPlanPresent": "pass",
           "userAcceptanceSourceAuthorityBoundaryClear": "pass",
           "noStaleEvidenceOrHiddenWarning": "pass",
-          "explicitRetirementApprovalPresent": "missing"
+          "narrowFallbackDeprecationMechanicsApproved": "present",
+          "explicitFileRetirementOrDeletionApprovalPresent": "missing"
         },
-        "blockingReason": "Tree-native selected-slice artifacts remain compatibility/fallback/reference until explicit retirement approval is in scope.",
-        "recommendedRole": "maintained-compatibility-fallback-reference"
+        "blockingReason": "Tree-native selected-slice artifacts are deprecated fallback/reference and not source for Todo Search read-model generation, but files remain present and destructive retirement/deletion approval is still missing.",
+        "recommendedRole": "deprecated-fallback-reference-not-source-not-deleted"
       }
     },
     {
