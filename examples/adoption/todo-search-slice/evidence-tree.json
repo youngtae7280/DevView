@@ -49,7 +49,7 @@
       "command": "npx vitest run examples/adoption/todo-search-slice/runtime-fixture",
       "testFile": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js",
       "observedAt": "2026-06-24T17:00:11+09:00",
-      "resultSummary": "Vitest passed 1 test file and 6 tests for title, note, content, no-match, scope-boundary, and blank-query checks.",
+      "resultSummary": "Vitest passed 1 test file and 7 tests for title, note, content, whitespace-normalized query, no-match, scope-boundary, and blank-query checks.",
       "limitations": [
         "Bounded representative fixture only; not full Todo app runtime.",
         "Does not provide UI screenshot evidence for the no-result empty state.",

@@ -37,6 +37,10 @@ describe('todo search runtime fixture', () => {
     expect(ids(searchTodos(todos, 'runtime evidence'))).toEqual(['TODO-002'])
   })
 
+  it('normalizes repeated whitespace in multi-word queries', () => {
+    expect(ids(searchTodos(todos, 'runtime    evidence'))).toEqual(['TODO-002'])
+  })
+
   it('matches Todo content text', () => {
     expect(ids(searchTodos(todos, 'window seat'))).toEqual(['TODO-003'])
   })

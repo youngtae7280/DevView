@@ -35,7 +35,7 @@
       "satisfiesAcceptanceCriteriaIds": ["AC-SEARCH-001", "AC-SEARCH-002", "AC-SEARCH-003"],
       "doneCriteria": [
         "Title query filters visible todos.",
-        "Note/content query filters visible todos.",
+        "Note/content query filters visible todos, including repeated-whitespace query normalization.",
         "Empty query restores all todos.",
         "No title or note/content match shows an empty search result state."
       ],

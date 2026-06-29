@@ -20,7 +20,7 @@
       "coversWorkNodeIds": ["WT-SEARCH-001"],
       "coversAcceptanceCriteriaIds": ["AC-SEARCH-001"],
       "evidenceNodeIds": ["EV-SEARCH-TEST", "EV-SEARCH-NOTE-TEST"],
-      "refreshNote": "The bounded runtime fixture reran title matching alongside note/content search."
+      "refreshNote": "The bounded runtime fixture reran title matching alongside note/content search and whitespace-normalized query matching."
     },
     {
       "id": "TT-SEARCH-002",
@@ -46,7 +46,7 @@
     {
       "id": "TT-SEARCH-004",
       "type": "automated_test",
-      "title": "Filters todos by note/content query",
+      "title": "Filters todos by note/content query, including repeated-whitespace normalization",
       "status": "passed_runtime_fixture",
       "createdByProductPatchId": "PP-001",
       "coversProductNodeIds": ["PT-SEARCH-001"],
@@ -58,7 +58,7 @@
       "testFile": "examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js",
       "evidenceArtifact": "examples/adoption/todo-search-slice/runtime-evidence.md",
       "observedAt": "2026-06-24T17:00:11+09:00",
-      "resultSummary": "Vitest passed 1 test file and 6 tests for the bounded runtime fixture."
+      "resultSummary": "Vitest passed 1 test file and 7 tests for the bounded runtime fixture."
     }
   ],
   "edges": []

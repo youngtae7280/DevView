@@ -18,6 +18,7 @@ work, and not Graph-source promotion.
 
 - Search query matches Todo `title`.
 - Search query matches Todo `note` or `content`.
+- Repeated whitespace inside multi-word queries is normalized before matching.
 - Blank query returns the full Todo list, matching `AC-SEARCH-002`.
 
 ## Non-Scope

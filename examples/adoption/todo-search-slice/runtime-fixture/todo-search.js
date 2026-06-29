@@ -1,16 +1,20 @@
 export function searchTodos(todos, query) {
-  const normalizedQuery = String(query ?? '')
-    .trim()
-    .toLowerCase()
+  const normalizeSearchText = (value) =>
+    String(value ?? '')
+      .trim()
+      .replace(/\s+/g, ' ')
+      .toLowerCase()
+
+  const normalizedQuery = normalizeSearchText(query)
 
   if (normalizedQuery.length === 0) {
     return [...todos]
   }
 
   return todos.filter((todo) => {
-    const title = String(todo.title ?? '').toLowerCase()
-    const note = String(todo.note ?? '').toLowerCase()
-    const content = String(todo.content ?? '').toLowerCase()
+    const title = normalizeSearchText(todo.title)
+    const note = normalizeSearchText(todo.note)
+    const content = normalizeSearchText(todo.content)
 
     return title.includes(normalizedQuery) || note.includes(normalizedQuery) || content.includes(normalizedQuery)
   })

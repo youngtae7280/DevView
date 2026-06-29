@@ -30,6 +30,8 @@
   clarification with regenerated projection.
 - [Bounded maintenance dogfood rollup](concept/bounded-maintenance-dogfood-rollup.md) ??Summary of native, retrofit, and
   Todo Search dogfood coverage plus remaining policy decisions.
+- [Tiny behavior-change dogfood](concept/tiny-behavior-change-dogfood.md) ??Bounded Todo Search runtime fixture behavior
+  change proving whitespace-normalized query matching through the Graph-source validation chain.
 
 ## Workflow Guides
 
