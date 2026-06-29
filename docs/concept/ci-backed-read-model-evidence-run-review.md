@@ -1329,6 +1329,8 @@ Manual workflow run `28350824272` reviewed the non-enforcing graph-source health
 
 ## Final Statement
 
+Temporary PR health report visibility smoke note.
+
 This review records successful non-enforcing validate-all CI-backed Evidence for the declared read-model Evidence
 bundle. It does not promote Maintainability Graph, change current source authority, expand source-authority pilot scope,
 introduce CI enforcement, add required checks, retire tree-native artifacts, clean up public docs, or replace user
