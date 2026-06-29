@@ -301,10 +301,10 @@ describe('intent-critical Graph-source examples', () => {
       expect(nativeProjected).toEqual(nativeCommittedProjection)
       expect(retrofitProjected).toEqual(retrofitCommittedProjection)
       expect(nativeProjected.edgeIntentProjections[0].claim).toBe(
-        'empty search restores the full list after clearing a query',
+        'empty search restores the full list after the query is cleared',
       )
       expect(retrofitProjected.edgeIntentProjections[0].claim).toBe(
-        'compatibility export stays until explicit retirement approval',
+        'compatibility export remains until explicit retirement approval and replacement evidence',
       )
     } finally {
       await rm(tempRoot, { recursive: true, force: true })
@@ -330,8 +330,10 @@ describe('intent-critical Graph-source examples', () => {
     const retrofit = report.fixtures.find((fixture) => fixture.sourceExampleKind === 'retrofit-pbe')
     expect(native?.status).toBe('intent-projection-pass')
     expect(retrofit?.status).toBe('intent-projection-pass')
-    expect(native?.claims).toContain('empty search restores the full list after clearing a query')
-    expect(retrofit?.claims).toContain('compatibility export stays until explicit retirement approval')
+    expect(native?.claims).toContain('empty search restores the full list after the query is cleared')
+    expect(retrofit?.claims).toContain(
+      'compatibility export remains until explicit retirement approval and replacement evidence',
+    )
     expect(native?.claims[0]).not.toBe('ux-acceptance')
     expect(retrofit?.claims[0]).not.toBe('compatibility-retention')
   })

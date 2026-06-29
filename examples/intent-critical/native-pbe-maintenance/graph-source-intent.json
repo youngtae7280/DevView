@@ -22,7 +22,7 @@
         "edgeType": "preserves-intent",
         "intentKind": "ux-acceptance",
         "riskKind": "behavior-regression",
-        "claim": "empty search restores the full list after clearing a query",
+        "claim": "empty search restores the full list after the query is cleared",
         "confidence": "user-confirmed",
         "enforcement": "validation-evidence",
         "anchors": [

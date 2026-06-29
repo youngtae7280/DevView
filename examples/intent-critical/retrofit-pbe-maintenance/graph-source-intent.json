@@ -22,7 +22,7 @@
         "edgeType": "preserves-intent",
         "intentKind": "compatibility-retention",
         "riskKind": "fallback-loss",
-        "claim": "compatibility export stays until explicit retirement approval",
+        "claim": "compatibility export remains until explicit retirement approval and replacement evidence",
         "confidence": "history-derived",
         "enforcement": "review-required",
         "anchors": [
@@ -34,7 +34,7 @@
           {
             "signalKind": "fallback",
             "sourceRole": "rollback-reference-signal",
-            "artifact": "rollback/audit review history"
+            "artifact": "rollback/audit and replacement-evidence review history"
           }
         ]
       }

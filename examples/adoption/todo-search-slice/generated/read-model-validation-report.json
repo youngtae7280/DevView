@@ -1,9 +1,9 @@
 {
   "version": "0.1.0-read-model-validation-report",
   "metadata": {
-    "validatedAt": "2026-06-29T08:05:12.153Z",
+    "validatedAt": "2026-06-29T08:18:55.453Z",
     "commandIdentity": "pbe graph read-model validate --slice examples/adoption/todo-search-slice",
-    "sourceCommit": "536a89b",
+    "sourceCommit": "42c18be",
     "sourceSlice": "examples/adoption/todo-search-slice",
     "profileId": "todo-search-selected-slice",
     "sliceProfile": "todo-search-selected-slice",

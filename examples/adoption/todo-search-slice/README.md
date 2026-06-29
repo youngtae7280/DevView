@@ -61,4 +61,5 @@ Demo-support evidence strengthening adds manual, non-authoritative selected-slic
 - `runtime-evidence.md`
 
 These files make the representative demo more reviewable. They are not CLI-generated runtime artifacts, not product
-feature implementation, and not Graph-source promotion.
+feature implementation, and not the Graph-source promotion action. Current limited Graph-source status is represented by
+`graph-source.json` and the generated read-model Evidence under `generated/`.

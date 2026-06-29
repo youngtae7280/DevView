@@ -30,7 +30,7 @@ Captured intent:
 - hiding all todos is a non-goal
 - runtime/validation Evidence should prove clear-search behavior
 - task-card or read-model projections must not weaken acceptance meaning
-- edge claim: `empty search restores the full list after clearing a query`
+- edge claim: `empty search restores the full list after the query is cleared`
 
 ## Retrofit PBE Example
 
@@ -46,7 +46,7 @@ Captured intent:
 - retirement needs an explicit decision
 - generated graph-source projections do not authorize deleting compatibility artifacts
 - maintenance review should compare both generated projection and retained compatibility evidence
-- edge claim: `compatibility export stays until explicit retirement approval`
+- edge claim: `compatibility export remains until explicit retirement approval and replacement evidence`
 
 ## Focused Validation
 

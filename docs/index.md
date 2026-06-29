@@ -20,6 +20,16 @@
   edgeIntent projection/report surfaces.
 - [First bounded maintenance dogfood](concept/first-bounded-maintenance-dogfood.md) ??Report-only Graph-source PBE
   maintenance pass showing how edgeIntent blocks accidental compatibility-export cleanup without enforcement changes.
+- [Second bounded maintenance dogfood](concept/second-bounded-maintenance-dogfood.md) ??Small retrofit edgeIntent claim
+  wording change with regenerated projection and unchanged non-enforcement boundaries.
+- [Third bounded maintenance dogfood](concept/third-bounded-maintenance-dogfood.md) ??Todo Search README consistency fix
+  verified by the Graph-source read-model health chain.
+- [Fourth bounded maintenance dogfood](concept/fourth-bounded-maintenance-dogfood.md) ??Native clear-search edgeIntent
+  wording clarification with regenerated projection.
+- [Fifth bounded maintenance dogfood](concept/fifth-bounded-maintenance-dogfood.md) ??Retrofit fallback anchor wording
+  clarification with regenerated projection.
+- [Bounded maintenance dogfood rollup](concept/bounded-maintenance-dogfood-rollup.md) ??Summary of native, retrofit, and
+  Todo Search dogfood coverage plus remaining policy decisions.
 
 ## Workflow Guides
 

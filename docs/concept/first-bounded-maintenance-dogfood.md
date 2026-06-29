@@ -41,7 +41,7 @@ Observed signal:
 - status: `intent-report-pass`
 - projected fixtures: `1`
 - edgeIntent count: `1`
-- claim: `compatibility export stays until explicit retirement approval`
+- claim: `compatibility export remains until explicit retirement approval and replacement evidence`
 - classification count: `6`
 - anchors: `2`
 - missing classifications: `0`

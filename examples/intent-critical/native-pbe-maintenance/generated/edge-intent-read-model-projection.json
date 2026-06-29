@@ -11,7 +11,7 @@
       "edgeType": "preserves-intent",
       "intentKind": "ux-acceptance",
       "riskKind": "behavior-regression",
-      "claim": "empty search restores the full list after clearing a query",
+      "claim": "empty search restores the full list after the query is cleared",
       "confidence": "user-confirmed",
       "enforcement": "validation-evidence",
       "anchors": [
@@ -26,7 +26,7 @@
           "artifact": "clear-search behavior check"
         }
       ],
-      "humanReadableSummary": "UX acceptance intent: empty search restores the full list after clearing a query. Risk: behavior-regression. Confidence: user-confirmed. Enforcement: validation-evidence."
+      "humanReadableSummary": "UX acceptance intent: empty search restores the full list after the query is cleared. Risk: behavior-regression. Confidence: user-confirmed. Enforcement: validation-evidence."
     }
   ],
   "vocabularyBoundary": {
