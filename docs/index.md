@@ -34,6 +34,8 @@
   change proving whitespace-normalized query matching through the Graph-source validation chain.
 - [Graph-source required-check readiness](concept/graph-source-required-check-readiness.md) - Policy and status package
   for possible required-check promotion without enabling enforcement or branch protection.
+- [External dogfooding readiness summary](concept/external-dogfooding-readiness-summary.md) - Current Graph-source
+  status, non-enforcement boundaries, and remaining approval branches before external dogfooding.
 
 ## Workflow Guides
 
