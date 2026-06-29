@@ -62,6 +62,76 @@
     "retirementAction": "not-in-scope",
     "boundary": "Criteria/readiness only; no tree-native artifact is retired, deleted, or deprecated by this status artifact."
   },
+  "retirementApprovalPackages": [
+    {
+      "scope": "todo-search-selected-slice",
+      "packageDocument": "docs/concept/tree-native-retirement-approval-package.md#todo-search-selected-slice",
+      "status": "approval-candidate-not-approved",
+      "readinessStatus": "closer-but-not-retirement-ready",
+      "wouldRetireOrDeprecateIfApproved": [
+        "tree-native selected-slice operational-source role for Todo Search read-model generation"
+      ],
+      "remainsFallbackReference": [
+        "tree-native selected-slice artifacts",
+        "manual parity/read-model artifacts",
+        "CI/E2E evidence records",
+        "user acceptance records"
+      ],
+      "rollbackPath": "Use source-authority rollback/fallback plan; restore tree-native selected-slice artifacts as operational source if graph-source interpretation is blocked or rejected.",
+      "evidenceReferences": [
+        "graph-source-backed generation 40/59/7",
+        "comparison-pass parity",
+        "validation-pass",
+        "validate-all aggregate-pass",
+        "E2E smoke pass with intentReport",
+        "manual and PR CI observation pass"
+      ],
+      "userApprovalRequirement": "explicit-retirement-approval-required-before-action"
+    },
+    {
+      "scope": "todo-app-pbe-run-structure-only",
+      "packageDocument": "docs/concept/tree-native-retirement-approval-package.md#todo-app-pbe-run-structure-only",
+      "status": "not-ready-structure-only",
+      "readinessStatus": "not-retirement-ready",
+      "wouldRetireOrDeprecateIfApproved": [],
+      "remainsFallbackReference": [
+        "canonical .pbe artifacts",
+        "structure-only generated/read-model artifacts",
+        "CI/E2E evidence records",
+        "user acceptance records"
+      ],
+      "rollbackPath": "Keep canonical .pbe artifacts as compatibility/fallback/reference; no retirement path is eligible until source authority beyond structure-only is separately approved.",
+      "evidenceReferences": [
+        "graph-source-backed structure-only generation 22/38/7",
+        "validation-pass",
+        "validate-all aggregate-pass",
+        "E2E smoke pass with intentReport",
+        "manual and PR CI observation pass"
+      ],
+      "userApprovalRequirement": "source-authority-beyond-structure-only-and-retirement-approval-required"
+    },
+    {
+      "scope": "repo-wide",
+      "packageDocument": "docs/concept/tree-native-retirement-approval-package.md#repo-wide",
+      "status": "not-ready",
+      "readinessStatus": "retirement-not-ready",
+      "wouldRetireOrDeprecateIfApproved": [],
+      "remainsFallbackReference": [
+        "Product/Project/Work/Test/Evidence/Acceptance tree-native artifacts",
+        "compatibility views",
+        "execution contracts",
+        "CI/E2E evidence records",
+        "user acceptance records"
+      ],
+      "rollbackPath": "No repo-wide retirement path is eligible; keep tree-native artifacts as compatibility/fallback/reference and require a separate migration/rollback package before any future approval.",
+      "evidenceReferences": [
+        "configured-slice validate-all aggregate-pass",
+        "E2E smoke pass with intentReport",
+        "manual and PR CI observation pass for configured slices"
+      ],
+      "userApprovalRequirement": "repo-wide-retirement-approval-not-requestable-yet"
+    }
+  ],
   "configuredSlices": [
     {
       "profileId": "todo-search-selected-slice",

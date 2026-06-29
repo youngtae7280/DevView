@@ -49,6 +49,10 @@ Current readiness remains `retirement-not-ready`.
 | `todo-search-selected-slice`      | `closer-but-not-retirement-ready` | Health criteria are mostly passing, but explicit tree-native retirement approval is missing and retirement is out of scope.  |
 | `todo-app-pbe-run-structure-only` | `not-retirement-ready`            | The slice is confirmed graph-source-backed for `structure-only`, but source authority beyond structure-only is not approved. |
 
+The approval decision surface is prepared in
+[tree-native-retirement-approval-package.md](tree-native-retirement-approval-package.md). It classifies Todo Search as
+`approval-candidate-not-approved`, Todo App as `not-ready-structure-only`, and repo-wide retirement as `not-ready`.
+
 ## Registry Alignment
 
 `examples/read-model-aggregate/read-model-slices.json` is now recorded as

@@ -683,6 +683,12 @@ the local E2E smoke. Current readiness remains `retirement-not-ready`: Todo Sear
 source authority beyond `structure-only` is not approved. This is retirement criteria/readiness only and does not retire
 tree-native artifacts, add enforcement, or enable required checks.
 
+DEC-140 does not supersede DEC-097 through DEC-139. It prepares
+`tree-native-retirement-approval-package.md` and status-artifact references for Todo Search, Todo App PBE Run, and
+repo-wide tree-native retirement decisions. Todo Search is classified as `approval-candidate-not-approved`; Todo App is
+`not-ready-structure-only`; repo-wide retirement is `not-ready`. The E2E smoke verifies those package statuses, but no
+tree-native artifact is retired, deprecated, deleted, enforced, or required-check gated.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

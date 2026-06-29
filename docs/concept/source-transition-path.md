@@ -144,6 +144,11 @@ retirement, no required checks, no CI enforcement, no invalid-fixture CI, and no
 Todo Search is closer but not retirement-ready without explicit retirement approval, and Todo App is not
 retirement-ready because source authority beyond `structure-only` is not approved.
 
+The explicit retirement approval surface is prepared in
+[tree-native-retirement-approval-package.md](tree-native-retirement-approval-package.md). It does not execute
+retirement; it records Todo Search as a narrow approval candidate, Todo App as structure-only not ready, and repo-wide
+retirement as not ready.
+
 ## Source Authority Matrix
 
 This matrix is conceptual. It does not define files, generators, validators, or migration behavior.

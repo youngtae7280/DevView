@@ -41,6 +41,8 @@ The smoke checks:
   boundaries
 - tree-native retirement readiness criteria/status: overall `retirement-not-ready`, Todo Search
   `closer-but-not-retirement-ready`, and Todo App `not-retirement-ready`
+- tree-native retirement approval package statuses: Todo Search `approval-candidate-not-approved`, Todo App
+  `not-ready-structure-only`, and repo-wide `not-ready`
 - candidate observation status `candidate-observation-pass` as separate report-only metadata
 - local `graph read-model report-intent --json` status `intent-report-pass`, with native/retrofit fixture summaries,
   nonzero edgeIntent/claim/classification/anchor counts, and zero missing classification/anchor counts

@@ -62,6 +62,11 @@ compatibility/fallback/reference. Tree-native retirement readiness is recorded a
 Todo Search is closer-but-not-retirement-ready, and Todo App is not-retirement-ready.
 ```
 
+The retirement approval surface is now prepared in
+[tree-native-retirement-approval-package.md](tree-native-retirement-approval-package.md). It keeps retirement unexecuted
+and records Todo Search as `approval-candidate-not-approved`, Todo App as `not-ready-structure-only`, and repo-wide
+retirement as `not-ready`.
+
 Current conceptual alignment model:
 
 ```text

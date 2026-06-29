@@ -195,6 +195,32 @@ try {
   ) {
     throw new Error('Tree-native retirement readiness criteria must remain explicit')
   }
+  if (
+    !Array.isArray(transitionStatus.retirementApprovalPackages) ||
+    transitionStatus.retirementApprovalPackages.length !== 3
+  ) {
+    throw new Error('Tree-native retirement approval packages must cover Todo Search, Todo App, and repo-wide scopes')
+  }
+  const todoSearchRetirementPackage = transitionStatus.retirementApprovalPackages.find(
+    (entry) => entry.scope === 'todo-search-selected-slice',
+  )
+  const todoAppRetirementPackage = transitionStatus.retirementApprovalPackages.find(
+    (entry) => entry.scope === 'todo-app-pbe-run-structure-only',
+  )
+  const repoWideRetirementPackage = transitionStatus.retirementApprovalPackages.find(
+    (entry) => entry.scope === 'repo-wide',
+  )
+  assertEqual(
+    todoSearchRetirementPackage?.status,
+    'approval-candidate-not-approved',
+    'Todo Search retirement approval package status',
+  )
+  assertEqual(
+    todoAppRetirementPackage?.status,
+    'not-ready-structure-only',
+    'Todo App retirement approval package status',
+  )
+  assertEqual(repoWideRetirementPackage?.status, 'not-ready', 'Repo-wide retirement approval package status')
 
   const todoSearchProfile = validateAll.perSliceResults.find(
     (entry) => entry.profileId === 'todo-search-selected-slice',
@@ -329,6 +355,11 @@ try {
       retirementReadinessStatus: transitionStatus.retirementReadinessSummary.status,
       todoSearchRetirementReadiness: todoSearchTransition.retirementReadiness.status,
       todoAppRetirementReadiness: todoAppTransition.retirementReadiness.status,
+      retirementApprovalPackages: {
+        todoSearch: todoSearchRetirementPackage.status,
+        todoApp: todoAppRetirementPackage.status,
+        repoWide: repoWideRetirementPackage.status,
+      },
     },
     candidateObservation: {
       status: candidateObservation.status,
