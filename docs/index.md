@@ -44,6 +44,8 @@
   profile recommend/init/status/validate pass after adoption-safe and fresh-init visual fixes.
 - [Real external feature dogfooding 1](concept/real-external-feature-dogfooding-1.md) - `mdn/todo-vue` title-search
   implementation observation showing adoption-safe validation works while Work scope authoring remains the next gap.
+- [External graph-source enrollment design](concept/external-graph-source-enrollment-design.md) - Design-only path for
+  enrolling bounded external feature slices without registering external repos or expanding source authority.
 - [Graph-first cleanup audit and compatibility boundary](concept/graph-first-cleanup-audit-and-compatibility-boundary.md)
   - Cleanup boundary for graph-source core, tree-based compatibility layers, and future retirement candidates.
 - [Tree-native artifact retirement candidates](concept/tree-native-artifact-retirement-candidates.md) - Non-destructive
