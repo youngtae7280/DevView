@@ -38,6 +38,8 @@
   status, non-enforcement boundaries, and remaining approval branches before external dogfooding.
 - [First external dogfooding run](concept/first-external-dogfooding-run.md) - `mdn/todo-vue` Lite slice observation,
   verification result, and adoption-safe validation blockers.
+- [Second external dogfooding run](concept/second-external-dogfooding-run.md) - `mdn/todo-vue` adoption-safe validation
+  smoke showing repo-only validator separation plus remaining v2 visual placeholder blocker.
 - [Graph-first cleanup audit and compatibility boundary](concept/graph-first-cleanup-audit-and-compatibility-boundary.md)
   - Cleanup boundary for graph-source core, tree-based compatibility layers, and future retirement candidates.
 - [Tree-native artifact retirement candidates](concept/tree-native-artifact-retirement-candidates.md) - Non-destructive
