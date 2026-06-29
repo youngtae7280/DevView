@@ -135,6 +135,8 @@ Commands:
   revision complete    Return revision work to WPD/VD/ACEP closure flow
   evidence check       Check evidence coverage
   visual check         Check Visual Design Contract and UI evidence
+  graph execution-contract report
+                       Report a graph-native execution contract view for a configured slice
   graph read-model generate
                        Generate bounded read-model Evidence from a selected slice
   graph read-model compare

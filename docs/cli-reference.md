@@ -389,6 +389,25 @@ pbe context pack --brief "docs/known-limits.md 한 줄 수정" --profile lite --
 
 ## Execution Commands
 
+### `pbe graph execution-contract report`
+
+- Purpose: Report the first graph-native execution contract view for a configured read-model slice.
+- Typical state before running: After graph-source/read-model projection exists for a configured registry slice.
+- What it checks: Configured slice/profile lookup, read-model registry entry, graph-source projection contract, and
+  compatibility boundaries.
+- What it writes: Nothing. This command is read-only and does not mutate `.pbe` state.
+- Success result: JSON/text report with source slice/profile id, Product/Work/Test/Evidence references where available,
+  source files, readiness notes, escalation triggers, and an ACEP compatibility note.
+- Common failures: unknown slice or missing/corrupted graph-source projection.
+- Next command: Continue using ACEP compatibility commands for execution packaging. This report is not a required
+  validation gate and does not replace user acceptance.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph execution-contract report --slice examples/adoption/todo-search-slice --json
+```
+
 ### `pbe acep check`
 
 - Purpose: Check ACEP execution pack readiness.

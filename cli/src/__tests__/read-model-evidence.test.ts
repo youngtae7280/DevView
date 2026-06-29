@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { runPbeCli } from '../app'
+import { buildGraphExecutionContractReport } from '../core/graph-execution-contract'
 import {
   buildReadModelRegistryCommandPlans,
   compareReadModelEvidence,
@@ -603,6 +604,62 @@ describe('read-model Evidence builder', () => {
         expectedCounts: todoAppPbeRunStructureOnlyProfile.expectedCounts,
       },
     ])
+  })
+
+  it('builds a graph-native execution contract report from the Todo Search configured slice', async () => {
+    const report = await buildGraphExecutionContractReport(resolve('.'), todoSearchReadModelProfile.supportedSlice)
+
+    expect(report.status).toBe('report-only')
+    expect(report.source.profileId).toBe(todoSearchReadModelProfile.profileId)
+    expect(report.source.sourceSlice).toBe(todoSearchReadModelProfile.supportedSlice)
+    expect(report.source.readModelProjection).toBe(
+      'examples/adoption/todo-search-slice/generated/graph-source-read-model-projection.json',
+    )
+    expect(report.references.productNodeIds).toContain('PT-SEARCH-001')
+    expect(report.references.workNodeIds).toContain('WT-SEARCH-001')
+    expect(report.verificationRequirements.testNodeIds).toContain('TT-SEARCH-001')
+    expect(report.fileChangeGuardContract.sourceFiles).toContain(
+      'examples/adoption/todo-search-slice/product-tree.json',
+    )
+    expect(report.fileChangeGuardContract.sourceFiles).toContain(
+      'examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
+    )
+    expect(report.fileChangeGuardContract.sourceFiles).not.toContain(
+      'examples/adoption/todo-search-slice/examples/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
+    )
+    expect(report.commandPlan.sequentialDefault).toBe(true)
+    expect(report.compatibility.acepRemainsExecutionPackagingPath).toBe(true)
+    expect(report.compatibility.note).toContain('ACEP')
+    expect(report.limitations).toContain('does not mutate .pbe active state')
+  })
+
+  it('reports graph-native execution contract JSON through the CLI without mutating active state', async () => {
+    const result = await runPbeCli(
+      ['graph', 'execution-contract', 'report', '--slice', todoSearchReadModelProfile.supportedSlice, '--json'],
+      { cwd: resolve('.'), pluginRoot: resolve('.') },
+    )
+
+    expect(result.exitCode).toBe(0)
+    const payload = JSON.parse(result.stdout)
+    expect(payload.command).toBe('graph execution-contract report')
+    expect(payload.profileId).toBe(todoSearchReadModelProfile.profileId)
+    expect(payload.contract.source.profileId).toBe(todoSearchReadModelProfile.profileId)
+    expect(payload.contract.compatibility.acepRemainsExecutionPackagingPath).toBe(true)
+    expect(payload.contract.userAcceptanceBoundary).toContain('acceptance')
+  })
+
+  it('fails graph-native execution contract reporting for an unknown slice', async () => {
+    const result = await runPbeCli(
+      ['graph', 'execution-contract', 'report', '--slice', 'examples/not-configured', '--json'],
+      { cwd: resolve('.'), pluginRoot: resolve('.') },
+    )
+
+    expect(result.exitCode).toBe(1)
+    const payload = JSON.parse(result.stderr)
+    expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain(
+      'GRAPH_EXECUTION_CONTRACT_REPORT_FAILED',
+    )
+    expect(JSON.stringify(payload)).toContain('No read-model profile is configured')
   })
 
   it('rejects duplicate profile IDs, missing top-level boundaries, and unknown policy levels', async () => {

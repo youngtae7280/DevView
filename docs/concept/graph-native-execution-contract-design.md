@@ -1,17 +1,34 @@
 # Graph-Native Execution Contract Design
 
-Status: design package / graph-native execution handoff / docs-only / no-behavior-change
+Status: design package / graph-native execution handoff / first read-only CLI report surface implemented
 
 ## Purpose
 
 This package designs a future graph-native execution contract for graph-based PBE.
 
-It is design-only. It does not add CLI behavior, schemas, templates, validators, state transitions, CI enforcement,
-required checks, branch protection, source-authority expansion, or artifact retirement.
+The first implementation adds a read-only CLI report surface. It does not add schemas, templates, validators, state
+transitions, CI enforcement, required checks, branch protection, source-authority expansion, or artifact retirement.
 
 The goal is to define what the primary execution handoff should eventually contain once graph-source and read-model
 projection are mature enough to drive bounded work directly. Existing ACEP, `.pbe/codex-execution-pack`, task-card
 views, Cycle Contracts, and Node Execution Contracts remain compatibility/execution views in this step.
+
+## Implemented First Surface
+
+The first implementation is intentionally small and report-only:
+
+```powershell
+node dist/cli/index.js graph execution-contract report --slice examples/adoption/todo-search-slice --json
+```
+
+The command reads configured read-model registry/profile/projection data and reports a graph-native execution contract
+view for a selected configured slice. It includes source slice/profile identity, Product/Work/Test/Evidence references
+available from the projection, source files, validation/readiness notes, escalation triggers, and a compatibility note
+that ACEP remains the execution packaging path.
+
+The command does not write `.pbe` state, does not generate a persistent execution artifact, does not become a required
+handoff, and does not replace ACEP, user review, or user acceptance. Unknown slices fail with a clear report error
+instead of being inferred from arbitrary directories.
 
 ## Current State Summary
 
@@ -264,7 +281,8 @@ For current behavior, map this lifecycle onto existing CLI flow:
 | `submitted-for-review` | current `pbe review submit` / review-result boundary                                             |
 | `user-accepted`        | current user-only `pbe accept` closure                                                           |
 
-This lifecycle is vocabulary for design only. It does not change the state machine or command behavior.
+This lifecycle is vocabulary for design only. The read-only report surface does not change the state machine,
+transition behavior, or execution readiness rules.
 
 ## Relationship To Existing Artifacts
 
@@ -330,11 +348,11 @@ Future implementation should follow the governance ladder:
 8. Request explicit user approval before source-authority expansion, required checks, branch protection, or artifact
    retirement.
 
-Potential future commands are candidates only:
+Potential future mutating/validating commands are candidates only:
 
-- `pbe graph execution contract generate`
-- `pbe graph execution contract validate`
-- `pbe graph execution contract project-acep`
+- `pbe graph execution-contract generate`
+- `pbe graph execution-contract validate`
+- `pbe graph execution-contract project-acep`
 
 Do not implement these commands until the contract is dogfooded and deterministic enough.
 
@@ -342,7 +360,7 @@ Do not implement these commands until the contract is dogfooded and deterministi
 
 This package does not:
 
-- implement a schema, template, validator, or CLI command;
+- implement a schema, template, validator, mutating command, or required handoff;
 - add a graph-native execution artifact;
 - change state machine behavior;
 - change existing ACEP behavior;
@@ -367,6 +385,6 @@ Separate approval is needed before any of these branches:
 3. Add a graph-native execution contract schema.
 4. Add generator/projection support after registry generalization.
 5. Add validator warnings or errors.
-6. Add new CLI command support.
+6. Add mutating or validating CLI command support.
 7. Make graph-native execution contract a required handoff before execution.
 8. Retire or downgrade any ACEP/codex-execution-pack surface.

@@ -1,4 +1,5 @@
 import { relativePath } from '../core/fs.js'
+import { buildGraphExecutionContractReport } from '../core/graph-execution-contract.js'
 import {
   compareReadModelEvidence,
   generateReadModelEvidence,
@@ -37,6 +38,50 @@ export async function graphReadModelGenerateCommand(context: CommandContext): Pr
       sourceAuthorityBoundary: result.model.sourceAuthorityBoundary,
       nonPromotionStatement: result.model.nonPromotionStatement,
     },
+  }
+}
+
+export async function graphExecutionContractReportCommand(context: CommandContext): Promise<CommandResult> {
+  const slice = context.options.slice
+  if (!slice) {
+    return invalidCommand('graph execution-contract report requires --slice <path>.')
+  }
+  try {
+    const report = await buildGraphExecutionContractReport(context.options.root, slice)
+    return {
+      ok: true,
+      command: 'graph execution-contract report',
+      exitCode: ExitCode.Success,
+      message: `Graph-native execution contract report created for ${report.source.profileId}.`,
+      issues: [],
+      data: {
+        status: report.status,
+        profileId: report.source.profileId,
+        sourceSlice: report.source.sourceSlice,
+        policyLevel: report.source.policyLevel,
+        compatibilityNote: report.compatibility.note,
+        contract: report,
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph execution-contract report',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Graph-native execution contract report failed.',
+      issues: [
+        issue({
+          validator: 'GraphExecutionContractReport',
+          code: 'GRAPH_EXECUTION_CONTRACT_REPORT_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Use a configured read-model slice and refresh the graph-source projection before generating the report.',
+          nextCommand: 'pbe graph read-model report-health',
+        }),
+      ],
+    }
   }
 }
 

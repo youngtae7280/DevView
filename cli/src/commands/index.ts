@@ -8,6 +8,7 @@ import { executionCompleteCommand, executionStartCommand } from './execution.js'
 import { filesCheckCommand } from './files.js'
 import { gateAssessCommand, gateCommand } from './gate.js'
 import {
+  graphExecutionContractReportCommand,
   graphReadModelCompareCommand,
   graphReadModelGenerateCommand,
   graphReadModelObserveCandidatesCommand,
@@ -155,6 +156,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'visual' && subcommand === 'check') {
     return checkResult('visual check', await validateVisualDesign(context.options.root))
+  }
+  if (command === 'graph' && subcommand === 'execution-contract' && positionals[2] === 'report') {
+    return graphExecutionContractReportCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate') {
     return graphReadModelGenerateCommand(context)

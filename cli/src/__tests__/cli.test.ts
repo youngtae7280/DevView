@@ -60,6 +60,7 @@ describe('PBE CLI', () => {
     expect(result.stdout).toContain('profile recommend')
     expect(result.stdout).toContain('context recommend')
     expect(result.stdout).toContain('context pack')
+    expect(result.stdout).toContain('graph execution-contract report')
     expect(result.stdout).toContain('rpd close')
     expect(result.stdout).toContain('wpd close')
     expect(result.stdout).toContain('execution start')
