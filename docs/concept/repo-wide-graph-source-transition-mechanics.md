@@ -75,6 +75,13 @@ The registry still has exactly two positive validate-all profiles:
 - repo-wide promotion, tree-native retirement, and CI enforcement remain incomplete.
 - retirement readiness remains criteria/readiness only, with Todo Search closer-but-not-ready and Todo App not-ready.
 
+## Local Health Report
+
+`graph read-model report-health --json` provides a non-enforcing local summary over the current Graph-source transition
+state. It reads existing validate-all aggregate output, projection contracts, edgeIntent report health, transition
+status, retirement readiness, and retirement approval package statuses. It does not rerun E2E, mutate generated
+artifacts, create required checks, or approve tree-native retirement.
+
 ## Boundaries
 
 This mechanics step is intentionally not:

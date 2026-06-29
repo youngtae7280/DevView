@@ -13,6 +13,7 @@ import {
   graphReadModelObserveCandidatesCommand,
   graphReadModelProjectCommand,
   graphReadModelProjectIntentCommand,
+  graphReadModelReportHealthCommand,
   graphReadModelReportIntentCommand,
   graphReadModelSummarizeCommand,
   graphReadModelValidateCommand,
@@ -169,6 +170,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-intent') {
     return graphReadModelReportIntentCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-health') {
+    return graphReadModelReportHealthCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'observe-candidates') {
     return graphReadModelObserveCandidatesCommand(context)

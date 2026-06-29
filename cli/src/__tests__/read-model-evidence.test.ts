@@ -20,6 +20,7 @@ import {
   normalizeStructureOnlyGraphSourceCandidateProjectionArtifact,
   projectGraphSourceReadModel,
   projectStructureOnlyGraphSourceCandidateReadModel,
+  reportGraphSourceHealth,
   summarizeReadModelEvidence,
   todoAppPbeRunStructureOnlyProfile,
   todoSearchReadModelProfile,
@@ -724,6 +725,96 @@ describe('read-model Evidence builder', () => {
     const after = await readFile(registryPath, 'utf8')
 
     expect(after).toBe(before)
+  })
+
+  it('reports non-enforcing graph-source health across validate-all, intent, and retirement readiness', async () => {
+    const workspace = await createExampleWorkspace()
+    await copyWorkspacePath('examples/intent-critical', workspace)
+
+    const report = await reportGraphSourceHealth(workspace)
+
+    expect(report.status).toBe('graph-source-health-pass')
+    expect(report.validateAll).toMatchObject({
+      status: 'aggregate-pass',
+      aggregateStatus: 'aggregate-pass',
+      sliceCount: 2,
+    })
+    expect(report.e2eSmoke).toMatchObject({
+      status: 'referenced-by-transition-status',
+      intentReportExpected: true,
+    })
+    expect(report.todoSearch).toMatchObject({
+      sourceMode: 'graph-source-backed',
+      projectionContractStatus: 'projection-contract-pass',
+      nodeCount: 40,
+      edgeCount: 59,
+      coreViewCount: 7,
+      retirementApprovalStatus: 'approval-candidate-not-approved',
+    })
+    expect(report.todoApp).toMatchObject({
+      sourceMode: 'graph-source-backed',
+      graphSourceAuthorityStatus: 'confirmed-structure-only-graph-source',
+      projectionContractStatus: 'projection-contract-pass',
+      nodeCount: 22,
+      edgeCount: 38,
+      coreViewCount: 7,
+      retirementApprovalStatus: 'not-ready-structure-only',
+    })
+    expect(report.edgeIntent).toMatchObject({
+      status: 'intent-report-pass',
+      missingClassificationCount: 0,
+      missingAnchorCount: 0,
+    })
+    expect(report.edgeIntent.edgeIntentCount).toBeGreaterThan(0)
+    expect(report.treeNativeRetirement).toMatchObject({
+      readinessStatus: 'retirement-not-ready',
+      todoSearchApprovalStatus: 'approval-candidate-not-approved',
+      todoAppApprovalStatus: 'not-ready-structure-only',
+      repoWideApprovalStatus: 'not-ready',
+      explicitRetirementApproval: 'not-approved',
+      retirementAction: 'not-in-scope',
+    })
+    expect(report.enforcementStatus).toBe('non-enforcing')
+    expect(report.blockingReasons).toEqual([])
+  })
+
+  it('exposes graph-source health through the CLI without creating enforcement', async () => {
+    const workspace = await createExampleWorkspace()
+    await copyWorkspacePath('examples/intent-critical', workspace)
+
+    const result = await runPbeCli(['graph', 'read-model', 'report-health', '--json'], {
+      cwd: workspace,
+      pluginRoot: resolve('.'),
+    })
+    const output = JSON.parse(result.stdout) as {
+      ok: boolean
+      status: string
+      enforcementStatus: string
+      treeNativeRetirement: { todoSearchApprovalStatus: string; repoWideApprovalStatus: string }
+    }
+
+    expect(result.exitCode).toBe(0)
+    expect(output.ok).toBe(true)
+    expect(output.status).toBe('graph-source-health-pass')
+    expect(output.enforcementStatus).toBe('non-enforcing')
+    expect(output.treeNativeRetirement.todoSearchApprovalStatus).toBe('approval-candidate-not-approved')
+    expect(output.treeNativeRetirement.repoWideApprovalStatus).toBe('not-ready')
+  })
+
+  it('blocks graph-source health when retirement approval package status drifts', async () => {
+    const workspace = await createExampleWorkspace()
+    await copyWorkspacePath('examples/intent-critical', workspace)
+    const statusPath = join(workspace, 'examples/read-model-aggregate/graph-source-transition-status.json')
+    const status = JSON.parse(await readFile(statusPath, 'utf8')) as {
+      retirementApprovalPackages: Array<{ scope: string; status: string }>
+    }
+    status.retirementApprovalPackages.find((entry) => entry.scope === 'todo-search-selected-slice')!.status = 'approved'
+    await writeFile(statusPath, JSON.stringify(status, null, 2))
+
+    const report = await reportGraphSourceHealth(workspace)
+
+    expect(report.status).toBe('graph-source-health-blocked')
+    expect(report.blockingReasons).toContain('Todo Search retirement approval package status is approved')
   })
 
   afterEach(async () => {

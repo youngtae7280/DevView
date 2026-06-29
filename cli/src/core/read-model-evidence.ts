@@ -431,6 +431,64 @@ interface EdgeIntentProjectionReportResult {
   validateAllBoundary: string
 }
 
+interface GraphSourceHealthReport {
+  status: 'graph-source-health-pass' | 'graph-source-health-blocked'
+  validateAll: {
+    status: AggregateStatus | 'missing' | 'malformed'
+    aggregateStatus: AggregateStatus | 'missing' | 'malformed'
+    sliceCount: number
+    source: string
+  }
+  e2eSmoke: {
+    status: 'referenced-by-transition-status' | 'not-referenced'
+    command: 'npm run test:read-model:e2e'
+    intentReportExpected: boolean
+  }
+  todoSearch: {
+    sourceMode: string
+    graphSourceArtifact: string
+    projectionContractStatus: 'projection-contract-pass' | 'projection-contract-blocked'
+    nodeCount: number
+    edgeCount: number
+    coreViewCount: number
+    retirementApprovalStatus: string
+    retirementReadinessStatus: string
+  }
+  todoApp: {
+    sourceMode: string
+    graphSourceAuthorityStatus: string
+    projectionContractStatus: 'projection-contract-pass' | 'projection-contract-blocked'
+    nodeCount: number
+    edgeCount: number
+    coreViewCount: number
+    retirementApprovalStatus: string
+    retirementReadinessStatus: string
+  }
+  edgeIntent: Pick<
+    EdgeIntentProjectionReportResult,
+    | 'status'
+    | 'projectedFixtureCount'
+    | 'edgeIntentCount'
+    | 'claimCount'
+    | 'classificationCount'
+    | 'anchorCount'
+    | 'missingClassificationCount'
+    | 'missingAnchorCount'
+  >
+  treeNativeRetirement: {
+    readinessStatus: string
+    todoSearchApprovalStatus: string
+    todoAppApprovalStatus: string
+    repoWideApprovalStatus: string
+    explicitRetirementApproval: string
+    retirementAction: string
+  }
+  enforcementStatus: 'non-enforcing'
+  nonEnforcementStatement: string
+  requiredCheckBoundary: string
+  blockingReasons: string[]
+}
+
 interface EdgeIntentProjectionFixtureSummary {
   graphSource: string
   sourceExampleKind: 'native-pbe' | 'retrofit-pbe' | 'unknown'
@@ -1156,6 +1214,205 @@ export async function reportIntentCriticalProjection(
     requiredCheckBoundary: 'Intent projection report is not a required check, branch protection rule, or merge gate.',
     validateAllBoundary: 'Intent projection report remains separate from broad validate-all intent enforcement.',
   }
+}
+
+export async function reportGraphSourceHealth(root: string): Promise<GraphSourceHealthReport> {
+  const blockingReasons: string[] = []
+  const aggregatePath = 'examples/read-model-aggregate/generated/read-model-aggregate-summary.json'
+  const aggregateResult = await readJsonSafe<AggregateReadModelSummary>(path.resolve(root, aggregatePath))
+  const aggregate =
+    aggregateResult.ok && typeof aggregateResult.value === 'object'
+      ? aggregateResult.value
+      : ({
+          status: aggregateResult.ok ? 'malformed' : 'missing',
+          summary: { sliceCount: 0 },
+        } as unknown as AggregateReadModelSummary)
+  if (!aggregateResult.ok) {
+    blockingReasons.push(`Unable to read aggregate summary: ${aggregateResult.error}`)
+  } else if (aggregate.status !== 'aggregate-pass') {
+    blockingReasons.push(`validate-all aggregate status is ${aggregate.status}`)
+  }
+
+  const transitionPath = 'examples/read-model-aggregate/graph-source-transition-status.json'
+  const transitionResult = await readJsonSafe<unknown>(path.resolve(root, transitionPath))
+  const transition = transitionResult.ok ? asRecord(transitionResult.value, 'graphSourceTransitionStatus', []) : {}
+  if (!transitionResult.ok) {
+    blockingReasons.push(`Unable to read graph-source transition status: ${transitionResult.error}`)
+  }
+  const retirementReadinessSummary = asRecord(
+    transition.retirementReadinessSummary,
+    'graphSourceTransitionStatus.retirementReadinessSummary',
+    [],
+  )
+  const retirementApprovalPackages = Array.isArray(transition.retirementApprovalPackages)
+    ? (transition.retirementApprovalPackages as Array<Record<string, unknown>>)
+    : []
+  if (retirementApprovalPackages.length !== 3) {
+    blockingReasons.push(
+      'Tree-native retirement approval package statuses must cover Todo Search, Todo App, and repo-wide scopes.',
+    )
+  }
+  const transitionSlices = Array.isArray(transition.configuredSlices)
+    ? (transition.configuredSlices as Array<Record<string, unknown>>)
+    : []
+  const validatedBy = Array.isArray(transition.validatedBy) ? transition.validatedBy : []
+
+  const todoSearchGenerated = await readGeneratedReadModelHealth(
+    root,
+    `${todoSearchReadModelProfile.supportedSlice}/generated/generated-read-model.json`,
+    blockingReasons,
+  )
+  const todoAppGenerated = await readGeneratedReadModelHealth(
+    root,
+    `${todoAppPbeRunStructureOnlyProfile.supportedSlice}/generated/generated-read-model.json`,
+    blockingReasons,
+  )
+
+  const todoSearchProjection = await readProjectionHealth(
+    () => loadGraphSourceProjectionArtifact(root),
+    blockingReasons,
+    'Todo Search projection contract',
+  )
+  const todoAppProjection = await readProjectionHealth(
+    () => loadStructureOnlyGraphSourceCandidateProjectionArtifact(root),
+    blockingReasons,
+    'Todo App projection contract',
+  )
+
+  const intentReport = await reportIntentCriticalProjection(root)
+  if (intentReport.status !== 'intent-report-pass') {
+    blockingReasons.push(`edgeIntent report status is ${intentReport.status}`)
+  }
+  if (intentReport.missingClassificationCount !== 0 || intentReport.missingAnchorCount !== 0) {
+    blockingReasons.push('edgeIntent report has missing classification or anchor counts')
+  }
+
+  const todoSearchTransition = findByField(transitionSlices, 'profileId', todoSearchReadModelProfile.profileId)
+  const todoAppTransition = findByField(transitionSlices, 'profileId', todoAppPbeRunStructureOnlyProfile.profileId)
+  const todoSearchRetirement = asRecord(todoSearchTransition.retirementReadiness, 'todoSearch.retirementReadiness', [])
+  const todoAppRetirement = asRecord(todoAppTransition.retirementReadiness, 'todoApp.retirementReadiness', [])
+  const todoSearchPackage = findByField(retirementApprovalPackages, 'scope', 'todo-search-selected-slice')
+  const todoAppPackage = findByField(retirementApprovalPackages, 'scope', 'todo-app-pbe-run-structure-only')
+  const repoWidePackage = findByField(retirementApprovalPackages, 'scope', 'repo-wide')
+
+  if (todoSearchPackage.status !== 'approval-candidate-not-approved') {
+    blockingReasons.push(`Todo Search retirement approval package status is ${String(todoSearchPackage.status)}`)
+  }
+  if (todoAppPackage.status !== 'not-ready-structure-only') {
+    blockingReasons.push(`Todo App retirement approval package status is ${String(todoAppPackage.status)}`)
+  }
+  if (repoWidePackage.status !== 'not-ready') {
+    blockingReasons.push(`Repo-wide retirement approval package status is ${String(repoWidePackage.status)}`)
+  }
+
+  return {
+    status: blockingReasons.length === 0 ? 'graph-source-health-pass' : 'graph-source-health-blocked',
+    validateAll: {
+      status: aggregate.status || (aggregateResult.ok ? 'malformed' : 'missing'),
+      aggregateStatus: aggregate.status || (aggregateResult.ok ? 'malformed' : 'missing'),
+      sliceCount: Number(aggregate.summary?.sliceCount || 0),
+      source: aggregatePath,
+    },
+    e2eSmoke: {
+      status: validatedBy.includes('npm run test:read-model:e2e')
+        ? 'referenced-by-transition-status'
+        : 'not-referenced',
+      command: 'npm run test:read-model:e2e',
+      intentReportExpected: true,
+    },
+    todoSearch: {
+      sourceMode: String(todoSearchGenerated.metadata.readModelSourceMode || 'unknown'),
+      graphSourceArtifact: String(todoSearchGenerated.metadata.graphSourceArtifact || 'unknown'),
+      projectionContractStatus: todoSearchProjection.status,
+      nodeCount: todoSearchProjection.nodeCount,
+      edgeCount: todoSearchProjection.edgeCount,
+      coreViewCount: todoSearchProjection.coreViewCount,
+      retirementApprovalStatus: String(todoSearchPackage.status || 'missing'),
+      retirementReadinessStatus: String(todoSearchRetirement.status || 'missing'),
+    },
+    todoApp: {
+      sourceMode: String(todoAppGenerated.metadata.readModelSourceMode || 'unknown'),
+      graphSourceAuthorityStatus: String(todoAppGenerated.metadata.graphSourceAuthorityStatus || 'unknown'),
+      projectionContractStatus: todoAppProjection.status,
+      nodeCount: todoAppProjection.nodeCount,
+      edgeCount: todoAppProjection.edgeCount,
+      coreViewCount: todoAppProjection.coreViewCount,
+      retirementApprovalStatus: String(todoAppPackage.status || 'missing'),
+      retirementReadinessStatus: String(todoAppRetirement.status || 'missing'),
+    },
+    edgeIntent: {
+      status: intentReport.status,
+      projectedFixtureCount: intentReport.projectedFixtureCount,
+      edgeIntentCount: intentReport.edgeIntentCount,
+      claimCount: intentReport.claimCount,
+      classificationCount: intentReport.classificationCount,
+      anchorCount: intentReport.anchorCount,
+      missingClassificationCount: intentReport.missingClassificationCount,
+      missingAnchorCount: intentReport.missingAnchorCount,
+    },
+    treeNativeRetirement: {
+      readinessStatus: String(retirementReadinessSummary.status || 'missing'),
+      todoSearchApprovalStatus: String(todoSearchPackage.status || 'missing'),
+      todoAppApprovalStatus: String(todoAppPackage.status || 'missing'),
+      repoWideApprovalStatus: String(repoWidePackage.status || 'missing'),
+      explicitRetirementApproval: String(retirementReadinessSummary.explicitRetirementApproval || 'missing'),
+      retirementAction: String(retirementReadinessSummary.retirementAction || 'missing'),
+    },
+    enforcementStatus: 'non-enforcing',
+    nonEnforcementStatement:
+      'Graph-source health report is local/non-enforcing summary only. It does not create required checks, branch protection, merge enforcement, or user acceptance.',
+    requiredCheckBoundary:
+      'Health pass is not a required check and does not approve tree-native retirement, source authority expansion, or enforcement.',
+    blockingReasons,
+  }
+}
+
+async function readGeneratedReadModelHealth(
+  root: string,
+  generatedPath: string,
+  blockingReasons: string[],
+): Promise<{ metadata: Record<string, unknown> }> {
+  const parsed = await readJsonSafe<GeneratedReadModel>(path.resolve(root, generatedPath))
+  if (!parsed.ok) {
+    blockingReasons.push(`Unable to read generated read-model at ${generatedPath}: ${parsed.error}`)
+    return { metadata: {} }
+  }
+  const metadata = asRecord(parsed.value.metadata, `${generatedPath}.metadata`, [])
+  return { metadata }
+}
+
+async function readProjectionHealth(
+  loader: () => Promise<{ nodes: unknown[]; edges: unknown[]; coreViewCoverage: unknown[] }>,
+  blockingReasons: string[],
+  label: string,
+): Promise<{
+  status: 'projection-contract-pass' | 'projection-contract-blocked'
+  nodeCount: number
+  edgeCount: number
+  coreViewCount: number
+}> {
+  try {
+    const projection = await loader()
+    return {
+      status: 'projection-contract-pass',
+      nodeCount: projection.nodes.length,
+      edgeCount: projection.edges.length,
+      coreViewCount: projection.coreViewCoverage.length,
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    blockingReasons.push(`${label} blocked: ${message}`)
+    return {
+      status: 'projection-contract-blocked',
+      nodeCount: 0,
+      edgeCount: 0,
+      coreViewCount: 0,
+    }
+  }
+}
+
+function findByField(entries: Array<Record<string, unknown>>, key: string, value: string): Record<string, unknown> {
+  return entries.find((entry) => entry[key] === value) || {}
 }
 
 export function projectIntentCriticalGraphSource(

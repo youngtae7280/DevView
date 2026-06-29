@@ -47,6 +47,10 @@ The smoke checks:
 - local `graph read-model report-intent --json` status `intent-report-pass`, with native/retrofit fixture summaries,
   nonzero edgeIntent/claim/classification/anchor counts, and zero missing classification/anchor counts
 
+The separate `graph read-model report-health --json` command summarizes the same transition state from existing
+artifacts and report surfaces. It is useful for a quick local health snapshot, while `npm run test:read-model:e2e`
+remains the dogfood command that actually runs the end-to-end flow.
+
 ## Boundary
 
 This local smoke is Evidence only. It does not add CI enforcement, required checks, repo-wide Graph-source promotion,

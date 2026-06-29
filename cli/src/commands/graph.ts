@@ -5,6 +5,7 @@ import {
   observeReadModelCandidateProjections,
   projectGraphSourceReadModelToFile,
   projectIntentCriticalGraphSourceToFile,
+  reportGraphSourceHealth,
   reportIntentCriticalProjection,
   summarizeReadModelEvidence,
   validateAllReadModelEvidence,
@@ -165,6 +166,30 @@ export async function graphReadModelReportIntentCommand(context: CommandContext)
                 'Restore required edgeIntent vocabulary classifications, project-specific claim text, and source signal anchors.',
             }),
           )
+      : [],
+    data: { ...result },
+  }
+}
+
+export async function graphReadModelReportHealthCommand(context: CommandContext): Promise<CommandResult> {
+  const result = await reportGraphSourceHealth(context.options.root)
+  const failed = result.status === 'graph-source-health-blocked'
+  return {
+    ok: !failed,
+    command: 'graph read-model report-health',
+    exitCode: failed ? ExitCode.ValidationFailed : ExitCode.Success,
+    message: failed ? 'Graph-source health report blocked.' : 'Graph-source health report passed.',
+    issues: failed
+      ? result.blockingReasons.map((message) =>
+          issue({
+            validator: 'GraphSourceHealthReport',
+            code: 'GRAPH_SOURCE_HEALTH_BLOCKED',
+            severity: 'error',
+            message,
+            suggestedFix:
+              'Review validate-all, E2E, projection, edgeIntent, retirement readiness, and non-enforcement boundaries.',
+          }),
+        )
       : [],
     data: { ...result },
   }

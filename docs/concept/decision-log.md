@@ -689,6 +689,12 @@ repo-wide tree-native retirement decisions. Todo Search is classified as `approv
 `not-ready-structure-only`; repo-wide retirement is `not-ready`. The E2E smoke verifies those package statuses, but no
 tree-native artifact is retired, deprecated, deleted, enforced, or required-check gated.
 
+DEC-141 does not supersede DEC-097 through DEC-140. It adds local
+`graph read-model report-health --json` as a non-enforcing Graph-source transition health summary. The report reads
+existing validate-all aggregate output, projection contracts, edgeIntent report health, transition status, retirement
+readiness, and retirement approval package statuses. It is local reporting only and does not rerun E2E, mutate generated
+artifacts, add required checks, enforce CI, or approve tree-native retirement.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.
