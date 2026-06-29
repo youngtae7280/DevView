@@ -48,6 +48,11 @@ Recommended sequence:
 Candidate C should wait until Candidate B is reviewed or the user explicitly accepts broader read-model blocking
 semantics.
 
+The latest Candidate C evaluation is recorded in
+[candidate-c-full-read-model-gate-evaluation.md](candidate-c-full-read-model-gate-evaluation.md). It keeps Candidate C
+non-enforcing because the broader validate-all / health / E2E / CI-backed Evidence surface is not yet a branch-protected
+gate and Todo App remains `structure-only`.
+
 ## Candidate B Soft-Required Package
 
 Candidate B is recorded in

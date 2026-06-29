@@ -34,6 +34,8 @@
   change proving whitespace-normalized query matching through the Graph-source validation chain.
 - [Graph-source required-check readiness](concept/graph-source-required-check-readiness.md) - Policy and status package
   for possible required-check promotion without enabling enforcement or branch protection.
+- [Candidate C full read-model gate evaluation](concept/candidate-c-full-read-model-gate-evaluation.md) - Evaluation
+  keeping the broader validate-all/health/E2E/CI read-model gate non-enforcing until promotion prerequisites are met.
 - [External dogfooding readiness summary](concept/external-dogfooding-readiness-summary.md) - Current Graph-source
   status, non-enforcement boundaries, and remaining approval branches before external dogfooding.
 - [First external dogfooding run](concept/first-external-dogfooding-run.md) - `mdn/todo-vue` Lite slice observation,
