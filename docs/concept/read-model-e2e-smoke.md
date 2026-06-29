@@ -32,6 +32,8 @@ The smoke checks:
 - `examples/read-model-aggregate/graph-source-transition-status.json` source roles and no-retirement/no-enforcement
   boundaries
 - candidate observation status `candidate-observation-pass` as separate report-only metadata
+- local `graph read-model report-intent --json` status `intent-report-pass`, with native/retrofit fixture summaries,
+  nonzero edgeIntent/claim/classification/anchor counts, and zero missing classification/anchor counts
 
 ## Boundary
 

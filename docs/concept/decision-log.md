@@ -658,6 +658,11 @@ classification count, and missing anchor count, and blocks locally when required
 It remains local intent report/validation only and does not add broad validate-all intent enforcement, required checks,
 or tree retirement.
 
+DEC-136 does not supersede DEC-097 through DEC-135. It adds `report-intent` coverage to the local
+`npm run test:read-model:e2e` smoke. The smoke now verifies `intent-report-pass`, native/retrofit summaries, nonzero
+edgeIntent/claim/classification/anchor counts, and zero missing classification/anchor counts while preserving the same
+non-enforcing E2E boundary.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

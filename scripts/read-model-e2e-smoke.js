@@ -64,6 +64,7 @@ try {
   copyPath('examples/adoption/compatibility-mismatch-slice')
   copyPath('examples/valid/todo-app-pbe-run')
   copyPath('examples/read-model-aggregate')
+  copyPath('examples/intent-critical')
 
   const todoSearchGenerate = runCli([
     'graph',
@@ -224,6 +225,30 @@ try {
     throw new Error('Candidate observation boundary must remain separate report-only command')
   }
 
+  const intentReport = runCli(['graph', 'read-model', 'report-intent', '--json'])
+  assertEqual(intentReport.status, 'intent-report-pass', 'edgeIntent report status')
+  assertEqual(intentReport.projectedFixtureCount, 2, 'edgeIntent projected fixture count')
+  if (!Array.isArray(intentReport.fixtures) || intentReport.fixtures.length !== 2) {
+    throw new Error('edgeIntent report must include native and retrofit fixture summaries')
+  }
+  if (intentReport.edgeIntentCount <= 0) {
+    throw new Error('edgeIntent report must include at least one edgeIntent')
+  }
+  if (intentReport.claimCount <= 0) {
+    throw new Error('edgeIntent report must include preserved claim text')
+  }
+  if (intentReport.classificationCount <= 0) {
+    throw new Error('edgeIntent report must include vocabulary classifications')
+  }
+  if (intentReport.anchorCount <= 0) {
+    throw new Error('edgeIntent report must include source signal anchors')
+  }
+  assertEqual(intentReport.missingClassificationCount, 0, 'edgeIntent missing classification count')
+  assertEqual(intentReport.missingAnchorCount, 0, 'edgeIntent missing anchor count')
+  const intentKinds = intentReport.fixtures.map((entry) => entry.sourceExampleKind)
+  assertIncludes(intentKinds, 'native-pbe', 'edgeIntent report fixture kinds')
+  assertIncludes(intentKinds, 'retrofit-pbe', 'edgeIntent report fixture kinds')
+
   const payload = {
     ok: true,
     command: 'test:read-model:e2e',
@@ -264,6 +289,18 @@ try {
     candidateObservation: {
       status: candidateObservation.status,
       separated: true,
+    },
+    intentReport: {
+      status: intentReport.status,
+      projectedFixtureCount: intentReport.projectedFixtureCount,
+      edgeIntentCount: intentReport.edgeIntentCount,
+      claimCount: intentReport.claimCount,
+      classificationCount: intentReport.classificationCount,
+      anchorCount: intentReport.anchorCount,
+      missingClassificationCount: intentReport.missingClassificationCount,
+      missingAnchorCount: intentReport.missingAnchorCount,
+      fixtureKinds: intentReport.fixtures.map((entry) => entry.sourceExampleKind),
+      separatedFromValidateAll: true,
     },
   }
 

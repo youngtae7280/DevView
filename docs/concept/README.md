@@ -547,7 +547,8 @@ The local read-model E2E smoke is now recorded:
 
 `npm run test:read-model:e2e` dogfoods the current mixed Graph-source flow in a temporary workspace: Todo Search
 graph-source-backed generation/parity/validation/projection, Todo App confirmed structure-only graph-source-backed
-generation/validation/projection contract, validate-all aggregate pass, and separate candidate observation.
+generation/validation/projection contract, validate-all aggregate pass, separate candidate observation, and the local
+edgeIntent `report-intent` summary.
 The non-enforcing read-model Evidence workflow now runs the same smoke and uploads
 `read-model-e2e-smoke-output.json` as observation metadata; manual run `28223860233` reviewed
 `e2eSmokeStatus: e2e-smoke-pass`, and PR #8 run `28224088829` reviewed the same status through
