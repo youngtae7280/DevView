@@ -118,6 +118,36 @@ If the user later approves Candidate B branch protection, use a separate setting
 5. Confirm local verification still passes sequentially.
 6. Configure required check or branch protection only if explicitly approved.
 
+## Current Branch Protection Decision
+
+Current decision after the Step 6 evaluation:
+
+```text
+Candidate B remains repo-side/manual and CI-observed. It is not promoted to branch protection in this step.
+```
+
+Observed facts:
+
+- the named script `npm.cmd run check:graph-source:candidate-b` passes locally;
+- the `PBE CI / Candidate B Read-Model Check` GitHub Actions job exists and the latest observed push run succeeded;
+- a read-only GitHub API check reported `main` as not branch-protected;
+- no GitHub settings were changed.
+
+The manual branch protection candidate, if approved later, is the existing CI job:
+
+```text
+PBE CI / Candidate B Read-Model Check
+```
+
+It runs:
+
+```text
+npm run check:graph-source:candidate-b
+```
+
+Do not enable it as a required check until the repository owner explicitly accepts the waiver/failure policy and confirms
+the exact required-check name in GitHub settings.
+
 ## Next User Decision
 
 The next decision is an external repository setting decision:

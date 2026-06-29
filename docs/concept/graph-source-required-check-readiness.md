@@ -96,6 +96,67 @@ Current blockers:
 - tree-native retirement remains not approved and must not be bundled into enforcement readiness;
 - Candidate B has not yet been reviewed as a branch-protection-required PR check.
 
+## Step 6 Branch Protection Evaluation
+
+Step 6 of the approved external-dogfooding/readiness sequence re-evaluated Candidate B after:
+
+- fresh external init validation passed without the visual placeholder blocker;
+- external initialized project smoke coverage was hardened;
+- the first graph-native execution contract report surface was added;
+- the source-authority pilot retry kept Todo App `structure-only`;
+- third external dogfooding passed `profile recommend -> init -> status -> validate` on `mdn/todo-vue`.
+
+Local and repository observations are positive:
+
+- `npm.cmd run check:graph-source:candidate-b`: pass locally;
+- latest observed `PBE CI` push run: success;
+- latest observed `PBE CI / Candidate B Read-Model Check` job: success;
+- `graph read-model report-health --json`: `graph-source-health-pass`;
+- `test:read-model:e2e`: `e2e-smoke-pass`.
+
+Read-only GitHub branch protection check:
+
+```text
+gh api repos/youngtae7280/Project-Blueprint-Engine-Plugin/branches/main/protection
+```
+
+returned:
+
+```text
+Branch not protected
+```
+
+Decision:
+
+```text
+Keep Candidate B as a repo-side/manual and CI-observed check for now. Do not configure branch protection in this step.
+```
+
+Reason:
+
+- branch protection is not currently configured;
+- Candidate B has a stable named script and CI job, but it is not yet accepted as a blocking merge policy;
+- Step 4 kept Todo App blocked beyond `structure-only`;
+- Step 5 proved external init/status/validate, but did not complete a real external feature implementation and review
+  loop;
+- source-authority expansion, tree-native retirement, and user acceptance remain separate decisions.
+
+If the repository owner later chooses to promote Candidate B, the manual GitHub settings action is to require the
+existing GitHub Actions job:
+
+```text
+PBE CI / Candidate B Read-Model Check
+```
+
+which runs:
+
+```text
+npm run check:graph-source:candidate-b
+```
+
+Before enabling that branch protection rule, confirm the exact required-check name in the GitHub branch protection UI
+and explicitly accept the failure/waiver policy.
+
 ## Boundary
 
 This package is a decision surface plus a named repo-side check surface. It changes package script/CI naming,
