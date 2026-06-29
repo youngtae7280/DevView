@@ -89,7 +89,8 @@ When PBE is initialized in a project, it stores local control artifacts under `.
 - `.pbe/blueprint/`: compatibility views for older workflows.
 
 Compatibility names still appear in docs and commands: RPD grows product intent, WPD derives project/work shape, VD
-derives verification, and ACEP packages an executable cycle for Codex.
+derives verification, and ACEP packages an executable cycle for Codex. These names are compatibility/control-layer
+terms; graph-source and read-model artifacts remain the forward source-authority direction where explicitly configured.
 
 ## Quick Commands
 

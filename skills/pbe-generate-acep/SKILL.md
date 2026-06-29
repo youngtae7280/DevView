@@ -9,7 +9,7 @@ description: Generate Cycle Contract and Node Execution Contracts from selected 
 
 Use PBE CLI transition commands for workflow state changes. Do not edit `.pbe/blueprint/pbe-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill to generate `.pbe/codex-execution-pack/` from completed blueprint artifacts.
+Use this skill to generate `.pbe/codex-execution-pack/` from completed tree-control compatibility artifacts.
 
 ACEP is not only a task-card bundle. It is a Codex execution contract that links Product, Project, Work, Test, Cycle, traceability, UI/UX expectations, evidence, and final coverage checks.
 

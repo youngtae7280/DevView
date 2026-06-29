@@ -13,6 +13,8 @@ Use this skill to execute an existing Autonomous Codex Execution Pack.
 
 ACEP execution is contract execution, not only task execution. Codex must keep Product, Project, Work, Test, requirement, task, verification, UI/UX, evidence, and coverage links intact.
 
+Graph-first boundary: `.pbe/codex-execution-pack/*`, ACEP manifests, task cards, Cycle Contracts, and Node Execution Contracts are compatibility/execution views for bounded work. They are not Graph-source authority, do not retire tree-native artifacts, and do not replace read-model projection evidence or explicit user acceptance.
+
 In PBE v2, ACEP Runner executes only the selected Cycle Contract and its Node Execution Contracts. It must not execute excluded, deferred, blocked, or out-of-scope nodes unless the user changes scope through an approved gate.
 
 ACEP Runner is deterministic in Autoflow. Run it automatically after ACEP generation succeeds, then stop at the Review Result gate.

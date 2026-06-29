@@ -241,7 +241,7 @@ Deferred work must not be implemented in the current slice. Foundation work may 
 WPD must produce a WorkGraph:
 
 ```text
-RPD Requirement Tree -> WPD WorkGraph -> Execution Planner Task DAG -> ACEP Task Cards -> Codex Coding Tasks
+RPD/Product compatibility input -> WPD WorkGraph -> Execution planning -> Cycle/Node Execution Contract -> ACEP task-card compatibility views
 ```
 
 The WorkGraph is organized by code responsibility and dependencies, not by the

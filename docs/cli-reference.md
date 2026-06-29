@@ -388,7 +388,8 @@ pbe context pack --brief "docs/known-limits.md 한 줄 수정" --profile lite --
 
 - Purpose: Check ACEP execution pack readiness.
 - Typical state before running: After planning artifacts exist, before `pbe acep ready`.
-- What it checks: ACEP manifest, task cards, traceability, selected/foundation scope constraints.
+- What it checks: ACEP manifest, Cycle/Node Execution Contract projections, task-card compatibility views, traceability,
+  selected/foundation scope constraints.
 - What it writes: Nothing.
 - Success result: ACEP readiness report.
 - Common failures: missing manifest, inactive scope tasks, incomplete task/evidence metadata.
@@ -396,9 +397,10 @@ pbe context pack --brief "docs/known-limits.md 한 줄 수정" --profile lite --
 
 ### `pbe acep ready`
 
-- Purpose: Validate ACEP manifest and transition to `ACEP_READY`.
+- Purpose: Validate ACEP compatibility/execution packaging and transition to `ACEP_READY`.
 - Typical state before running: `SCOPE_SELECTED` plus required pre-ACEP checkpoints.
-- What it checks: ACEP validator, pre-ACEP checkpoints, allowed transition.
+- What it checks: ACEP validator, pre-ACEP checkpoints, allowed transition. This does not promote Graph-source
+  authority, retire tree-native artifacts, or replace read-model projection evidence.
 - What it writes: `pbe-state.json`.
 - Success result: State becomes `ACEP_READY`.
 - Common failures: missing checkpoint artifact, missing ACEP manifest, invalid transition.
