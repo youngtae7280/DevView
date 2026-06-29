@@ -142,6 +142,67 @@ describe('read-model Evidence builder', () => {
     expect(registryTodoAppProfile?.optionalArtifacts.graphSource).toBe('graph-source.json')
   })
 
+  it('keeps Todo App source authority beyond structure-only blocked until pilot evidence exists', async () => {
+    const registry = await loadReadModelSliceRegistry(resolve('.'))
+    const candidate = await loadStructureOnlyGraphSourceCandidateArtifact(resolve('.'))
+    const report = JSON.parse(
+      await readFile('examples/valid/todo-app-pbe-run/generated/read-model-validation-report.json', 'utf8'),
+    ) as {
+      metadata: {
+        parityRequirement: Record<string, unknown>
+        pilotMarkerRequirement: Record<string, unknown>
+        runtimeFixtureRequirement: Record<string, unknown>
+      }
+      sourceAuthorityBoundary: string
+      nonPromotionStatement: string
+    }
+    const transitionStatus = JSON.parse(
+      await readFile('examples/read-model-aggregate/graph-source-transition-status.json', 'utf8'),
+    ) as {
+      configuredSlices: Array<{
+        profileId: string
+        sourceRole: string
+        retirementReadiness?: { criteriaStatus?: Record<string, unknown> }
+      }>
+      retirementApprovalPackages: Array<{ scope: string; status: string }>
+    }
+    const registryTodoAppProfile = registry.profiles.find(
+      (entry) => entry.profileId === todoAppPbeRunStructureOnlyProfile.profileId,
+    )
+    const transitionTodoApp = transitionStatus.configuredSlices.find(
+      (entry) => entry.profileId === todoAppPbeRunStructureOnlyProfile.profileId,
+    )
+    const retirementTodoApp = transitionStatus.retirementApprovalPackages.find(
+      (entry) => entry.scope === 'todo-app-pbe-run-structure-only',
+    )
+
+    expect(registryTodoAppProfile).toMatchObject({
+      policyLevel: 'structure-only',
+      requiredCommands: ['generate', 'validate'],
+      parityRequirement: { required: false, expectedStatus: 'not-required' },
+      pilotMarkerRequirement: { required: false, expectedStatus: 'not-required' },
+    })
+    expect(registryTodoAppProfile?.requiredCommands).not.toContain('compare')
+    expect(registryTodoAppProfile?.requiredArtifacts).not.toHaveProperty('parityReport')
+    expect(registryTodoAppProfile?.requiredArtifacts).not.toHaveProperty('scopedPilotMarker')
+    expect(candidate.sourceAuthorityBoundary).toContain('structure-only')
+    expect(candidate.graphSourceBoundaries.nonPromotionStatement).toContain('not promote Todo App')
+    expect(report.metadata.parityRequirement).toMatchObject({ required: false, status: 'not-required' })
+    expect(report.metadata.pilotMarkerRequirement).toMatchObject({ required: false, status: 'not-required' })
+    expect(report.metadata.runtimeFixtureRequirement).toMatchObject({ required: false })
+    expect(report.sourceAuthorityBoundary).toContain('structure-only')
+    expect(report.nonPromotionStatement).toContain('does not promote')
+    expect(transitionTodoApp).toMatchObject({
+      sourceRole: 'confirmed-structure-only-graph-source',
+      retirementReadiness: {
+        criteriaStatus: {
+          sourceAuthorityBeyondStructureOnly: 'not-approved',
+        },
+      },
+    })
+    expect(retirementTodoApp).toMatchObject({ status: 'not-ready-structure-only' })
+  })
+
   it('rejects Todo App graph source candidates that claim promotion or validate-all consumption', async () => {
     const candidate = JSON.parse(await readFile('examples/valid/todo-app-pbe-run/graph-source.json', 'utf8')) as {
       status: string

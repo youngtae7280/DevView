@@ -44,6 +44,8 @@
   - Cleanup boundary for graph-source core, tree-based compatibility layers, and future retirement candidates.
 - [Tree-native artifact retirement candidates](concept/tree-native-artifact-retirement-candidates.md) - Non-destructive
   retirement-candidate boundary for tree-native, blueprint, ACEP, profile, docs, and validator compatibility surfaces.
+- [Todo App limited source-authority pilot](concept/todo-app-limited-source-authority-pilot.md) - Evaluation showing why
+  Todo App remains `structure-only` until pilot evidence is explicitly added or waived.
 - [Graph-first primary workflow](concept/graph-first-primary-workflow.md) - Current source-authority, projection,
   Evidence, validation, compatibility, and user-acceptance boundaries for Graph-first PBE.
 - [Adoption-safe validation path design](concept/adoption-safe-validation-path-design.md) - Design package for
