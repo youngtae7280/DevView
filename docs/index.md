@@ -36,6 +36,8 @@
   for possible required-check promotion without enabling enforcement or branch protection.
 - [External dogfooding readiness summary](concept/external-dogfooding-readiness-summary.md) - Current Graph-source
   status, non-enforcement boundaries, and remaining approval branches before external dogfooding.
+- [First external dogfooding run](concept/first-external-dogfooding-run.md) - `mdn/todo-vue` Lite slice observation,
+  verification result, and adoption-safe validation blockers.
 
 ## Workflow Guides
 
