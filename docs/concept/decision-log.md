@@ -796,6 +796,14 @@ directly. `generate-pack` preserves the existing `generated-from-graph-source` i
 review-required graph update proposal. These commands do not patch target repos, mutate graph-source automatically,
 claim maintainer approval, enable enforcement, add required checks, or retire tree-native artifacts.
 
+DEC-157 does not supersede DEC-097 through DEC-156. It adds the user-facing Graph Operation Runbook and
+`npm run test:graph-operation:flow` smoke. The runbook gives the practical sequence from graph inspection through
+instruction-pack generation, bounded target change, graph-delta capture, graph update proposal generation,
+`apply-proposal` preview, and explicit `--apply`. The smoke creates an isolated temporary target git repo and exercises
+that CLI sequence without touching external projects or committed graph-source fixtures. This improves usability and
+regression coverage only; it does not add required checks, enforcement, target patching, upstream PR creation, source
+authority expansion, or tree-native retirement.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

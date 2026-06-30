@@ -24,6 +24,7 @@ graph-source -> instruction pack -> local change -> graph delta -> graph update 
 - CLI graph update proposal generation entry point: `pbe graph operation propose-update`.
 - CLI graph update proposal entry point: `pbe graph operation apply-proposal`.
 - CLI retrofit planning entry point: `pbe graph retrofit plan`.
+- Local graph operation flow smoke: `npm run test:graph-operation:flow`.
 - Generated observation reports under `outputs/`.
 - Non-enforcing CI observation through `.github/workflows/read-model-evidence.yml`.
 
@@ -37,9 +38,17 @@ npm run validate:pbe:operation-chain
 npm run validate:pbe:dogfood
 ```
 
+```powershell
+npm run test:graph-operation:flow
+```
+
 The operation-chain command recreates small ignored target repos under `work/`
 and validates graph-source, instruction pack, graph delta, graph update
 proposal, and dogfood evaluation surfaces.
+
+The graph operation flow smoke creates an isolated temporary target git repo and runs the explicit CLI sequence:
+`generate-pack`, `capture-delta`, `propose-update`, `apply-proposal` preview, and `apply-proposal --apply`. It proves the
+CLI path works without touching external projects or committed graph-source fixtures.
 
 The CLI wrapper exposes the same operation-chain script path through a stable command:
 

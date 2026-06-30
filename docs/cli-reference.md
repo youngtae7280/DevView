@@ -408,6 +408,8 @@ Example:
 node dist/cli/index.js graph execution-contract report --slice examples/adoption/todo-search-slice --json
 ```
 
+For the practical end-to-end sequence, see [Graph Operation Runbook](graph-operation-runbook.md).
+
 ### `pbe graph operation apply-proposal`
 
 - Purpose: Preview or apply a generated graph update proposal to its graph-source.

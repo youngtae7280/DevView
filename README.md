@@ -118,6 +118,12 @@ Run the graph-source read-model E2E smoke:
 npm run test:read-model:e2e
 ```
 
+Run the graph operation flow smoke:
+
+```bash
+npm run test:graph-operation:flow
+```
+
 Build the CLI, then generate the graph-source health report:
 
 ```bash
@@ -163,6 +169,7 @@ node dist/cli/index.js graph operation propose-update --graph-delta outputs/retr
 - [Documentation index](docs/index.md)
 - [Install PBE locally](docs/install.md)
 - [CLI reference](docs/cli-reference.md)
+- [Graph operation runbook](docs/graph-operation-runbook.md)
 - [Core concepts](docs/core-concepts.md)
 - [Tree control system](docs/tree-control-system.md)
 - [Current graph-source transition mechanics](docs/concept/repo-wide-graph-source-transition-mechanics.md)

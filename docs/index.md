@@ -4,6 +4,7 @@
 
 - [Install PBE locally](install.md)
 - [CLI Reference](cli-reference.md)
+- [Graph Operation Runbook](graph-operation-runbook.md)
 - [Troubleshooting](troubleshooting.md)
 - [PBE v0.5.0-beta Readiness](beta-readiness.md)
 - [Known Limits](known-limits.md)
