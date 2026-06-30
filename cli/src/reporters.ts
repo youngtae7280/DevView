@@ -137,6 +137,8 @@ Commands:
   visual check         Check Visual Design Contract and UI evidence
   graph execution-contract report
                        Report a graph-native execution contract view for a configured slice
+  graph operation apply-proposal
+                       Preview or apply a graph update proposal to graph-source; dry-run unless --apply is provided
   graph read-model generate
                        Generate bounded read-model Evidence from a selected slice
   graph read-model compare
@@ -164,6 +166,7 @@ Options:
   --verbose            Include validator details where available.
   --no-color           Disable colored output. Reserved for compatibility.
   --force              Allow init to overwrite existing PBE files.
+  --apply              Apply graph operation changes. Without this, graph operation commands run in preview mode.
   --all                Run all configured read-model registry profiles for graph read-model validate.
   --profile <value>    Compatibility workflow-depth hint: full, lite, or bypass. Defaults to full.
   --brief <text>       init project brief.
@@ -190,5 +193,6 @@ Options:
   --manual <file>      Manual parity artifact for graph read-model comparison.
   --output <file>      Output file for graph read-model projection or project-intent.
   --markdown <file>    Optional Markdown summary output for graph read-model report-health.
+  --proposal <file>    Graph update proposal file for graph operation apply-proposal.
 `
 }

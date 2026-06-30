@@ -1,5 +1,6 @@
 import { relativePath } from '../core/fs.js'
 import { buildGraphExecutionContractReport } from '../core/graph-execution-contract.js'
+import { applyGraphUpdateProposal } from '../core/graph-operation.js'
 import {
   compareReadModelEvidence,
   generateReadModelEvidence,
@@ -16,6 +17,54 @@ import {
 import type { CommandResult } from '../core/types.js'
 import { ExitCode, issue } from '../core/types.js'
 import { type CommandContext, invalidCommand } from './shared.js'
+
+export async function graphOperationApplyProposalCommand(context: CommandContext): Promise<CommandResult> {
+  const proposal = context.options.proposal
+  if (!proposal) {
+    return invalidCommand('graph operation apply-proposal requires --proposal <file>.')
+  }
+
+  try {
+    const result = await applyGraphUpdateProposal(context.options.root, proposal, {
+      apply: context.options.apply,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph operation apply-proposal',
+      exitCode: ExitCode.Success,
+      message: context.options.apply
+        ? 'Graph update proposal applied to graph-source.'
+        : 'Graph update proposal preview created.',
+      issues: [],
+      data: {
+        ...result,
+        next: context.options.apply
+          ? 'Run validation for the affected graph-source and review the resulting diff.'
+          : 'Review plannedChanges, then rerun with --apply if the graph-source update is approved.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph operation apply-proposal',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Graph update proposal application blocked.',
+      issues: [
+        issue({
+          validator: 'GraphOperationApplyProposal',
+          code: 'GRAPH_UPDATE_PROPOSAL_APPLY_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Regenerate the graph delta/proposal from the current graph-source, or inspect stale proposal boundaries before applying.',
+        }),
+      ],
+    }
+  }
+}
 
 export async function graphReadModelGenerateCommand(context: CommandContext): Promise<CommandResult> {
   const slice = context.options.slice

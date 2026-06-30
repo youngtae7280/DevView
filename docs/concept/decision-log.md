@@ -769,6 +769,12 @@ a graph delta for `index.js` and `test/index.js`, and generated a graph update p
 No upstream PR, maintainer approval claim, required check, enforcement, source-authority expansion, or tree retirement is
 introduced.
 
+DEC-153 does not supersede DEC-097 through DEC-152. It adds `pbe graph operation apply-proposal` as the first CLI surface
+for graph update proposal review/application. The command defaults to dry-run preview, validates proposal/delta/source
+alignment and stale current-state boundaries, and only writes graph-source node/record status fields when explicit
+`--apply` is provided. This is implementation/UX completion for the proposal application flow; it does not apply target
+code patches, create upstream PRs, enable enforcement, add required checks, or retire tree-native artifacts.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

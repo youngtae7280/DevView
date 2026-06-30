@@ -53,6 +53,7 @@ export interface CliOptions {
   verbose: boolean
   noColor: boolean
   force: boolean
+  apply: boolean
   all: boolean
   profile?: 'full' | 'lite' | 'bypass'
   brief?: string
@@ -78,6 +79,7 @@ export interface CliOptions {
   manual?: string
   output?: string
   markdown?: string
+  proposal?: string
 }
 
 export interface CliEnvironment {

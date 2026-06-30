@@ -9,6 +9,7 @@ import { filesCheckCommand } from './files.js'
 import { gateAssessCommand, gateCommand } from './gate.js'
 import {
   graphExecutionContractReportCommand,
+  graphOperationApplyProposalCommand,
   graphReadModelCompareCommand,
   graphReadModelGenerateCommand,
   graphReadModelObserveCandidatesCommand,
@@ -159,6 +160,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'execution-contract' && positionals[2] === 'report') {
     return graphExecutionContractReportCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'operation' && positionals[2] === 'apply-proposal') {
+    return graphOperationApplyProposalCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate') {
     return graphReadModelGenerateCommand(context)

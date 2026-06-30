@@ -408,6 +408,39 @@ Example:
 node dist/cli/index.js graph execution-contract report --slice examples/adoption/todo-search-slice --json
 ```
 
+### `pbe graph operation apply-proposal`
+
+- Purpose: Preview or apply a generated graph update proposal to its graph-source.
+- Typical state before running: After a graph delta and graph update proposal have been generated from a bounded local
+  change.
+- Options: `--proposal <file>` is required. Without `--apply`, the command is a dry-run preview. With `--apply`, it
+  updates graph-source node/record status fields only. `--output <file>` and `--markdown <file>` may write review
+  reports.
+- What it checks: proposal shape, graph delta link, graph-source link, source record id alignment, stale current-state
+  protection, and non-upstream/non-patch boundaries.
+- What it writes: Nothing in preview mode. With `--apply`, writes only the referenced graph-source when there are
+  planned graph-source changes.
+- Success result: Preview/apply report with changed files, planned graph-source changes, and boundary flags.
+- Common failures: stale proposal, missing graph-source node/record, malformed proposal, BOM/JSON read errors, unsafe
+  boundary flags.
+- Next command: Review the graph-source diff and run the relevant graph-source/read-model validation command.
+
+Examples:
+
+```powershell
+node dist/cli/index.js graph operation apply-proposal `
+  --proposal outputs/retrofit/open-source/escape-html/graph-update-proposals/symbol-stringification.graph-update-proposal.json `
+  --json
+```
+
+```powershell
+node dist/cli/index.js graph operation apply-proposal `
+  --proposal outputs/retrofit/open-source/escape-html/graph-update-proposals/symbol-stringification.graph-update-proposal.json `
+  --apply `
+  --output outputs/retrofit/open-source/escape-html/proposal-apply-report.json `
+  --markdown outputs/retrofit/open-source/escape-html/proposal-apply-report.md
+```
+
 ### `pbe acep check`
 
 - Purpose: Check ACEP execution pack readiness.

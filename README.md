@@ -132,6 +132,12 @@ node dist/cli/index.js graph read-model project-intent --graph-source examples/v
 node dist/cli/index.js graph read-model report-intent --graph-source examples/valid/todo-app-pbe-run/graph-source.json --json
 ```
 
+Preview a graph update proposal before applying it to graph-source:
+
+```bash
+node dist/cli/index.js graph operation apply-proposal --proposal outputs/retrofit/open-source/escape-html/graph-update-proposals/symbol-stringification.graph-update-proposal.json --json
+```
+
 ## Where To Go Next
 
 - [Documentation index](docs/index.md)

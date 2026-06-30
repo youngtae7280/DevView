@@ -21,7 +21,7 @@ export async function readJsonSafe<T = unknown>(
     return text
   }
   try {
-    return { ok: true, value: JSON.parse(text.value) as T }
+    return { ok: true, value: JSON.parse(text.value.replace(/^\uFEFF/, '')) as T }
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : String(error) }
   }
