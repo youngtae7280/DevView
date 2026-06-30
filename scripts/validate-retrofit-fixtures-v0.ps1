@@ -10,6 +10,7 @@ $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $schemaFullPath = Join-Path $repoRoot $SchemaPath
 $recordsFullPath = Join-Path $repoRoot $RecordsRoot
 $validatorPath = Join-Path $PSScriptRoot "validate-retrofit-change-record-v0.ps1"
+$powerShellExe = (Get-Process -Id $PID).Path
 
 function Fail($Message) {
     Write-Error $Message
@@ -50,7 +51,7 @@ foreach ($file in $textFiles) {
 
 $records = @(
     Get-ChildItem -Path $recordsFullPath -Recurse -Filter *.json |
-        Where-Object { $_.FullName -match "\\records\\" }
+        Where-Object { $_.FullName -match "[/\\]records[/\\]" }
 )
 
 if ($records.Count -eq 0) {
@@ -75,7 +76,7 @@ $results = foreach ($record in $records) {
         $args += "-CheckExternalRepo"
     }
 
-    & powershell @args
+    & $powerShellExe @args
     if ($LASTEXITCODE -ne 0) {
         exit $LASTEXITCODE
     }

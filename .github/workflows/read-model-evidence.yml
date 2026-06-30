@@ -87,7 +87,7 @@ jobs:
           const fs = require('node:fs')
 
           function readJson(filePath) {
-            return JSON.parse(fs.readFileSync(filePath, 'utf8'))
+            return JSON.parse(fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, ''))
           }
 
           const nativeOutputPath = process.env.PBE_INTENT_NATIVE_OUTPUT
@@ -173,7 +173,7 @@ jobs:
 
           function readJson(filePath) {
             if (!fs.existsSync(filePath)) return null
-            return JSON.parse(fs.readFileSync(filePath, 'utf8'))
+            return JSON.parse(fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, ''))
           }
 
           const todoSearchValidation = readJson(path.join(todoSearchGeneratedDir, 'read-model-validation-report.json'))
@@ -450,7 +450,7 @@ jobs:
           const manifestPath = path.join(generatedDir, 'read-model-ci-evidence-manifest.json')
           let manifest = null
           if (fs.existsSync(manifestPath)) {
-            manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+            manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8').replace(/^\uFEFF/, ''))
           }
 
           const status = manifest?.status || 'ci-evidence-blocked'

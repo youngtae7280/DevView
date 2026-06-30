@@ -8,7 +8,8 @@ if (-not (Test-Path $target)) {
     exit 1
 }
 
-& powershell -NoProfile -ExecutionPolicy Bypass -File $target
+$powerShellExe = (Get-Process -Id $PID).Path
+& $powerShellExe -NoProfile -ExecutionPolicy Bypass -File $target
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Graph counter runtime test failed"
     exit 1
