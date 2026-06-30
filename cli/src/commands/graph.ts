@@ -1,6 +1,7 @@
 import { relativePath } from '../core/fs.js'
 import { buildGraphExecutionContractReport } from '../core/graph-execution-contract.js'
 import { applyGraphUpdateProposal, runGraphOperationChain } from '../core/graph-operation.js'
+import { buildRetrofitPlan } from '../core/graph-retrofit.js'
 import {
   compareReadModelEvidence,
   generateReadModelEvidence,
@@ -103,6 +104,49 @@ export async function graphOperationRunChainCommand(context: CommandContext): Pr
           message,
           suggestedFix:
             'Use --dry-run to inspect the wrapped command, or run scripts/invoke-pbe-v0.ps1 directly for detailed troubleshooting.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphRetrofitPlanCommand(context: CommandContext): Promise<CommandResult> {
+  const graphSource = context.options.graphSource
+  if (!graphSource) {
+    return invalidCommand('graph retrofit plan requires --graph-source <file>.')
+  }
+
+  try {
+    const result = await buildRetrofitPlan(context.options.root, graphSource, {
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph retrofit plan',
+      exitCode: ExitCode.Success,
+      message: 'Retrofit graph-source plan created.',
+      issues: [],
+      data: {
+        ...result,
+        next: 'Select one implementationReadyRecord, generate an instruction pack, then capture graph delta/proposal after local changes.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph retrofit plan',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Retrofit graph-source plan blocked.',
+      issues: [
+        issue({
+          validator: 'GraphRetrofitPlan',
+          code: 'GRAPH_RETROFIT_PLAN_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide an active retrofit graph-source with records, nodes, edges, edgeIntent, and forbidden-flow boundaries.',
         }),
       ],
     }

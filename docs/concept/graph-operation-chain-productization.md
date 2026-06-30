@@ -20,6 +20,7 @@ graph-source -> instruction pack -> local change -> graph delta -> graph update 
 - Local PowerShell entry point: `scripts/invoke-pbe-v0.ps1`.
 - CLI operation-chain entry point: `pbe graph operation run-chain`.
 - CLI graph update proposal entry point: `pbe graph operation apply-proposal`.
+- CLI retrofit planning entry point: `pbe graph retrofit plan`.
 - Generated observation reports under `outputs/`.
 - Non-enforcing CI observation through `.github/workflows/read-model-evidence.yml`.
 
@@ -54,6 +55,15 @@ node dist/cli/index.js graph operation apply-proposal --proposal <proposal.json>
 
 Preview mode is the default. Applying requires explicit `--apply` and updates only graph-source node/record status fields
 after stale-state and boundary checks pass.
+
+Retrofit graph sources can be inspected before implementation:
+
+```powershell
+node dist/cli/index.js graph retrofit plan --graph-source <retrofit-graph-source.json> --json
+```
+
+The plan summarizes implementation-ready records, retained reference records, forbidden-flow boundaries, edgeIntent
+coverage, and next inputs without touching the target project.
 
 The read-model Evidence workflow also runs the same operation-chain and dogfood
 evaluation commands with `pwsh`, uploads the `outputs/` reports, and records

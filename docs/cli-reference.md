@@ -465,6 +465,29 @@ Example:
 node dist/cli/index.js graph operation run-chain --dry-run --json
 ```
 
+### `pbe graph retrofit plan`
+
+- Purpose: Summarize a retrofit graph-source before implementation without touching the target project.
+- Typical state before running: After a retrofit graph-source exists and before generating an instruction pack or making
+  local target-code changes.
+- Options: `--graph-source <file>` is required. `--output <file>` and `--markdown <file>` may write review reports.
+- What it checks: active retrofit graph-source shape, record/node/edge arrays, implementation-ready records, retained
+  reference records, forbidden-flow boundaries, and edgeIntent claim/classification presence.
+- What it writes: Nothing unless `--output` or `--markdown` is provided. It never mutates the target repo.
+- Success result: retrofit plan with target summary, counts, implementation-ready records, retained references,
+  forbidden boundaries, edgeIntent summary, next inputs, and boundary flags.
+- Common failures: non-retrofit graph-source, malformed records/nodes/edges, unreadable JSON.
+- Next command: Select one implementation-ready record, generate an instruction pack, make the bounded local change,
+  then capture graph delta/proposal.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph retrofit plan `
+  --graph-source examples/retrofit/cardprinterconfig/graph-source.json `
+  --json
+```
+
 ### `pbe acep check`
 
 - Purpose: Check ACEP execution pack readiness.

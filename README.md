@@ -144,6 +144,12 @@ Preview the local operation-chain wrapper without needing to know the script pat
 node dist/cli/index.js graph operation run-chain --dry-run --json
 ```
 
+Inspect a retrofit graph before implementation, without touching the target project:
+
+```bash
+node dist/cli/index.js graph retrofit plan --graph-source examples/retrofit/cardprinterconfig/graph-source.json --json
+```
+
 ## Where To Go Next
 
 - [Documentation index](docs/index.md)

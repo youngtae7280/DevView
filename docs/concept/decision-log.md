@@ -781,6 +781,12 @@ running without `--dry-run` delegates to `scripts/invoke-pbe-v0.ps1` and preserv
 This improves implementation/UX by removing the need to remember the script path. It does not replace the script
 implementation, apply graph proposals, enable enforcement, add required checks, or retire tree-native artifacts.
 
+DEC-155 does not supersede DEC-097 through DEC-154. It adds `pbe graph retrofit plan` as a target-safe retrofit start UX.
+The command reads an active retrofit graph-source and reports target summary, implementation-ready records, retained
+reference records, forbidden-flow boundaries, edgeIntent coverage, and next inputs before instruction-pack generation or
+target-code changes. It does not mutate the target project, apply patches, infer maintainer approval, enable enforcement,
+or retire tree-native artifacts.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

@@ -141,6 +141,7 @@ Commands:
                        Preview or apply a graph update proposal to graph-source; dry-run unless --apply is provided
   graph operation run-chain
                        Run or plan the local PBE operation-chain wrapper without knowing the underlying script path
+  graph retrofit plan  Summarize a retrofit graph-source before implementation without touching the target project
   graph read-model generate
                        Generate bounded read-model Evidence from a selected slice
   graph read-model compare
@@ -192,7 +193,7 @@ Options:
   --slices <paths>     Slice paths for graph read-model summarize, comma-separated.
   --generated <file>   Generated read-model file for graph read-model comparison.
   --graph-source <file>
-                       Graph source artifact for graph read-model projection, project-intent, or single-fixture report-intent.
+                       Graph source artifact for graph read-model projection, retrofit plan, project-intent, or report-intent.
   --manual <file>      Manual parity artifact for graph read-model comparison.
   --output <file>      Output file for graph read-model projection or project-intent.
   --markdown <file>    Optional Markdown summary output for graph read-model report-health.

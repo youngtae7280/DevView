@@ -11,6 +11,7 @@ import {
   graphExecutionContractReportCommand,
   graphOperationApplyProposalCommand,
   graphOperationRunChainCommand,
+  graphRetrofitPlanCommand,
   graphReadModelCompareCommand,
   graphReadModelGenerateCommand,
   graphReadModelObserveCandidatesCommand,
@@ -167,6 +168,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'operation' && positionals[2] === 'run-chain') {
     return graphOperationRunChainCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'retrofit' && positionals[2] === 'plan') {
+    return graphRetrofitPlanCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate') {
     return graphReadModelGenerateCommand(context)
