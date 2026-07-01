@@ -1,6 +1,6 @@
-# Contract Compiler Dry-Run v0
+# Contract Compiler Dry-Run v0.1
 
-Status: implemented / deterministic candidate compiler / local non-enforcing report
+Status: implemented / deterministic candidate compiler / generated-vs-hand-written diff / local non-enforcing report
 
 ## Purpose
 
@@ -8,10 +8,10 @@ The Contract Fixture Validator answers: "Is this contract-shaped artifact safe?"
 
 The Compiler Input Model answers: "Are the inputs grounded in graph, policy, Evidence, and bounded vocabulary?"
 
-Contract Compiler Dry-Run v0 answers the next narrow question:
+Contract Compiler Dry-Run v0.1 answers the next narrow question:
 
 "Can PBE deterministically compile one contract candidate from those validated inputs, then send that candidate back
-through the Contract Fixture Validator?"
+through the Contract Fixture Validator and compare it against the hand-written dry-run fixture?"
 
 ## Current Scope
 
@@ -19,6 +19,8 @@ The current dry-run compiler supports only the committed Todo Search whitespace-
 
 - input: `examples/read-model-aggregate/generated/compiler-input-model-dry-run.json`
 - output candidate: `examples/read-model-aggregate/generated/execution-contract-dry-run.generated.json`
+- hand-written comparison target: `examples/read-model-aggregate/generated/execution-contract-dry-run.json`
+- diff report: `examples/read-model-aggregate/generated/execution-contract-dry-run.diff.json`
 - validator: `validateExecutionContract`
 
 The local command is:
@@ -31,16 +33,32 @@ node dist/cli/index.js graph read-model compile-contract --dry-run --json
 
 The compiler candidate is derived without AI prose:
 
-- `humanRequest.text` becomes `goal`;
-- `packSchema.changeType` becomes `changeType`;
-- `targetScopeCandidates[]` becomes `allowedScope[]`;
-- `graphSnapshot.artifacts[]` becomes `requiredContext[]`;
-- `evidenceIndex.entries[]` becomes `requiredEvidence[]`;
-- non-enforcement and no-retirement policies become `forbiddenScope[]` and stop conditions;
+- `humanRequest.text` becomes `goal`.
+- `packSchema.changeType` becomes `changeType`.
+- `targetScopeCandidates[]` becomes `allowedScope[]`.
+- `graphSnapshot.artifacts[]` becomes `requiredContext[]`.
+- `policySnapshot.evidenceCheckMappings[]` maps `evidenceIndex.entries[]` into `requiredEvidence[]`.
+- `policySnapshot.forbiddenScopeRules[]` becomes `forbiddenScope[]`.
 - fixed local checks cover runtime fixture, validate-all, health report, and E2E smoke.
 
 After compilation, the candidate must pass the existing Contract Fixture Validator. A candidate that does not validate is
 blocked and is not treated as executable.
+
+The compiler-produced candidate uses `sourceMode: contract-compiler-dry-run-v0`. The hand-written fixture keeps
+`sourceMode: compiler-boundary-mvp-dry-run`, so the diff report is expected to show the intentional boundary between the
+manual fixture and the compiler-produced candidate.
+
+## Diff Report
+
+The diff report is review Evidence only. It compares the generated candidate with the hand-written dry-run contract
+across contract-level fields such as source mode, scopes, context, checks, Evidence, risks, stop conditions, and output
+requirements.
+
+Expected current status:
+
+- `candidateStatus`: `contract-candidate-pass`
+- `candidateDiff.status`: `contract-diff-detected`
+- `candidateDiff.differingFields`: visible fields to review before relying on the generated candidate
 
 ## Boundaries
 
@@ -61,12 +79,13 @@ It only proves the first closed loop:
 
 ```text
 Compiler Input Model
-→ deterministic contract candidate
-→ Contract Fixture Validator
+-> deterministic contract candidate
+-> Contract Fixture Validator
+-> generated-vs-hand-written diff report
 ```
 
 ## Next Layer
 
 The next layer should either widen supported pack schemas carefully or introduce a real source-authority resolver for
-choosing checks, Evidence, risks, and stop conditions from graph/policy inputs. It should not jump directly to AI executor
-automation.
+choosing checks, Evidence, risks, and stop conditions from graph/policy inputs. It should not jump directly to AI
+executor automation.

@@ -568,11 +568,11 @@ export async function graphReadModelCompileContractCommand(context: CommandConte
     ok: !failed,
     command: 'graph read-model compile-contract',
     exitCode: failed ? ExitCode.ValidationFailed : ExitCode.Success,
-    message: failed ? 'Contract Compiler Dry-Run v0 blocked.' : 'Contract Compiler Dry-Run v0 candidate created.',
+    message: failed ? 'Contract Compiler Dry-Run v0.1 blocked.' : 'Contract Compiler Dry-Run v0.1 candidate created.',
     issues: failed
       ? result.blockingReasons.map((message) =>
           issue({
-            validator: 'ContractCompilerDryRunV0',
+            validator: 'ContractCompilerDryRunV01',
             code: 'CONTRACT_COMPILER_DRY_RUN_BLOCKED',
             severity: 'error',
             message,

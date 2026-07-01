@@ -172,7 +172,7 @@ export async function validateCompilerInputDryRun(
   const graphSnapshot = asRecord(record.graphSnapshot)
   validateGraphSnapshot(graphSnapshot, root, blocking)
   validatePackSchema(asRecord(record.packSchema), blocking)
-  validatePolicySnapshot(asRecord(record.policySnapshot), blocking)
+  validatePolicySnapshot(asRecord(record.policySnapshot), root, blocking)
   validateEvidenceIndex(asRecord(record.evidenceIndex), root, blocking)
   validateTargetScopeCandidates(arrayValue(record.targetScopeCandidates), root, graphSnapshot, blocking)
 
@@ -214,7 +214,7 @@ function validatePackSchema(record: Record<string, unknown>, blocking: string[])
   }
 }
 
-function validatePolicySnapshot(record: Record<string, unknown>, blocking: string[]): void {
+function validatePolicySnapshot(record: Record<string, unknown>, root: string, blocking: string[]): void {
   validateRequiredStringFields('Compiler input dry-run policySnapshot', record, ['id'], blocking)
   const policies = arrayValue(record.policies)
   if (policies.length === 0) {
@@ -242,6 +242,52 @@ function validatePolicySnapshot(record: Record<string, unknown>, blocking: strin
           ', ',
         )}.`,
       )
+    }
+  }
+  validateEvidenceCheckMappings(record, blocking)
+  validateForbiddenScopeRules(record, root, blocking)
+}
+
+function validateEvidenceCheckMappings(record: Record<string, unknown>, blocking: string[]): void {
+  const mappings = arrayValue(record.evidenceCheckMappings)
+  if (mappings.length === 0) {
+    blocking.push('Compiler input dry-run policySnapshot.evidenceCheckMappings is required.')
+  }
+  const seen = new Set<string>()
+  for (const [index, mapping] of mappings.entries()) {
+    const label = `Compiler input dry-run policySnapshot.evidenceCheckMappings[${index}]`
+    validateRequiredStringFields(label, mapping, ['evidenceType', 'requiredCheckId', 'compiledEvidenceType'], blocking)
+    const evidenceType = stringValue(mapping.evidenceType, '')
+    if (evidenceType && seen.has(evidenceType)) {
+      blocking.push(`${label}.evidenceType duplicates an earlier mapping: ${evidenceType}.`)
+    }
+    seen.add(evidenceType)
+  }
+}
+
+function validateForbiddenScopeRules(record: Record<string, unknown>, root: string, blocking: string[]): void {
+  const rules = arrayValue(record.forbiddenScopeRules)
+  if (rules.length === 0) {
+    blocking.push('Compiler input dry-run policySnapshot.forbiddenScopeRules is required.')
+  }
+  for (const [index, rule] of rules.entries()) {
+    const label = `Compiler input dry-run policySnapshot.forbiddenScopeRules[${index}]`
+    validateRequiredStringFields(label, rule, ['id', 'scopeKind'], blocking)
+    const scopeKind = stringValue(rule.scopeKind, '')
+    if (scopeKind && !allowedScopeKinds.includes(scopeKind)) {
+      blocking.push(`${label}.scopeKind must be one of: ${allowedScopeKinds.join(', ')}.`)
+    }
+    const paths = stringArrayValue(rule.paths)
+    if (paths.length === 0) {
+      blocking.push(`${label}.paths must be a non-empty string array.`)
+    }
+    for (const rulePath of paths) {
+      if (!fileExists(root, rulePath)) {
+        blocking.push(`${label}.paths references missing file or artifact: ${rulePath}.`)
+      }
+    }
+    if (stringArrayValue(rule.derivedFrom).length === 0) {
+      blocking.push(`${label}.derivedFrom must be a non-empty string array.`)
     }
   }
 }

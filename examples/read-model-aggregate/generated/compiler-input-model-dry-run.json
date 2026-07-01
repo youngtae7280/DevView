@@ -52,6 +52,32 @@
         "authority": "policy",
         "status": "non-enforcing"
       }
+    ],
+    "evidenceCheckMappings": [
+      {
+        "evidenceType": "runtime_fixture_result",
+        "requiredCheckId": "check-todo-search-runtime-fixture",
+        "compiledEvidenceType": "unit_test_result"
+      },
+      {
+        "evidenceType": "health_report",
+        "requiredCheckId": "check-read-model-health-report",
+        "compiledEvidenceType": "health_report"
+      }
+    ],
+    "forbiddenScopeRules": [
+      {
+        "id": "scope-no-ci-enforcement",
+        "scopeKind": "workflow",
+        "paths": [".github/workflows/read-model-evidence.yml"],
+        "derivedFrom": ["policy:non-enforcement-policy"]
+      },
+      {
+        "id": "scope-no-tree-retirement",
+        "scopeKind": "graph",
+        "paths": ["examples/read-model-aggregate/graph-source-transition-status.json"],
+        "derivedFrom": ["policy:non-enforcement-policy"]
+      }
     ]
   },
   "evidenceIndex": {

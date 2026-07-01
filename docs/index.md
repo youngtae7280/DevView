@@ -39,8 +39,8 @@
   Contract Fixture Validator, and non-enforcing report-health/E2E observation.
 - [Compiler Input Model](concept/compiler-input-model.md) - Machine-readable input surface for a future Actual Contract
   Compiler, validated through a non-executing dry-run fixture.
-- [Contract Compiler Dry-Run v0](concept/contract-compiler-dry-run.md) - Deterministic non-executing contract candidate
-  compilation from the validated Compiler Input Model.
+- [Contract Compiler Dry-Run v0.1](concept/contract-compiler-dry-run.md) - Deterministic non-executing contract
+  candidate compilation plus generated-vs-hand-written diff from the validated Compiler Input Model.
 - [Graph operation-chain productization](concept/graph-operation-chain-productization.md) - Local native/retrofit
   dogfood package for `graph-source -> instruction pack -> local change -> graph delta -> graph update proposal`.
 - [Candidate C full read-model gate evaluation](concept/candidate-c-full-read-model-gate-evaluation.md) - Evaluation

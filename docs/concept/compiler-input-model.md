@@ -46,6 +46,10 @@ The MVP blocks:
 - graph snapshot artifact paths that do not exist;
 - policy entries without id/authority/status;
 - policy entries with authority or status outside the current bounded vocabulary;
+- policy snapshots without `evidenceCheckMappings[]` for compiler-owned Evidence/check derivation;
+- evidence check mappings without `evidenceType`, `requiredCheckId`, or `compiledEvidenceType`;
+- policy snapshots without `forbiddenScopeRules[]` for compiler-owned forbidden-scope derivation;
+- forbidden scope rules without id, bounded scope kind, existing paths, or derivation;
 - evidence entries without id/artifact/evidenceType/freshness;
 - evidence entries whose artifact path does not exist;
 - evidence freshness outside the current bounded vocabulary;

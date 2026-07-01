@@ -195,10 +195,10 @@ human request, graph snapshot, pack schema, policy snapshot, evidence index, and
 those inputs and their basic artifact/graph cross-references through `graph read-model report-compiler-input --json`; it
 does not compile contracts or execute AI.
 
-Contract Compiler Dry-Run v0 consumes that validated input for the current `bug_fix` fixture, deterministically writes a
-candidate execution contract, and revalidates the candidate through the Contract Fixture Validator via
-`graph read-model compile-contract --dry-run --json`. It remains local/non-enforcing and does not execute AI or apply
-graph deltas.
+Contract Compiler Dry-Run v0.1 consumes that validated input for the current `bug_fix` fixture, deterministically writes
+a candidate execution contract, revalidates the candidate through the Contract Fixture Validator, and writes a
+generated-vs-hand-written diff report via `graph read-model compile-contract --dry-run --json`. It remains
+local/non-enforcing and does not execute AI or apply graph deltas.
 
 The following readiness artifact is complete at documentation level:
 

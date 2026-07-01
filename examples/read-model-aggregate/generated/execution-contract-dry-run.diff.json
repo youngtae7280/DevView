@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "execution-contract-dry-run-diff-report",
+  "status": "contract-diff-detected",
+  "sourceCandidate": "examples/read-model-aggregate/generated/execution-contract-dry-run.generated.json",
+  "comparedWith": "examples/read-model-aggregate/generated/execution-contract-dry-run.json",
+  "differingFields": [
+    "sourceMode",
+    "allowedScope",
+    "forbiddenScope",
+    "requiredContext",
+    "requiredChecks",
+    "requiredEvidence",
+    "knownRisks",
+    "stopConditions",
+    "outputRequirements",
+    "nonExecutionStatement"
+  ],
+  "comparedFields": [
+    { "field": "sourceMode", "status": "different" },
+    { "field": "changeType", "status": "same" },
+    { "field": "goal", "status": "same" },
+    { "field": "allowedScope", "status": "different" },
+    { "field": "forbiddenScope", "status": "different" },
+    { "field": "requiredContext", "status": "different" },
+    { "field": "requiredChecks", "status": "different" },
+    { "field": "requiredEvidence", "status": "different" },
+    { "field": "knownRisks", "status": "different" },
+    { "field": "openUnknowns", "status": "same" },
+    { "field": "humanDecisions", "status": "same" },
+    { "field": "stopConditions", "status": "different" },
+    { "field": "outputRequirements", "status": "different" },
+    { "field": "nonExecutionStatement", "status": "different" }
+  ],
+  "nonExecutionStatement": "This diff report is review Evidence only and does not execute work, accept changes, or make the compiled candidate authoritative."
+}

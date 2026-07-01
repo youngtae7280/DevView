@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "artifactRole": "execution-contract-dry-run",
   "status": "contract-dry-run-valid",
-  "sourceMode": "compiler-boundary-mvp-dry-run",
+  "sourceMode": "contract-compiler-dry-run-v0",
   "changeId": "change-todo-search-whitespace-normalization-dogfood",
   "changeType": "bug_fix",
   "goal": "Preserve Todo Search matching when a multi-word query contains repeated whitespace.",
@@ -115,6 +115,7 @@
   "outputRequirements": [
     "Report compiler input status from graph read-model report-compiler-input only.",
     "Report compiled contract candidate status from Contract Fixture Validator output only.",
+    "Report generated-versus-handwritten dry-run diff status before relying on the candidate.",
     "Do not treat this dry-run candidate as execution, user acceptance, required check, or branch protection."
   ],
   "nonExecutionStatement": "This compiler-produced execution contract candidate is dry-run only. It does not execute work, enable required checks, apply graph deltas, or accept the change."

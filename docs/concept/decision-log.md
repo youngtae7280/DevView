@@ -863,6 +863,14 @@ surface that consumes the current validated Compiler Input Model `bug_fix` fixtu
 is still non-executing and non-enforcing. It does not execute AI, apply graph deltas, accept work, enable required
 checks, configure branch protection, expand source authority, or retire tree-native artifacts.
 
+DEC-166 does not supersede DEC-097 through DEC-165. It hardens Contract Compiler Dry-Run to v0.1: compiler-produced
+candidates now use `sourceMode: contract-compiler-dry-run-v0`, unsupported inputs report `contract-candidate-not-run`,
+Evidence/check derivation comes from `policySnapshot.evidenceCheckMappings`, forbidden-scope derivation comes from
+`policySnapshot.forbiddenScopeRules`, and the compiler writes a generated-vs-hand-written diff report at
+`examples/read-model-aggregate/generated/execution-contract-dry-run.diff.json`. This remains dry-run Evidence only and
+does not execute AI, apply graph deltas, accept work, enable required checks, configure branch protection, expand source
+authority, or retire tree-native artifacts.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

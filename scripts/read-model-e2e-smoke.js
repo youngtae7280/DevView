@@ -65,6 +65,7 @@ try {
   copyPath('examples/valid/todo-app-pbe-run')
   copyPath('examples/read-model-aggregate')
   copyPath('examples/intent-critical')
+  copyPath('.github/workflows/read-model-evidence.yml')
 
   const todoSearchGenerate = runCli([
     'graph',
@@ -359,11 +360,19 @@ try {
   assertEqual(contractCompilerDryRun.status, 'contract-compiler-dry-run-pass', 'contract compiler dry-run status')
   assertEqual(contractCompilerDryRun.inputModelStatus, 'compiler-input-model-pass', 'contract compiler input status')
   assertEqual(contractCompilerDryRun.candidateStatus, 'contract-candidate-pass', 'contract compiler candidate status')
+  assertEqual(
+    contractCompilerDryRun.candidateDiff.status,
+    'contract-diff-detected',
+    'contract compiler generated-vs-handwritten diff status',
+  )
   if (contractCompilerDryRun.candidate.requiredCheckCount <= 0) {
     throw new Error('Contract compiler dry-run candidate must include required checks')
   }
   if (contractCompilerDryRun.candidate.requiredEvidenceCount <= 0) {
     throw new Error('Contract compiler dry-run candidate must include required evidence')
+  }
+  if (!contractCompilerDryRun.paths.diffReport) {
+    throw new Error('Contract compiler dry-run must expose a diff report path')
   }
 
   const payload = {
@@ -459,6 +468,9 @@ try {
       requiredCheckCount: contractCompilerDryRun.candidate.requiredCheckCount,
       requiredEvidenceCount: contractCompilerDryRun.candidate.requiredEvidenceCount,
       outputCandidate: contractCompilerDryRun.paths.outputCandidate,
+      candidateDiffStatus: contractCompilerDryRun.candidateDiff.status,
+      differingFieldCount: contractCompilerDryRun.candidateDiff.differingFieldCount,
+      diffReport: contractCompilerDryRun.paths.diffReport,
       nonExecuting: true,
     },
   }

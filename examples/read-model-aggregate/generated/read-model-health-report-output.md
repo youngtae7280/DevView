@@ -11,23 +11,24 @@ Status: `graph-source-health-pass`
 
 ## Evidence Status
 
-| Surface                            | Status                                                                                                                                                         |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Validate-all aggregate             | `aggregate-pass` (2 slices)                                                                                                                                    |
-| E2E smoke                          | `referenced-by-transition-status`; command `npm run test:read-model:e2e`                                                                                       |
-| edgeIntent report                  | `intent-report-pass`; 2 edgeIntents / 2 claims / 12 classifications / 4 anchors                                                                                |
-| Missing edgeIntent classifications | `0`                                                                                                                                                            |
-| Missing edgeIntent anchors         | `0`                                                                                                                                                            |
-| Compiler Boundary MVP              | `compiler-boundary-mvp-pass`                                                                                                                                   |
-| Compiler task registry             | `task-registry-pass`                                                                                                                                           |
-| Execution contract schema          | `contract-schema-pass`                                                                                                                                         |
-| Dry-run contract validator         | `contract-validator-pass`                                                                                                                                      |
-| Dry-run contract                   | `dry-run-contract-pass`; `change-todo-search-whitespace-normalization-dogfood`; 3 checks / 2 evidence requirements                                             |
-| Compiler Input Model MVP           | `compiler-input-model-pass`                                                                                                                                    |
-| Compiler input schema              | `compiler-input-schema-pass`                                                                                                                                   |
-| Dry-run compiler input             | `compiler-input-dry-run-pass`; `change-todo-search-whitespace-normalization-dogfood`; 3 graph artifacts / 3 policies / 2 evidence entries / 2 scope candidates |
-| Contract Compiler Dry-Run v0       | `contract-compiler-dry-run-pass`                                                                                                                               |
-| Compiled contract candidate        | `contract-candidate-pass`; `change-todo-search-whitespace-normalization-dogfood`; 4 checks / 2 evidence requirements                                           |
+| Surface                                 | Status                                                                                                                                                         |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Validate-all aggregate                  | `aggregate-pass` (2 slices)                                                                                                                                    |
+| E2E smoke                               | `referenced-by-transition-status`; command `npm run test:read-model:e2e`                                                                                       |
+| edgeIntent report                       | `intent-report-pass`; 2 edgeIntents / 2 claims / 12 classifications / 4 anchors                                                                                |
+| Missing edgeIntent classifications      | `0`                                                                                                                                                            |
+| Missing edgeIntent anchors              | `0`                                                                                                                                                            |
+| Compiler Boundary MVP                   | `compiler-boundary-mvp-pass`                                                                                                                                   |
+| Compiler task registry                  | `task-registry-pass`                                                                                                                                           |
+| Execution contract schema               | `contract-schema-pass`                                                                                                                                         |
+| Dry-run contract validator              | `contract-validator-pass`                                                                                                                                      |
+| Dry-run contract                        | `dry-run-contract-pass`; `change-todo-search-whitespace-normalization-dogfood`; 3 checks / 2 evidence requirements                                             |
+| Compiler Input Model MVP                | `compiler-input-model-pass`                                                                                                                                    |
+| Compiler input schema                   | `compiler-input-schema-pass`                                                                                                                                   |
+| Dry-run compiler input                  | `compiler-input-dry-run-pass`; `change-todo-search-whitespace-normalization-dogfood`; 3 graph artifacts / 3 policies / 2 evidence entries / 2 scope candidates |
+| Contract Compiler Dry-Run v0.1          | `contract-compiler-dry-run-pass`                                                                                                                               |
+| Compiled contract candidate             | `contract-candidate-pass`; `change-todo-search-whitespace-normalization-dogfood`; 4 checks / 2 evidence requirements                                           |
+| Generated vs hand-written contract diff | `contract-diff-detected`; 10 differing fields; `examples/read-model-aggregate/generated/execution-contract-dry-run.diff.json`                                  |
 
 ## Retirement And Enforcement
 

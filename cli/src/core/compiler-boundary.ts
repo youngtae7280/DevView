@@ -112,7 +112,7 @@ interface ExecutionContractDryRun {
   schemaVersion: 1
   artifactRole: 'execution-contract-dry-run'
   status: 'contract-dry-run-valid'
-  sourceMode: 'compiler-boundary-mvp-dry-run'
+  sourceMode: 'compiler-boundary-mvp-dry-run' | 'contract-compiler-dry-run-v0'
   changeId: string
   changeType: string
   goal: string
@@ -220,6 +220,7 @@ const allowedEvidenceFreshness = [
 ]
 const allowedStopConditionActions = ['stop-and-request-human-decision', 'stop-and-record-missing-evidence']
 const allowedHumanDecisionStatuses = ['accepted', 'mitigated', 'rejected', 'deferred']
+const allowedExecutionContractSourceModes = ['compiler-boundary-mvp-dry-run', 'contract-compiler-dry-run-v0']
 
 export async function reportCompilerBoundary(root: string): Promise<CompilerBoundaryReport> {
   const registry = await readJsonSafe<CompilerBoundaryTaskRegistry>(path.resolve(root, taskRegistryPath))
@@ -446,8 +447,9 @@ export function validateExecutionContract(contract: unknown): { blocking: string
   if (record.status !== 'contract-dry-run-valid') {
     blocking.push('Execution contract status must be contract-dry-run-valid.')
   }
-  if (record.sourceMode !== 'compiler-boundary-mvp-dry-run') {
-    blocking.push('Execution contract sourceMode must be compiler-boundary-mvp-dry-run.')
+  const sourceMode = stringValue(record.sourceMode, '')
+  if (!allowedExecutionContractSourceModes.includes(sourceMode)) {
+    blocking.push(`Execution contract sourceMode must be one of: ${allowedExecutionContractSourceModes.join(', ')}.`)
   }
   for (const field of requiredContractFields) {
     if (!(field in record)) {

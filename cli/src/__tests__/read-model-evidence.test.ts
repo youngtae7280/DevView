@@ -48,6 +48,7 @@ const exampleWorkspacePaths = [
   'examples/valid/todo-app-pbe-run',
   'examples/read-model-aggregate',
   'docs/concept',
+  '.github/workflows/read-model-evidence.yml',
 ]
 const allowedTags = new Set(['target', 'context', 'candidate', 'guard', 'required', 'stale', 'blocked', 'output'])
 const coreViews = [
@@ -1141,7 +1142,7 @@ describe('read-model Evidence builder', () => {
       'Execution contract status must be contract-dry-run-valid',
     )
     expect(report.validationBuckets.dryRunContract.blocking.join('\n')).toContain(
-      'Execution contract sourceMode must be compiler-boundary-mvp-dry-run',
+      'Execution contract sourceMode must be one of',
     )
   })
 
@@ -1322,7 +1323,11 @@ describe('read-model Evidence builder', () => {
       graphSnapshot: { artifacts: Array<Record<string, unknown>> }
       evidenceIndex: { entries: Array<Record<string, unknown>> }
       targetScopeCandidates: Array<Record<string, unknown>>
-      policySnapshot: { policies: Array<Record<string, unknown>> }
+      policySnapshot: {
+        policies: Array<Record<string, unknown>>
+        evidenceCheckMappings: Array<Record<string, unknown>>
+        forbiddenScopeRules: Array<Record<string, unknown>>
+      }
       packSchema: { requiredInputGroups: string[] }
     }
     input.graphSnapshot.artifacts[0].path = 'examples/missing/graph-source.json'
@@ -1334,6 +1339,9 @@ describe('read-model Evidence builder', () => {
     input.targetScopeCandidates[0].confidence = 'ai-guessed'
     input.policySnapshot.policies[0].authority = 'ai-prose'
     input.policySnapshot.policies[0].status = 'maybe'
+    input.policySnapshot.evidenceCheckMappings[0].requiredCheckId = ''
+    input.policySnapshot.forbiddenScopeRules[0].paths = ['examples/missing/policy-boundary.json']
+    input.policySnapshot.forbiddenScopeRules[0].derivedFrom = []
     input.packSchema.requiredInputGroups = ['humanRequest', 'magicContext']
 
     const validation = await validateCompilerInputDryRun(input, resolve('.'))
@@ -1348,6 +1356,9 @@ describe('read-model Evidence builder', () => {
     expect(blocking).toContain('targetScopeCandidates[0].confidence must be one of')
     expect(blocking).toContain('policySnapshot.policies[0].authority must be one of')
     expect(blocking).toContain('policySnapshot.policies[0].status must be one of')
+    expect(blocking).toContain('policySnapshot.evidenceCheckMappings[0].requiredCheckId is required')
+    expect(blocking).toContain('policySnapshot.forbiddenScopeRules[0].paths references missing file or artifact')
+    expect(blocking).toContain('policySnapshot.forbiddenScopeRules[0].derivedFrom must be a non-empty string array')
     expect(blocking).toContain('packSchema.requiredInputGroups contains unknown groups: magicContext')
   })
 
@@ -1362,20 +1373,29 @@ describe('read-model Evidence builder', () => {
     expect(report.status).toBe('contract-compiler-dry-run-pass')
     expect(report.inputModelStatus).toBe('compiler-input-model-pass')
     expect(report.candidateStatus).toBe('contract-candidate-pass')
+    expect(report.candidateDiff.status).toBe('contract-diff-detected')
+    expect(report.paths.diffReport).toBe('examples/read-model-aggregate/generated/execution-contract-dry-run.diff.json')
     expect(report.candidate).toMatchObject({
       changeId: 'change-todo-search-whitespace-normalization-dogfood',
       changeType: 'bug_fix',
       allowedScopeCount: 2,
       forbiddenScopeCount: 2,
     })
+    expect(candidate.sourceMode).toBe('contract-compiler-dry-run-v0')
     expect(candidate.goal).toBe('Preserve Todo Search matching when a multi-word query contains repeated whitespace.')
     expect(JSON.stringify(candidate)).toContain('examples/adoption/todo-search-slice/runtime-fixture/todo-search.js')
     expect(JSON.stringify(candidate)).toContain('graph-source:node:CODE-RUNTIME-SEARCH-HELPER')
+    const diffReport = JSON.parse(await readFile(join(workspace, report.paths.diffReport), 'utf8')) as {
+      status: string
+      differingFields: string[]
+    }
+    expect(diffReport.status).toBe('contract-diff-detected')
+    expect(diffReport.differingFields).toContain('sourceMode')
     expect(validation.blocking).toEqual([])
     expect(report.nonExecutionStatement).toContain('does not execute AI')
   })
 
-  it('exposes Contract Compiler Dry-Run v0 through the CLI', async () => {
+  it('exposes Contract Compiler Dry-Run v0.1 through the CLI', async () => {
     const workspace = await createExampleWorkspace()
 
     const result = await runPbeCli(['graph', 'read-model', 'compile-contract', '--dry-run', '--json'], {
@@ -1387,8 +1407,9 @@ describe('read-model Evidence builder', () => {
       status: string
       inputModelStatus: string
       candidateStatus: string
-      paths: { outputCandidate: string }
+      paths: { outputCandidate: string; diffReport: string }
       candidate: { requiredCheckCount: number; requiredEvidenceCount: number }
+      candidateDiff: { status: string; differingFieldCount: number }
     }
 
     expect(result.exitCode).toBe(0)
@@ -1399,11 +1420,14 @@ describe('read-model Evidence builder', () => {
     expect(output.paths.outputCandidate).toBe(
       'examples/read-model-aggregate/generated/execution-contract-dry-run.generated.json',
     )
+    expect(output.paths.diffReport).toBe('examples/read-model-aggregate/generated/execution-contract-dry-run.diff.json')
+    expect(output.candidateDiff.status).toBe('contract-diff-detected')
+    expect(output.candidateDiff.differingFieldCount).toBeGreaterThan(0)
     expect(output.candidate.requiredCheckCount).toBeGreaterThan(0)
     expect(output.candidate.requiredEvidenceCount).toBeGreaterThan(0)
   })
 
-  it('blocks Contract Compiler Dry-Run v0 for unsupported compiler input change types', async () => {
+  it('blocks Contract Compiler Dry-Run v0.1 for unsupported compiler input change types', async () => {
     const workspace = await createExampleWorkspace()
     const inputPath = join(workspace, 'examples/read-model-aggregate/generated/compiler-input-model-dry-run.json')
     const input = JSON.parse(await readFile(inputPath, 'utf8')) as {
@@ -1417,6 +1441,8 @@ describe('read-model Evidence builder', () => {
     const blocking = report.blockingReasons.join('\n')
 
     expect(report.status).toBe('contract-compiler-dry-run-blocked')
+    expect(report.candidateStatus).toBe('contract-candidate-not-run')
+    expect(report.candidateDiff.status).toBe('contract-diff-not-run')
     expect(blocking).toContain('only supports pack-schema-bug-fix')
     expect(blocking).toContain('only supports bug_fix changeType')
   })
@@ -1438,7 +1464,14 @@ describe('read-model Evidence builder', () => {
       treeNativeRetirement: { todoSearchApprovalStatus: string; repoWideApprovalStatus: string }
       compilerBoundary: { status: string; dryRunChangeId: string }
       compilerInputModel: { status: string; dryRunChangeId: string }
-      contractCompilerDryRun: { status: string; dryRunChangeId: string; candidateStatus: string }
+      contractCompilerDryRun: {
+        status: string
+        dryRunChangeId: string
+        candidateStatus: string
+        candidateDiffStatus: string
+        differingFieldCount: number
+        diffReport: string
+      }
     }
     const markdown = await readFile(markdownPath, 'utf8')
 
@@ -1453,6 +1486,11 @@ describe('read-model Evidence builder', () => {
     expect(output.compilerInputModel.dryRunChangeId).toBe('change-todo-search-whitespace-normalization-dogfood')
     expect(output.contractCompilerDryRun.status).toBe('contract-compiler-dry-run-pass')
     expect(output.contractCompilerDryRun.candidateStatus).toBe('contract-candidate-pass')
+    expect(output.contractCompilerDryRun.candidateDiffStatus).toBe('contract-diff-detected')
+    expect(output.contractCompilerDryRun.differingFieldCount).toBeGreaterThan(0)
+    expect(output.contractCompilerDryRun.diffReport).toBe(
+      'examples/read-model-aggregate/generated/execution-contract-dry-run.diff.json',
+    )
     expect(output.contractCompilerDryRun.dryRunChangeId).toBe('change-todo-search-whitespace-normalization-dogfood')
     expect(output.treeNativeRetirement.todoSearchApprovalStatus).toBe('retirement-candidate-not-deleted')
     expect(output.treeNativeRetirement.repoWideApprovalStatus).toBe('not-ready')
@@ -1465,6 +1503,7 @@ describe('read-model Evidence builder', () => {
     expect(markdown).toContain('`compiler-boundary-mvp-pass`')
     expect(markdown).toContain('`compiler-input-model-pass`')
     expect(markdown).toContain('`contract-compiler-dry-run-pass`')
+    expect(markdown).toContain('`contract-diff-detected`')
     expect(markdown).toContain('`retirement-not-ready`')
     expect(markdown).toContain('`non-enforcing`')
     expect(markdown).toContain('node dist/cli/index.js graph read-model report-health --json --markdown')
