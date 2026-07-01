@@ -6,12 +6,12 @@
   "equivalenceStatus": "compiler-equivalence-not-proven",
   "sourceCandidate": "examples/read-model-aggregate/generated/execution-contract-dry-run.generated.json",
   "comparedWith": "examples/read-model-aggregate/generated/execution-contract-dry-run.json",
-  "differingFields": ["sourceMode", "allowedScope", "requiredChecks", "nonExecutionStatement"],
+  "differingFields": ["sourceMode", "requiredChecks", "nonExecutionStatement"],
   "comparedFields": [
     { "field": "sourceMode", "status": "different" },
     { "field": "changeType", "status": "same" },
     { "field": "goal", "status": "same" },
-    { "field": "allowedScope", "status": "different" },
+    { "field": "allowedScope", "status": "same" },
     { "field": "forbiddenScope", "status": "same" },
     { "field": "requiredContext", "status": "same" },
     { "field": "requiredChecks", "status": "different" },
@@ -27,8 +27,8 @@
     {
       "field": "allowedScope",
       "handWrittenCount": 3,
-      "generatedCount": 2,
-      "missingIdsInGenerated": ["scope-todo-search-evidence"],
+      "generatedCount": 3,
+      "missingIdsInGenerated": [],
       "extraIdsInGenerated": []
     },
     {
@@ -76,18 +76,6 @@
   ],
   "semanticDiffs": [
     {
-      "field": "allowedScope",
-      "targetField": "allowedScope",
-      "diffDirection": "missingIdsInGenerated",
-      "matchedRuleId": "semantic-diff-rule-allowed-scope-missing-conservative-restriction",
-      "classification": "conservative-restriction",
-      "reviewSeverity": "medium",
-      "promotionImpact": "review-required",
-      "reason": "The generated candidate permits less execution scope than the hand-written contract; review before relying on the candidate.",
-      "missingIdsInGenerated": ["scope-todo-search-evidence"],
-      "extraIdsInGenerated": []
-    },
-    {
       "field": "requiredChecks",
       "targetField": "requiredChecks",
       "diffDirection": "extraIdsInGenerated",
@@ -124,16 +112,15 @@
       "extraIdsInGenerated": []
     }
   ],
-  "semanticClassificationCounts": { "conservative-restriction": 1, "safe-additive": 1, "metadata-only": 2 },
-  "highestReviewSeverity": "medium",
-  "compilerPromotionReadiness": "compiler-promotion-not-ready",
-  "promotionReadiness": "compiler-promotion-not-ready",
+  "semanticClassificationCounts": { "safe-additive": 1, "metadata-only": 2 },
+  "highestReviewSeverity": "low",
+  "compilerPromotionReadiness": "compiler-promotion-review-required",
+  "promotionReadiness": "compiler-promotion-review-required",
   "semanticDiffRuleCoverage": {
-    "totalDiffs": 4,
-    "classifiedDiffs": 4,
+    "totalDiffs": 3,
+    "classifiedDiffs": 3,
     "unknownDiffs": 0,
     "matchedRuleIds": [
-      "semantic-diff-rule-allowed-scope-missing-conservative-restriction",
       "semantic-diff-rule-non-execution-statement-field-metadata-only",
       "semantic-diff-rule-required-checks-extra-safe-additive",
       "semantic-diff-rule-source-mode-field-metadata-only"

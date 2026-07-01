@@ -380,14 +380,14 @@ try {
   )
   assertEqual(
     contractCompilerDryRun.candidateDiff.compilerPromotionReadiness,
-    'compiler-promotion-not-ready',
+    'compiler-promotion-review-required',
     'contract compiler promotion readiness',
   )
   if ((contractCompilerDryRun.candidateDiff.semanticClassificationCounts['semantic-loss'] || 0) !== 0) {
     throw new Error('Contract compiler semantic-loss should be resolved by risk source authority mapping')
   }
-  if ((contractCompilerDryRun.candidateDiff.semanticClassificationCounts['conservative-restriction'] || 0) <= 0) {
-    throw new Error('Contract compiler semantic diff summary must retain allowed-scope conservative review debt')
+  if ((contractCompilerDryRun.candidateDiff.semanticClassificationCounts['conservative-restriction'] || 0) !== 0) {
+    throw new Error('Contract compiler allowed-scope conservative review debt should be resolved by source authority')
   }
   if ((contractCompilerDryRun.candidateDiff.semanticClassificationCounts['policy-loss'] || 0) !== 0) {
     throw new Error('Contract compiler policy-loss should be resolved by stop-condition source authority mapping')
@@ -461,7 +461,7 @@ try {
   )
   assertEqual(
     contractCompilerDryRun.sourceAuthorityGapPreview.nextRecommendedResolver,
-    'allowed-scope-source-authority',
+    'none',
     'contract source authority next recommended resolver',
   )
 

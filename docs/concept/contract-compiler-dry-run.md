@@ -88,8 +88,9 @@ The diff report now also classifies those id-based differences as semantic revie
 Dry-run v0.1 classifications are small fixture-specific rules, not a general policy engine. Earlier Todo Search
 whitespace-normalization diffs classified missing required Evidence as `semantic-loss` and missing forbidden scope as
 `policy-loss`; v0.2 source-authority resolvers now preserve those fields for the current fixture. The generated
-candidate still remains `compiler-promotion-not-ready` because allowed scope still has conservative review debt. This
-status is review metadata only; it does not enable promotion, required checks, branch protection, or execution.
+candidate remains review-only because non-semantic review differences still exist, but allowed scope no longer carries
+conservative source-authority review debt. This status is review metadata only; it does not enable promotion, required
+checks, branch protection, or execution.
 
 Each semantic diff records the `matchedRuleId` that produced its classification. Differences without a dedicated v0.1
 rule use `matchedRuleId: semantic-diff-rule-unknown`, classify as `unknown-review-required`, and prevent promotion
@@ -98,10 +99,9 @@ readiness. `compilerPromotionReadiness` is derived from the semantic diffs; it i
 Current triage previously classified `outputRequirements` as `output-requirement-loss`. v0.2 now derives generated
 `outputRequirements` from `outputRequirementSources[]`, so the current generated candidate preserves the changed-file,
 command-output Evidence, validation-result, and boundary reporting obligations for this fixture. `sourceMode` and
-`nonExecutionStatement` are classified as `metadata-only`; `requiredEvidence`, `forbiddenScope`, `stopConditions`, and
-`requiredContext` are preserved from source authority. `knownRisks` are also now preserved from `riskSources[]`.
-`allowedScope` remains a conservative restriction. Unknown diffs remain possible for future fields, but the current
-dry-run diff set is fully classified.
+`nonExecutionStatement` are classified as `metadata-only`; `requiredEvidence`, `forbiddenScope`, `stopConditions`,
+`requiredContext`, `knownRisks`, and `allowedScope` are preserved from source authority. Unknown diffs remain possible
+for future fields, but the current dry-run diff set is fully classified.
 
 ## v0.1 Closeout
 
@@ -123,8 +123,9 @@ v0.1 does not prove:
 - support for arbitrary `changeType` values.
 
 The current closeout status is `contract-compiler-dry-run-v0.1-classification-complete`, but
-`equivalenceProven` remains `false` and `compilerPromotionReadiness` remains `compiler-promotion-not-ready` because
-`allowedScope` still has conservative source-authority review debt.
+`equivalenceProven` remains `false` and `compilerPromotionReadiness` remains `compiler-promotion-review-required`
+because the generated candidate still differs from the hand-written fixture in review-only fields such as source mode,
+check set, and non-execution wording.
 
 ## Boundaries
 
@@ -173,8 +174,9 @@ longer carries stop-condition policy-loss. Finally, it derives `requiredEvidence
 `policySnapshot.evidenceCheckMappings[]`, so the current fixture no longer carries required-Evidence semantic loss or
 evidence-chain mismatch. It now derives `requiredContext[]` from `graphSnapshot.artifacts[]`, so the current fixture no
 longer carries required-context semantic loss. It now derives `knownRisks[]` from `riskSources[]`, so the current
-fixture no longer carries known-risk semantic loss. This still does not prove full equivalence because allowed-scope
-review debt remains.
+fixture no longer carries known-risk semantic loss. It now derives `allowedScope[]` from `targetScopeCandidates[]`, so
+the current fixture no longer carries allowed-scope conservative review debt. This still does not prove full
+equivalence because review-only diffs remain.
 
 The remaining-loss preview is recorded in
 [contract-source-authority-gap-preview.md](contract-source-authority-gap-preview.md) and emitted as:
@@ -183,7 +185,7 @@ The remaining-loss preview is recorded in
 examples/read-model-aggregate/generated/contract-source-authority-gap.preview.json
 ```
 
-It explains the remaining source-authority gaps by field and currently recommends `allowed-scope-source-authority` as
-the next narrow resolver candidate because risk coverage is now preserved while allowed scope still has conservative
-review debt. The policy forbidden-scope, stop-condition, Evidence, context, and risk resolvers are intentionally narrow:
-they derive generated fields from committed source authority entries, not from the hand-written comparison fixture.
+It explains source-authority gaps by field and currently recommends `none` for the current fixture because allowed scope
+is also preserved from source authority. The policy forbidden-scope, stop-condition, Evidence, context, risk, and
+allowed-scope resolvers are intentionally narrow: they derive generated fields from committed source authority entries,
+not from the hand-written comparison fixture.

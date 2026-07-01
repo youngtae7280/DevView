@@ -1003,6 +1003,18 @@ keeps `equivalenceProven` false, and recommends `allowed-scope-source-authority`
 not execute AI, apply graph deltas, accept work, enable required checks, configure branch protection, expand source
 authority beyond known risks, retire tree-native artifacts, or widen changeType support.
 
+DEC-181 does not supersede DEC-097 through DEC-180. It connects allowed-scope source authority to the current Contract
+Compiler Dry-Run candidate for `allowedScope` only. Generated allowed scope is now derived from
+`targetScopeCandidates[]`, which keep graph-backed source references and optional contract-facing derivation references;
+the hand-written dry-run contract remains a comparison fixture and is not a compiler source. The generated-vs-hand-
+written diff no longer reports allowed-scope conservative review debt for the current Todo Search `bug_fix` fixture. The
+source-authority gap preview now reports zero remaining semantic/policy losses, no fields requiring another resolver,
+`nextRecommendedResolver: none`, `compilerPromotionReadiness: compiler-promotion-review-required`, and
+`equivalenceProven: false` because review-only differences such as source mode, additive health check, and boundary
+wording remain. This does not execute AI, apply graph deltas, accept work, enable required checks, configure branch
+protection, expand source authority beyond allowed scope, retire tree-native artifacts, widen changeType support, or
+promote the compiler candidate to an execution source.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

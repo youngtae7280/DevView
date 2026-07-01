@@ -17,6 +17,7 @@ import {
   buildNotRunContractSourceAuthorityGapPreview,
   type ContractSourceAuthorityGapPreviewSummary,
 } from './contract-source-authority-gap.js'
+import { resolveAllowedScopeFromSourceAuthority } from './allowed-scope-source-authority.js'
 import { resolveRequiredContextFromSourceAuthority } from './context-source-authority.js'
 import { resolveRequiredEvidenceFromSourceAuthority } from './evidence-source-authority.js'
 import { resolveOutputRequirementsFromSourceAuthority } from './output-requirement-source-authority.js'
@@ -297,20 +298,28 @@ function compileBugFixContractCandidate(input: Record<string, unknown>): {
     blocking.push('Contract Compiler Dry-Run v0.2 requires source-authority-derived required context.')
   }
 
-  const allowedScope = targetScopes.map((scope) => ({
-    id: stringValue(scope.id),
-    scopeKind: stringValue(scope.scopeKind),
-    paths: stringArrayValue(scope.paths),
-    derivedFrom: stringArrayValue(scope.derivedFrom),
-  }))
+  const allowedScopeResolution = resolveAllowedScopeFromSourceAuthority(targetScopes)
+  for (const unresolved of allowedScopeResolution.unresolvedSources) {
+    blocking.push(
+      `Contract Compiler Dry-Run v0.2 could not derive allowed scope ${unresolved.id}: ${unresolved.reason}.`,
+    )
+  }
+  if (allowedScopeResolution.allowedScope.length === 0) {
+    blocking.push('Contract Compiler Dry-Run v0.2 requires source-authority-derived allowed scope.')
+  }
+
+  const allowedScope = allowedScopeResolution.allowedScope
   const runtimeFixtureDir = findRuntimeFixtureDir(allowedScope)
+  const runtimeValidatedPaths = allowedScope
+    .filter((scope) => scope.scopeKind === 'code' || scope.scopeKind === 'test')
+    .flatMap((scope) => scope.paths)
   const requiredChecks = [
     ...(runtimeFixtureDir
       ? [
           {
             id: 'check-todo-search-runtime-fixture',
             command: `npx vitest run ${runtimeFixtureDir}`,
-            validates: allowedScope.flatMap((scope) => scope.paths),
+            validates: runtimeValidatedPaths,
           },
         ]
       : []),

@@ -11,13 +11,22 @@
       "id": "scope-runtime-search-filter",
       "scopeKind": "code",
       "paths": ["examples/adoption/todo-search-slice/runtime-fixture/todo-search.js"],
-      "derivedFrom": ["graph-source:node:CODE-RUNTIME-SEARCH-HELPER"]
+      "derivedFrom": ["work:WT-SEARCH-001", "test:VT-SEARCH-001"]
     },
     {
       "id": "scope-runtime-search-test",
       "scopeKind": "test",
       "paths": ["examples/adoption/todo-search-slice/runtime-fixture/todo-search.test.js"],
-      "derivedFrom": ["graph-source:node:CODE-RUNTIME-SEARCH-TEST"]
+      "derivedFrom": ["test:VT-SEARCH-001"]
+    },
+    {
+      "id": "scope-todo-search-evidence",
+      "scopeKind": "evidence",
+      "paths": [
+        "examples/adoption/todo-search-slice/runtime-evidence.md",
+        "docs/concept/tiny-behavior-change-dogfood.md"
+      ],
+      "derivedFrom": ["evidence:EV-SEARCH-RUNTIME-001"]
     }
   ],
   "forbiddenScope": [

@@ -9,14 +9,14 @@
   "fieldGaps": [
     {
       "field": "allowedScope",
-      "currentDiffStatus": "field-diff-detected",
-      "semanticClassifications": ["conservative-restriction"],
-      "missingIdsInGenerated": ["scope-todo-search-evidence"],
+      "currentDiffStatus": "field-diff-none",
+      "semanticClassifications": [],
+      "missingIdsInGenerated": [],
       "extraIdsInGenerated": [],
-      "likelyMissingSourceAuthority": "Allowed execution and evidence/write-target scope source authority is not yet complete.",
+      "likelyMissingSourceAuthority": "No source-authority gap detected for the current dry-run diff.",
       "candidateSourceAuthorityType": "allowed-scope-source-authority",
-      "resolverRequired": true,
-      "preservationStatus": "source-authority-gap-review-required"
+      "resolverRequired": false,
+      "preservationStatus": "source-authority-preserved"
     },
     {
       "field": "forbiddenScope",
@@ -79,10 +79,10 @@
     "remainingLossCount": 0,
     "remainingPolicyLossCount": 0,
     "remainingSemanticLossCount": 0,
-    "fieldsRequiringSourceAuthority": ["allowedScope"],
-    "nextRecommendedResolver": "allowed-scope-source-authority",
+    "fieldsRequiringSourceAuthority": [],
+    "nextRecommendedResolver": "none",
     "promotionBlockedBy": [],
-    "equivalenceBlockedBy": ["allowedScope"]
+    "equivalenceBlockedBy": []
   },
   "nonExecutionStatement": "This gap preview is non-enforcing review metadata only. It does not execute AI, apply graph deltas, accept work, enable required checks, configure branch protection, retire tree-native artifacts, or promote the compiler candidate."
 }

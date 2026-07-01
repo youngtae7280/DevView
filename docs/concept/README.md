@@ -202,14 +202,14 @@ a candidate execution contract, revalidates the candidate through the Contract F
 generated-vs-hand-written diff report via `graph read-model compile-contract --dry-run --json`. A passing compiler
 candidate does not imply equivalence with the hand-written dry-run contract while the diff reports
 `compiler-equivalence-not-proven`. The diff report now adds semantic review classifications and
-`compilerPromotionReadiness`; the current fixture remains `compiler-promotion-not-ready` because semantic/policy losses
-must be reviewed before any compiler promotion. Those classifications now come from explicit dry-run v0.1 rule ids, and
+`compilerPromotionReadiness`; the current fixture remains review-only because generated-vs-hand-written review diffs
+still exist before any compiler promotion. Those classifications now come from explicit dry-run v0.1 rule ids, and
 unmatched differences are counted as `unknown-review-required`. Current v0.2 mapping derives generated
 `outputRequirements` from `outputRequirementSources[]`, so the former `output-requirement-loss` is no longer present in
 the current diff. The current dry-run diff set has no unknown fields and is marked
-`contract-compiler-dry-run-v0.1-classification-complete`, but `equivalenceProven` remains `false` because other
-semantic and policy losses remain; it remains local/non-enforcing. The next recommended direction is resolving the
-remaining source-authority gaps before any pack-schema widening, executor automation, or graph delta application.
+`contract-compiler-dry-run-v0.1-classification-complete`, but `equivalenceProven` remains `false` because review-only
+diffs remain; it remains local/non-enforcing. The next recommended direction is defining explicit
+equivalence/readiness policy before any pack-schema widening, executor automation, or graph delta application.
 
 Output Requirement Source Authority v0.2 adds `outputRequirementSources[]` to the current Compiler Input Model fixture
 and writes `output-requirement-source-authority.preview.json`. The preview maps the hand-written changed-file,
@@ -217,15 +217,16 @@ command-output Evidence, validation-result, and boundary reporting obligations t
 compiler now derives generated `outputRequirements` from those entries. The compiler also derives `forbiddenScope[]`
 from `policySnapshot.forbiddenScopeRules[]`, `stopConditions[]` from `stopConditionSources[]`, `requiredEvidence[]`
 from `evidenceIndex.entries[]` plus `policySnapshot.evidenceCheckMappings[]`, and `requiredContext[]` from
-`graphSnapshot.artifacts[]`. It also derives `knownRisks[]` from `riskSources[]`. It reports
-`generated-output-requirements-preserved`, required-Evidence preservation, required-context preservation, and risk
-preservation for the current fixture while keeping whole-contract equivalence unproven.
+`graphSnapshot.artifacts[]`. It also derives `knownRisks[]` from `riskSources[]` and `allowedScope[]` from
+`targetScopeCandidates[]`. It reports `generated-output-requirements-preserved`, required-Evidence preservation,
+required-context preservation, risk preservation, and allowed-scope preservation for the current fixture while keeping
+whole-contract equivalence unproven.
 
-Contract Source Authority Gap Preview v0.2 writes `contract-source-authority-gap.preview.json` to explain the remaining
-semantic losses by field. It now reports zero remaining semantic/policy loss, with source-authority attention on
-`allowedScope`; `forbiddenScope`, `stopConditions`, `requiredEvidence`, `requiredContext`, and `knownRisks` are
-preserved from source authority entries. The next recommended resolver is `allowed-scope-source-authority`. This is
-review metadata only, not enforcement or compiler promotion.
+Contract Source Authority Gap Preview v0.2 writes `contract-source-authority-gap.preview.json` to explain field-level
+source-authority status. It now reports zero remaining semantic/policy loss and no field requiring another resolver for
+the current fixture; `allowedScope`, `forbiddenScope`, `stopConditions`, `requiredEvidence`, `requiredContext`, and
+`knownRisks` are preserved from source authority entries. The next recommended resolver is `none`. This is review
+metadata only, not enforcement or compiler promotion.
 
 The following readiness artifact is complete at documentation level:
 

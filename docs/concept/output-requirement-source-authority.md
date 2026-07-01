@@ -82,12 +82,14 @@ v0.2 preview does not:
 
 ## Current Readiness
 
-The current dry-run remains `compiler-promotion-not-ready`. Output requirement preservation is now improved, but other
-semantic and policy losses still remain in the generated-vs-hand-written diff. `equivalenceProven` remains `false`.
+The current dry-run is `compiler-promotion-review-required`. Output requirement preservation is complete for the
+current fixture, and later source-authority resolvers now preserve forbidden scope, stop conditions, required Evidence,
+required context, known risks, and allowed scope. `equivalenceProven` still remains `false` because review-only
+generated-vs-hand-written differences remain.
 
 ## Next Step
 
-The next compiler step should address the remaining source-authority gaps for scope, context, Evidence, risk, and stop
-conditions. The current gap triage is recorded in
-[contract-source-authority-gap-preview.md](contract-source-authority-gap-preview.md). Only after those losses are
-resolved should equivalence be reconsidered.
+The next compiler step should define explicit equivalence/readiness policy for the remaining review-only differences,
+not jump to executor automation. The current gap triage is recorded in
+[contract-source-authority-gap-preview.md](contract-source-authority-gap-preview.md), which now recommends `none` for
+the current fixture's source-authority resolver queue.
