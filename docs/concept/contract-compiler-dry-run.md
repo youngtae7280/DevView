@@ -167,3 +167,14 @@ This surface maps hand-written output obligations to `outputRequirementSources[]
 source authority entries to derive generated `outputRequirements`. The current preview reports
 `generated-output-requirements-preserved` with zero unresolved output obligations. This still does not prove full
 equivalence because scope, context, Evidence, risk, and stop-condition losses remain.
+
+The remaining-loss preview is recorded in
+[contract-source-authority-gap-preview.md](contract-source-authority-gap-preview.md) and emitted as:
+
+```text
+examples/read-model-aggregate/generated/contract-source-authority-gap.preview.json
+```
+
+It does not add another resolver. It explains the remaining source-authority gaps by field and currently recommends
+`policy-forbidden-scope-source-authority` as the next narrow resolver candidate because `forbiddenScope` still contains
+policy-loss.

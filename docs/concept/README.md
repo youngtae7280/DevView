@@ -183,6 +183,7 @@ The first Compiler Boundary MVP and hardened Contract Fixture Validator are reco
 - [compiler-input-model.md](compiler-input-model.md)
 - [contract-compiler-dry-run.md](contract-compiler-dry-run.md)
 - [output-requirement-source-authority.md](output-requirement-source-authority.md)
+- [contract-source-authority-gap-preview.md](contract-source-authority-gap-preview.md)
 
 It separates compiler-required work from AI-advisory work, adds a machine-readable task registry and Execution Contract
 MVP schema, validates a Todo Search dry-run contract with bucketed registry/schema/contract issues, requires severe risks
@@ -215,6 +216,12 @@ and writes `output-requirement-source-authority.preview.json`. The preview maps 
 command-output Evidence, validation-result, and boundary reporting obligations to source authority entries, and the
 compiler now derives generated `outputRequirements` from those entries. It reports
 `generated-output-requirements-preserved` for the current fixture while keeping whole-contract equivalence unproven.
+
+Contract Source Authority Gap Preview v0.2 writes `contract-source-authority-gap.preview.json` to explain the remaining
+semantic/policy losses by field. It currently reports five remaining semantic/policy losses across
+`allowedScope`, `forbiddenScope`, `requiredContext`, `requiredEvidence`, `knownRisks`, and `stopConditions`, and selects
+`policy-forbidden-scope-source-authority` as the next recommended resolver. This is review metadata only, not
+enforcement or compiler promotion.
 
 The following readiness artifact is complete at documentation level:
 

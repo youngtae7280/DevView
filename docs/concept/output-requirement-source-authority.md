@@ -88,4 +88,6 @@ semantic and policy losses still remain in the generated-vs-hand-written diff. `
 ## Next Step
 
 The next compiler step should address the remaining source-authority gaps for scope, context, Evidence, risk, and stop
-conditions. Only after those losses are resolved should equivalence be reconsidered.
+conditions. The current gap triage is recorded in
+[contract-source-authority-gap-preview.md](contract-source-authority-gap-preview.md). Only after those losses are
+resolved should equivalence be reconsidered.

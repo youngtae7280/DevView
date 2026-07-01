@@ -440,6 +440,21 @@ try {
     'generated-output-requirements-preserved',
     'output requirement generated preservation status',
   )
+  assertEqual(
+    contractCompilerDryRun.sourceAuthorityGapPreview.status,
+    'contract-source-authority-gap-preview-pass',
+    'contract source authority gap preview status',
+  )
+  assertEqual(
+    contractCompilerDryRun.sourceAuthorityGapPreview.remainingLossCount,
+    5,
+    'contract source authority remaining loss count',
+  )
+  assertEqual(
+    contractCompilerDryRun.sourceAuthorityGapPreview.nextRecommendedResolver,
+    'policy-forbidden-scope-source-authority',
+    'contract source authority next recommended resolver',
+  )
 
   const payload = {
     ok: true,
@@ -549,6 +564,8 @@ try {
       equivalenceProven: contractCompilerDryRun.candidateDiff.equivalenceProven,
       outputRequirementSourceAuthorityPreview: contractCompilerDryRun.outputRequirementSourceAuthorityPreview,
       outputRequirementSourceAuthorityPreviewPath: contractCompilerDryRun.paths.outputRequirementSourceAuthorityPreview,
+      sourceAuthorityGapPreview: contractCompilerDryRun.sourceAuthorityGapPreview,
+      sourceAuthorityGapPreviewPath: contractCompilerDryRun.paths.sourceAuthorityGapPreview,
       differingFieldCount: contractCompilerDryRun.candidateDiff.differingFieldCount,
       diffReport: contractCompilerDryRun.paths.diffReport,
       nonExecuting: true,

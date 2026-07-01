@@ -58,6 +58,8 @@ The smoke checks:
 - output requirement source authority preview status `output-requirement-source-authority-preview-pass`, with
   `generated-output-requirements-preserved` and zero unresolved generated obligations visible as non-enforcing preview
   metadata
+- contract source authority gap preview status `contract-source-authority-gap-preview-pass`, with remaining
+  semantic/policy loss count and next recommended resolver visible as non-enforcing preview metadata
 
 The separate `graph read-model report-health --json` command summarizes the same transition state from existing
 artifacts and report surfaces. It is useful for a quick local health snapshot, while `npm run test:read-model:e2e`

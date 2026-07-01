@@ -12,6 +12,11 @@ import {
   type ContractSemanticDiffRuleCoverage,
   type ContractSemanticReviewSeverity,
 } from './contract-semantic-diff.js'
+import {
+  buildContractSourceAuthorityGapPreview,
+  buildNotRunContractSourceAuthorityGapPreview,
+  type ContractSourceAuthorityGapPreviewSummary,
+} from './contract-source-authority-gap.js'
 import { resolveOutputRequirementsFromSourceAuthority } from './output-requirement-source-authority.js'
 
 export type ContractCompilerDryRunStatus = 'contract-compiler-dry-run-pass' | 'contract-compiler-dry-run-blocked'
@@ -35,6 +40,7 @@ export interface ContractCompilerDryRunReport {
     handWrittenDryRunContract: string
     diffReport: string
     outputRequirementSourceAuthorityPreview: string
+    sourceAuthorityGapPreview: string
   }
   candidate: {
     changeId: string
@@ -87,6 +93,7 @@ export interface ContractCompilerDryRunReport {
       | 'generated-output-requirements-not-preserved'
     lossExplanation: string
   }
+  sourceAuthorityGapPreview: ContractSourceAuthorityGapPreviewSummary
   blockingReasons: string[]
   warnings: string[]
   nonExecutionStatement: string
@@ -100,6 +107,8 @@ const defaultOutputCandidatePath = 'examples/read-model-aggregate/generated/exec
 const defaultDiffReportPath = 'examples/read-model-aggregate/generated/execution-contract-dry-run.diff.json'
 const defaultOutputRequirementPreviewPath =
   'examples/read-model-aggregate/generated/output-requirement-source-authority.preview.json'
+const defaultSourceAuthorityGapPreviewPath =
+  'examples/read-model-aggregate/generated/contract-source-authority-gap.preview.json'
 
 export async function compileExecutionContractDryRun(
   root: string,
@@ -163,6 +172,21 @@ export async function compileExecutionContractDryRun(
           handWrittenDryRunContractPath,
         )
       : buildNotRunOutputRequirementSourceAuthorityPreview(defaultOutputRequirementPreviewPath)
+  const sourceAuthorityGapPreview =
+    candidateDiff.status === 'contract-diff-detected' || candidateDiff.status === 'contract-diff-none'
+      ? buildContractSourceAuthorityGapPreview({
+          changeId: summarizeCandidate(candidate).changeId,
+          diffReport: relativePath(root, path.resolve(root, diffReportPath)),
+          idBasedSummaries: candidateDiff.idBasedSummaries,
+          semanticDiffs: candidateDiff.semanticDiffs,
+          compilerPromotionReadiness: candidateDiff.compilerPromotionReadiness,
+          equivalenceProven: candidateDiff.equivalenceProven,
+          outputRequirementPreservationStatus: outputRequirementPreview.summary.generatedPreservationStatus,
+        })
+      : buildNotRunContractSourceAuthorityGapPreview(
+          summarizeCandidate(candidate).changeId,
+          relativePath(root, path.resolve(root, diffReportPath)),
+        )
   if (candidateDiff.status === 'contract-diff-blocked') {
     candidateBlocking.push(...candidateDiff.blockingReasons.map((reason) => `compiled contract diff: ${reason}`))
   }
@@ -183,6 +207,7 @@ export async function compileExecutionContractDryRun(
     await writeFormattedJson(path.resolve(root, outputCandidatePath), candidate)
     await writeFormattedJson(path.resolve(root, diffReportPath), stripInternalDiffFields(candidateDiff))
     await writeFormattedJson(path.resolve(root, defaultOutputRequirementPreviewPath), outputRequirementPreview.artifact)
+    await writeFormattedJson(path.resolve(root, defaultSourceAuthorityGapPreviewPath), sourceAuthorityGapPreview)
   }
 
   return {
@@ -199,6 +224,7 @@ export async function compileExecutionContractDryRun(
         root,
         path.resolve(root, defaultOutputRequirementPreviewPath),
       ),
+      sourceAuthorityGapPreview: relativePath(root, path.resolve(root, defaultSourceAuthorityGapPreviewPath)),
     },
     candidate: summarizeCandidate(candidate),
     candidateDiff: {
@@ -222,6 +248,7 @@ export async function compileExecutionContractDryRun(
       reviewBoundary: candidateDiff.reviewBoundary,
     },
     outputRequirementSourceAuthorityPreview: outputRequirementPreview.summary,
+    sourceAuthorityGapPreview: sourceAuthorityGapPreview.summary,
     blockingReasons,
     warnings,
     nonExecutionStatement:

@@ -43,6 +43,8 @@
   candidate compilation plus generated-vs-hand-written diff from the validated Compiler Input Model.
 - [Output Requirement Source Authority](concept/output-requirement-source-authority.md) - v0.2 preview surface for
   tracing output reporting obligations to graph, policy, Evidence, check, and diff source authority without execution.
+- [Contract Source Authority Gap Preview](concept/contract-source-authority-gap-preview.md) - v0.2 preview surface for
+  field-level remaining semantic/policy loss triage and next resolver selection.
 - [Graph operation-chain productization](concept/graph-operation-chain-productization.md) - Local native/retrofit
   dogfood package for `graph-source -> instruction pack -> local change -> graph delta -> graph update proposal`.
 - [Candidate C full read-model gate evaluation](concept/candidate-c-full-read-model-gate-evaluation.md) - Evaluation

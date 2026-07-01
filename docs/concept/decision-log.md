@@ -944,6 +944,15 @@ obligations for the current Todo Search `bug_fix` fixture, while `equivalencePro
 This does not execute AI, apply graph deltas, accept work, enable required checks, configure branch protection, expand
 source authority beyond output requirements, retire tree-native artifacts, or widen changeType support.
 
+DEC-175 does not supersede DEC-097 through DEC-174. It adds a non-enforcing Contract Source Authority Gap Preview for
+the remaining semantic/policy losses after output requirement preservation. The compiler writes
+`contract-source-authority-gap.preview.json`, summarizing field-level gaps for `allowedScope`, `forbiddenScope`,
+`requiredContext`, `requiredEvidence`, `knownRisks`, and `stopConditions`, including missing/extra ids, candidate
+source-authority types, remaining loss counts, and one next recommended resolver. The current recommendation is
+`policy-forbidden-scope-source-authority` because `forbiddenScope` still has policy-loss. This is review metadata only:
+it does not implement the resolver, execute AI, apply graph deltas, accept work, enable required checks, configure
+branch protection, expand source authority, retire tree-native artifacts, or widen changeType support.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

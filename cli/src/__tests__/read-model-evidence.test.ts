@@ -1402,6 +1402,9 @@ describe('read-model Evidence builder', () => {
     expect(report.paths.outputRequirementSourceAuthorityPreview).toBe(
       'examples/read-model-aggregate/generated/output-requirement-source-authority.preview.json',
     )
+    expect(report.paths.sourceAuthorityGapPreview).toBe(
+      'examples/read-model-aggregate/generated/contract-source-authority-gap.preview.json',
+    )
     expect(report.outputRequirementSourceAuthorityPreview).toMatchObject({
       status: 'output-requirement-source-authority-preview-pass',
       sourceAuthorityEntryCount: 4,
@@ -1504,6 +1507,28 @@ describe('read-model Evidence builder', () => {
       semanticDiffUnknownsResolved: boolean
       semanticDiffCoverageComplete: boolean
       equivalenceProven: boolean
+    }
+    const gapPreview = JSON.parse(await readFile(join(workspace, report.paths.sourceAuthorityGapPreview), 'utf8')) as {
+      status: string
+      fieldGaps: Array<{
+        field: string
+        semanticClassifications: string[]
+        missingIdsInGenerated: string[]
+        extraIdsInGenerated: string[]
+        candidateSourceAuthorityType: string
+        resolverRequired: boolean
+        preservationStatus: string
+      }>
+      summary: {
+        remainingLossCount: number
+        remainingPolicyLossCount: number
+        remainingSemanticLossCount: number
+        fieldsRequiringSourceAuthority: string[]
+        nextRecommendedResolver: string
+        promotionBlockedBy: string[]
+        equivalenceBlockedBy: string[]
+      }
+      outputRequirementPreservationStatus: string
     }
     expect(diffReport.status).toBe('contract-diff-detected')
     expect(diffReport.reviewStatus).toBe('non-blocking-review-diff')
@@ -1615,6 +1640,37 @@ describe('read-model Evidence builder', () => {
       promotionImpact: 'review-required',
     })
     expect(diffReport.semanticDiffs.some((entry) => entry.field === 'outputRequirements')).toBe(false)
+    expect(gapPreview.status).toBe('contract-source-authority-gap-preview-pass')
+    expect(gapPreview.outputRequirementPreservationStatus).toBe('generated-output-requirements-preserved')
+    expect(gapPreview.summary).toMatchObject({
+      remainingLossCount: 5,
+      remainingPolicyLossCount: 2,
+      remainingSemanticLossCount: 3,
+      nextRecommendedResolver: 'policy-forbidden-scope-source-authority',
+      promotionBlockedBy: ['policy-loss', 'semantic-loss'],
+    })
+    expect(gapPreview.summary.fieldsRequiringSourceAuthority).toEqual([
+      'allowedScope',
+      'forbiddenScope',
+      'requiredContext',
+      'requiredEvidence',
+      'knownRisks',
+      'stopConditions',
+    ])
+    expect(gapPreview.fieldGaps.find((entry) => entry.field === 'forbiddenScope')).toMatchObject({
+      candidateSourceAuthorityType: 'policy-forbidden-scope-source-authority',
+      semanticClassifications: ['policy-expansion', 'policy-loss'],
+      missingIdsInGenerated: ['scope-no-product-meaning-expansion'],
+      extraIdsInGenerated: ['scope-no-tree-retirement'],
+      resolverRequired: true,
+      preservationStatus: 'source-authority-gap-open',
+    })
+    expect(gapPreview.fieldGaps.find((entry) => entry.field === 'allowedScope')).toMatchObject({
+      candidateSourceAuthorityType: 'scope-source-authority',
+      semanticClassifications: ['conservative-restriction'],
+      resolverRequired: true,
+      preservationStatus: 'source-authority-gap-review-required',
+    })
     expect(validation.blocking).toEqual([])
     expect(report.nonExecutionStatement).toContain('does not execute AI')
   })
@@ -1791,7 +1847,12 @@ describe('read-model Evidence builder', () => {
       status: string
       inputModelStatus: string
       candidateStatus: string
-      paths: { outputCandidate: string; diffReport: string; outputRequirementSourceAuthorityPreview: string }
+      paths: {
+        outputCandidate: string
+        diffReport: string
+        outputRequirementSourceAuthorityPreview: string
+        sourceAuthorityGapPreview: string
+      }
       candidate: { requiredCheckCount: number; requiredEvidenceCount: number }
       outputRequirementSourceAuthorityPreview: {
         status: string
@@ -1818,6 +1879,16 @@ describe('read-model Evidence builder', () => {
         semanticDiffCoverageComplete: boolean
         equivalenceProven: boolean
       }
+      sourceAuthorityGapPreview: {
+        status: string
+        remainingLossCount: number
+        remainingPolicyLossCount: number
+        remainingSemanticLossCount: number
+        fieldsRequiringSourceAuthority: string[]
+        nextRecommendedResolver: string
+        promotionBlockedBy: string[]
+        equivalenceBlockedBy: string[]
+      }
     }
 
     expect(result.exitCode).toBe(0)
@@ -1831,6 +1902,9 @@ describe('read-model Evidence builder', () => {
     expect(output.paths.diffReport).toBe('examples/read-model-aggregate/generated/execution-contract-dry-run.diff.json')
     expect(output.paths.outputRequirementSourceAuthorityPreview).toBe(
       'examples/read-model-aggregate/generated/output-requirement-source-authority.preview.json',
+    )
+    expect(output.paths.sourceAuthorityGapPreview).toBe(
+      'examples/read-model-aggregate/generated/contract-source-authority-gap.preview.json',
     )
     expect(output.outputRequirementSourceAuthorityPreview).toMatchObject({
       status: 'output-requirement-source-authority-preview-pass',
@@ -1860,6 +1934,15 @@ describe('read-model Evidence builder', () => {
     expect(output.candidateDiff.semanticDiffRuleCoverage.matchedRuleIds).not.toContain(
       'semantic-diff-rule-output-requirements-field-output-requirement-loss',
     )
+    expect(output.sourceAuthorityGapPreview).toMatchObject({
+      status: 'contract-source-authority-gap-preview-pass',
+      remainingLossCount: 5,
+      remainingPolicyLossCount: 2,
+      remainingSemanticLossCount: 3,
+      nextRecommendedResolver: 'policy-forbidden-scope-source-authority',
+    })
+    expect(output.sourceAuthorityGapPreview.fieldsRequiringSourceAuthority).toContain('forbiddenScope')
+    expect(output.sourceAuthorityGapPreview.fieldsRequiringSourceAuthority).toHaveLength(6)
     expect(output.candidateDiff.differingFieldCount).toBeGreaterThan(0)
     expect(output.candidateDiff.idBasedSummaries.length).toBeGreaterThan(0)
     expect(output.candidate.requiredCheckCount).toBeGreaterThan(0)
@@ -1950,6 +2033,17 @@ describe('read-model Evidence builder', () => {
           generatedPreservationStatus: string
         }
         outputRequirementSourceAuthorityPreviewPath: string
+        sourceAuthorityGapPreview: {
+          status: string
+          remainingLossCount: number
+          remainingPolicyLossCount: number
+          remainingSemanticLossCount: number
+          fieldsRequiringSourceAuthority: string[]
+          nextRecommendedResolver: string
+          promotionBlockedBy: string[]
+          equivalenceBlockedBy: string[]
+        }
+        sourceAuthorityGapPreviewPath: string
       }
     }
     const markdown = await readFile(markdownPath, 'utf8')
@@ -1986,6 +2080,24 @@ describe('read-model Evidence builder', () => {
     expect(output.contractCompilerDryRun.outputRequirementSourceAuthorityPreviewPath).toBe(
       'examples/read-model-aggregate/generated/output-requirement-source-authority.preview.json',
     )
+    expect(output.contractCompilerDryRun.sourceAuthorityGapPreview).toMatchObject({
+      status: 'contract-source-authority-gap-preview-pass',
+      remainingLossCount: 5,
+      remainingPolicyLossCount: 2,
+      remainingSemanticLossCount: 3,
+      nextRecommendedResolver: 'policy-forbidden-scope-source-authority',
+    })
+    expect(output.contractCompilerDryRun.sourceAuthorityGapPreview.fieldsRequiringSourceAuthority).toEqual([
+      'allowedScope',
+      'forbiddenScope',
+      'requiredContext',
+      'requiredEvidence',
+      'knownRisks',
+      'stopConditions',
+    ])
+    expect(output.contractCompilerDryRun.sourceAuthorityGapPreviewPath).toBe(
+      'examples/read-model-aggregate/generated/contract-source-authority-gap.preview.json',
+    )
     expect(output.contractCompilerDryRun.highestReviewSeverity).toBe('high')
     expect(output.contractCompilerDryRun.semanticClassificationCounts['semantic-loss']).toBe(3)
     expect(output.contractCompilerDryRun.semanticClassificationCounts['policy-loss']).toBe(2)
@@ -2020,6 +2132,10 @@ describe('read-model Evidence builder', () => {
     expect(markdown).toContain('`output-requirement-source-authority-preview-pass`')
     expect(markdown).toContain('4 source entries / 4 derived requirements / 0 unresolved')
     expect(markdown).toContain('`generated-output-requirements-preserved`')
+    expect(markdown).toContain('`contract-source-authority-gap-preview-pass`')
+    expect(markdown).toContain('5 remaining losses (3 semantic / 2 policy)')
+    expect(markdown).toContain('next `policy-forbidden-scope-source-authority`')
+    expect(markdown).toContain('`examples/read-model-aggregate/generated/contract-source-authority-gap.preview.json`')
     expect(markdown).toContain(
       '`examples/read-model-aggregate/generated/output-requirement-source-authority.preview.json`',
     )

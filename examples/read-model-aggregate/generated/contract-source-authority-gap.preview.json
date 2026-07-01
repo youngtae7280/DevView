@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "contract-source-authority-gap-preview",
+  "status": "contract-source-authority-gap-preview-pass",
+  "sourceMode": "contract-compiler-dry-run-v0.2-gap-preview",
+  "changeId": "change-todo-search-whitespace-normalization-dogfood",
+  "diffReport": "examples/read-model-aggregate/generated/execution-contract-dry-run.diff.json",
+  "outputRequirementPreservationStatus": "generated-output-requirements-preserved",
+  "fieldGaps": [
+    {
+      "field": "allowedScope",
+      "currentDiffStatus": "field-diff-detected",
+      "semanticClassifications": ["conservative-restriction"],
+      "missingIdsInGenerated": ["scope-todo-search-evidence"],
+      "extraIdsInGenerated": [],
+      "likelyMissingSourceAuthority": "Allowed execution and evidence/write-target scope source authority is not yet complete.",
+      "candidateSourceAuthorityType": "scope-source-authority",
+      "resolverRequired": true,
+      "preservationStatus": "source-authority-gap-review-required"
+    },
+    {
+      "field": "forbiddenScope",
+      "currentDiffStatus": "field-diff-detected",
+      "semanticClassifications": ["policy-expansion", "policy-loss"],
+      "missingIdsInGenerated": ["scope-no-product-meaning-expansion"],
+      "extraIdsInGenerated": ["scope-no-tree-retirement"],
+      "likelyMissingSourceAuthority": "Forbidden policy scope source authority does not yet preserve all hand-written forbidden scopes.",
+      "candidateSourceAuthorityType": "policy-forbidden-scope-source-authority",
+      "resolverRequired": true,
+      "preservationStatus": "source-authority-gap-open"
+    },
+    {
+      "field": "requiredContext",
+      "currentDiffStatus": "field-diff-detected",
+      "semanticClassifications": ["safe-additive", "semantic-loss"],
+      "missingIdsInGenerated": ["context-read-model-health", "context-todo-search-graph-source"],
+      "extraIdsInGenerated": ["context-graph-source", "context-transition-status", "context-read-model-registry"],
+      "likelyMissingSourceAuthority": "Required context source authority does not yet preserve the hand-written context set.",
+      "candidateSourceAuthorityType": "context-source-authority",
+      "resolverRequired": true,
+      "preservationStatus": "source-authority-gap-open"
+    },
+    {
+      "field": "requiredEvidence",
+      "currentDiffStatus": "field-diff-detected",
+      "semanticClassifications": ["evidence-chain-mismatch", "semantic-loss"],
+      "missingIdsInGenerated": ["evidence-validate-all-result"],
+      "extraIdsInGenerated": ["evidence-read-model-health"],
+      "likelyMissingSourceAuthority": "Evidence source authority and check binding do not yet preserve the hand-written Evidence chain.",
+      "candidateSourceAuthorityType": "evidence-source-authority",
+      "resolverRequired": true,
+      "preservationStatus": "source-authority-gap-open"
+    },
+    {
+      "field": "knownRisks",
+      "currentDiffStatus": "field-diff-detected",
+      "semanticClassifications": ["safe-additive", "semantic-loss"],
+      "missingIdsInGenerated": ["risk-query-tokenization-regression"],
+      "extraIdsInGenerated": ["risk-compiler-dry-run-scope-drift"],
+      "likelyMissingSourceAuthority": "Risk source authority does not yet preserve the hand-written risk set.",
+      "candidateSourceAuthorityType": "risk-source-authority",
+      "resolverRequired": true,
+      "preservationStatus": "source-authority-gap-open"
+    },
+    {
+      "field": "stopConditions",
+      "currentDiffStatus": "field-diff-detected",
+      "semanticClassifications": ["policy-expansion", "policy-loss"],
+      "missingIdsInGenerated": ["stop-if-scope-expands"],
+      "extraIdsInGenerated": ["stop-if-input-model-drifts"],
+      "likelyMissingSourceAuthority": "Stop-condition policy source authority does not yet preserve the hand-written stop-condition set.",
+      "candidateSourceAuthorityType": "stop-condition-source-authority",
+      "resolverRequired": true,
+      "preservationStatus": "source-authority-gap-open"
+    }
+  ],
+  "summary": {
+    "status": "contract-source-authority-gap-preview-pass",
+    "remainingLossCount": 5,
+    "remainingPolicyLossCount": 2,
+    "remainingSemanticLossCount": 3,
+    "fieldsRequiringSourceAuthority": [
+      "allowedScope",
+      "forbiddenScope",
+      "requiredContext",
+      "requiredEvidence",
+      "knownRisks",
+      "stopConditions"
+    ],
+    "nextRecommendedResolver": "policy-forbidden-scope-source-authority",
+    "promotionBlockedBy": ["policy-loss", "semantic-loss"],
+    "equivalenceBlockedBy": [
+      "allowedScope",
+      "forbiddenScope",
+      "requiredContext",
+      "requiredEvidence",
+      "knownRisks",
+      "stopConditions"
+    ]
+  },
+  "nonExecutionStatement": "This gap preview is non-enforcing review metadata only. It does not execute AI, apply graph deltas, accept work, enable required checks, configure branch protection, retire tree-native artifacts, or promote the compiler candidate."
+}

@@ -522,6 +522,8 @@ interface GraphSourceHealthReport {
     equivalenceProven: boolean
     outputRequirementSourceAuthorityPreview: ContractCompilerDryRunReport['outputRequirementSourceAuthorityPreview']
     outputRequirementSourceAuthorityPreviewPath: string
+    sourceAuthorityGapPreview: ContractCompilerDryRunReport['sourceAuthorityGapPreview']
+    sourceAuthorityGapPreviewPath: string
   }
   treeNativeRetirement: {
     readinessStatus: string
@@ -1472,6 +1474,8 @@ export async function reportGraphSourceHealth(root: string): Promise<GraphSource
       equivalenceProven: contractCompilerDryRun.candidateDiff.equivalenceProven,
       outputRequirementSourceAuthorityPreview: contractCompilerDryRun.outputRequirementSourceAuthorityPreview,
       outputRequirementSourceAuthorityPreviewPath: contractCompilerDryRun.paths.outputRequirementSourceAuthorityPreview,
+      sourceAuthorityGapPreview: contractCompilerDryRun.sourceAuthorityGapPreview,
+      sourceAuthorityGapPreviewPath: contractCompilerDryRun.paths.sourceAuthorityGapPreview,
     },
     treeNativeRetirement: {
       readinessStatus: String(retirementReadinessSummary.status || 'missing'),
@@ -1543,6 +1547,7 @@ Status: \`${report.status}\`
 | Generated vs hand-written contract diff | \`${report.contractCompilerDryRun.candidateDiffStatus}\`; \`${report.contractCompilerDryRun.candidateDiffReviewStatus}\`; \`${report.contractCompilerDryRun.candidateEquivalenceStatus}\`; ${report.contractCompilerDryRun.differingFieldCount} differing fields; \`${report.contractCompilerDryRun.diffReport}\` |
 | Contract compiler v0.1 closeout | \`${report.contractCompilerDryRun.v01CloseoutStatus}\`; \`${report.contractCompilerDryRun.semanticDiffUnknownsStatus}\`; coverage complete \`${report.contractCompilerDryRun.semanticDiffCoverageComplete}\`; equivalence proven \`${report.contractCompilerDryRun.equivalenceProven}\` |
 | Output requirement source authority preview | \`${report.contractCompilerDryRun.outputRequirementSourceAuthorityPreview.status}\`; ${report.contractCompilerDryRun.outputRequirementSourceAuthorityPreview.sourceAuthorityEntryCount} source entries / ${report.contractCompilerDryRun.outputRequirementSourceAuthorityPreview.derivedOutputRequirementCount} derived requirements / ${report.contractCompilerDryRun.outputRequirementSourceAuthorityPreview.unresolvedObligationCount} unresolved; \`${report.contractCompilerDryRun.outputRequirementSourceAuthorityPreview.generatedPreservationStatus}\`; \`${report.contractCompilerDryRun.outputRequirementSourceAuthorityPreviewPath}\` |
+| Source authority gap preview | \`${report.contractCompilerDryRun.sourceAuthorityGapPreview.status}\`; ${report.contractCompilerDryRun.sourceAuthorityGapPreview.remainingLossCount} remaining losses (${report.contractCompilerDryRun.sourceAuthorityGapPreview.remainingSemanticLossCount} semantic / ${report.contractCompilerDryRun.sourceAuthorityGapPreview.remainingPolicyLossCount} policy); fields ${formatFieldList(report.contractCompilerDryRun.sourceAuthorityGapPreview.fieldsRequiringSourceAuthority)}; next \`${report.contractCompilerDryRun.sourceAuthorityGapPreview.nextRecommendedResolver}\`; \`${report.contractCompilerDryRun.sourceAuthorityGapPreviewPath}\` |
 | Contract semantic diff review | \`${report.contractCompilerDryRun.compilerPromotionReadiness}\`; severity \`${report.contractCompilerDryRun.highestReviewSeverity}\`; unknown semantic diffs ${report.contractCompilerDryRun.semanticDiffRuleCoverage.unknownDiffs}; unknown fields ${unknownSemanticFields}; ${semanticDiffSummary} |
 
 ${report.contractCompilerDryRun.diffReviewBoundary}
@@ -1591,6 +1596,10 @@ function formatSemanticClassificationCounts(counts: Record<string, number>): str
 }
 
 function formatUnknownSemanticFields(fields: string[]): string {
+  return fields.length === 0 ? 'none' : fields.join(', ')
+}
+
+function formatFieldList(fields: string[]): string {
   return fields.length === 0 ? 'none' : fields.join(', ')
 }
 
