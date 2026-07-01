@@ -74,6 +74,19 @@ The diff report keeps field-level status and id-based summaries for:
 - `requiredChecks`
 - `requiredEvidence`
 
+The diff report now also classifies those id-based differences as semantic review metadata:
+
+- `semanticDiffs[]`
+- `semanticClassificationCounts`
+- `highestReviewSeverity`
+- `compilerPromotionReadiness`
+
+Current dry-run v0.1 classifications are small fixture-specific rules, not a general policy engine. For the current
+Todo Search whitespace-normalization fixture, missing required Evidence is classified as `semantic-loss`, missing
+forbidden scope is classified as `policy-loss`, and the generated candidate remains
+`compiler-promotion-not-ready`. This status is review metadata only; it does not enable promotion, required checks,
+branch protection, or execution.
+
 ## Boundaries
 
 This is not an executor.

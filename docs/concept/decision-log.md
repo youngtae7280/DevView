@@ -881,6 +881,16 @@ Supported-but-uncompilable inputs now report `contract-candidate-blocked`, while
 accept work, enable required checks, configure branch protection, expand source authority, or retire tree-native
 artifacts.
 
+DEC-168 does not supersede DEC-097 through DEC-167. It classifies Contract Compiler Dry-Run generated-vs-hand-written
+diffs with fixture-specific semantic review metadata: `semanticDiffs[]`, `semanticClassificationCounts`,
+`highestReviewSeverity`, and `compilerPromotionReadiness`. Current rules classify missing allowed scope as
+`conservative-restriction`, missing forbidden scope as `policy-loss`, extra forbidden scope as `policy-expansion`, extra
+checks as `safe-additive`, missing checks or extra Evidence as `evidence-chain-mismatch`, and missing Evidence as
+`semantic-loss`. The current Todo Search dry-run remains `compiler-promotion-not-ready` because semantic/policy losses
+block promotion readiness. This remains non-enforcing review metadata only and does not execute AI, apply graph deltas,
+accept work, enable required checks, configure branch protection, expand source authority, or retire tree-native
+artifacts.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

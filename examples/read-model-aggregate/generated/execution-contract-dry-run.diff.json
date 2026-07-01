@@ -64,6 +64,72 @@
       "extraIdsInGenerated": ["evidence-read-model-health"]
     }
   ],
+  "semanticDiffs": [
+    {
+      "field": "allowedScope",
+      "classification": "conservative-restriction",
+      "reviewSeverity": "medium",
+      "promotionImpact": "review-required",
+      "reason": "The generated candidate permits less execution scope than the hand-written contract; review before relying on the candidate.",
+      "missingIdsInGenerated": ["scope-todo-search-evidence"],
+      "extraIdsInGenerated": []
+    },
+    {
+      "field": "forbiddenScope",
+      "classification": "policy-loss",
+      "reviewSeverity": "high",
+      "promotionImpact": "blocks-promotion",
+      "reason": "The generated candidate is missing a forbidden policy scope from the hand-written contract, so promotion is not ready.",
+      "missingIdsInGenerated": ["scope-no-product-meaning-expansion"],
+      "extraIdsInGenerated": []
+    },
+    {
+      "field": "forbiddenScope",
+      "classification": "policy-expansion",
+      "reviewSeverity": "low",
+      "promotionImpact": "review-required",
+      "reason": "The generated candidate adds a forbidden policy scope beyond the hand-written contract; review the policy expansion.",
+      "missingIdsInGenerated": [],
+      "extraIdsInGenerated": ["scope-no-tree-retirement"]
+    },
+    {
+      "field": "requiredChecks",
+      "classification": "safe-additive",
+      "reviewSeverity": "low",
+      "promotionImpact": "review-required",
+      "reason": "The generated candidate adds a required check beyond the hand-written contract; this is additive but still review-only.",
+      "missingIdsInGenerated": [],
+      "extraIdsInGenerated": ["check-read-model-health-report"]
+    },
+    {
+      "field": "requiredEvidence",
+      "classification": "semantic-loss",
+      "reviewSeverity": "high",
+      "promotionImpact": "blocks-promotion",
+      "reason": "The generated candidate is missing required Evidence from the hand-written contract, so semantic equivalence is not ready.",
+      "missingIdsInGenerated": ["evidence-validate-all-result"],
+      "extraIdsInGenerated": []
+    },
+    {
+      "field": "requiredEvidence",
+      "classification": "evidence-chain-mismatch",
+      "reviewSeverity": "medium",
+      "promotionImpact": "review-required",
+      "reason": "The generated candidate adds required Evidence beyond the hand-written contract; review the Evidence chain before promotion.",
+      "missingIdsInGenerated": [],
+      "extraIdsInGenerated": ["evidence-read-model-health"]
+    }
+  ],
+  "semanticClassificationCounts": {
+    "conservative-restriction": 1,
+    "policy-loss": 1,
+    "policy-expansion": 1,
+    "safe-additive": 1,
+    "semantic-loss": 1,
+    "evidence-chain-mismatch": 1
+  },
+  "highestReviewSeverity": "high",
+  "compilerPromotionReadiness": "compiler-promotion-not-ready",
   "reviewBoundary": "The compiler candidate is valid, but equivalence with the hand-written contract is not proven. Review the differing fields before relying on the candidate.",
   "nonExecutionStatement": "This diff report is review Evidence only and does not execute work, accept changes, or make the compiled candidate authoritative."
 }

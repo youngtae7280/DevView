@@ -375,6 +375,17 @@ try {
     'compiler-equivalence-not-proven',
     'contract compiler equivalence status',
   )
+  assertEqual(
+    contractCompilerDryRun.candidateDiff.compilerPromotionReadiness,
+    'compiler-promotion-not-ready',
+    'contract compiler promotion readiness',
+  )
+  if ((contractCompilerDryRun.candidateDiff.semanticClassificationCounts['semantic-loss'] || 0) <= 0) {
+    throw new Error('Contract compiler semantic diff summary must include semantic-loss')
+  }
+  if ((contractCompilerDryRun.candidateDiff.semanticClassificationCounts['policy-loss'] || 0) <= 0) {
+    throw new Error('Contract compiler semantic diff summary must include policy-loss')
+  }
   if (contractCompilerDryRun.candidate.requiredCheckCount <= 0) {
     throw new Error('Contract compiler dry-run candidate must include required checks')
   }
@@ -481,6 +492,9 @@ try {
       candidateDiffStatus: contractCompilerDryRun.candidateDiff.status,
       candidateDiffReviewStatus: contractCompilerDryRun.candidateDiff.reviewStatus,
       candidateEquivalenceStatus: contractCompilerDryRun.candidateDiff.equivalenceStatus,
+      compilerPromotionReadiness: contractCompilerDryRun.candidateDiff.compilerPromotionReadiness,
+      highestReviewSeverity: contractCompilerDryRun.candidateDiff.highestReviewSeverity,
+      semanticClassificationCounts: contractCompilerDryRun.candidateDiff.semanticClassificationCounts,
       differingFieldCount: contractCompilerDryRun.candidateDiff.differingFieldCount,
       diffReport: contractCompilerDryRun.paths.diffReport,
       nonExecuting: true,

@@ -504,6 +504,9 @@ interface GraphSourceHealthReport {
     differingFieldCount: number
     diffReport: string
     diffReviewBoundary: string
+    compilerPromotionReadiness: string
+    highestReviewSeverity: string
+    semanticClassificationCounts: Record<string, number>
   }
   treeNativeRetirement: {
     readinessStatus: string
@@ -1442,6 +1445,9 @@ export async function reportGraphSourceHealth(root: string): Promise<GraphSource
       differingFieldCount: contractCompilerDryRun.candidateDiff.differingFieldCount,
       diffReport: contractCompilerDryRun.paths.diffReport,
       diffReviewBoundary: contractCompilerDryRun.candidateDiff.reviewBoundary,
+      compilerPromotionReadiness: contractCompilerDryRun.candidateDiff.compilerPromotionReadiness,
+      highestReviewSeverity: contractCompilerDryRun.candidateDiff.highestReviewSeverity,
+      semanticClassificationCounts: contractCompilerDryRun.candidateDiff.semanticClassificationCounts,
     },
     treeNativeRetirement: {
       readinessStatus: String(retirementReadinessSummary.status || 'missing'),
@@ -1473,6 +1479,9 @@ export async function writeGraphSourceHealthMarkdownReport(
 export function renderGraphSourceHealthMarkdown(report: GraphSourceHealthReport): string {
   const blockingReasons =
     report.blockingReasons.length === 0 ? '- None.' : report.blockingReasons.map((reason) => `- ${reason}`).join('\n')
+  const semanticDiffSummary = formatSemanticClassificationCounts(
+    report.contractCompilerDryRun.semanticClassificationCounts,
+  )
 
   return `# Graph-Source Health Report
 
@@ -1505,8 +1514,13 @@ Status: \`${report.status}\`
 | Contract Compiler Dry-Run v0.1 | \`${report.contractCompilerDryRun.status}\` |
 | Compiled contract candidate | \`${report.contractCompilerDryRun.candidateStatus}\`; \`${report.contractCompilerDryRun.dryRunChangeId}\`; ${report.contractCompilerDryRun.requiredCheckCount} checks / ${report.contractCompilerDryRun.requiredEvidenceCount} evidence requirements |
 | Generated vs hand-written contract diff | \`${report.contractCompilerDryRun.candidateDiffStatus}\`; \`${report.contractCompilerDryRun.candidateDiffReviewStatus}\`; \`${report.contractCompilerDryRun.candidateEquivalenceStatus}\`; ${report.contractCompilerDryRun.differingFieldCount} differing fields; \`${report.contractCompilerDryRun.diffReport}\` |
+| Contract semantic diff review | \`${report.contractCompilerDryRun.compilerPromotionReadiness}\`; severity \`${report.contractCompilerDryRun.highestReviewSeverity}\`; ${semanticDiffSummary} |
 
 ${report.contractCompilerDryRun.diffReviewBoundary}
+
+Semantic diff classification is non-blocking review metadata only. \`compiler-equivalence-not-proven\` means the compiler
+candidate is valid, but promotion/equivalence is not proven; see \`${report.contractCompilerDryRun.diffReport}\` for the
+full semantic diff artifact.
 
 ## Retirement And Enforcement
 
@@ -1540,6 +1554,11 @@ node dist/cli/index.js graph read-model compile-contract --dry-run --json
 node dist/cli/index.js graph read-model report-health --json --markdown examples/read-model-aggregate/generated/read-model-health-report-output.md
 \`\`\`
 `
+}
+
+function formatSemanticClassificationCounts(counts: Record<string, number>): string {
+  const entries = Object.entries(counts).filter(([, count]) => count > 0)
+  return entries.length === 0 ? 'semantic diffs: none' : entries.map(([key, count]) => `${key}: ${count}`).join(', ')
 }
 
 async function readGeneratedReadModelHealth(

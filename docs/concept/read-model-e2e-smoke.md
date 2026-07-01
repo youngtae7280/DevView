@@ -51,6 +51,8 @@ The smoke checks:
 - local `graph read-model compile-contract --dry-run --json` status `contract-compiler-dry-run-pass`
 - compiler dry-run generated-vs-hand-written diff status `contract-diff-detected`,
   `non-blocking-review-diff`, and `compiler-equivalence-not-proven`
+- compiler dry-run semantic diff review status `compiler-promotion-not-ready`, with `semantic-loss` and `policy-loss`
+  visible as non-enforcing review metadata
 
 The separate `graph read-model report-health --json` command summarizes the same transition state from existing
 artifacts and report surfaces. It is useful for a quick local health snapshot, while `npm run test:read-model:e2e`

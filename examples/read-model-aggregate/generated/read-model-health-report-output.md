@@ -29,9 +29,14 @@ Status: `graph-source-health-pass`
 | Contract Compiler Dry-Run v0.1          | `contract-compiler-dry-run-pass`                                                                                                                                                             |
 | Compiled contract candidate             | `contract-candidate-pass`; `change-todo-search-whitespace-normalization-dogfood`; 4 checks / 2 evidence requirements                                                                         |
 | Generated vs hand-written contract diff | `contract-diff-detected`; `non-blocking-review-diff`; `compiler-equivalence-not-proven`; 10 differing fields; `examples/read-model-aggregate/generated/execution-contract-dry-run.diff.json` |
+| Contract semantic diff review           | `compiler-promotion-not-ready`; severity `high`; conservative-restriction: 1, policy-loss: 1, policy-expansion: 1, safe-additive: 1, semantic-loss: 1, evidence-chain-mismatch: 1            |
 
 The compiler candidate is valid, but equivalence with the hand-written contract is not proven. Review the differing
 fields before relying on the candidate.
+
+Semantic diff classification is non-blocking review metadata only. `compiler-equivalence-not-proven` means the compiler
+candidate is valid, but promotion/equivalence is not proven; see
+`examples/read-model-aggregate/generated/execution-contract-dry-run.diff.json` for the full semantic diff artifact.
 
 ## Retirement And Enforcement
 
