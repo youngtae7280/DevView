@@ -279,6 +279,7 @@
   },
   "highestReviewSeverity": "high",
   "compilerPromotionReadiness": "compiler-promotion-not-ready",
+  "promotionReadiness": "compiler-promotion-not-ready",
   "semanticDiffRuleCoverage": {
     "totalDiffs": 15,
     "classifiedDiffs": 15,
@@ -302,6 +303,11 @@
     ],
     "unknownFields": []
   },
+  "v01CloseoutStatus": "contract-compiler-dry-run-v0.1-classification-complete",
+  "semanticDiffUnknownsStatus": "semantic-diff-unknowns-zero",
+  "semanticDiffUnknownsResolved": true,
+  "semanticDiffCoverageComplete": true,
+  "equivalenceProven": false,
   "reviewBoundary": "The compiler candidate is valid, but equivalence with the hand-written contract is not proven. Review the differing fields before relying on the candidate.",
   "nonExecutionStatement": "This diff report is review Evidence only and does not execute work, accept changes, or make the compiled candidate authoritative."
 }

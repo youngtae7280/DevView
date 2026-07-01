@@ -71,8 +71,11 @@ The diff report keeps field-level status and id-based summaries for:
 
 - `allowedScope`
 - `forbiddenScope`
+- `requiredContext`
 - `requiredChecks`
 - `requiredEvidence`
+- `knownRisks`
+- `stopConditions`
 
 The diff report now also classifies those id-based differences as semantic review metadata:
 
@@ -97,7 +100,29 @@ compiler-produced candidate replaces the hand-written changed-file and command-d
 with compiler-review status reporting. `sourceMode` and `nonExecutionStatement` are classified as `metadata-only`;
 `requiredContext`, `knownRisks`, and `stopConditions` are compared through id-based summaries. Unknown diffs remain
 possible for future fields, but the current dry-run diff set is fully classified.
-The remaining unknown is an unclassified review debt, not a hidden pass.
+
+## v0.1 Closeout
+
+v0.1 proves:
+
+- Compiler Input Model data can produce a deterministic contract candidate.
+- The generated candidate can be revalidated by the Contract Fixture Validator.
+- The generated candidate can be compared against the hand-written dry-run contract.
+- Diff fields can be classified through explicit semantic diff rules.
+- Current semantic diff unknown coverage is zero: `semantic-diff-unknowns-zero`.
+- Promotion readiness is derived from semantic diffs, not asserted manually.
+
+v0.1 does not prove:
+
+- semantic equivalence with the hand-written contract;
+- execution readiness;
+- output requirement preservation;
+- policy, Evidence, check, or source-authority completeness;
+- support for arbitrary `changeType` values.
+
+The current closeout status is `contract-compiler-dry-run-v0.1-classification-complete`, but
+`equivalenceProven` remains `false` and `compilerPromotionReadiness` remains `compiler-promotion-not-ready` because
+`semantic-loss`, `policy-loss`, and `output-requirement-loss` are still present.
 
 ## Boundaries
 
@@ -123,8 +148,9 @@ Compiler Input Model
 -> generated-vs-hand-written diff report
 ```
 
-## Next Layer
+## v0.2 Direction
 
-The next layer should either widen supported pack schemas carefully or introduce a real source-authority resolver for
-choosing checks, Evidence, risks, and stop conditions from graph/policy inputs. It should not jump directly to AI
-executor automation.
+The next layer should not be an executor. The recommended v0.2 candidate is Output Requirement Source Authority, or a
+broader source-authority resolver, so the compiler can reconstruct output requirements from graph, policy, Evidence,
+and check sources instead of replacing execution-result reporting obligations with compiler self-reporting. Pack schema
+expansion should wait until that source-authority path is clearer.

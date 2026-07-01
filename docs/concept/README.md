@@ -205,7 +205,9 @@ must be reviewed before any compiler promotion. Those classifications now come f
 unmatched differences are counted as `unknown-review-required`. Current triage classifies the former
 `outputRequirements` unknown as `output-requirement-loss` because the compiler candidate does not preserve the
 hand-written changed-file and command-derived Evidence reporting obligations. The current dry-run diff set has no
-unknown fields, but it remains local/non-enforcing and does not execute AI or apply graph deltas.
+unknown fields and is marked `contract-compiler-dry-run-v0.1-classification-complete`, but `equivalenceProven` remains
+`false` and it remains local/non-enforcing. The recommended v0.2 direction is Output Requirement Source Authority or a
+source-authority resolver before any pack-schema widening, executor automation, or graph delta application.
 
 The following readiness artifact is complete at documentation level:
 

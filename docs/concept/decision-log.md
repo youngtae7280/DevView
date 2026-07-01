@@ -914,6 +914,17 @@ input/candidate/diff status reporting, so output obligations are not equivalent 
 metadata only and does not execute AI, apply graph deltas, accept work, enable required checks, configure branch
 protection, expand source authority, or retire tree-native artifacts.
 
+DEC-172 does not supersede DEC-097 through DEC-171. It closes Contract Compiler Dry-Run v0.1 hardening as
+classification-complete, not equivalence-proven: the diff artifact and health report now expose
+`contract-compiler-dry-run-v0.1-classification-complete`, `semantic-diff-unknowns-zero`,
+`semanticDiffCoverageComplete: true`, and `equivalenceProven: false`. v0.1 proves deterministic candidate generation,
+contract revalidation, diff detection, semantic classification, zero unknown coverage, and readiness derivation; it does
+not prove semantic equivalence, execution readiness, output requirement preservation, source-authority completeness, or
+arbitrary changeType support. The recommended v0.2 direction is Output Requirement Source Authority or a
+source-authority resolver before pack-schema widening. This remains non-enforcing review metadata only and does not
+execute AI, apply graph deltas, accept work, enable required checks, configure branch protection, expand source
+authority, or retire tree-native artifacts.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

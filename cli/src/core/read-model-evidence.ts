@@ -505,6 +505,7 @@ interface GraphSourceHealthReport {
     diffReport: string
     diffReviewBoundary: string
     compilerPromotionReadiness: string
+    promotionReadiness: string
     highestReviewSeverity: string
     semanticClassificationCounts: Record<string, number>
     semanticDiffRuleCoverage: {
@@ -514,6 +515,11 @@ interface GraphSourceHealthReport {
       matchedRuleIds: string[]
       unknownFields: string[]
     }
+    v01CloseoutStatus: string
+    semanticDiffUnknownsStatus: string
+    semanticDiffUnknownsResolved: boolean
+    semanticDiffCoverageComplete: boolean
+    equivalenceProven: boolean
   }
   treeNativeRetirement: {
     readinessStatus: string
@@ -1453,9 +1459,15 @@ export async function reportGraphSourceHealth(root: string): Promise<GraphSource
       diffReport: contractCompilerDryRun.paths.diffReport,
       diffReviewBoundary: contractCompilerDryRun.candidateDiff.reviewBoundary,
       compilerPromotionReadiness: contractCompilerDryRun.candidateDiff.compilerPromotionReadiness,
+      promotionReadiness: contractCompilerDryRun.candidateDiff.promotionReadiness,
       highestReviewSeverity: contractCompilerDryRun.candidateDiff.highestReviewSeverity,
       semanticClassificationCounts: contractCompilerDryRun.candidateDiff.semanticClassificationCounts,
       semanticDiffRuleCoverage: contractCompilerDryRun.candidateDiff.semanticDiffRuleCoverage,
+      v01CloseoutStatus: contractCompilerDryRun.candidateDiff.v01CloseoutStatus,
+      semanticDiffUnknownsStatus: contractCompilerDryRun.candidateDiff.semanticDiffUnknownsStatus,
+      semanticDiffUnknownsResolved: contractCompilerDryRun.candidateDiff.semanticDiffUnknownsResolved,
+      semanticDiffCoverageComplete: contractCompilerDryRun.candidateDiff.semanticDiffCoverageComplete,
+      equivalenceProven: contractCompilerDryRun.candidateDiff.equivalenceProven,
     },
     treeNativeRetirement: {
       readinessStatus: String(retirementReadinessSummary.status || 'missing'),
@@ -1525,6 +1537,7 @@ Status: \`${report.status}\`
 | Contract Compiler Dry-Run v0.1 | \`${report.contractCompilerDryRun.status}\` |
 | Compiled contract candidate | \`${report.contractCompilerDryRun.candidateStatus}\`; \`${report.contractCompilerDryRun.dryRunChangeId}\`; ${report.contractCompilerDryRun.requiredCheckCount} checks / ${report.contractCompilerDryRun.requiredEvidenceCount} evidence requirements |
 | Generated vs hand-written contract diff | \`${report.contractCompilerDryRun.candidateDiffStatus}\`; \`${report.contractCompilerDryRun.candidateDiffReviewStatus}\`; \`${report.contractCompilerDryRun.candidateEquivalenceStatus}\`; ${report.contractCompilerDryRun.differingFieldCount} differing fields; \`${report.contractCompilerDryRun.diffReport}\` |
+| Contract compiler v0.1 closeout | \`${report.contractCompilerDryRun.v01CloseoutStatus}\`; \`${report.contractCompilerDryRun.semanticDiffUnknownsStatus}\`; coverage complete \`${report.contractCompilerDryRun.semanticDiffCoverageComplete}\`; equivalence proven \`${report.contractCompilerDryRun.equivalenceProven}\` |
 | Contract semantic diff review | \`${report.contractCompilerDryRun.compilerPromotionReadiness}\`; severity \`${report.contractCompilerDryRun.highestReviewSeverity}\`; unknown semantic diffs ${report.contractCompilerDryRun.semanticDiffRuleCoverage.unknownDiffs}; unknown fields ${unknownSemanticFields}; ${semanticDiffSummary} |
 
 ${report.contractCompilerDryRun.diffReviewBoundary}

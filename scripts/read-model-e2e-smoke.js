@@ -396,6 +396,26 @@ try {
   ) {
     throw new Error('Contract compiler semantic diff coverage must classify the current dry-run diff set')
   }
+  assertEqual(
+    contractCompilerDryRun.candidateDiff.v01CloseoutStatus,
+    'contract-compiler-dry-run-v0.1-classification-complete',
+    'contract compiler v0.1 closeout status',
+  )
+  assertEqual(
+    contractCompilerDryRun.candidateDiff.semanticDiffUnknownsStatus,
+    'semantic-diff-unknowns-zero',
+    'contract compiler semantic diff unknowns status',
+  )
+  assertEqual(
+    contractCompilerDryRun.candidateDiff.semanticDiffCoverageComplete,
+    true,
+    'contract compiler semantic diff coverage complete flag',
+  )
+  assertEqual(
+    contractCompilerDryRun.candidateDiff.equivalenceProven,
+    false,
+    'contract compiler equivalence proven flag',
+  )
   if (contractCompilerDryRun.candidate.requiredCheckCount <= 0) {
     throw new Error('Contract compiler dry-run candidate must include required checks')
   }
@@ -503,9 +523,15 @@ try {
       candidateDiffReviewStatus: contractCompilerDryRun.candidateDiff.reviewStatus,
       candidateEquivalenceStatus: contractCompilerDryRun.candidateDiff.equivalenceStatus,
       compilerPromotionReadiness: contractCompilerDryRun.candidateDiff.compilerPromotionReadiness,
+      promotionReadiness: contractCompilerDryRun.candidateDiff.promotionReadiness,
       highestReviewSeverity: contractCompilerDryRun.candidateDiff.highestReviewSeverity,
       semanticClassificationCounts: contractCompilerDryRun.candidateDiff.semanticClassificationCounts,
       semanticDiffRuleCoverage: contractCompilerDryRun.candidateDiff.semanticDiffRuleCoverage,
+      v01CloseoutStatus: contractCompilerDryRun.candidateDiff.v01CloseoutStatus,
+      semanticDiffUnknownsStatus: contractCompilerDryRun.candidateDiff.semanticDiffUnknownsStatus,
+      semanticDiffUnknownsResolved: contractCompilerDryRun.candidateDiff.semanticDiffUnknownsResolved,
+      semanticDiffCoverageComplete: contractCompilerDryRun.candidateDiff.semanticDiffCoverageComplete,
+      equivalenceProven: contractCompilerDryRun.candidateDiff.equivalenceProven,
       differingFieldCount: contractCompilerDryRun.candidateDiff.differingFieldCount,
       diffReport: contractCompilerDryRun.paths.diffReport,
       nonExecuting: true,

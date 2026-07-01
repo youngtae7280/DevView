@@ -15,6 +15,10 @@ import {
 
 export type ContractCompilerDryRunStatus = 'contract-compiler-dry-run-pass' | 'contract-compiler-dry-run-blocked'
 
+export type ContractCompilerDryRunV01CloseoutStatus =
+  | 'contract-compiler-dry-run-v0.1-classification-complete'
+  | 'contract-compiler-dry-run-v0.1-classification-incomplete'
+
 export interface ContractCompilerDryRunReport {
   status: ContractCompilerDryRunStatus
   inputModelStatus: 'compiler-input-model-pass' | 'compiler-input-model-blocked'
@@ -57,7 +61,13 @@ export interface ContractCompilerDryRunReport {
     semanticClassificationCounts: Record<string, number>
     highestReviewSeverity: ContractSemanticReviewSeverity
     compilerPromotionReadiness: ContractCompilerPromotionReadiness
+    promotionReadiness: ContractCompilerPromotionReadiness
     semanticDiffRuleCoverage: ContractSemanticDiffRuleCoverage
+    v01CloseoutStatus: ContractCompilerDryRunV01CloseoutStatus
+    semanticDiffUnknownsStatus: 'semantic-diff-unknowns-zero' | 'semantic-diff-unknowns-present'
+    semanticDiffUnknownsResolved: boolean
+    semanticDiffCoverageComplete: boolean
+    equivalenceProven: boolean
     reviewBoundary: string
   }
   blockingReasons: string[]
@@ -167,7 +177,13 @@ export async function compileExecutionContractDryRun(
       semanticClassificationCounts: candidateDiff.semanticClassificationCounts,
       highestReviewSeverity: candidateDiff.highestReviewSeverity,
       compilerPromotionReadiness: candidateDiff.compilerPromotionReadiness,
+      promotionReadiness: candidateDiff.promotionReadiness,
       semanticDiffRuleCoverage: candidateDiff.semanticDiffRuleCoverage,
+      v01CloseoutStatus: candidateDiff.v01CloseoutStatus,
+      semanticDiffUnknownsStatus: candidateDiff.semanticDiffUnknownsStatus,
+      semanticDiffUnknownsResolved: candidateDiff.semanticDiffUnknownsResolved,
+      semanticDiffCoverageComplete: candidateDiff.semanticDiffCoverageComplete,
+      equivalenceProven: candidateDiff.equivalenceProven,
       reviewBoundary: candidateDiff.reviewBoundary,
     },
     blockingReasons,
@@ -370,7 +386,13 @@ interface ContractDiffReportInternal {
   semanticClassificationCounts: Record<string, number>
   highestReviewSeverity: ContractSemanticReviewSeverity
   compilerPromotionReadiness: ContractCompilerPromotionReadiness
+  promotionReadiness: ContractCompilerPromotionReadiness
   semanticDiffRuleCoverage: ContractSemanticDiffRuleCoverage
+  v01CloseoutStatus: ContractCompilerDryRunV01CloseoutStatus
+  semanticDiffUnknownsStatus: 'semantic-diff-unknowns-zero' | 'semantic-diff-unknowns-present'
+  semanticDiffUnknownsResolved: boolean
+  semanticDiffCoverageComplete: boolean
+  equivalenceProven: boolean
   blockingReasons: string[]
   reviewBoundary: string
   nonExecutionStatement: string
@@ -417,7 +439,16 @@ async function buildContractDiffReport(
       semanticClassificationCounts: semanticSummary.semanticClassificationCounts,
       highestReviewSeverity: semanticSummary.highestReviewSeverity,
       compilerPromotionReadiness: semanticSummary.compilerPromotionReadiness,
+      promotionReadiness: semanticSummary.compilerPromotionReadiness,
       semanticDiffRuleCoverage: semanticSummary.semanticDiffRuleCoverage,
+      ...buildV01CloseoutMetadata(
+        semanticSummary.semanticDiffRuleCoverage,
+        semanticSummary.compilerPromotionReadiness,
+        {
+          equivalenceStatus: 'compiler-equivalence-blocked',
+          isReviewable: false,
+        },
+      ),
       blockingReasons: [`Unable to read hand-written dry-run contract: ${handWritten.error}`],
       reviewBoundary:
         'Diff report generation was blocked. The compiled candidate cannot be reviewed for equivalence against the hand-written dry-run contract.',
@@ -441,13 +472,19 @@ async function buildContractDiffReport(
     differingFields,
     hasDiff ? 'contract-diff-detected' : 'contract-diff-none',
   )
+  const equivalenceStatus = hasDiff ? 'compiler-equivalence-not-proven' : 'compiler-equivalence-field-match'
+  const closeoutMetadata = buildV01CloseoutMetadata(
+    semanticSummary.semanticDiffRuleCoverage,
+    semanticSummary.compilerPromotionReadiness,
+    { equivalenceStatus, isReviewable: true },
+  )
 
   return {
     schemaVersion: 1,
     artifactRole: 'execution-contract-dry-run-diff-report',
     status: hasDiff ? 'contract-diff-detected' : 'contract-diff-none',
     reviewStatus: hasDiff ? 'non-blocking-review-diff' : 'no-review-diff',
-    equivalenceStatus: hasDiff ? 'compiler-equivalence-not-proven' : 'compiler-equivalence-field-match',
+    equivalenceStatus,
     sourceCandidate: relativePath(root, path.resolve(root, outputCandidatePath)),
     comparedWith: handWrittenPath,
     differingFields,
@@ -457,7 +494,9 @@ async function buildContractDiffReport(
     semanticClassificationCounts: semanticSummary.semanticClassificationCounts,
     highestReviewSeverity: semanticSummary.highestReviewSeverity,
     compilerPromotionReadiness: semanticSummary.compilerPromotionReadiness,
+    promotionReadiness: semanticSummary.compilerPromotionReadiness,
     semanticDiffRuleCoverage: semanticSummary.semanticDiffRuleCoverage,
+    ...closeoutMetadata,
     blockingReasons: [],
     reviewBoundary: hasDiff
       ? 'The compiler candidate is valid, but equivalence with the hand-written contract is not proven. Review the differing fields before relying on the candidate.'
@@ -484,12 +523,47 @@ function buildNotRunDiffReport(outputCandidatePath: string, handWrittenPath: str
     semanticClassificationCounts: semanticSummary.semanticClassificationCounts,
     highestReviewSeverity: semanticSummary.highestReviewSeverity,
     compilerPromotionReadiness: semanticSummary.compilerPromotionReadiness,
+    promotionReadiness: semanticSummary.compilerPromotionReadiness,
     semanticDiffRuleCoverage: semanticSummary.semanticDiffRuleCoverage,
+    ...buildV01CloseoutMetadata(semanticSummary.semanticDiffRuleCoverage, semanticSummary.compilerPromotionReadiness, {
+      equivalenceStatus: 'compiler-equivalence-not-run',
+      isReviewable: false,
+    }),
     blockingReasons: [],
     reviewBoundary:
       'No compiler candidate was produced, so equivalence with the hand-written contract was not reviewed.',
     nonExecutionStatement:
       'This diff report is review Evidence only and does not execute work, accept changes, or make the compiled candidate authoritative.',
+  }
+}
+
+function buildV01CloseoutMetadata(
+  coverage: ContractSemanticDiffRuleCoverage,
+  promotionReadiness: ContractCompilerPromotionReadiness,
+  options: { equivalenceStatus: ContractDiffReportInternal['equivalenceStatus']; isReviewable: boolean },
+): Pick<
+  ContractDiffReportInternal,
+  | 'v01CloseoutStatus'
+  | 'semanticDiffUnknownsStatus'
+  | 'semanticDiffUnknownsResolved'
+  | 'semanticDiffCoverageComplete'
+  | 'equivalenceProven'
+> {
+  const semanticDiffUnknownsResolved = coverage.unknownDiffs === 0
+  const semanticDiffCoverageComplete = options.isReviewable && semanticDiffUnknownsResolved
+  const equivalenceProven =
+    options.equivalenceStatus === 'compiler-equivalence-field-match' &&
+    promotionReadiness === 'compiler-promotion-equivalence-candidate'
+  return {
+    v01CloseoutStatus: semanticDiffCoverageComplete
+      ? 'contract-compiler-dry-run-v0.1-classification-complete'
+      : 'contract-compiler-dry-run-v0.1-classification-incomplete',
+    semanticDiffUnknownsStatus: semanticDiffUnknownsResolved
+      ? 'semantic-diff-unknowns-zero'
+      : 'semantic-diff-unknowns-present',
+    semanticDiffUnknownsResolved,
+    semanticDiffCoverageComplete,
+    equivalenceProven,
   }
 }
 

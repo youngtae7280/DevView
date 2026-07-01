@@ -1425,6 +1425,7 @@ describe('read-model Evidence builder', () => {
       semanticClassificationCounts: Record<string, number>
       highestReviewSeverity: string
       compilerPromotionReadiness: string
+      promotionReadiness: string
       semanticDiffRuleCoverage: {
         totalDiffs: number
         classifiedDiffs: number
@@ -1432,6 +1433,11 @@ describe('read-model Evidence builder', () => {
         matchedRuleIds: string[]
         unknownFields: string[]
       }
+      v01CloseoutStatus: string
+      semanticDiffUnknownsStatus: string
+      semanticDiffUnknownsResolved: boolean
+      semanticDiffCoverageComplete: boolean
+      equivalenceProven: boolean
     }
     expect(diffReport.status).toBe('contract-diff-detected')
     expect(diffReport.reviewStatus).toBe('non-blocking-review-diff')
@@ -1448,7 +1454,13 @@ describe('read-model Evidence builder', () => {
       extraIdsInGenerated: ['check-read-model-health-report'],
     })
     expect(diffReport.compilerPromotionReadiness).toBe('compiler-promotion-not-ready')
+    expect(diffReport.promotionReadiness).toBe('compiler-promotion-not-ready')
     expect(diffReport.highestReviewSeverity).toBe('high')
+    expect(diffReport.v01CloseoutStatus).toBe('contract-compiler-dry-run-v0.1-classification-complete')
+    expect(diffReport.semanticDiffUnknownsStatus).toBe('semantic-diff-unknowns-zero')
+    expect(diffReport.semanticDiffUnknownsResolved).toBe(true)
+    expect(diffReport.semanticDiffCoverageComplete).toBe(true)
+    expect(diffReport.equivalenceProven).toBe(false)
     expect(diffReport.semanticClassificationCounts).toMatchObject({
       'metadata-only': 2,
       'conservative-restriction': 1,
@@ -1682,7 +1694,13 @@ describe('read-model Evidence builder', () => {
         semanticClassificationCounts: Record<string, number>
         highestReviewSeverity: string
         compilerPromotionReadiness: string
+        promotionReadiness: string
         semanticDiffRuleCoverage: { unknownDiffs: number; matchedRuleIds: string[]; unknownFields: string[] }
+        v01CloseoutStatus: string
+        semanticDiffUnknownsStatus: string
+        semanticDiffUnknownsResolved: boolean
+        semanticDiffCoverageComplete: boolean
+        equivalenceProven: boolean
       }
     }
 
@@ -1699,7 +1717,13 @@ describe('read-model Evidence builder', () => {
     expect(output.candidateDiff.reviewStatus).toBe('non-blocking-review-diff')
     expect(output.candidateDiff.equivalenceStatus).toBe('compiler-equivalence-not-proven')
     expect(output.candidateDiff.compilerPromotionReadiness).toBe('compiler-promotion-not-ready')
+    expect(output.candidateDiff.promotionReadiness).toBe('compiler-promotion-not-ready')
     expect(output.candidateDiff.highestReviewSeverity).toBe('high')
+    expect(output.candidateDiff.v01CloseoutStatus).toBe('contract-compiler-dry-run-v0.1-classification-complete')
+    expect(output.candidateDiff.semanticDiffUnknownsStatus).toBe('semantic-diff-unknowns-zero')
+    expect(output.candidateDiff.semanticDiffUnknownsResolved).toBe(true)
+    expect(output.candidateDiff.semanticDiffCoverageComplete).toBe(true)
+    expect(output.candidateDiff.equivalenceProven).toBe(false)
     expect(output.candidateDiff.semanticClassificationCounts['semantic-loss']).toBe(3)
     expect(output.candidateDiff.semanticClassificationCounts['policy-loss']).toBe(2)
     expect(output.candidateDiff.semanticClassificationCounts['metadata-only']).toBe(2)
@@ -1786,6 +1810,10 @@ describe('read-model Evidence builder', () => {
         highestReviewSeverity: string
         semanticClassificationCounts: Record<string, number>
         semanticDiffRuleCoverage: { unknownDiffs: number; unknownFields: string[] }
+        v01CloseoutStatus: string
+        semanticDiffUnknownsStatus: string
+        semanticDiffCoverageComplete: boolean
+        equivalenceProven: boolean
       }
     }
     const markdown = await readFile(markdownPath, 'utf8')
@@ -1805,6 +1833,12 @@ describe('read-model Evidence builder', () => {
     expect(output.contractCompilerDryRun.candidateDiffReviewStatus).toBe('non-blocking-review-diff')
     expect(output.contractCompilerDryRun.candidateEquivalenceStatus).toBe('compiler-equivalence-not-proven')
     expect(output.contractCompilerDryRun.compilerPromotionReadiness).toBe('compiler-promotion-not-ready')
+    expect(output.contractCompilerDryRun.v01CloseoutStatus).toBe(
+      'contract-compiler-dry-run-v0.1-classification-complete',
+    )
+    expect(output.contractCompilerDryRun.semanticDiffUnknownsStatus).toBe('semantic-diff-unknowns-zero')
+    expect(output.contractCompilerDryRun.semanticDiffCoverageComplete).toBe(true)
+    expect(output.contractCompilerDryRun.equivalenceProven).toBe(false)
     expect(output.contractCompilerDryRun.highestReviewSeverity).toBe('high')
     expect(output.contractCompilerDryRun.semanticClassificationCounts['semantic-loss']).toBe(3)
     expect(output.contractCompilerDryRun.semanticClassificationCounts['policy-loss']).toBe(2)
@@ -1832,6 +1866,10 @@ describe('read-model Evidence builder', () => {
     expect(markdown).toContain('`contract-diff-detected`')
     expect(markdown).toContain('`non-blocking-review-diff`')
     expect(markdown).toContain('`compiler-equivalence-not-proven`')
+    expect(markdown).toContain('`contract-compiler-dry-run-v0.1-classification-complete`')
+    expect(markdown).toContain('`semantic-diff-unknowns-zero`')
+    expect(markdown).toContain('coverage complete `true`')
+    expect(markdown).toContain('equivalence proven `false`')
     expect(markdown).toContain('`compiler-promotion-not-ready`')
     expect(markdown).toContain('semantic-loss: 3')
     expect(markdown).toContain('policy-loss: 2')
