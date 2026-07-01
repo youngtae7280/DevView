@@ -486,6 +486,26 @@ try {
     'contract compiler promotion review-only diff count',
   )
   assertEqual(
+    contractCompilerDryRun.promotionReview.reviewOnlyDiffClassifications['source-mode-metadata-only'],
+    1,
+    'contract compiler source mode review-only diff classification count',
+  )
+  assertEqual(
+    contractCompilerDryRun.promotionReview.reviewOnlyDiffClassifications['validation-superset-review-only'],
+    1,
+    'contract compiler validation superset review-only diff classification count',
+  )
+  assertEqual(
+    contractCompilerDryRun.promotionReview.reviewOnlyDiffClassifications['boundary-wording-review-required'],
+    1,
+    'contract compiler boundary wording review-only diff classification count',
+  )
+  assertEqual(
+    contractCompilerDryRun.promotionReview.boundaryWordingReviewRequired,
+    true,
+    'contract compiler boundary wording review required flag',
+  )
+  assertEqual(
     contractCompilerDryRun.promotionReview.blockingSemanticLossCount,
     0,
     'contract compiler promotion review blocking semantic loss count',

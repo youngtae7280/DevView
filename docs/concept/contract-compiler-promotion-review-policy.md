@@ -60,6 +60,27 @@ The packet collects:
 
 The packet is review Evidence only. It is not an approval artifact.
 
+## Review-Only Diff Policy
+
+The current packet narrows the three remaining review-only diffs into explicit classifications:
+
+- `source-mode-metadata-only`: provenance differs because one artifact is hand-written and the other is compiler-
+  produced.
+- `validation-superset-review-only`: the generated candidate adds the read-model health check as a non-enforcing
+  validation superset.
+- `boundary-wording-review-required`: non-execution wording differs and must be reviewed by a human before any
+  promotion decision.
+
+Boundary wording is intentionally conservative. A reviewer must confirm the wording preserves these meanings:
+
+- compiler output is not an execution source;
+- the review packet is not approval;
+- validation is not user acceptance;
+- no CI enforcement or branch protection is introduced;
+- graph delta apply is not performed.
+
+This classification can keep `equivalenceCandidate: true`, but it does not make `equivalenceProven` true.
+
 ## Human Review Checklist
 
 A reviewer must check at least:
@@ -75,6 +96,8 @@ A reviewer must check at least:
 - `report-health`, E2E smoke, and validate-all were run before approval;
 - compiler output is not treated as execution source;
 - no required check, branch protection, or CI enforcement was introduced.
+
+For the current fixture, boundary wording review remains required.
 
 Passing deterministic checks does not replace the human decision.
 

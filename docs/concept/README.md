@@ -243,6 +243,11 @@ human checklist. Its current status is `promotion-review-ready-for-human` with `
 not set `equivalenceProven: true`, accept work, enable enforcement, or promote the generated contract to execution
 authority.
 
+The packet now narrows the remaining review-only diffs to `source-mode-metadata-only`,
+`validation-superset-review-only`, and `boundary-wording-review-required`. Boundary wording remains a human-review item
+because it must preserve non-execution, non-approval, non-enforcement, no user-acceptance, and no graph-delta-apply
+boundaries.
+
 The following readiness artifact is complete at documentation level:
 
 - [representative-runtime-feasibility-demo.md](representative-runtime-feasibility-demo.md)

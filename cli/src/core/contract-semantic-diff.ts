@@ -7,10 +7,13 @@ export type ContractDiffStatus =
 export type ContractSemanticDiffClassification =
   | 'format-only'
   | 'metadata-only'
+  | 'source-mode-metadata-only'
   | 'conservative-restriction'
   | 'policy-loss'
   | 'policy-expansion'
   | 'safe-additive'
+  | 'validation-superset-review-only'
+  | 'boundary-wording-review-required'
   | 'evidence-chain-mismatch'
   | 'output-requirement-loss'
   | 'semantic-loss'
@@ -103,7 +106,7 @@ export const contractSemanticDiffRules: readonly ContractSemanticDiffRule[] = [
     ruleId: 'semantic-diff-rule-source-mode-field-metadata-only',
     targetField: 'sourceMode',
     condition: 'fieldDifferent',
-    classification: 'metadata-only',
+    classification: 'source-mode-metadata-only',
     reviewSeverity: 'low',
     promotionImpact: 'review-required',
     reason:
@@ -163,11 +166,11 @@ export const contractSemanticDiffRules: readonly ContractSemanticDiffRule[] = [
     ruleId: 'semantic-diff-rule-required-checks-extra-safe-additive',
     targetField: 'requiredChecks',
     condition: 'extraIdsInGenerated',
-    classification: 'safe-additive',
+    classification: 'validation-superset-review-only',
     reviewSeverity: 'low',
     promotionImpact: 'review-required',
     reason:
-      'The generated candidate adds a required check beyond the hand-written contract; this is additive but still review-only.',
+      'The generated candidate adds the read-model health check beyond the hand-written contract; this is a validation superset for review only, not execution approval.',
   },
   {
     ruleId: 'semantic-diff-rule-required-checks-missing-evidence-chain-mismatch',
@@ -243,11 +246,11 @@ export const contractSemanticDiffRules: readonly ContractSemanticDiffRule[] = [
     ruleId: 'semantic-diff-rule-non-execution-statement-field-metadata-only',
     targetField: 'nonExecutionStatement',
     condition: 'fieldDifferent',
-    classification: 'metadata-only',
-    reviewSeverity: 'low',
+    classification: 'boundary-wording-review-required',
+    reviewSeverity: 'medium',
     promotionImpact: 'review-required',
     reason:
-      'The nonExecutionStatement wording differs between hand-written and compiler-produced artifacts; review boundary wording, but do not treat this as execution-scope loss.',
+      'The nonExecutionStatement wording differs between hand-written and compiler-produced artifacts; a human reviewer must confirm the wording preserves non-execution, non-approval, non-enforcement, and no graph-delta boundaries.',
   },
   {
     ruleId: 'semantic-diff-rule-output-requirements-field-output-requirement-loss',
@@ -528,7 +531,10 @@ function isReviewOnlyDiff(diff: ContractSemanticDiff): boolean {
   return (
     diff.classification === 'format-only' ||
     diff.classification === 'metadata-only' ||
+    diff.classification === 'source-mode-metadata-only' ||
     diff.classification === 'safe-additive' ||
+    diff.classification === 'validation-superset-review-only' ||
+    diff.classification === 'boundary-wording-review-required' ||
     diff.classification === 'policy-expansion'
   )
 }

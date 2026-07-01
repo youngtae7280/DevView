@@ -119,6 +119,8 @@ export interface ContractCompilerDryRunReport {
     equivalenceCandidate: boolean
     equivalenceProven: boolean
     reviewOnlyDiffCount: number
+    reviewOnlyDiffClassifications: Record<string, number>
+    boundaryWordingReviewRequired: boolean
     blockingSemanticLossCount: number
     unknownDiffCount: number
     checklistPassCount: number
@@ -695,6 +697,8 @@ interface ContractCompilerPromotionReviewPacketInternal {
         classification: string
         matchedRuleId: string
         reason: string
+        requiredHumanCheck: string
+        acceptanceRisk: string
       }>
     }
     blockingSemanticLossCount: number
@@ -733,16 +737,21 @@ function buildContractCompilerPromotionReviewPacket(input: {
   sourceAuthorityGapPreview: ContractSourceAuthorityGapPreviewSummary
 }): ContractCompilerPromotionReviewPacketInternal {
   const equivalencePolicy = input.candidateDiff.equivalencePolicy
-  const reviewOnlyDiffs = input.candidateDiff.semanticDiffs
-    .filter((diff) =>
-      ['format-only', 'metadata-only', 'safe-additive', 'policy-expansion'].includes(diff.classification),
-    )
-    .map((diff) => ({
-      field: diff.field,
-      classification: diff.classification,
-      matchedRuleId: diff.matchedRuleId,
-      reason: diff.reason,
-    }))
+  const reviewOnlyDiffs = input.candidateDiff.semanticDiffs.filter(isPromotionReviewOnlyDiff).map((diff) => ({
+    field: diff.field,
+    classification: diff.classification,
+    matchedRuleId: diff.matchedRuleId,
+    reason: diff.reason,
+    requiredHumanCheck: describeReviewOnlyHumanCheck(diff),
+    acceptanceRisk: describeReviewOnlyAcceptanceRisk(diff),
+  }))
+  const reviewOnlyDiffClassifications = reviewOnlyDiffs.reduce<Record<string, number>>((counts, diff) => {
+    counts[diff.classification] = (counts[diff.classification] || 0) + 1
+    return counts
+  }, {})
+  const boundaryWordingReviewRequired = reviewOnlyDiffs.some(
+    (diff) => diff.classification === 'boundary-wording-review-required',
+  )
   const humanReviewChecklist = buildPromotionReviewChecklist(input)
   const checklistPassCount = humanReviewChecklist.filter((entry) => entry.status === 'pass').length
   const checklistDecisionRequiredCount = humanReviewChecklist.filter(
@@ -766,6 +775,8 @@ function buildContractCompilerPromotionReviewPacket(input: {
     equivalenceCandidate: equivalencePolicy.equivalenceCandidate,
     equivalenceProven: false,
     reviewOnlyDiffCount: equivalencePolicy.reviewOnlyDiffCount,
+    reviewOnlyDiffClassifications,
+    boundaryWordingReviewRequired,
     blockingSemanticLossCount: equivalencePolicy.blockingSemanticLossCount,
     unknownDiffCount: equivalencePolicy.unknownDiffCount,
     checklistPassCount,
@@ -844,6 +855,44 @@ function buildContractCompilerPromotionReviewPacket(input: {
     },
     summary,
   }
+}
+
+function isPromotionReviewOnlyDiff(diff: ContractSemanticDiff): boolean {
+  return [
+    'format-only',
+    'metadata-only',
+    'source-mode-metadata-only',
+    'safe-additive',
+    'validation-superset-review-only',
+    'boundary-wording-review-required',
+    'policy-expansion',
+  ].includes(diff.classification)
+}
+
+function describeReviewOnlyHumanCheck(diff: ContractSemanticDiff): string {
+  if (diff.classification === 'source-mode-metadata-only') {
+    return 'Confirm compiler-produced sourceMode provenance is expected and does not make the candidate authoritative.'
+  }
+  if (diff.classification === 'validation-superset-review-only') {
+    return 'Confirm the added health check is a non-weakening validation superset and not a new required check policy.'
+  }
+  if (diff.classification === 'boundary-wording-review-required') {
+    return 'Confirm boundary wording preserves non-execution, non-approval, non-enforcement, no user acceptance, and no graph-delta apply meanings.'
+  }
+  return 'Confirm the review-only difference is acceptable before any human promotion decision.'
+}
+
+function describeReviewOnlyAcceptanceRisk(diff: ContractSemanticDiff): string {
+  if (diff.classification === 'source-mode-metadata-only') {
+    return 'Low: provenance can be accepted if the candidate remains review Evidence only.'
+  }
+  if (diff.classification === 'validation-superset-review-only') {
+    return 'Low: additive validation is acceptable only if it remains non-enforcing and non-approval evidence.'
+  }
+  if (diff.classification === 'boundary-wording-review-required') {
+    return 'Medium: weakened wording could blur execution, approval, enforcement, user acceptance, or graph-delta boundaries.'
+  }
+  return 'Review required: do not treat this packet as approval without a human decision record.'
 }
 
 function derivePromotionReviewStatus(input: {

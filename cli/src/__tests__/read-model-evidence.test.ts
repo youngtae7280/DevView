@@ -1607,7 +1607,17 @@ describe('read-model Evidence builder', () => {
         equivalenceCandidate: boolean
         equivalenceProven: boolean
       }
-      reviewOnlyDiffSummary: { status: string; count: number; differingFields: string[] }
+      reviewOnlyDiffSummary: {
+        status: string
+        count: number
+        differingFields: string[]
+        reviewOnlyDiffs: Array<{
+          field: string
+          classification: string
+          requiredHumanCheck: string
+          acceptanceRisk: string
+        }>
+      }
       validationCommands: Array<{ id: string; command: string; status: string }>
       humanReviewChecklist: Array<{ id: string; status: string; evidence: string }>
       explicitNonGoals: string[]
@@ -1617,6 +1627,8 @@ describe('read-model Evidence builder', () => {
         equivalenceCandidate: boolean
         equivalenceProven: boolean
         reviewOnlyDiffCount: number
+        reviewOnlyDiffClassifications: Record<string, number>
+        boundaryWordingReviewRequired: boolean
         blockingSemanticLossCount: number
         unknownDiffCount: number
         checklistPassCount: number
@@ -1684,7 +1696,7 @@ describe('read-model Evidence builder', () => {
     })
     expect(diffReport.compilerPromotionReadiness).toBe('compiler-promotion-review-required')
     expect(diffReport.promotionReadiness).toBe('compiler-promotion-review-required')
-    expect(diffReport.highestReviewSeverity).toBe('low')
+    expect(diffReport.highestReviewSeverity).toBe('medium')
     expect(diffReport.v01CloseoutStatus).toBe('contract-compiler-dry-run-v0.1-classification-complete')
     expect(diffReport.semanticDiffUnknownsStatus).toBe('semantic-diff-unknowns-zero')
     expect(diffReport.semanticDiffUnknownsResolved).toBe(true)
@@ -1709,6 +1721,12 @@ describe('read-model Evidence builder', () => {
       equivalenceCandidate: true,
       equivalenceProven: false,
       reviewOnlyDiffCount: 3,
+      reviewOnlyDiffClassifications: {
+        'source-mode-metadata-only': 1,
+        'validation-superset-review-only': 1,
+        'boundary-wording-review-required': 1,
+      },
+      boundaryWordingReviewRequired: true,
       blockingSemanticLossCount: 0,
       unknownDiffCount: 0,
       checklistBlockedCount: 0,
@@ -1739,6 +1757,34 @@ describe('read-model Evidence builder', () => {
       status: 'review-only-diff-detected',
       count: 3,
     })
+    expect(promotionReviewPacket.reviewOnlyDiffSummary.differingFields).toEqual([
+      'sourceMode',
+      'requiredChecks',
+      'nonExecutionStatement',
+    ])
+    expect(
+      promotionReviewPacket.reviewOnlyDiffSummary.reviewOnlyDiffs.find((entry) => entry.field === 'sourceMode'),
+    ).toMatchObject({
+      classification: 'source-mode-metadata-only',
+      requiredHumanCheck: expect.stringContaining('sourceMode provenance'),
+      acceptanceRisk: expect.stringContaining('Low'),
+    })
+    expect(
+      promotionReviewPacket.reviewOnlyDiffSummary.reviewOnlyDiffs.find((entry) => entry.field === 'requiredChecks'),
+    ).toMatchObject({
+      classification: 'validation-superset-review-only',
+      requiredHumanCheck: expect.stringContaining('validation superset'),
+      acceptanceRisk: expect.stringContaining('non-enforcing'),
+    })
+    expect(
+      promotionReviewPacket.reviewOnlyDiffSummary.reviewOnlyDiffs.find(
+        (entry) => entry.field === 'nonExecutionStatement',
+      ),
+    ).toMatchObject({
+      classification: 'boundary-wording-review-required',
+      requiredHumanCheck: expect.stringContaining('non-execution'),
+      acceptanceRisk: expect.stringContaining('Medium'),
+    })
     expect(promotionReviewPacket.validationCommands.map((entry) => entry.id)).toEqual([
       'compile-contract-dry-run',
       'report-health',
@@ -1765,6 +1811,12 @@ describe('read-model Evidence builder', () => {
       equivalenceCandidate: true,
       equivalenceProven: false,
       reviewOnlyDiffCount: 3,
+      reviewOnlyDiffClassifications: {
+        'source-mode-metadata-only': 1,
+        'validation-superset-review-only': 1,
+        'boundary-wording-review-required': 1,
+      },
+      boundaryWordingReviewRequired: true,
       blockingSemanticLossCount: 0,
       unknownDiffCount: 0,
       checklistBlockedCount: 0,
@@ -1774,8 +1826,9 @@ describe('read-model Evidence builder', () => {
     expect(promotionReviewPacket.explicitNonGoals.join('\n')).toContain('equivalenceProven remains false')
     expect(promotionReviewPacket.nonExecutionStatement).toContain('does not approve equivalence')
     expect(diffReport.semanticClassificationCounts).toMatchObject({
-      'metadata-only': 2,
-      'safe-additive': 1,
+      'source-mode-metadata-only': 1,
+      'validation-superset-review-only': 1,
+      'boundary-wording-review-required': 1,
     })
     expect(diffReport.semanticClassificationCounts['conservative-restriction']).toBeUndefined()
     expect(diffReport.semanticClassificationCounts['semantic-loss']).toBeUndefined()
@@ -1832,7 +1885,7 @@ describe('read-model Evidence builder', () => {
     expect(diffReport.semanticDiffs.some((entry) => entry.field === 'allowedScope')).toBe(false)
     expect(
       diffReport.semanticDiffs.find(
-        (entry) => entry.field === 'requiredChecks' && entry.classification === 'safe-additive',
+        (entry) => entry.field === 'requiredChecks' && entry.classification === 'validation-superset-review-only',
       ),
     ).toMatchObject({
       matchedRuleId: 'semantic-diff-rule-required-checks-extra-safe-additive',
@@ -1844,12 +1897,24 @@ describe('read-model Evidence builder', () => {
     })
     expect(
       diffReport.semanticDiffs.find(
-        (entry) => entry.field === 'sourceMode' && entry.classification === 'metadata-only',
+        (entry) => entry.field === 'sourceMode' && entry.classification === 'source-mode-metadata-only',
       ),
     ).toMatchObject({
       matchedRuleId: 'semantic-diff-rule-source-mode-field-metadata-only',
       targetField: 'sourceMode',
       diffDirection: 'fieldDifferent',
+      promotionImpact: 'review-required',
+    })
+    expect(
+      diffReport.semanticDiffs.find(
+        (entry) =>
+          entry.field === 'nonExecutionStatement' && entry.classification === 'boundary-wording-review-required',
+      ),
+    ).toMatchObject({
+      matchedRuleId: 'semantic-diff-rule-non-execution-statement-field-metadata-only',
+      targetField: 'nonExecutionStatement',
+      diffDirection: 'fieldDifferent',
+      reviewSeverity: 'medium',
       promotionImpact: 'review-required',
     })
     expect(diffReport.semanticDiffs.some((entry) => entry.field === 'outputRequirements')).toBe(false)
@@ -2472,7 +2537,7 @@ describe('read-model Evidence builder', () => {
     expect(semantic.highestReviewSeverity).toBe('medium')
     expect(semantic.semanticClassificationCounts).toMatchObject({
       'conservative-restriction': 1,
-      'safe-additive': 1,
+      'validation-superset-review-only': 1,
     })
     expect(semantic.semanticDiffRuleCoverage).toMatchObject({
       totalDiffs: 2,
@@ -2766,6 +2831,8 @@ describe('read-model Evidence builder', () => {
         equivalenceCandidate: boolean
         equivalenceProven: boolean
         reviewOnlyDiffCount: number
+        reviewOnlyDiffClassifications: Record<string, number>
+        boundaryWordingReviewRequired: boolean
         blockingSemanticLossCount: number
         unknownDiffCount: number
         checklistBlockedCount: number
@@ -2804,7 +2871,7 @@ describe('read-model Evidence builder', () => {
     expect(output.candidateDiff.equivalenceStatus).toBe('compiler-equivalence-not-proven')
     expect(output.candidateDiff.compilerPromotionReadiness).toBe('compiler-promotion-review-required')
     expect(output.candidateDiff.promotionReadiness).toBe('compiler-promotion-review-required')
-    expect(output.candidateDiff.highestReviewSeverity).toBe('low')
+    expect(output.candidateDiff.highestReviewSeverity).toBe('medium')
     expect(output.candidateDiff.v01CloseoutStatus).toBe('contract-compiler-dry-run-v0.1-classification-complete')
     expect(output.candidateDiff.semanticDiffUnknownsStatus).toBe('semantic-diff-unknowns-zero')
     expect(output.candidateDiff.semanticDiffUnknownsResolved).toBe(true)
@@ -2826,7 +2893,11 @@ describe('read-model Evidence builder', () => {
     expect(output.candidateDiff.semanticClassificationCounts['policy-loss']).toBeUndefined()
     expect(output.candidateDiff.semanticClassificationCounts['evidence-chain-mismatch']).toBeUndefined()
     expect(output.candidateDiff.semanticClassificationCounts['conservative-restriction']).toBeUndefined()
-    expect(output.candidateDiff.semanticClassificationCounts['metadata-only']).toBe(2)
+    expect(output.candidateDiff.semanticClassificationCounts['metadata-only']).toBeUndefined()
+    expect(output.candidateDiff.semanticClassificationCounts['safe-additive']).toBeUndefined()
+    expect(output.candidateDiff.semanticClassificationCounts['source-mode-metadata-only']).toBe(1)
+    expect(output.candidateDiff.semanticClassificationCounts['validation-superset-review-only']).toBe(1)
+    expect(output.candidateDiff.semanticClassificationCounts['boundary-wording-review-required']).toBe(1)
     expect(output.candidateDiff.semanticClassificationCounts['output-requirement-loss']).toBeUndefined()
     expect(output.candidateDiff.semanticDiffRuleCoverage.unknownDiffs).toBe(0)
     expect(output.candidateDiff.semanticDiffRuleCoverage.unknownFields).toEqual([])
@@ -2853,6 +2924,12 @@ describe('read-model Evidence builder', () => {
       equivalenceCandidate: true,
       equivalenceProven: false,
       reviewOnlyDiffCount: 3,
+      reviewOnlyDiffClassifications: {
+        'source-mode-metadata-only': 1,
+        'validation-superset-review-only': 1,
+        'boundary-wording-review-required': 1,
+      },
+      boundaryWordingReviewRequired: true,
       blockingSemanticLossCount: 0,
       unknownDiffCount: 0,
       checklistBlockedCount: 0,
@@ -3062,12 +3139,16 @@ describe('read-model Evidence builder', () => {
     expect(output.contractCompilerDryRun.promotionReviewPacketPath).toBe(
       'examples/read-model-aggregate/generated/contract-compiler-promotion-review.preview.json',
     )
-    expect(output.contractCompilerDryRun.highestReviewSeverity).toBe('low')
+    expect(output.contractCompilerDryRun.highestReviewSeverity).toBe('medium')
     expect(output.contractCompilerDryRun.semanticClassificationCounts['semantic-loss']).toBeUndefined()
     expect(output.contractCompilerDryRun.semanticClassificationCounts['policy-loss']).toBeUndefined()
     expect(output.contractCompilerDryRun.semanticClassificationCounts['evidence-chain-mismatch']).toBeUndefined()
     expect(output.contractCompilerDryRun.semanticClassificationCounts['conservative-restriction']).toBeUndefined()
-    expect(output.contractCompilerDryRun.semanticClassificationCounts['metadata-only']).toBe(2)
+    expect(output.contractCompilerDryRun.semanticClassificationCounts['metadata-only']).toBeUndefined()
+    expect(output.contractCompilerDryRun.semanticClassificationCounts['safe-additive']).toBeUndefined()
+    expect(output.contractCompilerDryRun.semanticClassificationCounts['source-mode-metadata-only']).toBe(1)
+    expect(output.contractCompilerDryRun.semanticClassificationCounts['validation-superset-review-only']).toBe(1)
+    expect(output.contractCompilerDryRun.semanticClassificationCounts['boundary-wording-review-required']).toBe(1)
     expect(output.contractCompilerDryRun.semanticClassificationCounts['output-requirement-loss']).toBeUndefined()
     expect(output.contractCompilerDryRun.semanticDiffRuleCoverage.unknownDiffs).toBe(0)
     expect(output.contractCompilerDryRun.semanticDiffRuleCoverage.unknownFields).toEqual([])
@@ -3110,6 +3191,7 @@ describe('read-model Evidence builder', () => {
     expect(markdown).toContain('Contract compiler promotion review packet')
     expect(markdown).toContain('`promotion-review-ready-for-human`')
     expect(markdown).toContain('approval `not-approved`')
+    expect(markdown).toContain('boundary wording review required `true`')
     expect(markdown).toContain(
       '`examples/read-model-aggregate/generated/contract-compiler-promotion-review.preview.json`',
     )
@@ -3124,7 +3206,9 @@ describe('read-model Evidence builder', () => {
     expect(markdown).not.toContain('policy-loss: 1')
     expect(markdown).not.toContain('evidence-chain-mismatch: 1')
     expect(markdown).not.toContain('conservative-restriction: 1')
-    expect(markdown).toContain('metadata-only: 2')
+    expect(markdown).toContain('source-mode-metadata-only: 1')
+    expect(markdown).toContain('validation-superset-review-only: 1')
+    expect(markdown).toContain('boundary-wording-review-required: 1')
     expect(markdown).not.toContain('output-requirement-loss: 1')
     expect(markdown).toContain('unknown semantic diffs 0')
     expect(markdown).toContain('unknown fields none')

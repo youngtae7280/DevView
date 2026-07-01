@@ -1033,6 +1033,15 @@ non-goals, and human checklist so a later reviewer can approve, reject, or reque
 enable required checks, configure branch protection, introduce CI enforcement, retire tree-native artifacts, widen
 changeType support, or make the generated contract authoritative.
 
+DEC-184 does not supersede DEC-097 through DEC-183. It hardens the remaining Contract Compiler Promotion Review
+review-only diffs by classifying them as `source-mode-metadata-only`, `validation-superset-review-only`, and
+`boundary-wording-review-required`. The review packet now records required human checks and acceptance risk for each
+review-only diff, and health reports whether boundary wording review is required. `equivalenceCandidate` may remain
+true, but `equivalenceProven` remains false and `approvalStatus` remains `not-approved`. This does not approve compiler
+promotion, accept user work, execute AI, apply graph deltas, enable required checks, configure branch protection,
+introduce CI enforcement, retire tree-native artifacts, widen changeType support, or make the generated contract
+authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

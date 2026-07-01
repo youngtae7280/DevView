@@ -15,9 +15,14 @@ Status: draft human decision record
 
 ## Review-Only Diff Decision
 
+- Review-only diff summary reviewed: yes / no
 - Source mode difference accepted: yes / no / request changes
 - Additive health check difference accepted: yes / no / request changes
-- Boundary wording difference accepted: yes / no / request changes
+- Boundary wording preserves non-execution: yes / no / request changes
+- Boundary wording preserves non-approval: yes / no / request changes
+- Boundary wording preserves non-enforcement / no branch protection: yes / no / request changes
+- Boundary wording preserves no graph delta apply: yes / no / request changes
+- Review-only diff decision: approve review-only diffs / request wording change / reject promotion
 - Rationale:
 
 ## Decision

@@ -33,21 +33,27 @@
     "reviewOnlyDiffs": [
       {
         "field": "requiredChecks",
-        "classification": "safe-additive",
+        "classification": "validation-superset-review-only",
         "matchedRuleId": "semantic-diff-rule-required-checks-extra-safe-additive",
-        "reason": "The generated candidate adds a required check beyond the hand-written contract; this is additive but still review-only."
+        "reason": "The generated candidate adds the read-model health check beyond the hand-written contract; this is a validation superset for review only, not execution approval.",
+        "requiredHumanCheck": "Confirm the added health check is a non-weakening validation superset and not a new required check policy.",
+        "acceptanceRisk": "Low: additive validation is acceptable only if it remains non-enforcing and non-approval evidence."
       },
       {
         "field": "sourceMode",
-        "classification": "metadata-only",
+        "classification": "source-mode-metadata-only",
         "matchedRuleId": "semantic-diff-rule-source-mode-field-metadata-only",
-        "reason": "The sourceMode differs because one artifact is hand-written and the other is compiler-produced; review provenance but do not treat this as execution-scope loss."
+        "reason": "The sourceMode differs because one artifact is hand-written and the other is compiler-produced; review provenance but do not treat this as execution-scope loss.",
+        "requiredHumanCheck": "Confirm compiler-produced sourceMode provenance is expected and does not make the candidate authoritative.",
+        "acceptanceRisk": "Low: provenance can be accepted if the candidate remains review Evidence only."
       },
       {
         "field": "nonExecutionStatement",
-        "classification": "metadata-only",
+        "classification": "boundary-wording-review-required",
         "matchedRuleId": "semantic-diff-rule-non-execution-statement-field-metadata-only",
-        "reason": "The nonExecutionStatement wording differs between hand-written and compiler-produced artifacts; review boundary wording, but do not treat this as execution-scope loss."
+        "reason": "The nonExecutionStatement wording differs between hand-written and compiler-produced artifacts; a human reviewer must confirm the wording preserves non-execution, non-approval, non-enforcement, and no graph-delta boundaries.",
+        "requiredHumanCheck": "Confirm boundary wording preserves non-execution, non-approval, non-enforcement, no user acceptance, and no graph-delta apply meanings.",
+        "acceptanceRisk": "Medium: weakened wording could blur execution, approval, enforcement, user acceptance, or graph-delta boundaries."
       }
     ]
   },
@@ -165,6 +171,12 @@
     "equivalenceCandidate": true,
     "equivalenceProven": false,
     "reviewOnlyDiffCount": 3,
+    "reviewOnlyDiffClassifications": {
+      "validation-superset-review-only": 1,
+      "source-mode-metadata-only": 1,
+      "boundary-wording-review-required": 1
+    },
+    "boundaryWordingReviewRequired": true,
     "blockingSemanticLossCount": 0,
     "unknownDiffCount": 0,
     "checklistPassCount": 6,

@@ -240,6 +240,16 @@ summary, explicit non-goals, and a human checklist. The current packet status is
 `promotion-review-ready-for-human`, while `approvalStatus` remains `not-approved` and `equivalenceProven` remains
 `false`.
 
+The current review-only diffs are now narrowed into:
+
+- `source-mode-metadata-only`;
+- `validation-superset-review-only`;
+- `boundary-wording-review-required`.
+
+`boundary-wording-review-required` remains a human-review item because boundary wording must preserve non-execution,
+non-approval, non-enforcement, no user-acceptance, and no graph-delta-apply meanings before any later promotion
+decision.
+
 The optional decision template is:
 
 ```text
