@@ -28,6 +28,7 @@ import {
   validateAllReadModelEvidence,
   validateReadModelEvidence,
 } from '../core/read-model-evidence'
+import { reportCompilerBoundary, validateExecutionContract, validateTaskRegistry } from '../core/compiler-boundary'
 
 const workspaces: string[] = []
 const exampleWorkspacePaths = [
@@ -957,6 +958,16 @@ describe('read-model Evidence builder', () => {
       missingClassificationCount: 0,
       missingAnchorCount: 0,
     })
+    expect(report.compilerBoundary).toMatchObject({
+      status: 'compiler-boundary-mvp-pass',
+      taskRegistryStatus: 'task-registry-pass',
+      contractSchemaStatus: 'contract-schema-pass',
+      contractValidatorStatus: 'contract-validator-pass',
+      dryRunContractStatus: 'dry-run-contract-pass',
+      dryRunChangeId: 'change-todo-search-whitespace-normalization-dogfood',
+    })
+    expect(report.compilerBoundary.requiredCheckCount).toBeGreaterThan(0)
+    expect(report.compilerBoundary.requiredEvidenceCount).toBeGreaterThan(0)
     expect(report.edgeIntent.edgeIntentCount).toBeGreaterThan(0)
     expect(report.treeNativeRetirement).toMatchObject({
       readinessStatus: 'retirement-not-ready',
@@ -968,6 +979,89 @@ describe('read-model Evidence builder', () => {
     })
     expect(report.enforcementStatus).toBe('non-enforcing')
     expect(report.blockingReasons).toEqual([])
+  })
+
+  it('reports the Compiler Boundary MVP registry, schema, and dry-run contract without enforcement', async () => {
+    const workspace = await createExampleWorkspace()
+
+    const report = await reportCompilerBoundary(workspace)
+
+    expect(report.status).toBe('compiler-boundary-mvp-pass')
+    expect(report.taskRegistryStatus).toBe('task-registry-pass')
+    expect(report.contractSchemaStatus).toBe('contract-schema-pass')
+    expect(report.contractValidatorStatus).toBe('contract-validator-pass')
+    expect(report.dryRunContractStatus).toBe('dry-run-contract-pass')
+    expect(report.taskCounts.compilerRequired).toBeGreaterThan(0)
+    expect(report.taskCounts.aiAdvisory).toBeGreaterThan(0)
+    expect(report.dryRunContract).toMatchObject({
+      changeId: 'change-todo-search-whitespace-normalization-dogfood',
+      changeType: 'bug_fix',
+    })
+    expect(report.dryRunContract.requiredCheckCount).toBeGreaterThan(0)
+    expect(report.dryRunContract.requiredEvidenceCount).toBeGreaterThan(0)
+    expect(report.nonEnforcementStatement).toContain('does not enable required checks')
+    expect(report.blockingReasons).toEqual([])
+  })
+
+  it('exposes the Compiler Boundary MVP through the CLI', async () => {
+    const workspace = await createExampleWorkspace()
+
+    const result = await runPbeCli(['graph', 'read-model', 'report-compiler-boundary', '--json'], {
+      cwd: workspace,
+      pluginRoot: resolve('.'),
+    })
+    const output = JSON.parse(result.stdout) as {
+      ok: boolean
+      status: string
+      taskRegistryStatus: string
+      contractSchemaStatus: string
+      contractValidatorStatus: string
+      dryRunContractStatus: string
+    }
+
+    expect(result.exitCode).toBe(0)
+    expect(output.ok).toBe(true)
+    expect(output.status).toBe('compiler-boundary-mvp-pass')
+    expect(output.taskRegistryStatus).toBe('task-registry-pass')
+    expect(output.contractSchemaStatus).toBe('contract-schema-pass')
+    expect(output.contractValidatorStatus).toBe('contract-validator-pass')
+    expect(output.dryRunContractStatus).toBe('dry-run-contract-pass')
+  })
+
+  it('blocks Compiler Boundary MVP when advisory tasks claim execution authority', async () => {
+    const registryPath = 'examples/read-model-aggregate/compiler-boundary-task-registry.json'
+    const registry = JSON.parse(await readFile(registryPath, 'utf8')) as { tasks: Array<Record<string, unknown>> }
+    const advisory = registry.tasks.find((task) => task.classification === 'ai-advisory')
+    expect(advisory).toBeTruthy()
+    advisory!.executionAuthority = true
+
+    const validation = validateTaskRegistry(registry)
+
+    expect(validation.blocking.join('\n')).toContain('ai-advisory task must have executionAuthority false')
+  })
+
+  it('blocks dry-run contracts with critical unknowns or high risks without human decisions', async () => {
+    const contractPath = 'examples/read-model-aggregate/generated/execution-contract-dry-run.json'
+    const contract = JSON.parse(await readFile(contractPath, 'utf8')) as Record<string, unknown>
+
+    const criticalUnknownContract = {
+      ...contract,
+      openUnknowns: [
+        { id: 'unknown-printer-protocol', severity: 'critical', status: 'open', question: 'Need device?' },
+      ],
+    }
+    expect(validateExecutionContract(criticalUnknownContract).blocking.join('\n')).toContain(
+      'blocking critical unknown',
+    )
+
+    const highRiskContract = {
+      ...contract,
+      knownRisks: [{ id: 'risk-driver-protocol', severity: 'high', status: 'open' }],
+      humanDecisions: [],
+    }
+    expect(validateExecutionContract(highRiskContract).blocking.join('\n')).toContain(
+      'high risk without human decision',
+    )
   })
 
   it('exposes graph-source health through the CLI without creating enforcement', async () => {
@@ -985,6 +1079,7 @@ describe('read-model Evidence builder', () => {
       enforcementStatus: string
       markdownReport: string
       treeNativeRetirement: { todoSearchApprovalStatus: string; repoWideApprovalStatus: string }
+      compilerBoundary: { status: string; dryRunChangeId: string }
     }
     const markdown = await readFile(markdownPath, 'utf8')
 
@@ -993,6 +1088,8 @@ describe('read-model Evidence builder', () => {
     expect(output.status).toBe('graph-source-health-pass')
     expect(output.markdownReport).toBe('examples/read-model-aggregate/generated/read-model-health-report-output.md')
     expect(output.enforcementStatus).toBe('non-enforcing')
+    expect(output.compilerBoundary.status).toBe('compiler-boundary-mvp-pass')
+    expect(output.compilerBoundary.dryRunChangeId).toBe('change-todo-search-whitespace-normalization-dogfood')
     expect(output.treeNativeRetirement.todoSearchApprovalStatus).toBe('retirement-candidate-not-deleted')
     expect(output.treeNativeRetirement.repoWideApprovalStatus).toBe('not-ready')
     expect(markdown).toContain('# Graph-Source Health Report')
@@ -1001,6 +1098,7 @@ describe('read-model Evidence builder', () => {
     expect(markdown).toContain('Todo App PBE Run')
     expect(markdown).toContain('`aggregate-pass`')
     expect(markdown).toContain('`intent-report-pass`')
+    expect(markdown).toContain('`compiler-boundary-mvp-pass`')
     expect(markdown).toContain('`retirement-not-ready`')
     expect(markdown).toContain('`non-enforcing`')
     expect(markdown).toContain('node dist/cli/index.js graph read-model report-health --json --markdown')

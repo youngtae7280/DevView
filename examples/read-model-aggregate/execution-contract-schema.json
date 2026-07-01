@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "execution-contract-mvp-schema",
+  "status": "compiler-boundary-mvp",
+  "requiredFields": [
+    "changeId",
+    "changeType",
+    "goal",
+    "allowedScope",
+    "forbiddenScope",
+    "requiredContext",
+    "requiredChecks",
+    "requiredEvidence",
+    "knownRisks",
+    "openUnknowns",
+    "humanDecisions",
+    "stopConditions",
+    "outputRequirements"
+  ],
+  "fieldDefinitions": {
+    "changeId": {
+      "type": "string",
+      "source": "Change Node",
+      "authority": "compiler"
+    },
+    "changeType": {
+      "type": "string",
+      "source": "Change Type Router",
+      "authority": "compiler"
+    },
+    "goal": {
+      "type": "string",
+      "source": "Change Node",
+      "authority": "compiler"
+    },
+    "allowedScope": {
+      "type": "array",
+      "source": "Scope Compiler",
+      "authority": "compiler"
+    },
+    "forbiddenScope": {
+      "type": "array",
+      "source": "Scope Compiler",
+      "authority": "compiler"
+    },
+    "requiredContext": {
+      "type": "array",
+      "source": "View Tree Pack Extractor",
+      "authority": "compiler"
+    },
+    "requiredChecks": {
+      "type": "array",
+      "source": "Check Policy",
+      "authority": "compiler"
+    },
+    "requiredEvidence": {
+      "type": "array",
+      "source": "Evidence Policy",
+      "authority": "compiler"
+    },
+    "knownRisks": {
+      "type": "array",
+      "source": "Risk Policy",
+      "authority": "compiler"
+    },
+    "openUnknowns": {
+      "type": "array",
+      "source": "Unknown Policy",
+      "authority": "compiler"
+    },
+    "humanDecisions": {
+      "type": "array",
+      "source": "Human Decision Gate",
+      "authority": "human"
+    },
+    "stopConditions": {
+      "type": "array",
+      "source": "Stop Condition Policy",
+      "authority": "compiler"
+    },
+    "outputRequirements": {
+      "type": "array",
+      "source": "Report/Artifact Policy",
+      "authority": "compiler"
+    }
+  },
+  "nonEnforcementStatement": "This MVP schema validates compiler-boundary shape only and does not enable required checks, branch protection, automatic execution, acceptance, or tree retirement."
+}

@@ -1,5 +1,6 @@
 import { relativePath } from '../core/fs.js'
 import { buildGraphExecutionContractReport } from '../core/graph-execution-contract.js'
+import { reportCompilerBoundary } from '../core/compiler-boundary.js'
 import {
   applyGraphUpdateProposal,
   captureGraphDelta,
@@ -501,6 +502,30 @@ export async function graphReadModelReportHealthCommand(context: CommandContext)
       ...result,
       ...(markdownReportPath ? { markdownReport: relativePath(context.options.root, markdownReportPath) } : {}),
     },
+  }
+}
+
+export async function graphReadModelReportCompilerBoundaryCommand(context: CommandContext): Promise<CommandResult> {
+  const result = await reportCompilerBoundary(context.options.root)
+  const failed = result.status === 'compiler-boundary-mvp-blocked'
+  return {
+    ok: !failed,
+    command: 'graph read-model report-compiler-boundary',
+    exitCode: failed ? ExitCode.ValidationFailed : ExitCode.Success,
+    message: failed ? 'Compiler Boundary MVP report blocked.' : 'Compiler Boundary MVP report passed.',
+    issues: failed
+      ? result.blockingReasons.map((message) =>
+          issue({
+            validator: 'CompilerBoundaryMvp',
+            code: 'COMPILER_BOUNDARY_MVP_BLOCKED',
+            severity: 'error',
+            message,
+            suggestedFix:
+              'Restore the compiler boundary task registry, contract schema, and dry-run execution contract fixture.',
+          }),
+        )
+      : [],
+    data: { ...result },
   }
 }
 

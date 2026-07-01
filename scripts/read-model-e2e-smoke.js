@@ -321,6 +321,29 @@ try {
   assertIncludes(intentKinds, 'native-pbe', 'edgeIntent report fixture kinds')
   assertIncludes(intentKinds, 'retrofit-pbe', 'edgeIntent report fixture kinds')
 
+  const compilerBoundary = runCli(['graph', 'read-model', 'report-compiler-boundary', '--json'])
+  assertEqual(compilerBoundary.status, 'compiler-boundary-mvp-pass', 'compiler boundary status')
+  assertEqual(compilerBoundary.taskRegistryStatus, 'task-registry-pass', 'compiler boundary task registry status')
+  assertEqual(compilerBoundary.contractSchemaStatus, 'contract-schema-pass', 'compiler boundary contract schema status')
+  assertEqual(
+    compilerBoundary.contractValidatorStatus,
+    'contract-validator-pass',
+    'compiler boundary contract validator status',
+  )
+  assertEqual(compilerBoundary.dryRunContractStatus, 'dry-run-contract-pass', 'compiler boundary dry-run status')
+  if (compilerBoundary.taskCounts.compilerRequired <= 0) {
+    throw new Error('Compiler boundary report must include compiler-required tasks')
+  }
+  if (compilerBoundary.taskCounts.aiAdvisory <= 0) {
+    throw new Error('Compiler boundary report must include ai-advisory tasks')
+  }
+  if (compilerBoundary.dryRunContract.requiredCheckCount <= 0) {
+    throw new Error('Compiler boundary dry-run contract must include required checks')
+  }
+  if (compilerBoundary.dryRunContract.requiredEvidenceCount <= 0) {
+    throw new Error('Compiler boundary dry-run contract must include required evidence')
+  }
+
   const payload = {
     ok: true,
     command: 'test:read-model:e2e',
@@ -381,6 +404,19 @@ try {
       missingAnchorCount: intentReport.missingAnchorCount,
       fixtureKinds: intentReport.fixtures.map((entry) => entry.sourceExampleKind),
       separatedFromValidateAll: true,
+    },
+    compilerBoundary: {
+      status: compilerBoundary.status,
+      taskRegistryStatus: compilerBoundary.taskRegistryStatus,
+      contractSchemaStatus: compilerBoundary.contractSchemaStatus,
+      contractValidatorStatus: compilerBoundary.contractValidatorStatus,
+      dryRunContractStatus: compilerBoundary.dryRunContractStatus,
+      compilerRequiredTaskCount: compilerBoundary.taskCounts.compilerRequired,
+      aiAdvisoryTaskCount: compilerBoundary.taskCounts.aiAdvisory,
+      dryRunChangeId: compilerBoundary.dryRunContract.changeId,
+      requiredCheckCount: compilerBoundary.dryRunContract.requiredCheckCount,
+      requiredEvidenceCount: compilerBoundary.dryRunContract.requiredEvidenceCount,
+      nonEnforcing: true,
     },
   }
 

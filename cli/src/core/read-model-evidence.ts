@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { format } from 'prettier'
+import { reportCompilerBoundary, type CompilerBoundaryReport } from './compiler-boundary.js'
 import { readJsonSafe, readTextSafe, relativePath, writeTextAtomic } from './fs.js'
 
 const allowedViewScopedTags = ['target', 'context', 'candidate', 'guard', 'required', 'stale', 'blocked', 'output']
@@ -475,6 +476,14 @@ interface GraphSourceHealthReport {
     | 'missingClassificationCount'
     | 'missingAnchorCount'
   >
+  compilerBoundary: Pick<
+    CompilerBoundaryReport,
+    'status' | 'taskRegistryStatus' | 'contractSchemaStatus' | 'contractValidatorStatus' | 'dryRunContractStatus'
+  > & {
+    dryRunChangeId: string
+    requiredCheckCount: number
+    requiredEvidenceCount: number
+  }
   treeNativeRetirement: {
     readinessStatus: string
     todoSearchApprovalStatus: string
@@ -1295,6 +1304,12 @@ export async function reportGraphSourceHealth(root: string): Promise<GraphSource
     blockingReasons.push('edgeIntent report has missing classification or anchor counts')
   }
 
+  const compilerBoundary = await reportCompilerBoundary(root)
+  if (compilerBoundary.status !== 'compiler-boundary-mvp-pass') {
+    blockingReasons.push(`compiler boundary status is ${compilerBoundary.status}`)
+  }
+  blockingReasons.push(...compilerBoundary.blockingReasons.map((reason) => `compiler boundary: ${reason}`))
+
   const todoSearchTransition = findByField(transitionSlices, 'profileId', todoSearchReadModelProfile.profileId)
   const todoAppTransition = findByField(transitionSlices, 'profileId', todoAppPbeRunStructureOnlyProfile.profileId)
   const todoSearchRetirement = asRecord(todoSearchTransition.retirementReadiness, 'todoSearch.retirementReadiness', [])
@@ -1358,6 +1373,16 @@ export async function reportGraphSourceHealth(root: string): Promise<GraphSource
       missingClassificationCount: intentReport.missingClassificationCount,
       missingAnchorCount: intentReport.missingAnchorCount,
     },
+    compilerBoundary: {
+      status: compilerBoundary.status,
+      taskRegistryStatus: compilerBoundary.taskRegistryStatus,
+      contractSchemaStatus: compilerBoundary.contractSchemaStatus,
+      contractValidatorStatus: compilerBoundary.contractValidatorStatus,
+      dryRunContractStatus: compilerBoundary.dryRunContractStatus,
+      dryRunChangeId: compilerBoundary.dryRunContract.changeId,
+      requiredCheckCount: compilerBoundary.dryRunContract.requiredCheckCount,
+      requiredEvidenceCount: compilerBoundary.dryRunContract.requiredEvidenceCount,
+    },
     treeNativeRetirement: {
       readinessStatus: String(retirementReadinessSummary.status || 'missing'),
       todoSearchApprovalStatus: String(todoSearchPackage.status || 'missing'),
@@ -1409,6 +1434,11 @@ Status: \`${report.status}\`
 | edgeIntent report | \`${report.edgeIntent.status}\`; ${report.edgeIntent.edgeIntentCount} edgeIntents / ${report.edgeIntent.claimCount} claims / ${report.edgeIntent.classificationCount} classifications / ${report.edgeIntent.anchorCount} anchors |
 | Missing edgeIntent classifications | \`${report.edgeIntent.missingClassificationCount}\` |
 | Missing edgeIntent anchors | \`${report.edgeIntent.missingAnchorCount}\` |
+| Compiler Boundary MVP | \`${report.compilerBoundary.status}\` |
+| Compiler task registry | \`${report.compilerBoundary.taskRegistryStatus}\` |
+| Execution contract schema | \`${report.compilerBoundary.contractSchemaStatus}\` |
+| Dry-run contract validator | \`${report.compilerBoundary.contractValidatorStatus}\` |
+| Dry-run contract | \`${report.compilerBoundary.dryRunContractStatus}\`; \`${report.compilerBoundary.dryRunChangeId}\`; ${report.compilerBoundary.requiredCheckCount} checks / ${report.compilerBoundary.requiredEvidenceCount} evidence requirements |
 
 ## Retirement And Enforcement
 
@@ -1437,6 +1467,7 @@ ${blockingReasons}
 npm run build:cli
 node dist/cli/index.js graph read-model validate --all --json
 npm run test:read-model:e2e
+node dist/cli/index.js graph read-model report-compiler-boundary --json
 node dist/cli/index.js graph read-model report-health --json --markdown examples/read-model-aggregate/generated/read-model-health-report-output.md
 \`\`\`
 `

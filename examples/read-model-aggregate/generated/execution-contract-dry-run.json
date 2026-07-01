@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "execution-contract-dry-run",
+  "status": "contract-dry-run-valid",
+  "sourceMode": "compiler-boundary-mvp-dry-run",
+  "changeId": "change-todo-search-whitespace-normalization-dogfood",
+  "changeType": "bug_fix",
+  "goal": "Preserve Todo Search matching when a multi-word query contains repeated whitespace.",
+  "allowedScope": [
+    {
+      "id": "scope-runtime-search-filter",
+      "scopeKind": "code",
+      "paths": ["examples/adoption/todo-search-slice/runtime-fixture/search-filter.ts"],
+      "derivedFrom": ["work:WT-SEARCH-001", "test:VT-SEARCH-001"]
+    },
+    {
+      "id": "scope-runtime-search-test",
+      "scopeKind": "test",
+      "paths": ["examples/adoption/todo-search-slice/runtime-fixture/search-filter.test.ts"],
+      "derivedFrom": ["test:VT-SEARCH-001"]
+    },
+    {
+      "id": "scope-todo-search-evidence",
+      "scopeKind": "evidence",
+      "paths": [
+        "examples/adoption/todo-search-slice/runtime-evidence.md",
+        "docs/concept/tiny-behavior-change-dogfood.md"
+      ],
+      "derivedFrom": ["evidence:EV-SEARCH-RUNTIME-001"]
+    }
+  ],
+  "forbiddenScope": [
+    {
+      "id": "scope-no-product-meaning-expansion",
+      "scopeKind": "product",
+      "paths": ["examples/adoption/todo-search-slice/product-tree.json"],
+      "derivedFrom": ["intent:todo-search-selected-slice"]
+    },
+    {
+      "id": "scope-no-ci-enforcement",
+      "scopeKind": "workflow",
+      "paths": [".github/workflows/read-model-evidence.yml"],
+      "derivedFrom": ["policy:non-enforcing-read-model-evidence"]
+    }
+  ],
+  "requiredContext": [
+    {
+      "id": "context-read-model-health",
+      "artifact": "examples/read-model-aggregate/generated/read-model-health-report-output.json",
+      "role": "non-enforcing status context"
+    },
+    {
+      "id": "context-todo-search-graph-source",
+      "artifact": "examples/adoption/todo-search-slice/graph-source.json",
+      "role": "limited graph-source context"
+    }
+  ],
+  "requiredChecks": [
+    {
+      "id": "check-todo-search-runtime-fixture",
+      "command": "npx vitest run examples/adoption/todo-search-slice/runtime-fixture",
+      "validates": ["examples/adoption/todo-search-slice/runtime-fixture/search-filter.ts"]
+    },
+    {
+      "id": "check-read-model-validate-all",
+      "command": "node dist/cli/index.js graph read-model validate --all --json",
+      "validates": ["examples/read-model-aggregate/read-model-slices.json"]
+    },
+    {
+      "id": "check-read-model-e2e",
+      "command": "npm run test:read-model:e2e",
+      "validates": ["examples/read-model-aggregate/graph-source-transition-status.json"]
+    }
+  ],
+  "requiredEvidence": [
+    {
+      "id": "evidence-runtime-fixture-result",
+      "evidenceType": "unit_test_result",
+      "fromCheck": "check-todo-search-runtime-fixture",
+      "freshness": "required-after-source-change"
+    },
+    {
+      "id": "evidence-validate-all-result",
+      "evidenceType": "validator_output",
+      "fromCheck": "check-read-model-validate-all",
+      "freshness": "required-after-graph-or-artifact-change"
+    }
+  ],
+  "knownRisks": [
+    {
+      "id": "risk-query-tokenization-regression",
+      "severity": "warning",
+      "status": "mitigated",
+      "mitigation": "Runtime fixture must prove repeated whitespace does not prevent matching."
+    }
+  ],
+  "openUnknowns": [],
+  "humanDecisions": [],
+  "stopConditions": [
+    {
+      "id": "stop-if-scope-expands",
+      "condition": "Any production, workflow, source-authority, or tree-retirement change is required.",
+      "action": "Stop and request a new human decision."
+    },
+    {
+      "id": "stop-if-required-check-unavailable",
+      "condition": "Required runtime or read-model checks cannot be executed.",
+      "action": "Stop and record missing evidence instead of accepting completion."
+    }
+  ],
+  "outputRequirements": [
+    "Report changed files from actual git diff only.",
+    "Report check and evidence status from command output only.",
+    "Do not treat this dry-run contract as user acceptance or branch protection."
+  ],
+  "nonExecutionStatement": "This dry-run contract proves the Compiler Boundary MVP shape only. It does not execute work, enable required checks, or accept the change."
+}

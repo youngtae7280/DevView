@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "compiler-boundary-task-registry",
+  "status": "compiler-boundary-mvp",
+  "boundaryPrinciple": {
+    "aiOutput": "advisory",
+    "compilerOutput": "authoritative",
+    "humanRole": "decides"
+  },
+  "tasks": [
+    {
+      "taskId": "change-node-create",
+      "classification": "compiler-required",
+      "reason": "Every executable request must become a traceable Change node before AI execution.",
+      "inputs": ["humanRequest", "requestSource", "requestTimestamp", "maintainabilityGraph"],
+      "outputs": ["changeNode", "changeGoal", "initialUnknowns", "initialRisks"],
+      "requiredRelations": ["Request creates Change", "Change relates_to Intent", "Change has_unknown Unknown"],
+      "validationRules": ["Change must derive from exactly one Request", "Change must include a non-empty goal"],
+      "executionAuthority": true
+    },
+    {
+      "taskId": "change-type-route",
+      "classification": "compiler-required",
+      "reason": "Change type selects pack schema, check policy, evidence policy, and risk policy.",
+      "inputs": ["changeNode", "humanRequest", "keywordClassifier", "relatedNodeCandidates"],
+      "outputs": ["changeType", "confidence", "requiredPackSchema", "requiredPolicies"],
+      "requiredRelations": ["Change classified_as ChangeType", "ChangeType requires_pack PackSchema"],
+      "validationRules": ["Low confidence blocks AI execution", "Conflicting types require HumanDecision"],
+      "executionAuthority": true
+    },
+    {
+      "taskId": "view-tree-pack-extract",
+      "classification": "compiler-required",
+      "reason": "AI must receive a bounded subgraph, not freely chosen context or the full graph.",
+      "inputs": ["changeNode", "changeType", "packSchema", "allowedEdgeTypes", "traversalDepth"],
+      "outputs": ["viewTreePack", "includedNodes", "includedEdges", "missingRequiredNodes", "staleNodes"],
+      "requiredRelations": ["Change uses_pack ViewTreePack", "ViewTreePack compiled_from MaintainabilityGraph"],
+      "validationRules": ["Missing required node blocks contract generation", "Critical Unknown blocks execution"],
+      "executionAuthority": true
+    },
+    {
+      "taskId": "scope-compute",
+      "classification": "compiler-required",
+      "reason": "Allowed and forbidden scope directly control what AI may change.",
+      "inputs": ["changeNode", "viewTreePack", "affectedCodeNodes", "ownershipMetadata", "riskPolicy"],
+      "outputs": ["allowedScope", "forbiddenScope", "readonlyContext", "scopeViolationPolicy"],
+      "requiredRelations": ["ExecutionContract allows Scope", "ExecutionContract forbids Scope"],
+      "validationRules": ["Empty allowedScope blocks execution", "Forbidden scope changes block acceptance"],
+      "executionAuthority": true
+    },
+    {
+      "taskId": "execution-contract-compile",
+      "classification": "compiler-required",
+      "reason": "Execution contracts must be compiled from graph and policy facts rather than AI prose.",
+      "inputs": ["changeNode", "viewTreePack", "allowedScope", "forbiddenScope", "checkPolicy", "evidencePolicy"],
+      "outputs": ["executionContractJson", "contractMarkdown", "executorPrompt", "contractValidationResult"],
+      "requiredRelations": ["Change has_contract ExecutionContract", "ExecutionContract compiled_from ViewTreePack"],
+      "validationRules": [
+        "Contract must include goal, scope, checks, evidence, and stop conditions",
+        "Invalid contract blocks AI executor"
+      ],
+      "executionAuthority": true
+    },
+    {
+      "taskId": "required-check-select",
+      "classification": "compiler-required",
+      "reason": "Required checks are completion conditions and cannot be downgraded by AI.",
+      "inputs": ["changeType", "affectedCodeNodes", "riskTier", "testIndex", "checkPolicyVersion"],
+      "outputs": ["requiredChecks", "optionalChecks", "checkTier", "recheckRequired"],
+      "requiredRelations": ["Change requires_check Check", "Check validates Code"],
+      "validationRules": ["Code changes require at least one Check", "Protocol or driver changes need stronger checks"],
+      "executionAuthority": true
+    },
+    {
+      "taskId": "required-evidence-select",
+      "classification": "compiler-required",
+      "reason": "Evidence is the proof of completion and freshness must be computed from digests.",
+      "inputs": ["requiredChecks", "changeType", "evidencePolicy", "riskTier", "previousEvidence"],
+      "outputs": ["requiredEvidence", "freshnessRequirement", "evidenceFormat"],
+      "requiredRelations": ["Check has_evidence Evidence", "Evidence has_digest SourceDigest"],
+      "validationRules": ["Completed Check requires Evidence", "Stale Evidence cannot support acceptance"],
+      "executionAuthority": true
+    },
+    {
+      "taskId": "question-render",
+      "classification": "ai-advisory",
+      "reason": "AI may phrase a human decision request after compiler has fixed the options and safe default.",
+      "inputs": ["humanDecisionRequest", "decisionType", "options", "defaultSafeOption"],
+      "outputs": ["questionText", "optionDescriptions", "riskExplanation"],
+      "requiredRelations": ["QuestionText renders HumanDecisionRequest"],
+      "validationRules": ["Question text must not change options", "Question text must not reduce risk severity"],
+      "executionAuthority": false
+    },
+    {
+      "taskId": "narrative-summary",
+      "classification": "ai-advisory",
+      "reason": "AI may make compiler facts readable, but cannot add or override facts.",
+      "inputs": ["reportFactBlock", "executionContract", "acceptanceResult"],
+      "outputs": ["humanReadableSummary", "nextStepSuggestion"],
+      "requiredRelations": ["NarrativeReport renders ReportFactBlock"],
+      "validationRules": ["Narrative must not conflict with Fact Block", "Failed checks must not be described as pass"],
+      "executionAuthority": false
+    },
+    {
+      "taskId": "optional-test-idea-suggest",
+      "classification": "ai-advisory",
+      "reason": "AI may suggest extra tests, but CheckPolicy decides whether any suggestion becomes required.",
+      "inputs": ["changeType", "viewTreePack", "affectedCode", "knownRisks"],
+      "outputs": ["optionalTestIdeas", "edgeCaseSuggestions"],
+      "requiredRelations": ["AITestSuggestion suggests Check"],
+      "validationRules": [
+        "Suggestion is optional until CheckCompiler promotes it",
+        "AI cannot mark required checks optional"
+      ],
+      "executionAuthority": false
+    }
+  ]
+}

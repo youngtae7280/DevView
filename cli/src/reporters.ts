@@ -158,6 +158,8 @@ Commands:
                        Project an intent-critical Graph source fixture into edge-intent read-model projection output
   graph read-model report-intent
                        Summarize local native/retrofit edge-intent projection health without validate-all enforcement
+  graph read-model report-compiler-boundary
+                       Validate the local non-enforcing Compiler Boundary MVP registry, schema, and dry-run contract
   graph read-model report-health
                        Summarize local non-enforcing Graph-source transition health
   graph read-model observe-candidates

@@ -819,6 +819,13 @@ for restartable init-container behavior. Focused tests verify the expanded ancho
 remains read-only external dogfood Evidence and still does not clone or mutate Kubernetes, run Kubernetes tests, claim
 maintainer approval, create upstream PRs, enable enforcement, or expand source authority.
 
+DEC-160 does not supersede DEC-097 through DEC-159. It adds the Compiler Boundary MVP: a compiler-required vs
+AI-advisory task registry, an Execution Contract MVP schema, a Todo Search dry-run execution contract fixture, the local
+`pbe graph read-model report-compiler-boundary --json` report command, and health/E2E observation of compiler boundary
+status. This proves that execution-affecting contract facts can be validated as compiler-owned artifacts before AI
+execution. It remains non-enforcing and does not enable required checks, branch protection, automatic AI execution,
+acceptance, graph delta application, source-authority expansion, or tree-native retirement.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

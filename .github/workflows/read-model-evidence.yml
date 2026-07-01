@@ -45,6 +45,7 @@ jobs:
       PBE_EDGE_INTENT_OBSERVATION_OUTPUT: examples/read-model-aggregate/generated/read-model-edge-intent-observation-output.json
       PBE_HEALTH_REPORT_OUTPUT: examples/read-model-aggregate/generated/read-model-health-report-output.json
       PBE_HEALTH_REPORT_MARKDOWN: examples/read-model-aggregate/generated/read-model-health-report-output.md
+      PBE_COMPILER_BOUNDARY_OUTPUT: examples/read-model-aggregate/generated/read-model-compiler-boundary-output.json
       PBE_OPERATION_CHAIN_REPORT: outputs/pbe-operation-chain/operation-chain-report.json
       PBE_DOGFOOD_EVALUATION_REPORT: outputs/pbe-operation-chain/dogfood-evaluation.json
     steps:
@@ -76,6 +77,11 @@ jobs:
         run: |
           mkdir -p "$PBE_AGGREGATE_DIR"
           node scripts/read-model-e2e-smoke.js --output "$PBE_E2E_SMOKE_OUTPUT"
+
+      - name: Report Compiler Boundary MVP
+        run: |
+          mkdir -p "$PBE_AGGREGATE_DIR"
+          node dist/cli/index.js graph read-model report-compiler-boundary --json 2>&1 | tee "$PBE_COMPILER_BOUNDARY_OUTPUT"
 
       - name: Observe intent-critical edgeIntent projections
         run: |
@@ -164,6 +170,7 @@ jobs:
           const edgeIntentObservationOutputPath = process.env.PBE_EDGE_INTENT_OBSERVATION_OUTPUT
           const healthReportOutputPath = process.env.PBE_HEALTH_REPORT_OUTPUT
           const healthReportMarkdownPath = process.env.PBE_HEALTH_REPORT_MARKDOWN
+          const compilerBoundaryOutputPath = process.env.PBE_COMPILER_BOUNDARY_OUTPUT
           const operationChainReportPath = process.env.PBE_OPERATION_CHAIN_REPORT
           const dogfoodEvaluationReportPath = process.env.PBE_DOGFOOD_EVALUATION_REPORT
           const aggregateSlices = (process.env.PBE_AGGREGATE_SLICES || '')
@@ -185,6 +192,7 @@ jobs:
           const e2eSmokeOutput = readJson(e2eSmokeOutputPath)
           const edgeIntentObservationOutput = readJson(edgeIntentObservationOutputPath)
           const healthReportOutput = readJson(healthReportOutputPath)
+          const compilerBoundaryOutput = readJson(compilerBoundaryOutputPath)
           const operationChainReport = readJson(operationChainReportPath)
           const dogfoodEvaluationReport = readJson(dogfoodEvaluationReportPath)
           const eventName = process.env.GITHUB_EVENT_NAME || 'workflow_dispatch'
@@ -223,6 +231,8 @@ jobs:
           const edgeIntentProjectionPass = edgeIntentProjectionObservationStatus === 'edge-intent-projection-pass'
           const healthReportStatus = healthReportOutput?.status || 'missing'
           const healthReportPass = healthReportStatus === 'graph-source-health-pass'
+          const compilerBoundaryStatus = compilerBoundaryOutput?.status || 'missing'
+          const compilerBoundaryPass = compilerBoundaryStatus === 'compiler-boundary-mvp-pass'
           const operationChainStatus = operationChainReport?.status || 'missing'
           const operationChainPass = operationChainStatus === 'pbe-operation-chain-pass'
           const dogfoodEvaluationStatus = dogfoodEvaluationReport?.status || 'missing'
@@ -238,6 +248,7 @@ jobs:
             e2eSmokePass &&
             edgeIntentProjectionPass &&
             healthReportPass &&
+            compilerBoundaryPass &&
             operationChainPass &&
             dogfoodEvaluationPass
               ? 'ci-evidence-pass'
@@ -270,6 +281,7 @@ jobs:
             e2eSmokeStatus,
             edgeIntentProjectionObservationStatus,
             healthReportStatus,
+            compilerBoundaryStatus,
             operationChainStatus,
             dogfoodEvaluationStatus,
             generatedAt: new Date().toISOString(),
@@ -345,6 +357,19 @@ jobs:
               nonEnforcementStatement: healthReportOutput?.nonEnforcementStatement || null,
               requiredCheckBoundary: healthReportOutput?.requiredCheckBoundary || null,
             },
+            compilerBoundary: {
+              status: compilerBoundaryStatus,
+              artifactPath: compilerBoundaryOutputPath,
+              taskRegistryStatus: compilerBoundaryOutput?.taskRegistryStatus || 'missing',
+              contractSchemaStatus: compilerBoundaryOutput?.contractSchemaStatus || 'missing',
+              contractValidatorStatus: compilerBoundaryOutput?.contractValidatorStatus || 'missing',
+              dryRunContractStatus: compilerBoundaryOutput?.dryRunContractStatus || 'missing',
+              dryRunContract: compilerBoundaryOutput?.dryRunContract || null,
+              nonEnforcementStatement: compilerBoundaryOutput?.nonEnforcementStatement || null,
+              aiBoundary: compilerBoundaryOutput?.aiBoundary || null,
+              compilerBoundary: compilerBoundaryOutput?.compilerBoundary || null,
+              humanDecisionBoundary: compilerBoundaryOutput?.humanDecisionBoundary || null,
+            },
             pbeOperationChain: {
               status: operationChainStatus,
               artifactPath: operationChainReportPath,
@@ -417,6 +442,7 @@ jobs:
               process.env.PBE_INTENT_RETROFIT_PROJECTION,
               healthReportOutputPath,
               healthReportMarkdownPath,
+              compilerBoundaryOutputPath,
               operationChainReportPath,
               dogfoodEvaluationReportPath,
             ],
@@ -474,6 +500,11 @@ jobs:
           const healthEdgeIntentCount = manifest?.healthReport?.edgeIntent?.edgeIntentCount ?? 'missing'
           const healthRetirement = manifest?.healthReport?.treeNativeRetirement?.readinessStatus || 'missing'
           const healthEnforcement = manifest?.healthReport?.enforcementStatus || 'missing'
+          const compilerBoundaryStatus = manifest?.compilerBoundaryStatus || 'missing'
+          const compilerTaskRegistry = manifest?.compilerBoundary?.taskRegistryStatus || 'missing'
+          const compilerContractSchema = manifest?.compilerBoundary?.contractSchemaStatus || 'missing'
+          const compilerContractValidator = manifest?.compilerBoundary?.contractValidatorStatus || 'missing'
+          const compilerDryRun = manifest?.compilerBoundary?.dryRunContractStatus || 'missing'
           const operationChainStatus = manifest?.operationChainStatus || 'missing'
           const dogfoodEvaluationStatus = manifest?.dogfoodEvaluationStatus || 'missing'
           const includedSlices = manifest?.includedSlices || []
@@ -501,6 +532,11 @@ jobs:
             `- Health edgeIntent status/count: \`${healthEdgeIntent}\` / \`${healthEdgeIntentCount}\``,
             `- Health retirement readiness: \`${healthRetirement}\``,
             `- Health enforcement status: \`${healthEnforcement}\``,
+            `- Compiler Boundary MVP status: \`${compilerBoundaryStatus}\``,
+            `- Compiler task registry: \`${compilerTaskRegistry}\``,
+            `- Execution contract schema: \`${compilerContractSchema}\``,
+            `- Execution contract validator: \`${compilerContractValidator}\``,
+            `- Dry-run execution contract: \`${compilerDryRun}\``,
             `- PBE operation-chain status: \`${operationChainStatus}\``,
             `- PBE dogfood evaluation status: \`${dogfoodEvaluationStatus}\``,
             `- Aggregate status: \`${aggregateStatus}\``,
@@ -553,6 +589,8 @@ jobs:
             examples/read-model-aggregate/generated/read-model-edge-intent-retrofit-output.json
             examples/read-model-aggregate/generated/read-model-health-report-output.json
             examples/read-model-aggregate/generated/read-model-health-report-output.md
+            examples/read-model-aggregate/generated/read-model-compiler-boundary-output.json
+            examples/read-model-aggregate/generated/execution-contract-dry-run.json
             outputs/pbe-operation-chain/**
             outputs/native/**
             outputs/retrofit/**

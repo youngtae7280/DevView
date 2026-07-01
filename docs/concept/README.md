@@ -177,6 +177,16 @@ It maps Kubernetes KEP-753 Sidecar Containers from KEP goals, non-goals, risks, 
 Kubernetes code/test surfaces. This pass is read-only and proves instruction-pack readiness without cloning, mutating,
 testing, or claiming maintainer approval for Kubernetes.
 
+The first Compiler Boundary MVP is recorded in:
+
+- [pbe-compiler-boundary.md](pbe-compiler-boundary.md)
+
+It separates compiler-required work from AI-advisory work, adds a machine-readable task registry and Execution Contract
+MVP schema, validates a Todo Search dry-run contract, and exposes the status through `graph read-model
+report-compiler-boundary --json`, `graph read-model report-health --json`, and `npm run test:read-model:e2e`. It remains
+non-enforcing and does not enable required checks, branch protection, automatic AI execution, acceptance, graph delta
+application, source-authority expansion, or tree-native retirement.
+
 The following readiness artifact is complete at documentation level:
 
 - [representative-runtime-feasibility-demo.md](representative-runtime-feasibility-demo.md)
