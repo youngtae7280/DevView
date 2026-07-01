@@ -95,11 +95,12 @@ Each semantic diff records the `matchedRuleId` that produced its classification.
 rule use `matchedRuleId: semantic-diff-rule-unknown`, classify as `unknown-review-required`, and prevent promotion
 readiness. `compilerPromotionReadiness` is derived from the semantic diffs; it is not a manually asserted status.
 
-Current triage closes the previous `outputRequirements` unknown by classifying it as `output-requirement-loss`: the
-compiler-produced candidate replaces the hand-written changed-file and command-derived Evidence reporting obligations
-with compiler-review status reporting. `sourceMode` and `nonExecutionStatement` are classified as `metadata-only`;
-`requiredContext`, `knownRisks`, and `stopConditions` are compared through id-based summaries. Unknown diffs remain
-possible for future fields, but the current dry-run diff set is fully classified.
+Current triage previously classified `outputRequirements` as `output-requirement-loss`. v0.2 now derives generated
+`outputRequirements` from `outputRequirementSources[]`, so the current generated candidate preserves the changed-file,
+command-output Evidence, validation-result, and boundary reporting obligations for this fixture. `sourceMode` and
+`nonExecutionStatement` are classified as `metadata-only`; `requiredContext`, `knownRisks`, and `stopConditions` are
+compared through id-based summaries. Unknown diffs remain possible for future fields, but the current dry-run diff set
+is fully classified.
 
 ## v0.1 Closeout
 
@@ -122,7 +123,7 @@ v0.1 does not prove:
 
 The current closeout status is `contract-compiler-dry-run-v0.1-classification-complete`, but
 `equivalenceProven` remains `false` and `compilerPromotionReadiness` remains `compiler-promotion-not-ready` because
-`semantic-loss`, `policy-loss`, and `output-requirement-loss` are still present.
+`semantic-loss` and `policy-loss` are still present.
 
 ## Boundaries
 
@@ -162,6 +163,7 @@ The first v0.2 preview is now recorded in
 examples/read-model-aggregate/generated/output-requirement-source-authority.preview.json
 ```
 
-This preview maps hand-written output obligations to `outputRequirementSources[]`, but reports
-`generated-output-requirements-not-preserved` because generated output requirements still do not preserve changed-file,
-command-output Evidence, and validation-result reporting obligations.
+This surface maps hand-written output obligations to `outputRequirementSources[]` for comparison and now uses those
+source authority entries to derive generated `outputRequirements`. The current preview reports
+`generated-output-requirements-preserved` with zero unresolved output obligations. This still does not prove full
+equivalence because scope, context, Evidence, risk, and stop-condition losses remain.

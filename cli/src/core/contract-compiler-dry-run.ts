@@ -12,6 +12,7 @@ import {
   type ContractSemanticDiffRuleCoverage,
   type ContractSemanticReviewSeverity,
 } from './contract-semantic-diff.js'
+import { resolveOutputRequirementsFromSourceAuthority } from './output-requirement-source-authority.js'
 
 export type ContractCompilerDryRunStatus = 'contract-compiler-dry-run-pass' | 'contract-compiler-dry-run-blocked'
 
@@ -224,9 +225,9 @@ export async function compileExecutionContractDryRun(
     blockingReasons,
     warnings,
     nonExecutionStatement:
-      'Contract Compiler Dry-Run v0.1 is local/non-enforcing Evidence only. It compiles a deterministic candidate from committed input fixtures and does not execute AI, apply graph deltas, accept work, enable required checks, or retire tree-native artifacts.',
+      'Contract Compiler Dry-Run v0.2 output requirement mapping is local/non-enforcing Evidence only. It compiles a deterministic candidate from committed input fixtures and does not execute AI, apply graph deltas, accept work, enable required checks, or retire tree-native artifacts.',
     compilerBoundary:
-      'Compiler Dry-Run v0.1 supports only the current bug_fix compiler input fixture and must feed its candidate back through the Contract Fixture Validator.',
+      'Compiler Dry-Run v0.2 still supports only the current bug_fix compiler input fixture and must feed its candidate back through the Contract Fixture Validator.',
   }
 }
 
@@ -234,11 +235,11 @@ function validateSupportedInput(input: Record<string, unknown>): string[] {
   const blocking: string[] = []
   const packSchema = asRecord(input.packSchema)
   if (packSchema.id !== 'pack-schema-bug-fix') {
-    blocking.push(`Contract Compiler Dry-Run v0.1 only supports pack-schema-bug-fix; got ${String(packSchema.id)}.`)
+    blocking.push(`Contract Compiler Dry-Run v0.2 only supports pack-schema-bug-fix; got ${String(packSchema.id)}.`)
   }
   if (packSchema.changeType !== 'bug_fix') {
     blocking.push(
-      `Contract Compiler Dry-Run v0.1 only supports bug_fix changeType; got ${String(packSchema.changeType)}.`,
+      `Contract Compiler Dry-Run v0.2 only supports bug_fix changeType; got ${String(packSchema.changeType)}.`,
     )
   }
   return blocking
@@ -291,19 +292,19 @@ function compileBugFixContractCandidate(input: Record<string, unknown>): {
   const requiredCheckIds = new Set(requiredChecks.map((check) => check.id))
   const evidenceMappings = buildEvidenceCheckMapping(policySnapshot)
   if (evidenceMappings.size === 0) {
-    blocking.push('Contract Compiler Dry-Run v0.1 requires policySnapshot.evidenceCheckMappings.')
+    blocking.push('Contract Compiler Dry-Run v0.2 requires policySnapshot.evidenceCheckMappings.')
   }
   const requiredEvidence = arrayValue(evidenceIndex.entries)
     .map((entry) => {
       const evidenceType = stringValue(entry.evidenceType)
       const mapping = evidenceMappings.get(evidenceType)
       if (!mapping) {
-        blocking.push(`Contract Compiler Dry-Run v0.1 has no evidenceCheckMapping for evidenceType: ${evidenceType}.`)
+        blocking.push(`Contract Compiler Dry-Run v0.2 has no evidenceCheckMapping for evidenceType: ${evidenceType}.`)
         return undefined
       }
       if (!requiredCheckIds.has(mapping.requiredCheckId)) {
         blocking.push(
-          `Contract Compiler Dry-Run v0.1 policySnapshot.evidenceCheckMappings for evidenceType ${evidenceType} references unknown required check id: ${mapping.requiredCheckId}. Known check ids: ${Array.from(
+          `Contract Compiler Dry-Run v0.2 policySnapshot.evidenceCheckMappings for evidenceType ${evidenceType} references unknown required check id: ${mapping.requiredCheckId}. Known check ids: ${Array.from(
             requiredCheckIds,
           ).join(', ')}.`,
         )
@@ -327,7 +328,19 @@ function compileBugFixContractCandidate(input: Record<string, unknown>): {
     derivedFrom: stringArrayValue(rule.derivedFrom),
   }))
   if (forbiddenScope.length === 0) {
-    blocking.push('Contract Compiler Dry-Run v0.1 requires policySnapshot.forbiddenScopeRules.')
+    blocking.push('Contract Compiler Dry-Run v0.2 requires policySnapshot.forbiddenScopeRules.')
+  }
+
+  const outputRequirementResolution = resolveOutputRequirementsFromSourceAuthority(
+    arrayValue(input.outputRequirementSources),
+  )
+  for (const unresolved of outputRequirementResolution.unresolvedSources) {
+    blocking.push(
+      `Contract Compiler Dry-Run v0.2 could not derive output requirement ${unresolved.id}: ${unresolved.reason}.`,
+    )
+  }
+  if (outputRequirementResolution.outputRequirements.length === 0) {
+    blocking.push('Contract Compiler Dry-Run v0.2 requires source-authority-derived output requirements.')
   }
 
   if (blocking.length > 0) {
@@ -374,12 +387,7 @@ function compileBugFixContractCandidate(input: Record<string, unknown>): {
           action: 'stop-and-record-missing-evidence',
         },
       ],
-      outputRequirements: [
-        'Report compiler input status from graph read-model report-compiler-input only.',
-        'Report compiled contract candidate status from Contract Fixture Validator output only.',
-        'Report generated-versus-handwritten dry-run diff status before relying on the candidate.',
-        'Do not treat this dry-run candidate as execution, user acceptance, required check, or branch protection.',
-      ],
+      outputRequirements: outputRequirementResolution.outputRequirements,
       nonExecutionStatement:
         'This compiler-produced execution contract candidate is dry-run only. It does not execute work, enable required checks, apply graph deltas, or accept the change.',
     },
@@ -603,15 +611,18 @@ async function buildOutputRequirementSourceAuthorityPreview(
     : []
   const generatedOutputRequirements = stringArrayValue(candidate.outputRequirements)
   const sourceAuthorityEntries = arrayValue(input.outputRequirementSources)
-  const derivedOutputRequirementCandidates = sourceAuthorityEntries.map((entry) => ({
-    id: stringValue(entry.derivedOutputRequirementId),
-    obligationType: stringValue(entry.obligationType),
-    requiredReportTarget: stringValue(entry.requiredReportTarget),
-    sourceId: stringValue(entry.sourceId),
-    handWrittenRequirement: stringValue(entry.handWrittenRequirement),
+  const outputRequirementResolution = resolveOutputRequirementsFromSourceAuthority(sourceAuthorityEntries)
+  const derivedOutputRequirementCandidates = outputRequirementResolution.derivedOutputRequirements.map((entry) => ({
+    id: entry.id,
+    obligationType: entry.obligationType,
+    requiredReportTarget: entry.requiredReportTarget,
+    sourceId: entry.sourceId,
+    requirement: entry.requirement,
+    derivationStatus: entry.derivationStatus,
+    derivationReason: entry.derivationReason,
   }))
   const handWrittenOutputRequirementMappings = derivedOutputRequirementCandidates.map((entry) => {
-    const requirement = stringValue(entry.handWrittenRequirement)
+    const requirement = stringValue(entry.requirement)
     return {
       derivedOutputRequirementId: stringValue(entry.id),
       sourceId: stringValue(entry.sourceId),
@@ -622,22 +633,19 @@ async function buildOutputRequirementSourceAuthorityPreview(
     }
   })
   const generatedOutputRequirementMappings = derivedOutputRequirementCandidates.map((entry) => {
-    const obligationType = stringValue(entry.obligationType)
-    const status =
-      obligationType === 'non-execution-boundary-statement' &&
-      generatedOutputRequirements.some(
-        (requirement) => requirement.includes('user acceptance') && requirement.includes('branch protection'),
-      )
-        ? 'generated-output-requirement-partially-preserved'
-        : 'generated-output-requirement-missing'
+    const requirement = stringValue(entry.requirement)
+    const status = generatedOutputRequirements.includes(requirement)
+      ? 'generated-output-requirement-preserved'
+      : 'generated-output-requirement-missing'
     return {
       derivedOutputRequirementId: stringValue(entry.id),
-      obligationType,
+      obligationType: stringValue(entry.obligationType),
+      requirement,
       status,
       reason:
         status === 'generated-output-requirement-missing'
           ? 'source-authority-present-but-compiler-output-mapping-not-applied'
-          : 'boundary wording is present, but full output equivalence still depends on the complete output requirement set',
+          : 'source-authority-derived-output-requirement-present-in-generated-candidate',
     }
   })
   const generatedReplacementObligations = generatedOutputRequirements
@@ -648,9 +656,17 @@ async function buildOutputRequirementSourceAuthorityPreview(
       reason:
         'Compiler self-report is useful review metadata, but it does not replace execution-result output obligations.',
     }))
-  const unresolvedObligations = generatedOutputRequirementMappings.filter(
-    (entry) => entry.status === 'generated-output-requirement-missing',
-  )
+  const unresolvedObligations = [
+    ...outputRequirementResolution.unresolvedSources.map((entry) => ({
+      derivedOutputRequirementId: entry.id,
+      sourceId: entry.sourceId,
+      obligationType: entry.obligationType,
+      requiredReportTarget: entry.requiredReportTarget,
+      status: entry.derivationStatus,
+      reason: entry.reason,
+    })),
+    ...generatedOutputRequirementMappings.filter((entry) => entry.status === 'generated-output-requirement-missing'),
+  ]
   const mappedHandWrittenOutputRequirementCount = new Set(
     handWrittenOutputRequirementMappings
       .filter((entry) => entry.status === 'hand-written-output-requirement-mapped')
@@ -662,7 +678,7 @@ async function buildOutputRequirementSourceAuthorityPreview(
       : 'generated-output-requirements-not-preserved'
   const lossExplanation =
     unresolvedObligations.length === 0
-      ? 'Output requirement source authority preview has no unresolved generated output obligations.'
+      ? 'Output requirement source authority now derives every generated output requirement obligation for the current dry-run fixture.'
       : 'Source authority entries exist, but the current compiler output requirement mapping does not preserve every hand-written execution-result reporting obligation.'
   return {
     artifact: {

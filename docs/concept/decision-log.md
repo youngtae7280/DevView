@@ -929,10 +929,20 @@ DEC-173 does not supersede DEC-097 through DEC-172. It begins Contract Compiler 
 Source Authority preview only. The Compiler Input Model dry-run fixture now includes `outputRequirementSources[]`, and
 the compiler writes `output-requirement-source-authority.preview.json` showing source authority entries, derived output
 requirement candidates, hand-written output requirement mappings, generated preservation status, and unresolved
-obligations. The preview explains `output-requirement-loss` as source authority being present while compiler output
-mapping is not yet applied. It does not rewrite generated output requirements, prove equivalence, execute AI, apply
+obligations. At that preview-only stage, the preview explained `output-requirement-loss` as source authority being
+present while compiler output mapping was not yet applied. It does not rewrite generated output requirements, prove
+equivalence, execute AI, apply
 graph deltas, accept work, enable required checks, configure branch protection, expand source authority, retire
 tree-native artifacts, or widen changeType support.
+
+DEC-174 does not supersede DEC-097 through DEC-173. It connects Output Requirement Source Authority to the current
+Contract Compiler Dry-Run candidate for `outputRequirements` only. Generated output requirements are now derived from
+`outputRequirementSources[]` and no longer copied from the hand-written comparison contract or replaced by compiler
+self-reporting. The preview now reports `generated-output-requirements-preserved` with zero unresolved output
+obligations for the current Todo Search `bug_fix` fixture, while `equivalenceProven` remains false and
+`compilerPromotionReadiness` remains `compiler-promotion-not-ready` because other semantic and policy losses remain.
+This does not execute AI, apply graph deltas, accept work, enable required checks, configure branch protection, expand
+source authority beyond output requirements, retire tree-native artifacts, or widen changeType support.
 
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in

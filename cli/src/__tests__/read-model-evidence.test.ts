@@ -41,6 +41,7 @@ import {
 } from '../core/compiler-input-model'
 import { compileExecutionContractDryRun } from '../core/contract-compiler-dry-run'
 import { classifyContractDiffSemantics, deriveCompilerPromotionReadiness } from '../core/contract-semantic-diff'
+import { resolveOutputRequirementsFromSourceAuthority } from '../core/output-requirement-source-authority'
 
 const workspaces: string[] = []
 const exampleWorkspacePaths = [
@@ -1406,8 +1407,8 @@ describe('read-model Evidence builder', () => {
       sourceAuthorityEntryCount: 4,
       derivedOutputRequirementCount: 4,
       mappedHandWrittenOutputRequirementCount: 3,
-      unresolvedObligationCount: 3,
-      generatedPreservationStatus: 'generated-output-requirements-not-preserved',
+      unresolvedObligationCount: 0,
+      generatedPreservationStatus: 'generated-output-requirements-preserved',
     })
     expect(report.candidate).toMatchObject({
       changeId: 'change-todo-search-whitespace-normalization-dogfood',
@@ -1417,6 +1418,11 @@ describe('read-model Evidence builder', () => {
     })
     expect(candidate.sourceMode).toBe('contract-compiler-dry-run-v0')
     expect(candidate.goal).toBe('Preserve Todo Search matching when a multi-word query contains repeated whitespace.')
+    expect(candidate.outputRequirements).toEqual([
+      'Report changed files from actual git diff only.',
+      'Report check and evidence status from command output only.',
+      'Do not treat this dry-run contract as user acceptance or branch protection.',
+    ])
     expect(JSON.stringify(candidate)).toContain('examples/adoption/todo-search-slice/runtime-fixture/todo-search.js')
     expect(JSON.stringify(candidate)).toContain('graph-source:node:CODE-RUNTIME-SEARCH-HELPER')
     const outputRequirementPreview = JSON.parse(
@@ -1424,7 +1430,7 @@ describe('read-model Evidence builder', () => {
     ) as {
       status: string
       sourceAuthorityEntries: unknown[]
-      derivedOutputRequirementCandidates: unknown[]
+      derivedOutputRequirementCandidates: Array<{ derivationReason?: string }>
       handWrittenOutputRequirementMappings: Array<{ status: string }>
       generatedOutputRequirementMappings: Array<{ status: string; reason: string }>
       unresolvedObligations: Array<{ derivedOutputRequirementId: string; reason: string }>
@@ -1443,22 +1449,23 @@ describe('read-model Evidence builder', () => {
       sourceAuthorityEntryCount: 4,
       derivedOutputRequirementCount: 4,
       mappedHandWrittenOutputRequirementCount: 3,
-      unresolvedObligationCount: 3,
-      generatedPreservationStatus: 'generated-output-requirements-not-preserved',
+      unresolvedObligationCount: 0,
+      generatedPreservationStatus: 'generated-output-requirements-preserved',
     })
-    expect(outputRequirementPreview.unresolvedObligations.map((entry) => entry.derivedOutputRequirementId)).toEqual([
-      'output-report-changed-files',
-      'output-report-command-evidence-status',
-      'output-report-validation-result-summary',
+    expect(outputRequirementPreview.unresolvedObligations).toEqual([])
+    expect(outputRequirementPreview.generatedReplacementObligations).toEqual([])
+    expect(outputRequirementPreview.generatedOutputRequirementMappings.map((entry) => entry.status)).toEqual([
+      'generated-output-requirement-preserved',
+      'generated-output-requirement-preserved',
+      'generated-output-requirement-preserved',
+      'generated-output-requirement-preserved',
     ])
-    expect(outputRequirementPreview.unresolvedObligations[0].reason).toBe(
-      'source-authority-present-but-compiler-output-mapping-not-applied',
-    )
-    expect(outputRequirementPreview.generatedReplacementObligations[0].status).toBe(
-      'compiler-self-report-not-execution-output',
+    expect(outputRequirementPreview.derivedOutputRequirementCandidates.map((entry) => entry.derivationReason)).toEqual(
+      Array(4).fill('derived-from-outputRequirementSources-not-hand-written-contract'),
     )
     const diffReport = JSON.parse(await readFile(join(workspace, report.paths.diffReport), 'utf8')) as {
       status: string
+      comparedFields: Array<{ field: string; status: string }>
       differingFields: string[]
       reviewStatus: string
       equivalenceStatus: string
@@ -1502,6 +1509,11 @@ describe('read-model Evidence builder', () => {
     expect(diffReport.reviewStatus).toBe('non-blocking-review-diff')
     expect(diffReport.equivalenceStatus).toBe('compiler-equivalence-not-proven')
     expect(diffReport.differingFields).toContain('sourceMode')
+    expect(diffReport.differingFields).not.toContain('outputRequirements')
+    expect(diffReport.comparedFields.find((entry) => entry.field === 'outputRequirements')).toMatchObject({
+      field: 'outputRequirements',
+      status: 'same',
+    })
     expect(diffReport.idBasedSummaries.find((entry) => entry.field === 'allowedScope')).toMatchObject({
       handWrittenCount: 3,
       generatedCount: 2,
@@ -1528,11 +1540,10 @@ describe('read-model Evidence builder', () => {
       'safe-additive': 3,
       'semantic-loss': 3,
       'evidence-chain-mismatch': 1,
-      'output-requirement-loss': 1,
     })
     expect(diffReport.semanticDiffRuleCoverage).toMatchObject({
-      totalDiffs: 15,
-      classifiedDiffs: 15,
+      totalDiffs: 14,
+      classifiedDiffs: 14,
       unknownDiffs: 0,
     })
     expect(diffReport.semanticDiffRuleCoverage.totalDiffs).toBe(
@@ -1541,7 +1552,7 @@ describe('read-model Evidence builder', () => {
     expect(diffReport.semanticDiffRuleCoverage.matchedRuleIds).toContain(
       'semantic-diff-rule-required-evidence-missing-semantic-loss',
     )
-    expect(diffReport.semanticDiffRuleCoverage.matchedRuleIds).toContain(
+    expect(diffReport.semanticDiffRuleCoverage.matchedRuleIds).not.toContain(
       'semantic-diff-rule-output-requirements-field-output-requirement-loss',
     )
     expect(diffReport.semanticDiffRuleCoverage.unknownFields).toEqual([])
@@ -1603,19 +1614,57 @@ describe('read-model Evidence builder', () => {
       diffDirection: 'fieldDifferent',
       promotionImpact: 'review-required',
     })
-    expect(
-      diffReport.semanticDiffs.find(
-        (entry) => entry.field === 'outputRequirements' && entry.classification === 'output-requirement-loss',
-      ),
-    ).toMatchObject({
-      matchedRuleId: 'semantic-diff-rule-output-requirements-field-output-requirement-loss',
-      targetField: 'outputRequirements',
-      diffDirection: 'fieldDifferent',
-      reviewSeverity: 'high',
-      promotionImpact: 'blocks-promotion',
-    })
+    expect(diffReport.semanticDiffs.some((entry) => entry.field === 'outputRequirements')).toBe(false)
     expect(validation.blocking).toEqual([])
     expect(report.nonExecutionStatement).toContain('does not execute AI')
+  })
+
+  it('derives output requirements from source authority rather than hand-written comparison text', async () => {
+    const workspace = await createExampleWorkspace()
+    const dryRunInputPath = join(workspace, 'examples/read-model-aggregate/generated/compiler-input-model-dry-run.json')
+    const input = JSON.parse(await readFile(dryRunInputPath, 'utf8')) as {
+      outputRequirementSources: Array<Record<string, unknown>>
+    }
+    input.outputRequirementSources[0].handWrittenRequirement = 'DO NOT COPY THIS HAND-WRITTEN COMPARISON TEXT.'
+    await writeFile(dryRunInputPath, `${JSON.stringify(input, null, 2)}\n`)
+
+    const report = await compileExecutionContractDryRun(workspace)
+    const candidate = JSON.parse(await readFile(join(workspace, report.paths.outputCandidate), 'utf8')) as {
+      outputRequirements: string[]
+    }
+
+    expect(candidate.outputRequirements).toContain('Report changed files from actual git diff only.')
+    expect(candidate.outputRequirements).not.toContain('DO NOT COPY THIS HAND-WRITTEN COMPARISON TEXT.')
+  })
+
+  it('resolves output requirement obligations from typed source authority entries', () => {
+    const resolution = resolveOutputRequirementsFromSourceAuthority([
+      {
+        sourceId: 'source-changed-files',
+        sourceType: 'git-diff',
+        derivedOutputRequirementId: 'output-changed-files',
+        obligationType: 'changed-files-report',
+        requiredReportTarget: 'actual git diff changed files',
+        handWrittenRequirement: 'Do not copy this field.',
+      },
+      {
+        sourceId: 'source-validation-summary',
+        sourceType: 'check',
+        derivedOutputRequirementId: 'output-validation-summary',
+        obligationType: 'validation-result-summary',
+        requiredReportTarget: 'validate-all command result summary',
+      },
+    ])
+
+    expect(resolution.unresolvedSources).toEqual([])
+    expect(resolution.outputRequirements).toEqual([
+      'Report changed files from actual git diff only.',
+      'Report check and evidence status from command output only.',
+    ])
+    expect(resolution.derivedOutputRequirements[0]).toMatchObject({
+      id: 'output-changed-files',
+      derivationReason: 'derived-from-outputRequirementSources-not-hand-written-contract',
+    })
   })
 
   it('classifies safe and conservative contract diffs as promotion review required', () => {
@@ -1788,8 +1837,8 @@ describe('read-model Evidence builder', () => {
       sourceAuthorityEntryCount: 4,
       derivedOutputRequirementCount: 4,
       mappedHandWrittenOutputRequirementCount: 3,
-      unresolvedObligationCount: 3,
-      generatedPreservationStatus: 'generated-output-requirements-not-preserved',
+      unresolvedObligationCount: 0,
+      generatedPreservationStatus: 'generated-output-requirements-preserved',
     })
     expect(output.candidateDiff.status).toBe('contract-diff-detected')
     expect(output.candidateDiff.reviewStatus).toBe('non-blocking-review-diff')
@@ -1805,10 +1854,10 @@ describe('read-model Evidence builder', () => {
     expect(output.candidateDiff.semanticClassificationCounts['semantic-loss']).toBe(3)
     expect(output.candidateDiff.semanticClassificationCounts['policy-loss']).toBe(2)
     expect(output.candidateDiff.semanticClassificationCounts['metadata-only']).toBe(2)
-    expect(output.candidateDiff.semanticClassificationCounts['output-requirement-loss']).toBe(1)
+    expect(output.candidateDiff.semanticClassificationCounts['output-requirement-loss']).toBeUndefined()
     expect(output.candidateDiff.semanticDiffRuleCoverage.unknownDiffs).toBe(0)
     expect(output.candidateDiff.semanticDiffRuleCoverage.unknownFields).toEqual([])
-    expect(output.candidateDiff.semanticDiffRuleCoverage.matchedRuleIds).toContain(
+    expect(output.candidateDiff.semanticDiffRuleCoverage.matchedRuleIds).not.toContain(
       'semantic-diff-rule-output-requirements-field-output-requirement-loss',
     )
     expect(output.candidateDiff.differingFieldCount).toBeGreaterThan(0)
@@ -1931,8 +1980,8 @@ describe('read-model Evidence builder', () => {
       sourceAuthorityEntryCount: 4,
       derivedOutputRequirementCount: 4,
       mappedHandWrittenOutputRequirementCount: 3,
-      unresolvedObligationCount: 3,
-      generatedPreservationStatus: 'generated-output-requirements-not-preserved',
+      unresolvedObligationCount: 0,
+      generatedPreservationStatus: 'generated-output-requirements-preserved',
     })
     expect(output.contractCompilerDryRun.outputRequirementSourceAuthorityPreviewPath).toBe(
       'examples/read-model-aggregate/generated/output-requirement-source-authority.preview.json',
@@ -1941,7 +1990,7 @@ describe('read-model Evidence builder', () => {
     expect(output.contractCompilerDryRun.semanticClassificationCounts['semantic-loss']).toBe(3)
     expect(output.contractCompilerDryRun.semanticClassificationCounts['policy-loss']).toBe(2)
     expect(output.contractCompilerDryRun.semanticClassificationCounts['metadata-only']).toBe(2)
-    expect(output.contractCompilerDryRun.semanticClassificationCounts['output-requirement-loss']).toBe(1)
+    expect(output.contractCompilerDryRun.semanticClassificationCounts['output-requirement-loss']).toBeUndefined()
     expect(output.contractCompilerDryRun.semanticDiffRuleCoverage.unknownDiffs).toBe(0)
     expect(output.contractCompilerDryRun.semanticDiffRuleCoverage.unknownFields).toEqual([])
     expect(output.contractCompilerDryRun.differingFieldCount).toBeGreaterThan(0)
@@ -1969,8 +2018,8 @@ describe('read-model Evidence builder', () => {
     expect(markdown).toContain('coverage complete `true`')
     expect(markdown).toContain('equivalence proven `false`')
     expect(markdown).toContain('`output-requirement-source-authority-preview-pass`')
-    expect(markdown).toContain('4 source entries / 4 derived requirements / 3 unresolved')
-    expect(markdown).toContain('`generated-output-requirements-not-preserved`')
+    expect(markdown).toContain('4 source entries / 4 derived requirements / 0 unresolved')
+    expect(markdown).toContain('`generated-output-requirements-preserved`')
     expect(markdown).toContain(
       '`examples/read-model-aggregate/generated/output-requirement-source-authority.preview.json`',
     )
@@ -1978,7 +2027,7 @@ describe('read-model Evidence builder', () => {
     expect(markdown).toContain('semantic-loss: 3')
     expect(markdown).toContain('policy-loss: 2')
     expect(markdown).toContain('metadata-only: 2')
-    expect(markdown).toContain('output-requirement-loss: 1')
+    expect(markdown).not.toContain('output-requirement-loss: 1')
     expect(markdown).toContain('unknown semantic diffs 0')
     expect(markdown).toContain('unknown fields none')
     expect(markdown).toContain('Semantic diff classification is non-blocking review metadata only')

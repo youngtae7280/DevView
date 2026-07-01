@@ -15,7 +15,6 @@
     "requiredEvidence",
     "knownRisks",
     "stopConditions",
-    "outputRequirements",
     "nonExecutionStatement"
   ],
   "comparedFields": [
@@ -31,7 +30,7 @@
     { "field": "openUnknowns", "status": "same" },
     { "field": "humanDecisions", "status": "same" },
     { "field": "stopConditions", "status": "different" },
-    { "field": "outputRequirements", "status": "different" },
+    { "field": "outputRequirements", "status": "same" },
     { "field": "nonExecutionStatement", "status": "different" }
   ],
   "idBasedSummaries": [
@@ -243,18 +242,6 @@
       "extraIdsInGenerated": []
     },
     {
-      "field": "outputRequirements",
-      "targetField": "outputRequirements",
-      "diffDirection": "fieldDifferent",
-      "matchedRuleId": "semantic-diff-rule-output-requirements-field-output-requirement-loss",
-      "classification": "output-requirement-loss",
-      "reviewSeverity": "high",
-      "promotionImpact": "blocks-promotion",
-      "reason": "The generated candidate does not preserve the hand-written output reporting obligations for changed files and command-derived Evidence status; output requirements are not equivalent.",
-      "missingIdsInGenerated": [],
-      "extraIdsInGenerated": []
-    },
-    {
       "field": "nonExecutionStatement",
       "targetField": "nonExecutionStatement",
       "diffDirection": "fieldDifferent",
@@ -274,15 +261,14 @@
     "semantic-loss": 3,
     "safe-additive": 3,
     "evidence-chain-mismatch": 1,
-    "metadata-only": 2,
-    "output-requirement-loss": 1
+    "metadata-only": 2
   },
   "highestReviewSeverity": "high",
   "compilerPromotionReadiness": "compiler-promotion-not-ready",
   "promotionReadiness": "compiler-promotion-not-ready",
   "semanticDiffRuleCoverage": {
-    "totalDiffs": 15,
-    "classifiedDiffs": 15,
+    "totalDiffs": 14,
+    "classifiedDiffs": 14,
     "unknownDiffs": 0,
     "matchedRuleIds": [
       "semantic-diff-rule-allowed-scope-missing-conservative-restriction",
@@ -291,7 +277,6 @@
       "semantic-diff-rule-known-risks-extra-safe-additive",
       "semantic-diff-rule-known-risks-missing-semantic-loss",
       "semantic-diff-rule-non-execution-statement-field-metadata-only",
-      "semantic-diff-rule-output-requirements-field-output-requirement-loss",
       "semantic-diff-rule-required-checks-extra-safe-additive",
       "semantic-diff-rule-required-context-extra-safe-additive",
       "semantic-diff-rule-required-context-missing-semantic-loss",

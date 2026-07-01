@@ -48,28 +48,36 @@
       "obligationType": "changed-files-report",
       "requiredReportTarget": "actual git diff changed files",
       "sourceId": "output-source-git-diff-changed-files",
-      "handWrittenRequirement": "Report changed files from actual git diff only."
+      "requirement": "Report changed files from actual git diff only.",
+      "derivationStatus": "derived-output-requirement-ready",
+      "derivationReason": "derived-from-outputRequirementSources-not-hand-written-contract"
     },
     {
       "id": "output-report-command-evidence-status",
       "obligationType": "command-output-evidence-status",
       "requiredReportTarget": "check and evidence status from command output",
       "sourceId": "output-source-command-evidence-status",
-      "handWrittenRequirement": "Report check and evidence status from command output only."
+      "requirement": "Report check and evidence status from command output only.",
+      "derivationStatus": "derived-output-requirement-ready",
+      "derivationReason": "derived-from-outputRequirementSources-not-hand-written-contract"
     },
     {
       "id": "output-report-validation-result-summary",
       "obligationType": "validation-result-summary",
       "requiredReportTarget": "validate-all command result summary",
       "sourceId": "output-source-validate-all-summary",
-      "handWrittenRequirement": "Report check and evidence status from command output only."
+      "requirement": "Report check and evidence status from command output only.",
+      "derivationStatus": "derived-output-requirement-ready",
+      "derivationReason": "derived-from-outputRequirementSources-not-hand-written-contract"
     },
     {
       "id": "output-report-non-execution-boundary",
       "obligationType": "non-execution-boundary-statement",
       "requiredReportTarget": "dry-run non-execution, non-acceptance, and non-enforcement boundary",
       "sourceId": "output-source-non-execution-boundary",
-      "handWrittenRequirement": "Do not treat this dry-run contract as user acceptance or branch protection."
+      "requirement": "Do not treat this dry-run contract as user acceptance or branch protection.",
+      "derivationStatus": "derived-output-requirement-ready",
+      "derivationReason": "derived-from-outputRequirementSources-not-hand-written-contract"
     }
   ],
   "handWrittenOutputRequirementMappings": [
@@ -102,67 +110,41 @@
     {
       "derivedOutputRequirementId": "output-report-changed-files",
       "obligationType": "changed-files-report",
-      "status": "generated-output-requirement-missing",
-      "reason": "source-authority-present-but-compiler-output-mapping-not-applied"
+      "requirement": "Report changed files from actual git diff only.",
+      "status": "generated-output-requirement-preserved",
+      "reason": "source-authority-derived-output-requirement-present-in-generated-candidate"
     },
     {
       "derivedOutputRequirementId": "output-report-command-evidence-status",
       "obligationType": "command-output-evidence-status",
-      "status": "generated-output-requirement-missing",
-      "reason": "source-authority-present-but-compiler-output-mapping-not-applied"
+      "requirement": "Report check and evidence status from command output only.",
+      "status": "generated-output-requirement-preserved",
+      "reason": "source-authority-derived-output-requirement-present-in-generated-candidate"
     },
     {
       "derivedOutputRequirementId": "output-report-validation-result-summary",
       "obligationType": "validation-result-summary",
-      "status": "generated-output-requirement-missing",
-      "reason": "source-authority-present-but-compiler-output-mapping-not-applied"
+      "requirement": "Report check and evidence status from command output only.",
+      "status": "generated-output-requirement-preserved",
+      "reason": "source-authority-derived-output-requirement-present-in-generated-candidate"
     },
     {
       "derivedOutputRequirementId": "output-report-non-execution-boundary",
       "obligationType": "non-execution-boundary-statement",
-      "status": "generated-output-requirement-partially-preserved",
-      "reason": "boundary wording is present, but full output equivalence still depends on the complete output requirement set"
+      "requirement": "Do not treat this dry-run contract as user acceptance or branch protection.",
+      "status": "generated-output-requirement-preserved",
+      "reason": "source-authority-derived-output-requirement-present-in-generated-candidate"
     }
   ],
-  "generatedReplacementObligations": [
-    {
-      "requirement": "Report compiler input status from graph read-model report-compiler-input only.",
-      "status": "compiler-self-report-not-execution-output",
-      "reason": "Compiler self-report is useful review metadata, but it does not replace execution-result output obligations."
-    },
-    {
-      "requirement": "Report generated-versus-handwritten dry-run diff status before relying on the candidate.",
-      "status": "compiler-self-report-not-execution-output",
-      "reason": "Compiler self-report is useful review metadata, but it does not replace execution-result output obligations."
-    }
-  ],
-  "unresolvedObligations": [
-    {
-      "derivedOutputRequirementId": "output-report-changed-files",
-      "obligationType": "changed-files-report",
-      "status": "generated-output-requirement-missing",
-      "reason": "source-authority-present-but-compiler-output-mapping-not-applied"
-    },
-    {
-      "derivedOutputRequirementId": "output-report-command-evidence-status",
-      "obligationType": "command-output-evidence-status",
-      "status": "generated-output-requirement-missing",
-      "reason": "source-authority-present-but-compiler-output-mapping-not-applied"
-    },
-    {
-      "derivedOutputRequirementId": "output-report-validation-result-summary",
-      "obligationType": "validation-result-summary",
-      "status": "generated-output-requirement-missing",
-      "reason": "source-authority-present-but-compiler-output-mapping-not-applied"
-    }
-  ],
+  "generatedReplacementObligations": [],
+  "unresolvedObligations": [],
   "mappingSummary": {
     "sourceAuthorityEntryCount": 4,
     "derivedOutputRequirementCount": 4,
     "mappedHandWrittenOutputRequirementCount": 3,
-    "unresolvedObligationCount": 3,
-    "generatedPreservationStatus": "generated-output-requirements-not-preserved",
-    "lossExplanation": "Source authority entries exist, but the current compiler output requirement mapping does not preserve every hand-written execution-result reporting obligation."
+    "unresolvedObligationCount": 0,
+    "generatedPreservationStatus": "generated-output-requirements-preserved",
+    "lossExplanation": "Output requirement source authority now derives every generated output requirement obligation for the current dry-run fixture."
   },
   "nonExecutionStatement": "This preview explains output requirement source authority only. It does not execute work, rewrite the generated contract, prove equivalence, apply graph deltas, accept work, enable required checks, or retire tree-native artifacts."
 }

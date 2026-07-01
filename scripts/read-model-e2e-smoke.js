@@ -386,8 +386,8 @@ try {
   if ((contractCompilerDryRun.candidateDiff.semanticClassificationCounts['policy-loss'] || 0) <= 0) {
     throw new Error('Contract compiler semantic diff summary must include policy-loss')
   }
-  if ((contractCompilerDryRun.candidateDiff.semanticClassificationCounts['output-requirement-loss'] || 0) <= 0) {
-    throw new Error('Contract compiler semantic diff summary must include output-requirement-loss')
+  if ((contractCompilerDryRun.candidateDiff.semanticClassificationCounts['output-requirement-loss'] || 0) !== 0) {
+    throw new Error('Contract compiler output requirement loss should be resolved by source authority mapping')
   }
   const semanticDiffCoverage = contractCompilerDryRun.candidateDiff.semanticDiffRuleCoverage
   if (
@@ -432,12 +432,12 @@ try {
   )
   assertEqual(
     contractCompilerDryRun.outputRequirementSourceAuthorityPreview.unresolvedObligationCount,
-    3,
+    0,
     'output requirement source authority unresolved obligation count',
   )
   assertEqual(
     contractCompilerDryRun.outputRequirementSourceAuthorityPreview.generatedPreservationStatus,
-    'generated-output-requirements-not-preserved',
+    'generated-output-requirements-preserved',
     'output requirement generated preservation status',
   )
 

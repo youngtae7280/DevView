@@ -203,18 +203,18 @@ candidate does not imply equivalence with the hand-written dry-run contract whil
 `compiler-equivalence-not-proven`. The diff report now adds semantic review classifications and
 `compilerPromotionReadiness`; the current fixture remains `compiler-promotion-not-ready` because semantic/policy losses
 must be reviewed before any compiler promotion. Those classifications now come from explicit dry-run v0.1 rule ids, and
-unmatched differences are counted as `unknown-review-required`. Current triage classifies the former
-`outputRequirements` unknown as `output-requirement-loss` because the compiler candidate does not preserve the
-hand-written changed-file and command-derived Evidence reporting obligations. The current dry-run diff set has no
-unknown fields and is marked `contract-compiler-dry-run-v0.1-classification-complete`, but `equivalenceProven` remains
-`false` and it remains local/non-enforcing. The recommended v0.2 direction is Output Requirement Source Authority or a
-source-authority resolver before any pack-schema widening, executor automation, or graph delta application.
+unmatched differences are counted as `unknown-review-required`. Current v0.2 mapping derives generated
+`outputRequirements` from `outputRequirementSources[]`, so the former `output-requirement-loss` is no longer present in
+the current diff. The current dry-run diff set has no unknown fields and is marked
+`contract-compiler-dry-run-v0.1-classification-complete`, but `equivalenceProven` remains `false` because other
+semantic and policy losses remain; it remains local/non-enforcing. The next recommended direction is resolving the
+remaining source-authority gaps before any pack-schema widening, executor automation, or graph delta application.
 
-Output Requirement Source Authority v0.2 preview adds `outputRequirementSources[]` to the current Compiler Input Model
-fixture and writes `output-requirement-source-authority.preview.json`. The preview maps the hand-written changed-file,
-command-output Evidence, validation-result, and boundary reporting obligations to source authority entries, while still
-reporting `generated-output-requirements-not-preserved` because the generated candidate does not yet use that authority
-to preserve output obligations.
+Output Requirement Source Authority v0.2 adds `outputRequirementSources[]` to the current Compiler Input Model fixture
+and writes `output-requirement-source-authority.preview.json`. The preview maps the hand-written changed-file,
+command-output Evidence, validation-result, and boundary reporting obligations to source authority entries, and the
+compiler now derives generated `outputRequirements` from those entries. It reports
+`generated-output-requirements-preserved` for the current fixture while keeping whole-contract equivalence unproven.
 
 The following readiness artifact is complete at documentation level:
 

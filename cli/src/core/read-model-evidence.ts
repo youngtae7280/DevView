@@ -1538,7 +1538,7 @@ Status: \`${report.status}\`
 | Compiler Input Model MVP | \`${report.compilerInputModel.status}\` |
 | Compiler input schema | \`${report.compilerInputModel.inputSchemaStatus}\` |
 | Dry-run compiler input | \`${report.compilerInputModel.dryRunInputStatus}\`; \`${report.compilerInputModel.dryRunChangeId}\`; ${report.compilerInputModel.graphSnapshotArtifactCount} graph artifacts / ${report.compilerInputModel.policyCount} policies / ${report.compilerInputModel.evidenceEntryCount} evidence entries / ${report.compilerInputModel.targetScopeCandidateCount} scope candidates |
-| Contract Compiler Dry-Run v0.1 | \`${report.contractCompilerDryRun.status}\` |
+| Contract Compiler Dry-Run | \`${report.contractCompilerDryRun.status}\` |
 | Compiled contract candidate | \`${report.contractCompilerDryRun.candidateStatus}\`; \`${report.contractCompilerDryRun.dryRunChangeId}\`; ${report.contractCompilerDryRun.requiredCheckCount} checks / ${report.contractCompilerDryRun.requiredEvidenceCount} evidence requirements |
 | Generated vs hand-written contract diff | \`${report.contractCompilerDryRun.candidateDiffStatus}\`; \`${report.contractCompilerDryRun.candidateDiffReviewStatus}\`; \`${report.contractCompilerDryRun.candidateEquivalenceStatus}\`; ${report.contractCompilerDryRun.differingFieldCount} differing fields; \`${report.contractCompilerDryRun.diffReport}\` |
 | Contract compiler v0.1 closeout | \`${report.contractCompilerDryRun.v01CloseoutStatus}\`; \`${report.contractCompilerDryRun.semanticDiffUnknownsStatus}\`; coverage complete \`${report.contractCompilerDryRun.semanticDiffCoverageComplete}\`; equivalence proven \`${report.contractCompilerDryRun.equivalenceProven}\` |
