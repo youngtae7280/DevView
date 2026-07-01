@@ -46,6 +46,8 @@ The smoke checks:
 - candidate observation status `candidate-observation-pass` as separate report-only metadata
 - local `graph read-model report-intent --json` status `intent-report-pass`, with native/retrofit fixture summaries,
   nonzero edgeIntent/claim/classification/anchor counts, and zero missing classification/anchor counts
+- local `graph read-model report-compiler-boundary --json` status `compiler-boundary-mvp-pass`
+- local `graph read-model report-compiler-input --json` status `compiler-input-model-pass`
 
 The separate `graph read-model report-health --json` command summarizes the same transition state from existing
 artifacts and report surfaces. It is useful for a quick local health snapshot, while `npm run test:read-model:e2e`

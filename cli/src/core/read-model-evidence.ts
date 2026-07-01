@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { format } from 'prettier'
 import { reportCompilerBoundary, type CompilerBoundaryReport } from './compiler-boundary.js'
+import { reportCompilerInputModel, type CompilerInputModelReport } from './compiler-input-model.js'
 import { readJsonSafe, readTextSafe, relativePath, writeTextAtomic } from './fs.js'
 
 const allowedViewScopedTags = ['target', 'context', 'candidate', 'guard', 'required', 'stale', 'blocked', 'output']
@@ -483,6 +484,13 @@ interface GraphSourceHealthReport {
     dryRunChangeId: string
     requiredCheckCount: number
     requiredEvidenceCount: number
+  }
+  compilerInputModel: Pick<CompilerInputModelReport, 'status' | 'inputSchemaStatus' | 'dryRunInputStatus'> & {
+    dryRunChangeId: string
+    graphSnapshotArtifactCount: number
+    policyCount: number
+    evidenceEntryCount: number
+    targetScopeCandidateCount: number
   }
   treeNativeRetirement: {
     readinessStatus: string
@@ -1310,6 +1318,12 @@ export async function reportGraphSourceHealth(root: string): Promise<GraphSource
   }
   blockingReasons.push(...compilerBoundary.blockingReasons.map((reason) => `compiler boundary: ${reason}`))
 
+  const compilerInputModel = await reportCompilerInputModel(root)
+  if (compilerInputModel.status !== 'compiler-input-model-pass') {
+    blockingReasons.push(`compiler input model status is ${compilerInputModel.status}`)
+  }
+  blockingReasons.push(...compilerInputModel.blockingReasons.map((reason) => `compiler input model: ${reason}`))
+
   const todoSearchTransition = findByField(transitionSlices, 'profileId', todoSearchReadModelProfile.profileId)
   const todoAppTransition = findByField(transitionSlices, 'profileId', todoAppPbeRunStructureOnlyProfile.profileId)
   const todoSearchRetirement = asRecord(todoSearchTransition.retirementReadiness, 'todoSearch.retirementReadiness', [])
@@ -1383,6 +1397,16 @@ export async function reportGraphSourceHealth(root: string): Promise<GraphSource
       requiredCheckCount: compilerBoundary.dryRunContract.requiredCheckCount,
       requiredEvidenceCount: compilerBoundary.dryRunContract.requiredEvidenceCount,
     },
+    compilerInputModel: {
+      status: compilerInputModel.status,
+      inputSchemaStatus: compilerInputModel.inputSchemaStatus,
+      dryRunInputStatus: compilerInputModel.dryRunInputStatus,
+      dryRunChangeId: compilerInputModel.dryRunInput.changeId,
+      graphSnapshotArtifactCount: compilerInputModel.dryRunInput.graphSnapshotArtifactCount,
+      policyCount: compilerInputModel.dryRunInput.policyCount,
+      evidenceEntryCount: compilerInputModel.dryRunInput.evidenceEntryCount,
+      targetScopeCandidateCount: compilerInputModel.dryRunInput.targetScopeCandidateCount,
+    },
     treeNativeRetirement: {
       readinessStatus: String(retirementReadinessSummary.status || 'missing'),
       todoSearchApprovalStatus: String(todoSearchPackage.status || 'missing'),
@@ -1439,6 +1463,9 @@ Status: \`${report.status}\`
 | Execution contract schema | \`${report.compilerBoundary.contractSchemaStatus}\` |
 | Dry-run contract validator | \`${report.compilerBoundary.contractValidatorStatus}\` |
 | Dry-run contract | \`${report.compilerBoundary.dryRunContractStatus}\`; \`${report.compilerBoundary.dryRunChangeId}\`; ${report.compilerBoundary.requiredCheckCount} checks / ${report.compilerBoundary.requiredEvidenceCount} evidence requirements |
+| Compiler Input Model MVP | \`${report.compilerInputModel.status}\` |
+| Compiler input schema | \`${report.compilerInputModel.inputSchemaStatus}\` |
+| Dry-run compiler input | \`${report.compilerInputModel.dryRunInputStatus}\`; \`${report.compilerInputModel.dryRunChangeId}\`; ${report.compilerInputModel.graphSnapshotArtifactCount} graph artifacts / ${report.compilerInputModel.policyCount} policies / ${report.compilerInputModel.evidenceEntryCount} evidence entries / ${report.compilerInputModel.targetScopeCandidateCount} scope candidates |
 
 ## Retirement And Enforcement
 

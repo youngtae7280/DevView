@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "compiler-input-model-schema",
+  "status": "compiler-input-model-mvp",
+  "requiredInputGroups": [
+    "humanRequest",
+    "graphSnapshot",
+    "packSchema",
+    "policySnapshot",
+    "evidenceIndex",
+    "targetScopeCandidates"
+  ],
+  "inputDefinitions": {
+    "humanRequest": {
+      "source": "Human request or approved change node seed",
+      "authority": "human"
+    },
+    "graphSnapshot": {
+      "source": "Current graph-source and transition artifacts",
+      "authority": "graph"
+    },
+    "packSchema": {
+      "source": "Compiler-selected pack schema definition",
+      "authority": "policy"
+    },
+    "policySnapshot": {
+      "source": "Compiler boundary, check, evidence, risk, and stop policies",
+      "authority": "policy"
+    },
+    "evidenceIndex": {
+      "source": "Existing validator, E2E, health, and evidence artifacts",
+      "authority": "evidence-index"
+    },
+    "targetScopeCandidates": {
+      "source": "Graph-derived candidate scopes before contract compilation",
+      "authority": "graph"
+    }
+  },
+  "nonExecutionStatement": "This input model schema validates Actual Contract Compiler inputs only and does not compile execution contracts, execute AI, apply graph deltas, accept work, enable required checks, or retire tree-native artifacts."
+}

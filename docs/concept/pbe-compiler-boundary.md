@@ -101,6 +101,7 @@ The Contract Fixture Validator currently blocks:
 - open critical or blocking unknowns
 - critical, high, or blocking risks without a matching accepted or mitigated human decision
 - human decisions that do not point at a known risk, unknown, scope, or change id
+- human decisions with status outside `accepted`, `mitigated`, `rejected`, or `deferred`
 - schema field authority values outside the current compiler-boundary vocabulary
 
 The report preserves the original top-level status fields and also exposes `validationBuckets` for task registry,
@@ -141,6 +142,10 @@ Graph-source health and E2E surfaces.
 
 ## Next Layer
 
-The next layer after this MVP is the Actual Contract Compiler. That compiler would derive request, scope, checks,
-Evidence, unknowns, risks, and stop conditions from graph and policy inputs. The current MVP does not perform that
-derivation; it only validates committed fixture artifacts that model the expected compiler boundary.
+The next layer after this MVP is the [Compiler Input Model](compiler-input-model.md). It defines the machine-readable
+request, graph snapshot, pack schema, policy snapshot, evidence index, and target scope candidate inputs that a future
+Actual Contract Compiler may consume.
+
+The Actual Contract Compiler would then derive request, scope, checks, Evidence, unknowns, risks, and stop conditions
+from graph and policy inputs. The current MVP does not perform that derivation; it only validates committed fixture
+artifacts that model the expected compiler boundary.

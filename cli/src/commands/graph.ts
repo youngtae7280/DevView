@@ -1,6 +1,7 @@
 import { relativePath } from '../core/fs.js'
 import { buildGraphExecutionContractReport } from '../core/graph-execution-contract.js'
 import { reportCompilerBoundary } from '../core/compiler-boundary.js'
+import { reportCompilerInputModel } from '../core/compiler-input-model.js'
 import {
   applyGraphUpdateProposal,
   captureGraphDelta,
@@ -522,6 +523,30 @@ export async function graphReadModelReportCompilerBoundaryCommand(context: Comma
             message,
             suggestedFix:
               'Restore the compiler boundary task registry, contract schema, and dry-run execution contract fixture.',
+          }),
+        )
+      : [],
+    data: { ...result },
+  }
+}
+
+export async function graphReadModelReportCompilerInputCommand(context: CommandContext): Promise<CommandResult> {
+  const result = await reportCompilerInputModel(context.options.root)
+  const failed = result.status === 'compiler-input-model-blocked'
+  return {
+    ok: !failed,
+    command: 'graph read-model report-compiler-input',
+    exitCode: failed ? ExitCode.ValidationFailed : ExitCode.Success,
+    message: failed ? 'Compiler Input Model report blocked.' : 'Compiler Input Model report passed.',
+    issues: failed
+      ? result.blockingReasons.map((message) =>
+          issue({
+            validator: 'CompilerInputModelMvp',
+            code: 'COMPILER_INPUT_MODEL_BLOCKED',
+            severity: 'error',
+            message,
+            suggestedFix:
+              'Restore the compiler input model schema and dry-run input fixture before contract compilation work.',
           }),
         )
       : [],

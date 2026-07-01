@@ -219,6 +219,7 @@ const allowedEvidenceFreshness = [
   'required-before-acceptance',
 ]
 const allowedStopConditionActions = ['stop-and-request-human-decision', 'stop-and-record-missing-evidence']
+const allowedHumanDecisionStatuses = ['accepted', 'mitigated', 'rejected', 'deferred']
 
 export async function reportCompilerBoundary(root: string): Promise<CompilerBoundaryReport> {
   const registry = await readJsonSafe<CompilerBoundaryTaskRegistry>(path.resolve(root, taskRegistryPath))
@@ -535,6 +536,14 @@ export function validateExecutionContract(contract: unknown): { blocking: string
       ['id', 'decides', 'status', 'decision'],
       blocking,
     )
+    const status = stringValue(decision.status, '')
+    if (status && !allowedHumanDecisionStatuses.includes(status)) {
+      blocking.push(
+        `Execution contract humanDecisions[${index}].status must be one of: ${allowedHumanDecisionStatuses.join(
+          ', ',
+        )}.`,
+      )
+    }
     const target = stringValue(decision.decides, '')
     if (target && !decisionTargetIds.has(target)) {
       blocking.push(

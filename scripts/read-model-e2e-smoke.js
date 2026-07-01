@@ -344,6 +344,17 @@ try {
     throw new Error('Compiler boundary dry-run contract must include required evidence')
   }
 
+  const compilerInputModel = runCli(['graph', 'read-model', 'report-compiler-input', '--json'])
+  assertEqual(compilerInputModel.status, 'compiler-input-model-pass', 'compiler input model status')
+  assertEqual(compilerInputModel.inputSchemaStatus, 'compiler-input-schema-pass', 'compiler input schema status')
+  assertEqual(compilerInputModel.dryRunInputStatus, 'compiler-input-dry-run-pass', 'compiler input dry-run status')
+  if (compilerInputModel.dryRunInput.graphSnapshotArtifactCount <= 0) {
+    throw new Error('Compiler input model must include graph snapshot artifacts')
+  }
+  if (compilerInputModel.dryRunInput.targetScopeCandidateCount <= 0) {
+    throw new Error('Compiler input model must include target scope candidates')
+  }
+
   const payload = {
     ok: true,
     command: 'test:read-model:e2e',
@@ -417,6 +428,17 @@ try {
       requiredCheckCount: compilerBoundary.dryRunContract.requiredCheckCount,
       requiredEvidenceCount: compilerBoundary.dryRunContract.requiredEvidenceCount,
       nonEnforcing: true,
+    },
+    compilerInputModel: {
+      status: compilerInputModel.status,
+      inputSchemaStatus: compilerInputModel.inputSchemaStatus,
+      dryRunInputStatus: compilerInputModel.dryRunInputStatus,
+      dryRunChangeId: compilerInputModel.dryRunInput.changeId,
+      graphSnapshotArtifactCount: compilerInputModel.dryRunInput.graphSnapshotArtifactCount,
+      policyCount: compilerInputModel.dryRunInput.policyCount,
+      evidenceEntryCount: compilerInputModel.dryRunInput.evidenceEntryCount,
+      targetScopeCandidateCount: compilerInputModel.dryRunInput.targetScopeCandidateCount,
+      nonExecuting: true,
     },
   }
 

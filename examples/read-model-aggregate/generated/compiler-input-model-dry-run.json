@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "compiler-input-model-dry-run",
+  "status": "compiler-input-model-dry-run-valid",
+  "sourceMode": "compiler-input-model-mvp-dry-run",
+  "changeId": "change-todo-search-whitespace-normalization-dogfood",
+  "humanRequest": {
+    "id": "request-todo-search-whitespace-normalization",
+    "source": "bounded-maintenance-dogfood",
+    "text": "Preserve Todo Search matching when a multi-word query contains repeated whitespace."
+  },
+  "graphSnapshot": {
+    "id": "graph-snapshot-todo-search-selected-slice",
+    "artifacts": [
+      {
+        "id": "graph-source",
+        "path": "examples/adoption/todo-search-slice/graph-source.json",
+        "role": "limited Todo Search graph source"
+      },
+      {
+        "id": "transition-status",
+        "path": "examples/read-model-aggregate/graph-source-transition-status.json",
+        "role": "current graph-source transition status"
+      },
+      {
+        "id": "read-model-registry",
+        "path": "examples/read-model-aggregate/read-model-slices.json",
+        "role": "configured read-model validation registry"
+      }
+    ]
+  },
+  "packSchema": {
+    "id": "pack-schema-bug-fix",
+    "changeType": "bug_fix",
+    "requiredInputGroups": ["humanRequest", "graphSnapshot", "policySnapshot", "evidenceIndex", "targetScopeCandidates"]
+  },
+  "policySnapshot": {
+    "id": "policy-snapshot-compiler-boundary-mvp",
+    "policies": [
+      {
+        "id": "compiler-boundary-task-registry",
+        "authority": "compiler-boundary-validator",
+        "status": "compiler-boundary-mvp-pass"
+      },
+      {
+        "id": "execution-contract-schema",
+        "authority": "contract-fixture-validator",
+        "status": "contract-schema-pass"
+      },
+      {
+        "id": "non-enforcement-policy",
+        "authority": "policy",
+        "status": "non-enforcing"
+      }
+    ]
+  },
+  "evidenceIndex": {
+    "id": "evidence-index-todo-search-whitespace-normalization",
+    "entries": [
+      {
+        "id": "evidence-runtime-fixture-result",
+        "artifact": "examples/adoption/todo-search-slice/runtime-evidence.md",
+        "evidenceType": "runtime_fixture_result",
+        "freshness": "required-after-source-change"
+      },
+      {
+        "id": "evidence-read-model-health",
+        "artifact": "examples/read-model-aggregate/generated/read-model-health-report-output.json",
+        "evidenceType": "health_report",
+        "freshness": "required-after-graph-or-artifact-change"
+      }
+    ]
+  },
+  "targetScopeCandidates": [
+    {
+      "id": "scope-runtime-search-filter",
+      "scopeKind": "code",
+      "paths": ["examples/adoption/todo-search-slice/runtime-fixture/search-filter.ts"],
+      "derivedFrom": ["graph-source:node:todo-search-runtime-filter"],
+      "confidence": "graph-backed-candidate"
+    },
+    {
+      "id": "scope-runtime-search-test",
+      "scopeKind": "test",
+      "paths": ["examples/adoption/todo-search-slice/runtime-fixture/search-filter.test.ts"],
+      "derivedFrom": ["graph-source:node:todo-search-runtime-test"],
+      "confidence": "graph-backed-candidate"
+    }
+  ],
+  "nonExecutionStatement": "This compiler input dry-run validates Actual Contract Compiler inputs only and does not compile an execution contract, execute AI, apply graph deltas, accept work, enable required checks, or retire tree-native artifacts."
+}

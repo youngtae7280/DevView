@@ -34,6 +34,11 @@ import {
   validateExecutionContract,
   validateTaskRegistry,
 } from '../core/compiler-boundary'
+import {
+  reportCompilerInputModel,
+  validateCompilerInputDryRun,
+  validateCompilerInputSchema,
+} from '../core/compiler-input-model'
 
 const workspaces: string[] = []
 const exampleWorkspacePaths = [
@@ -1241,7 +1246,7 @@ describe('read-model Evidence builder', () => {
       {
         id: 'decision-unknown-target',
         decides: 'risk-does-not-exist',
-        status: 'accepted',
+        status: 'approved-by-ai',
         decision: 'Invalid target.',
       },
     ]
@@ -1251,6 +1256,63 @@ describe('read-model Evidence builder', () => {
     expect(validation.blocking.join('\n')).toContain(
       'humanDecisions[0].decides must reference a known risk, unknown, scope, or change id',
     )
+    expect(validation.blocking.join('\n')).toContain('humanDecisions[0].status must be one of')
+  })
+
+  it('reports the Compiler Input Model MVP without compiling contracts', async () => {
+    const workspace = await createExampleWorkspace()
+
+    const report = await reportCompilerInputModel(workspace)
+
+    expect(report.status).toBe('compiler-input-model-pass')
+    expect(report.inputSchemaStatus).toBe('compiler-input-schema-pass')
+    expect(report.dryRunInputStatus).toBe('compiler-input-dry-run-pass')
+    expect(report.dryRunInput).toMatchObject({
+      changeId: 'change-todo-search-whitespace-normalization-dogfood',
+      humanRequestId: 'request-todo-search-whitespace-normalization',
+    })
+    expect(report.dryRunInput.graphSnapshotArtifactCount).toBeGreaterThan(0)
+    expect(report.dryRunInput.targetScopeCandidateCount).toBeGreaterThan(0)
+    expect(report.nonExecutionStatement).toContain('does not compile an execution contract')
+    expect(report.blockingReasons).toEqual([])
+  })
+
+  it('exposes the Compiler Input Model MVP through the CLI', async () => {
+    const workspace = await createExampleWorkspace()
+
+    const result = await runPbeCli(['graph', 'read-model', 'report-compiler-input', '--json'], {
+      cwd: workspace,
+      pluginRoot: resolve('.'),
+    })
+    const output = JSON.parse(result.stdout) as {
+      ok: boolean
+      status: string
+      inputSchemaStatus: string
+      dryRunInputStatus: string
+    }
+
+    expect(result.exitCode).toBe(0)
+    expect(output.ok).toBe(true)
+    expect(output.status).toBe('compiler-input-model-pass')
+    expect(output.inputSchemaStatus).toBe('compiler-input-schema-pass')
+    expect(output.dryRunInputStatus).toBe('compiler-input-dry-run-pass')
+  })
+
+  it('blocks Compiler Input Model schema authority drift and dry-run contract output claims', async () => {
+    const schemaPath = 'examples/read-model-aggregate/compiler-input-model-schema.json'
+    const inputPath = 'examples/read-model-aggregate/generated/compiler-input-model-dry-run.json'
+    const schema = JSON.parse(await readFile(schemaPath, 'utf8')) as {
+      inputDefinitions: Record<string, Record<string, unknown>>
+    }
+    const input = JSON.parse(await readFile(inputPath, 'utf8')) as Record<string, unknown>
+    schema.inputDefinitions.graphSnapshot.authority = 'ai-prose'
+    input.compiledExecutionContract = { id: 'not-allowed' }
+
+    const schemaValidation = validateCompilerInputSchema(schema)
+    const inputValidation = validateCompilerInputDryRun(input)
+
+    expect(schemaValidation.blocking.join('\n')).toContain('inputDefinitions.graphSnapshot.authority must be one of')
+    expect(inputValidation.blocking.join('\n')).toContain('must not contain compiledExecutionContract')
   })
 
   it('exposes graph-source health through the CLI without creating enforcement', async () => {
@@ -1269,6 +1331,7 @@ describe('read-model Evidence builder', () => {
       markdownReport: string
       treeNativeRetirement: { todoSearchApprovalStatus: string; repoWideApprovalStatus: string }
       compilerBoundary: { status: string; dryRunChangeId: string }
+      compilerInputModel: { status: string; dryRunChangeId: string }
     }
     const markdown = await readFile(markdownPath, 'utf8')
 
@@ -1279,6 +1342,8 @@ describe('read-model Evidence builder', () => {
     expect(output.enforcementStatus).toBe('non-enforcing')
     expect(output.compilerBoundary.status).toBe('compiler-boundary-mvp-pass')
     expect(output.compilerBoundary.dryRunChangeId).toBe('change-todo-search-whitespace-normalization-dogfood')
+    expect(output.compilerInputModel.status).toBe('compiler-input-model-pass')
+    expect(output.compilerInputModel.dryRunChangeId).toBe('change-todo-search-whitespace-normalization-dogfood')
     expect(output.treeNativeRetirement.todoSearchApprovalStatus).toBe('retirement-candidate-not-deleted')
     expect(output.treeNativeRetirement.repoWideApprovalStatus).toBe('not-ready')
     expect(markdown).toContain('# Graph-Source Health Report')
@@ -1288,6 +1353,7 @@ describe('read-model Evidence builder', () => {
     expect(markdown).toContain('`aggregate-pass`')
     expect(markdown).toContain('`intent-report-pass`')
     expect(markdown).toContain('`compiler-boundary-mvp-pass`')
+    expect(markdown).toContain('`compiler-input-model-pass`')
     expect(markdown).toContain('`retirement-not-ready`')
     expect(markdown).toContain('`non-enforcing`')
     expect(markdown).toContain('node dist/cli/index.js graph read-model report-health --json --markdown')

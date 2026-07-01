@@ -37,6 +37,8 @@
   for possible required-check promotion without enabling enforcement or branch protection.
 - [PBE Compiler Boundary](concept/pbe-compiler-boundary.md) - Compiler-required vs AI-advisory boundary, hardened
   Contract Fixture Validator, and non-enforcing report-health/E2E observation.
+- [Compiler Input Model](concept/compiler-input-model.md) - Machine-readable input surface for a future Actual Contract
+  Compiler, validated through a non-executing dry-run fixture.
 - [Graph operation-chain productization](concept/graph-operation-chain-productization.md) - Local native/retrofit
   dogfood package for `graph-source -> instruction pack -> local change -> graph delta -> graph update proposal`.
 - [Candidate C full read-model gate evaluation](concept/candidate-c-full-read-model-gate-evaluation.md) - Evaluation

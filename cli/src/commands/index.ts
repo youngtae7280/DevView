@@ -21,6 +21,7 @@ import {
   graphReadModelProjectCommand,
   graphReadModelProjectIntentCommand,
   graphReadModelReportCompilerBoundaryCommand,
+  graphReadModelReportCompilerInputCommand,
   graphReadModelReportHealthCommand,
   graphReadModelReportIntentCommand,
   graphReadModelSummarizeCommand,
@@ -202,6 +203,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-compiler-boundary') {
     return graphReadModelReportCompilerBoundaryCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-compiler-input') {
+    return graphReadModelReportCompilerInputCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-health') {
     return graphReadModelReportHealthCommand(context)
