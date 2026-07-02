@@ -205,6 +205,41 @@ is also preserved from source authority. The policy forbidden-scope, stop-condit
 allowed-scope resolvers are intentionally narrow: they derive generated fields from committed source authority entries,
 not from the hand-written comparison fixture.
 
+## v0.2 Current-Fixture Closeout
+
+For the current Todo Search whitespace-normalization `bug_fix` dry-run fixture, v0.2 now proves the narrow
+source-authority reconstruction loop:
+
+- generated `outputRequirements` are derived from `outputRequirementSources[]`;
+- generated `forbiddenScope` is derived from `policySnapshot.forbiddenScopeRules[]`;
+- generated `stopConditions` are derived from `stopConditionSources[]`;
+- generated `requiredEvidence` is derived from `evidenceIndex.entries[]` and `policySnapshot.evidenceCheckMappings[]`;
+- generated `requiredContext` is derived from `graphSnapshot.artifacts[]`;
+- generated `knownRisks` are derived from `riskSources[]`;
+- generated `allowedScope` is derived from `targetScopeCandidates[]`;
+- remaining semantic/policy/source-authority loss is zero for this fixture;
+- the current generated candidate is an `equivalenceCandidate` for review.
+
+The first human decision record for this fixture is
+[contract-compiler-promotion-decision-current-fixture.md](contract-compiler-promotion-decision-current-fixture.md). It
+records `approved-for-current-fixture-promotion-review` for the current Todo Search dry-run fixture, current generated
+candidate, and current promotion review packet only.
+
+v0.2 does not prove:
+
+- semantic equivalence for future fixtures;
+- support for arbitrary `changeType` values;
+- executor or implementation readiness;
+- CI enforcement or required-check readiness;
+- graph delta application;
+- user acceptance;
+- tree-native retirement readiness;
+- that the generated compiler candidate should become broadly authoritative.
+
+`equivalenceProven` remains `false` because the approved decision is scoped to current-fixture promotion review, not to
+broad equivalence proof. Generated `approvalStatus` remains unchanged because no machine-readable promotion status
+policy has been approved for reflecting docs-only human decision records into generated artifacts.
+
 ## v0.2 Equivalence/Readiness Policy
 
 The current next layer is not another resolver. It is the review policy recorded in
@@ -259,3 +294,23 @@ docs/templates/contract-compiler-promotion-decision.md
 The template is for human decision records. It is not an automatic approval mechanism. The first docs-only current
 fixture decision record is
 [contract-compiler-promotion-decision-current-fixture.md](contract-compiler-promotion-decision-current-fixture.md).
+
+## Next Milestone
+
+The next milestone is not executor automation. The recommended next step is selecting a second fixture or calibration
+fixture with a different contract shape, then observing whether source-authority reconstruction generalizes beyond the
+current Todo Search `bug_fix` fixture.
+
+The next milestone should:
+
+- choose a bounded second fixture;
+- model compiler inputs for that fixture;
+- run the non-executing compiler dry-run loop;
+- observe which source-authority resolvers fail, remain sufficient, or require extension;
+- keep promotion review non-enforcing;
+- keep generated compiler output out of execution authority;
+- avoid changing `pbe`, `.pbe`, validation scripts, generated artifact paths, sourceMode values, or compatibility
+  namespaces.
+
+That observation should determine the v0.3 scope. It should not begin with AI executor automation, graph delta apply,
+required checks, branch protection, user acceptance automation, or tree-native retirement.
