@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "git-derived-changed-file-collection-preview",
+  "status": "git-derived-changed-files-collected",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "checkerAxis": "scope-compliance-preview",
+  "collectionStatus": "git-derived-changed-files-collected",
+  "authorityClass": "git-derived-changed-files",
+  "collectionMode": "explicit-base-head",
+  "baseRef": "928ad5ef9e31cc76173645fbc9f76602ea3678e1",
+  "headRef": "21de850cc05c2a3a01658d4d6cf12ec475b34127",
+  "resolvedBaseRef": "928ad5ef9e31cc76173645fbc9f76602ea3678e1",
+  "resolvedHeadRef": "21de850cc05c2a3a01658d4d6cf12ec475b34127",
+  "changedFilesCollected": true,
+  "checkerRun": false,
+  "scopeComplianceEvaluationStatus": "not-evaluated",
+  "evaluatedViolations": [],
+  "actualDiffInspected": false,
+  "patchContentsInspected": false,
+  "gitNameStatusCollected": true,
+  "scopeEnforced": false,
+  "diffRejected": false,
+  "cleanClaimed": false,
+  "actualViolationClaimed": false,
+  "changedFiles": [
+    {
+      "status": "M",
+      "statusCode": "M",
+      "path": "docs/concept/contract-compiler-calibration-fixtures.md"
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "path": "docs/concept/decision-log.md"
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "path": "docs/concept/devview-compliance-checker-mvp-scope.md"
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "path": "docs/concept/scope-compliance-checker-implementation-readiness.md"
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "path": "examples/valid/todo-app-pbe-run/generated/compiler-input-calibration-observation.runtime-evidence-only.preview.json"
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "path": "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-input-design.runtime-evidence-only.preview.json"
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "path": "examples/valid/todo-app-pbe-run/generated/scope-compliance-checker.runtime-evidence-only.preview.json"
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "path": "examples/valid/todo-app-pbe-run/generated/scope-compliance-dry-run-skeleton.runtime-evidence-only.preview.json"
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "path": "examples/valid/todo-app-pbe-run/generated/scope-compliance-not-run-report.runtime-evidence-only.preview.json"
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "path": "examples/valid/todo-app-pbe-run/generated/scope-compliance-result.runtime-evidence-only.preview.json"
+    }
+  ],
+  "normalizedChangedFiles": [
+    {
+      "status": "M",
+      "statusCode": "M",
+      "changeType": "modified",
+      "path": "docs/concept/contract-compiler-calibration-fixtures.md",
+      "generatedPath": false
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "changeType": "modified",
+      "path": "docs/concept/decision-log.md",
+      "generatedPath": false
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "changeType": "modified",
+      "path": "docs/concept/devview-compliance-checker-mvp-scope.md",
+      "generatedPath": false
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "changeType": "modified",
+      "path": "docs/concept/scope-compliance-checker-implementation-readiness.md",
+      "generatedPath": false
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "changeType": "modified",
+      "path": "examples/valid/todo-app-pbe-run/generated/compiler-input-calibration-observation.runtime-evidence-only.preview.json",
+      "generatedPath": true
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "changeType": "modified",
+      "path": "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-input-design.runtime-evidence-only.preview.json",
+      "generatedPath": true
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "changeType": "modified",
+      "path": "examples/valid/todo-app-pbe-run/generated/scope-compliance-checker.runtime-evidence-only.preview.json",
+      "generatedPath": true
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "changeType": "modified",
+      "path": "examples/valid/todo-app-pbe-run/generated/scope-compliance-dry-run-skeleton.runtime-evidence-only.preview.json",
+      "generatedPath": true
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "changeType": "modified",
+      "path": "examples/valid/todo-app-pbe-run/generated/scope-compliance-not-run-report.runtime-evidence-only.preview.json",
+      "generatedPath": true
+    },
+    {
+      "status": "M",
+      "statusCode": "M",
+      "changeType": "modified",
+      "path": "examples/valid/todo-app-pbe-run/generated/scope-compliance-result.runtime-evidence-only.preview.json",
+      "generatedPath": true
+    }
+  ],
+  "pathNormalization": {
+    "policy": "repository-root-relative-posix-paths",
+    "windowsBackslashNormalization": "replace-backslash-with-forward-slash",
+    "absoluteLocalPathsAllowed": false,
+    "emittedAbsoluteLocalPaths": false,
+    "repositoryRootRelative": true,
+    "caseSensitivity": "repository-policy-unresolved"
+  },
+  "renameDeleteHandling": {
+    "commandMode": "name-status-with-renames",
+    "renameStatusPreserved": false,
+    "deletedStatusPreserved": false,
+    "copiedStatusPreserved": false
+  },
+  "generatedFileHandling": {
+    "policy": "report-generated-files-honestly",
+    "generatedFilesExcluded": false,
+    "generatedFilesPresent": true,
+    "generatedFiles": [
+      "examples/valid/todo-app-pbe-run/generated/compiler-input-calibration-observation.runtime-evidence-only.preview.json",
+      "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-input-design.runtime-evidence-only.preview.json",
+      "examples/valid/todo-app-pbe-run/generated/scope-compliance-checker.runtime-evidence-only.preview.json",
+      "examples/valid/todo-app-pbe-run/generated/scope-compliance-dry-run-skeleton.runtime-evidence-only.preview.json",
+      "examples/valid/todo-app-pbe-run/generated/scope-compliance-not-run-report.runtime-evidence-only.preview.json",
+      "examples/valid/todo-app-pbe-run/generated/scope-compliance-result.runtime-evidence-only.preview.json"
+    ],
+    "suppressionPolicy": "not-applied-separate-policy-required"
+  },
+  "collectionWarnings": [],
+  "allowedUse": [
+    "collect git-derived changed-file names and status for a later scope compliance input",
+    "review normalized repository-root-relative paths",
+    "confirm that collection-only output keeps checkerRun false",
+    "prepare a later non-enforcing scope evaluation slice"
+  ],
+  "forbiddenUse": [
+    "scope compliance evaluation",
+    "allowedScope comparison",
+    "forbiddenScope comparison",
+    "no-violation claim",
+    "actual violation claim",
+    "diff rejection",
+    "scope enforcement",
+    "CI enforcement",
+    "required check configuration",
+    "fixture approval",
+    "runtime Evidence satisfaction",
+    "equivalence proof",
+    "user acceptance"
+  ],
+  "nonEvaluationBoundary": "This artifact is collection-only. It records git-derived changed-file names/status between explicit refs, but it does not inspect patch contents, evaluate allowedScope or forbiddenScope, run the compliance checker, report clean or violation results, reject diffs, enforce scope, approve fixtures, satisfy runtime Evidence, or prove equivalence."
+}

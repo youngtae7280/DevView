@@ -1573,6 +1573,20 @@ candidates, approve fixtures, claim runtime Evidence is satisfied, execute AI, a
 acceptance, retire tree-native artifacts, rename PBE compatibility surfaces, or make any generated contract
 authoritative.
 
+DEC-220 does not supersede DEC-097 through DEC-219. It implements the first git-derived changed-file collection-only
+slice for the Todo App runtime Evidence-only scope compliance input layer. The new command
+`graph read-model collect-changed-files --base <baseRef> --head <headRef> --json` produces
+`examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-collection.runtime-evidence-only.preview.json`.
+The artifact records `collectionStatus: git-derived-changed-files-collected`, `authorityClass:
+git-derived-changed-files`, `collectionMode: explicit-base-head`, `changedFilesCollected: true`, `checkerRun: false`,
+`scopeComplianceEvaluationStatus: not-evaluated`, and `evaluatedViolations: []`. Git is used only to collect
+changed-file names/status between explicit refs; patch hunks and file contents are not inspected. Paths are normalized
+to repository-root-relative POSIX-style paths, rename/delete status is preserved where Git reports it, and generated
+files are reported honestly rather than suppressed. The scope compliance result, dry-run skeleton, not-run report,
+observation, and docs now link the collection artifact while preserving no clean result, no actual violation, no
+allowedScope or forbiddenScope evaluation, no rejection, no enforcement, no CI/required-check/branch-protection wiring,
+no fixture approval, no runtime Evidence satisfaction, and `equivalenceProven: false`.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

@@ -253,8 +253,9 @@ The first static result-shape preview is now recorded:
 examples/valid/todo-app-pbe-run/generated/scope-compliance-result.runtime-evidence-only.preview.json
 ```
 
-It reports `scope-compliance-input-missing` because no authoritative changed-file list exists, no checker has run, and
-no violation or no-violation status can be claimed.
+It originally reported `scope-compliance-input-missing` because no authoritative changed-file list existed. After the
+collection-only slice, the result preview can link a git-derived changed-file collection artifact, but it still reports
+scope compliance as not evaluated: no checker has run, and no violation or no-violation status can be claimed.
 
 The changed-file list authority preview is now recorded:
 
@@ -284,9 +285,9 @@ examples/valid/todo-app-pbe-run/generated/scope-compliance-fixture-input-consump
 ```
 
 It records `scope-compliance-fixture-input-present-preview-only`: fixture-provided input is present, but no checker has
-run, no actual diff was inspected, no changed files were collected, and no scope compliance conclusion was produced.
-This prepares the future checker dry-run boundary without adding enforcement, rejection, CI approval, or equivalence
-status.
+run, no actual diff was inspected, and no scope compliance conclusion was produced. DEC-220 later adds a separate
+git-derived collection-only artifact; fixture-provided input still remains preview-only. This prepares the future
+checker dry-run boundary without adding enforcement, rejection, CI approval, or equivalence status.
 
 The preview-only dry-run skeleton is now recorded:
 
@@ -295,8 +296,8 @@ examples/valid/todo-app-pbe-run/generated/scope-compliance-dry-run-skeleton.runt
 ```
 
 It records `dryRunSkeletonStatus: preview-only-not-executable`, `resultStatus: scope-compliance-dry-run-not-run`, and
-`stopReason: authoritative-changed-file-list-missing`. This means a future dry-run sequence is described, but no checker
-dry-run logic has executed and no clean or violation result can be claimed.
+after DEC-220 `stopReason: scope-compliance-evaluation-not-implemented`. This means a future dry-run sequence is
+described, but no checker dry-run logic has executed and no clean or violation result can be claimed.
 
 The not-run report shape preview is now recorded:
 
@@ -305,10 +306,10 @@ examples/valid/todo-app-pbe-run/generated/scope-compliance-not-run-report.runtim
 ```
 
 It records `reportStatus: scope-compliance-not-run-report-previewed`, `checkerRun: false`, `stopReason:
-authoritative-changed-file-list-missing`, and `nextRequiredInput: authoritative-changed-file-list`. This report explains
-why no dry-run result can be claimed: no actual diff was inspected, no changed files were collected, fixture-provided
-changed-file input is preview-only, and no violation categories were evaluated. It does not enforce scope, reject
-changes, approve the fixture, satisfy runtime Evidence, or prove equivalence.
+scope-compliance-evaluation-not-implemented`, and `nextRequiredInput: implemented-scope-evaluation`. This report
+explains why no dry-run result can be claimed: changed files may now be collected by the collection-only artifact, but no
+scope comparison has run and no violation categories were evaluated. It does not enforce scope, reject changes, approve
+the fixture, satisfy runtime Evidence, or prove equivalence.
 
 The authoritative changed-file input boundary is now decided at documentation level:
 
@@ -329,8 +330,8 @@ examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-input-design.
 
 It records `git-derived-input-design-previewed` and designs the future input around explicit base/head refs or a
 committed range, with working-tree, staged, and untracked modes deferred. It also records path normalization and
-generated-churn handling requirements. No `git diff` command has run, no changed files were collected, and the checker
-result remains not-run/input-missing.
+generated-churn handling requirements. At that design stage no `git diff` command had run and no changed files were
+collected. DEC-220 adds collection-only input while keeping the checker result not evaluated.
 
 The git-derived changed-file collection scope is now decided:
 
@@ -341,6 +342,23 @@ gitDerivedChangedFileCollectionScopeDecisionStatus: git-derived-collection-scope
 The next implementation slice is collection-only with explicit base/head refs first. It should create only a
 changed-file collection artifact. Collection success still keeps `checkerRun: false`, `evaluatedViolations: []`, and
 `scopeComplianceEvaluationStatus: not-evaluated`; scope matching and clean/violation results remain later work.
+
+The first collection-only implementation now records:
+
+```text
+examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-collection.runtime-evidence-only.preview.json
+```
+
+Status:
+
+```text
+gitDerivedChangedFileCollectionStatus: git-derived-changed-files-collected
+```
+
+The command collects Git name/status data between explicit refs and normalizes paths. It is still only an input
+collector: `checkerRun` remains `false`, `scopeComplianceEvaluationStatus` remains `not-evaluated`, and
+`evaluatedViolations` remains `[]`. It does not inspect patch contents, compare scope, reject diffs, enforce CI, approve
+fixtures, satisfy runtime Evidence, or prove equivalence.
 
 ## Decision
 

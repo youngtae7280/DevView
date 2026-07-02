@@ -164,6 +164,8 @@ Commands:
                        Validate the local non-enforcing Compiler Input Model MVP schema and dry-run input fixture
   graph read-model compile-contract
                        Compile a non-executing dry-run contract candidate from the Compiler Input Model with --dry-run
+  graph read-model collect-changed-files
+                       Collect git-derived changed-file names/status between explicit refs without scope evaluation
   graph read-model report-health
                        Summarize local non-enforcing Graph-source transition health
   graph read-model observe-candidates
@@ -217,5 +219,7 @@ Options:
   --proposal <file>    Graph update proposal file for graph operation apply-proposal.
   --chain-command <name>
                        Wrapped graph operation script command. Defaults to operation-chain.
+  --base <ref>         Base git ref for graph read-model collect-changed-files.
+  --head <ref>         Head git ref for graph read-model collect-changed-files.
 `
 }

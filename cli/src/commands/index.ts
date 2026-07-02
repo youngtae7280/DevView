@@ -15,6 +15,7 @@ import {
   graphOperationProposeUpdateCommand,
   graphOperationRunChainCommand,
   graphRetrofitPlanCommand,
+  graphReadModelCollectChangedFilesCommand,
   graphReadModelCompareCommand,
   graphReadModelCompileContractCommand,
   graphReadModelGenerateCommand,
@@ -210,6 +211,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'compile-contract') {
     return graphReadModelCompileContractCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'collect-changed-files') {
+    return graphReadModelCollectChangedFilesCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-health') {
     return graphReadModelReportHealthCommand(context)

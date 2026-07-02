@@ -1299,24 +1299,24 @@ examples/valid/todo-app-pbe-run/generated/scope-compliance-result.runtime-eviden
 
 Preview status:
 
-- `status: scope-compliance-input-missing-previewed`
-- `scopeComplianceResultStatus: scope-compliance-input-missing`
-- `changedFileListStatus: missing-or-not-authoritative`
-- `changedFileListAuthorityStatus: missing-or-not-authoritative`
+- `status: scope-compliance-collection-only-not-evaluated-previewed`
+- `scopeComplianceResultStatus: scope-compliance-not-evaluated-collection-only`
+- `changedFileListStatus: git-derived-changed-files-collected`
+- `changedFileListAuthorityStatus: git-derived-changed-files`
 - `enforcementStatus: non-enforcing-preview`
 - `checkerRun: false`
 - `actualDiffInspected: false`
-- `changedFilesCollected: false`
+- `changedFilesCollected: true`
+- `scopeComplianceEvaluationStatus: not-evaluated`
 - `scopeEnforced: false`
 
 The preview result intentionally does not report `scope-compliance-no-violation-observed`. It also does not report an
-actual violation. Because no authoritative changed-file list exists, the only honest result shape is input missing /
-not authoritative.
+actual violation. Changed files may now be collected as names/status only, but no scope compliance evaluation has run.
 
 The third-fixture observation now links this preview with:
 
 ```text
-scopeComplianceResultPreviewStatus: scope-compliance-input-missing-previewed
+scopeComplianceResultPreviewStatus: scope-compliance-collection-only-not-evaluated-previewed
 ```
 
 Runtime Evidence remains missing, evidence/check binding remains `preview-only-not-satisfied`, the fixture remains
@@ -1351,7 +1351,7 @@ The third-fixture observation now links this preview with:
 changedFileListAuthorityPreviewStatus: changed-file-list-authority-previewed
 ```
 
-The scope compliance result preview still reports `scope-compliance-input-missing`, keeps `evaluatedViolations: []`, and
+The scope compliance result preview now links collection-only changed-file input, keeps `evaluatedViolations: []`, and
 does not claim a clean result or an actual violation.
 
 ## Authoritative Changed-File Input Boundary Decision
@@ -1370,10 +1370,10 @@ Decision:
 - execution-metadata changed files may become authoritative later if emitted by a trusted executor;
 - git-derived changed files are the selected first real authoritative candidate for a later implementation task.
 
-This decision does not implement changed-file collection, run `git diff`, inspect actual diffs, run checker logic,
+This decision did not implement changed-file collection, run `git diff`, inspect actual diffs, run checker logic,
 evaluate fixture-provided scenarios, claim no-violation, claim actual violations, reject diffs, enforce scope, approve
-the fixture, satisfy runtime Evidence, or prove equivalence. Until a future authoritative changed-file input exists, the
-scope compliance result remains `scope-compliance-input-missing` and the not-run report remains valid.
+the fixture, satisfy runtime Evidence, or prove equivalence. DEC-220 later adds collection-only input; scope compliance
+still remains not evaluated.
 
 ## Git-Derived Changed-File Input Design Preview
 
@@ -1403,8 +1403,9 @@ The third-fixture observation now links this preview with:
 gitDerivedChangedFileInputDesignStatus: git-derived-input-design-previewed
 ```
 
-The result preview still reports `scope-compliance-input-missing`. No `git diff` output is encoded, no actual diff is
-inspected, no changed files are collected, no fixture scenario is evaluated, and no clean or violation result is claimed.
+At this design-preview stage the result preview still reported `scope-compliance-input-missing`. No `git diff` output was
+encoded, no actual diff was inspected, no changed files were collected, no fixture scenario was evaluated, and no clean
+or violation result was claimed.
 
 ## Git-Derived Changed-File Collection Scope Decision
 
@@ -1427,6 +1428,41 @@ Decision:
 
 Future collection-only state may set `changedFilesCollected: true`, but it must keep `checkerRun: false`,
 `evaluatedViolations: []`, and `scopeComplianceEvaluationStatus: not-evaluated` until a later evaluation slice exists.
+
+## Git-Derived Changed-File Collection-Only Implementation
+
+The first git-derived changed-file collection artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-collection.runtime-evidence-only.preview.json
+```
+
+Collection status:
+
+```text
+gitDerivedChangedFileCollectionStatus: git-derived-changed-files-collected
+```
+
+The new command shape is:
+
+```text
+graph read-model collect-changed-files --base <baseRef> --head <headRef> --json
+```
+
+This is the first implementation slice for the scope compliance input layer. It uses Git only to collect changed-file
+names/status between explicit refs. It normalizes paths to repository-root-relative POSIX-style paths and reports
+generated files honestly. It does not inspect patch contents.
+
+The third-fixture observation now records collection-only progress while preserving:
+
+- `checkerRun: false`;
+- `scopeComplianceEvaluationStatus: not-evaluated`;
+- `evaluatedViolations: []`;
+- no allowedScope or forbiddenScope evaluation;
+- no clean or violation result;
+- no rejection, enforcement, CI wiring, fixture approval, runtime Evidence satisfaction, or equivalence proof.
+
+Changed files collected does not mean scope compliance checked.
 
 ## Fixture-Provided Changed-File List Preview
 
@@ -1462,8 +1498,9 @@ The third-fixture observation now links this preview with:
 fixtureProvidedChangedFileListPreviewStatus: fixture-provided-preview-input-available
 ```
 
-The scope compliance result preview still keeps `checkerRun: false`, `actualDiffInspected: false`,
-`changedFilesCollected: false`, and `evaluatedViolations: []`.
+The fixture-provided preview itself still keeps `checkerRun: false`, `actualDiffInspected: false`,
+`changedFilesCollected: false`, and `evaluatedViolations: []`. A separate git-derived collection-only artifact now
+records collected changed-file names/status without evaluating scope.
 
 ## Scope Compliance Fixture Input Consumption Preview
 
@@ -1493,8 +1530,9 @@ The third-fixture observation now links this preview with:
 fixtureInputConsumptionPreviewStatus: scope-compliance-fixture-input-present-preview-only
 ```
 
-The result preview remains non-conclusive: `scopeComplianceResultStatus` is still `scope-compliance-input-missing`,
-`checkerRun` is still `false`, and `evaluatedViolations` is still empty.
+The result preview remains non-conclusive: `scopeComplianceResultStatus` is now
+`scope-compliance-not-evaluated-collection-only`, `checkerRun` is still `false`, and `evaluatedViolations` is still
+empty.
 
 ## Scope Compliance Dry-Run Skeleton Preview
 
@@ -1509,15 +1547,17 @@ Preview status:
 - `status: scope-compliance-dry-run-skeleton-previewed`
 - `dryRunSkeletonStatus: preview-only-not-executable`
 - `resultStatus: scope-compliance-dry-run-not-run`
-- `stopReason: authoritative-changed-file-list-missing`
+- `stopReason: scope-compliance-evaluation-not-implemented`
 - `checkerRun: false`
 - `actualDiffInspected: false`
-- `changedFilesCollected: false`
+- `changedFilesCollected: true`
+- `scopeComplianceEvaluationStatus: not-evaluated`
 - `evaluatedViolations: []`
 
 The skeleton describes the future dry-run stages: load contract scope, load an authoritative changed-file list, normalize
 paths, compare allowed scope, compare forbidden scope, and emit a non-enforcing result. Each stage is currently not run.
-The fixture-provided changed-file list is present only as preview input, so it does not unblock evaluation.
+The fixture-provided changed-file list is present only as preview input. The git-derived collection-only artifact now
+adds collected names/status, but it still does not unblock evaluation because no scope comparison slice exists.
 
 The third-fixture observation now links this preview with:
 
@@ -1525,9 +1565,10 @@ The third-fixture observation now links this preview with:
 scopeComplianceDryRunSkeletonStatus: preview-only-not-executable
 ```
 
-The result preview remains conservative: `scopeComplianceResultStatus` is still `scope-compliance-input-missing`,
-`checkerRun` is still `false`, and `evaluatedViolations` is still empty. No clean result, actual violation, rejection,
-enforcement, approval, runtime Evidence satisfaction, or equivalence proof is claimed.
+The result preview remains conservative: `scopeComplianceResultStatus` is now
+`scope-compliance-not-evaluated-collection-only`, `checkerRun` is still `false`, and `evaluatedViolations` is still
+empty. No clean result, actual violation, rejection, enforcement, approval, runtime Evidence satisfaction, or
+equivalence proof is claimed.
 
 ## Scope Compliance Not-Run Report Preview
 
@@ -1541,16 +1582,17 @@ Preview status:
 
 - `status: scope-compliance-not-run-report-previewed`
 - `reportStatus: scope-compliance-not-run-report-previewed`
-- `stopReason: authoritative-changed-file-list-missing`
-- `nextRequiredInput: authoritative-changed-file-list`
+- `stopReason: scope-compliance-evaluation-not-implemented`
+- `nextRequiredInput: implemented-scope-evaluation`
 - `checkerRun: false`
 - `actualDiffInspected: false`
-- `changedFilesCollected: false`
+- `changedFilesCollected: true`
+- `scopeComplianceEvaluationStatus: not-evaluated`
 - `evaluatedViolations: []`
 
 This artifact previews how DevView should report a not-run scope compliance dry-run. It explains that fixture-provided
-changed-file lists are available only as preview input and cannot replace an authoritative changed-file list. Therefore
-no actual diff is inspected, no changed files are collected, no violation categories are evaluated, and no clean or
+changed-file lists are available only as preview input and cannot replace git-derived collection. The collection-only
+artifact now exists, but no scope comparison is implemented, no violation categories are evaluated, and no clean or
 actual violation result can be claimed.
 
 The third-fixture observation now links this preview with:

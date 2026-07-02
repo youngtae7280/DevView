@@ -1,18 +1,19 @@
 {
   "schemaVersion": 1,
   "artifactRole": "scope-compliance-result-preview",
-  "status": "scope-compliance-input-missing-previewed",
+  "status": "scope-compliance-collection-only-not-evaluated-previewed",
   "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
   "fixtureShape": "test-only-behavior-proof",
   "checkerAxis": "scope-compliance-preview",
-  "resultStatus": "scope-compliance-input-missing",
-  "scopeComplianceResultStatus": "scope-compliance-input-missing",
-  "changedFileListStatus": "missing-or-not-authoritative",
-  "changedFileListAuthorityStatus": "missing-or-not-authoritative",
+  "resultStatus": "scope-compliance-not-evaluated-collection-only",
+  "scopeComplianceResultStatus": "scope-compliance-not-evaluated-collection-only",
+  "changedFileListStatus": "git-derived-changed-files-collected",
+  "changedFileListAuthorityStatus": "git-derived-changed-files",
   "changedFileListAuthorityPreviewStatus": "changed-file-list-authority-previewed",
   "authoritativeChangedFileInputBoundaryDecisionStatus": "authoritative-changed-file-input-boundary-decided",
   "gitDerivedChangedFileInputDesignStatus": "git-derived-input-design-previewed",
   "gitDerivedChangedFileCollectionScopeDecisionStatus": "git-derived-collection-scope-decided",
+  "gitDerivedChangedFileCollectionStatus": "git-derived-changed-files-collected",
   "fixtureProvidedChangedFileListPreviewStatus": "fixture-provided-preview-input-available",
   "fixtureInputConsumptionPreviewStatus": "scope-compliance-fixture-input-present-preview-only",
   "scopeComplianceDryRunSkeletonStatus": "preview-only-not-executable",
@@ -21,7 +22,8 @@
   "checkerImplemented": false,
   "checkerRun": false,
   "actualDiffInspected": false,
-  "changedFilesCollected": false,
+  "changedFilesCollected": true,
+  "scopeComplianceEvaluationStatus": "not-evaluated",
   "scopeEnforced": false,
   "diffRejected": false,
   "supportStatus": "not-supported",
@@ -35,6 +37,7 @@
     "scopeComplianceCheckerPreview": "examples/valid/todo-app-pbe-run/generated/scope-compliance-checker.runtime-evidence-only.preview.json",
     "changedFileListAuthorityPreview": "examples/valid/todo-app-pbe-run/generated/changed-file-list-authority.runtime-evidence-only.preview.json",
     "gitDerivedChangedFileInputDesign": "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-input-design.runtime-evidence-only.preview.json",
+    "gitDerivedChangedFileCollection": "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-collection.runtime-evidence-only.preview.json",
     "collectionScopeDecision": "docs/concept/scope-compliance-checker-implementation-readiness.md#git-derived-changed-file-collection-scope-decision",
     "fixtureProvidedChangedFileListPreview": "examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json",
     "fixtureInputConsumptionPreview": "examples/valid/todo-app-pbe-run/generated/scope-compliance-fixture-input-consumption.runtime-evidence-only.preview.json",
@@ -73,17 +76,18 @@
         "forbidden-scope-violation",
         "production-source-modified-in-test-only-fixture"
       ],
-      "currentStatus": "missing-or-not-authoritative",
-      "currentSource": "none",
+      "currentStatus": "git-derived-changed-files-collected",
+      "currentSource": "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-collection.runtime-evidence-only.preview.json",
       "authorityPreview": "examples/valid/todo-app-pbe-run/generated/changed-file-list-authority.runtime-evidence-only.preview.json",
       "gitDerivedDesign": "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-input-design.runtime-evidence-only.preview.json",
-      "collectionScopeDecision": "git-derived-collection-only-implementation-not-started",
+      "collectionScopeDecision": "git-derived-collection-scope-decided",
+      "collectionImplementationStatus": "collection-only-implemented",
       "fixtureProvidedPreview": "examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json",
       "authoritativeBoundaryDecision": "git-derived-changed-files-selected-for-later-implementation",
-      "blockingReason": "No actual diff inspection, changed-file collection, or supplied authoritative changed-file artifact exists."
+      "blockingReason": "A git-derived changed-file collection artifact exists, but scope compliance still has no supported scope source, path comparison implementation, or checker evaluation slice."
     },
     {
-      "inputId": "path-normalization-rules",
+      "inputId": "scope-evaluation-path-comparison-rules",
       "requiredFor": ["scope-path-comparison"],
       "currentStatus": "not-defined",
       "currentSource": "none",
@@ -122,6 +126,19 @@
     "evaluatedViolations": [],
     "resultConclusion": "not-produced"
   },
+  "gitDerivedChangedFileCollectionPreview": {
+    "status": "git-derived-changed-files-collected",
+    "path": "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-collection.runtime-evidence-only.preview.json",
+    "collectionMode": "explicit-base-head",
+    "authorityClass": "git-derived-changed-files",
+    "changedFilesCollected": true,
+    "checkerRun": false,
+    "actualDiffInspected": false,
+    "patchContentsInspected": false,
+    "scopeComplianceEvaluationStatus": "not-evaluated",
+    "evaluatedViolations": [],
+    "resultConclusion": "not-produced"
+  },
   "dryRunSkeletonPreview": {
     "status": "preview-only-not-executable",
     "path": "examples/valid/todo-app-pbe-run/generated/scope-compliance-dry-run-skeleton.runtime-evidence-only.preview.json",
@@ -129,7 +146,8 @@
     "stopReason": "authoritative-changed-file-list-missing",
     "checkerRun": false,
     "actualDiffInspected": false,
-    "changedFilesCollected": false,
+    "changedFilesCollected": true,
+    "scopeComplianceEvaluationStatus": "not-evaluated",
     "evaluatedViolations": [],
     "resultConclusion": "not-produced"
   },
@@ -141,7 +159,8 @@
     "nextRequiredInput": "authoritative-changed-file-list",
     "checkerRun": false,
     "actualDiffInspected": false,
-    "changedFilesCollected": false,
+    "changedFilesCollected": true,
+    "scopeComplianceEvaluationStatus": "not-evaluated",
     "evaluatedViolations": [],
     "resultConclusion": "not-produced"
   },
@@ -150,26 +169,22 @@
   "notEvaluatedViolations": [
     {
       "violationId": "allowed-scope-violation",
-      "reasonNotEvaluated": "No authoritative changed-file list exists.",
-      "wouldRequire": ["authoritative-changed-file-list", "allowedScope", "path-normalization-rules"]
+      "reasonNotEvaluated": "Changed files have been collected, but no scope evaluation slice compares them with allowedScope.",
+      "wouldRequire": ["implemented-scope-evaluation", "allowedScope", "path-normalization-rules"]
     },
     {
       "violationId": "forbidden-scope-violation",
-      "reasonNotEvaluated": "No authoritative changed-file list exists.",
-      "wouldRequire": ["authoritative-changed-file-list", "forbiddenScope", "path-normalization-rules"]
+      "reasonNotEvaluated": "Changed files have been collected, but no scope evaluation slice compares them with forbiddenScope.",
+      "wouldRequire": ["implemented-scope-evaluation", "forbiddenScope", "path-normalization-rules"]
     },
     {
       "violationId": "production-source-modified-in-test-only-fixture",
-      "reasonNotEvaluated": "No authoritative changed-file list exists and no diff inspection has run.",
-      "wouldRequire": [
-        "authoritative-changed-file-list",
-        "production-source-forbidden-scope",
-        "path-normalization-rules"
-      ]
+      "reasonNotEvaluated": "Changed files have been collected as names/status only, but no production-source scope comparison has run.",
+      "wouldRequire": ["implemented-scope-evaluation", "production-source-forbidden-scope", "path-normalization-rules"]
     },
     {
       "violationId": "missing-changed-file-list",
-      "reasonNotEvaluated": "This result preview records the missing input state but does not run a checker.",
+      "reasonNotEvaluated": "Changed-file collection exists, but this result preview does not run a checker.",
       "wouldRequire": ["implemented-result-classifier"]
     },
     {
@@ -180,17 +195,18 @@
   ],
   "missingInputs": [
     {
-      "inputId": "authoritative-changed-file-list",
-      "impact": "scope compliance cannot be evaluated",
+      "inputId": "implemented-scope-evaluation",
+      "impact": "changed files were collected, but scope compliance cannot be evaluated",
       "authorityPreview": "examples/valid/todo-app-pbe-run/generated/changed-file-list-authority.runtime-evidence-only.preview.json",
       "gitDerivedDesign": "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-input-design.runtime-evidence-only.preview.json",
-      "collectionScopeDecision": "git-derived-collection-only-implementation-not-started",
+      "collectionScopeDecision": "git-derived-collection-scope-decided",
+      "collectionArtifact": "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-collection.runtime-evidence-only.preview.json",
       "fixtureProvidedPreview": "examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json",
       "authoritativeBoundaryDecision": "git-derived-changed-files-selected-for-later-implementation",
       "requiredBeforeNoViolationClaim": true
     },
     {
-      "inputId": "path-normalization-rules",
+      "inputId": "scope-evaluation-path-comparison-rules",
       "impact": "scope paths and changed files cannot be compared reliably",
       "requiredBeforeNoViolationClaim": true
     },
@@ -219,12 +235,12 @@
     "canApproveFixture": false,
     "canSatisfyRuntimeEvidence": false,
     "canProveEquivalence": false,
-    "reason": "The result preview has no authoritative changed-file input and no implemented checker execution."
+    "reason": "The result preview has a collection-only changed-file input, but no implemented scope evaluation or checker execution."
   },
   "allowedUse": [
     "review the expected scope compliance result shape",
-    "show how missing changed-file input should be represented",
-    "confirm that missing input does not become no-violation",
+    "show how collection-only changed-file input should remain not evaluated",
+    "confirm that collection success does not become no-violation",
     "prepare a future static result schema or checker input decision"
   ],
   "forbiddenUse": [
@@ -247,5 +263,5 @@
     "Todo App source-authority promotion",
     "user acceptance"
   ],
-  "nonExecutionBoundary": "This scope compliance result preview is static and non-enforcing. It records that checker inputs are missing or not authoritative. It does not run a checker, inspect actual diffs, collect changed files, report no-violation, detect violations, reject changes, enforce scope, wire CI, configure required checks, generate a contract candidate, approve a fixture, satisfy runtime Evidence, set equivalenceProven true, apply graph deltas, or replace user acceptance."
+  "nonExecutionBoundary": "This scope compliance result preview is static and non-enforcing. It records that a git-derived changed-file collection artifact exists, but scope compliance evaluation is not implemented and checkerRun remains false. It does not inspect patch contents, compare allowedScope or forbiddenScope, report no-violation, detect violations, reject changes, enforce scope, wire CI, configure required checks, generate a contract candidate, approve a fixture, satisfy runtime Evidence, set equivalenceProven true, apply graph deltas, or replace user acceptance."
 }

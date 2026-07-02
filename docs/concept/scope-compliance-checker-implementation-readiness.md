@@ -182,8 +182,9 @@ Generated churn policy:
 - generated read-model churn suppression or exclusion must be a separate explicit policy;
 - collection must not silently hide generated files.
 
-The current checker result remains `scope-compliance-input-missing`; `checkerRun`, `actualDiffInspected`,
-`changedFilesCollected`, and `evaluatedViolations` remain false/empty.
+At the design-preview stage the checker result remained `scope-compliance-input-missing`; `checkerRun`,
+`actualDiffInspected`, `changedFilesCollected`, and `evaluatedViolations` remained false/empty. DEC-220 adds only the
+collection-only slice described below. It does not add scope evaluation.
 
 ## Git-Derived Changed-File Collection Scope Decision
 
@@ -225,7 +226,7 @@ allowedUse
 forbiddenUse
 ```
 
-Future state transition after collection-only implementation:
+Collection-only state transition:
 
 ```text
 changedFilesCollected: true
@@ -236,6 +237,45 @@ scopeComplianceEvaluationStatus: not-evaluated
 
 Collection success will not imply scope compliance. The scope compliance checker must remain not-run until a later
 evaluation slice explicitly consumes a collection artifact with allowedScope/forbiddenScope comparison logic.
+
+## Git-Derived Changed-File Collection-Only Implementation
+
+The first collection-only artifact is now produced by:
+
+```text
+node dist/cli/index.js graph read-model collect-changed-files --base <baseRef> --head <headRef> --json
+```
+
+Default output:
+
+```text
+examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-collection.runtime-evidence-only.preview.json
+```
+
+Implementation status:
+
+```text
+gitDerivedChangedFileCollectionStatus: git-derived-changed-files-collected
+```
+
+The command uses Git only for changed-file names/status between explicit refs. It uses name-status output with rename
+status preservation, normalizes paths to repository-root-relative POSIX-style paths, strips absolute local path shapes
+if they ever appear, and reports generated files honestly. It does not inspect patch hunks or file contents.
+
+Collection-only boundaries:
+
+- `changedFilesCollected: true`;
+- `checkerRun: false`;
+- `scopeComplianceEvaluationStatus: not-evaluated`;
+- `evaluatedViolations: []`;
+- no allowedScope comparison;
+- no forbiddenScope comparison;
+- no clean result;
+- no violation result;
+- no rejection, enforcement, approval, runtime Evidence satisfaction, or equivalence proof.
+
+The scope compliance result preview may link this collection artifact, but it must stay non-conclusive. Collection is an
+input layer only.
 
 ## Fixture-Provided Changed-File List Preview
 
@@ -299,16 +339,18 @@ scope, loading an authoritative changed-file list, normalizing paths, comparing 
 scope, and emitting a non-enforcing result. Current execution stops before evaluation:
 
 ```text
-stopReason: authoritative-changed-file-list-missing
+stopReason: scope-compliance-evaluation-not-implemented
 resultStatus: scope-compliance-dry-run-not-run
 checkerRun: false
+changedFilesCollected: true
+scopeComplianceEvaluationStatus: not-evaluated
 evaluatedViolations: []
 ```
 
-Fixture-provided changed-file input is present, but it remains preview-only and does not satisfy the authoritative
-changed-file input requirement. The skeleton does not run checker dry-run logic, inspect actual diffs, collect changed
-files, evaluate scenarios, report no-violation, report actual violations, reject changes, enforce scope, or promote any
-fixture.
+Fixture-provided changed-file input is present, but it remains preview-only. A separate git-derived collection-only
+artifact now satisfies only the collection layer; it does not satisfy scope evaluation. The skeleton does not run checker
+dry-run logic, inspect patch contents, evaluate scenarios, report no-violation, report actual violations, reject
+changes, enforce scope, or promote any fixture.
 
 ## Scope Compliance Not-Run Report Preview
 
@@ -328,16 +370,18 @@ This report shape documents why the checker did not run. It records:
 
 ```text
 checkerRun: false
-stopReason: authoritative-changed-file-list-missing
-nextRequiredInput: authoritative-changed-file-list
+stopReason: scope-compliance-evaluation-not-implemented
+nextRequiredInput: implemented-scope-evaluation
+changedFilesCollected: true
+scopeComplianceEvaluationStatus: not-evaluated
 evaluatedViolations: []
 ```
 
 The report explicitly keeps fixture-provided changed-file lists as preview-only input. They are useful for explaining
 future result shape, but they are not actual git diff output, collected changed files, execution metadata, or an
-authoritative changed-file list. Because no actual diff was inspected and no changed files were collected, the report
-does not claim a clean result, an actual violation, rejection, enforcement, approval, runtime Evidence satisfaction, or
-equivalence proof.
+authoritative changed-file list. A separate git-derived collection-only artifact now exists, but because no scope
+comparison has run, the report does not claim a clean result, an actual violation, rejection, enforcement, approval,
+runtime Evidence satisfaction, or equivalence proof.
 
 ## Readiness Criteria
 

@@ -86,6 +86,8 @@ export interface CliOptions {
   markdown?: string
   proposal?: string
   chainCommand?: string
+  base?: string
+  head?: string
 }
 
 export interface CliEnvironment {

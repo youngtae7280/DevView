@@ -1,5 +1,6 @@
 import { relativePath } from '../core/fs.js'
 import { compileExecutionContractDryRun } from '../core/contract-compiler-dry-run.js'
+import { collectGitDerivedChangedFiles } from '../core/git-derived-changed-file-collection.js'
 import { buildGraphExecutionContractReport } from '../core/graph-execution-contract.js'
 import { reportCompilerBoundary } from '../core/compiler-boundary.js'
 import { reportCompilerInputModel } from '../core/compiler-input-model.js'
@@ -582,6 +583,53 @@ export async function graphReadModelCompileContractCommand(context: CommandConte
         )
       : [],
     data: { ...result },
+  }
+}
+
+export async function graphReadModelCollectChangedFilesCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.base) {
+    return invalidCommand('graph read-model collect-changed-files requires --base <baseRef>.')
+  }
+  if (!context.options.head) {
+    return invalidCommand('graph read-model collect-changed-files requires --head <headRef>.')
+  }
+
+  try {
+    const result = await collectGitDerivedChangedFiles(context.options.root, {
+      baseRef: context.options.base,
+      headRef: context.options.head,
+      output: context.options.output,
+    })
+    return {
+      ok: true,
+      command: 'graph read-model collect-changed-files',
+      exitCode: ExitCode.Success,
+      message: 'Git-derived changed-file collection artifact created.',
+      issues: [],
+      data: {
+        ...result.artifact,
+        outputPath: result.outputPath,
+        next: 'Review the collection artifact as input only. Scope compliance remains not evaluated and checkerRun remains false.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model collect-changed-files',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Git-derived changed-file collection blocked.',
+      issues: [
+        issue({
+          validator: 'GitDerivedChangedFileCollection',
+          code: 'GIT_DERIVED_CHANGED_FILE_COLLECTION_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide valid explicit --base and --head refs in the target repository. This command collects names/status only and does not evaluate scope compliance.',
+        }),
+      ],
+    }
   }
 }
 
