@@ -669,6 +669,43 @@ This fixture should reduce overfitting risk because it is neither the completed 
 external behavior-change preview fixture. It asks whether DevView can reason about a proof-focused task where the safest
 contract may forbid production code edits and require only test/Evidence strengthening.
 
+## Third Calibration Input Draft
+
+The third fixture calibration-only input draft is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/compiler-input-model-calibration-draft.runtime-evidence-only.json
+```
+
+Draft status:
+
+- `fixtureStatus: calibration-draft`
+- `fixtureShape: test-only-behavior-proof`
+- `supportStatus: not-supported`
+- `expectedCandidateStatus: contract-candidate-not-run`
+- `approvalStatus: not-approved`
+- `equivalenceProven: false`
+
+This draft is intentionally placed beside the existing Todo App generated artifacts, but it does not overwrite or
+reinterpret the existing `todo-app-pbe-run-structure-only` fixture. The positive Todo App fixture remains
+structure-only; the draft is a separate calibration artifact for a possible future runtime Evidence-only proof.
+
+The draft models:
+
+- allowed test/Evidence-oriented scope through `.pbe/tree/test-tree.json`, `.pbe/evidence/evidence-tree.json`, and
+  `.pbe/evidence/test-results/todo-add.txt`;
+- forbidden production source scope through the conceptual `src/todos.ts` path from `WT-1`;
+- required runtime command Evidence as missing/unresolved rather than satisfied;
+- attached structure-only Evidence as present but not authoritative runtime proof;
+- output requirements for runtime Evidence status, production source non-modification, and non-promotion boundaries;
+- stop conditions when runtime proof would require production source edits, when runtime command Evidence is missing, or
+  when Evidence is treated as user acceptance;
+- risk sources for test-only scope drift, attached-Evidence authority confusion, and acceptance-boundary confusion.
+
+This draft should help a later calibration cycle observe compliance-checker-adjacent questions, especially whether a
+test-only contract can detect forbidden production source edits. It is not a supported Compiler Input Model, does not
+generate a contract candidate, does not create a promotion review packet, and does not approve Todo App promotion.
+
 ## Calibration Success Criteria
 
 A future calibration cycle is successful if:
@@ -700,7 +737,7 @@ This selection does not:
 
 ## Next Step
 
-The next task should draft a calibration input model for the selected Todo App runtime evidence-only fixture without
-declaring support. It should not broaden compiler support, wire the third fixture into the supported command path,
-create a promotion review packet, approve the fixture, apply graph deltas, turn test Evidence into user acceptance, or
-change the existing Todo App structure-only status.
+The next task should add a calibration observation report for the selected Todo App runtime evidence-only draft. It
+should not broaden compiler support, wire the third fixture into the supported command path, create a promotion review
+packet, approve the fixture, apply graph deltas, turn test Evidence into user acceptance, or change the existing Todo App
+structure-only status.

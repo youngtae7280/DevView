@@ -1201,6 +1201,19 @@ promotion packet, generalize the Todo Search human decision, promote the `escape
 configure branch protection, set `equivalenceProven: true`, execute AI, accept user work, retire tree-native artifacts,
 rename PBE compatibility surfaces, or make any generated contract authoritative.
 
+DEC-198 does not supersede DEC-097 through DEC-197. It adds the calibration-only draft
+`examples/valid/todo-app-pbe-run/generated/compiler-input-model-calibration-draft.runtime-evidence-only.json` for the
+selected `Todo App add-todo runtime evidence-only calibration` fixture. The draft models a `test-only-behavior-proof`
+shape with test/Evidence-oriented candidate scope, production source edits forbidden through the conceptual `src/todos.ts`
+path, missing runtime command Evidence, attached structure-only Evidence that is not authoritative runtime proof, output
+obligations for Evidence status and source non-modification, stop conditions for production-source edits or Evidence
+being treated as acceptance, and risks for scope drift, Evidence authority confusion, and acceptance-boundary confusion.
+The draft remains `calibration-draft`, `not-supported`, `contract-candidate-not-run`, `not-approved`, and
+`equivalenceProven: false`. It does not reinterpret the existing Todo App positive fixture beyond `structure-only`, wire
+the draft into `compile-contract --dry-run`, compile a candidate, create or approve a promotion packet, create required
+checks or CI enforcement, set `equivalenceProven: true`, execute AI, accept user work, retire tree-native artifacts,
+rename PBE compatibility surfaces, or make any generated contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

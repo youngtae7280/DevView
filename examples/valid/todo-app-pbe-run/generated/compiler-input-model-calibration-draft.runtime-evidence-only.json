@@ -1,0 +1,360 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "compiler-input-model-calibration-draft",
+  "status": "calibration-draft",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "supportStatus": "not-supported",
+  "expectedCandidateStatus": "contract-candidate-not-run",
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "changeId": "change-todo-app-add-todo-runtime-evidence-only-calibration",
+  "calibrationFixture": {
+    "id": "calibration-fixture-todo-app-runtime-evidence-only",
+    "projectName": "Todo App PBE Run",
+    "fixtureScope": "third-calibration-fixture-only",
+    "sourceProfile": "todo-app-pbe-run-structure-only",
+    "supportedByCurrentCompiler": false,
+    "promotionApproved": false,
+    "executionReady": false,
+    "structureOnlyFixturePromoted": false
+  },
+  "humanRequest": {
+    "id": "request-todo-app-runtime-evidence-only",
+    "source": "third-calibration-fixture-selection",
+    "text": "Prove the Todo App add-todo behavior with runtime test Evidence without changing production source."
+  },
+  "graphSnapshot": {
+    "id": "graph-snapshot-todo-app-runtime-evidence-only",
+    "artifacts": [
+      {
+        "id": "todo-app-graph-source",
+        "path": "examples/valid/todo-app-pbe-run/graph-source.json",
+        "role": "structure-only graph-source context"
+      },
+      {
+        "id": "todo-app-product-tree",
+        "path": "examples/valid/todo-app-pbe-run/.pbe/tree/product-tree.json",
+        "role": "Product and acceptance-criteria context"
+      },
+      {
+        "id": "todo-app-work-tree",
+        "path": "examples/valid/todo-app-pbe-run/.pbe/tree/work-tree.json",
+        "role": "Work scope context with conceptual production source path"
+      },
+      {
+        "id": "todo-app-test-tree",
+        "path": "examples/valid/todo-app-pbe-run/.pbe/tree/test-tree.json",
+        "role": "required check context"
+      },
+      {
+        "id": "todo-app-evidence-tree",
+        "path": "examples/valid/todo-app-pbe-run/.pbe/evidence/evidence-tree.json",
+        "role": "attached Evidence context"
+      },
+      {
+        "id": "todo-app-attached-test-output",
+        "path": "examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt",
+        "role": "attached structure-only test output"
+      },
+      {
+        "id": "todo-app-source-authority-evidence-package",
+        "path": "docs/concept/todo-app-source-authority-evidence-package.md",
+        "role": "planning context for missing runtime Evidence"
+      }
+    ]
+  },
+  "packSchema": {
+    "id": "pack-schema-test-only-behavior-proof-calibration-draft",
+    "changeType": "calibration_test_only_behavior_proof",
+    "changeTypeSupportStatus": "not-supported-calibration-only",
+    "calibrationChangeShape": "test-only-behavior-proof",
+    "requiredInputGroups": [
+      "humanRequest",
+      "graphSnapshot",
+      "policySnapshot",
+      "evidenceIndex",
+      "targetScopeCandidates",
+      "outputRequirementSources",
+      "stopConditionSources",
+      "riskSources"
+    ],
+    "boundary": "This draft models a proof-only calibration shape. It does not add arbitrary changeType support and is not consumed by the supported compile-contract command path."
+  },
+  "policySnapshot": {
+    "id": "policy-snapshot-todo-app-runtime-evidence-only",
+    "policies": [
+      {
+        "id": "todo-app-structure-only-boundary",
+        "authority": "graph-source-profile",
+        "status": "structure-only",
+        "sourceArtifact": "examples/valid/todo-app-pbe-run/graph-source.json"
+      },
+      {
+        "id": "test-only-behavior-proof-boundary",
+        "authority": "calibration-policy",
+        "status": "calibration-only"
+      },
+      {
+        "id": "production-source-non-modification-policy",
+        "authority": "calibration-policy",
+        "status": "policy-active"
+      },
+      {
+        "id": "user-acceptance-not-replaced-by-evidence",
+        "authority": "policy",
+        "status": "policy-active"
+      },
+      {
+        "id": "non-enforcing-read-model-evidence",
+        "authority": "policy",
+        "status": "non-enforcing"
+      }
+    ],
+    "evidenceCheckMappings": [
+      {
+        "evidenceType": "attached_structure_only_test_output",
+        "requiredCheckId": "check-todo-app-attached-evidence-review",
+        "compiledEvidenceType": "review_artifact",
+        "calibrationSupportStatus": "present-but-not-authoritative-runtime-proof"
+      },
+      {
+        "evidenceType": "runtime_command_output",
+        "requiredCheckId": "check-todo-app-runtime-add-todo",
+        "compiledEvidenceType": "unit_test_result",
+        "calibrationSupportStatus": "missing-runtime-command-evidence"
+      },
+      {
+        "evidenceType": "source-non-modification-report",
+        "requiredCheckId": "check-todo-app-production-source-unchanged",
+        "compiledEvidenceType": "diff_review",
+        "calibrationSupportStatus": "future-compliance-checker-candidate"
+      }
+    ],
+    "forbiddenScopeRules": [
+      {
+        "id": "scope-no-todo-app-production-source-edit",
+        "scopeKind": "code",
+        "paths": ["src/todos.ts"],
+        "pathAuthorityStatus": "conceptual-path-from-structure-only-work-tree",
+        "derivedFrom": ["work:WT-1", "policy:production-source-non-modification-policy"]
+      },
+      {
+        "id": "scope-no-registry-or-profile-promotion",
+        "scopeKind": "configuration",
+        "paths": [
+          "examples/read-model-aggregate/read-model-slices.json",
+          "examples/valid/todo-app-pbe-run/graph-source.json"
+        ],
+        "derivedFrom": ["policy:todo-app-structure-only-boundary"]
+      },
+      {
+        "id": "scope-no-acceptance-state-mutation",
+        "scopeKind": "decision",
+        "paths": ["examples/valid/todo-app-pbe-run/.pbe/control/acceptance-tree.json"],
+        "derivedFrom": ["policy:user-acceptance-not-replaced-by-evidence"]
+      }
+    ]
+  },
+  "evidenceIndex": {
+    "id": "evidence-index-todo-app-runtime-evidence-only",
+    "entries": [
+      {
+        "id": "evidence-todo-app-attached-test-output",
+        "artifact": "examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt",
+        "evidenceType": "attached_structure_only_test_output",
+        "freshness": "existing-structure-only-evidence",
+        "evidenceStatus": "present-not-authoritative-runtime-proof"
+      },
+      {
+        "id": "evidence-todo-app-runtime-command-output",
+        "artifact": "unresolved:node test/todos.test.js",
+        "evidenceType": "runtime_command_output",
+        "freshness": "required-for-runtime-proof",
+        "evidenceStatus": "missing"
+      },
+      {
+        "id": "evidence-todo-app-production-source-non-modification",
+        "artifact": "unresolved:production-source-diff-report",
+        "evidenceType": "source-non-modification-report",
+        "freshness": "required-after-test-or-evidence-change",
+        "evidenceStatus": "missing"
+      }
+    ]
+  },
+  "targetScopeCandidates": [
+    {
+      "id": "scope-todo-app-test-tree",
+      "scopeKind": "test",
+      "paths": ["examples/valid/todo-app-pbe-run/.pbe/tree/test-tree.json"],
+      "derivedFrom": ["test:TT-1", "acceptance:AC-PT-1-1"],
+      "contractDerivedFrom": ["check:check-todo-app-runtime-add-todo"],
+      "confidence": "structure-only-context",
+      "calibrationUse": "candidate test obligation context"
+    },
+    {
+      "id": "scope-todo-app-evidence-tree",
+      "scopeKind": "evidence",
+      "paths": [
+        "examples/valid/todo-app-pbe-run/.pbe/evidence/evidence-tree.json",
+        "examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt"
+      ],
+      "derivedFrom": ["evidence:EV-1"],
+      "contractDerivedFrom": ["check:check-todo-app-attached-evidence-review"],
+      "confidence": "structure-only-context",
+      "calibrationUse": "candidate evidence strengthening context"
+    },
+    {
+      "id": "scope-todo-app-runtime-proof-report",
+      "scopeKind": "evidence",
+      "paths": ["unresolved:todo-app-runtime-proof-report"],
+      "derivedFrom": ["docs:todo-app-source-authority-evidence-package"],
+      "contractDerivedFrom": ["check:check-todo-app-runtime-add-todo"],
+      "confidence": "missing-evidence-candidate",
+      "calibrationUse": "future runtime proof output, not present now"
+    }
+  ],
+  "outputRequirementSources": [
+    {
+      "sourceId": "output-source-todo-app-runtime-evidence-status",
+      "sourceType": "evidence",
+      "derivedOutputRequirementId": "output-report-todo-app-runtime-evidence-status",
+      "obligationType": "command-output-evidence-status",
+      "requiredReportTarget": "add-todo runtime command Evidence status, including missing/unresolved status",
+      "evidenceBinding": {
+        "evidenceId": "evidence-todo-app-runtime-command-output"
+      },
+      "commandBinding": {
+        "requiredCheckId": "check-todo-app-runtime-add-todo"
+      }
+    },
+    {
+      "sourceId": "output-source-todo-app-attached-evidence-boundary",
+      "sourceType": "evidence",
+      "derivedOutputRequirementId": "output-report-todo-app-attached-evidence-boundary",
+      "obligationType": "evidence-boundary-statement",
+      "requiredReportTarget": "attached structure-only Evidence is present but not authoritative runtime proof",
+      "evidenceBinding": {
+        "evidenceId": "evidence-todo-app-attached-test-output"
+      }
+    },
+    {
+      "sourceId": "output-source-todo-app-source-non-modification",
+      "sourceType": "diff",
+      "derivedOutputRequirementId": "output-report-todo-app-production-source-unchanged",
+      "obligationType": "source-non-modification-report",
+      "requiredReportTarget": "production source non-modification status for src/todos.ts and implementation files",
+      "commandBinding": {
+        "requiredCheckId": "check-todo-app-production-source-unchanged"
+      }
+    },
+    {
+      "sourceId": "output-source-todo-app-non-promotion-boundary",
+      "sourceType": "boundary",
+      "derivedOutputRequirementId": "output-report-todo-app-non-promotion-boundary",
+      "obligationType": "non-execution-boundary-statement",
+      "requiredReportTarget": "test-only calibration is not support, not approval, not user acceptance, and not Todo App promotion"
+    }
+  ],
+  "stopConditionSources": [
+    {
+      "sourceId": "stop-source-todo-app-production-source-edit-needed",
+      "sourceType": "policy",
+      "derivedStopConditionId": "stop-if-runtime-proof-needs-production-source-edit",
+      "triggerType": "forbidden-scope-required",
+      "condition": "The add-todo runtime proof cannot be satisfied without editing production source such as src/todos.ts.",
+      "action": "stop-and-record-test-only-scope-blocker",
+      "policyBinding": {
+        "policyId": "production-source-non-modification-policy"
+      },
+      "relatedFields": ["allowedScope", "forbiddenScope", "requiredEvidence"]
+    },
+    {
+      "sourceId": "stop-source-todo-app-runtime-command-unavailable",
+      "sourceType": "validator",
+      "derivedStopConditionId": "stop-if-runtime-command-evidence-missing",
+      "triggerType": "required-check-unavailable",
+      "condition": "The runtime test command or equivalent observable behavior proof is unavailable.",
+      "action": "stop-and-record-missing-evidence",
+      "commandBinding": {
+        "requiredCheckIds": ["check-todo-app-runtime-add-todo"]
+      },
+      "relatedFields": ["requiredChecks", "requiredEvidence"]
+    },
+    {
+      "sourceId": "stop-source-todo-app-promotion-or-acceptance-requested",
+      "sourceType": "policy",
+      "derivedStopConditionId": "stop-if-test-evidence-treated-as-acceptance",
+      "triggerType": "approval-boundary-violation",
+      "condition": "Runtime Evidence is treated as user acceptance, compiler support, CI enforcement, or Todo App promotion.",
+      "action": "stop-and-request-human-decision",
+      "policyBinding": {
+        "policyIds": ["user-acceptance-not-replaced-by-evidence", "todo-app-structure-only-boundary"]
+      },
+      "relatedFields": ["outputRequirements", "compilerPromotionReadiness"]
+    }
+  ],
+  "riskSources": [
+    {
+      "sourceId": "risk-source-todo-app-test-only-scope-drift",
+      "sourceType": "scope",
+      "derivedRiskId": "risk-todo-app-test-only-scope-drift",
+      "riskType": "test-only-scope-drift",
+      "severity": "high",
+      "status": "tracked",
+      "mitigation": "Future contract must forbid production source edits and stop if runtime proof requires implementation changes.",
+      "scopeBinding": {
+        "targetScopeCandidateIds": ["scope-todo-app-test-tree", "scope-todo-app-evidence-tree"]
+      },
+      "evidenceBinding": {
+        "evidenceIds": ["evidence-todo-app-production-source-non-modification"]
+      }
+    },
+    {
+      "sourceId": "risk-source-todo-app-attached-evidence-misread",
+      "sourceType": "evidence",
+      "derivedRiskId": "risk-todo-app-attached-evidence-misread-as-runtime-proof",
+      "riskType": "evidence-authority-confusion",
+      "severity": "medium",
+      "status": "tracked",
+      "mitigation": "Output must distinguish attached structure-only Evidence from missing authoritative runtime command Evidence.",
+      "evidenceBinding": {
+        "evidenceIds": ["evidence-todo-app-attached-test-output", "evidence-todo-app-runtime-command-output"]
+      }
+    },
+    {
+      "sourceId": "risk-source-todo-app-acceptance-confusion",
+      "sourceType": "boundary",
+      "derivedRiskId": "risk-todo-app-test-evidence-treated-as-acceptance",
+      "riskType": "acceptance-boundary-confusion",
+      "severity": "high",
+      "status": "tracked",
+      "mitigation": "Runtime Evidence may inform review but must not mutate acceptance state or approve Todo App promotion.",
+      "contextBinding": {
+        "requiredContextIds": ["todo-app-structure-only-boundary", "user-acceptance-not-replaced-by-evidence"]
+      }
+    }
+  ],
+  "calibrationObservation": {
+    "representableInputs": [
+      "structure-only graph source",
+      "Product/Work/Test/Evidence references",
+      "attached Evidence artifact",
+      "test-only allowed scope candidates",
+      "production-source forbidden scope rules",
+      "missing runtime command Evidence",
+      "non-promotion and non-acceptance boundaries"
+    ],
+    "expectedGaps": [
+      "current compiler input command surface is still wired to the Todo Search dry-run fixture",
+      "test-only behavior proof is not a supported pack shape",
+      "runtime command Evidence is missing or unresolved",
+      "production source non-modification requires a future compliance-checker-style diff binding",
+      "attached structure-only Evidence must not be treated as authoritative runtime proof",
+      "Todo App structure-only status must not be promoted by this draft"
+    ],
+    "expectedCurrentCompilerStatus": "not-supported-or-blocked-if-wired",
+    "nonExecutionBoundary": "This draft is calibration-only. It does not compile a supported contract, execute AI, apply graph deltas, accept work, approve promotion, enable required checks, configure branch protection, or retire tree-native artifacts."
+  },
+  "nonExecutionStatement": "This calibration draft models a possible test-only behavior proof input for the selected third fixture only. It is not a supported compiler input, not an execution source, not approval, not user acceptance, not CI or branch-protection enforcement, and not a Todo App source-authority promotion."
+}
