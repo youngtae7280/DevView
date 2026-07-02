@@ -301,9 +301,16 @@ The next milestone is not executor automation. The recommended next step is sele
 fixture with a different contract shape, then observing whether source-authority reconstruction generalizes beyond the
 current Todo Search `bug_fix` fixture.
 
+The selected second/calibration fixture is recorded in
+[contract-compiler-calibration-fixtures.md](contract-compiler-calibration-fixtures.md). The selected candidate is the
+`component/escape-html` Symbol stringification behavior-change dogfood because it is an existing external retrofit
+fixture with graph source, instruction pack, graph delta, graph update proposal, and external project test Evidence. The
+selection is planning-only: it does not mark the second fixture as supported, does not generalize the current human
+decision, and does not approve execution or enforcement.
+
 The next milestone should:
 
-- choose a bounded second fixture;
+- design a bounded Compiler Input Model candidate for the selected second fixture;
 - model compiler inputs for that fixture;
 - run the non-executing compiler dry-run loop;
 - observe which source-authority resolvers fail, remain sufficient, or require extension;

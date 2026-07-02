@@ -1052,6 +1052,16 @@ not update generated `approvalStatus`, does not approve arbitrary fixtures or ch
 graph deltas, accept user work, enable required checks, configure branch protection, introduce CI enforcement, retire
 tree-native artifacts, rename PBE compatibility surfaces, or make the generated contract authoritative.
 
+DEC-186 does not supersede DEC-097 through DEC-185. It selects the `component/escape-html` Symbol stringification
+behavior-change dogfood as the second/calibration fixture candidate for Contract Compiler Dry-Run generalization
+observation. The selection is planning-only: the fixture has graph source, instruction pack, graph delta, graph update
+proposal, and external project test Evidence, making it meaningfully different from the current Todo Search
+whitespace-normalization `bug_fix` fixture. This does not implement compiler support for the second fixture, mark it as
+supported, generalize the current human decision, set `equivalenceProven: true`, update generated `approvalStatus`,
+execute AI, apply graph deltas, accept user work, enable required checks, configure branch protection, introduce CI
+enforcement, retire tree-native artifacts, widen changeType support, rename PBE compatibility surfaces, or make any
+generated contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

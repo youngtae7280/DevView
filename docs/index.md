@@ -52,6 +52,9 @@
 - [Contract Compiler Promotion Decision: Current Fixture](concept/contract-compiler-promotion-decision-current-fixture.md)
   - Docs-only human decision accepting the current Todo Search dry-run fixture's promotion review packet without
     granting execution authority, enforcement, user acceptance, or broad equivalence proof.
+- [Contract Compiler Calibration Fixtures](concept/contract-compiler-calibration-fixtures.md) - Second/calibration
+  fixture selection for observing whether source-authority reconstruction generalizes beyond the current Todo Search
+  dry-run fixture without claiming support or enforcement.
 - [Graph operation-chain productization](concept/graph-operation-chain-productization.md) - Local native/retrofit
   dogfood package for `graph-source -> instruction pack -> local change -> graph delta -> graph update proposal`.
 - [Candidate C full read-model gate evaluation](concept/candidate-c-full-read-model-gate-evaluation.md) - Evaluation
