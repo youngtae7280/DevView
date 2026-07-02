@@ -266,7 +266,9 @@ approval, user acceptance automation, or equivalence proof.
 Scope Compliance Checker Implementation Readiness defines the input authority, path normalization, missing-input
 reporting, result artifact, and non-enforcing status criteria that must be settled before a first executable checker
 slice. It keeps changed-file collection, diff inspection, rejection, enforcement, fixture approval, and equivalence proof
-out of scope.
+out of scope. It now decides that fixture-provided changed files remain preview-only, agent-reported changed files are
+not authoritative, and git-derived changed files are the first real authoritative candidate for a later implementation
+task.
 
 The following readiness artifact is complete at documentation level:
 

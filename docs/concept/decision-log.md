@@ -1511,6 +1511,25 @@ candidates, approve fixtures, claim runtime Evidence is satisfied, promote stati
 output, set `equivalenceProven: true`, execute AI, apply graph deltas, automate user acceptance, retire tree-native
 artifacts, rename PBE compatibility surfaces, or make any generated contract authoritative.
 
+DEC-217 does not supersede DEC-097 through DEC-216. It decides the authoritative changed-file input boundary for the
+scope compliance checker MVP without implementing changed-file collection. The decision records
+`authoritativeChangedFileInputBoundaryDecisionStatus: authoritative-changed-file-input-boundary-decided`: agent-reported
+changed files are not authoritative, fixture-provided changed files remain preview-only and limited to static
+result-shape design, review-packet changed files remain review context for this MVP boundary, execution-metadata changed
+files may become authoritative later if a trusted executor emits them, and git-derived changed files are the selected
+first real authoritative candidate for a later implementation task. The changed-file authority preview, scope
+compliance result preview, dry-run skeleton, not-run report, observation, and docs now record this boundary while
+preserving `scopeComplianceResultStatus: scope-compliance-input-missing`, `checkerRun: false`,
+`actualDiffInspected: false`, `changedFilesCollected: false`, `evaluatedViolations: []`, `not-supported`,
+`contract-candidate-not-run`, `not-approved`, `equivalenceProven: false`, missing runtime Evidence, and unsatisfied
+evidence/check binding. This does not run `git diff`, implement changed-file collection, inspect actual diffs, run the
+compliance checker, run checker dry-run logic, evaluate fixture-provided changed-file scenarios, normalize paths,
+compare scope, report no-violation, report actual violations, reject diffs, enforce scope, wire checker behavior into
+compiler execution, CI, required checks, or branch protection, mark calibration fixtures supported, generate contract
+candidates, approve fixtures, claim runtime Evidence is satisfied, promote static preview artifacts into compiler
+output, set `equivalenceProven: true`, execute AI, apply graph deltas, automate user acceptance, retire tree-native
+artifacts, rename PBE compatibility surfaces, or make any generated contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

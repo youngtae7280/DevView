@@ -114,6 +114,37 @@ Recommended implementation order:
 The authority preview does not implement collection, run the checker, report no-violation, report an actual violation,
 reject changes, enforce scope, or promote any fixture.
 
+## Authoritative Changed-File Input Boundary Decision
+
+Decision status:
+
+```text
+authoritative-changed-file-input-boundary-decided
+```
+
+Boundary decision:
+
+- agent-reported changed files are not authoritative;
+- fixture-provided changed files are preview-only and may be used only for static result-shape design;
+- review-packet changed files may provide review context, but they are not the first MVP authority source;
+- execution-metadata changed files may become authoritative later if a trusted executor emits them;
+- git-derived changed files are the selected first real authoritative candidate for future scope compliance evaluation.
+
+Changed-file input classes:
+
+| Input class                              | Can be authoritative?     | Preview-only?        | Agent-claim-only? | Supports result-shape testing?  | Supports actual scope evaluation now? |
+| ---------------------------------------- | ------------------------- | -------------------- | ----------------- | ------------------------------- | ------------------------------------- |
+| `agent-reported-changed-files`           | No                        | No                   | Yes               | Limited comparison context only | No                                    |
+| `fixture-provided-preview-changed-files` | No                        | Yes                  | No                | Yes                             | No                                    |
+| `review-packet-changed-files`            | Not for the MVP boundary  | Potentially          | No                | Review context only             | No                                    |
+| `execution-metadata-changed-files`       | Future candidate          | No, if trusted later | No                | Later                           | No                                    |
+| `git-derived-changed-files`              | Selected future candidate | No, once implemented | No                | Later                           | No, collection is not implemented     |
+
+This decision does not run `git diff`, inspect actual diffs, collect changed files, normalize paths, evaluate
+fixture-provided scenarios, report a clean result, report an actual violation, reject changes, enforce scope, or wire
+checker behavior into CI or compiler execution. The current not-run report remains valid until an authoritative
+changed-file input exists.
+
 ## Fixture-Provided Changed-File List Preview
 
 The first fixture-provided changed-file list preview is:
@@ -372,7 +403,9 @@ Reason:
 - the first MVP axis is selected;
 - the first preview artifact exists;
 - future inputs and conceptual violation states are defined;
-- changed-file list authority is previewed but unresolved for execution;
+- changed-file list authority is previewed and its first real authoritative candidate is decided as git-derived changed
+  files;
+- git-derived changed-file collection remains unimplemented;
 - fixture-provided changed-file list scenarios are previewed but not evaluated;
 - fixture-provided input consumption is previewed without checker execution;
 - dry-run skeleton is previewed but not executable;
@@ -384,12 +417,12 @@ Reason:
 Recommended next task:
 
 ```text
-authoritative-changed-file-input-decision
+git-derived-changed-file-input-design-preview
 ```
 
-That next task may decide the first authoritative changed-file input boundary or keep shaping static preview results.
-It should still avoid actual git diff inspection until base/head and path normalization rules are explicit, and it
-should not produce clean or violation conclusions without authoritative inputs.
+That next task may design the future git-derived changed-file input boundary in more detail. It should still avoid
+actual git diff inspection until base/head, working-tree state, and path normalization rules are explicit, and it should
+not produce clean or violation conclusions without authoritative inputs.
 
 ## Non-Goals
 

@@ -8,6 +8,7 @@
   "dryRunSkeletonStatus": "preview-only-not-executable",
   "resultStatus": "scope-compliance-dry-run-not-run",
   "scopeComplianceNotRunReportStatus": "scope-compliance-not-run-report-previewed",
+  "authoritativeChangedFileInputBoundaryDecisionStatus": "authoritative-changed-file-input-boundary-decided",
   "currentStageStatus": "stopped-before-evaluation",
   "stopReason": "authoritative-changed-file-list-missing",
   "supportStatus": "not-supported",
@@ -56,6 +57,8 @@
       "inputId": "authoritative-changed-file-list",
       "requiredFor": ["scope-compliance-evaluation"],
       "currentStatus": "missing-or-not-authoritative",
+      "selectedFutureCandidate": "git-derived-changed-files",
+      "collectionImplementationStatus": "not-implemented",
       "blocking": true
     },
     {

@@ -310,6 +310,17 @@ why no dry-run result can be claimed: no actual diff was inspected, no changed f
 changed-file input is preview-only, and no violation categories were evaluated. It does not enforce scope, reject
 changes, approve the fixture, satisfy runtime Evidence, or prove equivalence.
 
+The authoritative changed-file input boundary is now decided at documentation level:
+
+```text
+authoritativeChangedFileInputBoundaryDecisionStatus: authoritative-changed-file-input-boundary-decided
+```
+
+The decision keeps agent-reported changed files non-authoritative, keeps fixture-provided changed files preview-only for
+static result-shape design, and selects git-derived changed files as the first real authoritative candidate for a later
+implementation task. This does not run `git diff`, collect changed files, inspect actual diffs, run checker logic,
+evaluate fixture scenarios, or claim clean/violation results.
+
 ## Decision
 
 Decision:

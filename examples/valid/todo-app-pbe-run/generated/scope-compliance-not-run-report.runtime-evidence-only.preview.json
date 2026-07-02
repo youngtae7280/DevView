@@ -10,6 +10,8 @@
   "scopeComplianceResultStatus": "scope-compliance-input-missing",
   "stopReason": "authoritative-changed-file-list-missing",
   "nextRequiredInput": "authoritative-changed-file-list",
+  "authoritativeChangedFileInputBoundaryDecisionStatus": "authoritative-changed-file-input-boundary-decided",
+  "selectedFutureAuthoritativeCandidate": "git-derived-changed-files",
   "supportStatus": "not-supported",
   "compileEligibility": "not-eligible-current-command-not-wired",
   "expectedCandidateStatus": "contract-candidate-not-run",
@@ -40,6 +42,8 @@
     {
       "inputId": "authoritative-changed-file-list",
       "currentStatus": "missing-or-not-authoritative",
+      "selectedFutureCandidate": "git-derived-changed-files",
+      "collectionImplementationStatus": "not-implemented",
       "requiredFor": [
         "allowed-scope-violation-evaluation",
         "forbidden-scope-violation-evaluation",
@@ -126,6 +130,8 @@
     "actualDiffInspected": false,
     "changedFilesCollected": false,
     "fixtureProvidedChangedFileListIsPreviewOnly": true,
+    "authoritativeChangedFileInputBoundaryDecided": true,
+    "selectedFutureAuthoritativeCandidate": "git-derived-changed-files",
     "violationCategoriesEvaluated": false,
     "canClaimCleanResult": false,
     "canClaimActualViolation": false,

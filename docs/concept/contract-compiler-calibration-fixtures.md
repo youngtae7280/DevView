@@ -1354,6 +1354,27 @@ changedFileListAuthorityPreviewStatus: changed-file-list-authority-previewed
 The scope compliance result preview still reports `scope-compliance-input-missing`, keeps `evaluatedViolations: []`, and
 does not claim a clean result or an actual violation.
 
+## Authoritative Changed-File Input Boundary Decision
+
+The scope compliance MVP now records the changed-file input boundary decision:
+
+```text
+authoritativeChangedFileInputBoundaryDecisionStatus: authoritative-changed-file-input-boundary-decided
+```
+
+Decision:
+
+- agent-reported changed files are not authoritative;
+- fixture-provided changed files are preview-only and remain limited to static result-shape design;
+- review-packet changed files are review context, not the first MVP authority source;
+- execution-metadata changed files may become authoritative later if emitted by a trusted executor;
+- git-derived changed files are the selected first real authoritative candidate for a later implementation task.
+
+This decision does not implement changed-file collection, run `git diff`, inspect actual diffs, run checker logic,
+evaluate fixture-provided scenarios, claim no-violation, claim actual violations, reject diffs, enforce scope, approve
+the fixture, satisfy runtime Evidence, or prove equivalence. Until a future authoritative changed-file input exists, the
+scope compliance result remains `scope-compliance-input-missing` and the not-run report remains valid.
+
 ## Fixture-Provided Changed-File List Preview
 
 The first fixture-provided changed-file list preview artifact is:
@@ -1519,9 +1540,9 @@ This selection does not:
 
 ## Next Step
 
-The next task may decide the first authoritative changed-file input boundary or continue shaping static preview results
-without evaluation. It should not inspect actual git diffs, collect changed files from the worktree, broaden compiler
-support, wire additional fixtures into the supported command path, create promotion review packets, approve fixtures,
-claim runtime Evidence is satisfied, implement compliance checking, inspect or reject diffs, turn candidate checks into
-required checks, apply graph deltas, turn test Evidence into user acceptance, allow production source edits, enforce CI,
-or change the existing Todo App structure-only status.
+The next task may design the git-derived changed-file input preview boundary, including base/head and path-normalization
+questions, without collecting actual changed files. It should not inspect actual git diffs, collect changed files from
+the worktree, broaden compiler support, wire additional fixtures into the supported command path, create promotion
+review packets, approve fixtures, claim runtime Evidence is satisfied, implement compliance checking, inspect or reject
+diffs, turn candidate checks into required checks, apply graph deltas, turn test Evidence into user acceptance, allow
+production source edits, enforce CI, or change the existing Todo App structure-only status.

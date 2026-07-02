@@ -65,6 +65,7 @@
     "mvpAxis": "scope-compliance-preview",
     "changedFileListSourceStatus": "missing-not-implemented",
     "changedFileListAuthorityPreviewStatus": "changed-file-list-authority-previewed",
+    "authoritativeChangedFileInputBoundaryDecisionStatus": "authoritative-changed-file-input-boundary-decided",
     "fixtureProvidedChangedFileListPreviewStatus": "fixture-provided-preview-input-available",
     "fixtureInputConsumptionPreviewStatus": "scope-compliance-fixture-input-present-preview-only",
     "scopeComplianceDryRunSkeletonStatus": "preview-only-not-executable",
@@ -77,12 +78,15 @@
     "path": "examples/valid/todo-app-pbe-run/generated/changed-file-list-authority.runtime-evidence-only.preview.json",
     "status": "changed-file-list-authority-previewed",
     "changedFileListAuthorityStatus": "changed-file-list-authority-unresolved",
+    "authoritativeChangedFileInputBoundaryDecisionStatus": "authoritative-changed-file-input-boundary-decided",
+    "selectedFutureAuthoritativeCandidate": "git-derived-changed-files",
     "currentChangedFileListStatus": "changed-file-list-missing",
     "actualDiffInspected": false,
     "changedFilesCollected": false,
     "remainingSupportStatus": "not-supported"
   },
   "changedFileListAuthorityPreviewStatus": "changed-file-list-authority-previewed",
+  "authoritativeChangedFileInputBoundaryDecisionStatus": "authoritative-changed-file-input-boundary-decided",
   "fixtureProvidedChangedFileListPreview": {
     "path": "examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json",
     "status": "fixture-provided-changed-file-list-previewed",

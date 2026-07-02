@@ -10,6 +10,7 @@
   "changedFileListStatus": "missing-or-not-authoritative",
   "changedFileListAuthorityStatus": "missing-or-not-authoritative",
   "changedFileListAuthorityPreviewStatus": "changed-file-list-authority-previewed",
+  "authoritativeChangedFileInputBoundaryDecisionStatus": "authoritative-changed-file-input-boundary-decided",
   "fixtureProvidedChangedFileListPreviewStatus": "fixture-provided-preview-input-available",
   "fixtureInputConsumptionPreviewStatus": "scope-compliance-fixture-input-present-preview-only",
   "scopeComplianceDryRunSkeletonStatus": "preview-only-not-executable",
@@ -72,6 +73,7 @@
       "currentSource": "none",
       "authorityPreview": "examples/valid/todo-app-pbe-run/generated/changed-file-list-authority.runtime-evidence-only.preview.json",
       "fixtureProvidedPreview": "examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json",
+      "authoritativeBoundaryDecision": "git-derived-changed-files-selected-for-later-implementation",
       "blockingReason": "No actual diff inspection, changed-file collection, or supplied authoritative changed-file artifact exists."
     },
     {
@@ -176,6 +178,7 @@
       "impact": "scope compliance cannot be evaluated",
       "authorityPreview": "examples/valid/todo-app-pbe-run/generated/changed-file-list-authority.runtime-evidence-only.preview.json",
       "fixtureProvidedPreview": "examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json",
+      "authoritativeBoundaryDecision": "git-derived-changed-files-selected-for-later-implementation",
       "requiredBeforeNoViolationClaim": true
     },
     {

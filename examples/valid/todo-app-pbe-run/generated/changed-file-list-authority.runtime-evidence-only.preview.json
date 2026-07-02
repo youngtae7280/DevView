@@ -13,6 +13,8 @@
   "currentRuntimeEvidenceStatus": "missing",
   "evidenceCheckBindingStatus": "preview-only-not-satisfied",
   "changedFileListAuthorityStatus": "changed-file-list-authority-unresolved",
+  "authoritativeChangedFileInputBoundaryDecisionStatus": "authoritative-changed-file-input-boundary-decided",
+  "selectedFutureAuthoritativeCandidate": "git-derived-changed-files",
   "currentChangedFileListStatus": "changed-file-list-missing",
   "fixtureProvidedChangedFileListPreviewStatus": "fixture-provided-preview-input-available",
   "fixtureInputConsumptionPreviewStatus": "scope-compliance-fixture-input-present-preview-only",
@@ -68,8 +70,8 @@
       "reproducible": true,
       "agentClaimOnly": false,
       "needsPathNormalization": true,
-      "suitableForFirstImplementationSlice": false,
-      "reason": "Git-derived file lists are a strong later authority candidate, but this task must not inspect actual diffs or define base/head semantics."
+      "suitableForFirstImplementationSlice": true,
+      "reason": "Git-derived file lists are the selected first real authoritative candidate for future scope compliance evaluation, but collection must wait for a separate task that defines base/head semantics and path normalization."
     },
     {
       "sourceId": "generated-patch-metadata",
@@ -141,6 +143,19 @@
     "later": "git-diff-name-only",
     "laterStatus": "git-diff-derived-authoritative-candidate",
     "reason": "Fixture-provided input can shape non-enforcing result logic without diff inspection. Git-derived input is more authoritative but should be introduced only after base/head and path normalization policy are defined."
+  },
+  "authoritativeChangedFileInputBoundaryDecision": {
+    "decisionStatus": "authoritative-changed-file-input-boundary-decided",
+    "agentReportedChangedFiles": "not-authoritative",
+    "fixtureProvidedChangedFiles": "preview-only-result-shape-input",
+    "reviewPacketChangedFiles": "review-context-not-authoritative-for-mvp",
+    "executionMetadataChangedFiles": "future-authoritative-candidate-not-first",
+    "gitDerivedChangedFiles": "selected-first-real-authoritative-candidate",
+    "collectionImplementationStatus": "not-implemented",
+    "actualDiffInspected": false,
+    "changedFilesCollected": false,
+    "checkerRun": false,
+    "boundary": "This decision selects git-derived changed files as the first real authoritative candidate for a later implementation slice. It does not run git diff, collect changed files, evaluate scope compliance, report no-violation, or report actual violations."
   },
   "pathNormalizationNeeds": [
     "repository-relative path normalization",
