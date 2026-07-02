@@ -1257,6 +1257,20 @@ edits, create or approve a promotion packet, create required checks or CI enforc
 execute AI, accept user work, retire tree-native artifacts, rename PBE compatibility surfaces, or make any generated
 contract authoritative.
 
+DEC-202 does not supersede DEC-097 through DEC-201. It adds the preview-only evidence/check binding artifact
+`examples/valid/todo-app-pbe-run/generated/evidence-check-binding.runtime-evidence-only.preview.json` and links it from
+the third-fixture observation. The preview maps candidate checks to expected Evidence:
+`check-todo-app-runtime-add-todo` to missing authoritative runtime command Evidence,
+`check-todo-app-attached-evidence-review` to present attached structure-only Evidence that is not runtime proof, and
+`check-todo-app-production-source-unchanged` to missing future source non-modification Evidence. The updated observation
+marks `evidence-check-binding` as `evidence-check-binding-previewed`, keeps runtime Evidence unsatisfied and missing, and
+leaves `output-requirement-for-test-evidence` and `compliance-checker-bridge` unresolved. The next recommended scope is
+`output-requirement-for-test-evidence`. This does not support the third fixture, wire it into `compile-contract
+--dry-run`, compile a candidate, run checks, capture passing Evidence, turn candidate checks into required checks,
+create CI enforcement or branch protection, allow production source edits, create or approve a promotion packet, set
+`equivalenceProven: true`, execute AI, accept user work, retire tree-native artifacts, rename PBE compatibility surfaces,
+or make any generated contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

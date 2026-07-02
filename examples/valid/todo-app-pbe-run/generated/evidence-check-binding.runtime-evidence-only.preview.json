@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "evidence-check-binding-preview",
+  "status": "evidence-check-binding-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "draftInputPath": "examples/valid/todo-app-pbe-run/generated/compiler-input-model-calibration-draft.runtime-evidence-only.json",
+  "observationPath": "examples/valid/todo-app-pbe-run/generated/compiler-input-calibration-observation.runtime-evidence-only.preview.json",
+  "testOnlyScopeBoundaryPreview": "examples/valid/todo-app-pbe-run/generated/test-only-scope-boundary.runtime-evidence-only.preview.json",
+  "runtimeEvidenceAuthorityPreview": "examples/valid/todo-app-pbe-run/generated/runtime-evidence-authority.runtime-evidence-only.preview.json",
+  "supportStatus": "not-supported",
+  "compileEligibility": "not-eligible-current-command-not-wired",
+  "expectedCandidateStatus": "contract-candidate-not-run",
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "evidenceCheckBindingStatus": "preview-only-not-satisfied",
+  "currentRuntimeEvidenceStatus": "missing",
+  "candidateChecks": [
+    {
+      "checkId": "check-todo-app-runtime-add-todo",
+      "checkKind": "runtime-behavior-check",
+      "candidateCommand": "node test/todos.test.js",
+      "candidateCommandSource": "examples/valid/todo-app-pbe-run/.pbe/tree/test-tree.json",
+      "commandStatus": "candidate-only-not-executed",
+      "verifies": ["PT-1", "AC-PT-1-1", "WT-1", "TT-1"],
+      "expectedEvidenceIds": ["evidence-todo-app-runtime-command-output"],
+      "bindingStatus": "missing-authoritative-runtime-evidence"
+    },
+    {
+      "checkId": "check-todo-app-attached-evidence-review",
+      "checkKind": "evidence-review-check",
+      "candidateCommand": "review attached structure-only Evidence",
+      "candidateCommandSource": "examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt",
+      "commandStatus": "review-only-not-runtime-proof",
+      "verifies": ["EV-1", "TT-1"],
+      "expectedEvidenceIds": ["evidence-todo-app-attached-test-output"],
+      "bindingStatus": "present-but-not-authoritative-runtime-proof"
+    },
+    {
+      "checkId": "check-todo-app-production-source-unchanged",
+      "checkKind": "source-non-modification-check",
+      "candidateCommand": "future compliance checker or diff review",
+      "candidateCommandSource": "test-only-scope-boundary-preview",
+      "commandStatus": "future-candidate-not-implemented",
+      "verifies": ["scope-no-todo-app-production-source-edit"],
+      "expectedEvidenceIds": ["evidence-todo-app-production-source-non-modification"],
+      "bindingStatus": "missing-compliance-checker-binding"
+    }
+  ],
+  "expectedEvidenceProduced": [
+    {
+      "evidenceId": "evidence-todo-app-runtime-command-output",
+      "expectedFromCheckId": "check-todo-app-runtime-add-todo",
+      "requiredEvidenceType": "captured-runtime-command-output",
+      "requiredAuthority": "runtime-evidence-authority-preview",
+      "currentStatus": "missing",
+      "mustInclude": [
+        "command",
+        "exitStatus",
+        "passFailStatus",
+        "assertionSummary",
+        "evidenceArtifactPath",
+        "capturedAtOrFreshnessStatement",
+        "linkedCheckId",
+        "linkedAcceptanceCriteriaId",
+        "sourceNonModificationStatement"
+      ]
+    },
+    {
+      "evidenceId": "evidence-todo-app-attached-test-output",
+      "expectedFromCheckId": "check-todo-app-attached-evidence-review",
+      "requiredEvidenceType": "attached_structure_only_test_output",
+      "requiredAuthority": "structure-only-context-only",
+      "currentStatus": "present-not-authoritative-runtime-proof",
+      "mustInclude": ["path", "linkedTestId", "structureOnlyBoundary"]
+    },
+    {
+      "evidenceId": "evidence-todo-app-production-source-non-modification",
+      "expectedFromCheckId": "check-todo-app-production-source-unchanged",
+      "requiredEvidenceType": "source-non-modification-report",
+      "requiredAuthority": "future-compliance-checker-preview",
+      "currentStatus": "missing",
+      "mustInclude": ["changedFiles", "forbiddenProductionScope", "sourceEditStopCondition"]
+    }
+  ],
+  "authoritativeEvidenceRequirements": {
+    "source": "examples/valid/todo-app-pbe-run/generated/runtime-evidence-authority.runtime-evidence-only.preview.json",
+    "runtimeEvidenceAuthorityStatus": "preview-only-not-satisfied",
+    "currentRuntimeEvidenceStatus": "missing",
+    "candidateChecksMustProduceAuthorityCompliantEvidence": true
+  },
+  "missingEvidence": [
+    "evidence-todo-app-runtime-command-output",
+    "evidence-todo-app-production-source-non-modification"
+  ],
+  "unresolvedBindingGaps": [
+    "no authoritative runtime command output artifact exists",
+    "no supported check registry entry exists for check-todo-app-runtime-add-todo",
+    "no compliance-checker binding exists for source non-modification",
+    "candidate checks are not wired into the supported compiler command path",
+    "candidate checks are not CI required checks or branch protection rules"
+  ],
+  "testOnlyBoundary": {
+    "source": "examples/valid/todo-app-pbe-run/generated/test-only-scope-boundary.runtime-evidence-only.preview.json",
+    "checksMustNotRequireProductionSourceEdits": true,
+    "sourceEditNeededBehavior": "stop-and-report",
+    "silentScopeExpansionAllowed": false
+  },
+  "gapStatusUpdates": [
+    {
+      "gapId": "evidence-check-binding",
+      "previousStatus": "gap-observed",
+      "previewStatus": "evidence-check-binding-previewed",
+      "bindingSatisfied": false,
+      "remainingSupportStatus": "not-supported"
+    }
+  ],
+  "remainingUnresolvedGaps": ["output-requirement-for-test-evidence", "compliance-checker-bridge"],
+  "allowedUse": [
+    "review candidate check-to-evidence mappings",
+    "explain which evidence remains missing",
+    "inform future output-requirement preview",
+    "inform future compliance-checker design"
+  ],
+  "forbiddenUse": [
+    "supported compiler output",
+    "proof that runtime behavior passed",
+    "required check configuration",
+    "CI enforcement",
+    "branch protection",
+    "execution authority",
+    "candidate generation eligibility",
+    "promotion approval",
+    "permission to edit production source",
+    "user acceptance",
+    "Todo App source-authority promotion"
+  ],
+  "nonExecutionBoundary": "This preview maps candidate checks to expected Evidence for calibration review only. It does not run checks, capture passing Evidence, create required checks, enforce CI, modify source, generate a contract candidate, approve promotion, or replace user acceptance."
+}

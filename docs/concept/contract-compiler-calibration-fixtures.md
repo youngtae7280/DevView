@@ -849,20 +849,60 @@ Still unresolved:
 - `output-requirement-for-test-evidence`;
 - `compliance-checker-bridge`.
 
+## Third Evidence-Check Binding Preview
+
+The third fixture evidence-check binding preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/evidence-check-binding.runtime-evidence-only.preview.json
+```
+
+Preview status:
+
+- `status: evidence-check-binding-previewed`
+- `evidenceCheckBindingStatus: preview-only-not-satisfied`
+- `currentRuntimeEvidenceStatus: missing`
+- `supportStatus: not-supported`
+- `expectedCandidateStatus: contract-candidate-not-run`
+- `approvalStatus: not-approved`
+- `equivalenceProven: false`
+
+The preview maps candidate checks to expected Evidence without making those checks required checks:
+
+- `check-todo-app-runtime-add-todo` -> missing authoritative runtime command Evidence;
+- `check-todo-app-attached-evidence-review` -> present attached structure-only Evidence, not runtime proof;
+- `check-todo-app-production-source-unchanged` -> missing future source non-modification Evidence.
+
+Candidate checks must produce Evidence satisfying the runtime Evidence authority preview. Because current runtime
+Evidence is still missing, the binding is not satisfied. No command is claimed to have passed, and no check is wired into
+CI, branch protection, or the supported compiler command path.
+
+The preview preserves the test-only boundary: checks and Evidence must not require production source edits. If production
+source edits appear necessary, the expected behavior remains stop and report, not silent scope expansion.
+
+Updated third-fixture gap status:
+
+- `evidence-check-binding`: `evidence-check-binding-previewed`
+
+Still unresolved:
+
+- `output-requirement-for-test-evidence`;
+- `compliance-checker-bridge`.
+
 Recommended next step from the observation:
 
 ```text
-preview-third-fixture-evidence-check-binding
+preview-third-fixture-output-requirement-for-test-evidence
 ```
 
 Recommended next scope:
 
 ```text
-evidence-check-binding
+output-requirement-for-test-evidence
 ```
 
-Reason: after previewing runtime Evidence authority, DevView needs to bind evidence types to required checks without
-marking the fixture supported.
+Reason: after previewing evidence/check binding, DevView needs to define what output must report about missing runtime
+Evidence and source non-modification.
 
 ## Calibration Success Criteria
 
@@ -895,7 +935,7 @@ This selection does not:
 
 ## Next Step
 
-The next task should preview `evidence-check-binding` for the third fixture. It should not broaden compiler support,
-wire the third fixture into the supported command path, create a promotion review packet, approve the fixture, claim
-runtime Evidence is satisfied, apply graph deltas, turn test Evidence into user acceptance, allow production source
-edits, or change the existing Todo App structure-only status.
+The next task should preview `output-requirement-for-test-evidence` for the third fixture. It should not broaden compiler
+support, wire the third fixture into the supported command path, create a promotion review packet, approve the fixture,
+claim runtime Evidence is satisfied, turn candidate checks into required checks, apply graph deltas, turn test Evidence
+into user acceptance, allow production source edits, or change the existing Todo App structure-only status.

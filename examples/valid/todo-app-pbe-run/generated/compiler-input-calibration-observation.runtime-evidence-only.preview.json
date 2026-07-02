@@ -36,6 +36,13 @@
     "currentRuntimeEvidenceStatus": "missing",
     "remainingSupportStatus": "not-supported"
   },
+  "evidenceCheckBindingPreview": {
+    "path": "examples/valid/todo-app-pbe-run/generated/evidence-check-binding.runtime-evidence-only.preview.json",
+    "status": "evidence-check-binding-previewed",
+    "evidenceCheckBindingStatus": "preview-only-not-satisfied",
+    "currentRuntimeEvidenceStatus": "missing",
+    "remainingSupportStatus": "not-supported"
+  },
   "observedGaps": [
     {
       "gapId": "test-only-allowed-scope",
@@ -66,12 +73,12 @@
     },
     {
       "gapId": "evidence-check-binding",
-      "status": "gap-observed",
+      "status": "evidence-check-binding-previewed",
       "whyItMatters": "The draft names checks, but current supported compiler check binding is still the Todo Search dry-run path.",
-      "currentDraftSignal": "policySnapshot.evidenceCheckMappings includes attached Evidence review, missing runtime command output, and future source non-modification report mappings.",
+      "currentDraftSignal": "evidence-check binding preview maps candidate checks to expected runtime command, attached structure-only, and source non-modification Evidence while keeping all bindings unsatisfied or candidate-only.",
       "blocksCompileEligibility": true,
       "blocksCandidateGeneration": true,
-      "futureNeed": "A calibration-only check binding policy for test-only behavior proof fixtures."
+      "futureNeed": "Captured runtime Evidence, supported check binding policy, and later output requirements are still required; candidate checks are not required checks."
     },
     {
       "gapId": "output-requirement-for-test-evidence",
@@ -144,11 +151,7 @@
     "sourceEditNeededBehavior": "stop-rather-than-silently-expand-scope",
     "complianceCheckerUsefulness": "future-useful-for-detecting-forbidden-production-source-edits"
   },
-  "remainingUnresolvedGaps": [
-    "evidence-check-binding",
-    "output-requirement-for-test-evidence",
-    "compliance-checker-bridge"
-  ],
+  "remainingUnresolvedGaps": ["output-requirement-for-test-evidence", "compliance-checker-bridge"],
   "unresolvedEvidence": [
     {
       "evidenceId": "evidence-todo-app-runtime-command-output",
@@ -162,9 +165,9 @@
     }
   ],
   "recommendedNextStep": {
-    "id": "preview-third-fixture-evidence-check-binding",
-    "recommendedFirstScope": "evidence-check-binding",
-    "reason": "After previewing runtime Evidence authority, DevView next needs to bind evidence types to required checks without marking the fixture supported."
+    "id": "preview-third-fixture-output-requirement-for-test-evidence",
+    "recommendedFirstScope": "output-requirement-for-test-evidence",
+    "reason": "After previewing evidence/check binding, DevView next needs to define what output must report about missing runtime Evidence and source non-modification."
   },
   "forbiddenInterpretations": [
     "not-supported",
