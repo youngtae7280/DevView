@@ -1282,6 +1282,12 @@ The third-fixture observation now links this preview with:
 scopeCompliancePreviewStatus: scope-compliance-checker-previewed
 ```
 
+The implementation readiness criteria are now recorded in
+[scope-compliance-checker-implementation-readiness.md](scope-compliance-checker-implementation-readiness.md). They define
+the future changed-file input authority question, allowed/forbidden scope sources, missing-input reporting, path
+normalization questions, non-enforcing result states, and the first proposed static result artifact without implementing
+checker behavior.
+
 ## Calibration Success Criteria
 
 A future calibration cycle is successful if:
@@ -1313,8 +1319,8 @@ This selection does not:
 
 ## Next Step
 
-The next task should decide whether to close out the scope compliance preview or define a minimal checker input/report
-schema. It should not broaden compiler support, wire additional fixtures into the supported command path, create
+The next task should define the static `scope-compliance-result` preview schema before any executable checker logic is
+added. It should not broaden compiler support, wire additional fixtures into the supported command path, create
 promotion review packets, approve fixtures, claim runtime Evidence is satisfied, implement compliance checking, inspect
 or reject diffs, turn candidate checks into required checks, apply graph deltas, turn test Evidence into user acceptance,
 allow production source edits, enforce CI, or change the existing Todo App structure-only status.

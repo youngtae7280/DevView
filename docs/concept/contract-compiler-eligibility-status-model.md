@@ -294,6 +294,11 @@ scope-compliance-preview
 as the first future compliance-checker MVP axis. That scope decision is planning-only and does not implement checker
 behavior, inspect or reject diffs, enforce scope, wire CI, approve fixtures, or prove equivalence.
 
+The implementation readiness criteria are now recorded in
+[scope-compliance-checker-implementation-readiness.md](scope-compliance-checker-implementation-readiness.md). That
+readiness document keeps the checker unimplemented while defining future input requirements, missing-input states,
+preview-only result states, and the first static result-artifact boundary.
+
 ## Non-Goals
 
 This model does not:

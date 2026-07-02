@@ -239,11 +239,13 @@ into compiler execution output.
 Recommended next task:
 
 ```text
-scope-compliance-preview-closeout-or-input-schema-decision
+scope-compliance-checker-implementation-readiness
 ```
 
-That next task should remain planning-only unless a separate implementation decision narrows the checker input schema and
-report format.
+The readiness criteria are now recorded in
+[scope-compliance-checker-implementation-readiness.md](scope-compliance-checker-implementation-readiness.md). They define
+required future inputs, unresolved changed-file list authority, path normalization questions, non-enforcing result
+states, and the first future static preview result boundary without implementing checker behavior.
 
 ## Decision
 

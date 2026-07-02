@@ -1381,6 +1381,23 @@ satisfied, promote static preview artifacts into compiler output, turn candidate
 AI, apply graph deltas, automate user acceptance, retire tree-native artifacts, rename PBE compatibility surfaces, or
 make any generated contract authoritative.
 
+DEC-210 does not supersede DEC-097 through DEC-209. It adds
+`docs/concept/scope-compliance-checker-implementation-readiness.md` as the planning-only readiness criteria for the
+first future scope compliance checker implementation slice. The readiness model defines required future inputs for
+execution contract source, allowed scope source, forbidden scope source, changed file list source, generated result
+artifact path, fixture identity, and support/eligibility status inputs. It records readiness questions for changed-file
+authority, path normalization, missing-input reporting, result artifact location, and non-enforcing result behavior. It
+also defines conceptual result states including `scope-compliance-not-run`, `scope-compliance-input-missing`,
+`scope-compliance-preview-only`, `scope-compliance-potential-violation`, and
+`scope-compliance-no-violation-observed`, while marking the readiness status as
+`implementation-not-ready-inputs-unresolved`. The recommended next task is `scope-compliance-result-preview-schema`.
+This does not implement the compliance checker, inspect actual diffs, collect changed files, reject diffs, enforce
+scope, wire checker behavior into compiler execution, CI, required checks, or branch protection, mark calibration
+fixtures supported, generate contract candidates, approve fixtures, claim runtime Evidence is satisfied, promote static
+preview artifacts into compiler output, turn candidate checks into required checks, set `equivalenceProven: true`,
+execute AI, apply graph deltas, automate user acceptance, retire tree-native artifacts, rename PBE compatibility
+surfaces, or make any generated contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.
