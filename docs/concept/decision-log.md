@@ -1271,6 +1271,20 @@ create CI enforcement or branch protection, allow production source edits, creat
 `equivalenceProven: true`, execute AI, accept user work, retire tree-native artifacts, rename PBE compatibility surfaces,
 or make any generated contract authoritative.
 
+DEC-203 does not supersede DEC-097 through DEC-202. It adds the preview-only output requirement artifact
+`examples/valid/todo-app-pbe-run/generated/output-requirement-for-test-evidence.runtime-evidence-only.preview.json` and
+links it from the third-fixture observation. The preview defines required report items for candidate check attempt
+status, captured command output or explicit missing Evidence status, runtime Evidence status, runtime Evidence authority
+satisfaction, production source non-modification, source-edit stop condition status, and non-promotion/non-acceptance
+boundaries. The updated observation marks `output-requirement-for-test-evidence` as
+`output-requirement-for-test-evidence-previewed`, keeps runtime Evidence missing and evidence/check binding unsatisfied,
+and leaves `compliance-checker-bridge` unresolved. The next recommended scope is `compliance-checker-bridge`. This does
+not support the third fixture, wire it into `compile-contract --dry-run`, compile a candidate, run checks, capture
+passing Evidence, turn candidate checks into required checks, generate final output requirements, implement compliance
+checker behavior, create CI enforcement or branch protection, allow production source edits, create or approve a
+promotion packet, set `equivalenceProven: true`, execute AI, accept user work, retire tree-native artifacts, rename PBE
+compatibility surfaces, or make any generated contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

@@ -884,25 +884,72 @@ Updated third-fixture gap status:
 
 - `evidence-check-binding`: `evidence-check-binding-previewed`
 
-Still unresolved:
+Still unresolved before the output requirement preview:
 
 - `output-requirement-for-test-evidence`;
+- `compliance-checker-bridge`.
+
+## Third Output Requirement For Test Evidence Preview
+
+The third fixture output requirement preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/output-requirement-for-test-evidence.runtime-evidence-only.preview.json
+```
+
+Preview status:
+
+- `status: output-requirement-for-test-evidence-previewed`
+- `outputRequirementStatus: preview-only-not-satisfied`
+- `currentRuntimeEvidenceStatus: missing`
+- `evidenceCheckBindingStatus: preview-only-not-satisfied`
+- `supportStatus: not-supported`
+- `expectedCandidateStatus: contract-candidate-not-run`
+- `approvalStatus: not-approved`
+- `equivalenceProven: false`
+
+The preview defines what an agent must report after a test-only behavior proof attempt without turning that report into
+runtime Evidence by itself. Required report content includes:
+
+- whether candidate checks were attempted, skipped, or unavailable;
+- captured command output references or an explicit missing Evidence status;
+- current runtime Evidence status;
+- whether available Evidence satisfies runtime Evidence authority requirements;
+- whether production source files were modified;
+- whether the source-edit stop condition was triggered;
+- the non-promotion, non-approval, and non-acceptance boundary for this calibration fixture.
+
+Report text alone is insufficient without command output or structured Evidence references. The output requirement also
+keeps the structure-only attached Evidence boundary visible: the existing attached Evidence can be referenced as context,
+but it does not satisfy runtime Evidence authority by itself.
+
+The preview preserves the test-only boundary. Runtime Evidence must be produced without production source edits. If
+production source edits appear necessary, the report should identify the stop condition rather than silently expanding
+scope.
+
+Updated third-fixture gap status:
+
+- `output-requirement-for-test-evidence`: `output-requirement-for-test-evidence-previewed`
+
+Still unresolved:
+
 - `compliance-checker-bridge`.
 
 Recommended next step from the observation:
 
 ```text
-preview-third-fixture-output-requirement-for-test-evidence
+preview-third-fixture-compliance-checker-bridge
 ```
 
 Recommended next scope:
 
 ```text
-output-requirement-for-test-evidence
+compliance-checker-bridge
 ```
 
-Reason: after previewing evidence/check binding, DevView needs to define what output must report about missing runtime
-Evidence and source non-modification.
+Reason: after previewing output requirements, DevView needs a non-enforcing bridge for comparing actual changed files
+and reported Evidence against the test-only contract. That future bridge should not enforce CI, apply graph deltas,
+approve the fixture, or turn runtime Evidence reports into user acceptance.
 
 ## Calibration Success Criteria
 
@@ -935,7 +982,7 @@ This selection does not:
 
 ## Next Step
 
-The next task should preview `output-requirement-for-test-evidence` for the third fixture. It should not broaden compiler
-support, wire the third fixture into the supported command path, create a promotion review packet, approve the fixture,
-claim runtime Evidence is satisfied, turn candidate checks into required checks, apply graph deltas, turn test Evidence
-into user acceptance, allow production source edits, or change the existing Todo App structure-only status.
+The next task should preview `compliance-checker-bridge` for the third fixture. It should not broaden compiler support,
+wire the third fixture into the supported command path, create a promotion review packet, approve the fixture, claim
+runtime Evidence is satisfied, turn candidate checks into required checks, apply graph deltas, turn test Evidence into
+user acceptance, allow production source edits, enforce CI, or change the existing Todo App structure-only status.

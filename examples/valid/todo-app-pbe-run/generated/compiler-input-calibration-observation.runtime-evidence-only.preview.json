@@ -43,6 +43,13 @@
     "currentRuntimeEvidenceStatus": "missing",
     "remainingSupportStatus": "not-supported"
   },
+  "outputRequirementForTestEvidencePreview": {
+    "path": "examples/valid/todo-app-pbe-run/generated/output-requirement-for-test-evidence.runtime-evidence-only.preview.json",
+    "status": "output-requirement-for-test-evidence-previewed",
+    "outputRequirementStatus": "preview-only-not-satisfied",
+    "currentRuntimeEvidenceStatus": "missing",
+    "remainingSupportStatus": "not-supported"
+  },
   "observedGaps": [
     {
       "gapId": "test-only-allowed-scope",
@@ -82,12 +89,12 @@
     },
     {
       "gapId": "output-requirement-for-test-evidence",
-      "status": "gap-observed",
+      "status": "output-requirement-for-test-evidence-previewed",
       "whyItMatters": "The output should report test Evidence status and source non-modification rather than claiming implementation work.",
-      "currentDraftSignal": "outputRequirementSources include runtime Evidence status, attached Evidence boundary, production source unchanged, and non-promotion boundary obligations.",
+      "currentDraftSignal": "output requirement preview defines report items for candidate check attempt status, captured command output or explicit missing Evidence, runtime Evidence status, source non-modification, source-edit stop condition, and runtime Evidence authority satisfaction.",
       "blocksCompileEligibility": false,
       "blocksCandidateGeneration": true,
-      "futureNeed": "A source-authority resolver or preview that derives proof-only output requirements without treating them as execution output."
+      "futureNeed": "Future compliance-checker or output generation work may consume this shape; current preview does not generate output, satisfy Evidence, or make the fixture supported."
     },
     {
       "gapId": "stop-condition-when-source-edits-needed",
@@ -151,7 +158,7 @@
     "sourceEditNeededBehavior": "stop-rather-than-silently-expand-scope",
     "complianceCheckerUsefulness": "future-useful-for-detecting-forbidden-production-source-edits"
   },
-  "remainingUnresolvedGaps": ["output-requirement-for-test-evidence", "compliance-checker-bridge"],
+  "remainingUnresolvedGaps": ["compliance-checker-bridge"],
   "unresolvedEvidence": [
     {
       "evidenceId": "evidence-todo-app-runtime-command-output",
@@ -165,9 +172,9 @@
     }
   ],
   "recommendedNextStep": {
-    "id": "preview-third-fixture-output-requirement-for-test-evidence",
-    "recommendedFirstScope": "output-requirement-for-test-evidence",
-    "reason": "After previewing evidence/check binding, DevView next needs to define what output must report about missing runtime Evidence and source non-modification."
+    "id": "preview-third-fixture-compliance-checker-bridge",
+    "recommendedFirstScope": "compliance-checker-bridge",
+    "reason": "After previewing output requirements, DevView next needs a non-enforcing bridge for comparing actual changed files and reported Evidence against the test-only contract."
   },
   "forbiddenInterpretations": [
     "not-supported",

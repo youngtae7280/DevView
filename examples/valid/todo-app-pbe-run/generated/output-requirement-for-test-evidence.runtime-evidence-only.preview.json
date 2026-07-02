@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "output-requirement-for-test-evidence-preview",
+  "status": "output-requirement-for-test-evidence-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "draftInputPath": "examples/valid/todo-app-pbe-run/generated/compiler-input-model-calibration-draft.runtime-evidence-only.json",
+  "observationPath": "examples/valid/todo-app-pbe-run/generated/compiler-input-calibration-observation.runtime-evidence-only.preview.json",
+  "testOnlyScopeBoundaryPreview": "examples/valid/todo-app-pbe-run/generated/test-only-scope-boundary.runtime-evidence-only.preview.json",
+  "runtimeEvidenceAuthorityPreview": "examples/valid/todo-app-pbe-run/generated/runtime-evidence-authority.runtime-evidence-only.preview.json",
+  "evidenceCheckBindingPreview": "examples/valid/todo-app-pbe-run/generated/evidence-check-binding.runtime-evidence-only.preview.json",
+  "supportStatus": "not-supported",
+  "compileEligibility": "not-eligible-current-command-not-wired",
+  "expectedCandidateStatus": "contract-candidate-not-run",
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "outputRequirementStatus": "preview-only-not-satisfied",
+  "currentRuntimeEvidenceStatus": "missing",
+  "evidenceCheckBindingStatus": "preview-only-not-satisfied",
+  "requiredReportItems": [
+    {
+      "itemId": "report-candidate-check-attempt-status",
+      "requirement": "Report whether each candidate check was attempted, skipped, or unavailable.",
+      "requiredWhen": "always",
+      "currentStatus": "preview-only"
+    },
+    {
+      "itemId": "report-command-output-reference",
+      "requirement": "Report captured command output artifact paths or explicitly state that runtime command Evidence is missing.",
+      "requiredWhen": "candidate runtime check is attempted or expected",
+      "currentStatus": "missing-runtime-evidence"
+    },
+    {
+      "itemId": "report-runtime-evidence-status",
+      "requirement": "Report whether runtime Evidence is present, missing, or non-authoritative for the add-todo behavior proof.",
+      "requiredWhen": "always",
+      "currentStatus": "missing"
+    },
+    {
+      "itemId": "report-runtime-evidence-authority-satisfaction",
+      "requirement": "Report whether the available Evidence satisfies runtime Evidence authority requirements.",
+      "requiredWhen": "runtime Evidence is present or claimed",
+      "currentStatus": "not-satisfied"
+    },
+    {
+      "itemId": "report-production-source-non-modification",
+      "requirement": "Report whether production source files were modified during the proof attempt.",
+      "requiredWhen": "always",
+      "currentStatus": "missing-source-non-modification-report"
+    },
+    {
+      "itemId": "report-source-edit-stop-condition",
+      "requirement": "Report whether the source-edit stop condition was triggered because runtime proof appeared to need production source changes.",
+      "requiredWhen": "always",
+      "currentStatus": "preview-only"
+    },
+    {
+      "itemId": "report-non-promotion-boundary",
+      "requirement": "Report that the fixture remains calibration-only, not approved, not supported, and not user acceptance.",
+      "requiredWhen": "always",
+      "currentStatus": "preview-only"
+    }
+  ],
+  "requiredEvidenceReferences": [
+    {
+      "evidenceId": "evidence-todo-app-runtime-command-output",
+      "expectedFromCheckId": "check-todo-app-runtime-add-todo",
+      "expectedStatus": "missing-or-captured",
+      "reportRequirement": "Reference captured runtime command output or state that authoritative runtime Evidence is missing.",
+      "currentStatus": "missing"
+    },
+    {
+      "evidenceId": "evidence-todo-app-attached-test-output",
+      "expectedFromCheckId": "check-todo-app-attached-evidence-review",
+      "expectedStatus": "present-not-authoritative-runtime-proof",
+      "reportRequirement": "Describe the attached structure-only Evidence boundary if it is mentioned.",
+      "currentStatus": "present-but-not-authoritative-runtime-proof"
+    },
+    {
+      "evidenceId": "evidence-todo-app-production-source-non-modification",
+      "expectedFromCheckId": "check-todo-app-production-source-unchanged",
+      "expectedStatus": "missing-or-captured",
+      "reportRequirement": "Reference a future source non-modification report or state that no authoritative report exists.",
+      "currentStatus": "missing"
+    }
+  ],
+  "requiredCommandOutputReferences": [
+    {
+      "checkId": "check-todo-app-runtime-add-todo",
+      "candidateCommand": "node test/todos.test.js",
+      "requiredReport": "Captured output artifact with command, exit status, pass/fail status, assertion summary, linked check, linked acceptance criteria, and source non-modification statement; otherwise explicit missing Evidence status.",
+      "currentStatus": "missing"
+    },
+    {
+      "checkId": "check-todo-app-attached-evidence-review",
+      "candidateCommand": "review attached structure-only Evidence",
+      "requiredReport": "Report that attached Evidence is structure-only context and does not satisfy runtime Evidence authority by itself.",
+      "currentStatus": "present-but-not-authoritative-runtime-proof"
+    },
+    {
+      "checkId": "check-todo-app-production-source-unchanged",
+      "candidateCommand": "future compliance checker or diff review",
+      "requiredReport": "Report production source modification status or explicitly state that source non-modification Evidence is missing.",
+      "currentStatus": "missing"
+    }
+  ],
+  "requiredSourceModificationStatement": {
+    "status": "required-preview-only",
+    "mustReport": "whether production source files such as src/todos.ts were modified",
+    "requiredResultForTestOnlyPass": "production-source-unchanged",
+    "currentEvidenceStatus": "missing-source-non-modification-report"
+  },
+  "requiredStopConditionStatement": {
+    "status": "required-preview-only",
+    "mustReport": "whether source-edit stop condition was triggered",
+    "ifTriggered": "stop and report that production source edits appear necessary; do not silently expand scope",
+    "currentEvidenceStatus": "preview-only-not-executed"
+  },
+  "missingOutputEvidence": [
+    {
+      "missingEvidenceId": "evidence-todo-app-runtime-command-output",
+      "reason": "No captured runtime command output exists for this calibration fixture."
+    },
+    {
+      "missingEvidenceId": "evidence-todo-app-production-source-non-modification",
+      "reason": "No compliance-checker or diff report exists for production source non-modification."
+    },
+    {
+      "missingEvidenceId": "runtime-evidence-authority-satisfaction-report",
+      "reason": "No runtime Evidence exists to evaluate against the authority requirements."
+    }
+  ],
+  "gapStatusUpdates": [
+    {
+      "gapId": "output-requirement-for-test-evidence",
+      "previousStatus": "gap-observed",
+      "previewStatus": "output-requirement-for-test-evidence-previewed",
+      "outputSatisfied": false,
+      "remainingSupportStatus": "not-supported"
+    }
+  ],
+  "remainingUnresolvedGaps": ["compliance-checker-bridge"],
+  "allowedUse": [
+    "review what a test-only proof report should include",
+    "distinguish report text from authoritative runtime Evidence",
+    "inform future compliance-checker bridge design",
+    "preserve the production source non-modification reporting boundary"
+  ],
+  "forbiddenUse": [
+    "supported compiler output",
+    "final output requirement generation",
+    "proof that runtime behavior passed",
+    "required check configuration",
+    "CI enforcement",
+    "branch protection",
+    "execution authority",
+    "candidate generation eligibility",
+    "promotion approval",
+    "permission to edit production source",
+    "user acceptance",
+    "Todo App source-authority promotion"
+  ],
+  "nonExecutionBoundary": "This preview defines report obligations for calibration review only. It does not run checks, capture passing Evidence, satisfy runtime Evidence authority, create required checks, enforce CI, modify source, generate a contract candidate, approve promotion, or replace user acceptance."
+}
