@@ -49,6 +49,9 @@
   separates source-authority preservation, equivalence candidate status, and equivalence proof.
 - [Contract Compiler Promotion Review Policy](concept/contract-compiler-promotion-review-policy.md) - Human review
   packet boundary for equivalence candidates without approving promotion, execution, or enforcement.
+- [Contract Compiler Promotion Decision: Current Fixture](concept/contract-compiler-promotion-decision-current-fixture.md)
+  - Docs-only human decision accepting the current Todo Search dry-run fixture's promotion review packet without
+    granting execution authority, enforcement, user acceptance, or broad equivalence proof.
 - [Graph operation-chain productization](concept/graph-operation-chain-productization.md) - Local native/retrofit
   dogfood package for `graph-source -> instruction pack -> local change -> graph delta -> graph update proposal`.
 - [Candidate C full read-model gate evaluation](concept/candidate-c-full-read-model-gate-evaluation.md) - Evaluation

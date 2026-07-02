@@ -34,7 +34,12 @@ The current dry-run may report `equivalenceCandidate: true`, but it keeps `equiv
 - `promotion-review-approved`: a human decision record explicitly approves promotion. This is never set automatically.
 - `promotion-review-rejected`: a human decision record explicitly rejects promotion.
 
-Current status is `promotion-review-ready-for-human` with `approvalStatus: not-approved`.
+Current generated status is `promotion-review-ready-for-human` with `approvalStatus: not-approved`.
+
+The current fixture also has a docs-only human decision record:
+[contract-compiler-promotion-decision-current-fixture.md](contract-compiler-promotion-decision-current-fixture.md).
+That record accepts the current Todo Search dry-run fixture's promotion review packet for review purposes only; it does
+not set `equivalenceProven: true`, does not update generated `approvalStatus`, and does not grant execution authority.
 
 ## Review Packet
 

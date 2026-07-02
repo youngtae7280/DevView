@@ -256,4 +256,6 @@ The optional decision template is:
 docs/templates/contract-compiler-promotion-decision.md
 ```
 
-The template is for a later human decision record. It is not an automatic approval mechanism.
+The template is for human decision records. It is not an automatic approval mechanism. The first docs-only current
+fixture decision record is
+[contract-compiler-promotion-decision-current-fixture.md](contract-compiler-promotion-decision-current-fixture.md).

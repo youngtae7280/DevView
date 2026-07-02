@@ -1042,6 +1042,16 @@ promotion, accept user work, execute AI, apply graph deltas, enable required che
 introduce CI enforcement, retire tree-native artifacts, widen changeType support, or make the generated contract
 authoritative.
 
+DEC-185 does not supersede DEC-097 through DEC-184. It records the first human review decision for the DevView Contract
+Compiler Promotion Review Packet, scoped only to the current Todo Search whitespace-normalization `bug_fix` dry-run
+fixture, current generated candidate, and current promotion review packet. The decision status is
+`approved-for-current-fixture-promotion-review`: the reviewer accepts the review-only diffs for this fixture's promotion
+review packet, including source-mode provenance, additive non-enforcing health-check validation, and boundary wording
+after the DevView boundary audit. This is a docs-only decision record. It does not set `equivalenceProven: true`, does
+not update generated `approvalStatus`, does not approve arbitrary fixtures or change types, does not execute AI, apply
+graph deltas, accept user work, enable required checks, configure branch protection, introduce CI enforcement, retire
+tree-native artifacts, rename PBE compatibility surfaces, or make the generated contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.
