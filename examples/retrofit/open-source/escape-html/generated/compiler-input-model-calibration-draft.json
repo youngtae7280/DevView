@@ -61,7 +61,9 @@
     "behaviorChangeCalibrationPolicyStatus": "behavior-change-calibration-policy-recognized",
     "behaviorChangeCalibrationPolicy": "examples/retrofit/open-source/escape-html/generated/behavior-change-calibration-policy.preview.json",
     "externalRequiredCheckBindingPreview": "examples/retrofit/open-source/escape-html/generated/external-required-check-binding.preview.json",
-    "externalRequiredCheckBindingStatus": "external-required-check-binding-blocked-by-checkout-authority",
+    "externalRequiredCheckBindingStatus": "external-required-check-binding-awaiting-authoritative-checkout",
+    "externalCheckoutPathAuthorityPreview": "examples/retrofit/open-source/escape-html/generated/external-checkout-path-authority.preview.json",
+    "externalCheckoutPathAuthorityStatus": "external-checkout-path-authority-previewed-calibration-local",
     "changeTypeGap": "The source dogfood is behavior-change shaped, but this draft keeps the current bug_fix compiler vocabulary and is recognized only as calibration policy, not arbitrary changeType support.",
     "requiredInputGroups": [
       "humanRequest",
@@ -103,13 +105,13 @@
         "evidenceType": "external_project_test_result",
         "requiredCheckId": "check-escape-html-npm-test",
         "compiledEvidenceType": "unit_test_result",
-        "calibrationSupportStatus": "external-required-check-binding-previewed-blocked-by-checkout-authority"
+        "calibrationSupportStatus": "external-required-check-binding-previewed-awaiting-authoritative-checkout"
       },
       {
         "evidenceType": "dogfood_report",
         "requiredCheckId": "check-escape-html-dogfood-validator",
         "compiledEvidenceType": "validator_output",
-        "calibrationSupportStatus": "external-required-check-binding-previewed-blocked-by-checkout-authority"
+        "calibrationSupportStatus": "external-required-check-binding-previewed-awaiting-authoritative-checkout"
       },
       {
         "evidenceType": "graph_delta_report",
@@ -182,7 +184,7 @@
       "derivedFrom": ["graph-source:node:module.escape-html-function"],
       "contractDerivedFrom": ["change:change.escape-html-symbol-stringification"],
       "confidence": "graph-backed-candidate",
-      "externalPathStatus": "external-local-checkout-path-not-committed"
+      "externalPathStatus": "external-checkout-path-authority-previewed-calibration-local"
     },
     {
       "id": "scope-escape-html-test",
@@ -191,7 +193,7 @@
       "derivedFrom": ["graph-source:node:surface.stringification-tests"],
       "contractDerivedFrom": ["change:change.escape-html-symbol-stringification"],
       "confidence": "graph-backed-candidate",
-      "externalPathStatus": "external-local-checkout-path-not-committed"
+      "externalPathStatus": "external-checkout-path-authority-previewed-calibration-local"
     },
     {
       "id": "scope-escape-html-evidence",
@@ -341,7 +343,7 @@
     "expectedGaps": [
       "current compiler input command surface is hardcoded to the Todo Search dry-run fixture",
       "external project check IDs are previewed as calibration bindings but are not in the current compiler required-check registry",
-      "external checkout paths are not committed repository paths",
+      "external checkout paths are previewed as calibration-local source context but are not portable compiler support authority",
       "behavior-change shape is recognized as calibration-only policy under current bug_fix vocabulary",
       "graph delta and graph update proposal bindings are review artifacts, not graph apply authority"
     ],

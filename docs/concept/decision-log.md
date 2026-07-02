@@ -1121,6 +1121,21 @@ candidate, create a promotion packet, approve the fixture, set `equivalenceProve
 deltas, accept user work, retire tree-native artifacts, widen changeType support, rename PBE compatibility surfaces, or
 make any generated contract authoritative.
 
+DEC-192 does not supersede DEC-097 through DEC-191. It adds a preview-only external checkout path authority artifact for
+the selected `component/escape-html` behavior-change calibration draft at
+`examples/retrofit/open-source/escape-html/generated/external-checkout-path-authority.preview.json`. The preview records
+static dogfood metadata for `work/external/escape-html`, including the expected upstream, observed clone head, dirty
+files, and authority limits, while reporting
+`external-checkout-path-authority-previewed-calibration-local`. The external required-check binding status moves to
+`external-required-check-binding-awaiting-authoritative-checkout`, not to enforced or supported required checks. The
+second fixture remains `not-supported`, `not-eligible-current-command-not-wired`, `contract-candidate-not-run`,
+`not-approved`, and `equivalenceProven: false`; the next recommended scope is bounded risk vocabulary. This does not
+make the local checkout portable authority, run external checks as required checks, modify external files, wire the
+fixture into `compile-contract --dry-run`, compile a candidate, create a promotion packet, approve the fixture, set
+`equivalenceProven: true`, execute AI, apply graph deltas, accept user work, create CI enforcement, configure branch
+protection, retire tree-native artifacts, widen changeType support, rename PBE compatibility surfaces, or make any
+generated contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

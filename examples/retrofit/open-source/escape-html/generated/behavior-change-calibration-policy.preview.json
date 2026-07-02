@@ -11,7 +11,9 @@
   "approvalStatus": "not-approved",
   "equivalenceProven": false,
   "externalRequiredCheckBindingPreviewPath": "examples/retrofit/open-source/escape-html/generated/external-required-check-binding.preview.json",
-  "externalRequiredCheckBindingStatus": "external-required-check-binding-blocked-by-checkout-authority",
+  "externalRequiredCheckBindingStatus": "external-required-check-binding-awaiting-authoritative-checkout",
+  "externalCheckoutPathAuthorityPreviewPath": "examples/retrofit/open-source/escape-html/generated/external-checkout-path-authority.preview.json",
+  "externalCheckoutPathAuthorityStatus": "external-checkout-path-authority-previewed-calibration-local",
   "recognizedInputShape": {
     "packSchemaChangeType": "bug_fix",
     "calibrationChangeShape": "external-behavior-change",
@@ -57,12 +59,12 @@
     {
       "id": "gap-external-required-check-registry",
       "field": "requiredEvidence",
-      "status": "previewed-blocked-by-checkout-authority"
+      "status": "previewed-awaiting-authoritative-checkout"
     },
     {
       "id": "gap-external-path-authority",
       "field": "allowedScope",
-      "status": "unresolved"
+      "status": "previewed-calibration-local-not-supported"
     },
     {
       "id": "gap-risk-vocabulary",
@@ -81,9 +83,9 @@
     }
   ],
   "recommendedNextStep": {
-    "id": "external-checkout-path-authority-scope-decision",
-    "summary": "Decide whether external checkout path authority should be the next v0.3 calibration scope.",
-    "rationale": "External required-check binding is previewed, but the observed checks remain blocked by unresolved work/external checkout path authority."
+    "id": "risk-vocabulary-scope-decision",
+    "summary": "Decide whether bounded risk vocabulary should be the next v0.3 calibration scope.",
+    "rationale": "Behavior-change policy, external required-check binding, and external checkout path authority now have preview boundaries while remaining non-support signals."
   },
   "nonExecutionBoundary": "This policy preview recognizes a behavior-change-shaped calibration draft only. It does not mark the second fixture as supported, compile a candidate, execute AI, apply graph deltas, approve promotion, accept work, enable required checks, configure branch protection, or retire tree-native artifacts."
 }

@@ -13,7 +13,9 @@
   "behaviorChangeCalibrationPolicyPath": "examples/retrofit/open-source/escape-html/generated/behavior-change-calibration-policy.preview.json",
   "behaviorChangeCalibrationPolicyStatus": "behavior-change-calibration-policy-recognized",
   "externalRequiredCheckBindingPreviewPath": "examples/retrofit/open-source/escape-html/generated/external-required-check-binding.preview.json",
-  "externalRequiredCheckBindingStatus": "external-required-check-binding-blocked-by-checkout-authority",
+  "externalRequiredCheckBindingStatus": "external-required-check-binding-awaiting-authoritative-checkout",
+  "externalCheckoutPathAuthorityPreviewPath": "examples/retrofit/open-source/escape-html/generated/external-checkout-path-authority.preview.json",
+  "externalCheckoutPathAuthorityStatus": "external-checkout-path-authority-previewed-calibration-local",
   "currentSupportedBoundary": {
     "supportedFixture": "Todo Search whitespace-normalization bug_fix dry-run fixture",
     "supportedInputPath": "examples/read-model-aggregate/generated/compiler-input-model-dry-run.json",
@@ -37,16 +39,16 @@
       "reason": "The draft needs escaping/stringification and observed-intent-not-maintainer-approval risk detail beyond the current generic risk vocabulary."
     },
     "scopeShape": {
-      "status": "requires-extension",
-      "reason": "The draft scope includes external checkout paths under work/external/escape-html, which are not committed repository paths."
+      "status": "external-checkout-path-authority-previewed-calibration-local",
+      "reason": "The draft scope includes external checkout paths under work/external/escape-html. Static metadata identifies the path as component/escape-html calibration context, but it remains non-portable and not compiler support authority."
     },
     "contextShape": {
       "status": "partially-reusable",
       "reason": "The graph snapshot can point to graph source, change record, instruction pack, graph delta, proposal, and report artifacts, but source/test/README anchor mapping is not yet a supported compiler input surface."
     },
     "validationCheckMapping": {
-      "status": "external-required-check-binding-previewed-blocked-by-checkout-authority",
-      "reason": "External checks such as check-escape-html-npm-test and check-escape-html-dogfood-validator are previewed against observed dogfood Evidence, but they remain outside the current compiler required-check registry and are blocked by unresolved external checkout path authority."
+      "status": "external-required-check-binding-previewed-awaiting-authoritative-checkout",
+      "reason": "External checks such as check-escape-html-npm-test and check-escape-html-dogfood-validator are previewed against observed dogfood Evidence, but they remain outside the current compiler required-check registry and await authoritative, portable checkout modeling."
     },
     "outputRequirementSourceShape": {
       "status": "partially-reusable",
@@ -76,20 +78,20 @@
     },
     {
       "id": "external-paths-not-committed",
-      "status": "source-authority-gap-detected",
-      "reason": "Allowed scope points at a local external checkout under work/external/escape-html rather than committed repository paths."
+      "status": "external-checkout-path-authority-previewed-not-supported",
+      "reason": "Allowed scope points at a local external checkout under work/external/escape-html. The path is now previewed as calibration-local context, not a committed repo path or supported compiler source."
     }
   ],
   "blockedReasonsIfWired": [
     {
       "id": "blocked-external-check-binding",
       "status": "blocked",
-      "reason": "External check binding is previewed, but current required-check generation cannot treat it as authoritative until external checkout path authority and a supported check registry extension exist."
+      "reason": "External check binding and checkout authority are previewed, but current required-check generation cannot treat them as authoritative or supported."
     },
     {
       "id": "blocked-external-path-validation",
       "status": "blocked",
-      "reason": "Current source-authority validation expects committed fixture paths for compiler input cross references."
+      "reason": "Current source-authority validation expects committed fixture paths for compiler input cross references; work/external/escape-html remains calibration-local and non-portable."
     },
     {
       "id": "blocked-risk-vocabulary-detail",
@@ -107,8 +109,8 @@
     {
       "field": "forbiddenScope",
       "reuseStatus": "partially-reusable",
-      "expectedCurrentBehavior": "policy-shape-usable-but-external-paths-need-extension",
-      "reason": "Policy-derived forbidden scope maps well to no metadata, no upstream approval, and no graph apply boundaries, but external checkout paths need explicit calibration handling."
+      "expectedCurrentBehavior": "policy-shape-usable-with-calibration-local-checkout-preview",
+      "reason": "Policy-derived forbidden scope maps well to no metadata, no upstream approval, and no graph apply boundaries; external checkout paths are now previewed but not supported."
     },
     {
       "field": "stopConditions",
@@ -119,7 +121,7 @@
     {
       "field": "requiredEvidence",
       "reuseStatus": "previewed-needs-authority",
-      "expectedCurrentBehavior": "external-required-check-binding-previewed-but-blocked-by-checkout-authority",
+      "expectedCurrentBehavior": "external-required-check-binding-previewed-awaiting-authoritative-checkout",
       "reason": "The fixture can map external_project_test_result, dogfood_report, and graph_delta_report to preview check bindings, but those bindings remain non-authoritative and outside compiler support."
     },
     {
@@ -136,25 +138,27 @@
     },
     {
       "field": "allowedScope",
-      "reuseStatus": "needs-extension",
-      "expectedCurrentBehavior": "external-local-paths-block",
-      "reason": "Allowed code/test paths are external local checkout paths, not committed repo fixture files."
+      "reuseStatus": "previewed-needs-authority",
+      "expectedCurrentBehavior": "external-checkout-path-authority-previewed-calibration-local",
+      "reason": "Allowed code/test paths are identified as component/escape-html calibration-local checkout paths, but remain non-portable and not supported compiler source paths."
     }
   ],
   "sourceAuthorityGaps": [
     {
       "id": "gap-external-required-check-registry",
       "field": "requiredEvidence",
-      "gapType": "previewed-required-check-binding-blocked-by-checkout-authority",
+      "gapType": "previewed-required-check-binding-awaiting-authoritative-checkout",
       "severity": "high",
-      "recommendedFollowUp": "Use the previewed binding as calibration evidence only; decide external checkout path authority before any supported required-check registry extension."
+      "status": "previewed-not-supported",
+      "recommendedFollowUp": "Use the previewed binding as calibration evidence only; do not add supported required-check registry entries without separate approval."
     },
     {
       "id": "gap-external-path-authority",
       "field": "allowedScope",
       "gapType": "external-path-source-authority",
       "severity": "high",
-      "recommendedFollowUp": "Represent external checkout paths as observed external targets without treating them as committed repo paths or execution authority."
+      "status": "previewed-calibration-local-not-supported",
+      "recommendedFollowUp": "Treat work/external/escape-html as calibration-local source context only; do not use it as execution or compiler support authority."
     },
     {
       "id": "gap-risk-vocabulary",
@@ -179,9 +183,9 @@
     }
   ],
   "recommendedNextStep": {
-    "id": "external-checkout-path-authority-scope-decision",
-    "summary": "Decide whether external checkout path authority should be the next v0.3 calibration scope.",
-    "rationale": "Behavior-change policy is recognized and external required-check binding is previewed, but observed checks remain blocked by non-authoritative work/external paths."
+    "id": "risk-vocabulary-scope-decision",
+    "summary": "Decide whether bounded risk vocabulary should be the next v0.3 calibration scope.",
+    "rationale": "Behavior-change policy, external required-check binding, and checkout path authority now have preview boundaries, while the fixture remains not supported and non-enforcing."
   },
   "promotionEligibility": {
     "status": "promotion-not-eligible",

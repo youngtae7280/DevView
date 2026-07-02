@@ -107,6 +107,12 @@ The first external required-check binding preview is:
 examples/retrofit/open-source/escape-html/generated/external-required-check-binding.preview.json
 ```
 
+The first external checkout path authority preview is:
+
+```text
+examples/retrofit/open-source/escape-html/generated/external-checkout-path-authority.preview.json
+```
+
 This draft is `calibration-draft`, `not-supported`, `not-approved`, and `equivalenceProven: false`. It is not wired into
 `graph read-model compile-contract --dry-run`, does not create a promotion review packet for the second fixture, and is
 not an execution source.
@@ -131,7 +137,8 @@ Known draft gaps:
 - The current compiler input command surface still reads only the Todo Search dry-run fixture.
 - External project check IDs such as `check-escape-html-npm-test` are previewed as calibration-only bindings but are
   not in the current required-check registry.
-- `work/external/escape-html` paths are local external checkout paths, not committed repository paths.
+- `work/external/escape-html` paths are previewed as calibration-local source context, not portable compiler support
+  authority.
 - The source dogfood is behavior-change shaped and is now recognized as calibration-only policy while still using the
   current `bug_fix` vocabulary; this does not add arbitrary `changeType` support.
 - Graph delta and graph update proposal artifacts are review Evidence, not graph apply authority.
@@ -170,8 +177,8 @@ The current source-authority model appears reusable in concept for:
 
 The observation reports likely extensions for:
 
-- external required-check registry binding, now previewed but blocked by checkout path authority;
-- external checkout path authority;
+- external required-check registry binding, now previewed but awaiting authoritative checkout modeling;
+- external checkout path authority, now previewed as calibration-local and non-portable;
 - escaping/stringification and maintainer-approval risk vocabulary;
 - README/source/test anchor-level context;
 - graph delta and graph update proposal review-output binding.
@@ -179,13 +186,12 @@ The observation reports likely extensions for:
 Recommended v0.3 direction:
 
 ```text
-external-checkout-path-authority-scope-decision
+risk-vocabulary-scope-decision
 ```
 
-External required-check binding is now previewed as non-enforcing calibration Evidence. The next step should decide
-whether external checkout path authority is the next v0.3 calibration scope, because the previewed bindings cannot
-become authoritative while `work/external/escape-html` remains an unmodeled local checkout path. That should happen
-before candidate generation, promotion review, behavior-change support, broad pack schema expansion, or any
+External required-check binding and external checkout path authority are now previewed as non-enforcing calibration
+Evidence. The next step should decide whether bounded risk vocabulary is the next v0.3 calibration scope. That should
+happen before candidate generation, promotion review, behavior-change support, broad pack schema expansion, or any
 execution/enforcement work.
 
 ## External Required-Check Binding Preview
@@ -202,11 +208,12 @@ without turning them into supported compiler required checks:
 The preview status is:
 
 ```text
-external-required-check-binding-blocked-by-checkout-authority
+external-required-check-binding-awaiting-authoritative-checkout
 ```
 
-This means the required-check shape is now visible, but the check authority is not established. The external checkout
-path `work/external/escape-html` is not yet modeled as an authoritative source target for compiler support.
+This means the required-check shape is visible, but the check authority is not established for support. The external
+checkout path `work/external/escape-html` is previewed as calibration-local source context, not portable execution or
+compiler support authority.
 
 This preview is not:
 
@@ -217,6 +224,37 @@ This preview is not:
 - a promotion approval;
 - user acceptance;
 - execution authority.
+
+## External Checkout Path Authority Preview
+
+The external checkout path authority preview describes `work/external/escape-html` using static dogfood metadata:
+
+- expected project: `component/escape-html`;
+- expected upstream: `https://github.com/component/escape-html`;
+- observed checkout path: `work/external/escape-html`;
+- observed clone head: `b42947eefa79efff01b3fe988c4c7e7b051ec8d8`;
+- observed dirty files: `index.js` and `test/index.js`.
+
+The preview status is:
+
+```text
+external-checkout-path-authority-previewed-calibration-local
+```
+
+This establishes only that the calibration artifacts consistently describe the same local external checkout. It does
+not independently verify repository identity, make the local path portable, prove a clean baseline, or permit command
+execution.
+
+The checkout authority preview may be used to explain why external required-check binding is waiting for authoritative
+checkout modeling. It must not be used as:
+
+- permission to run external checks;
+- permission to modify external files;
+- supported compiler source authority;
+- CI enforcement;
+- branch protection;
+- promotion approval;
+- graph delta apply authority.
 
 ## v0.3 Scope Decision
 
@@ -268,17 +306,19 @@ Follow-up output after external required-check binding preview:
 
 - `external-required-check-binding.preview.json` records candidate mappings for `npm test`, dogfood validation, and
   graph-delta review Evidence;
-- the observation reports `external-required-check-binding-blocked-by-checkout-authority`;
+- `external-checkout-path-authority.preview.json` records the calibration-local checkout context for
+  `work/external/escape-html`;
+- the observation reports `external-required-check-binding-awaiting-authoritative-checkout` and
+  `external-checkout-path-authority-previewed-calibration-local`;
 - the fixture remains `not-supported`, `not-eligible-current-command-not-wired`, `contract-candidate-not-run`,
   `not-approved`, and `equivalenceProven: false`;
-- external checkout path authority, risk vocabulary, anchor-level context, and graph-delta review binding remain future
-  scopes.
+- risk vocabulary, anchor-level context, and graph-delta review binding remain future scopes.
 
 Non-goals for the first v0.3 scope:
 
 - no arbitrary behavior-change support;
 - no supported external required-check binding or CI/branch-protection enforcement;
-- no external checkout path authority;
+- no supported external checkout path authority or execution permission;
 - no anchor-level context resolver;
 - no risk vocabulary expansion;
 - no graph-delta review binding;
@@ -312,6 +352,8 @@ This task does not implement the second fixture. The first calibration run shoul
 - no committed Compiler Input Model fixture for `escape-html` yet;
 - required Evidence/check mapping for external project commands now has a preview-only binding, but still needs checkout
   path authority before support can be considered;
+- checkout path authority now has a calibration-local preview, but still needs a separate portable authority policy
+  before support can be considered;
 - required context may need graph-node-to-source/test/README anchor mapping;
 - forbidden scope and stop condition sources may need external-retrofit boundary vocabulary;
 - known risk sources may need an escaping/stringification-specific risk vocabulary;
@@ -364,6 +406,7 @@ This selection does not:
 
 ## Next Step
 
-The next implementation task should decide whether external checkout path authority is the next narrow v0.3 calibration
-scope. It should not broaden compiler support, wire the second fixture into the supported command path, create a
-promotion review packet, approve the fixture, or turn previewed external checks into CI enforcement.
+The next implementation task should decide whether bounded risk vocabulary is the next narrow v0.3 calibration scope. It
+should not broaden compiler support, wire the second fixture into the supported command path, create a promotion review
+packet, approve the fixture, turn previewed external checks into CI enforcement, or turn the calibration-local checkout
+path into execution authority.
