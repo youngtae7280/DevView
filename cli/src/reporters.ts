@@ -166,6 +166,8 @@ Commands:
                        Compile a non-executing dry-run contract candidate from the Compiler Input Model with --dry-run
   graph read-model collect-changed-files
                        Collect git-derived changed-file names/status between explicit refs without scope evaluation
+  graph read-model check-scope
+                       Run advisory non-enforcing scope compliance evaluation for explicit refs
   graph read-model report-health
                        Summarize local non-enforcing Graph-source transition health
   graph read-model observe-candidates
@@ -214,12 +216,12 @@ Options:
   --graph-delta <file> Graph delta file for graph operation propose-update.
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for graph read-model projection or project-intent.
+  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, or check-scope.
   --markdown <file>    Optional Markdown summary output for graph read-model report-health.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal.
   --chain-command <name>
                        Wrapped graph operation script command. Defaults to operation-chain.
-  --base <ref>         Base git ref for graph read-model collect-changed-files.
-  --head <ref>         Head git ref for graph read-model collect-changed-files.
+  --base <ref>         Base git ref for graph read-model collect-changed-files or check-scope.
+  --head <ref>         Head git ref for graph read-model collect-changed-files or check-scope.
 `
 }

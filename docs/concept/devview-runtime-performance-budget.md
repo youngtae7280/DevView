@@ -56,9 +56,14 @@ It runs:
 - `node dist/cli/index.js graph read-model report-compiler-input --json`;
 - `node dist/cli/index.js graph read-model compile-contract --dry-run --json`;
 - `node dist/cli/index.js graph read-model collect-changed-files --base HEAD~1 --head HEAD --output .tmp/devview-runtime-timing-smoke/git-derived-changed-file-collection.json --json`.
+- `node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --json`.
 
 The changed-file collection step writes to a `.tmp` smoke artifact so the timing smoke does not refresh the tracked
 Todo App preview collection artifact during ordinary measurement.
+
+The scope check step runs the advisory evaluator through the supported CLI surface. It collects changed-file names in
+memory, consumes the current Todo App runtime Evidence-only scope inputs, and reports findings as non-enforcing JSON.
+It does not write an artifact unless `--output` is explicitly supplied.
 
 The smoke reports JSON with:
 
@@ -73,8 +78,8 @@ The smoke reports JSON with:
 The budget status is advisory. The smoke does not fail because the 5 second target is exceeded. It exits nonzero only
 when a measured deterministic command itself fails.
 
-The non-enforcing scope evaluator currently has a helper and advisory artifact, but no dedicated supported CLI command.
-It is therefore listed as pending in the timing smoke rather than hidden or folded into a different command.
+The timing smoke still lists graph delta proposal generation as pending because no supported runtime proposal command is
+part of this budget slice yet.
 
 ## Health Report Boundary
 
@@ -87,8 +92,16 @@ advisoryOnly: true
 runtimeBudgetEnforced: false
 ```
 
-The health report does not run the timing smoke. It only names the advisory surface and preserves the non-enforcement
-boundary.
+It also names the advisory scope evaluator CLI:
+
+```text
+scopeComplianceEvaluatorStatus: advisory-cli-available
+command: graph read-model check-scope --base <baseRef> --head <headRef> --json
+enforcementStatus: not-enforced
+```
+
+The health report does not run the timing smoke or the evaluator. It only names the advisory surfaces and preserves the
+non-enforcement boundary.
 
 ## Non-Goals
 

@@ -590,6 +590,27 @@ not approve the fixture, satisfy runtime Evidence, prove equivalence, reject dif
 The evaluator must stay outside CI gates, required checks, branch protection, graph delta apply, fixture approval, and
 runtime Evidence satisfaction until a separate decision explicitly changes those boundaries.
 
+## Advisory Evaluator CLI
+
+The first supported evaluator surface is:
+
+```text
+graph read-model check-scope --base <baseRef> --head <headRef> --json
+```
+
+The command is local and deterministic. It collects git-derived changed-file names/status for explicit refs in memory,
+loads the current Todo App runtime Evidence-only allowed/forbidden scope inputs from the calibration draft, runs the
+non-enforcing evaluator, and prints JSON. Advisory findings do not change the exit code. Command failures such as
+invalid refs, unreadable draft input, or malformed internal scope data still fail normally.
+
+Optional artifact output is explicit:
+
+```text
+graph read-model check-scope --base <baseRef> --head <headRef> --output <file> --json
+```
+
+Without `--output`, the command does not refresh tracked preview artifacts.
+
 ## Runtime Budget Timing Smoke
 
 The runtime performance budget is documented in
@@ -603,11 +624,14 @@ npm run devview:runtime:smoke
 
 It measures selected deterministic runtime commands after `npm run build:cli` has produced `dist/cli/index.js`.
 Measured commands currently include compiler input reporting, contract compiler dry-run, and git-derived changed-file
-collection. The smoke reports `runtimeBudgetTargetMs: 5000`, `budgetStatus: advisory-not-enforced`, and
-`runtimeBudgetEnforced: false`.
+collection, and advisory scope evaluation through `graph read-model check-scope`. The smoke reports
+`runtimeBudgetTargetMs: 5000`, `budgetStatus: advisory-not-enforced`, and `runtimeBudgetEnforced: false`.
 
 The git-derived changed-file collection measurement writes to `.tmp/devview-runtime-timing-smoke/` so timing checks do
 not rewrite the tracked Todo App preview collection artifact.
+
+The scope evaluator measurement runs without `--output`, so it does not write an advisory evaluation artifact during
+ordinary timing checks.
 
 The timing smoke is not a CI gate. It excludes AI editing time, full validation, CI runtime, and human review time. It
 does not make the evaluator blocking, reject diffs, approve fixtures, satisfy runtime Evidence, prove equivalence, or

@@ -4,6 +4,7 @@ import { collectGitDerivedChangedFiles } from '../core/git-derived-changed-file-
 import { buildGraphExecutionContractReport } from '../core/graph-execution-contract.js'
 import { reportCompilerBoundary } from '../core/compiler-boundary.js'
 import { reportCompilerInputModel } from '../core/compiler-input-model.js'
+import { runAdvisoryScopeComplianceCheck } from '../core/scope-compliance-check.js'
 import {
   applyGraphUpdateProposal,
   captureGraphDelta,
@@ -627,6 +628,53 @@ export async function graphReadModelCollectChangedFilesCommand(context: CommandC
           message,
           suggestedFix:
             'Provide valid explicit --base and --head refs in the target repository. This command collects names/status only and does not evaluate scope compliance.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelCheckScopeCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.base) {
+    return invalidCommand('graph read-model check-scope requires --base <baseRef>.')
+  }
+  if (!context.options.head) {
+    return invalidCommand('graph read-model check-scope requires --head <headRef>.')
+  }
+
+  try {
+    const result = await runAdvisoryScopeComplianceCheck(context.options.root, {
+      baseRef: context.options.base,
+      headRef: context.options.head,
+      output: context.options.output,
+    })
+    return {
+      ok: true,
+      command: 'graph read-model check-scope',
+      exitCode: ExitCode.Success,
+      message: 'Advisory scope compliance evaluation completed without enforcement.',
+      issues: [],
+      data: {
+        ...result.artifact,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        next: 'Review advisory findings only. This command does not reject diffs, enforce scope, configure required checks, approve fixtures, satisfy runtime Evidence, prove equivalence, or apply graph deltas.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model check-scope',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Advisory scope compliance evaluation could not run.',
+      issues: [
+        issue({
+          validator: 'ScopeComplianceAdvisoryCheck',
+          code: 'SCOPE_COMPLIANCE_ADVISORY_CHECK_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide valid explicit --base and --head refs and keep the Todo App runtime Evidence-only calibration draft readable. Advisory findings are non-enforcing once the command can run.',
         }),
       ],
     }

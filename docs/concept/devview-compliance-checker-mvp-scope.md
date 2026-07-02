@@ -497,6 +497,21 @@ CI, configure required checks, approve fixtures, satisfy runtime Evidence, apply
 Todo App artifact currently reports `evaluation-blocked` because unresolved scope patterns must not silently pass as
 clean.
 
+## Advisory CLI Surface
+
+The evaluator is now exposed through a small local CLI surface:
+
+```text
+graph read-model check-scope --base <baseRef> --head <headRef> --json
+```
+
+The command collects git-derived changed-file names/status in memory, binds the current Todo App runtime Evidence-only
+scope inputs, runs the non-enforcing evaluator, and prints JSON. It returns success when advisory findings exist; exit
+code failure is reserved for command/runtime problems such as invalid refs or unreadable internal inputs.
+
+The command may write an advisory evaluation artifact only when `--output <file>` is explicitly provided. Without
+`--output`, it does not refresh tracked preview artifacts.
+
 ## Runtime Budget Smoke
 
 The deterministic DevView runtime budget is documented in
@@ -511,8 +526,9 @@ npm run devview:runtime:smoke
 It measures selected deterministic commands and reports `runtimeBudgetTargetMs: 5000`, `budgetStatus:
 advisory-not-enforced`, and `runtimeBudgetEnforced: false`. The timing smoke excludes AI editing time, full validation,
 CI runtime, and human review. The changed-file collection measurement writes to a `.tmp` smoke artifact rather than the
-tracked Todo App preview artifact. It does not turn scope compliance into a gate and does not reject diffs or configure
-required checks.
+tracked Todo App preview artifact. The smoke now includes the advisory `check-scope` command without writing an
+evaluation artifact. It does not turn scope compliance into a gate and does not reject diffs or configure required
+checks.
 
 ## Decision
 

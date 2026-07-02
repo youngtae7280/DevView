@@ -12,7 +12,7 @@ export function createWorkspace(): string {
 
 export function cleanupWorkspaces(): void {
   for (const root of tempRoots.splice(0)) {
-    rmSync(root, { recursive: true, force: true })
+    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 })
   }
 }
 

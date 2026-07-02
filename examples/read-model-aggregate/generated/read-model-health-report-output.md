@@ -36,6 +36,7 @@ Status: `graph-source-health-pass`
 | Source authority gap preview                | `contract-source-authority-gap-preview-pass`; 0 remaining losses (0 semantic / 0 policy); fields none; next `none`; `examples/read-model-aggregate/generated/contract-source-authority-gap.preview.json`                                                                                                                           |
 | Contract semantic diff review               | `compiler-promotion-review-required`; severity `medium`; unknown semantic diffs 0; unknown fields none; validation-superset-review-only: 1, source-mode-metadata-only: 1, boundary-wording-review-required: 1                                                                                                                      |
 | DevView runtime timing smoke                | target 5000ms; last `not-run-by-report-health`; advisory `true`; enforced `false`; command `npm run devview:runtime:smoke`                                                                                                                                                                                                         |
+| Scope compliance evaluator CLI              | `advisory-cli-available`; non-enforcing `true`; enforced `not-enforced`; health runs evaluator `false`; command `graph read-model check-scope --base <baseRef> --head <headRef> --json`                                                                                                                                            |
 
 The compiler candidate is valid, but equivalence with the hand-written contract is not proven. Review the differing
 fields before relying on the candidate.
@@ -75,12 +76,16 @@ artifacts.
   enforcement.
 - DevView runtime timing smoke is advisory only. It excludes AI editing time, full validation, CI runtime, and human
   review time, and it does not enforce the 5000ms target.
+- Scope compliance evaluator findings from `graph read-model check-scope --base <baseRef> --head <headRef> --json` are
+  advisory only. Report-health does not run the evaluator and advisory findings do not reject diffs or create required
+  checks.
 
 ## Reproduce
 
 ```bash
 npm run build:cli
 npm run devview:runtime:smoke
+node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --json
 node dist/cli/index.js graph read-model validate --all --json
 npm run test:read-model:e2e
 node dist/cli/index.js graph read-model report-compiler-boundary --json

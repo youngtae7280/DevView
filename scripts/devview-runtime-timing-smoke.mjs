@@ -41,16 +41,15 @@ const measuredSteps = [
     ],
     includedInRuntimeBudget: true,
   },
+  {
+    stepName: 'non-enforcing-scope-compliance-evaluation',
+    command: 'node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --json',
+    args: ['graph', 'read-model', 'check-scope', '--base', 'HEAD~1', '--head', 'HEAD', '--json'],
+    includedInRuntimeBudget: true,
+  },
 ]
 
 const pendingDeterministicSteps = [
-  {
-    stepName: 'non-enforcing-scope-compliance-evaluation',
-    status: 'pending-cli-command',
-    includedInRuntimeBudget: false,
-    reason:
-      'The evaluator helper and advisory artifact exist, but no supported CLI command runs the evaluator as a separate runtime step yet.',
-  },
   {
     stepName: 'graph-delta-proposal-generation',
     status: 'future-runtime-step-not-implemented',

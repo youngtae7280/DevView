@@ -311,6 +311,19 @@ export async function collectGitDerivedChangedFiles(
   root: string,
   options: GitDerivedCollectionOptions,
 ): Promise<GitDerivedChangedFileCollectionResult> {
+  const artifact = await collectGitDerivedChangedFileArtifact(root, options)
+  const outputPath = path.resolve(root, options.output || defaultGitDerivedChangedFileCollectionPath)
+  await writeJsonAtomic(outputPath, artifact)
+  return {
+    artifact,
+    outputPath: relativePath(root, outputPath),
+  }
+}
+
+export async function collectGitDerivedChangedFileArtifact(
+  root: string,
+  options: Pick<GitDerivedCollectionOptions, 'baseRef' | 'headRef'>,
+): Promise<GitDerivedChangedFileCollectionArtifact> {
   const validationProblems = [
     ...validateExplicitGitRef('base', options.baseRef),
     ...validateExplicitGitRef('head', options.headRef),
@@ -331,12 +344,7 @@ export async function collectGitDerivedChangedFiles(
     resolvedHeadRef,
     nameStatusOutput,
   })
-  const outputPath = path.resolve(root, options.output || defaultGitDerivedChangedFileCollectionPath)
-  await writeJsonAtomic(outputPath, artifact)
-  return {
-    artifact,
-    outputPath: relativePath(root, outputPath),
-  }
+  return artifact
 }
 
 async function resolveCommitRef(root: string, ref: string): Promise<string> {

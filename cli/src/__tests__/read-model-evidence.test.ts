@@ -3006,6 +3006,14 @@ describe('read-model Evidence builder', () => {
         runtimeBudgetEnforced: boolean
         fullValidationExcluded: boolean
       }
+      scopeComplianceEvaluator: {
+        scopeComplianceEvaluatorStatus: string
+        command: string
+        nonEnforcing: boolean
+        enforcementStatus: string
+        reportHealthRunsEvaluator: boolean
+        advisoryFindingsAreBlocking: boolean
+      }
       contractCompilerDryRun: {
         status: string
         dryRunChangeId: string
@@ -3091,6 +3099,14 @@ describe('read-model Evidence builder', () => {
       advisoryOnly: true,
       runtimeBudgetEnforced: false,
       fullValidationExcluded: true,
+    })
+    expect(output.scopeComplianceEvaluator).toMatchObject({
+      scopeComplianceEvaluatorStatus: 'advisory-cli-available',
+      command: 'graph read-model check-scope --base <baseRef> --head <headRef> --json',
+      nonEnforcing: true,
+      enforcementStatus: 'not-enforced',
+      reportHealthRunsEvaluator: false,
+      advisoryFindingsAreBlocking: false,
     })
     expect(output.contractCompilerDryRun.status).toBe('contract-compiler-dry-run-pass')
     expect(output.contractCompilerDryRun.candidateStatus).toBe('contract-candidate-pass')
@@ -3235,6 +3251,8 @@ describe('read-model Evidence builder', () => {
     expect(markdown).toContain('node dist/cli/index.js graph read-model report-health --json --markdown')
     expect(markdown).toContain('DevView runtime timing smoke')
     expect(markdown).toContain('npm run devview:runtime:smoke')
+    expect(markdown).toContain('Scope compliance evaluator CLI')
+    expect(markdown).toContain('graph read-model check-scope --base HEAD~1 --head HEAD --json')
   })
 
   it('blocks graph-source health when retirement approval package status drifts', async () => {

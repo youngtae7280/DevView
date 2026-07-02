@@ -1736,6 +1736,15 @@ binding, path pattern policy, path matching helper, violation category schema, a
 only. It does not inspect patch contents, reject diffs, enforce scope, wire CI, configure required checks, approve the
 fixture, satisfy runtime Evidence, apply graph deltas, or prove equivalence.
 
+The evaluator is also available through the advisory CLI surface:
+
+```text
+graph read-model check-scope --base <baseRef> --head <headRef> --json
+```
+
+The command prints advisory JSON, may write an artifact only with explicit `--output`, and does not fail solely because
+advisory findings exist.
+
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
 approval or runtime Evidence satisfaction.
@@ -1753,9 +1762,9 @@ npm run devview:runtime:smoke
 
 It measures selected deterministic local commands and reports the 5 second target as advisory only. Full validation,
 full test suites, CI runtime, human review, and AI editing time are outside this budget. The changed-file collection
-step writes to a `.tmp` smoke artifact rather than refreshing the tracked Todo App collection preview. The smoke does
-not enforce scope, reject diffs, configure required checks, approve fixtures, satisfy runtime Evidence, or prove
-equivalence.
+step writes to a `.tmp` smoke artifact rather than refreshing the tracked Todo App collection preview. The smoke
+includes advisory `check-scope` without writing an evaluation artifact. It does not enforce scope, reject diffs,
+configure required checks, approve fixtures, satisfy runtime Evidence, or prove equivalence.
 
 ## Fixture-Provided Changed-File List Preview
 
@@ -1928,8 +1937,8 @@ This selection does not:
 
 ## Next Step
 
-The next task may decide how to expose the non-enforcing evaluator through a supported CLI command or generated report
-surface. It should not reject diffs, enforce scope, broaden compiler support, wire additional fixtures into the
-supported command path, create promotion review packets, approve fixtures, claim runtime Evidence is satisfied, inspect
-patch contents, turn candidate checks into required checks, apply graph deltas, turn test Evidence into user acceptance,
-allow production source edits, enforce CI, or change the existing Todo App structure-only status.
+The next task may decide how to summarize advisory `check-scope` output inside a broader DevView runtime report. It
+should not reject diffs, enforce scope, broaden compiler support, wire additional fixtures into the supported command
+path, create promotion review packets, approve fixtures, claim runtime Evidence is satisfied, inspect patch contents,
+turn candidate checks into required checks, apply graph deltas, turn test Evidence into user acceptance, allow
+production source edits, enforce CI, or change the existing Todo App structure-only status.

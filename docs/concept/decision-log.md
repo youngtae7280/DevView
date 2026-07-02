@@ -1691,14 +1691,29 @@ DEC-228 does not supersede DEC-097 through DEC-227. It adds
 The runtime target is 5000ms for selected local deterministic DevView passes during normal task slices. This target
 excludes Codex or AI editing time, full test suite runtime, full validation suite runtime, CI runtime, human review
 time, Markdown documentation authoring, and DEC authoring. The timing smoke measures compiler input reporting, contract
-compiler dry-run, and git-derived changed-file collection. The collection measurement writes to a `.tmp` smoke artifact
-rather than refreshing the tracked Todo App preview collection artifact. The smoke lists evaluator CLI execution and
-graph delta proposal generation as pending deterministic steps when no supported CLI surface exists yet.
+compiler dry-run, git-derived changed-file collection, and advisory `graph read-model check-scope`. The collection
+measurement writes to a `.tmp` smoke artifact rather than refreshing the tracked Todo App preview collection artifact.
+The smoke lists graph delta proposal generation as a pending deterministic step when no supported runtime proposal
+surface exists yet.
 
 The timing smoke is advisory only. Timing over the target does not fail CI, create a required check, reject diffs,
 enforce scope, approve fixtures, set `equivalenceProven: true`, satisfy runtime Evidence, apply graph deltas, introduce
 executor automation, or replace user acceptance. `graph read-model report-health --json` exposes the timing smoke as a
 non-enforcing summary with `runtimeBudgetEnforced: false` and does not run the smoke itself.
+
+## DEC-229 Expose Advisory Scope Compliance Evaluator CLI
+
+DEC-229 does not supersede DEC-097 through DEC-228. It adds the advisory CLI command
+`graph read-model check-scope --base <baseRef> --head <headRef> --json` for the non-enforcing scope compliance
+evaluator. The command collects git-derived changed-file names/status for explicit refs in memory, loads the current
+Todo App runtime Evidence-only allowed/forbidden scope inputs, runs the evaluator, and prints JSON. It writes an
+advisory evaluation artifact only when `--output <file>` is explicitly supplied.
+
+The command is advisory only. Advisory findings do not reject diffs, fail CI, configure required checks, enforce scope,
+approve fixtures, set `equivalenceProven: true`, satisfy runtime Evidence, apply graph deltas, introduce executor
+automation, or replace user acceptance. Runtime failures such as invalid refs or unreadable internal inputs can still
+return a nonzero exit code. The timing smoke includes this command as part of the advisory runtime budget, and
+`report-health` names the CLI surface without running it as a gate.
 
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
