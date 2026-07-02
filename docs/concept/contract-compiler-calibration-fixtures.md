@@ -64,6 +64,7 @@ Primary paths:
 - `docs/concept/real-external-behavior-change-dogfood.md`
 - `examples/retrofit/open-source/escape-html/graph-source.json`
 - `examples/retrofit/open-source/escape-html/records/symbol-stringification.implemented.json`
+- `examples/retrofit/open-source/escape-html/generated/compiler-input-model-calibration-draft.json`
 - `outputs/retrofit/open-source/escape-html/instruction-packs/symbol-stringification.instruction-pack.json`
 - `outputs/retrofit/open-source/escape-html/graph-deltas/symbol-stringification.graph-delta.json`
 - `outputs/retrofit/open-source/escape-html/graph-update-proposals/symbol-stringification.graph-update-proposal.json`
@@ -79,6 +80,51 @@ Why this fixture is different:
   vocabulary change.
 - Its Evidence shape is an external project test suite result (`npm test`, 31 passing tests), not the Todo Search runtime
   fixture chain.
+
+## Calibration Input Draft
+
+The first input-model draft is:
+
+```text
+examples/retrofit/open-source/escape-html/generated/compiler-input-model-calibration-draft.json
+```
+
+This draft is `calibration-draft`, `not-supported`, `not-approved`, and `equivalenceProven: false`. It is not wired into
+`graph read-model compile-contract --dry-run`, does not create a promotion review packet for the second fixture, and is
+not an execution source.
+
+Inputs that can be represented with the current shape:
+
+- `humanRequest` from the external behavior-change dogfood record;
+- `graphSnapshot.artifacts[]` for graph source, change record, instruction pack, graph delta, graph update proposal, and
+  dogfood report;
+- `targetScopeCandidates[]` for `index.js`, `test/index.js`, and review Evidence artifacts;
+- `policySnapshot.forbiddenScopeRules[]` for escaping vocabulary, package metadata, upstream approval, and graph-delta
+  apply boundaries;
+- `evidenceIndex.entries[]` for `npm test`, dogfood report, graph delta, and graph update proposal artifacts;
+- `outputRequirementSources[]` for changed files, command Evidence status, validation summary, and non-upstream boundary
+  reporting;
+- `stopConditionSources[]` for missing external checkout/tests, scope expansion, and unsupported current compiler check
+  bindings;
+- `riskSources[]` for scope drift and source-authority loss.
+
+Known draft gaps:
+
+- The current compiler input command surface still reads only the Todo Search dry-run fixture.
+- External project check IDs such as `check-escape-html-npm-test` are not in the current required-check registry.
+- `work/external/escape-html` paths are local external checkout paths, not committed repository paths.
+- The source dogfood is behavior-change shaped, but the draft keeps `changeType: bug_fix` as a calibration assumption
+  instead of adding arbitrary `changeType` support.
+- Graph delta and graph update proposal artifacts are review Evidence, not graph apply authority.
+
+Expected resolver behavior:
+
+- Existing output requirement, forbidden scope, stop condition, Evidence, context, risk, and allowed-scope resolver
+  concepts should be reusable in shape.
+- External checkout path handling and external required-check binding are expected to block or require a calibration
+  extension.
+- If this draft is wired in a future v0.3 task, the correct first result may be `not-supported` or `blocked` with
+  precise source-authority gaps, not a successful candidate.
 
 ## What It Should Exercise
 

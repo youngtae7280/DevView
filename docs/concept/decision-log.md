@@ -1062,6 +1062,17 @@ execute AI, apply graph deltas, accept user work, enable required checks, config
 enforcement, retire tree-native artifacts, widen changeType support, rename PBE compatibility surfaces, or make any
 generated contract authoritative.
 
+DEC-187 does not supersede DEC-097 through DEC-186. It adds a calibration-only Compiler Input Model draft for the
+selected `component/escape-html` Symbol stringification fixture at
+`examples/retrofit/open-source/escape-html/generated/compiler-input-model-calibration-draft.json`. The draft records
+which input groups can be represented and which gaps remain, including unsupported external project check IDs, external
+checkout paths, behavior-change shape under current `bug_fix` vocabulary, and graph delta/proposal review-only
+bindings. The draft status is `calibration-draft`, `not-supported`, `not-approved`, and `equivalenceProven: false`. It
+does not wire the second fixture into the compiler command, create a promotion packet, approve the fixture, execute AI,
+apply graph deltas, accept user work, enable required checks, configure branch protection, introduce CI enforcement,
+retire tree-native artifacts, widen changeType support, rename PBE compatibility surfaces, or make any generated
+contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.
