@@ -13,8 +13,10 @@
   "outputRequirementForTestEvidencePreview": "examples/valid/todo-app-pbe-run/generated/output-requirement-for-test-evidence.runtime-evidence-only.preview.json",
   "complianceCheckerBridgePreview": "examples/valid/todo-app-pbe-run/generated/compliance-checker-bridge.runtime-evidence-only.preview.json",
   "changedFileListAuthorityPreview": "examples/valid/todo-app-pbe-run/generated/changed-file-list-authority.runtime-evidence-only.preview.json",
+  "fixtureProvidedChangedFileListPreview": "examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json",
   "checkerPreviewStatus": "preview-only-not-implemented",
   "changedFileListAuthorityPreviewStatus": "changed-file-list-authority-previewed",
+  "fixtureProvidedChangedFileListPreviewStatus": "fixture-provided-preview-input-available",
   "supportStatus": "not-supported",
   "compileEligibility": "not-eligible-current-command-not-wired",
   "expectedCandidateStatus": "contract-candidate-not-run",
@@ -123,6 +125,8 @@
     "authorityPreviewPath": "examples/valid/todo-app-pbe-run/generated/changed-file-list-authority.runtime-evidence-only.preview.json",
     "authorityPreviewStatus": "changed-file-list-authority-previewed",
     "authorityStatus": "changed-file-list-authority-unresolved",
+    "fixtureProvidedPreviewPath": "examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json",
+    "fixtureProvidedPreviewStatus": "fixture-provided-preview-input-available",
     "expectedFutureSource": "future actual changed-file list from diff/file modification inspection",
     "currentChangedFilesInspected": false,
     "currentChangedFileListAuthoritative": false,
@@ -192,6 +196,11 @@
       "previewId": "changed-file-list-authority",
       "path": "examples/valid/todo-app-pbe-run/generated/changed-file-list-authority.runtime-evidence-only.preview.json",
       "use": "Authority model for future changed-file inputs; agent-reported file lists are not authoritative by themselves."
+    },
+    {
+      "previewId": "fixture-provided-changed-file-list",
+      "path": "examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json",
+      "use": "Static preview-only changed-file scenarios for shaping future result states; not actual diff output."
     },
     {
       "previewId": "test-only-scope-boundary",

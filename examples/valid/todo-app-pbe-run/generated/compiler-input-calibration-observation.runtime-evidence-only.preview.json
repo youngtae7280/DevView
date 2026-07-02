@@ -65,6 +65,7 @@
     "mvpAxis": "scope-compliance-preview",
     "changedFileListSourceStatus": "missing-not-implemented",
     "changedFileListAuthorityPreviewStatus": "changed-file-list-authority-previewed",
+    "fixtureProvidedChangedFileListPreviewStatus": "fixture-provided-preview-input-available",
     "scopeEnforced": false,
     "remainingSupportStatus": "not-supported"
   },
@@ -79,12 +80,24 @@
     "remainingSupportStatus": "not-supported"
   },
   "changedFileListAuthorityPreviewStatus": "changed-file-list-authority-previewed",
+  "fixtureProvidedChangedFileListPreview": {
+    "path": "examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json",
+    "status": "fixture-provided-changed-file-list-previewed",
+    "inputAuthorityStatus": "fixture-provided-preview-only",
+    "notActualDiff": true,
+    "actualDiffInspected": false,
+    "changedFilesCollected": false,
+    "checkerRun": false,
+    "remainingSupportStatus": "not-supported"
+  },
+  "fixtureProvidedChangedFileListPreviewStatus": "fixture-provided-preview-input-available",
   "scopeComplianceResultPreview": {
     "path": "examples/valid/todo-app-pbe-run/generated/scope-compliance-result.runtime-evidence-only.preview.json",
     "status": "scope-compliance-input-missing-previewed",
     "scopeComplianceResultStatus": "scope-compliance-input-missing",
     "changedFileListStatus": "missing-or-not-authoritative",
     "changedFileListAuthorityPreviewStatus": "changed-file-list-authority-previewed",
+    "fixtureProvidedChangedFileListPreviewStatus": "fixture-provided-preview-input-available",
     "evaluatedViolations": [],
     "scopeEnforced": false,
     "remainingSupportStatus": "not-supported"

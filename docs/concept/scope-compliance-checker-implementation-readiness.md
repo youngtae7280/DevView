@@ -114,6 +114,30 @@ Recommended implementation order:
 The authority preview does not implement collection, run the checker, report no-violation, report an actual violation,
 reject changes, enforce scope, or promote any fixture.
 
+## Fixture-Provided Changed-File List Preview
+
+The first fixture-provided changed-file list preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json
+```
+
+Preview status:
+
+```text
+fixture-provided-changed-file-list-previewed
+```
+
+The preview supplies two static scenarios for future result-shape design:
+
+- a test/Evidence-only changed-file scenario;
+- a production-source-modified scenario.
+
+These scenarios are fixture-provided preview inputs only. They are not actual diff output, not collected from Git, not
+agent-reported changed files, not execution transcript metadata, and not authoritative runtime Evidence. They are useful
+for shaping future scope compliance result states, but they do not prove actual compliance and do not replace a later
+git-derived changed-file authority path.
+
 ## Readiness Criteria
 
 The first implementation slice should not start until DevView can answer:
@@ -271,6 +295,7 @@ Reason:
 - the first preview artifact exists;
 - future inputs and conceptual violation states are defined;
 - changed-file list authority is previewed but unresolved for execution;
+- fixture-provided changed-file list scenarios are previewed but not evaluated;
 - path normalization is unresolved;
 - result artifact exists only as a static preview, not an implemented output schema;
 - no checker is implemented.
@@ -278,12 +303,12 @@ Reason:
 Recommended next task:
 
 ```text
-fixture-provided-changed-file-list-preview
+scope-compliance-result-preview-with-fixture-input
 ```
 
-That next task should define a supplied static changed-file list for a result-shape preview without inspecting actual
-diffs. It should remain preview-only, non-authoritative, and non-enforcing. A git-derived changed-file list should wait
-until a later implementation slice defines base/head and path normalization rules.
+That next task may define a static result-shape preview that references one fixture-provided scenario without inspecting
+actual diffs or running a checker. It should remain preview-only, non-authoritative, and non-enforcing. A git-derived
+changed-file list should wait until a later implementation slice defines base/head and path normalization rules.
 
 ## Non-Goals
 

@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "fixture-provided-changed-file-list-preview",
+  "status": "fixture-provided-changed-file-list-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "checkerAxis": "scope-compliance-preview",
+  "inputAuthorityStatus": "fixture-provided-preview-only",
+  "changedFileListStatus": "fixture-provided-preview-input-available",
+  "authoritativeChangedFileListStatus": "missing-or-not-authoritative",
+  "supportStatus": "not-supported",
+  "compileEligibility": "not-eligible-current-command-not-wired",
+  "expectedCandidateStatus": "contract-candidate-not-run",
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "currentRuntimeEvidenceStatus": "missing",
+  "evidenceCheckBindingStatus": "preview-only-not-satisfied",
+  "checkerRun": false,
+  "actualDiffInspected": false,
+  "changedFilesCollected": false,
+  "collectedFromGit": false,
+  "agentReported": false,
+  "executionTranscriptDerived": false,
+  "scopeEnforced": false,
+  "diffRejected": false,
+  "sourceArtifacts": {
+    "changedFileListAuthorityPreview": "examples/valid/todo-app-pbe-run/generated/changed-file-list-authority.runtime-evidence-only.preview.json",
+    "scopeComplianceCheckerPreview": "examples/valid/todo-app-pbe-run/generated/scope-compliance-checker.runtime-evidence-only.preview.json",
+    "scopeComplianceResultPreview": "examples/valid/todo-app-pbe-run/generated/scope-compliance-result.runtime-evidence-only.preview.json",
+    "testOnlyScopeBoundaryPreview": "examples/valid/todo-app-pbe-run/generated/test-only-scope-boundary.runtime-evidence-only.preview.json",
+    "complianceCheckerBridgePreview": "examples/valid/todo-app-pbe-run/generated/compliance-checker-bridge.runtime-evidence-only.preview.json"
+  },
+  "sourceAuthority": {
+    "sourceType": "fixture-provided-preview-input",
+    "authorityLevel": "fixture-provided-preview-only",
+    "notActualDiff": true,
+    "notCollectedFromGit": true,
+    "notAgentClaim": true,
+    "notExecutionTranscriptDerived": true,
+    "notRuntimeEvidence": true,
+    "suitableUse": "static result-shape design only",
+    "boundary": "This fixture-provided list is a controlled calibration input. It is not proof of actual changed files and is not authoritative for compliance."
+  },
+  "previewScenarios": [
+    {
+      "scenarioId": "test-evidence-only-changed-files",
+      "scenarioStatus": "fixture-provided-preview-only",
+      "scenarioRole": "future-allowed-scope-result-shape-candidate",
+      "notActualDiff": true,
+      "notCollectedFromGit": true,
+      "notAgentClaim": true,
+      "changedFiles": [
+        {
+          "path": "examples/valid/todo-app-pbe-run/.pbe/evidence/evidence-tree.json",
+          "previewScopeExpectation": "test-or-evidence-scope",
+          "sourceBoundary": "fixture-provided-preview-only"
+        },
+        {
+          "path": "examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt",
+          "previewScopeExpectation": "runtime-evidence-file",
+          "sourceBoundary": "fixture-provided-preview-only"
+        },
+        {
+          "path": "examples/valid/todo-app-pbe-run/generated/todo-app-runtime-proof-report.preview.md",
+          "previewScopeExpectation": "report-only-artifact",
+          "sourceBoundary": "fixture-provided-preview-only"
+        }
+      ],
+      "futureEvaluationShape": {
+        "wouldExercise": ["allowed-scope-comparison", "path-normalization", "report-only-artifact-handling"],
+        "mustNotClaim": ["scope-compliance-no-violation-observed", "runtime-evidence-satisfied", "fixture-approved"]
+      }
+    },
+    {
+      "scenarioId": "production-source-modified",
+      "scenarioStatus": "fixture-provided-preview-only",
+      "scenarioRole": "future-forbidden-scope-result-shape-candidate",
+      "notActualDiff": true,
+      "notCollectedFromGit": true,
+      "notAgentClaim": true,
+      "changedFiles": [
+        {
+          "path": "src/todos.ts",
+          "previewScopeExpectation": "production-source-forbidden-or-stop-required",
+          "sourceBoundary": "fixture-provided-preview-only"
+        },
+        {
+          "path": "examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt",
+          "previewScopeExpectation": "runtime-evidence-file",
+          "sourceBoundary": "fixture-provided-preview-only"
+        }
+      ],
+      "futureEvaluationShape": {
+        "wouldExercise": [
+          "forbidden-scope-comparison",
+          "production-source-modified-in-test-only-fixture",
+          "source-edit-stop-condition"
+        ],
+        "mustNotClaim": [
+          "actual-forbidden-scope-violation-detected",
+          "diff-rejected",
+          "scope-enforced",
+          "fixture-approved"
+        ]
+      }
+    }
+  ],
+  "scenarioStatuses": ["fixture-provided-preview-only", "not-actual-diff", "not-collected-from-git", "not-agent-claim"],
+  "futureCheckerInputCandidate": {
+    "suitableForFirstStaticSlice": true,
+    "suitableForAuthoritativeCompliance": false,
+    "reason": "The scenarios can shape expected result states without reading actual diffs, but they cannot prove actual scope compliance."
+  },
+  "unresolvedInputGaps": [
+    "no actual changed-file collection",
+    "no git-derived changed-file list",
+    "no path normalization policy",
+    "no checker evaluation over these scenarios",
+    "no authoritative runtime execution evidence"
+  ],
+  "allowedUse": [
+    "shape future scope compliance result states",
+    "exercise static allowed-scope and forbidden-scope scenario vocabulary",
+    "document how fixture-provided inputs differ from git-derived changed files",
+    "prepare later non-enforcing checker result previews"
+  ],
+  "forbiddenUse": [
+    "actual diff output",
+    "collected changed files",
+    "authoritative changed-file list",
+    "agent-reported changed files",
+    "execution transcript changed files",
+    "scope-compliance checker run",
+    "scope-compliance pass",
+    "scope-compliance violation finding",
+    "no-violation claim",
+    "diff rejection",
+    "scope enforcement",
+    "supported compiler output",
+    "candidate generation eligibility",
+    "promotion approval",
+    "runtime Evidence satisfaction",
+    "required check configuration",
+    "CI enforcement",
+    "branch protection",
+    "execution authority",
+    "Todo App source-authority promotion",
+    "user acceptance"
+  ],
+  "nonExecutionBoundary": "This fixture-provided changed-file list preview is static and non-enforcing. It is not actual diff output, not collected from Git, not agent-reported, not execution transcript-derived, not authoritative runtime Evidence, and not a checker result. It does not run scope compliance evaluation, report no-violation, detect violations, reject changes, enforce scope, approve a fixture, satisfy runtime Evidence, set equivalenceProven true, or replace user acceptance."
+}

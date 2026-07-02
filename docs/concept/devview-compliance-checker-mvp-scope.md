@@ -267,6 +267,16 @@ states that agent-reported changed files are not authoritative by themselves, fi
 preview-only, and a git-derived changed-file list is a later implementation candidate after base/head and path
 normalization policy exist.
 
+The fixture-provided changed-file list preview is now recorded:
+
+```text
+examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json
+```
+
+It adds static test/Evidence-only and production-source-modified scenarios for future result-shape design. These
+scenarios are not actual observed diffs, are not collected from Git, are not agent-reported changed files, and do not
+prove compliance or violations. The scope compliance result preview still keeps evaluation not run.
+
 ## Decision
 
 Decision:

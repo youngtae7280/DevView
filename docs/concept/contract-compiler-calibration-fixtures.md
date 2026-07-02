@@ -1354,6 +1354,43 @@ changedFileListAuthorityPreviewStatus: changed-file-list-authority-previewed
 The scope compliance result preview still reports `scope-compliance-input-missing`, keeps `evaluatedViolations: []`, and
 does not claim a clean result or an actual violation.
 
+## Fixture-Provided Changed-File List Preview
+
+The first fixture-provided changed-file list preview artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json
+```
+
+Preview status:
+
+- `status: fixture-provided-changed-file-list-previewed`
+- `inputAuthorityStatus: fixture-provided-preview-only`
+- `changedFileListStatus: fixture-provided-preview-input-available`
+- `authoritativeChangedFileListStatus: missing-or-not-authoritative`
+- `checkerRun: false`
+- `actualDiffInspected: false`
+- `changedFilesCollected: false`
+
+The artifact provides two static scenarios:
+
+- test/Evidence-only changed files, for a future allowed-scope result-shape candidate;
+- production source modified, for a future forbidden-scope result-shape candidate.
+
+Both scenarios are preview inputs only. They are not actual observed diffs, not collected from Git, not agent-reported
+changed files, not execution transcript metadata, and not authoritative runtime Evidence. They may help shape future
+checker result logic, but they do not prove compliance, do not report a violation, and do not replace later git-derived
+changed-file authority.
+
+The third-fixture observation now links this preview with:
+
+```text
+fixtureProvidedChangedFileListPreviewStatus: fixture-provided-preview-input-available
+```
+
+The scope compliance result preview still keeps `checkerRun: false`, `actualDiffInspected: false`,
+`changedFilesCollected: false`, and `evaluatedViolations: []`.
+
 ## Calibration Success Criteria
 
 A future calibration cycle is successful if:
@@ -1385,9 +1422,10 @@ This selection does not:
 
 ## Next Step
 
-The next task should define a fixture-provided changed-file list preview for the Todo App runtime Evidence-only fixture,
-if DevView is ready to shape a static non-enforcing result around supplied input. It should not inspect actual git diffs,
-collect changed files from the worktree, broaden compiler support, wire additional fixtures into the supported command
-path, create promotion review packets, approve fixtures, claim runtime Evidence is satisfied, implement compliance
-checking, inspect or reject diffs, turn candidate checks into required checks, apply graph deltas, turn test Evidence
-into user acceptance, allow production source edits, enforce CI, or change the existing Todo App structure-only status.
+The next task may define a static scope compliance result-shape preview that references one fixture-provided scenario,
+if DevView is ready to model not-run evaluation states with supplied preview input. It should not inspect actual git
+diffs, collect changed files from the worktree, broaden compiler support, wire additional fixtures into the supported
+command path, create promotion review packets, approve fixtures, claim runtime Evidence is satisfied, implement
+compliance checking, inspect or reject diffs, turn candidate checks into required checks, apply graph deltas, turn test
+Evidence into user acceptance, allow production source edits, enforce CI, or change the existing Todo App structure-only
+status.
