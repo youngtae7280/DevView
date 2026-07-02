@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "scope-compliance-result-preview",
+  "status": "scope-compliance-input-missing-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "checkerAxis": "scope-compliance-preview",
+  "resultStatus": "scope-compliance-input-missing",
+  "scopeComplianceResultStatus": "scope-compliance-input-missing",
+  "changedFileListStatus": "missing-or-not-authoritative",
+  "changedFileListAuthorityStatus": "missing-or-not-authoritative",
+  "enforcementStatus": "non-enforcing-preview",
+  "checkerImplemented": false,
+  "checkerRun": false,
+  "actualDiffInspected": false,
+  "changedFilesCollected": false,
+  "scopeEnforced": false,
+  "diffRejected": false,
+  "supportStatus": "not-supported",
+  "compileEligibility": "not-eligible-current-command-not-wired",
+  "expectedCandidateStatus": "contract-candidate-not-run",
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "currentRuntimeEvidenceStatus": "missing",
+  "evidenceCheckBindingStatus": "preview-only-not-satisfied",
+  "sourceArtifacts": {
+    "scopeComplianceCheckerPreview": "examples/valid/todo-app-pbe-run/generated/scope-compliance-checker.runtime-evidence-only.preview.json",
+    "testOnlyScopeBoundaryPreview": "examples/valid/todo-app-pbe-run/generated/test-only-scope-boundary.runtime-evidence-only.preview.json",
+    "complianceCheckerBridgePreview": "examples/valid/todo-app-pbe-run/generated/compliance-checker-bridge.runtime-evidence-only.preview.json",
+    "implementationReadiness": "docs/concept/scope-compliance-checker-implementation-readiness.md"
+  },
+  "requiredFutureInputs": [
+    {
+      "inputId": "execution-contract-or-contract-equivalent-scope-source",
+      "requiredFor": ["allowedScope", "forbiddenScope"],
+      "currentStatus": "preview-source-only",
+      "currentSource": "examples/valid/todo-app-pbe-run/generated/test-only-scope-boundary.runtime-evidence-only.preview.json",
+      "blockingReason": "The fixture has no supported generated contract candidate and remains contract-candidate-not-run."
+    },
+    {
+      "inputId": "allowedScope",
+      "requiredFor": ["allowed-scope-violation"],
+      "currentStatus": "preview-source-only",
+      "currentSource": "test-only-scope-boundary-preview",
+      "blockingReason": "Allowed scope is available only as preview metadata, not as a supported checker input."
+    },
+    {
+      "inputId": "forbiddenScope",
+      "requiredFor": ["forbidden-scope-violation", "production-source-modified-in-test-only-fixture"],
+      "currentStatus": "preview-source-only",
+      "currentSource": "test-only-scope-boundary-preview",
+      "blockingReason": "Forbidden scope is available only as preview metadata, not as a supported checker input."
+    },
+    {
+      "inputId": "authoritative-changed-file-list",
+      "requiredFor": [
+        "allowed-scope-violation",
+        "forbidden-scope-violation",
+        "production-source-modified-in-test-only-fixture"
+      ],
+      "currentStatus": "missing-or-not-authoritative",
+      "currentSource": "none",
+      "blockingReason": "No actual diff inspection, changed-file collection, or supplied authoritative changed-file artifact exists."
+    },
+    {
+      "inputId": "path-normalization-rules",
+      "requiredFor": ["scope-path-comparison"],
+      "currentStatus": "not-defined",
+      "currentSource": "none",
+      "blockingReason": "No rule exists yet for comparing repository-relative, generated, unresolved, and conceptual paths."
+    },
+    {
+      "inputId": "result-output-path",
+      "requiredFor": ["non-enforcing-result-report"],
+      "currentStatus": "preview-path-only",
+      "currentSource": "examples/valid/todo-app-pbe-run/generated/scope-compliance-result.runtime-evidence-only.preview.json",
+      "blockingReason": "This file is a static result-shape preview, not output from an implemented checker."
+    }
+  ],
+  "scopeSourceStatus": {
+    "allowedScopeSourceStatus": "preview-only",
+    "forbiddenScopeSourceStatus": "preview-only",
+    "scopeSourceAuthoritative": false,
+    "scopeSourceSupportedByChecker": false,
+    "reason": "The test-only scope boundary preview identifies expected allowed and forbidden scope, but the fixture is not supported and no checker consumes the preview."
+  },
+  "pathNormalizationStatus": {
+    "status": "not-defined",
+    "repositoryRelativePathRuleDefined": false,
+    "unresolvedPathHandlingDefined": false,
+    "generatedPathHandlingDefined": false,
+    "conceptualPathHandlingDefined": false,
+    "reason": "Path matching rules must be defined before any actual changed-file comparison."
+  },
+  "evaluatedViolations": [],
+  "violationEvaluationStatus": "not-run-input-missing",
+  "notEvaluatedViolations": [
+    {
+      "violationId": "allowed-scope-violation",
+      "reasonNotEvaluated": "No authoritative changed-file list exists.",
+      "wouldRequire": ["authoritative-changed-file-list", "allowedScope", "path-normalization-rules"]
+    },
+    {
+      "violationId": "forbidden-scope-violation",
+      "reasonNotEvaluated": "No authoritative changed-file list exists.",
+      "wouldRequire": ["authoritative-changed-file-list", "forbiddenScope", "path-normalization-rules"]
+    },
+    {
+      "violationId": "production-source-modified-in-test-only-fixture",
+      "reasonNotEvaluated": "No authoritative changed-file list exists and no diff inspection has run.",
+      "wouldRequire": [
+        "authoritative-changed-file-list",
+        "production-source-forbidden-scope",
+        "path-normalization-rules"
+      ]
+    },
+    {
+      "violationId": "missing-changed-file-list",
+      "reasonNotEvaluated": "This result preview records the missing input state but does not run a checker.",
+      "wouldRequire": ["implemented-result-classifier"]
+    },
+    {
+      "violationId": "scope-status-overclaim",
+      "reasonNotEvaluated": "No agent output report is attached to this preview.",
+      "wouldRequire": ["agent-output-report", "status-field-policy"]
+    }
+  ],
+  "missingInputs": [
+    {
+      "inputId": "authoritative-changed-file-list",
+      "impact": "scope compliance cannot be evaluated",
+      "requiredBeforeNoViolationClaim": true
+    },
+    {
+      "inputId": "path-normalization-rules",
+      "impact": "scope paths and changed files cannot be compared reliably",
+      "requiredBeforeNoViolationClaim": true
+    },
+    {
+      "inputId": "supported-contract-scope-source",
+      "impact": "allowedScope and forbiddenScope remain preview-only for this fixture",
+      "requiredBeforeNoViolationClaim": true
+    },
+    {
+      "inputId": "implemented-result-classifier",
+      "impact": "missing inputs are documented statically, not emitted by checker logic",
+      "requiredBeforeNoViolationClaim": true
+    },
+    {
+      "inputId": "agent-output-report",
+      "impact": "scope-status-overclaim cannot be checked",
+      "requiredBeforeNoViolationClaim": false
+    }
+  ],
+  "resultInterpretation": {
+    "canClaimNoViolationObserved": false,
+    "canClaimViolationDetected": false,
+    "canClaimScopeCompliant": false,
+    "canRejectDiff": false,
+    "canEnforceCi": false,
+    "canApproveFixture": false,
+    "canSatisfyRuntimeEvidence": false,
+    "canProveEquivalence": false,
+    "reason": "The result preview has no authoritative changed-file input and no implemented checker execution."
+  },
+  "allowedUse": [
+    "review the expected scope compliance result shape",
+    "show how missing changed-file input should be represented",
+    "confirm that missing input does not become no-violation",
+    "prepare a future static result schema or checker input decision"
+  ],
+  "forbiddenUse": [
+    "implemented checker result",
+    "actual diff inspection",
+    "authoritative changed-file list",
+    "scope-compliance pass",
+    "scope-compliance violation finding",
+    "no-violation claim",
+    "diff rejection",
+    "scope enforcement",
+    "supported compiler output",
+    "candidate generation eligibility",
+    "promotion approval",
+    "runtime Evidence satisfaction",
+    "required check configuration",
+    "CI enforcement",
+    "branch protection",
+    "execution authority",
+    "Todo App source-authority promotion",
+    "user acceptance"
+  ],
+  "nonExecutionBoundary": "This scope compliance result preview is static and non-enforcing. It records that checker inputs are missing or not authoritative. It does not run a checker, inspect actual diffs, collect changed files, report no-violation, detect violations, reject changes, enforce scope, wire CI, configure required checks, generate a contract candidate, approve a fixture, satisfy runtime Evidence, set equivalenceProven true, apply graph deltas, or replace user acceptance."
+}

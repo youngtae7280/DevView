@@ -247,6 +247,15 @@ The readiness criteria are now recorded in
 required future inputs, unresolved changed-file list authority, path normalization questions, non-enforcing result
 states, and the first future static preview result boundary without implementing checker behavior.
 
+The first static result-shape preview is now recorded:
+
+```text
+examples/valid/todo-app-pbe-run/generated/scope-compliance-result.runtime-evidence-only.preview.json
+```
+
+It reports `scope-compliance-input-missing` because no authoritative changed-file list exists, no checker has run, and
+no violation or no-violation status can be claimed.
+
 ## Decision
 
 Decision:

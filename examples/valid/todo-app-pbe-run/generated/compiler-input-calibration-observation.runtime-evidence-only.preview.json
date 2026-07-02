@@ -68,6 +68,16 @@
     "remainingSupportStatus": "not-supported"
   },
   "scopeCompliancePreviewStatus": "scope-compliance-checker-previewed",
+  "scopeComplianceResultPreview": {
+    "path": "examples/valid/todo-app-pbe-run/generated/scope-compliance-result.runtime-evidence-only.preview.json",
+    "status": "scope-compliance-input-missing-previewed",
+    "scopeComplianceResultStatus": "scope-compliance-input-missing",
+    "changedFileListStatus": "missing-or-not-authoritative",
+    "evaluatedViolations": [],
+    "scopeEnforced": false,
+    "remainingSupportStatus": "not-supported"
+  },
+  "scopeComplianceResultPreviewStatus": "scope-compliance-input-missing-previewed",
   "observedGaps": [
     {
       "gapId": "test-only-allowed-scope",

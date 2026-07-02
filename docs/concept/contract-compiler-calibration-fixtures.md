@@ -1288,6 +1288,39 @@ the future changed-file input authority question, allowed/forbidden scope source
 normalization questions, non-enforcing result states, and the first proposed static result artifact without implementing
 checker behavior.
 
+## Scope Compliance Result Preview
+
+The first static scope compliance result-shape preview artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/scope-compliance-result.runtime-evidence-only.preview.json
+```
+
+Preview status:
+
+- `status: scope-compliance-input-missing-previewed`
+- `scopeComplianceResultStatus: scope-compliance-input-missing`
+- `changedFileListStatus: missing-or-not-authoritative`
+- `changedFileListAuthorityStatus: missing-or-not-authoritative`
+- `enforcementStatus: non-enforcing-preview`
+- `checkerRun: false`
+- `actualDiffInspected: false`
+- `changedFilesCollected: false`
+- `scopeEnforced: false`
+
+The preview result intentionally does not report `scope-compliance-no-violation-observed`. It also does not report an
+actual violation. Because no authoritative changed-file list exists, the only honest result shape is input missing /
+not authoritative.
+
+The third-fixture observation now links this preview with:
+
+```text
+scopeComplianceResultPreviewStatus: scope-compliance-input-missing-previewed
+```
+
+Runtime Evidence remains missing, evidence/check binding remains `preview-only-not-satisfied`, the fixture remains
+`not-supported`, and no checker has run.
+
 ## Calibration Success Criteria
 
 A future calibration cycle is successful if:
@@ -1319,8 +1352,9 @@ This selection does not:
 
 ## Next Step
 
-The next task should define the static `scope-compliance-result` preview schema before any executable checker logic is
-added. It should not broaden compiler support, wire additional fixtures into the supported command path, create
-promotion review packets, approve fixtures, claim runtime Evidence is satisfied, implement compliance checking, inspect
-or reject diffs, turn candidate checks into required checks, apply graph deltas, turn test Evidence into user acceptance,
-allow production source edits, enforce CI, or change the existing Todo App structure-only status.
+The next task should decide changed-file list authority for a future scope compliance checker: where the list comes from,
+whether it is authoritative or supplied-static-preview, and how missing changed-file input is represented. It should not
+broaden compiler support, wire additional fixtures into the supported command path, create promotion review packets,
+approve fixtures, claim runtime Evidence is satisfied, implement compliance checking, inspect or reject diffs, turn
+candidate checks into required checks, apply graph deltas, turn test Evidence into user acceptance, allow production
+source edits, enforce CI, or change the existing Todo App structure-only status.
