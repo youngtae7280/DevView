@@ -95,6 +95,12 @@ The first static observation report is:
 examples/retrofit/open-source/escape-html/generated/compiler-input-calibration-observation.preview.json
 ```
 
+The first behavior-change calibration policy preview is:
+
+```text
+examples/retrofit/open-source/escape-html/generated/behavior-change-calibration-policy.preview.json
+```
+
 This draft is `calibration-draft`, `not-supported`, `not-approved`, and `equivalenceProven: false`. It is not wired into
 `graph read-model compile-contract --dry-run`, does not create a promotion review packet for the second fixture, and is
 not an execution source.
@@ -119,8 +125,8 @@ Known draft gaps:
 - The current compiler input command surface still reads only the Todo Search dry-run fixture.
 - External project check IDs such as `check-escape-html-npm-test` are not in the current required-check registry.
 - `work/external/escape-html` paths are local external checkout paths, not committed repository paths.
-- The source dogfood is behavior-change shaped, but the draft keeps `changeType: bug_fix` as a calibration assumption
-  instead of adding arbitrary `changeType` support.
+- The source dogfood is behavior-change shaped and is now recognized as calibration-only policy while still using the
+  current `bug_fix` vocabulary; this does not add arbitrary `changeType` support.
 - Graph delta and graph update proposal artifacts are review Evidence, not graph apply authority.
 
 Expected resolver behavior:
@@ -138,13 +144,15 @@ The observation preview classifies the second fixture as:
 
 - `fixtureStatus: calibration-draft`
 - `supportStatus: not-supported`
+- `behaviorChangeCalibrationPolicyStatus: behavior-change-calibration-policy-recognized`
 - `compileEligibility: not-eligible-current-command-not-wired`
 - `expectedCandidateStatus: contract-candidate-not-run`
 - `promotionEligibility.status: promotion-not-eligible`
 - `equivalenceProven: false`
 
-This is the intended current result. The observation does not compile a candidate and does not ask the current
-compiler-supported Todo Search path to accept the second fixture.
+This is the intended current result. Behavior-change shape is now recognized as a calibration policy boundary, but the
+observation does not compile a candidate and does not ask the current compiler-supported Todo Search path to accept the
+second fixture.
 
 The current source-authority model appears reusable in concept for:
 
@@ -157,7 +165,6 @@ The observation reports likely extensions for:
 
 - external required-check registry binding;
 - external checkout path authority;
-- behavior-change pack schema policy;
 - escaping/stringification and maintainer-approval risk vocabulary;
 - README/source/test anchor-level context;
 - graph delta and graph update proposal review-output binding.
@@ -165,12 +172,12 @@ The observation reports likely extensions for:
 Recommended v0.3 direction:
 
 ```text
-v0.3-calibration-unsupported-blocked-reporting
+external-required-check-binding-scope-decision
 ```
 
-The next step should be a narrow observation path that can load calibration drafts and report unsupported/blocked reasons
-without compiling a supported candidate. That should happen before behavior-change support, broad pack schema expansion,
-promotion review, or any execution/enforcement work.
+The next step should decide whether external required-check binding is the next v0.3 calibration scope. That should
+happen before candidate generation, promotion review, behavior-change support, broad pack schema expansion, or any
+execution/enforcement work.
 
 ## v0.3 Scope Decision
 
@@ -180,7 +187,7 @@ The first v0.3 scope is:
 behavior-change pack schema policy
 ```
 
-This is a scope decision, not implementation. The second fixture remains `not-supported`,
+This scope is now implemented as calibration-only policy recognition. The second fixture remains `not-supported`,
 `not-eligible-current-command-not-wired`, `contract-candidate-not-run`, `not-approved`, and `equivalenceProven: false`.
 
 Why this scope comes first:
@@ -207,13 +214,12 @@ The selected scope is deliberately narrow. It should define how a behavior-chang
 reported, and held outside support. It should not make `compile-contract --dry-run` compile the second fixture as a
 supported candidate.
 
-Expected next implementation output for this first v0.3 scope:
+Implemented output for this first v0.3 scope:
 
 - the calibration observation can distinguish `behavior-change-calibration-policy-recognized` from arbitrary
   `unsupported-change-type-shape`;
 - the fixture remains `not-supported`;
-- expected candidate status remains `contract-candidate-not-run` unless a later decision explicitly adds candidate
-  generation;
+- expected candidate status remains `contract-candidate-not-run`;
 - unsupported/blocked reasons become clearer;
 - external required-check binding, external checkout path authority, anchor-level context, risk vocabulary, and
   graph-delta review binding remain future scopes;

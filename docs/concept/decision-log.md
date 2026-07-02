@@ -1096,6 +1096,18 @@ packet, approve the fixture, set `equivalenceProven: true`, execute AI, apply gr
 required checks, configure branch protection, introduce CI enforcement, retire tree-native artifacts, widen changeType
 support, rename PBE compatibility surfaces, or make any generated contract authoritative.
 
+DEC-190 does not supersede DEC-097 through DEC-189. It implements the first v0.3 scope as a calibration-only
+behavior-change policy preview at
+`examples/retrofit/open-source/escape-html/generated/behavior-change-calibration-policy.preview.json` and updates the
+escape-html calibration observation to `behavior-change-calibration-policy-recognized`. This recognizes the
+behavior-change-shaped draft as a calibration input boundary while keeping it `not-supported`,
+`not-eligible-current-command-not-wired`, `contract-candidate-not-run`, `not-approved`, and `equivalenceProven: false`.
+The next recommended scope is external required-check binding, but that binding is not implemented here. This does not
+wire the fixture into `compile-contract --dry-run`, compile a candidate, create a promotion packet, approve the fixture,
+set `equivalenceProven: true`, execute AI, apply graph deltas, accept user work, enable required checks, configure
+branch protection, introduce CI enforcement, retire tree-native artifacts, widen changeType support, rename PBE
+compatibility surfaces, or make any generated contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

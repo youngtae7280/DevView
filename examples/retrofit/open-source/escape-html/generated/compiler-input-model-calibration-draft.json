@@ -58,7 +58,9 @@
     "id": "pack-schema-bug-fix-calibration-draft",
     "changeType": "bug_fix",
     "calibrationChangeShape": "external-behavior-change",
-    "changeTypeGap": "The source dogfood is behavior-change shaped, but this draft keeps the current bug_fix compiler vocabulary rather than adding arbitrary changeType support.",
+    "behaviorChangeCalibrationPolicyStatus": "behavior-change-calibration-policy-recognized",
+    "behaviorChangeCalibrationPolicy": "examples/retrofit/open-source/escape-html/generated/behavior-change-calibration-policy.preview.json",
+    "changeTypeGap": "The source dogfood is behavior-change shaped, but this draft keeps the current bug_fix compiler vocabulary and is recognized only as calibration policy, not arbitrary changeType support.",
     "requiredInputGroups": [
       "humanRequest",
       "graphSnapshot",
@@ -338,7 +340,7 @@
       "current compiler input command surface is hardcoded to the Todo Search dry-run fixture",
       "external project check IDs are not in the current compiler required-check registry",
       "external checkout paths are not committed repository paths",
-      "behavior-change shape is represented under current bug_fix vocabulary as a calibration assumption",
+      "behavior-change shape is recognized as calibration-only policy under current bug_fix vocabulary",
       "graph delta and graph update proposal bindings are review artifacts, not graph apply authority"
     ],
     "expectedCurrentCompilerStatus": "not-supported-or-blocked-if-wired",

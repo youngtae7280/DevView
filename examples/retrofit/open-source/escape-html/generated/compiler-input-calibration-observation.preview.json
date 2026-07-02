@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "artifactRole": "compiler-input-calibration-observation-preview",
-  "status": "source-authority-gap-detected",
+  "status": "behavior-change-calibration-policy-recognized",
   "fixtureId": "calibration-fixture-escape-html-symbol-stringification",
   "fixtureStatus": "calibration-draft",
   "supportStatus": "not-supported",
@@ -10,6 +10,8 @@
   "compileEligibility": "not-eligible-current-command-not-wired",
   "expectedCandidateStatus": "contract-candidate-not-run",
   "draftInputPath": "examples/retrofit/open-source/escape-html/generated/compiler-input-model-calibration-draft.json",
+  "behaviorChangeCalibrationPolicyPath": "examples/retrofit/open-source/escape-html/generated/behavior-change-calibration-policy.preview.json",
+  "behaviorChangeCalibrationPolicyStatus": "behavior-change-calibration-policy-recognized",
   "currentSupportedBoundary": {
     "supportedFixture": "Todo Search whitespace-normalization bug_fix dry-run fixture",
     "supportedInputPath": "examples/read-model-aggregate/generated/compiler-input-model-dry-run.json",
@@ -21,8 +23,8 @@
     "changeType": {
       "draftValue": "bug_fix",
       "calibrationShape": "external-behavior-change",
-      "status": "change-type-calibration-assumption",
-      "reason": "The draft keeps the current bug_fix vocabulary to avoid adding arbitrary changeType support, but the source dogfood is behavior-change shaped."
+      "status": "behavior-change-calibration-policy-recognized",
+      "reason": "The draft is recognized as behavior-change shaped for calibration policy only while preserving current bug_fix support boundaries."
     },
     "evidenceShape": {
       "status": "requires-extension",
@@ -62,8 +64,8 @@
     },
     {
       "id": "behavior-change-pack-schema-not-approved",
-      "status": "unsupported-change-type-shape",
-      "reason": "The source dogfood is behavior-change shaped; the draft uses bug_fix only as a calibration assumption."
+      "status": "behavior-change-calibration-policy-recognized-not-supported",
+      "reason": "The source dogfood is behavior-change shaped and recognized as a calibration draft, but this does not add supported behavior-change compilation."
     },
     {
       "id": "external-checks-not-registered",
@@ -153,13 +155,6 @@
       "recommendedFollowUp": "Represent external checkout paths as observed external targets without treating them as committed repo paths or execution authority."
     },
     {
-      "id": "gap-behavior-change-pack-schema",
-      "field": "packSchema",
-      "gapType": "change-shape-policy",
-      "severity": "medium",
-      "recommendedFollowUp": "Decide whether v0.3 introduces a bounded behavior-change calibration pack schema or keeps bug_fix with explicit calibration caveats."
-    },
-    {
       "id": "gap-risk-vocabulary",
       "field": "knownRisks",
       "gapType": "risk-taxonomy",
@@ -182,9 +177,9 @@
     }
   ],
   "recommendedNextStep": {
-    "id": "v0.3-calibration-unsupported-blocked-reporting",
-    "summary": "Add a narrow v0.3 observation path that can load calibration drafts and report unsupported/blocked reasons without compiling a supported candidate.",
-    "rationale": "The draft is mostly representable, but unsupported external checks and external path authority should be surfaced before adding behavior-change support."
+    "id": "external-required-check-binding-scope-decision",
+    "summary": "Decide whether the next v0.3 calibration scope should define external required-check binding for npm test and dogfood validation.",
+    "rationale": "Behavior-change calibration policy is now recognized, while unsupported external checks remain the next proof-obligation blocker."
   },
   "promotionEligibility": {
     "status": "promotion-not-eligible",
