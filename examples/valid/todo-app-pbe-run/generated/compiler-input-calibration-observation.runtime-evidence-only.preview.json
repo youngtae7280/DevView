@@ -22,21 +22,28 @@
     "structureOnlyFixturePromoted": false,
     "boundary": "The observation does not reinterpret the existing Todo App positive fixture beyond structure-only."
   },
+  "testOnlyScopeBoundaryPreview": {
+    "path": "examples/valid/todo-app-pbe-run/generated/test-only-scope-boundary.runtime-evidence-only.preview.json",
+    "status": "test-only-scope-boundary-previewed",
+    "scopeBoundaryStatus": "preview-only-non-enforcing",
+    "productionSourceBoundaryStatus": "production-source-edit-forbidden-or-stop-required",
+    "remainingSupportStatus": "not-supported"
+  },
   "observedGaps": [
     {
       "gapId": "test-only-allowed-scope",
-      "status": "gap-observed",
+      "status": "test-only-scope-boundary-previewed",
       "whyItMatters": "A proof-only contract must allow test/Evidence strengthening without opening production implementation scope.",
-      "currentDraftSignal": "targetScopeCandidates include test-tree, evidence-tree, attached evidence, and an unresolved runtime proof report.",
+      "currentDraftSignal": "targetScopeCandidates include test-tree, evidence-tree, attached evidence, and an unresolved runtime proof report; test-only scope boundary preview now classifies these as candidate-only allowed surfaces.",
       "blocksCompileEligibility": true,
       "blocksCandidateGeneration": true,
-      "futureNeed": "A supported policy for test-only allowed scope and evidence-only outputs."
+      "futureNeed": "A supported policy for test-only allowed scope and evidence-only outputs; current preview is non-enforcing."
     },
     {
       "gapId": "production-source-forbidden-scope",
-      "status": "gap-observed",
+      "status": "production-source-boundary-previewed",
       "whyItMatters": "If production source must change to make the runtime proof pass, the correct action is to stop instead of widening scope.",
-      "currentDraftSignal": "forbiddenScopeRules include conceptual production path src/todos.ts and promotion/acceptance mutation boundaries.",
+      "currentDraftSignal": "forbiddenScopeRules and the test-only scope boundary preview identify conceptual production path src/todos.ts, profile promotion, and acceptance mutation as forbidden or stop-required.",
       "blocksCompileEligibility": true,
       "blocksCandidateGeneration": true,
       "futureNeed": "A compliance-checker-style diff binding that can detect forbidden production source edits."
@@ -70,12 +77,12 @@
     },
     {
       "gapId": "stop-condition-when-source-edits-needed",
-      "status": "gap-observed",
+      "status": "source-edit-stop-condition-previewed",
       "whyItMatters": "A test-only fixture must stop if proof requires implementation changes.",
-      "currentDraftSignal": "stopConditionSources include stop-if-runtime-proof-needs-production-source-edit and stop-if-runtime-command-evidence-missing.",
+      "currentDraftSignal": "stopConditionSources include stop-if-runtime-proof-needs-production-source-edit and the test-only scope boundary preview states stop/report/no silent source edit.",
       "blocksCompileEligibility": false,
       "blocksCandidateGeneration": true,
-      "futureNeed": "A supported stop-condition policy for proof-only contracts."
+      "futureNeed": "A supported stop-condition policy for proof-only contracts; current preview does not execute a stop action."
     },
     {
       "gapId": "compliance-checker-bridge",
@@ -130,6 +137,12 @@
     "sourceEditNeededBehavior": "stop-rather-than-silently-expand-scope",
     "complianceCheckerUsefulness": "future-useful-for-detecting-forbidden-production-source-edits"
   },
+  "remainingUnresolvedGaps": [
+    "runtime-evidence-authority",
+    "evidence-check-binding",
+    "output-requirement-for-test-evidence",
+    "compliance-checker-bridge"
+  ],
   "unresolvedEvidence": [
     {
       "evidenceId": "evidence-todo-app-runtime-command-output",
@@ -145,7 +158,7 @@
   "recommendedNextStep": {
     "id": "select-third-fixture-first-preview-scope",
     "recommendedFirstScope": "runtime-evidence-authority",
-    "reason": "Before candidate generation or compliance checking, DevView needs to define what Evidence can prove the add-todo behavior without production source edits."
+    "reason": "After previewing the test-only scope boundary, DevView next needs to define what Evidence can prove the add-todo behavior without production source edits."
   },
   "forbiddenInterpretations": [
     "not-supported",

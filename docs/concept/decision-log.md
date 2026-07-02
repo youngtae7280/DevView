@@ -1228,6 +1228,21 @@ candidate, create or approve a promotion packet, create required checks or CI en
 edits, set `equivalenceProven: true`, execute AI, accept user work, retire tree-native artifacts, rename PBE
 compatibility surfaces, or make any generated contract authoritative.
 
+DEC-200 does not supersede DEC-097 through DEC-199. It adds the preview-only test-only scope boundary artifact
+`examples/valid/todo-app-pbe-run/generated/test-only-scope-boundary.runtime-evidence-only.preview.json` and links it
+from the third-fixture observation. The boundary previews test/Evidence-oriented candidate scope, unresolved runtime
+command output and source non-modification report surfaces, forbidden production source edits, forbidden Todo App profile
+promotion, forbidden acceptance-state mutation, and the stop-required behavior when runtime proof appears to require
+production implementation changes. The updated observation marks `test-only-allowed-scope` as
+`test-only-scope-boundary-previewed`, `production-source-forbidden-scope` as
+`production-source-boundary-previewed`, and `stop-condition-when-source-edits-needed` as
+`source-edit-stop-condition-previewed`, while `runtime-evidence-authority`, `evidence-check-binding`,
+`output-requirement-for-test-evidence`, and `compliance-checker-bridge` remain unresolved. This does not support the
+third fixture, wire it into `compile-contract --dry-run`, compile a candidate, enforce scope, execute checks, allow
+production source edits, create or approve a promotion packet, satisfy runtime Evidence, create required checks or CI
+enforcement, set `equivalenceProven: true`, execute AI, accept user work, retire tree-native artifacts, rename PBE
+compatibility surfaces, or make any generated contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

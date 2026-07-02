@@ -747,6 +747,58 @@ The observation marks attached structure-only Evidence as present but not author
 runtime command Evidence and production source non-modification Evidence as unresolved. It does not invent passing
 Evidence, does not create a contract candidate, and does not approve Todo App promotion.
 
+## Third Test-Only Scope Boundary Preview
+
+The third fixture test-only scope boundary preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/test-only-scope-boundary.runtime-evidence-only.preview.json
+```
+
+Preview status:
+
+- `status: test-only-scope-boundary-previewed`
+- `scopeBoundaryStatus: preview-only-non-enforcing`
+- `productionSourceBoundaryStatus: production-source-edit-forbidden-or-stop-required`
+- `supportStatus: not-supported`
+- `expectedCandidateStatus: contract-candidate-not-run`
+- `approvalStatus: not-approved`
+- `equivalenceProven: false`
+
+The preview narrows the third fixture's core boundary:
+
+- allowed or candidate scope is test/Evidence oriented;
+- runtime command output and source non-modification reports remain unresolved candidate Evidence/report surfaces;
+- production source edits are forbidden, out of scope, or stop-required;
+- Todo App profile promotion and acceptance-state mutation are forbidden;
+- silent expansion from proof-only work into production implementation work is not allowed.
+
+If runtime behavior cannot be proven without production source edits, the expected review behavior is:
+
+```text
+stop
+report that production source edits appear necessary
+do not silently modify production source
+request a separate human scope decision
+```
+
+This is a preview policy only. It does not enforce scope, execute checks, edit files, generate a candidate, satisfy
+runtime Evidence, approve promotion, or replace user acceptance. It prepares the fixture for later compliance-checker
+work by making forbidden production source edits explicit and reviewable.
+
+Updated third-fixture gap statuses:
+
+- `test-only-allowed-scope`: `test-only-scope-boundary-previewed`
+- `production-source-forbidden-scope`: `production-source-boundary-previewed`
+- `stop-condition-when-source-edits-needed`: `source-edit-stop-condition-previewed`
+
+Still unresolved:
+
+- `runtime-evidence-authority`;
+- `evidence-check-binding`;
+- `output-requirement-for-test-evidence`;
+- `compliance-checker-bridge`.
+
 Recommended next step from the observation:
 
 ```text
@@ -793,7 +845,7 @@ This selection does not:
 
 ## Next Step
 
-The next task should select the first third-fixture preview scope. The recommended first scope is
-`runtime-evidence-authority`. It should not broaden compiler support, wire the third fixture into the supported command
-path, create a promotion review packet, approve the fixture, apply graph deltas, turn test Evidence into user acceptance,
-or change the existing Todo App structure-only status.
+The next task should preview `runtime-evidence-authority` for the third fixture. It should not broaden compiler support,
+wire the third fixture into the supported command path, create a promotion review packet, approve the fixture, apply
+graph deltas, turn test Evidence into user acceptance, allow production source edits, or change the existing Todo App
+structure-only status.

@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "test-only-scope-boundary-preview",
+  "status": "test-only-scope-boundary-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "draftInputPath": "examples/valid/todo-app-pbe-run/generated/compiler-input-model-calibration-draft.runtime-evidence-only.json",
+  "observationPath": "examples/valid/todo-app-pbe-run/generated/compiler-input-calibration-observation.runtime-evidence-only.preview.json",
+  "supportStatus": "not-supported",
+  "compileEligibility": "not-eligible-current-command-not-wired",
+  "expectedCandidateStatus": "contract-candidate-not-run",
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "scopeBoundaryStatus": "preview-only-non-enforcing",
+  "allowedScopeBoundary": {
+    "status": "test-evidence-scope-previewed",
+    "allowedScopeCategories": [
+      {
+        "category": "test-files",
+        "status": "candidate-only",
+        "paths": ["examples/valid/todo-app-pbe-run/.pbe/tree/test-tree.json"],
+        "reason": "The fixture is centered on add-todo behavior proof obligations."
+      },
+      {
+        "category": "runtime-evidence-files",
+        "status": "candidate-only",
+        "paths": [
+          "examples/valid/todo-app-pbe-run/.pbe/evidence/evidence-tree.json",
+          "examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt"
+        ],
+        "reason": "Evidence artifacts can describe proof status without changing production source."
+      },
+      {
+        "category": "command-output-evidence",
+        "status": "candidate-missing",
+        "paths": ["unresolved:node test/todos.test.js", "unresolved:todo-app-runtime-proof-report"],
+        "reason": "Authoritative runtime command output is expected later, but it is not present in this preview."
+      },
+      {
+        "category": "report-only-artifacts",
+        "status": "candidate-only",
+        "paths": ["unresolved:production-source-non-modification-report"],
+        "reason": "A later compliance-checker-style report could document source non-modification without granting edit permission."
+      }
+    ]
+  },
+  "productionSourceBoundary": {
+    "productionSourceBoundaryStatus": "production-source-edit-forbidden-or-stop-required",
+    "forbiddenProductionScope": [
+      {
+        "id": "forbidden-production-src-todos",
+        "paths": ["src/todos.ts"],
+        "pathAuthorityStatus": "conceptual-path-from-structure-only-work-tree",
+        "reason": "The third fixture is proof-only. Production implementation edits would change the task shape."
+      },
+      {
+        "id": "forbidden-todo-app-source-authority-promotion",
+        "paths": [
+          "examples/read-model-aggregate/read-model-slices.json",
+          "examples/valid/todo-app-pbe-run/graph-source.json"
+        ],
+        "reason": "Runtime evidence calibration must not promote Todo App beyond structure-only."
+      },
+      {
+        "id": "forbidden-acceptance-state-mutation",
+        "paths": ["examples/valid/todo-app-pbe-run/.pbe/control/acceptance-tree.json"],
+        "reason": "Test Evidence does not replace user acceptance."
+      }
+    ],
+    "silentScopeExpansionAllowed": false
+  },
+  "sourceEditStopCondition": {
+    "status": "previewed",
+    "trigger": "runtime-proof-appears-to-require-production-source-edit",
+    "expectedBehavior": [
+      "stop",
+      "report that production source edits appear necessary",
+      "do not silently modify production source",
+      "request separate human scope decision before any implementation work"
+    ],
+    "executorAction": "none-preview-only"
+  },
+  "gapStatusUpdates": [
+    {
+      "gapId": "test-only-allowed-scope",
+      "previousStatus": "gap-observed",
+      "previewStatus": "test-only-scope-boundary-previewed",
+      "remainingSupportStatus": "not-supported"
+    },
+    {
+      "gapId": "production-source-forbidden-scope",
+      "previousStatus": "gap-observed",
+      "previewStatus": "production-source-boundary-previewed",
+      "remainingSupportStatus": "not-supported"
+    },
+    {
+      "gapId": "stop-condition-when-source-edits-needed",
+      "previousStatus": "gap-observed",
+      "previewStatus": "source-edit-stop-condition-previewed",
+      "remainingSupportStatus": "not-supported"
+    }
+  ],
+  "remainingUnresolvedGaps": [
+    "runtime-evidence-authority",
+    "evidence-check-binding",
+    "output-requirement-for-test-evidence",
+    "compliance-checker-bridge"
+  ],
+  "allowedUse": [
+    "review the intended test/evidence-only boundary",
+    "explain why production source edits should stop the fixture",
+    "inform a future compliance-checker design",
+    "inform future runtime Evidence authority preview"
+  ],
+  "forbiddenUse": [
+    "supported compiler output",
+    "execution authority",
+    "candidate generation eligibility",
+    "promotion approval",
+    "runtime Evidence satisfaction",
+    "permission to edit production source",
+    "CI enforcement",
+    "branch protection",
+    "user acceptance",
+    "Todo App source-authority promotion"
+  ],
+  "nonExecutionBoundary": "This preview defines a test-only scope boundary for calibration review only. It does not enforce scope, execute checks, modify source, generate a contract candidate, approve promotion, satisfy runtime Evidence, create required checks, configure branch protection, or replace user acceptance."
+}
