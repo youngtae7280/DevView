@@ -37,7 +37,8 @@ been explicitly configured.
 An Instruction Pack is a bounded task handoff for Codex. It can include goal, selected scope, forbidden scope, required
 context, checks, evidence, risks, stop conditions, and output requirements.
 
-An Instruction Pack is not approval, not user acceptance, and not permission to ignore explicit boundaries.
+An Instruction Pack is not an execution source, not approval, not user acceptance, and not permission to ignore explicit
+boundaries.
 
 ### Graph Delta
 
@@ -52,6 +53,13 @@ An Impact Preview describes likely downstream effects before a change is accepte
 helps review affected scope, tests, evidence, risks, and compatibility surfaces.
 
 An Impact Preview is review evidence, not automatic approval.
+
+### Promotion Review Packet
+
+A Promotion Review Packet gathers compiler candidate, comparison fixture, semantic diff, source-authority gap, health,
+validation, and checklist evidence for a human review.
+
+It is not approval, not user acceptance, not an execution source, and not an enforcement switch.
 
 ## PBE To DevView Terminology
 
@@ -84,5 +92,7 @@ An Impact Preview is review evidence, not automatic approval.
 - DevView does not rename generated artifact paths.
 - DevView does not change sourceMode or provenance enum values.
 - DevView does not change compiler, source-authority resolver, semantic diff, or readiness behavior.
+- DevView does not turn generated compiler output, Instruction Packs, or review packets into execution authority,
+  approval, or user acceptance.
 - DevView does not introduce executor automation, graph delta apply, required checks, branch protection, CI enforcement,
   user acceptance automation, or tree-native retirement.

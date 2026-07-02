@@ -45,6 +45,19 @@ DevView is not an executor. Generated compiler output is not an execution source
 Review packets are not approvals. CI enforcement, required checks, branch protection, graph delta apply, user acceptance
 automation, and tree-native retirement require separate explicit approval.
 
+## Post-Rename Boundary Audit
+
+After the DevView public identity rename, public wording should continue to preserve these audit checks:
+
+- DevView does not execute code changes by itself.
+- Generated compiler output and Instruction Packs are bounded review/control artifacts, not execution authority.
+- Promotion review packets are review inputs, not approvals.
+- Validation and CI observation are evidence, not user acceptance.
+- CI enforcement, required checks, and branch protection are not introduced by the rename.
+- Graph delta apply is not automated by the rename.
+- PBE compatibility remains active for `pbe`, `.pbe`, validation scripts, generated artifact paths, historical records,
+  and sourceMode/provenance values.
+
 ## Future Rename Phases
 
 Future rename work should stay staged and reviewable:

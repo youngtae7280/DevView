@@ -194,8 +194,13 @@ DevView is intentionally conservative:
 
 - Do not derive executable work from ambiguous product intent.
 - Do not close work without test and evidence links.
+- Do not treat generated compiler output, Instruction Packs, or promotion review packets as execution authority,
+  approval, or user acceptance.
 - Do not treat CI or local validation as user acceptance.
 - Do not make graph-source observation into enforcement without approval.
+- Do not apply graph deltas automatically or treat proposal previews as accepted graph changes.
 - Do not retire tree or compatibility structures without an explicit retirement decision.
+- Do not remove the PBE compatibility namespace, `pbe` commands, `.pbe` paths, validation scripts, generated artifact
+  paths, or sourceMode values without a separate migration approval.
 
 The short version: DevView is for keeping Codex work connected to meaning, proof, and human decisions.
