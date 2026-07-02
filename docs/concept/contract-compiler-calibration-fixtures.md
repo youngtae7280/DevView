@@ -507,6 +507,92 @@ After a narrow Compiler Input Model candidate is authored in a future task, the 
 - `equivalenceProven` remains `false`;
 - promotion review remains non-enforcing and fixture-scoped.
 
+## v0.3 Calibration Preview Closeout
+
+The v0.3 escape-html calibration preview cycle is closed as observation-complete for the selected second fixture:
+
+```text
+previewGapSetStatus: v0.3-calibration-preview-gap-set-complete
+```
+
+This closeout means the observed calibration gaps now have reviewable preview artifacts. It does not mean the second
+fixture is supported, compile-eligible, approved, or equivalence-proven.
+
+Completed preview axes:
+
+- behavior-change calibration policy:
+  `examples/retrofit/open-source/escape-html/generated/behavior-change-calibration-policy.preview.json`
+- external required-check binding:
+  `examples/retrofit/open-source/escape-html/generated/external-required-check-binding.preview.json`
+- external checkout path authority:
+  `examples/retrofit/open-source/escape-html/generated/external-checkout-path-authority.preview.json`
+- anchor-level context:
+  `examples/retrofit/open-source/escape-html/generated/anchor-level-context.preview.json`
+- risk vocabulary:
+  `examples/retrofit/open-source/escape-html/generated/risk-vocabulary.preview.json`
+- graph-delta review binding:
+  `examples/retrofit/open-source/escape-html/generated/graph-delta-review-binding.preview.json`
+
+Current second-fixture status remains:
+
+- `supportStatus: not-supported`
+- `compileEligibility: not-eligible-current-command-not-wired`
+- `expectedCandidateStatus: contract-candidate-not-run`
+- `approvalStatus: not-approved`
+- `equivalenceProven: false`
+
+Closed preview gaps:
+
+- DevView can recognize the fixture as behavior-change shaped for calibration only.
+- DevView can preview external required-check binding candidates.
+- DevView can describe the external checkout as calibration-local source context.
+- DevView can preview approximate source/test anchors for the behavior change.
+- DevView can name behavior-change-specific risks without claiming mitigation.
+- DevView can bind graph delta and graph update proposal artifacts to review-only questions.
+
+Unresolved support blockers:
+
+- external checkout authority remains calibration-local, non-portable, and non-enforcing;
+- required-check binding still awaits an authoritative checkout and supported check registry decision;
+- anchor-level context remains approximate and lacks exact line/source authority;
+- risk vocabulary is not mitigation proof or final compiler risk policy;
+- graph-delta review binding is review-only and does not apply graph deltas;
+- no supported Compiler Input Model is committed for this fixture;
+- no contract candidate is generated for this fixture;
+- no promotion review packet or human approval exists for this fixture.
+
+Closeout decision:
+
+```text
+close-v0.3-escape-html-calibration-preview-cycle
+```
+
+The preview observation cycle is closed for the second fixture, but the fixture is not promoted to supported. The preview
+artifacts should stay non-enforcing calibration evidence. They should not be moved into general compiler report
+generation, command wiring, or candidate generation without a separate decision.
+
+Recommended next step:
+
+```text
+select-third-calibration-fixture
+```
+
+Reason: a third fixture should reduce overfitting risk before any of the preview concepts are promoted into general
+report generation or compiler behavior.
+
+Closeout non-goals:
+
+- no second-fixture support;
+- no compiler command wiring;
+- no contract candidate generation;
+- no external required checks;
+- no graph delta apply;
+- no graph source mutation;
+- no promotion review packet or approval;
+- no semantic equivalence claim;
+- no risk mitigation proof;
+- no CI enforcement, required checks, branch protection, user acceptance automation, or tree-native retirement.
+
 ## Calibration Success Criteria
 
 A future calibration cycle is successful if:
@@ -538,7 +624,8 @@ This selection does not:
 
 ## Next Step
 
-The next implementation task should close out the v0.3 escape-html calibration preview gap set. It should not broaden
-compiler support, wire the second fixture into the supported command path, create a promotion review packet, approve the
-fixture, apply graph deltas, turn previewed external checks into CI enforcement, turn previewed risks into mitigation
-proof, or turn the calibration-local checkout path into execution authority.
+The next task should select a third calibration fixture before promoting any v0.3 escape-html preview concept into
+general report generation or compiler behavior. It should not broaden compiler support, wire the second fixture into the
+supported command path, create a promotion review packet, approve the fixture, apply graph deltas, turn previewed
+external checks into CI enforcement, turn previewed risks into mitigation proof, or turn the calibration-local checkout
+path into execution authority.

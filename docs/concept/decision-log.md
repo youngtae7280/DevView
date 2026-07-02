@@ -1176,6 +1176,19 @@ candidate, create or approve a promotion packet, run external checks as required
 configure branch protection, set `equivalenceProven: true`, execute AI, accept user work, retire tree-native artifacts,
 widen changeType support, rename PBE compatibility surfaces, or make any generated contract authoritative.
 
+DEC-196 does not supersede DEC-097 through DEC-195. It closes the v0.3 `component/escape-html` calibration preview cycle
+as observation-complete only. The completed preview axes are behavior-change calibration policy, external required-check
+binding, external checkout path authority, anchor-level context, risk vocabulary, and graph-delta review binding, with
+`previewGapSetStatus: v0.3-calibration-preview-gap-set-complete`. The second fixture remains `not-supported`,
+`not-eligible-current-command-not-wired`, `contract-candidate-not-run`, `not-approved`, and `equivalenceProven: false`.
+The closeout decision is `close-v0.3-escape-html-calibration-preview-cycle`, and the recommended next step is selecting
+a third calibration fixture before promoting preview concepts into general report generation or compiler behavior. This
+does not wire the fixture into `compile-contract --dry-run`, compile a candidate, create or approve a promotion packet,
+run external checks as required checks, apply graph deltas, mutate graph source, prove semantic equivalence, prove risk
+mitigation, create CI enforcement, configure branch protection, set `equivalenceProven: true`, execute AI, accept user
+work, retire tree-native artifacts, widen changeType support, rename PBE compatibility surfaces, or make any generated
+contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.
