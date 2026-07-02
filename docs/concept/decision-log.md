@@ -1302,6 +1302,21 @@ candidate checks into required checks, create CI enforcement or branch protectio
 or approve a promotion packet, set `equivalenceProven: true`, execute AI, accept user work, retire tree-native
 artifacts, rename PBE compatibility surfaces, or make any generated contract authoritative.
 
+DEC-205 does not supersede DEC-097 through DEC-204. It closes the runtime Evidence-only preview observation cycle for
+the `Todo App add-todo runtime evidence-only calibration` fixture. The closeout records the completed preview axes:
+test-only scope boundary, runtime Evidence authority, evidence/check binding, output requirement for test Evidence, and
+compliance-checker bridge. The third fixture remains `not-supported`, `not-eligible-current-command-not-wired`,
+`contract-candidate-not-run`, `not-approved`, and `equivalenceProven: false`; runtime Evidence remains missing,
+evidence/check binding remains `preview-only-not-satisfied`, and no compliance checker is implemented. The closeout
+distinguishes closed preview gaps from unresolved support blockers and recommends
+`cross-fixture-calibration-synthesis` before promoting preview concepts into general compiler logic, report generation,
+or compliance-checker implementation. This does not support the third fixture, wire it into `compile-contract --dry-run`,
+compile a candidate, create or approve a promotion packet, claim runtime Evidence is satisfied, invent command output,
+turn candidate checks into required checks, enforce scope, inspect or reject diffs, allow production source edits,
+promote `escape-html`, set `equivalenceProven: true`, execute AI, apply graph deltas, create CI enforcement or branch
+protection, accept user work, retire tree-native artifacts, rename PBE compatibility surfaces, or make any generated
+contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

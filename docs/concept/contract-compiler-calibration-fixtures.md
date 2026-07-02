@@ -1009,6 +1009,92 @@ Reason: the third fixture preview gap set is complete. The next step should clos
 implementing compliance checking, broadening compiler support, generating a contract candidate, approving the fixture,
 or turning reports into user acceptance.
 
+## Third Runtime Evidence-Only Preview Closeout
+
+Closeout decision:
+
+```text
+close-third-fixture-runtime-evidence-preview-cycle
+```
+
+Scope:
+
+```text
+Todo App add-todo runtime evidence-only calibration
+```
+
+The third fixture preview cycle is closed as a support-before-observation milestone, not as supported compiler behavior.
+The completed preview axes are:
+
+- test-only scope boundary;
+- runtime Evidence authority;
+- evidence/check binding;
+- output requirement for test Evidence;
+- compliance-checker bridge.
+
+These previews show how a test-only behavior proof fixture can separate allowed test/Evidence work from forbidden
+production source edits, how runtime Evidence should be made observable, how candidate checks map to expected Evidence,
+what output must report, and what a future checker would inspect. They remain preview-only and non-enforcing.
+
+What remains unsupported:
+
+- the third fixture is not supported;
+- the third fixture is not wired into the supported compiler command path;
+- no contract candidate is generated;
+- no promotion review approval exists;
+- `equivalenceProven` remains `false`;
+- runtime Evidence is still missing;
+- evidence/check binding remains `preview-only-not-satisfied`;
+- no compliance checker is implemented;
+- production source edits remain forbidden or stop-required for this fixture.
+
+Remaining limitations:
+
+- runtime Evidence authority is defined but not satisfied;
+- candidate checks do not become required checks;
+- output requirements are preview-only and do not generate final reports;
+- the compliance-checker bridge is descriptive, not executable;
+- no diff inspection, file modification detection, command output parsing, or violation reporting exists yet.
+
+Closed preview gaps:
+
+```text
+test-only-allowed-scope
+production-source-forbidden-scope
+runtime-evidence-authority
+evidence-check-binding
+output-requirement-for-test-evidence
+stop-condition-when-source-edits-needed
+compliance-checker-bridge
+```
+
+Unresolved support blockers:
+
+```text
+not-supported
+not-eligible-current-command-not-wired
+contract-candidate-not-run
+runtime-evidence-missing
+evidence-check-binding-not-satisfied
+compliance-checker-not-implemented
+approvalStatus-not-approved
+equivalenceProven-false
+```
+
+Future implementation candidates include test-only allowed-scope policy, runtime Evidence capture authority, supported
+evidence/check binding, proof-only output generation, and non-enforcing compliance-checker reporting. None of those are
+approved by this closeout.
+
+Recommended next step:
+
+```text
+cross-fixture-calibration-synthesis
+```
+
+Reason: three fixtures now cover distinct shapes: local `bug_fix`, external `behavior-change`, and test-only behavior
+proof. A cross-fixture synthesis should summarize what these calibration cycles taught before any preview concept is
+promoted into general compiler logic, report generation, or compliance-checker implementation.
+
 ## Calibration Success Criteria
 
 A future calibration cycle is successful if:
@@ -1040,8 +1126,9 @@ This selection does not:
 
 ## Next Step
 
-The next task should close out the third fixture runtime Evidence-only preview cycle. It should not broaden compiler
-support, wire the third fixture into the supported command path, create a promotion review packet, approve the fixture,
+The next task should summarize cross-fixture calibration lessons across the current success fixture, the escape-html
+behavior-change preview fixture, and the Todo App runtime Evidence-only preview fixture. It should not broaden compiler
+support, wire additional fixtures into the supported command path, create promotion review packets, approve fixtures,
 claim runtime Evidence is satisfied, implement compliance checking, turn candidate checks into required checks, apply
 graph deltas, turn test Evidence into user acceptance, allow production source edits, enforce CI, or change the existing
 Todo App structure-only status.
