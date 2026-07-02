@@ -1108,6 +1108,19 @@ set `equivalenceProven: true`, execute AI, apply graph deltas, accept user work,
 branch protection, introduce CI enforcement, retire tree-native artifacts, widen changeType support, rename PBE
 compatibility surfaces, or make any generated contract authoritative.
 
+DEC-191 does not supersede DEC-097 through DEC-190. It adds a preview-only external required-check binding artifact for
+the selected `component/escape-html` behavior-change calibration draft at
+`examples/retrofit/open-source/escape-html/generated/external-required-check-binding.preview.json`. The preview maps
+observed dogfood Evidence to candidate check ids such as `check-escape-html-npm-test`,
+`check-escape-html-dogfood-validator`, and `check-escape-html-graph-delta-review`, while reporting
+`external-required-check-binding-blocked-by-checkout-authority`. The second fixture remains `not-supported`,
+`not-eligible-current-command-not-wired`, `contract-candidate-not-run`, `not-approved`, and `equivalenceProven: false`;
+the next recommended scope is external checkout path authority. This does not register supported compiler checks, create
+CI required checks, configure branch protection, wire the fixture into `compile-contract --dry-run`, compile a
+candidate, create a promotion packet, approve the fixture, set `equivalenceProven: true`, execute AI, apply graph
+deltas, accept user work, retire tree-native artifacts, widen changeType support, rename PBE compatibility surfaces, or
+make any generated contract authoritative.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

@@ -12,6 +12,8 @@
   "draftInputPath": "examples/retrofit/open-source/escape-html/generated/compiler-input-model-calibration-draft.json",
   "behaviorChangeCalibrationPolicyPath": "examples/retrofit/open-source/escape-html/generated/behavior-change-calibration-policy.preview.json",
   "behaviorChangeCalibrationPolicyStatus": "behavior-change-calibration-policy-recognized",
+  "externalRequiredCheckBindingPreviewPath": "examples/retrofit/open-source/escape-html/generated/external-required-check-binding.preview.json",
+  "externalRequiredCheckBindingStatus": "external-required-check-binding-blocked-by-checkout-authority",
   "currentSupportedBoundary": {
     "supportedFixture": "Todo Search whitespace-normalization bug_fix dry-run fixture",
     "supportedInputPath": "examples/read-model-aggregate/generated/compiler-input-model-dry-run.json",
@@ -43,8 +45,8 @@
       "reason": "The graph snapshot can point to graph source, change record, instruction pack, graph delta, proposal, and report artifacts, but source/test/README anchor mapping is not yet a supported compiler input surface."
     },
     "validationCheckMapping": {
-      "status": "requires-extension",
-      "reason": "External checks such as check-escape-html-npm-test and check-escape-html-dogfood-validator are not in the current compiler required-check registry."
+      "status": "external-required-check-binding-previewed-blocked-by-checkout-authority",
+      "reason": "External checks such as check-escape-html-npm-test and check-escape-html-dogfood-validator are previewed against observed dogfood Evidence, but they remain outside the current compiler required-check registry and are blocked by unresolved external checkout path authority."
     },
     "outputRequirementSourceShape": {
       "status": "partially-reusable",
@@ -69,8 +71,8 @@
     },
     {
       "id": "external-checks-not-registered",
-      "status": "source-authority-gap-detected",
-      "reason": "The draft check IDs for npm test, dogfood validation, and graph-delta review are not current compiler required-check IDs."
+      "status": "external-required-check-binding-previewed-not-supported",
+      "reason": "The draft check IDs for npm test, dogfood validation, and graph-delta review now have preview bindings, but those previews are not current compiler required-check IDs or CI gates."
     },
     {
       "id": "external-paths-not-committed",
@@ -82,7 +84,7 @@
     {
       "id": "blocked-external-check-binding",
       "status": "blocked",
-      "reason": "Current required-check generation would not know how to bind check-escape-html-npm-test or check-escape-html-dogfood-validator."
+      "reason": "External check binding is previewed, but current required-check generation cannot treat it as authoritative until external checkout path authority and a supported check registry extension exist."
     },
     {
       "id": "blocked-external-path-validation",
@@ -116,9 +118,9 @@
     },
     {
       "field": "requiredEvidence",
-      "reuseStatus": "needs-extension",
-      "expectedCurrentBehavior": "external-evidence-types-block",
-      "reason": "The fixture needs external_project_test_result, dogfood_report, graph_delta_report, and graph_update_proposal evidence bindings."
+      "reuseStatus": "previewed-needs-authority",
+      "expectedCurrentBehavior": "external-required-check-binding-previewed-but-blocked-by-checkout-authority",
+      "reason": "The fixture can map external_project_test_result, dogfood_report, and graph_delta_report to preview check bindings, but those bindings remain non-authoritative and outside compiler support."
     },
     {
       "field": "requiredContext",
@@ -143,9 +145,9 @@
     {
       "id": "gap-external-required-check-registry",
       "field": "requiredEvidence",
-      "gapType": "validation-check-mapping",
+      "gapType": "previewed-required-check-binding-blocked-by-checkout-authority",
       "severity": "high",
-      "recommendedFollowUp": "Define a calibration-only external required-check binding model before attempting candidate generation."
+      "recommendedFollowUp": "Use the previewed binding as calibration evidence only; decide external checkout path authority before any supported required-check registry extension."
     },
     {
       "id": "gap-external-path-authority",
@@ -177,9 +179,9 @@
     }
   ],
   "recommendedNextStep": {
-    "id": "external-required-check-binding-scope-decision",
-    "summary": "Decide whether the next v0.3 calibration scope should define external required-check binding for npm test and dogfood validation.",
-    "rationale": "Behavior-change calibration policy is now recognized, while unsupported external checks remain the next proof-obligation blocker."
+    "id": "external-checkout-path-authority-scope-decision",
+    "summary": "Decide whether external checkout path authority should be the next v0.3 calibration scope.",
+    "rationale": "Behavior-change policy is recognized and external required-check binding is previewed, but observed checks remain blocked by non-authoritative work/external paths."
   },
   "promotionEligibility": {
     "status": "promotion-not-eligible",

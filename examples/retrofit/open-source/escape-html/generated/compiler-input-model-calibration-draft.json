@@ -60,6 +60,8 @@
     "calibrationChangeShape": "external-behavior-change",
     "behaviorChangeCalibrationPolicyStatus": "behavior-change-calibration-policy-recognized",
     "behaviorChangeCalibrationPolicy": "examples/retrofit/open-source/escape-html/generated/behavior-change-calibration-policy.preview.json",
+    "externalRequiredCheckBindingPreview": "examples/retrofit/open-source/escape-html/generated/external-required-check-binding.preview.json",
+    "externalRequiredCheckBindingStatus": "external-required-check-binding-blocked-by-checkout-authority",
     "changeTypeGap": "The source dogfood is behavior-change shaped, but this draft keeps the current bug_fix compiler vocabulary and is recognized only as calibration policy, not arbitrary changeType support.",
     "requiredInputGroups": [
       "humanRequest",
@@ -101,19 +103,19 @@
         "evidenceType": "external_project_test_result",
         "requiredCheckId": "check-escape-html-npm-test",
         "compiledEvidenceType": "unit_test_result",
-        "calibrationSupportStatus": "unknown-required-check-for-current-compiler"
+        "calibrationSupportStatus": "external-required-check-binding-previewed-blocked-by-checkout-authority"
       },
       {
         "evidenceType": "dogfood_report",
         "requiredCheckId": "check-escape-html-dogfood-validator",
         "compiledEvidenceType": "validator_output",
-        "calibrationSupportStatus": "unknown-required-check-for-current-compiler"
+        "calibrationSupportStatus": "external-required-check-binding-previewed-blocked-by-checkout-authority"
       },
       {
         "evidenceType": "graph_delta_report",
         "requiredCheckId": "check-escape-html-graph-delta-review",
         "compiledEvidenceType": "review_artifact",
-        "calibrationSupportStatus": "unknown-required-check-for-current-compiler"
+        "calibrationSupportStatus": "external-required-check-binding-previewed-review-only-not-required-check"
       }
     ],
     "forbiddenScopeRules": [
@@ -338,7 +340,7 @@
     ],
     "expectedGaps": [
       "current compiler input command surface is hardcoded to the Todo Search dry-run fixture",
-      "external project check IDs are not in the current compiler required-check registry",
+      "external project check IDs are previewed as calibration bindings but are not in the current compiler required-check registry",
       "external checkout paths are not committed repository paths",
       "behavior-change shape is recognized as calibration-only policy under current bug_fix vocabulary",
       "graph delta and graph update proposal bindings are review artifacts, not graph apply authority"
