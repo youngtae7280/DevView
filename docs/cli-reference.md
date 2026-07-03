@@ -597,6 +597,33 @@ node dist/cli/index.js graph read-model check-graph-delta-apply `
   --json
 ```
 
+### `pbe graph read-model report-graph-source-mutation-readiness`
+
+- Purpose: Report graph-source mutation readiness from a Graph Delta Apply readiness preview without writing
+  graph-source.
+- Typical state before running: After `graph read-model check-graph-delta-apply` has produced apply-readiness output.
+- Options: `--policy <policyBoundaryPath>` and `--apply-readiness <applyReadinessPath>` are required. `--output <file>`
+  and `--markdown <file>` may write explicit readiness outputs.
+- What it checks: Graph-source Mutation Policy boundary role/status, apply-readiness role/status/safety fields, and
+  output authority.
+- What it writes: Nothing by default. It writes only to explicit `--output` and `--markdown` paths.
+- Success result: JSON with `artifactRole: devview-graph-source-mutation-readiness-preview`. If apply readiness is
+  ready, mutation readiness is `dry-run-ready-apply-readiness-present`; otherwise it is blocked. In all cases
+  `mutationAllowed`, `graphSourceMutated`, `graphDeltaApplied`, `runtimeEvidenceSatisfied`, `evidenceAccepted`,
+  `equivalenceProven`, `scopeEnforced`, and `ciEnforcementEnabled` remain false.
+- Next command: A separate future mutation/apply command would still need graph-source identity, rollback/fallback,
+  mutation report, and post-mutation validation. This command itself never writes graph-source.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model report-graph-source-mutation-readiness `
+  --policy examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-policy-boundary.runtime-evidence-only.preview.json `
+  --apply-readiness examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-readiness.blocked-defer-decision.runtime-evidence-only.preview.json `
+  --output .tmp/devview-graph-source-mutation-readiness.json `
+  --json
+```
+
 ### `pbe graph read-model generate-ai-request-analyzer-pack`
 
 - Purpose: Generate deterministic AI Request Analyzer prompt/input contract JSON, and optionally Markdown, from the

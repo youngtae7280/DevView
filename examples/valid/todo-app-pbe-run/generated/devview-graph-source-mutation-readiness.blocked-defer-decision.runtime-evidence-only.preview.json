@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-graph-source-mutation-readiness-preview",
+  "status": "devview-graph-source-mutation-readiness-blocked",
+  "readinessScope": "graph-source-mutation-readiness-preview-no-write",
+  "sourcePolicyBoundary": "examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-policy-boundary.runtime-evidence-only.preview.json",
+  "sourceApplyReadiness": "examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+  "sourceApprovedProposalState": "examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state.blocked-defer-decision.runtime-evidence-only.preview.json",
+  "sourceGraphDeltaProposal": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal.add-todo-runtime-evidence-only.preview.json",
+  "proposalId": "proposal-only-preview-ch-001",
+  "mutationReadinessStatus": "blocked-apply-readiness-not-ready",
+  "applyReadinessStatus": "blocked-approved-state-not-created",
+  "mutationAllowed": false,
+  "graphSourceMutationAllowed": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplyEnabled": false,
+  "graphDeltaApplied": false,
+  "approvedProposalStateCreated": false,
+  "humanDecisionRecorded": true,
+  "humanReviewRequired": true,
+  "runtimeEvidenceSatisfied": false,
+  "evidenceAccepted": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "strictModeEnabled": false,
+  "guidedEnforcementEnabled": false,
+  "validationFindings": [
+    {
+      "code": "GRAPH_SOURCE_MUTATION_APPLY_READINESS_NOT_READY",
+      "severity": "warning",
+      "field": "applyReadinessStatus",
+      "expected": "dry-run-ready-approved-state-present",
+      "actual": "blocked-approved-state-not-created",
+      "message": "Graph-source mutation readiness is blocked because Graph Delta apply readiness is not ready."
+    }
+  ],
+  "allowedUse": [
+    "document why graph-source mutation readiness is blocked",
+    "preserve apply-readiness provenance for human review",
+    "keep blocked inputs out of mutation-ready state"
+  ],
+  "forbiddenUse": [
+    "graph-source mutation",
+    "graph delta apply",
+    "runtime Evidence satisfaction",
+    "Evidence acceptance",
+    "equivalence proof",
+    "scope enforcement",
+    "CI required check",
+    "branch protection mutation",
+    "production source mutation",
+    "Codex hook or config mutation",
+    "user acceptance automation"
+  ],
+  "outputWritePolicy": "explicit-output-only",
+  "writtenOutputPath": "examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+  "writtenOutputPathAuthorityStatus": "explicit-mutation-readiness-output-not-source-authority",
+  "markdownReportPath": null,
+  "nonExecutionBoundary": "This Graph-source Mutation readiness command reports readiness only. It does not write graph-source, apply graph deltas, accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI or required checks, change branch protection, mutate production source, mutate Codex hook/config files, or replace user acceptance."
+}

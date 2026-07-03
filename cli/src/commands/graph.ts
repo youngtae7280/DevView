@@ -2,6 +2,7 @@ import { relativePath } from '../core/fs.js'
 import { createApprovedProposalStateFile } from '../core/approved-proposal-state.js'
 import { generateAiRequestAnalyzerPackFile } from '../core/ai-request-analyzer-pack.js'
 import { checkGraphDeltaApplyReadinessFile } from '../core/graph-delta-apply-readiness.js'
+import { reportGraphSourceMutationReadinessFile } from '../core/graph-source-mutation-readiness.js'
 import { analyzeRequestFile } from '../core/ai-request-analyzer-run.js'
 import { generateClarificationInterviewPackFile } from '../core/clarification-interview-pack.js'
 import { compileExecutionContractDryRun } from '../core/contract-compiler-dry-run.js'
@@ -962,6 +963,60 @@ export async function graphReadModelCheckGraphDeltaApplyCommand(context: Command
           message,
           suggestedFix:
             'Provide a readable apply boundary, approved proposal state preview, proposal-only preview, and dedicated apply-readiness output paths. This command is read-only and never mutates graph-source.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelReportGraphSourceMutationReadinessCommand(
+  context: CommandContext,
+): Promise<CommandResult> {
+  if (!context.options.policy) {
+    return invalidCommand('graph read-model report-graph-source-mutation-readiness requires --policy <file>.')
+  }
+  if (!context.options.applyReadiness) {
+    return invalidCommand('graph read-model report-graph-source-mutation-readiness requires --apply-readiness <file>.')
+  }
+
+  try {
+    const result = await reportGraphSourceMutationReadinessFile(context.options.root, {
+      policy: context.options.policy,
+      applyReadiness: context.options.applyReadiness,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph read-model report-graph-source-mutation-readiness',
+      exitCode: ExitCode.Success,
+      message:
+        result.readiness.status === 'devview-graph-source-mutation-readiness-ready'
+          ? 'Graph-source mutation readiness preview created without mutation, apply, or enforcement.'
+          : 'Graph-source mutation readiness preview blocked without mutation, apply, or enforcement.',
+      issues: [],
+      data: {
+        ...result.readiness,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: 'Use this as readiness context only. This command did not write graph-source, apply graph deltas, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model report-graph-source-mutation-readiness',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Graph-source mutation readiness report blocked.',
+      issues: [
+        issue({
+          validator: 'GraphSourceMutationReadiness',
+          code: 'GRAPH_SOURCE_MUTATION_READINESS_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a readable mutation policy boundary, Graph Delta apply readiness preview, and dedicated mutation-readiness output paths. This command is read-only and never mutates graph-source.',
         }),
       ],
     }

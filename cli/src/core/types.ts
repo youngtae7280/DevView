@@ -101,6 +101,8 @@ export interface CliOptions {
   selectedSlice?: string
   contractInput?: string
   approvedState?: string
+  applyReadiness?: string
+  policy?: string
   scaffold?: string
   scriptScaffold?: string
   scriptTemplates?: string

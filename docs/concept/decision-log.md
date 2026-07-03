@@ -2994,3 +2994,22 @@ readiness is blocked because the approved-state preview was blocked by `defer-de
 This decision does not add an apply command, apply graph deltas, mutate graph-source, accept Evidence, satisfy runtime
 Evidence, prove equivalence, enforce scope, introduce CI required checks, change branch protection, automate approval,
 or automate user acceptance.
+
+## DEC-275 Report Graph-source Mutation Readiness
+
+DEC-275 does not supersede DEC-097 through DEC-274. It implements
+`graph read-model report-graph-source-mutation-readiness` as a readiness-only surface after Graph Delta Apply readiness.
+
+The Todo App calibration artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-readiness.blocked-defer-decision.runtime-evidence-only.preview.json
+```
+
+The command consumes a Graph-source Mutation Policy boundary and a Graph Delta Apply readiness preview. It validates
+policy/readiness safety fields and output authority, then reports whether mutation readiness is blocked or ready. The
+calibration readiness is blocked because apply readiness is blocked.
+
+This decision does not write graph-source, apply graph deltas, accept Evidence, satisfy runtime Evidence, prove
+equivalence, enforce scope, introduce CI required checks, change branch protection, mutate production source, mutate
+Codex hook/config files, automate approval, or automate user acceptance.

@@ -1920,13 +1920,17 @@ The Graph-source Mutation Policy boundary preview is:
 examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-policy-boundary.runtime-evidence-only.preview.json
 ```
 
-It previews future graph-source mutation policy after approved proposal state and apply boundary work. Future mutation
-may target only the explicit current graph-source and must exclude read-model outputs, Evidence artifacts,
-proposal/review/decision inputs, hook/config files, CI or branch protection config, unrelated graph-source files, and
-production source. It also previews pre-mutation backup/rollback/fallback requirements and post-mutation read-model
-regeneration, consistency check, and mutation report requirements. The boundary performs no write and does not apply
-graph deltas, accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, configure required checks, or
-automate user acceptance.
+It defines graph-source mutation readiness policy after apply readiness and now anchors the
+`graph read-model report-graph-source-mutation-readiness` command. The first calibration readiness artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-readiness.blocked-defer-decision.runtime-evidence-only.preview.json
+```
+
+It is blocked because Graph Delta apply readiness is blocked. The command reports readiness only and keeps
+`mutationAllowed`, `graphSourceMutated`, `graphDeltaApplied`, `runtimeEvidenceSatisfied`, `evidenceAccepted`,
+`equivalenceProven`, `scopeEnforced`, and `ciEnforcementEnabled` false. It performs no write and does not apply graph
+deltas, accept Evidence, configure required checks, or automate user acceptance.
 
 The DevView roadmap completion audit preview is:
 

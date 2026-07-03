@@ -140,6 +140,8 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     selectedSlice: undefined as string | undefined,
     contractInput: undefined as string | undefined,
     approvedState: undefined as string | undefined,
+    applyReadiness: undefined as string | undefined,
+    policy: undefined as string | undefined,
     scaffold: undefined as string | undefined,
     scriptScaffold: undefined as string | undefined,
     scriptTemplates: undefined as string | undefined,
@@ -490,6 +492,20 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--approved-state requires a file path.' }
       }
       options.approvedState = value
+      index += 1
+    } else if (arg === '--apply-readiness') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--apply-readiness requires a file path.' }
+      }
+      options.applyReadiness = value
+      index += 1
+    } else if (arg === '--policy') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--policy requires a file path.' }
+      }
+      options.policy = value
       index += 1
     } else if (arg === '--scaffold') {
       const value = argv[index + 1]

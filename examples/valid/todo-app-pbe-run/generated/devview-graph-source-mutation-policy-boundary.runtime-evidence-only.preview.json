@@ -3,19 +3,20 @@
   "artifactRole": "devview-graph-source-mutation-policy-boundary-preview",
   "status": "devview-graph-source-mutation-policy-boundary-previewed",
   "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
-  "boundaryScope": "future-graph-source-mutation-policy-preview-only",
+  "boundaryScope": "graph-source-mutation-readiness-policy-preview",
   "phase": "phase-13-human-decision-approved-apply-boundary",
   "sourceGraphDeltaApplyBoundary": "examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-boundary.runtime-evidence-only.preview.json",
   "sourceEvidenceAcceptancePolicyBoundary": "examples/valid/todo-app-pbe-run/generated/devview-evidence-acceptance-policy-boundary.runtime-evidence-only.preview.json",
   "sourceApprovedProposalStateBoundary": "examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json",
-  "mutationPolicyImplemented": false,
+  "mutationPolicyImplemented": true,
+  "mutationReadinessCommandImplemented": true,
   "mutationCommandImplemented": false,
   "graphSourceMutationAllowed": false,
   "graphSourceMutated": false,
   "graphDeltaApplyEnabled": false,
   "graphDeltaApplied": false,
   "approvedProposalStateCreated": false,
-  "humanDecisionRecorded": false,
+  "humanDecisionRecorded": true,
   "runtimeEvidenceSatisfied": false,
   "evidenceAccepted": false,
   "equivalenceProven": false,
@@ -78,15 +79,15 @@
     },
     {
       "requirementId": "approved-proposal-state",
-      "description": "Future mutation requires approved proposal state created from an explicit human decision.",
+      "description": "Mutation readiness reports whether approved proposal state and apply readiness prerequisites exist.",
       "blockingIfMissing": true,
-      "implementedNow": false
+      "implementedNow": true
     },
     {
       "requirementId": "dry-run-reviewed",
-      "description": "Future mutation requires a dry-run mutation report reviewed before apply.",
+      "description": "Mutation readiness requires apply readiness before any future dry-run mutation report.",
       "blockingIfMissing": true,
-      "implementedNow": false
+      "implementedNow": true
     },
     {
       "requirementId": "backup-or-reversible-patch",
@@ -148,14 +149,14 @@
     "ciEnforcementEnabled": false
   },
   "allowedUse": [
-    "document future graph-source mutation target policy",
+    "document graph-source mutation readiness target policy",
     "define forbidden mutation target classes",
     "define pre-mutation backup, rollback, fallback, and dry-run requirements",
     "define post-mutation regeneration, consistency, and report requirements",
     "preserve current no-mutation boundary until explicit future implementation"
   ],
   "forbiddenUse": [
-    "treat this boundary as mutation permission",
+    "treat this boundary or readiness report as mutation permission",
     "write graph-source",
     "apply graph delta",
     "create approved proposal state",
@@ -181,8 +182,8 @@
   },
   "nextFutureStepsPreview": [
     {
-      "step": "apply-approved-graph-delta-command-boundary",
-      "status": "future-not-implemented"
+      "step": "graph-source-mutation-readiness-command",
+      "status": "implemented-readiness-only"
     },
     {
       "step": "post-mutation-consistency-check-boundary",
@@ -193,5 +194,5 @@
       "status": "future-not-implemented"
     }
   ],
-  "nonExecutionBoundary": "This artifact previews the future graph-source mutation policy boundary only. It does not allow graph-source mutation, write graph-source, apply graph deltas, create approved proposal state, record human decisions, accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI or required checks, change branch protection, mutate production source, mutate Codex hook/config files, or replace user acceptance."
+  "nonExecutionBoundary": "This artifact previews the Graph-source Mutation readiness policy boundary. The readiness command reports mutation readiness only. It does not allow graph-source mutation, write graph-source, apply graph deltas, create approved proposal state, record human decisions, accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI or required checks, change branch protection, mutate production source, mutate Codex hook/config files, or replace user acceptance."
 }

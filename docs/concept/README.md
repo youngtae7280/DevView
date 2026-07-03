@@ -347,10 +347,11 @@ prove equivalence, enforce scope, apply graph deltas, mutate graph-source, or co
 
 The Graph-source Mutation Policy boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-policy-boundary.runtime-evidence-only.preview.json`.
-It defines future mutation target restrictions, pre-mutation backup/rollback/fallback requirements, and post-mutation
-read-model regeneration/consistency/report requirements. It does not allow graph-source writes, apply graph deltas,
-accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, mutate production source, mutate hook/config
-files, or configure CI.
+It now anchors the `graph read-model report-graph-source-mutation-readiness ...` command. The first calibration mutation
+readiness artifact is blocked because apply readiness is blocked:
+`examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-readiness.blocked-defer-decision.runtime-evidence-only.preview.json`.
+The command reports readiness only. It does not allow graph-source writes, apply graph deltas, accept Evidence, satisfy
+runtime Evidence, prove equivalence, enforce scope, mutate production source, mutate hook/config files, or configure CI.
 
 The roadmap completion audit preview is recorded in
 `examples/valid/todo-app-pbe-run/generated/devview-roadmap-completion-audit.runtime-evidence-only.preview.json`. It
