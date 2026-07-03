@@ -658,6 +658,17 @@ decision-note candidates partially align with `proposedRecordState`, and boundar
 `boundaries` object. Evidence links, runtime report links, graph-delta source selection, and record binding remain
 explicitly unresolved until a future proposal-only generator is designed.
 
+The narrow mapping decision preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json
+```
+
+It resolves only what is safe to resolve before generation: `CH-001` is identified as an existing structure-only change
+node candidate, not an apply-ready operation-chain record; advisory JSON and compact markdown reports may become
+candidate links only; and `graphDeltaPath` remains unresolved because advisory `check-scope` output is not a graph delta.
+Proposal generation remains future work.
+
 ## Runtime Budget Timing Smoke
 
 The runtime performance budget is documented in

@@ -108,6 +108,15 @@ examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.
 It records how future proposal candidates may map to the existing graph update proposal fields. It adds no runtime
 command, does not scan files, does not inspect patches, and does not change the timing smoke boundary.
 
+The unresolved mapping decision preview is also outside the measured runtime path:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json
+```
+
+It records pre-generator decisions for `sourceRecordId`, `graphDeltaPath`, and Evidence/report link handling. It does
+not generate proposals, add runtime work, or change the advisory timing budget.
+
 ## Health Report Boundary
 
 `graph read-model report-health --json` exposes a small runtime budget summary:

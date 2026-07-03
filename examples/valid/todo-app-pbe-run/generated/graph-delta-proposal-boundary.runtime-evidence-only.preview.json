@@ -20,6 +20,7 @@
   "branchProtectionChanged": false,
   "candidateGenerationStatus": "proposal-candidate-shape-preview-only",
   "candidateSchemaAlignmentStatus": "graph-delta-proposal-candidate-schema-alignment-previewed",
+  "unresolvedMappingDecisionStatus": "graph-delta-proposal-unresolved-mapping-decision-previewed",
   "sourceArtifacts": {
     "advisoryCheckScopeJsonCommand": "graph read-model check-scope --base <baseRef> --head <headRef> --json",
     "compactAdvisoryRuntimeReportCommand": "graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json",
@@ -28,6 +29,7 @@
     "scopeComplianceCheckerPreview": "examples/valid/todo-app-pbe-run/generated/scope-compliance-checker.runtime-evidence-only.preview.json",
     "compilerInputCalibrationObservation": "examples/valid/todo-app-pbe-run/generated/compiler-input-calibration-observation.runtime-evidence-only.preview.json",
     "proposalCandidateSchemaAlignment": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.runtime-evidence-only.preview.json",
+    "proposalUnresolvedMappingDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
     "existingGraphSource": "examples/valid/todo-app-pbe-run/graph-source.json"
   },
   "inputSources": [
@@ -97,6 +99,7 @@
   "futureGraphDeltaProposalShape": {
     "proposalId": "future-generated-id",
     "candidateSchemaAlignment": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.runtime-evidence-only.preview.json",
+    "unresolvedMappingDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
     "sourceEvaluationArtifact": "examples/valid/todo-app-pbe-run/generated/scope-compliance-evaluation.runtime-evidence-only.preview.json",
     "sourceRuntimeReport": ".tmp/devview-scope-runtime-report.md",
     "candidateNodes": [],

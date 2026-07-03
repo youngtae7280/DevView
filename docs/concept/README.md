@@ -285,6 +285,11 @@ The follow-on candidate schema alignment preview is recorded in
 It maps advisory `check-scope` categories to existing `pbe-graph-update-proposal-v0` fields where possible and marks
 unresolved mappings for review instead of creating approved graph updates.
 
+The unresolved mapping decision preview is recorded in
+`examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json`.
+It identifies `CH-001` as a structure-only source record candidate, defers `graphDeltaPath` until a graph-delta-compatible
+source exists, and keeps advisory JSON/report links candidate-only.
+
 The following readiness artifact is complete at documentation level:
 
 - [representative-runtime-feasibility-demo.md](representative-runtime-feasibility-demo.md)

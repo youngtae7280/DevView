@@ -5,7 +5,9 @@
   "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
   "fixtureShape": "test-only-behavior-proof",
   "schemaAlignmentStatus": "existing-graph-update-proposal-v0-alignment-previewed",
+  "unresolvedMappingDecisionStatus": "graph-delta-proposal-unresolved-mapping-decision-previewed",
   "proposalBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-boundary.runtime-evidence-only.preview.json",
+  "unresolvedMappingDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
   "existingGraphUpdateProposalSchema": "schemas/pbe/graph-update-proposal-v0.json",
   "existingGraphDeltaSchema": "schemas/pbe/graph-delta-v0.json",
   "existingGraphOperationDocs": [
@@ -230,6 +232,7 @@
   ],
   "futureProposalCandidateShape": {
     "proposalCandidateId": "future-generated-id",
+    "unresolvedMappingDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
     "sourceEvaluationArtifact": "examples/valid/todo-app-pbe-run/generated/scope-compliance-evaluation.runtime-evidence-only.preview.json",
     "sourceRuntimeReport": ".tmp/devview-scope-runtime-report.md",
     "sourceGraphUpdateProposalSchema": "schemas/pbe/graph-update-proposal-v0.json",

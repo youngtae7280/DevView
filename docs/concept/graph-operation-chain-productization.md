@@ -86,6 +86,11 @@ That preview maps advisory scope candidate categories to the existing `pbe-graph
 possible, and marks Evidence/report link mappings as unresolved. It does not run `propose-update`, create approved graph
 updates, mutate graph-source, or apply graph deltas.
 
+The follow-on mapping decision preview is
+`examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json`.
+It keeps `graphDeltaPath` unresolved until a graph-delta-compatible source exists and treats advisory JSON/markdown links
+as candidate review context only.
+
 Retrofit graph sources can be inspected before implementation:
 
 ```powershell

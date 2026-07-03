@@ -60,11 +60,11 @@
   promotion review, approval, equivalence, and non-enforcement status.
 - [DevView Compliance Checker MVP Scope](concept/devview-compliance-checker-mvp-scope.md) - Planning-only scope decision
   selecting `scope-compliance-preview` as the first checker axis and recording the Graph Delta Proposal boundary plus
-  candidate schema alignment without implementing enforcement, required checks, diff rejection, fixture approval, or
-  equivalence proof.
+  candidate schema/mapping alignment without implementing enforcement, required checks, diff rejection, fixture
+  approval, or equivalence proof.
 - [DevView Runtime Performance Budget](concept/devview-runtime-performance-budget.md) - Advisory 5 second target for
   deterministic local runtime passes plus compact advisory `check-scope` reporting, proposal-boundary preview, and
-  proposal candidate schema alignment, excluding AI editing time, full validation, CI runtime, and human review.
+  proposal candidate schema/mapping alignment, excluding AI editing time, full validation, CI runtime, and human review.
 - [Scope Compliance Checker Implementation Readiness](concept/scope-compliance-checker-implementation-readiness.md) -
   Readiness criteria for future scope-compliance checker inputs, missing-input states, result preview status, and
   authoritative changed-file input boundaries before executable checker logic exists.

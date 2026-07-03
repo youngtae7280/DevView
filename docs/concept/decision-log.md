@@ -1762,3 +1762,20 @@ This is proposal-candidate schema alignment only. It does not generate a `pbe-gr
 graph-source, apply graph deltas, approve proposals, change equivalence behavior, satisfy runtime Evidence, enforce
 scope, reject diffs, introduce CI required checks, change branch protection, introduce executor automation, or automate
 user acceptance.
+
+## DEC-233 Decide Graph Delta Proposal Unresolved Mappings
+
+DEC-233 does not supersede DEC-097 through DEC-232. It adds the preview artifact
+`examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json`
+to record the narrow mapping decisions required before a proposal-only generator can be considered.
+
+The decision identifies `CH-001` as an existing Todo App structure-only change node candidate for future `sourceRecordId`
+review. It does not treat advisory `check-scope` output as source authority, and it does not make `CH-001` an apply-ready
+operation-chain record. `graphDeltaPath` remains unresolved until a graph-delta-compatible source artifact exists,
+because advisory `check-scope` output and git-derived changed-file collection are not graph deltas. Advisory evaluation
+JSON may be linked only as an `evidence-link-candidate`, compact markdown may be linked only as a
+`runtime-report-link-candidate`, and both remain candidate-only until human review.
+
+This is a proposal-only mapping decision. It does not generate graph delta proposals, mutate graph-source, apply graph
+deltas, approve graph updates, change equivalence behavior, satisfy runtime Evidence, enforce scope, reject diffs,
+introduce CI required checks, change branch protection, introduce executor automation, or automate user acceptance.

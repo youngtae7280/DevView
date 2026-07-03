@@ -549,6 +549,17 @@ still proposal-only. Unknown mappings, including Evidence links and runtime repo
 `mappingStatus: unresolved-existing-schema-review-required` rather than becoming a parallel authoritative graph update
 format.
 
+The narrow unresolved mapping decision preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json
+```
+
+It identifies `CH-001` as the structure-only `sourceRecordId` candidate for review, keeps `graphDeltaPath` unresolved
+until a graph-delta-compatible source exists, and allows advisory evaluation JSON plus compact runtime reports to be
+linked only as candidate review context. These links do not satisfy runtime Evidence, approve graph changes, or generate
+proposals.
+
 ## Runtime Budget Smoke
 
 The deterministic DevView runtime budget is documented in
