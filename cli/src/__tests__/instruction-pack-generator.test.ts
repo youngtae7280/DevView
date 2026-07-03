@@ -1,5 +1,5 @@
-import { existsSync, readFileSync } from 'node:fs'
-import { join, resolve } from 'node:path'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { runPbeCli } from '../app'
 import { generateInstructionPack, renderInstructionPackMarkdown } from '../core/instruction-pack-generator'
@@ -226,7 +226,131 @@ describe('Instruction Pack generator CLI', () => {
     expect(payload.issues[0].message).toContain('would overwrite the source Contract Compiler Input')
     expect(readFileSync(join(workspace, 'contract-input.json'), 'utf8')).toBe(contractInputBefore)
   })
+
+  it('blocks JSON output that would overwrite a required Evidence artifact', async () => {
+    const workspace = createWorkspace()
+    const evidencePath = 'examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/todo-add.txt'
+    writeJson(join(workspace, 'contract-input.json'), validContractInput())
+    writeTextFile(workspace, evidencePath, 'original evidence\n')
+
+    const result = await runPbeCli(
+      [
+        'graph',
+        'read-model',
+        'generate-instruction-pack',
+        '--contract-input',
+        'contract-input.json',
+        '--output',
+        evidencePath,
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.ok).toBe(false)
+    expect(payload.issues[0].message).toContain('would overwrite requiredEvidence artifact required-evidence-ev-1')
+    expect(readFileSync(join(workspace, evidencePath), 'utf8')).toBe('original evidence\n')
+  })
+
+  it('blocks Markdown output that would overwrite an evidenceIndex artifact before writing JSON output', async () => {
+    const workspace = createWorkspace()
+    const evidencePath = 'examples/valid/todo-app-pbe-run/.pbe/evidence/test-results/evidence-index-only.txt'
+    const outputPath = join('.tmp', 'instruction-pack.json')
+    const contractInput = validContractInput()
+    const evidenceIndex = contractInput.evidenceIndex as { entries: Array<{ artifact: string }> }
+    evidenceIndex.entries[0].artifact = evidencePath
+    writeJson(join(workspace, 'contract-input.json'), contractInput)
+    writeTextFile(workspace, evidencePath, 'original evidence\n')
+
+    const result = await runPbeCli(
+      [
+        'graph',
+        'read-model',
+        'generate-instruction-pack',
+        '--contract-input',
+        'contract-input.json',
+        '--output',
+        outputPath,
+        '--markdown',
+        evidencePath,
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.ok).toBe(false)
+    expect(payload.issues[0].message).toContain('would overwrite evidenceIndex artifact evidence-ev-1')
+    expect(existsSync(join(workspace, outputPath))).toBe(false)
+    expect(readFileSync(join(workspace, evidencePath), 'utf8')).toBe('original evidence\n')
+  })
+
+  it('blocks output that would overwrite an allowedScope evidence path', async () => {
+    const workspace = createWorkspace()
+    const evidenceTreePath = 'examples/valid/todo-app-pbe-run/.pbe/evidence/evidence-tree.json'
+    writeJson(join(workspace, 'contract-input.json'), validContractInput())
+    writeTextFile(workspace, evidenceTreePath, '{"original":true}\n')
+
+    const result = await runPbeCli(
+      [
+        'graph',
+        'read-model',
+        'generate-instruction-pack',
+        '--contract-input',
+        'contract-input.json',
+        '--output',
+        evidenceTreePath,
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.ok).toBe(false)
+    expect(payload.issues[0].message).toContain('would overwrite allowedScope path allowed-scope-ev-1')
+    expect(readFileSync(join(workspace, evidenceTreePath), 'utf8')).toBe('{"original":true}\n')
+  })
+
+  it('blocks output that would overwrite a selected targetScopeCandidate path', async () => {
+    const workspace = createWorkspace()
+    const testTreePath = 'examples/valid/todo-app-pbe-run/.pbe/tree/test-tree.json'
+    const contractInput = validContractInput()
+    const allowedScope = contractInput.allowedScope as Array<{ paths: string[] }>
+    allowedScope[0].paths = []
+    writeJson(join(workspace, 'contract-input.json'), contractInput)
+    writeTextFile(workspace, testTreePath, '{"original":true}\n')
+
+    const result = await runPbeCli(
+      [
+        'graph',
+        'read-model',
+        'generate-instruction-pack',
+        '--contract-input',
+        'contract-input.json',
+        '--output',
+        testTreePath,
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.ok).toBe(false)
+    expect(payload.issues[0].message).toContain('would overwrite targetScopeCandidate path scope-tt-1')
+    expect(readFileSync(join(workspace, testTreePath), 'utf8')).toBe('{"original":true}\n')
+  })
 })
+
+function writeTextFile(workspace: string, relativePath: string, contents: string): void {
+  const resolvedPath = join(workspace, relativePath)
+  mkdirSync(dirname(resolvedPath), { recursive: true })
+  writeFileSync(resolvedPath, contents, 'utf8')
+}
 
 function validContractInput(): Record<string, unknown> {
   return {

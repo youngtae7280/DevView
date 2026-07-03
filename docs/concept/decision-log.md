@@ -2201,9 +2201,10 @@ graph-source mutation ban, approval/acceptance ban, required Evidence, stop cond
 requirements, and trace context into a deterministic pack for Codex/human review.
 
 Explicit JSON/Markdown preview output is allowed only when the target path is not a source-authority path, not a
-selected frontend input, not a concrete forbidden-scope path, not a graph snapshot artifact, not a context-only
-target-scope path, and not an existing graph-source/source-authority-shaped JSON artifact. The generator checks these
-output authority boundaries before writing, so blocked output paths leave existing files unchanged.
+selected frontend input, not a concrete forbidden-scope path, not a graph snapshot artifact, not an Evidence authority
+artifact, not a selected scope candidate path, and not an existing graph-source/source-authority-shaped JSON artifact.
+The generator checks these output authority boundaries before writing, so blocked output paths leave existing files
+unchanged.
 
 The generated pack is not approval and does not trigger Codex execution. This decision does not call an LLM, implement
 an AI analyzer, implement hook scripts, mutate graph-source, apply graph deltas, approve graph updates, record human

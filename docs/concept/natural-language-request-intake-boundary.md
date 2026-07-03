@@ -415,8 +415,8 @@ Evidence, prove equivalence, enforce scope, or configure CI.
 
 Explicit JSON/Markdown output paths are preview outputs only. The generator must reject paths that would overwrite the
 source Contract Compiler Input, graph/source authority artifacts, selected frontend inputs, concrete forbidden-scope
-paths, graph snapshot artifacts, context-only target scope paths, or existing graph-source/source-authority-shaped JSON
-files.
+paths, graph snapshot artifacts, Evidence authority artifacts, selected scope candidate paths, or existing
+graph-source/source-authority-shaped JSON files.
 
 ## Hook Gateway Relationship
 

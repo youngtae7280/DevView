@@ -346,7 +346,10 @@ function buildProtectedOutputPathMap(
     if (!isConcreteOutputProtectedPath(candidatePath)) {
       return
     }
-    protectedPaths.set(pathKey(resolveRepoPath(root, candidatePath)), reason)
+    const key = pathKey(resolveRepoPath(root, candidatePath))
+    if (!protectedPaths.has(key)) {
+      protectedPaths.set(key, reason)
+    }
   }
 
   protectedPaths.set(pathKey(resolvedContractInputPath), 'the source Contract Compiler Input')
@@ -367,12 +370,23 @@ function buildProtectedOutputPathMap(
     add(artifact.path, `graphSnapshot artifact ${stringValue(artifact.id) || stringValue(artifact.path)}`)
   }
 
-  for (const candidate of arrayRecords(contractInput.targetScopeCandidates)) {
-    if (candidate.contextOnly !== true) {
-      continue
+  for (const evidence of arrayRecords(contractInput.requiredEvidence)) {
+    add(evidence.artifact, `requiredEvidence artifact ${stringValue(evidence.id) || stringValue(evidence.artifact)}`)
+  }
+
+  for (const evidence of arrayRecords(asRecord(contractInput.evidenceIndex)?.entries)) {
+    add(evidence.artifact, `evidenceIndex artifact ${stringValue(evidence.id) || stringValue(evidence.artifact)}`)
+  }
+
+  for (const scope of arrayRecords(contractInput.allowedScope)) {
+    for (const scopePath of stringArray(scope.paths)) {
+      add(scopePath, `allowedScope path ${stringValue(scope.id) || scopePath}`)
     }
+  }
+
+  for (const candidate of arrayRecords(contractInput.targetScopeCandidates)) {
     for (const scopePath of stringArray(candidate.paths)) {
-      add(scopePath, `context-only targetScopeCandidate path ${stringValue(candidate.id) || scopePath}`)
+      add(scopePath, `targetScopeCandidate path ${stringValue(candidate.id) || scopePath}`)
     }
   }
 

@@ -1978,6 +1978,8 @@ production source changes as unresolved forbidden scope, keeps graph-source muta
 forbidden, and carries required Evidence, stop conditions, known risks, and output requirements into concise
 operational instructions. The generated pack is not Codex execution, not approval, not runtime Evidence satisfaction,
 not graph-source mutation, not graph delta apply, and not scope or CI enforcement.
+Its preview outputs cannot overwrite source authority, selected frontend inputs, forbidden concrete paths, Evidence
+authority artifacts, selected scope candidate paths, or graph-source/source-authority-shaped JSON artifacts.
 
 Traversal boundary type fields are limited to actual graph taxonomy vocabulary from the Todo App projection. Abstract
 planner meanings such as target component, scope policy, required evidence, stop condition, output requirement, and risk

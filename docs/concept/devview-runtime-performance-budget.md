@@ -311,8 +311,8 @@ It turns frontend Contract Compiler Input into deterministic JSON/Markdown pack 
 boundaries. It does not trigger Codex execution, mutate graph-source, apply graph deltas, approve work, record human
 decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
 Its explicit output paths are checked before writing so preview JSON/Markdown cannot overwrite source authority,
-selected frontend inputs, concrete forbidden-scope paths, graph snapshot artifacts, context-only target scope paths, or
-existing graph-source/source-authority-shaped JSON artifacts.
+selected frontend inputs, concrete forbidden-scope paths, graph snapshot artifacts, Evidence authority artifacts,
+selected scope candidate paths, or existing graph-source/source-authority-shaped JSON artifacts.
 
 The traversal boundary keeps graph vocabulary separate from planner semantics: `requiredNodeTypes` and
 `requiredEdgeTypes` use only the current graph-source taxonomy, while target/scope/evidence/output meanings are recorded
