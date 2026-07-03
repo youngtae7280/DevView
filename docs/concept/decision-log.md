@@ -2855,3 +2855,31 @@ requires a current graph-source recheck at apply time.
 This decision does not add an apply CLI command, enable graph delta apply, apply graph deltas, mutate graph-source,
 create approved proposal state, record a human decision, accept runtime Evidence, prove equivalence, enforce scope,
 introduce CI required checks, change branch protection, or automate user acceptance.
+
+## DEC-269 Define Evidence Acceptance Policy Boundary
+
+DEC-269 does not supersede DEC-097 through DEC-268. It previews the future Evidence acceptance policy without accepting
+Evidence or setting runtime Evidence satisfaction.
+
+The Todo App calibration artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-evidence-acceptance-policy-boundary.runtime-evidence-only.preview.json
+```
+
+The boundary separates three states that must not be conflated:
+
+```text
+evidence-linked
+evidence-accepted
+runtime-evidence-satisfied
+```
+
+Future tooling must not treat Codex claims, AI output, CI pass, validator pass, runtime smoke, Human Review Packet
+generation, or graph apply as Evidence acceptance by itself. Evidence acceptance may require human judgment or a
+separately approved deterministic policy, and runtime Evidence satisfaction requires accepted Evidence to be bound to
+the relevant runtime obligation.
+
+This decision does not implement Evidence acceptance, accept Evidence, set `runtimeEvidenceSatisfied: true`, prove
+equivalence, enforce scope, apply graph deltas, mutate graph-source, introduce CI required checks, change branch
+protection, or automate user acceptance.

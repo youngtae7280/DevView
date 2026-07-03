@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-evidence-acceptance-policy-boundary-preview",
+  "status": "devview-evidence-acceptance-policy-boundary-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "boundaryScope": "future-evidence-acceptance-policy-preview-only",
+  "phase": "phase-13-human-decision-approved-apply-boundary",
+  "sourceGraphDeltaApplyBoundary": "examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-boundary.runtime-evidence-only.preview.json",
+  "sourceApprovedProposalStateBoundary": "examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json",
+  "sourceHumanDecisionRecordBoundary": "examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-boundary.runtime-evidence-only.preview.json",
+  "evidenceAcceptancePolicyImplemented": false,
+  "evidenceAcceptanceCommandImplemented": false,
+  "evidenceLinked": "future-review-link-only-not-acceptance",
+  "evidenceAccepted": false,
+  "runtimeEvidenceSatisfied": false,
+  "equivalenceProven": false,
+  "graphDeltaApplied": false,
+  "graphSourceMutated": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "approvalStatus": "not-approved-evidence-acceptance-not-implemented",
+  "codexSelfAcceptanceAllowed": false,
+  "aiGeneratedAcceptanceAllowed": false,
+  "ciSelfAcceptanceAllowed": false,
+  "validatorSelfAcceptanceAllowed": false,
+  "futureRequiredInputs": [
+    {
+      "inputId": "post-apply-validation-report",
+      "artifactRole": "future-post-apply-validation-report",
+      "required": "future-policy-required-before-acceptance",
+      "authorityBoundary": "Validation report may provide Evidence candidates but cannot self-accept runtime Evidence."
+    },
+    {
+      "inputId": "runtime-report",
+      "artifactRole": "advisory-runtime-report",
+      "required": "future-policy-required-before-acceptance",
+      "authorityBoundary": "Runtime report may be linked as review Evidence but is not accepted Evidence by itself."
+    },
+    {
+      "inputId": "evidence-artifacts",
+      "artifactRole": "runtime-evidence-artifact-candidates",
+      "required": "future-policy-required-before-acceptance",
+      "authorityBoundary": "Evidence artifacts can be linked, reviewed, and policy-checked before any acceptance."
+    },
+    {
+      "inputId": "approved-proposal-state",
+      "artifactRole": "devview-approved-proposal-state",
+      "required": "future-policy-required-before-acceptance",
+      "authorityBoundary": "Approved state may scope acceptance review but does not imply Evidence satisfaction."
+    },
+    {
+      "inputId": "human-decision-record",
+      "artifactRole": "devview-human-decision-record",
+      "required": "future-policy-required-before-acceptance",
+      "authorityBoundary": "Human decision may authorize review of Evidence acceptance but does not by itself satisfy Evidence."
+    }
+  ],
+  "futureEvidenceStateVocabulary": [
+    {
+      "state": "evidence-linked",
+      "meaning": "Evidence artifact is linked for review or traceability only.",
+      "runtimeEvidenceSatisfied": false
+    },
+    {
+      "state": "evidence-policy-check-passed",
+      "meaning": "Future deterministic policy checks pass for the evidence candidate, but human or configured acceptance may still be required.",
+      "runtimeEvidenceSatisfied": false
+    },
+    {
+      "state": "evidence-accepted",
+      "meaning": "Future accepted Evidence state after required policy and human/configured acceptance steps.",
+      "runtimeEvidenceSatisfied": "future-policy-dependent-not-created-here"
+    },
+    {
+      "state": "runtime-evidence-satisfied",
+      "meaning": "Future terminal evidence satisfaction state only after accepted Evidence is bound to the required runtime obligation.",
+      "runtimeEvidenceSatisfied": true,
+      "createdHere": false
+    },
+    {
+      "state": "evidence-rejected",
+      "meaning": "Future state when evidence is insufficient, stale, mismatched, or not accepted.",
+      "runtimeEvidenceSatisfied": false
+    }
+  ],
+  "futurePolicyChecks": [
+    {
+      "checkId": "artifact-exists-and-readable",
+      "description": "Future policy must verify Evidence artifacts exist, are readable, and match declared paths.",
+      "implementedNow": false
+    },
+    {
+      "checkId": "evidence-freshness",
+      "description": "Future policy must verify Evidence freshness relative to the applied proposal and current graph-source.",
+      "implementedNow": false
+    },
+    {
+      "checkId": "scope-binding",
+      "description": "Future policy must verify Evidence binds to the selected graph slice, contract obligation, or post-apply check under review.",
+      "implementedNow": false
+    },
+    {
+      "checkId": "human-or-configured-acceptance",
+      "description": "Future policy must require explicit human judgment or a separately approved deterministic acceptance policy.",
+      "implementedNow": false
+    },
+    {
+      "checkId": "no-self-acceptance",
+      "description": "Future policy must reject Codex, AI, CI, validator, smoke, or review packet self-acceptance.",
+      "implementedNow": false
+    },
+    {
+      "checkId": "no-equivalence-conflation",
+      "description": "Future policy must not treat Evidence acceptance as equivalence proof unless a separate equivalence policy proves it.",
+      "implementedNow": false
+    }
+  ],
+  "futureAcceptanceSeparation": {
+    "evidenceLinkedIsAccepted": false,
+    "evidenceAcceptedIsRuntimeSatisfied": "future-policy-dependent",
+    "runtimeEvidenceSatisfiedRequiresAcceptedEvidenceBinding": true,
+    "validatorPassIsAcceptance": false,
+    "ciPassIsAcceptance": false,
+    "codexClaimIsAcceptance": false,
+    "humanReviewPacketIsAcceptance": false
+  },
+  "allowedUse": [
+    "document future Evidence acceptance vocabulary",
+    "separate linked Evidence from accepted Evidence",
+    "separate accepted Evidence from runtime Evidence satisfaction",
+    "define future no-self-acceptance policy",
+    "preserve runtimeEvidenceSatisfied false until future policy is implemented"
+  ],
+  "forbiddenUse": [
+    "treat this boundary as accepted Evidence",
+    "set runtimeEvidenceSatisfied true",
+    "create accepted Evidence state",
+    "infer acceptance from Codex, AI, validators, runtime smoke, CI, review packet generation, or graph apply",
+    "prove equivalence",
+    "enforce scope",
+    "configure CI or branch protection",
+    "mutate graph-source",
+    "apply graph delta",
+    "automate user acceptance"
+  ],
+  "runtimePerformanceBoundary": {
+    "designOnly": true,
+    "addsRuntimeWork": false,
+    "aiCalls": false,
+    "networkCalls": false,
+    "fullRepoScan": false,
+    "patchHunkInspection": false,
+    "fullValidation": false,
+    "timingSmokeIntegrationStatus": "not-integrated-boundary-preview-only",
+    "runtimeBudgetStatus": "advisory-not-enforced"
+  },
+  "nextFutureStepsPreview": [
+    {
+      "step": "graph-source-mutation-policy-boundary",
+      "status": "future-not-implemented"
+    },
+    {
+      "step": "evidence-acceptance-command-boundary",
+      "status": "future-not-implemented"
+    },
+    {
+      "step": "equivalence-proof-policy-boundary",
+      "status": "future-not-implemented"
+    }
+  ],
+  "nonExecutionBoundary": "This artifact previews the future Evidence acceptance policy boundary only. It does not accept Evidence, set runtimeEvidenceSatisfied true, prove equivalence, enforce scope, configure CI or required checks, apply graph deltas, mutate graph-source, record human decisions, approve proposals, or replace user acceptance."
+}

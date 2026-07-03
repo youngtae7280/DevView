@@ -1884,6 +1884,17 @@ adds no apply command and performs no mutation. It does not apply graph deltas, 
 proposal state, record a human decision, satisfy runtime Evidence, prove equivalence, reject diffs, enforce scope,
 configure required checks, or automate user acceptance.
 
+The Evidence Acceptance Policy boundary preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-evidence-acceptance-policy-boundary.runtime-evidence-only.preview.json
+```
+
+It separates `evidence-linked`, `evidence-accepted`, and `runtime-evidence-satisfied` so review links, validator passes,
+CI passes, runtime smoke, and Codex claims cannot self-accept Evidence. The boundary does not accept Evidence, set
+`runtimeEvidenceSatisfied: true`, prove equivalence, enforce scope, mutate graph-source, apply graph deltas, configure
+required checks, or automate user acceptance.
+
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
 approval or runtime Evidence satisfaction.

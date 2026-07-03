@@ -336,6 +336,12 @@ stale-proposal checks, rollback/fallback requirements, and dry-run/apply separat
 enable graph delta apply, mutate graph-source, satisfy runtime Evidence, prove equivalence, enforce scope, or configure
 CI.
 
+The Evidence Acceptance Policy boundary is previewed in
+`examples/valid/todo-app-pbe-run/generated/devview-evidence-acceptance-policy-boundary.runtime-evidence-only.preview.json`.
+It separates linked Evidence, accepted Evidence, and `runtimeEvidenceSatisfied` so future tooling cannot treat CI,
+validators, Codex output, or review packets as self-acceptance. It does not accept Evidence, satisfy runtime Evidence,
+prove equivalence, enforce scope, apply graph deltas, mutate graph-source, or configure CI.
+
 The DevView Codex Hook Gateway boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json` and
 documented in [devview-codex-hook-gateway-boundary.md](devview-codex-hook-gateway-boundary.md). It defines how future
