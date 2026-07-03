@@ -1,6 +1,7 @@
 import { relativePath } from '../core/fs.js'
 import { createApprovedProposalStateFile } from '../core/approved-proposal-state.js'
 import { generateAiRequestAnalyzerPackFile } from '../core/ai-request-analyzer-pack.js'
+import { checkGraphDeltaApplyReadinessFile } from '../core/graph-delta-apply-readiness.js'
 import { analyzeRequestFile } from '../core/ai-request-analyzer-run.js'
 import { generateClarificationInterviewPackFile } from '../core/clarification-interview-pack.js'
 import { compileExecutionContractDryRun } from '../core/contract-compiler-dry-run.js'
@@ -905,6 +906,62 @@ export async function graphReadModelCreateApprovedProposalStateCommand(
           message,
           suggestedFix:
             'Provide a readable approved-state boundary, Human Decision Record, proposal-only preview, and dedicated approved-state output paths. The decision must be an explicit human approve-proposal record before approved state can be created.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelCheckGraphDeltaApplyCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.approvedState) {
+    return invalidCommand('graph read-model check-graph-delta-apply requires --approved-state <file>.')
+  }
+  if (!context.options.proposal) {
+    return invalidCommand('graph read-model check-graph-delta-apply requires --proposal <file>.')
+  }
+
+  try {
+    const result = await checkGraphDeltaApplyReadinessFile(context.options.root, {
+      boundary: context.options.boundary,
+      approvedState: context.options.approvedState,
+      proposal: context.options.proposal,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph read-model check-graph-delta-apply',
+      exitCode: ExitCode.Success,
+      message:
+        result.readiness.status === 'devview-graph-delta-apply-readiness-ready'
+          ? 'Graph Delta apply readiness preview created without apply, mutation, or enforcement.'
+          : 'Graph Delta apply readiness preview blocked without apply, mutation, or enforcement.',
+      issues: [],
+      data: {
+        ...result.readiness,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next:
+          result.readiness.status === 'devview-graph-delta-apply-readiness-ready'
+            ? 'A separate future apply command may consume this readiness preview after current graph-source and rollback checks. This command did not apply graph deltas, mutate graph-source, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.'
+            : 'Resolve approved-state/proposal preconditions before any future apply path. This command did not apply graph deltas, mutate graph-source, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model check-graph-delta-apply',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Graph Delta apply readiness check blocked.',
+      issues: [
+        issue({
+          validator: 'GraphDeltaApplyReadiness',
+          code: 'GRAPH_DELTA_APPLY_READINESS_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a readable apply boundary, approved proposal state preview, proposal-only preview, and dedicated apply-readiness output paths. This command is read-only and never mutates graph-source.',
         }),
       ],
     }

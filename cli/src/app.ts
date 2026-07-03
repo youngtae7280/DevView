@@ -139,6 +139,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     traversalPlan: undefined as string | undefined,
     selectedSlice: undefined as string | undefined,
     contractInput: undefined as string | undefined,
+    approvedState: undefined as string | undefined,
     scaffold: undefined as string | undefined,
     scriptScaffold: undefined as string | undefined,
     scriptTemplates: undefined as string | undefined,
@@ -482,6 +483,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--contract-input requires a file path.' }
       }
       options.contractInput = value
+      index += 1
+    } else if (arg === '--approved-state') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--approved-state requires a file path.' }
+      }
+      options.approvedState = value
       index += 1
     } else if (arg === '--scaffold') {
       const value = argv[index + 1]

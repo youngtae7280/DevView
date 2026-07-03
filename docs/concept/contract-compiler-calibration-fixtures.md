@@ -1891,11 +1891,17 @@ The Graph Delta Apply boundary preview is:
 examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-boundary.runtime-evidence-only.preview.json
 ```
 
-It previews future apply preconditions after approved proposal state: current graph-source identity/hash checks,
-stale-proposal rejection, conflict detection, rollback/fallback readiness, and dry-run/apply separation. The boundary
-adds no apply command and performs no mutation. It does not apply graph deltas, mutate graph-source, create approved
-proposal state, record a human decision, satisfy runtime Evidence, prove equivalence, reject diffs, enforce scope,
-configure required checks, or automate user acceptance.
+It defines future apply preconditions after approved proposal state and now anchors the
+`graph read-model check-graph-delta-apply` readiness command. The first calibration readiness artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-readiness.blocked-defer-decision.runtime-evidence-only.preview.json
+```
+
+It is blocked because the calibration approved-state preview was not created from an `approve-proposal` decision. The
+readiness command checks approved-state/proposal provenance and keeps `graphDeltaApplyEnabled`, `graphDeltaApplied`,
+`graphSourceMutated`, `runtimeEvidenceSatisfied`, `equivalenceProven`, `scopeEnforced`, and `ciEnforcementEnabled`
+false. It performs no apply, no mutation, and no approved-state creation.
 
 The Evidence Acceptance Policy boundary preview is:
 

@@ -2975,3 +2975,22 @@ calibration `defer-decision` input produces a blocked preview with `approvedProp
 This decision does not apply graph deltas, mutate graph-source, accept Evidence, satisfy runtime Evidence, prove
 equivalence, enforce scope, introduce CI required checks, change branch protection, automate approval, or automate user
 acceptance.
+
+## DEC-274 Check Graph Delta Apply Readiness
+
+DEC-274 does not supersede DEC-097 through DEC-273. It implements
+`graph read-model check-graph-delta-apply` as an apply-readiness preview surface after Approved Proposal State preview.
+
+The Todo App calibration artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-readiness.blocked-defer-decision.runtime-evidence-only.preview.json
+```
+
+The command consumes a Graph Delta Apply boundary, an Approved Proposal State preview, and a proposal-only Graph Delta
+preview. It verifies role/status/safety fields, proposal id/path consistency, and output authority. The calibration
+readiness is blocked because the approved-state preview was blocked by `defer-decision`.
+
+This decision does not add an apply command, apply graph deltas, mutate graph-source, accept Evidence, satisfy runtime
+Evidence, prove equivalence, enforce scope, introduce CI required checks, change branch protection, automate approval,
+or automate user acceptance.

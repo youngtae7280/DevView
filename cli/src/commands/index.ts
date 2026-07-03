@@ -19,6 +19,7 @@ import {
   graphRetrofitPlanCommand,
   graphReadModelCollectChangedFilesCommand,
   graphReadModelCompareCommand,
+  graphReadModelCheckGraphDeltaApplyCommand,
   graphReadModelCompileContractCommand,
   graphReadModelCreateApprovedProposalStateCommand,
   graphReadModelGenerateCommand,
@@ -251,6 +252,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'create-approved-proposal-state') {
     return graphReadModelCreateApprovedProposalStateCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'check-graph-delta-apply') {
+    return graphReadModelCheckGraphDeltaApplyCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-ai-request-analyzer-pack') {
     return graphReadModelGenerateAiRequestAnalyzerPackCommand(context)

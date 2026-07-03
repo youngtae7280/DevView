@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-graph-delta-apply-readiness-preview",
+  "status": "devview-graph-delta-apply-readiness-blocked",
+  "readinessScope": "graph-delta-apply-readiness-preview-no-apply",
+  "sourceBoundary": "examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-boundary.runtime-evidence-only.preview.json",
+  "sourceBoundaryArtifactRole": "devview-graph-delta-apply-boundary-preview",
+  "sourceBoundaryStatus": "devview-graph-delta-apply-boundary-previewed",
+  "sourceApprovedProposalState": "examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state.blocked-defer-decision.runtime-evidence-only.preview.json",
+  "sourceGraphDeltaProposal": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal.add-todo-runtime-evidence-only.preview.json",
+  "proposalId": "proposal-only-preview-ch-001",
+  "applyReadinessStatus": "blocked-approved-state-not-created",
+  "approvedProposalStateCreated": false,
+  "approvalStatus": "not-approved",
+  "humanDecisionRecorded": true,
+  "humanReviewRequired": true,
+  "graphDeltaApplyEnabled": false,
+  "graphDeltaApplied": false,
+  "graphSourceMutationAllowed": false,
+  "graphSourceMutated": false,
+  "runtimeEvidenceSatisfied": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "strictModeEnabled": false,
+  "guidedEnforcementEnabled": false,
+  "userAcceptanceAutomated": false,
+  "validationFindings": [
+    {
+      "code": "GRAPH_DELTA_APPLY_APPROVED_STATE_NOT_CREATED",
+      "severity": "warning",
+      "field": "approvedProposalStateCreated",
+      "expected": true,
+      "actual": false,
+      "message": "Approved Proposal State was not created, so graph delta apply readiness is blocked."
+    }
+  ],
+  "allowedUse": [
+    "document why graph delta apply readiness is blocked",
+    "preserve approved-state and proposal provenance for human review",
+    "keep blocked or mismatched inputs out of apply-ready state"
+  ],
+  "forbiddenUse": [
+    "graph delta apply",
+    "graph-source mutation",
+    "runtime Evidence satisfaction",
+    "equivalence proof",
+    "scope enforcement",
+    "CI required check",
+    "branch protection mutation",
+    "user acceptance automation",
+    "approval inference from Codex, AI, validators, runtime smoke, CI, or review packet generation"
+  ],
+  "outputWritePolicy": "explicit-output-only",
+  "writtenOutputPath": "examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+  "writtenOutputPathAuthorityStatus": "explicit-apply-readiness-output-not-source-authority",
+  "markdownReportPath": null,
+  "nonExecutionBoundary": "This Graph Delta Apply readiness command checks apply preconditions only. It does not apply graph deltas, mutate graph-source, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI or required checks, change branch protection, or replace user acceptance."
+}

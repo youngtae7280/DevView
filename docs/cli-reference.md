@@ -564,6 +564,39 @@ node dist/cli/index.js graph read-model create-approved-proposal-state `
   --json
 ```
 
+### `pbe graph read-model check-graph-delta-apply`
+
+- Purpose: Check Graph Delta apply readiness from an Approved Proposal State preview and proposal-only Graph Delta
+  preview without applying or mutating graph-source.
+- Typical state before running: After `graph read-model create-approved-proposal-state` has produced an approved-state
+  preview or blocked preview.
+- Options: `--approved-state <approvedStatePath>` and `--proposal <proposalPath>` are required.
+  `--boundary <boundaryPath>` is optional but recommended. `--output <file>` and `--markdown <file>` may write explicit
+  readiness outputs.
+- What it checks: Graph Delta Apply boundary role/status, approved-state role/status/safety fields, proposal-only
+  boundaries, approved-state proposal id/path consistency, and output authority.
+- What it writes: Nothing by default. It writes only to explicit `--output` and `--markdown` paths.
+- Success result: JSON with `artifactRole: devview-graph-delta-apply-readiness-preview`. If the approved state was
+  created and proposal provenance matches, readiness is `dry-run-ready-approved-state-present`; otherwise it is blocked.
+  In all cases `graphDeltaApplyEnabled`, `graphDeltaApplied`, `graphSourceMutated`, `runtimeEvidenceSatisfied`,
+  `equivalenceProven`, `scopeEnforced`, and `ciEnforcementEnabled` remain false.
+- Common failures: malformed boundary, unsafe approved-state/proposal fields, proposal provenance mismatch, or output
+  paths that would overwrite source/proposal/review/decision/evidence/graph artifacts.
+- Next command: A separate future apply command may consume a ready preview after current graph-source identity,
+  conflict, rollback, and human dry-run review checks. This command itself never applies graph deltas, mutates
+  graph-source, accepts Evidence, proves equivalence, enforces scope, or configures CI.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model check-graph-delta-apply `
+  --boundary examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-boundary.runtime-evidence-only.preview.json `
+  --approved-state examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state.blocked-defer-decision.runtime-evidence-only.preview.json `
+  --proposal examples/valid/todo-app-pbe-run/generated/graph-delta-proposal.add-todo-runtime-evidence-only.preview.json `
+  --output .tmp/devview-graph-delta-apply-readiness.json `
+  --json
+```
+
 ### `pbe graph read-model generate-ai-request-analyzer-pack`
 
 - Purpose: Generate deterministic AI Request Analyzer prompt/input contract JSON, and optionally Markdown, from the

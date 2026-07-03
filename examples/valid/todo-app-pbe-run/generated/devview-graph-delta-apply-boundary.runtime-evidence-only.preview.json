@@ -3,13 +3,15 @@
   "artifactRole": "devview-graph-delta-apply-boundary-preview",
   "status": "devview-graph-delta-apply-boundary-previewed",
   "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
-  "boundaryScope": "future-graph-delta-apply-preview-only",
+  "boundaryScope": "graph-delta-apply-readiness-preview-only",
   "phase": "phase-13-human-decision-approved-apply-boundary",
   "sourceHumanDecisionRecordBoundary": "examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-boundary.runtime-evidence-only.preview.json",
   "sourceHumanDecisionRecordCommandBoundary": "examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-command-boundary.runtime-evidence-only.preview.json",
   "sourceApprovedProposalStateBoundary": "examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json",
+  "applyReadinessCommand": "graph read-model check-graph-delta-apply --approved-state <approvedState> --proposal <proposal> --json",
   "futureApplyCommand": "graph read-model apply-approved-graph-delta --approved-proposal <approvedState> --graph-source <graphSource> --dry-run --json",
   "futureApplyCommandWithMutation": "graph read-model apply-approved-graph-delta --approved-proposal <approvedState> --graph-source <graphSource> --apply --json",
+  "applyReadinessCommandImplemented": true,
   "applyCommandImplemented": false,
   "applyCliSurfaceAdded": false,
   "graphDeltaApplyEnabled": false,
@@ -18,7 +20,7 @@
   "graphSourceMutated": false,
   "approvalStatus": "not-approved-future-apply-not-enabled",
   "approvedProposalStateCreated": false,
-  "humanDecisionRecorded": false,
+  "humanDecisionRecorded": true,
   "runtimeEvidenceSatisfied": false,
   "equivalenceProven": false,
   "scopeEnforced": false,
@@ -28,9 +30,9 @@
   "futureRequiredInputs": [
     {
       "inputId": "approved-proposal-state",
-      "artifactRole": "devview-approved-proposal-state",
+      "artifactRole": "devview-approved-proposal-state-preview",
       "required": true,
-      "authorityBoundary": "Approved proposal state is a future apply input only; this boundary does not create it."
+      "authorityBoundary": "Approved proposal state is an apply-readiness input only; this boundary does not create it or apply it."
     },
     {
       "inputId": "current-graph-source-identity",
@@ -54,9 +56,9 @@
   "futurePreconditionChecks": [
     {
       "checkId": "approved-state-present",
-      "description": "Future apply must require an approved proposal state created from a human-authored approve-proposal decision.",
+      "description": "Apply readiness requires an approved proposal state created from a human-authored approve-proposal decision.",
       "blockingIfMissing": true,
-      "implementedNow": false
+      "implementedNow": true
     },
     {
       "checkId": "approved-state-not-stale",
@@ -84,9 +86,9 @@
     },
     {
       "checkId": "dry-run-before-apply",
-      "description": "Future apply must support a dry-run preview and keep dry-run separate from --apply mutation.",
+      "description": "Apply readiness preview keeps precondition checking separate from future --apply mutation.",
       "blockingIfMissing": true,
-      "implementedNow": false
+      "implementedNow": true
     },
     {
       "checkId": "single-target-graph-source",
@@ -146,14 +148,14 @@
     "rollbackAutomationImplementedNow": false
   },
   "allowedUse": [
-    "document future graph delta apply preconditions",
-    "define dry-run/apply separation before implementation",
+    "document graph delta apply readiness preconditions",
+    "define readiness/apply separation before apply implementation",
     "define graph-source identity and stale-proposal checks",
     "define rollback/fallback requirements",
     "preserve no-mutation behavior until explicit future implementation"
   ],
   "forbiddenUse": [
-    "treat this boundary as an apply command",
+    "treat this boundary or readiness command as an apply command",
     "apply graph delta",
     "mutate graph-source",
     "create approved proposal state",
@@ -186,9 +188,9 @@
       "status": "future-not-implemented"
     },
     {
-      "step": "apply-approved-graph-delta-command-boundary",
-      "status": "future-not-implemented"
+      "step": "graph-delta-apply-readiness-command",
+      "status": "implemented-readiness-only"
     }
   ],
-  "nonExecutionBoundary": "This artifact previews the future graph delta apply boundary only. It does not add an apply CLI command, enable graph delta apply, apply a graph delta, mutate graph-source, create approved proposal state, record a human decision, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI or required checks, change branch protection, or replace user acceptance."
+  "nonExecutionBoundary": "This artifact previews the Graph Delta Apply readiness boundary. The readiness command checks approved-state and proposal preconditions only. It does not add an apply CLI command, enable graph delta apply, apply a graph delta, mutate graph-source, create approved proposal state, record a human decision, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI or required checks, change branch protection, or replace user acceptance."
 }

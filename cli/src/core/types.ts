@@ -100,6 +100,7 @@ export interface CliOptions {
   traversalPlan?: string
   selectedSlice?: string
   contractInput?: string
+  approvedState?: string
   scaffold?: string
   scriptScaffold?: string
   scriptTemplates?: string
