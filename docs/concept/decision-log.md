@@ -1836,3 +1836,21 @@ artifact, mutate graph-source, apply graph deltas, approve graph updates, change
 Evidence, enforce scope, reject diffs, introduce CI required checks, change branch protection, introduce executor
 automation, or automate user acceptance. The default graphDeltaPath policy remains unresolved except for explicit preview
 output paths supplied by the caller.
+
+## DEC-237 Add Human Review Packet For Proposal-Only Graph Delta Previews
+
+DEC-237 does not supersede DEC-097 through DEC-236. It adds the Human Review Packet surface for proposal-only Graph
+Delta previews:
+
+```text
+graph read-model review-graph-delta --proposal <proposalPath> --json
+graph read-model review-graph-delta --proposal <proposalPath> --markdown <file> --json
+```
+
+The packet command reads a `graph-delta-proposal-only-preview`, validates required non-apply and non-approval
+boundaries, and emits `reviewPacketStatus: review-required` with compact counts, candidate-only items, and human review
+questions. JSON is stdout by default. Markdown is written only when explicit `--markdown` is supplied.
+
+The review packet is review input only. It does not record approval, record human decisions, mutate graph-source, apply
+graph deltas, approve graph updates, change equivalence behavior, satisfy runtime Evidence, enforce scope, reject diffs,
+introduce CI required checks, change branch protection, introduce executor automation, or automate user acceptance.

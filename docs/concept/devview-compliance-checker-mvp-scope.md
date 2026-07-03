@@ -593,6 +593,18 @@ structure-only review candidate, keeps Evidence/report links candidate-only, and
 explicitly supplied. The generated preview is not graph-source, not graph delta apply, not approval, not runtime Evidence
 satisfaction, and not enforcement.
 
+The Human Review Packet CLI is now implemented:
+
+```text
+graph read-model review-graph-delta --proposal <proposalPath> --json
+graph read-model review-graph-delta --proposal <proposalPath> --markdown <file> --json
+```
+
+It consumes a proposal-only preview and emits a compact `review-required` packet for human developers. The packet is
+review input only: it does not record approval, record a human decision, mutate graph-source, apply graph deltas, satisfy
+runtime Evidence, prove equivalence, enforce scope, or reject diffs. Markdown is written only when `--markdown` is
+explicitly supplied.
+
 ## Runtime Budget Smoke
 
 The deterministic DevView runtime budget is documented in
@@ -609,8 +621,9 @@ advisory-not-enforced`, and `runtimeBudgetEnforced: false`. The timing smoke exc
 CI runtime, and human review. The changed-file collection measurement writes to a `.tmp` smoke artifact rather than the
 tracked Todo App preview artifact. The smoke includes the advisory `check-scope` command and writes its compact report to
 `.tmp` without writing a tracked evaluation artifact. It also includes the proposal-only generator with an explicit
-`.tmp` output path. It does not turn scope compliance or proposal generation into a gate and does not reject diffs,
-configure required checks, approve updates, or apply graph deltas.
+`.tmp` output path and the Human Review Packet command with an explicit `.tmp` Markdown output path. It does not turn
+scope compliance, proposal generation, or review-packet generation into a gate and does not reject diffs, configure
+required checks, approve updates, record human decisions, or apply graph deltas.
 
 ## Decision
 

@@ -146,6 +146,18 @@ The command reads a graph-delta-compatible source artifact, validates non-apply 
 `graph-delta-proposal-only-preview` object. It writes no file by default; timing smoke uses an explicit `.tmp` output.
 The preview is unapproved, non-enforcing, human-review-required, and not graph-source apply.
 
+The Human Review Packet CLI is also part of the measured advisory runtime path:
+
+```text
+graph read-model review-graph-delta --proposal <proposalPath> --json
+graph read-model review-graph-delta --proposal <proposalPath> --markdown <file> --json
+```
+
+The command reads a proposal-only preview, validates non-apply/non-approval boundaries, and emits a compact
+`review-required` packet. It writes no Markdown by default; timing smoke uses an explicit `.tmp` Markdown output. The
+packet is review input only and does not record approval, human decisions, runtime Evidence satisfaction, graph-source
+apply, or enforcement.
+
 ## Health Report Boundary
 
 `graph read-model report-health --json` exposes a small runtime budget summary:
@@ -175,8 +187,17 @@ approvalStatus: not-approved
 graphDeltaApplied: false
 ```
 
-The health report does not run the timing smoke, evaluator, or generator. It only names the advisory surfaces and
-preserves the non-enforcement/non-apply boundary.
+It also names the Human Review Packet CLI:
+
+```text
+graphDeltaHumanReviewPacketStatus: review-packet-cli-available
+command: graph read-model review-graph-delta --proposal <proposalPath> --json
+approvalStatus: not-approved
+humanDecisionRecorded: false
+```
+
+The health report does not run the timing smoke, evaluator, generator, or review packet command. It only names the
+advisory surfaces and preserves the non-enforcement/non-apply/non-approval boundary.
 
 ## Non-Goals
 

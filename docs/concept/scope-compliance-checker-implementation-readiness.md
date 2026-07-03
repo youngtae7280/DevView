@@ -704,6 +704,18 @@ It produces a `graph-delta-proposal-only-preview` aligned to `pbe-graph-update-p
 `nonEnforcing: true`, and `enforcementStatus: not-enforced`. It is not an apply-ready graph update proposal and does not
 mutate graph-source, apply graph deltas, satisfy runtime Evidence, prove equivalence, enforce scope, or reject diffs.
 
+The Human Review Packet CLI now summarizes those proposal-only previews for human developers:
+
+```text
+graph read-model review-graph-delta --proposal <proposalPath> --json
+graph read-model review-graph-delta --proposal <proposalPath> --markdown <file> --json
+```
+
+It validates the proposal-only boundaries again and emits `reviewPacketStatus: review-required` with compact counts,
+candidate-only items, and human review questions. It writes Markdown only to an explicit `--markdown` path. It does not
+record approval, record human decisions, mutate graph-source, apply graph deltas, satisfy runtime Evidence, prove
+equivalence, enforce scope, or reject diffs.
+
 ## Runtime Budget Timing Smoke
 
 The runtime performance budget is documented in
@@ -718,7 +730,8 @@ npm run devview:runtime:smoke
 It measures selected deterministic runtime commands after `npm run build:cli` has produced `dist/cli/index.js`.
 Measured commands currently include compiler input reporting, contract compiler dry-run, git-derived changed-file
 collection, advisory scope evaluation through `graph read-model check-scope`, and proposal-only graph delta preview
-generation through `graph read-model propose-graph-delta`. The smoke reports
+generation through `graph read-model propose-graph-delta`, and Human Review Packet generation through
+`graph read-model review-graph-delta`. The smoke reports
 `runtimeBudgetTargetMs: 5000`, `budgetStatus: advisory-not-enforced`, and `runtimeBudgetEnforced: false`.
 
 The git-derived changed-file collection measurement writes to `.tmp/devview-runtime-timing-smoke/` so timing checks do
@@ -730,6 +743,9 @@ runtime reporting visible without changing tracked preview artifacts.
 
 The proposal-only generator measurement writes only to `.tmp/devview-runtime-timing-smoke/` through explicit `--output`.
 It does not create a tracked proposal artifact or graph-source mutation.
+
+The Human Review Packet measurement reads that `.tmp` proposal preview and writes Markdown only to
+`.tmp/devview-runtime-timing-smoke/` through explicit `--markdown`. It does not record a human decision or approval.
 
 The timing smoke is not a CI gate. It excludes AI editing time, full validation, CI runtime, and human review time. It
 does not make the evaluator blocking, reject diffs, approve fixtures, satisfy runtime Evidence, prove equivalence, or

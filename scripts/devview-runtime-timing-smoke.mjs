@@ -9,6 +9,7 @@ const cliPath = join(repoRoot, 'dist/cli/index.js')
 const smokeArtifactPath = '.tmp/devview-runtime-timing-smoke/git-derived-changed-file-collection.json'
 const smokeScopeReportPath = '.tmp/devview-runtime-timing-smoke/scope-compliance-runtime-report.md'
 const smokeGraphDeltaProposalPath = '.tmp/devview-runtime-timing-smoke/graph-delta-proposal.preview.json'
+const smokeGraphDeltaReviewPacketPath = '.tmp/devview-runtime-timing-smoke/graph-delta-human-review-packet.md'
 const graphDeltaCompatibleSourcePath =
   'examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json'
 const runtimeBudgetTargetMs = 5000
@@ -73,6 +74,21 @@ const measuredSteps = [
       graphDeltaCompatibleSourcePath,
       '--output',
       smokeGraphDeltaProposalPath,
+      '--json',
+    ],
+    includedInRuntimeBudget: true,
+  },
+  {
+    stepName: 'graph-delta-human-review-packet',
+    command: `node dist/cli/index.js graph read-model review-graph-delta --proposal ${smokeGraphDeltaProposalPath} --markdown ${smokeGraphDeltaReviewPacketPath} --json`,
+    args: [
+      'graph',
+      'read-model',
+      'review-graph-delta',
+      '--proposal',
+      smokeGraphDeltaProposalPath,
+      '--markdown',
+      smokeGraphDeltaReviewPacketPath,
       '--json',
     ],
     includedInRuntimeBudget: true,

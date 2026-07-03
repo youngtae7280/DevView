@@ -11,6 +11,7 @@
   "graphDeltaApplied": false,
   "requiresHumanReview": true,
   "approvalStatus": "not-approved",
+  "humanDecisionRecorded": false,
   "equivalenceProven": false,
   "runtimeEvidenceSatisfied": false,
   "enforcementStatus": "not-enforced",
@@ -23,6 +24,7 @@
   "unresolvedMappingDecisionStatus": "graph-delta-proposal-unresolved-mapping-decision-previewed",
   "graphDeltaCompatibleSourceStatus": "graph-delta-compatible-source-previewed",
   "proposalGeneratorScopeDecisionStatus": "proposal-only-generator-scope-decided",
+  "humanReviewPacketSurfaceStatus": "review-packet-cli-available",
   "sourceArtifacts": {
     "advisoryCheckScopeJsonCommand": "graph read-model check-scope --base <baseRef> --head <headRef> --json",
     "compactAdvisoryRuntimeReportCommand": "graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json",
@@ -34,6 +36,7 @@
     "proposalUnresolvedMappingDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
     "graphDeltaCompatibleSource": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
     "proposalGeneratorScopeDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
+    "humanReviewPacketCore": "cli/src/core/graph-delta-human-review-packet.ts",
     "existingGraphSource": "examples/valid/todo-app-pbe-run/graph-source.json"
   },
   "inputSources": [

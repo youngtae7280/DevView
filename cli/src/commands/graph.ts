@@ -1,6 +1,7 @@
 import { relativePath } from '../core/fs.js'
 import { compileExecutionContractDryRun } from '../core/contract-compiler-dry-run.js'
 import { collectGitDerivedChangedFiles } from '../core/git-derived-changed-file-collection.js'
+import { generateGraphDeltaHumanReviewPacket } from '../core/graph-delta-human-review-packet.js'
 import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
 import { buildGraphExecutionContractReport } from '../core/graph-execution-contract.js'
 import { reportCompilerBoundary } from '../core/compiler-boundary.js'
@@ -721,6 +722,48 @@ export async function graphReadModelProposeGraphDeltaCommand(context: CommandCon
           message,
           suggestedFix:
             'Provide a readable graph-delta-compatible source artifact with proposalOnly=true, graphSourceMutated=false, graphDeltaApplied=false, requiresHumanReview=true, and approvalStatus=not-approved.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelReviewGraphDeltaCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.proposal) {
+    return invalidCommand('graph read-model review-graph-delta requires --proposal <proposalPath>.')
+  }
+
+  try {
+    const result = await generateGraphDeltaHumanReviewPacket(context.options.root, context.options.proposal, {
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph read-model review-graph-delta',
+      exitCode: ExitCode.Success,
+      message: 'Graph Delta human review packet created without approval or apply.',
+      issues: [],
+      data: {
+        ...result.packet,
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: 'Use this packet as review input only. This command does not record approval, mutate graph-source, apply graph deltas, satisfy runtime Evidence, prove equivalence, enforce scope, reject diffs, or create required checks.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model review-graph-delta',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Graph Delta human review packet generation blocked.',
+      issues: [
+        issue({
+          validator: 'GraphDeltaHumanReviewPacket',
+          code: 'GRAPH_DELTA_HUMAN_REVIEW_PACKET_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a readable proposal-only Graph Delta preview with proposalOnly=true, graphSourceMutated=false, graphDeltaApplied=false, requiresHumanReview=true, approvalStatus=not-approved, nonEnforcing=true, and enforcementStatus=not-enforced.',
         }),
       ],
     }

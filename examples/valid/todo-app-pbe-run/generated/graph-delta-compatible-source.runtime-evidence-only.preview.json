@@ -13,6 +13,7 @@
   "unresolvedMappingDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
   "proposalGeneratorScopeDecisionStatus": "proposal-only-generator-scope-decided",
   "proposalGeneratorScopeDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
+  "humanReviewPacketSurfaceStatus": "review-packet-cli-available-after-explicit-proposal-output",
   "proposalOnly": true,
   "candidateOnly": true,
   "candidateGenerationStatus": "not-generated",
@@ -193,9 +194,12 @@
     "status": "proposal-only-generator-scope-decided",
     "artifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
     "generatorImplementationStatus": "implemented-proposal-only-cli",
+    "humanReviewPacketSurfaceStatus": "review-packet-cli-available",
     "proposalGenerationStatus": "supported-on-demand-not-generated-in-this-source-artifact",
     "defaultOutputBehavior": "json-stdout-only",
-    "artifactWritePolicy": "no-tracked-artifact-churn-without-explicit-output"
+    "artifactWritePolicy": "no-tracked-artifact-churn-without-explicit-output",
+    "reviewPacketCommand": "graph read-model review-graph-delta --proposal <proposalPath> --markdown <file> --json",
+    "reviewPacketBoundary": "The review packet consumes an explicit proposal-only preview output and remains review input only; it does not record approval or human decisions."
   },
   "allowedUse": [
     "serve as the proposal-only generator input shape",
@@ -218,8 +222,9 @@
     "fixture approval",
     "runtime Evidence satisfaction",
     "equivalence proof",
+    "human decision recording",
     "user acceptance automation",
     "executor automation"
   ],
-  "nonExecutionBoundary": "This artifact is the graph-delta-compatible source input shape for the proposal-only generator. It is not graph-source, not a graph-delta-v0 artifact, not a pbe-graph-update-proposal-v0 artifact, and not graph delta apply. The generator emits graph-delta-proposal-only-preview JSON without mutating graph-source, approving graph updates, enforcing scope, rejecting diffs, satisfying runtime Evidence, proving equivalence, configuring CI or required checks, changing branch protection, or replacing human review."
+  "nonExecutionBoundary": "This artifact is the graph-delta-compatible source input shape for the proposal-only generator. It is not graph-source, not a graph-delta-v0 artifact, not a pbe-graph-update-proposal-v0 artifact, and not graph delta apply. The generator emits graph-delta-proposal-only-preview JSON without mutating graph-source, approving graph updates, enforcing scope, rejecting diffs, satisfying runtime Evidence, proving equivalence, configuring CI or required checks, changing branch protection, or replacing human review. The Human Review Packet surface consumes explicit proposal preview output only and does not record approval, record human decisions, or replace human review."
 }

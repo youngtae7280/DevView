@@ -106,6 +106,12 @@ or an explicit `--output` path, preserves unapproved/non-enforcing/human-review-
 from `graph operation apply-proposal`. It does not mutate graph-source, apply graph deltas, approve updates, satisfy
 runtime Evidence, prove equivalence, enforce scope, or reject diffs.
 
+The Human Review Packet surface is now available through
+`graph read-model review-graph-delta --proposal <proposalPath> --markdown <file> --json`. It summarizes a
+proposal-only preview for human developers, but it is review input only. It does not record approval, record a human
+decision, mutate graph-source, apply graph deltas, satisfy runtime Evidence, prove equivalence, enforce scope, or reject
+diffs.
+
 Retrofit graph sources can be inspected before implementation:
 
 ```powershell

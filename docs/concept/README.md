@@ -304,6 +304,11 @@ It defines the stdout-or-explicit-output CLI boundary now implemented by
 graph-source, apply graph deltas, approve updates, enforce scope, satisfy runtime Evidence, prove equivalence, or reject
 diffs.
 
+The Human Review Packet surface is now implemented by
+`graph read-model review-graph-delta --proposal <proposalPath> --json`. It can also write a compact Markdown packet
+with explicit `--markdown <file>`. The packet is review input only: it does not record approval, record human decisions,
+mutate graph-source, apply graph deltas, satisfy runtime Evidence, enforce scope, prove equivalence, or reject diffs.
+
 The following readiness artifact is complete at documentation level:
 
 - [representative-runtime-feasibility-demo.md](representative-runtime-feasibility-demo.md)

@@ -13,6 +13,7 @@
   "unresolvedMappingDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
   "decisionStatus": "proposal-only-generator-scope-decided",
   "generatorImplementationStatus": "implemented-proposal-only-cli",
+  "humanReviewPacketSurfaceStatus": "review-packet-cli-available",
   "proposalGenerationStatus": "supported-on-demand-not-generated-in-this-artifact",
   "candidateGenerationStatus": "supported-on-demand-not-generated-in-this-artifact",
   "proposalOnly": true,
@@ -74,7 +75,7 @@
         "inputId": "markdownReportPath",
         "flag": "--markdown <file>",
         "required": false,
-        "meaning": "Future optional compact proposal review report; not required for the first generator slice."
+        "meaning": "Human Review Packet Markdown output is implemented by graph read-model review-graph-delta and must be explicitly requested there."
       }
     ],
     "requiredOutputs": ["json-stdout", "proposal-shaped-preview-object"],
@@ -88,6 +89,21 @@
       "runtimeErrorsFailCommand": true,
       "timingBudgetFailureFailsCommand": false
     }
+  },
+  "humanReviewPacketSurface": {
+    "status": "review-packet-cli-available",
+    "command": "graph read-model review-graph-delta --proposal <proposalPath> --json",
+    "markdownCommand": "graph read-model review-graph-delta --proposal <proposalPath> --markdown <file> --json",
+    "defaultOutputBehavior": "json-stdout-only",
+    "artifactWritePolicy": "no-tracked-artifact-churn-without-explicit-markdown",
+    "reviewPacketStatus": "review-required",
+    "approvalStatus": "not-approved",
+    "graphSourceMutated": false,
+    "graphDeltaApplied": false,
+    "humanDecisionRecorded": false,
+    "runtimeEvidenceSatisfied": false,
+    "equivalenceProven": false,
+    "enforcementStatus": "not-enforced"
   },
   "proposalOutputPathPolicy": {
     "graphDeltaPathStatus": "unresolved-output-path-policy-required",
@@ -214,7 +230,7 @@
     },
     {
       "prerequisiteId": "compact-proposal-review-report",
-      "status": "deferred-optional"
+      "status": "implemented-as-human-review-packet-cli"
     }
   ],
   "allowedUse": [
@@ -222,6 +238,7 @@
     "record CLI input, output, artifact write, and exit-code policies",
     "record the minimum implemented proposal-shaped preview object",
     "preserve candidate-only Evidence/report link policy",
+    "support the Human Review Packet surface as review input only",
     "support the first proposal-only implementation while preserving non-apply boundaries"
   ],
   "forbiddenUse": [
@@ -241,5 +258,5 @@
     "user acceptance automation",
     "executor automation"
   ],
-  "nonExecutionBoundary": "This artifact records the narrow scope for the proposal-only Graph Delta generator/CLI now implemented as graph read-model propose-graph-delta. The implementation emits proposal-shaped preview JSON only; it does not generate apply-ready graph update proposals, mutate graph-source, apply graph deltas, approve graph updates, enforce scope, reject diffs, satisfy runtime Evidence, prove equivalence, configure CI or required checks, change branch protection, or automate user acceptance."
+  "nonExecutionBoundary": "This artifact records the narrow scope for the proposal-only Graph Delta generator/CLI now implemented as graph read-model propose-graph-delta and the Human Review Packet surface now implemented as graph read-model review-graph-delta. The implementation emits proposal-shaped preview JSON and review-required packet JSON/Markdown only; it does not generate apply-ready graph update proposals, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, enforce scope, reject diffs, satisfy runtime Evidence, prove equivalence, configure CI or required checks, change branch protection, or automate user acceptance."
 }

@@ -8,10 +8,12 @@
   "unresolvedMappingDecisionStatus": "graph-delta-proposal-unresolved-mapping-decision-previewed",
   "graphDeltaCompatibleSourceStatus": "graph-delta-compatible-source-previewed",
   "proposalGeneratorScopeDecisionStatus": "proposal-only-generator-scope-decided",
+  "humanReviewPacketSurfaceStatus": "review-packet-cli-available",
   "proposalBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-boundary.runtime-evidence-only.preview.json",
   "unresolvedMappingDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
   "graphDeltaCompatibleSourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
   "proposalGeneratorScopeDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
+  "humanReviewPacketCore": "cli/src/core/graph-delta-human-review-packet.ts",
   "existingGraphUpdateProposalSchema": "schemas/pbe/graph-update-proposal-v0.json",
   "existingGraphDeltaSchema": "schemas/pbe/graph-delta-v0.json",
   "existingGraphOperationDocs": [

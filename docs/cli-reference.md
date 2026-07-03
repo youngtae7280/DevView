@@ -462,6 +462,33 @@ node dist/cli/index.js graph read-model propose-graph-delta `
   --json
 ```
 
+### `pbe graph read-model review-graph-delta`
+
+- Purpose: Generate a compact Human Review Packet from a proposal-only Graph Delta preview.
+- Typical state before running: After `graph read-model propose-graph-delta` has emitted a
+  `graph-delta-proposal-only-preview` JSON object, usually to an explicit `.tmp` path.
+- Options: `--proposal <proposalPath>` is required. `--markdown <file>` may write the human-readable packet. Without
+  `--markdown`, JSON stdout is the only output.
+- What it checks: Proposal-only boundary fields, including `proposalOnly: true`, `graphSourceMutated: false`,
+  `graphDeltaApplied: false`, `requiresHumanReview: true`, `approvalStatus: not-approved`, `nonEnforcing: true`, and
+  `enforcementStatus: not-enforced`.
+- What it writes: Nothing by default. It writes Markdown only to the explicit `--markdown` path.
+- Success result: JSON with `reviewPacketStatus: review-required`, review counts, candidate-only items,
+  `approvalStatus: not-approved`, `graphSourceMutated: false`, `graphDeltaApplied: false`, and
+  `humanDecisionRecorded: false`.
+- Common failures: unreadable proposal preview, malformed JSON, non-preview proposal role, or unsafe boundary fields.
+- Next command: Use the packet as review input only. Do not treat it as approval, human decision record, graph-source
+  apply, runtime Evidence satisfaction, equivalence proof, enforcement, or user acceptance.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model review-graph-delta `
+  --proposal .tmp/devview-graph-delta-proposal.preview.json `
+  --markdown .tmp/devview-graph-delta-review-packet.md `
+  --json
+```
+
 ### `pbe graph operation apply-proposal`
 
 - Purpose: Preview or apply a generated graph update proposal to its graph-source.

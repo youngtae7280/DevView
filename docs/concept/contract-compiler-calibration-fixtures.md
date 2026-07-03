@@ -1819,6 +1819,18 @@ It emits `artifactRole: graph-delta-proposal-only-preview` with `schemaId: pbe-g
 create an apply-ready graph update proposal, mutate graph-source, apply graph deltas, approve updates, satisfy runtime
 Evidence, prove equivalence, reject diffs, enforce scope, or configure required checks.
 
+The Human Review Packet CLI is:
+
+```text
+graph read-model review-graph-delta --proposal <proposalPath> --json
+graph read-model review-graph-delta --proposal <proposalPath> --markdown <file> --json
+```
+
+It consumes proposal-only previews and emits `reviewPacketStatus: review-required` with compact review counts,
+candidate-only items, and human review questions. It does not approve the fixture, record a human decision, mutate
+graph-source, apply graph deltas, satisfy runtime Evidence, prove equivalence, reject diffs, enforce scope, or configure
+required checks.
+
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
 approval or runtime Evidence satisfaction.
@@ -1839,8 +1851,9 @@ full test suites, CI runtime, human review, and AI editing time are outside this
 step writes to a `.tmp` smoke artifact rather than refreshing the tracked Todo App collection preview. The smoke
 includes advisory `check-scope` and writes its compact runtime report to `.tmp` without writing an evaluation artifact.
 It also includes proposal-only graph delta preview generation and writes any generated preview to `.tmp` through explicit
-`--output`. It does not enforce scope, reject diffs, configure required checks, approve fixtures, satisfy runtime
-Evidence, prove equivalence, or apply graph deltas.
+`--output`. It then generates the Human Review Packet from that `.tmp` proposal preview and writes Markdown only to
+`.tmp` through explicit `--markdown`. It does not enforce scope, reject diffs, configure required checks, approve
+fixtures, record human decisions, satisfy runtime Evidence, prove equivalence, or apply graph deltas.
 
 ## Fixture-Provided Changed-File List Preview
 

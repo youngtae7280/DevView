@@ -11,6 +11,8 @@
   "graphDeltaCompatibleSourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
   "proposalGeneratorScopeDecisionStatus": "proposal-only-generator-scope-decided",
   "proposalGeneratorScopeDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
+  "humanReviewPacketSurfaceStatus": "review-packet-cli-available",
+  "humanReviewPacketCore": "cli/src/core/graph-delta-human-review-packet.ts",
   "existingGraphSource": "examples/valid/todo-app-pbe-run/graph-source.json",
   "existingChangeTree": "examples/valid/todo-app-pbe-run/.pbe/control/change-tree.json",
   "boundaryState": {
@@ -24,6 +26,7 @@
     "graphDeltaApplied": false,
     "requiresHumanReview": true,
     "approvalStatus": "not-approved",
+    "humanDecisionRecorded": false,
     "equivalenceProven": false,
     "runtimeEvidenceSatisfied": false,
     "enforcementStatus": "not-enforced",
