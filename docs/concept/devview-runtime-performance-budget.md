@@ -54,6 +54,7 @@ npm run devview:runtime:smoke
 It runs:
 
 - `node dist/cli/index.js graph read-model validate-request-ir --candidate examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json --output .tmp/devview-runtime-timing-smoke/request-ir-validation.json --json`;
+- `node dist/cli/index.js graph read-model validate-request-ir-graph --candidate examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json --schema-validation .tmp/devview-runtime-timing-smoke/request-ir-validation.json --output .tmp/devview-runtime-timing-smoke/request-ir-graph-validation.json --json`;
 - `node dist/cli/index.js graph read-model report-compiler-input --json`;
 - `node dist/cli/index.js graph read-model compile-contract --dry-run --json`;
 - `node dist/cli/index.js graph read-model collect-changed-files --base HEAD~1 --head HEAD --output .tmp/devview-runtime-timing-smoke/git-derived-changed-file-collection.json --json`.
@@ -211,15 +212,28 @@ This validator checks candidate schema and safety boundaries only. A schema-vali
 `graphAuthorityValidationStatus: not-run`, `graphTraversalAllowed: false`, `contractGenerationAllowed: false`, and
 `instructionPackGenerationAllowed: false`.
 
-The graph-aware validation boundary is previewed separately:
+The graph-aware Request IR validator is now part of the measured advisory runtime path:
+
+```text
+graph read-model validate-request-ir-graph --candidate <candidatePath> --schema-validation <schemaValidationPath> --json
+graph read-model validate-request-ir-graph --candidate <candidatePath> --schema-validation <schemaValidationPath> --output <validationPath> --json
+```
+
+The tracked Todo App graph-aware validation result is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json
+```
+
+The graph-aware boundary remains:
 
 ```text
 examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json
 ```
 
-It is not a measured runtime command yet. It defines how a future deterministic pass may validate schema-valid candidate
-fields such as `CH-001`, `Todo App`, `runtime-evidence-only`, and `test-only-behavior-proof` against graph/read-model
-authority. The boundary does not run graph traversal, select nodes or edges, generate contract input, generate
+The validator resolves schema-valid candidate fields such as `CH-001`, `Todo App`, `runtime-evidence-only`, and
+`test-only-behavior-proof` against graph/read-model authority. `graphTraversalAllowed: true` is only future-pass
+permission. The validator does not run graph traversal, select nodes or edges, generate contract input, generate
 instruction packs, call an LLM, or mutate graph-source.
 
 ## Health Report Boundary
@@ -260,8 +274,19 @@ approvalStatus: not-approved
 humanDecisionRecorded: false
 ```
 
-The health report does not run the timing smoke, evaluator, generator, or review packet command. It only names the
-advisory surfaces and preserves the non-enforcement/non-apply/non-approval boundary.
+It also names the Request IR graph-aware validator CLI:
+
+```text
+requestIrGraphValidatorStatus: graph-aware-cli-available
+command: graph read-model validate-request-ir-graph --candidate <candidatePath> --schema-validation <schemaValidationPath> --json
+graphValidationStatus: not-run-by-report-health
+graphTraversalAllowed: false
+selectedGraphSliceGenerated: false
+contractGenerationAllowed: false
+```
+
+The health report does not run the timing smoke, evaluator, generator, review packet command, or Request IR graph-aware
+validator. It only names the advisory surfaces and preserves the non-enforcement/non-apply/non-approval boundary.
 
 ## Non-Goals
 

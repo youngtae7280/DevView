@@ -3,6 +3,7 @@ import { compileExecutionContractDryRun } from '../core/contract-compiler-dry-ru
 import { collectGitDerivedChangedFiles } from '../core/git-derived-changed-file-collection.js'
 import { generateGraphDeltaHumanReviewPacket } from '../core/graph-delta-human-review-packet.js'
 import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
+import { validateRequestIrGraphAwareFile } from '../core/request-ir-graph-aware-validator.js'
 import { validateRequestIrCandidateFile } from '../core/request-ir-candidate-validator.js'
 import { buildGraphExecutionContractReport } from '../core/graph-execution-contract.js'
 import { reportCompilerBoundary } from '../core/compiler-boundary.js'
@@ -809,7 +810,7 @@ export async function graphReadModelValidateRequestIrCommand(context: CommandCon
         ...(validation.outputPath ? { outputPath: validation.outputPath } : {}),
         next: blocked
           ? 'Fix the malformed or unsafe Request IR Candidate boundary fields. This validator never enables traversal from unsafe AI output.'
-          : 'Proceed only to future graph-aware validation. Schema-valid candidate output still cannot drive graph traversal, contract generation, or instruction-pack generation.',
+          : 'Proceed only to graph-aware validation. Schema-valid candidate output still cannot drive graph traversal, contract generation, or instruction-pack generation.',
       },
     }
   } catch (error) {
@@ -827,6 +828,78 @@ export async function graphReadModelValidateRequestIrCommand(context: CommandCon
           message,
           suggestedFix:
             'Provide a readable Request IR Candidate artifact with candidate-only boundaries and no graph traversal or contract-generation claims.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelValidateRequestIrGraphCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.candidate) {
+    return invalidCommand('graph read-model validate-request-ir-graph requires --candidate <candidatePath>.')
+  }
+  if (!context.options.schemaValidation) {
+    return invalidCommand(
+      'graph read-model validate-request-ir-graph requires --schema-validation <schemaValidationPath>.',
+    )
+  }
+
+  try {
+    const validation = await validateRequestIrGraphAwareFile(
+      context.options.root,
+      context.options.candidate,
+      context.options.schemaValidation,
+      {
+        output: context.options.output,
+      },
+    )
+    const blocked = validation.result.graphValidationStatus === 'validation-blocked'
+    const errorFindings = validation.result.validationFindings.filter((finding) => finding.severity === 'error')
+
+    return {
+      ok: !blocked,
+      command: 'graph read-model validate-request-ir-graph',
+      exitCode: blocked ? ExitCode.ValidationFailed : ExitCode.Success,
+      message: blocked
+        ? 'Request IR graph-aware validation blocked before traversal.'
+        : 'Request IR graph-aware validation completed without running traversal.',
+      issues: blocked
+        ? errorFindings.map((finding) =>
+            issue({
+              validator: 'RequestIrGraphAwareValidator',
+              code: finding.code,
+              severity: finding.severity,
+              message: finding.message,
+              reason: finding.field ? `Field: ${finding.field}` : undefined,
+              suggestedFix:
+                finding.suggestedFix ??
+                'Fix the Request IR candidate or schema-only validation prerequisite before graph traversal can be considered.',
+            }),
+          )
+        : [],
+      data: {
+        ...validation.result,
+        ...(validation.outputPath ? { outputPath: validation.outputPath } : {}),
+        next: blocked
+          ? 'Fix the graph-aware validation prerequisite or unresolved candidate authority. No traversal, selected slice, contract input, or instruction pack was generated.'
+          : 'A later traversal pass may be attempted. This command did not run traversal, select graph nodes or edges, generate contract input, generate instruction packs, mutate graph-source, or approve work.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model validate-request-ir-graph',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Request IR graph-aware validation could not run.',
+      issues: [
+        issue({
+          validator: 'RequestIrGraphAwareValidator',
+          code: 'REQUEST_IR_GRAPH_AWARE_VALIDATION_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide readable Request IR Candidate and schema-only validation artifacts. Graph-aware validation does not run traversal or generate contract input.',
         }),
       ],
     }

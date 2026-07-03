@@ -28,6 +28,7 @@
   "requestIrGraphAwareValidationStatus": "not-implemented",
   "requestIrGraphAwareValidationBoundaryStatus": "request-ir-graph-aware-validation-boundary-previewed",
   "requestIrGraphAwareValidationBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json",
+  "requestIrGraphAwareValidationResultArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
   "devviewActivationModes": [
     {
       "mode": "off",

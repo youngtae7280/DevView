@@ -586,6 +586,19 @@ interface GraphSourceHealthReport {
     humanDecisionRecorded: false
     reportHealthRunsReviewPacket: false
   }
+  requestIrGraphValidator: {
+    requestIrGraphValidatorStatus: 'graph-aware-cli-available'
+    command: 'graph read-model validate-request-ir-graph --candidate <candidatePath> --schema-validation <schemaValidationPath> --json'
+    graphValidationStatus: 'not-run-by-report-health'
+    graphTraversalAllowed: false
+    graphTraversalExecuted: false
+    selectedGraphSliceGenerated: false
+    contractGenerationAllowed: false
+    contractInputGenerated: false
+    instructionPackGenerationAllowed: false
+    instructionPackGenerated: false
+    reportHealthRunsValidator: false
+  }
   enforcementStatus: 'non-enforcing'
   nonEnforcementStatement: string
   requiredCheckBoundary: string
@@ -1594,6 +1607,20 @@ export async function reportGraphSourceHealth(root: string): Promise<GraphSource
       humanDecisionRecorded: false,
       reportHealthRunsReviewPacket: false,
     },
+    requestIrGraphValidator: {
+      requestIrGraphValidatorStatus: 'graph-aware-cli-available',
+      command:
+        'graph read-model validate-request-ir-graph --candidate <candidatePath> --schema-validation <schemaValidationPath> --json',
+      graphValidationStatus: 'not-run-by-report-health',
+      graphTraversalAllowed: false,
+      graphTraversalExecuted: false,
+      selectedGraphSliceGenerated: false,
+      contractGenerationAllowed: false,
+      contractInputGenerated: false,
+      instructionPackGenerationAllowed: false,
+      instructionPackGenerated: false,
+      reportHealthRunsValidator: false,
+    },
     enforcementStatus: 'non-enforcing',
     nonEnforcementStatement:
       'Graph-source health report is local/non-enforcing summary only. It does not create required checks, branch protection, merge enforcement, or user acceptance.',
@@ -1664,6 +1691,7 @@ Status: \`${report.status}\`
 | Scope compliance evaluator CLI | \`${report.scopeComplianceEvaluator.scopeComplianceEvaluatorStatus}\`; compact report \`${report.scopeComplianceEvaluator.compactReportStatus}\`; non-enforcing \`${report.scopeComplianceEvaluator.nonEnforcing}\`; enforced \`${report.scopeComplianceEvaluator.enforcementStatus}\`; health runs evaluator \`${report.scopeComplianceEvaluator.reportHealthRunsEvaluator}\`; command \`${report.scopeComplianceEvaluator.command}\`; compact command \`${report.scopeComplianceEvaluator.compactReportCommand}\` |
 | Graph Delta proposal-only generator CLI | \`${report.graphDeltaProposalGenerator.graphDeltaProposalGeneratorStatus}\`; proposal-only \`${report.graphDeltaProposalGenerator.proposalOnly}\`; graph-source mutated \`${report.graphDeltaProposalGenerator.graphSourceMutated}\`; graph delta applied \`${report.graphDeltaProposalGenerator.graphDeltaApplied}\`; approval \`${report.graphDeltaProposalGenerator.approvalStatus}\`; health runs generator \`${report.graphDeltaProposalGenerator.reportHealthRunsGenerator}\`; command \`${report.graphDeltaProposalGenerator.command}\` |
 | Graph Delta human review packet CLI | \`${report.graphDeltaHumanReviewPacket.graphDeltaHumanReviewPacketStatus}\`; surface \`${report.graphDeltaHumanReviewPacket.reviewPacketSurface}\`; approval \`${report.graphDeltaHumanReviewPacket.approvalStatus}\`; graph-source mutated \`${report.graphDeltaHumanReviewPacket.graphSourceMutated}\`; graph delta applied \`${report.graphDeltaHumanReviewPacket.graphDeltaApplied}\`; decision recorded \`${report.graphDeltaHumanReviewPacket.humanDecisionRecorded}\`; health runs packet \`${report.graphDeltaHumanReviewPacket.reportHealthRunsReviewPacket}\`; command \`${report.graphDeltaHumanReviewPacket.command}\` |
+| Request IR graph-aware validator CLI | \`${report.requestIrGraphValidator.requestIrGraphValidatorStatus}\`; graph validation \`${report.requestIrGraphValidator.graphValidationStatus}\`; traversal allowed \`${report.requestIrGraphValidator.graphTraversalAllowed}\`; traversal executed \`${report.requestIrGraphValidator.graphTraversalExecuted}\`; selected slice generated \`${report.requestIrGraphValidator.selectedGraphSliceGenerated}\`; contract generation allowed \`${report.requestIrGraphValidator.contractGenerationAllowed}\`; health runs validator \`${report.requestIrGraphValidator.reportHealthRunsValidator}\`; command \`${report.requestIrGraphValidator.command}\` |
 
 ${report.contractCompilerDryRun.diffReviewBoundary}
 
@@ -1699,6 +1727,7 @@ ${blockingReasons}
 - Scope compliance evaluator findings from \`${report.scopeComplianceEvaluator.command}\` are advisory only. The compact report surface \`${report.scopeComplianceEvaluator.compactReportCommand}\` summarizes the same result without making it blocking. Report-health does not run the evaluator and advisory findings do not reject diffs or create required checks.
 - Graph Delta proposal-only previews from \`${report.graphDeltaProposalGenerator.command}\` are unapproved review artifacts only. Report-health does not run the generator, mutate graph-source, apply graph deltas, approve updates, satisfy runtime Evidence, or enforce scope.
 - Graph Delta human review packets from \`${report.graphDeltaHumanReviewPacket.command}\` are review input only. Report-health does not run the packet command, record human decisions, approve proposals, mutate graph-source, apply graph deltas, satisfy runtime Evidence, or enforce scope.
+- Request IR graph-aware validation from \`${report.requestIrGraphValidator.command}\` resolves candidate fields for future traversal permission only. Report-health does not run the validator, run traversal, select graph slices, generate contract input, generate instruction packs, mutate graph-source, or approve work.
 
 ## Reproduce
 
@@ -1709,6 +1738,7 @@ node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --
 node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --markdown .tmp/devview-scope-runtime-report.md --json
 node dist/cli/index.js graph read-model propose-graph-delta --source examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json --output .tmp/devview-graph-delta-proposal.preview.json --json
 node dist/cli/index.js graph read-model review-graph-delta --proposal .tmp/devview-graph-delta-proposal.preview.json --markdown .tmp/devview-graph-delta-review-packet.md --json
+node dist/cli/index.js graph read-model validate-request-ir-graph --candidate examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json --schema-validation examples/valid/todo-app-pbe-run/generated/request-ir-validation.add-todo-runtime-evidence-only.preview.json --json
 node dist/cli/index.js graph read-model validate --all --json
 npm run test:read-model:e2e
 node dist/cli/index.js graph read-model report-compiler-boundary --json

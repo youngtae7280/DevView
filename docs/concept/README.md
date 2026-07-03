@@ -338,9 +338,13 @@ instruction packs, or call an LLM.
 
 The graph-aware validation boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json`.
-It defines how a future deterministic pass may resolve candidate fields against graph/read-model authority after
-schema-only validation. It is not implemented graph-aware validation, not graph traversal, not selected graph slice
-generation, and not contract compiler input generation.
+The first non-traversing graph-aware validator is exposed through
+`graph read-model validate-request-ir-graph --candidate <candidatePath> --schema-validation <schemaValidationPath> --json`.
+Its Todo App calibration result is
+`examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json`.
+It resolves `CH-001`, `Todo App`, `runtime-evidence-only`, and `test-only-behavior-proof` against graph/read-model
+authority after schema-only validation. It is not graph traversal, not selected graph slice generation, not contract
+compiler input generation, and not instruction pack generation.
 
 The following readiness artifact is complete at documentation level:
 

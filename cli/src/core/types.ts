@@ -86,6 +86,7 @@ export interface CliOptions {
   markdown?: string
   proposal?: string
   candidate?: string
+  schemaValidation?: string
   chainCommand?: string
   base?: string
   head?: string

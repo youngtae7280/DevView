@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "request-ir-graph-aware-validation",
+  "status": "request-ir-graph-aware-validation-complete",
+  "validatorName": "RequestIrGraphAwareValidator",
+  "validationScope": "graph-aware-validation-no-traversal",
+  "candidatePath": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json",
+  "schemaValidationPath": "examples/valid/todo-app-pbe-run/generated/request-ir-validation.add-todo-runtime-evidence-only.preview.json",
+  "schemaValidationPrerequisiteStatus": "passed",
+  "graphAuthorityInputs": {
+    "graphSourcePath": "examples/valid/todo-app-pbe-run/graph-source.json",
+    "generatedReadModelPath": "examples/valid/todo-app-pbe-run/generated/generated-read-model.json",
+    "compilerInputCalibrationDraftPath": "examples/valid/todo-app-pbe-run/generated/compiler-input-model-calibration-draft.runtime-evidence-only.json",
+    "graphSourceStatus": "confirmed-graph-source-backed",
+    "graphSourcePolicyLevel": "structure-only",
+    "graphSourceScope": "todo-app-pbe-run-structure-only",
+    "graphSourceNodeCount": 22,
+    "graphSourceEdgeCount": 38,
+    "sourceAuthorityBoundary": "This Todo App PBE Run graph source is confirmed for structure-only graph-source-backed generation. Canonical .pbe artifacts remain compatibility/fallback/reference, and this graph source does not create parity backing, pilot marker backing, CI enforcement, or broader source authority."
+  },
+  "targetRecordValidationStatus": "resolved",
+  "targetRecordResolution": {
+    "candidate": "CH-001",
+    "resolvedRecordId": "CH-001",
+    "nodeKind": "change",
+    "sourceArtifact": "examples/valid/todo-app-pbe-run/.pbe/control/change-tree.json",
+    "status": "impact_analyzed",
+    "graphSourceAuthorityStatus": "resolved-from-structure-only-graph-source",
+    "readModelRecordPresent": true,
+    "authorityBoundary": "record existence is resolved for future traversal permission only, not source promotion"
+  },
+  "targetComponentValidationStatus": "resolved",
+  "targetComponentResolution": {
+    "candidate": "Todo App",
+    "resolvedComponent": "Todo App PBE Run",
+    "graphSourceScope": "todo-app-pbe-run-structure-only",
+    "sourceProfile": "todo-app-pbe-run-structure-only",
+    "authorityStatus": "resolved-from-calibration-fixture-and-graph-source-scope",
+    "authorityBoundary": "component resolution permits a future traversal attempt only"
+  },
+  "requestTypeValidationStatus": "resolved",
+  "changeTypeCompatibilityStatus": "compatible",
+  "changeTypeCompatibility": {
+    "requestTypeCandidate": "runtime-evidence-only",
+    "changeTypeCandidate": "test-only-behavior-proof",
+    "compatiblePolicy": "test-only-behavior-proof-boundary",
+    "graphSourcePolicyLevel": "structure-only",
+    "compatibilityBoundary": "compatibility does not generate contract input or instruction packs"
+  },
+  "scopeIntentValidationStatus": "resolved",
+  "scopeIntentResolution": {
+    "allowedScopeIntentCandidate": [
+      "runtime behavior evidence",
+      "test output or evidence artifact updates",
+      "review/report-only artifacts"
+    ],
+    "forbiddenScopeIntentCandidate": [
+      "production source changes",
+      "graph-source mutation",
+      "approval or acceptance changes"
+    ],
+    "targetScopeCandidateCount": 3,
+    "forbiddenScopeRuleCount": 3,
+    "resolutionBoundary": "scope intent is resolved enough for future traversal permission, not enforcement"
+  },
+  "requiredEvidenceAvailabilityStatus": "resolved",
+  "requiredEvidenceResolution": {
+    "requiredEvidenceIntentCandidate": [
+      "add-todo behavior proof",
+      "runtime or test evidence link candidate",
+      "report artifact candidate"
+    ],
+    "evidenceCheckMappingCount": 3,
+    "runtimeEvidenceSatisfied": false,
+    "acceptedEvidence": false,
+    "resolutionBoundary": "evidence policy is resolvable, but Evidence is not accepted or satisfied by this validator"
+  },
+  "riskIntentValidationStatus": "resolved",
+  "riskIntentResolution": {
+    "riskIntentCandidate": [
+      "attached evidence may not satisfy runtime Evidence policy",
+      "target record CH-001 remains structure-only until validation confirms authority",
+      "production source must remain untouched"
+    ],
+    "riskSourceCount": 3,
+    "resolutionBoundary": "risk intent informs future traversal planning only"
+  },
+  "graphValidationStatus": "graph-aware-valid",
+  "graphTraversalAllowed": true,
+  "graphTraversalPermissionMeaning": "future-pass-permission-only",
+  "graphTraversalExecuted": false,
+  "selectedGraphSliceGenerated": false,
+  "contractGenerationAllowed": false,
+  "contractInputGenerated": false,
+  "instructionPackGenerationAllowed": false,
+  "instructionPackGenerated": false,
+  "requiresClarification": false,
+  "humanReviewRequired": true,
+  "aiClassifierImplemented": false,
+  "llmCallsIntroduced": false,
+  "graphSourceInspected": true,
+  "graphNodeExistenceValidated": true,
+  "graphEdgeExistenceValidated": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false,
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "runtimeEvidenceSatisfied": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "outputWritePolicy": "explicit-output-only",
+  "writtenOutputPath": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
+  "writtenOutputPathAuthorityStatus": "explicit-preview-output-not-graph-source",
+  "validationFindings": [],
+  "nonExecutionBoundary": "This graph-aware Request IR validator resolves candidate fields against graph/read-model metadata only far enough to decide whether a later traversal pass may be attempted. It does not call an LLM, run graph traversal, create traversal plans, select nodes or edges, generate selected graph slices, generate contract compiler input, generate instruction packs, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, enforce scope, reject diffs, or configure required checks."
+}

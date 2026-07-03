@@ -127,18 +127,20 @@ The schema-only validation result for that fixture is:
 examples/valid/todo-app-pbe-run/generated/request-ir-validation.add-todo-runtime-evidence-only.preview.json
 ```
 
-These files do not implement hook behavior or AI classification. The validator checks schema and candidate-only safety
-boundaries, but graph-aware validation remains future work. A schema-valid Request IR Candidate still cannot drive graph
-traversal, contract generation, or instruction pack generation.
+These files do not implement hook behavior or AI classification. The schema-only validator checks schema and
+candidate-only safety boundaries. The graph-aware Request IR validator is now implemented as a non-traversing pass; a
+graph-aware-valid result may permit a later traversal attempt but still cannot itself drive graph traversal, contract
+generation, or instruction pack generation.
 
-The graph-aware validation boundary is previewed as the next compiler-frontend prerequisite:
+The graph-aware validation boundary and first validation result are:
 
 ```text
 examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json
 ```
 
-It is still not hook behavior, not graph traversal, not selected graph slice generation, and not contract compiler input
-generation.
+They are still not hook behavior, not graph traversal, not selected graph slice generation, and not contract compiler
+input generation.
 
 ## Trust Boundary
 

@@ -20,9 +20,11 @@
   "requestIrValidatorImplemented": true,
   "requestIrValidatorScope": "schema-and-boundary-only",
   "requestIrSchemaOnlyValidationResultArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-validation.add-todo-runtime-evidence-only.preview.json",
-  "graphAwareRequestIrValidatorImplemented": false,
+  "graphAwareRequestIrValidatorImplemented": true,
   "graphAwareValidationBoundaryStatus": "request-ir-graph-aware-validation-boundary-previewed",
   "graphAwareValidationBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json",
+  "graphAwareValidatorImplemented": true,
+  "graphAwareValidationResultArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
   "graphSourceMutated": false,
   "graphDeltaApplied": false,
   "approvalStatus": "not-approved",
@@ -207,9 +209,10 @@
     "highConfidenceBoundary": "high confidence still does not permit graph traversal until deterministic validation succeeds"
   },
   "futureValidatorExpectations": {
-    "validatorStatus": "schema-only-validator-implemented-graph-aware-validation-future",
+    "validatorStatus": "schema-only-and-graph-aware-validators-implemented-no-traversal",
     "schemaOnlyValidationResult": "examples/valid/todo-app-pbe-run/generated/request-ir-validation.add-todo-runtime-evidence-only.preview.json",
     "graphAwareValidationBoundary": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json",
+    "graphAwareValidationResult": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
     "inputs": [
       "request-ir-candidate-schema.runtime-evidence-only.preview.json",
       "request-ir-candidate.add-todo-runtime-evidence-only.preview.json",
@@ -235,7 +238,7 @@
     ],
     "outputStatuses": ["schema-valid-graph-validation-not-run", "validation-blocked"],
     "futureGraphAwareOutputStatuses": [
-      "validated",
+      "graph-aware-valid",
       "validation-blocked",
       "clarification-required",
       "human-review-required"
@@ -256,7 +259,7 @@
     "define future AI request analyzer output shape",
     "validate candidate fixture shape in the schema-only validator",
     "preserve candidate-only Request IR boundary",
-    "link the graph-aware validation boundary as the next deterministic pass",
+    "link the graph-aware validation boundary and result as the next non-traversing deterministic pass",
     "document narrow request type taxonomy and confidence policy"
   ],
   "forbiddenUse": [
@@ -274,5 +277,5 @@
     "scope enforcement",
     "CI required check"
   ],
-  "nonExecutionBoundary": "This artifact previews the Request IR Candidate schema only and links the graph-aware validation boundary as the future next deterministic pass. It does not implement an AI classifier, call an LLM, run graph-aware Request IR validation, run graph traversal, select nodes or edges, generate contract compiler input, generate instruction packs, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, configure required checks, or automate user acceptance."
+  "nonExecutionBoundary": "This artifact previews the Request IR Candidate schema only and links the graph-aware validation boundary and result as the next non-traversing deterministic pass. It does not implement an AI classifier, call an LLM, run graph traversal, select nodes or edges, generate contract compiler input, generate instruction packs, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, configure required checks, or automate user acceptance."
 }

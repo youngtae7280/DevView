@@ -6,8 +6,11 @@
   "fixtureShape": "test-only-behavior-proof",
   "validatorName": "RequestIrGraphAwareValidator",
   "validationScope": "graph-aware-boundary-preview",
-  "implementationStatus": "boundary-preview-only",
-  "graphAwareValidatorImplemented": false,
+  "implementationStatus": "implemented-as-non-traversing-validator",
+  "graphAwareValidatorImplemented": true,
+  "graphAwareValidatorCore": "cli/src/core/request-ir-graph-aware-validator.ts",
+  "graphAwareValidatorCommand": "graph read-model validate-request-ir-graph --candidate <candidatePath> --schema-validation <schemaValidationPath> --json",
+  "firstCalibrationGraphAwareValidationArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
   "graphTraversalExecuted": false,
   "selectedGraphSliceGenerated": false,
   "contractInputGenerated": false,
@@ -50,58 +53,59 @@
     "targetRecordIdCandidate": {
       "candidateValue": "CH-001",
       "authorityRequired": "graph-record-existence-or-structure-only-record-authority",
-      "currentBoundaryStatus": "requires-future-graph-aware-validation",
+      "currentBoundaryStatus": "resolved-by-graph-aware-validation",
       "validationStatusValues": ["not-run", "resolved", "unresolved", "ambiguous", "review-required"]
     },
     "targetComponentCandidate": {
       "candidateValue": "Todo App",
       "authorityRequired": "graph/read-model component identity",
-      "currentBoundaryStatus": "requires-future-graph-aware-validation",
+      "currentBoundaryStatus": "resolved-by-graph-aware-validation",
       "validationStatusValues": ["not-run", "resolved", "unresolved", "ambiguous", "review-required"]
     },
     "requestTypeCandidate": {
       "candidateValue": "runtime-evidence-only",
       "authorityRequired": "request-type taxonomy and calibration fixture policy",
-      "currentBoundaryStatus": "schema-valid-but-policy-compatibility-not-run",
+      "currentBoundaryStatus": "resolved-by-graph-aware-validation",
       "validationStatusValues": ["not-run", "resolved", "incompatible", "review-required"]
     },
     "changeTypeCandidate": {
       "candidateValue": "test-only-behavior-proof",
       "authorityRequired": "change type compatibility with Todo App runtime Evidence-only calibration fixture",
-      "currentBoundaryStatus": "requires-future-change-type-compatibility-validation",
+      "currentBoundaryStatus": "compatible-by-graph-aware-validation",
       "validationStatusValues": ["not-run", "resolved", "incompatible", "review-required"]
     },
     "allowedScopeIntentCandidate": {
       "authorityRequired": "graph/read-model selected target plus policy-derived allowed scope",
-      "currentBoundaryStatus": "requires-future-scope-intent-validation",
+      "currentBoundaryStatus": "resolved-by-graph-aware-validation",
       "validationStatusValues": ["not-run", "resolved", "unresolved", "ambiguous", "review-required"]
     },
     "forbiddenScopeIntentCandidate": {
       "authorityRequired": "policy snapshot and forbidden scope source authority",
-      "currentBoundaryStatus": "requires-future-scope-intent-validation",
+      "currentBoundaryStatus": "resolved-by-graph-aware-validation",
       "validationStatusValues": ["not-run", "resolved", "unresolved", "ambiguous", "review-required"]
     },
     "requiredEvidenceIntentCandidate": {
       "authorityRequired": "Evidence policy and availability for runtime Evidence-only proof",
-      "currentBoundaryStatus": "requires-future-required-evidence-availability-validation",
+      "currentBoundaryStatus": "resolved-by-graph-aware-validation",
       "validationStatusValues": ["not-run", "resolved", "unresolved", "ambiguous", "review-required"]
     },
     "riskIntentCandidate": {
       "authorityRequired": "risk vocabulary and graph/read-model risk policy",
-      "currentBoundaryStatus": "requires-future-risk-intent-validation",
+      "currentBoundaryStatus": "resolved-by-graph-aware-validation",
       "validationStatusValues": ["not-run", "resolved", "unresolved", "ambiguous", "review-required"]
     }
   },
   "validationStatuses": {
-    "graphValidationStatus": "not-run",
-    "targetRecordValidationStatus": "not-run",
-    "targetComponentValidationStatus": "not-run",
-    "changeTypeCompatibilityStatus": "not-run",
-    "scopeIntentValidationStatus": "not-run",
-    "requiredEvidenceAvailabilityStatus": "not-run",
-    "riskIntentValidationStatus": "not-run",
+    "graphValidationStatus": "graph-aware-valid",
+    "targetRecordValidationStatus": "resolved",
+    "targetComponentValidationStatus": "resolved",
+    "changeTypeCompatibilityStatus": "compatible",
+    "scopeIntentValidationStatus": "resolved",
+    "requiredEvidenceAvailabilityStatus": "resolved",
+    "riskIntentValidationStatus": "resolved",
     "allowedValues": [
       "not-run",
+      "graph-aware-valid",
       "resolved",
       "unresolved",
       "ambiguous",
@@ -138,26 +142,27 @@
     ],
     "targetRecordResolution": {
       "candidateValue": "CH-001",
-      "status": "not-run"
+      "status": "resolved"
     },
     "targetComponentResolution": {
       "candidateValue": "Todo App",
-      "status": "not-run"
+      "status": "resolved"
     },
     "changeTypeCompatibility": {
       "candidateValue": "test-only-behavior-proof",
-      "status": "not-run"
+      "status": "compatible"
     },
     "scopeIntentResolution": {
-      "status": "not-run"
+      "status": "resolved"
     },
     "requiredEvidenceResolution": {
-      "status": "not-run"
+      "status": "resolved"
     },
     "riskIntentResolution": {
-      "status": "not-run"
+      "status": "resolved"
     },
-    "graphTraversalAllowed": false,
+    "graphTraversalAllowed": true,
+    "graphTraversalPermissionMeaning": "future-pass-permission-only",
     "contractGenerationAllowed": false,
     "instructionPackGenerationAllowed": false,
     "requiresClarification": false,
@@ -165,8 +170,9 @@
     "validationFindings": []
   },
   "currentPreviewOutputState": {
-    "graphValidationStatus": "not-run",
-    "graphTraversalAllowed": false,
+    "graphValidationStatus": "graph-aware-valid",
+    "graphTraversalAllowed": true,
+    "graphTraversalPermissionMeaning": "future-pass-permission-only",
     "contractGenerationAllowed": false,
     "instructionPackGenerationAllowed": false,
     "graphTraversalExecuted": false,
@@ -178,13 +184,14 @@
     "validationFindings": []
   },
   "allowedUse": [
-    "define the future graph-aware Request IR validation boundary",
+    "record the graph-aware Request IR validation boundary",
     "identify graph/read-model authority inputs for candidate field validation",
     "document that schema-only validation is prerequisite but not traversal authority",
-    "prepare a later graph-aware validator implementation slice"
+    "document the implemented graph-aware validator as non-traversing",
+    "prepare a later graph traversal plan implementation slice"
   ],
   "forbiddenUse": [
-    "graph-aware validator implementation",
+    "graph traversal execution from graph-aware validation alone",
     "graph traversal execution",
     "selected node or edge slice generation",
     "contract compiler input generation",
@@ -202,5 +209,5 @@
     "branch protection",
     "user acceptance automation"
   ],
-  "nonExecutionBoundary": "This artifact previews the Request IR graph-aware validation boundary only. It defines how a future deterministic pass may resolve schema-valid Request IR Candidate fields against graph/read-model authority before traversal. It does not implement graph-aware validation, run graph traversal, select nodes or edges, generate contract compiler input, generate instruction packs, call an LLM, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, reject diffs, configure required checks, change branch protection, or automate user acceptance."
+  "nonExecutionBoundary": "This artifact records the Request IR graph-aware validation boundary and links the implemented non-traversing validator. The validator resolves schema-valid Request IR Candidate fields against graph/read-model authority only far enough to decide whether a later traversal pass may be attempted. It does not run graph traversal, select nodes or edges, generate contract compiler input, generate instruction packs, call an LLM, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, reject diffs, configure required checks, change branch protection, or automate user acceptance."
 }

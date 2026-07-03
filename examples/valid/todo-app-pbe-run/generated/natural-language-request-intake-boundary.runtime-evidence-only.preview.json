@@ -13,9 +13,10 @@
   "requestIrValidatorScope": "schema-and-boundary-only",
   "requestIrSchemaOnlyValidatorStatus": "implemented",
   "requestIrSchemaOnlyValidationResultArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-validation.add-todo-runtime-evidence-only.preview.json",
-  "graphAwareRequestIrValidatorImplemented": false,
+  "graphAwareRequestIrValidatorImplemented": true,
   "requestIrGraphAwareValidationBoundaryStatus": "request-ir-graph-aware-validation-boundary-previewed",
   "requestIrGraphAwareValidationBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json",
+  "requestIrGraphAwareValidationResultArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
   "graphTraversalImplementedFromRequestIr": false,
   "selectedGraphSliceGenerated": false,
   "contractCompilerInputGenerated": false,
@@ -34,8 +35,9 @@
   "firstCalibrationRequestIrCandidateArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json",
   "firstCalibrationRequestIrValidationStatus": "schema-valid-graph-validation-not-run",
   "firstCalibrationRequestIrValidationArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-validation.add-todo-runtime-evidence-only.preview.json",
-  "firstCalibrationGraphAwareValidationStatus": "not-run",
+  "firstCalibrationGraphAwareValidationStatus": "graph-aware-valid",
   "firstCalibrationGraphAwareValidationBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json",
+  "firstCalibrationGraphAwareValidationArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
   "frontendFlow": {
     "flowStatus": "previewed-not-implemented",
     "steps": [
@@ -180,10 +182,11 @@
     "sourceAuthorityBoundary": "AI output is not graph-source, not product intent authority, not approval, and not compiler execution authority."
   },
   "requestIrValidationBoundary": {
-    "validationStatus": "schema-only-validator-implemented-graph-aware-validation-not-run",
+    "validationStatus": "schema-only-and-graph-aware-validators-implemented-no-traversal",
     "futureValidatorInputSchema": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json",
     "firstCalibrationCandidateInput": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json",
     "firstSchemaOnlyValidationResult": "examples/valid/todo-app-pbe-run/generated/request-ir-validation.add-todo-runtime-evidence-only.preview.json",
+    "firstGraphAwareValidationResult": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
     "validationChecks": [
       "enum values",
       "required fields",
@@ -216,7 +219,7 @@
     ],
     "runtimeValidatorImplemented": true,
     "runtimeValidatorScope": "schema-and-boundary-only",
-    "graphAuthorityValidationStatus": "not-run",
+    "graphAuthorityValidationStatus": "graph-aware-valid",
     "graphAwareValidationBoundary": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json",
     "contractGenerationAllowedWhenValidationBlocked": false,
     "graphTraversalAllowedWhenValidationBlocked": false
@@ -224,7 +227,8 @@
   "graphAwareValidationBoundary": {
     "boundaryStatus": "request-ir-graph-aware-validation-boundary-previewed",
     "boundaryArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json",
-    "implementationStatus": "not-implemented",
+    "implementationStatus": "implemented-as-non-traversing-validator",
+    "validationResultArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
     "schemaOnlyValidationPrerequisite": true,
     "candidateFieldsToValidate": [
       "targetRecordIdCandidate",
@@ -242,10 +246,12 @@
       "requestTypeCandidate": "runtime-evidence-only",
       "changeTypeCandidate": "test-only-behavior-proof"
     },
-    "graphValidationStatus": "not-run",
-    "graphTraversalAllowed": false,
+    "graphValidationStatus": "graph-aware-valid",
+    "graphTraversalAllowed": true,
+    "graphTraversalPermissionMeaning": "future-pass-permission-only",
     "contractGenerationAllowed": false,
     "instructionPackGenerationAllowed": false,
+    "graphTraversalExecuted": false,
     "selectedGraphSliceGenerated": false
   },
   "graphTraversalPlanPreviewShape": {
@@ -331,6 +337,7 @@
     "define deterministic Request IR validation boundary before traversal",
     "link the schema-only Request IR Candidate validator result",
     "link the graph-aware validation boundary as the next prerequisite before traversal",
+    "link the graph-aware validation result as a non-traversing future-pass permission",
     "preview graph traversal plan shape",
     "preview Request IR to contract input mapping",
     "separate Hook Gateway activation from compiler frontend semantics"
@@ -338,8 +345,8 @@
   "forbiddenUse": [
     "AI classifier implementation",
     "runtime LLM calls",
-    "graph-aware Request IR validation",
     "graph traversal from unvalidated AI output",
+    "graph traversal execution",
     "contract input generation from unvalidated AI output",
     "instruction pack generation from unvalidated AI output",
     "graph-source mutation",
@@ -353,5 +360,5 @@
     "branch protection",
     "user acceptance automation"
   ],
-  "nonExecutionBoundary": "This artifact defines the Natural Language Request Intake compiler frontend boundary only. It links the Request IR Candidate schema preview, first calibration candidate fixture, schema-only validation result, and graph-aware validation boundary as candidate-only inputs for future graph-aware validation. It does not implement an AI classifier, call an LLM from runtime code, implement hook scripts, run graph-aware Request IR validation, run graph traversal, generate selected graph slices, generate contract compiler input, generate instruction packs, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, create required checks, change branch protection, or automate user acceptance."
+  "nonExecutionBoundary": "This artifact defines the Natural Language Request Intake compiler frontend boundary only. It links the Request IR Candidate schema preview, first calibration candidate fixture, schema-only validation result, graph-aware validation boundary, and graph-aware validation result as candidate-only/non-traversing frontend inputs. It does not implement an AI classifier, call an LLM from runtime code, implement hook scripts, run graph traversal, generate selected graph slices, generate contract compiler input, generate instruction packs, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, create required checks, change branch protection, or automate user acceptance."
 }

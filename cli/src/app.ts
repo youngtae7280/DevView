@@ -125,6 +125,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     markdown: undefined as string | undefined,
     proposal: undefined as string | undefined,
     candidate: undefined as string | undefined,
+    schemaValidation: undefined as string | undefined,
     chainCommand: undefined as string | undefined,
     base: undefined as string | undefined,
     head: undefined as string | undefined,
@@ -356,6 +357,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--candidate requires a file path.' }
       }
       options.candidate = value
+      index += 1
+    } else if (arg === '--schema-validation') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--schema-validation requires a file path.' }
+      }
+      options.schemaValidation = value
       index += 1
     } else if (arg === '--chain-command') {
       const value = argv[index + 1]

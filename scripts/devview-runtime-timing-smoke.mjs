@@ -11,6 +11,7 @@ const smokeScopeReportPath = '.tmp/devview-runtime-timing-smoke/scope-compliance
 const smokeGraphDeltaProposalPath = '.tmp/devview-runtime-timing-smoke/graph-delta-proposal.preview.json'
 const smokeGraphDeltaReviewPacketPath = '.tmp/devview-runtime-timing-smoke/graph-delta-human-review-packet.md'
 const smokeRequestIrValidationPath = '.tmp/devview-runtime-timing-smoke/request-ir-validation.json'
+const smokeRequestIrGraphValidationPath = '.tmp/devview-runtime-timing-smoke/request-ir-graph-validation.json'
 const graphDeltaCompatibleSourcePath =
   'examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json'
 const requestIrCandidatePath =
@@ -31,6 +32,23 @@ const measuredSteps = [
       requestIrCandidatePath,
       '--output',
       smokeRequestIrValidationPath,
+      '--json',
+    ],
+    includedInRuntimeBudget: true,
+  },
+  {
+    stepName: 'request-ir-graph-aware-validation',
+    command: `node dist/cli/index.js graph read-model validate-request-ir-graph --candidate ${requestIrCandidatePath} --schema-validation ${smokeRequestIrValidationPath} --output ${smokeRequestIrGraphValidationPath} --json`,
+    args: [
+      'graph',
+      'read-model',
+      'validate-request-ir-graph',
+      '--candidate',
+      requestIrCandidatePath,
+      '--schema-validation',
+      smokeRequestIrValidationPath,
+      '--output',
+      smokeRequestIrGraphValidationPath,
       '--json',
     ],
     includedInRuntimeBudget: true,

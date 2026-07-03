@@ -1901,16 +1901,21 @@ The graph-aware validation boundary preview is:
 examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json
 ```
 
+The graph-aware validation result is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json
+```
+
 The calibration candidate models a Korean natural-language request to add evidence for the Todo App add button without
 touching production source. It classifies the request as `runtime-evidence-only` and `test-only-behavior-proof`, with
 `CH-001` and `Todo App` as candidate targets. The schema-only validator confirms required fields, enum shape,
-candidate-only boundaries, confidence policy, and ambiguity policy, but it does not run graph-aware validation. The
-candidate is not validated-for-traversal, not an instruction pack, not contract compiler input, and not graph traversal
-authority.
+candidate-only boundaries, confidence policy, and ambiguity policy.
 
-The graph-aware boundary defines how a later deterministic pass may check whether `CH-001`, `Todo App`,
-`runtime-evidence-only`, and `test-only-behavior-proof` resolve against graph/read-model authority. It does not perform
-that validation, run traversal, select nodes or edges, or generate contract compiler input.
+The graph-aware validator then resolves `CH-001`, `Todo App`, `runtime-evidence-only`, and
+`test-only-behavior-proof` against graph/read-model authority. It may report `graphTraversalAllowed: true`, but that is
+future-pass permission only. It does not run traversal, select nodes or edges, generate contract compiler input, or
+generate instruction packs.
 
 ## Fixture-Provided Changed-File List Preview
 

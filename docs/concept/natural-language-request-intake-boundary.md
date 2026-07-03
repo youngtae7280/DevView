@@ -28,7 +28,7 @@ aiClassifierImplemented: false
 llmCallsIntroduced: false
 requestIrValidatorImplemented: true
 requestIrValidatorScope: schema-and-boundary-only
-graphAwareRequestIrValidatorImplemented: false
+graphAwareRequestIrValidatorImplemented: true
 graphTraversalImplementedFromRequestIr: false
 selectedGraphSliceGenerated: false
 contractCompilerInputGenerated: false
@@ -129,16 +129,28 @@ This is not graph-aware validation. It checks required fields, enum values, cand
 confidence policy, ambiguity policy, and the safety rule that unvalidated candidates cannot drive traversal or contract
 generation.
 
-## Graph-Aware Validation Boundary
+## Graph-Aware Validation
 
-The future graph-aware validation boundary is previewed in:
+The graph-aware validation boundary is previewed in:
 
 ```text
 examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json
 ```
 
-This boundary defines how a future deterministic pass may resolve schema-valid candidate fields against graph/read-model
-authority before traversal. The first calibration values remain candidates:
+The first non-traversing graph-aware validator is now available as:
+
+```text
+graph read-model validate-request-ir-graph --candidate <candidatePath> --schema-validation <schemaValidationPath> --json
+```
+
+The Todo App calibration graph-aware validation result is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json
+```
+
+This pass resolves schema-valid candidate fields against graph/read-model authority before traversal. The first
+calibration values remain candidates until this validator resolves them:
 
 ```text
 targetRecordIdCandidate: CH-001
@@ -147,9 +159,13 @@ requestTypeCandidate: runtime-evidence-only
 changeTypeCandidate: test-only-behavior-proof
 ```
 
-The graph-aware boundary may later check target record resolution, target component resolution, change type
-compatibility, scope intent resolution, required Evidence availability, and risk intent resolution. It is still not
-graph traversal, selected graph slice generation, contract compiler input generation, or instruction pack generation.
+For the current calibration fixture, graph-aware validation resolves `CH-001`, `Todo App`,
+`runtime-evidence-only`, and `test-only-behavior-proof` against the structure-only graph-source/read-model metadata and
+reports `graphValidationStatus: graph-aware-valid`.
+
+`graphTraversalAllowed: true` means only that a later traversal pass may be attempted. The validator still reports
+`graphTraversalExecuted: false`, `selectedGraphSliceGenerated: false`, `contractGenerationAllowed: false`,
+`contractInputGenerated: false`, and `instructionPackGenerated: false`.
 
 ## Request Type Taxonomy
 
@@ -191,27 +207,28 @@ The current schema-only Request IR validator checks:
 - graph traversal remains disallowed from unvalidated candidates
 - contract generation remains disallowed from unvalidated candidates
 
-Future graph-aware Request IR validation should check:
+The graph-aware Request IR validator checks:
 
 - graph record existence
 - target component existence
 - changeType compatibility
 - policy compatibility
 - required evidence availability
-- unresolved ambiguity
+- risk intent resolution
 
 Previewed validation statuses are:
 
 - `schema-valid-graph-validation-not-run`
-- `validated`
+- `graph-aware-valid`
 - `validation-blocked`
 - `clarification-required`
 - `human-review-required`
 
-The schema-only runtime validator is implemented. Graph-aware validation remains future work.
+The schema-only runtime validator and the graph-aware runtime validator are implemented. Graph traversal remains future
+work.
 
-Schema-valid does not mean validated-for-traversal. Graph record existence, target component existence, edge traversal,
-selected graph slice generation, contract input generation, and instruction pack generation remain blocked.
+Schema-valid does not mean validated-for-traversal. Graph-aware-valid means future traversal permission only. Edge
+traversal, selected graph slice generation, contract input generation, and instruction pack generation remain blocked.
 
 ## Graph Traversal Plan Boundary
 

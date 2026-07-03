@@ -30,6 +30,7 @@ import {
   graphReadModelReportHealthCommand,
   graphReadModelReportIntentCommand,
   graphReadModelSummarizeCommand,
+  graphReadModelValidateRequestIrGraphCommand,
   graphReadModelValidateRequestIrCommand,
   graphReadModelValidateCommand,
 } from './graph.js'
@@ -230,6 +231,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'validate-request-ir') {
     return graphReadModelValidateRequestIrCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'validate-request-ir-graph') {
+    return graphReadModelValidateRequestIrGraphCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-health') {
     return graphReadModelReportHealthCommand(context)

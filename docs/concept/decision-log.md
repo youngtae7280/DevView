@@ -1979,3 +1979,37 @@ generate selected graph slice artifacts, generate contract compiler input, gener
 implement an AI classifier, mutate graph-source, apply graph deltas, approve graph updates, record human decisions,
 change equivalence behavior, satisfy runtime Evidence, enforce scope, introduce CI required checks, change branch
 protection, or automate user acceptance.
+
+## DEC-243 Implement Request IR Graph-Aware Validator
+
+DEC-243 does not supersede DEC-097 through DEC-242. It implements the first deterministic graph-aware Request IR
+validator as a non-traversing compiler frontend pass.
+
+The implementation is exposed through:
+
+```text
+graph read-model validate-request-ir-graph --candidate <candidatePath> --schema-validation <schemaValidationPath> --json
+```
+
+The validator is implemented in:
+
+```text
+cli/src/core/request-ir-graph-aware-validator.ts
+```
+
+The Todo App calibration result is recorded in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json
+```
+
+The validator requires schema-only Request IR validation first, reads graph/read-model authority metadata, and resolves
+the first calibration candidate values `CH-001`, `Todo App`, `runtime-evidence-only`, and
+`test-only-behavior-proof`. A successful result may set `graphTraversalAllowed: true`, but this means future traversal
+permission only.
+
+The validator is graph-aware but non-traversing. It does not implement an AI classifier, call an LLM, run graph
+traversal, create graph traversal plans, select nodes or edges, generate selected graph slice artifacts, generate
+contract compiler input, generate instruction packs, mutate graph-source, apply graph deltas, approve graph updates,
+record human decisions, change equivalence behavior, satisfy runtime Evidence, enforce scope, introduce CI required
+checks, change branch protection, or automate user acceptance.
