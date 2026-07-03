@@ -1872,6 +1872,18 @@ requires future stale-proposal and current graph-source checks, but it creates n
 approved state separate from actual graph delta apply. It does not mutate graph-source, apply graph deltas, satisfy
 runtime Evidence, prove equivalence, reject diffs, enforce scope, configure required checks, or automate user acceptance.
 
+The Graph Delta Apply boundary preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-boundary.runtime-evidence-only.preview.json
+```
+
+It previews future apply preconditions after approved proposal state: current graph-source identity/hash checks,
+stale-proposal rejection, conflict detection, rollback/fallback readiness, and dry-run/apply separation. The boundary
+adds no apply command and performs no mutation. It does not apply graph deltas, mutate graph-source, create approved
+proposal state, record a human decision, satisfy runtime Evidence, prove equivalence, reject diffs, enforce scope,
+configure required checks, or automate user acceptance.
+
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
 approval or runtime Evidence satisfaction.

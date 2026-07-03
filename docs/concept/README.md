@@ -329,6 +329,13 @@ It defines the future state that may follow a human decision record with `decisi
 approved state creation separate from graph delta apply. It does not create approved state, apply graph deltas, mutate
 graph-source, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
 
+The Graph Delta Apply boundary is previewed in
+`examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-boundary.runtime-evidence-only.preview.json`. It
+defines future apply preconditions, including approved proposal state input, current graph-source identity checks,
+stale-proposal checks, rollback/fallback requirements, and dry-run/apply separation. It does not add an apply command,
+enable graph delta apply, mutate graph-source, satisfy runtime Evidence, prove equivalence, enforce scope, or configure
+CI.
+
 The DevView Codex Hook Gateway boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json` and
 documented in [devview-codex-hook-gateway-boundary.md](devview-codex-hook-gateway-boundary.md). It defines how future

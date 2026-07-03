@@ -2833,3 +2833,25 @@ but it must not itself mutate graph-source or apply deltas.
 This decision does not implement approved proposal state creation, create approved proposal state, apply a graph delta,
 mutate graph-source, record a human decision, accept runtime Evidence, prove equivalence, enforce scope, introduce CI
 required checks, change branch protection, or automate user acceptance.
+
+## DEC-268 Define Graph Delta Apply Boundary
+
+DEC-268 does not supersede DEC-097 through DEC-267. It previews the future graph delta apply boundary without adding an
+apply command or mutating graph-source.
+
+The Todo App calibration artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-boundary.runtime-evidence-only.preview.json
+```
+
+The boundary points back to the Human Decision Record and Approved Proposal State boundaries. It defines future apply
+inputs and checks: approved proposal state, current graph-source identity/hash, proposal delta match, stale proposal
+rejection, conflict detection, rollback/fallback readiness, and dry-run/apply separation.
+
+Dry-run and apply remain separate. The preview requires a future dry-run surface before any `--apply` mutation and
+requires a current graph-source recheck at apply time.
+
+This decision does not add an apply CLI command, enable graph delta apply, apply graph deltas, mutate graph-source,
+create approved proposal state, record a human decision, accept runtime Evidence, prove equivalence, enforce scope,
+introduce CI required checks, change branch protection, or automate user acceptance.

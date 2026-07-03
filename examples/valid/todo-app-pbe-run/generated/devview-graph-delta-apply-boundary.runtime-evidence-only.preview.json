@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-graph-delta-apply-boundary-preview",
+  "status": "devview-graph-delta-apply-boundary-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "boundaryScope": "future-graph-delta-apply-preview-only",
+  "phase": "phase-13-human-decision-approved-apply-boundary",
+  "sourceHumanDecisionRecordBoundary": "examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-boundary.runtime-evidence-only.preview.json",
+  "sourceHumanDecisionRecordCommandBoundary": "examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-command-boundary.runtime-evidence-only.preview.json",
+  "sourceApprovedProposalStateBoundary": "examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json",
+  "futureApplyCommand": "graph read-model apply-approved-graph-delta --approved-proposal <approvedState> --graph-source <graphSource> --dry-run --json",
+  "futureApplyCommandWithMutation": "graph read-model apply-approved-graph-delta --approved-proposal <approvedState> --graph-source <graphSource> --apply --json",
+  "applyCommandImplemented": false,
+  "applyCliSurfaceAdded": false,
+  "graphDeltaApplyEnabled": false,
+  "graphDeltaApplied": false,
+  "graphSourceMutationAllowed": false,
+  "graphSourceMutated": false,
+  "approvalStatus": "not-approved-future-apply-not-enabled",
+  "approvedProposalStateCreated": false,
+  "humanDecisionRecorded": false,
+  "runtimeEvidenceSatisfied": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "strictModeEnabled": false,
+  "guidedEnforcementEnabled": false,
+  "futureRequiredInputs": [
+    {
+      "inputId": "approved-proposal-state",
+      "artifactRole": "devview-approved-proposal-state",
+      "required": true,
+      "authorityBoundary": "Approved proposal state is a future apply input only; this boundary does not create it."
+    },
+    {
+      "inputId": "current-graph-source-identity",
+      "artifactRole": "graph-source-identity-or-hash",
+      "required": true,
+      "authorityBoundary": "Future apply must verify current graph-source identity before any mutation."
+    },
+    {
+      "inputId": "proposal-delta",
+      "artifactRole": "approved-proposal-delta",
+      "required": true,
+      "authorityBoundary": "Delta must come from the approved proposal state and must match the current graph-source baseline."
+    },
+    {
+      "inputId": "rollback-fallback-plan",
+      "artifactRole": "graph-source-rollback-fallback-plan",
+      "required": true,
+      "authorityBoundary": "Future apply must present rollback/fallback behavior before mutation is allowed."
+    }
+  ],
+  "futurePreconditionChecks": [
+    {
+      "checkId": "approved-state-present",
+      "description": "Future apply must require an approved proposal state created from a human-authored approve-proposal decision.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "checkId": "approved-state-not-stale",
+      "description": "Future apply must reject approved states whose source proposal or graph-source baseline is stale.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "checkId": "current-graph-source-match",
+      "description": "Future apply must verify graph-source path, identity, and content hash before writing.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "checkId": "delta-conflict-check",
+      "description": "Future apply must detect conflicts between proposed graph changes and current graph-source records.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "checkId": "rollback-fallback-ready",
+      "description": "Future apply must define rollback/fallback output before mutation is allowed.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "checkId": "dry-run-before-apply",
+      "description": "Future apply must support a dry-run preview and keep dry-run separate from --apply mutation.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "checkId": "single-target-graph-source",
+      "description": "Future apply must mutate only the explicitly selected graph-source artifact.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    }
+  ],
+  "futureDryRunApplySeparation": {
+    "dryRunRequiredBeforeApply": true,
+    "dryRunMutatesGraphSource": false,
+    "applyRequiresExplicitFlag": true,
+    "applyRequiresApprovedProposalState": true,
+    "applyRequiresCurrentGraphSourceRecheck": true,
+    "applyRequiresRollbackFallbackPlan": true,
+    "applyRequiresHumanReviewOfDryRun": true,
+    "applyImplementedNow": false
+  },
+  "futureOutputAuthorityPolicyPreview": {
+    "dryRunOutputWritePolicy": "explicit-output-or-stdout-preview-only",
+    "applyOutputWritePolicy": "future-explicit-mutation-report-required",
+    "forbiddenDryRunOverwriteTargets": [
+      "approved proposal state input",
+      "human decision record input",
+      "Human Review Packet input",
+      "Graph Delta proposal input",
+      "graph-source artifacts",
+      "generated read-model projections",
+      "evidence artifacts",
+      "runtime reports",
+      "active hook/config paths"
+    ],
+    "applyMutationTargetPolicy": "Future --apply may write only the explicit graph-source target after all preconditions pass.",
+    "unsafeMarkdownPreventsJsonWrite": true
+  },
+  "futureGraphSourceMutationPolicyPreview": {
+    "mutationAllowedNow": false,
+    "futureAllowedMutationTarget": "explicit-current-graph-source-only",
+    "futureForbiddenMutationTargets": [
+      "unrelated graph-source artifacts",
+      "generated read-model artifacts",
+      "runtime Evidence artifacts",
+      "proposal inputs",
+      "review packet inputs",
+      "decision record inputs",
+      "Codex hook config",
+      "CI config or branch protection"
+    ],
+    "futureMutationReportRequired": true,
+    "futurePostApplyValidationRequired": true
+  },
+  "futureRollbackFallbackPreview": {
+    "rollbackPlanRequired": true,
+    "fallbackPlanRequired": true,
+    "preApplyBackupOrPatchRequired": "future-policy-required-before-implementation",
+    "postApplyConsistencyCheckRequired": true,
+    "rollbackAutomationImplementedNow": false
+  },
+  "allowedUse": [
+    "document future graph delta apply preconditions",
+    "define dry-run/apply separation before implementation",
+    "define graph-source identity and stale-proposal checks",
+    "define rollback/fallback requirements",
+    "preserve no-mutation behavior until explicit future implementation"
+  ],
+  "forbiddenUse": [
+    "treat this boundary as an apply command",
+    "apply graph delta",
+    "mutate graph-source",
+    "create approved proposal state",
+    "record a human decision",
+    "infer approval from Codex, AI, validators, runtime smoke, CI, or review packet generation",
+    "satisfy runtime Evidence",
+    "prove equivalence",
+    "enforce scope",
+    "configure CI or branch protection",
+    "automate user acceptance"
+  ],
+  "runtimePerformanceBoundary": {
+    "designOnly": true,
+    "addsRuntimeWork": false,
+    "aiCalls": false,
+    "networkCalls": false,
+    "fullRepoScan": false,
+    "patchHunkInspection": false,
+    "fullValidation": false,
+    "timingSmokeIntegrationStatus": "not-integrated-boundary-preview-only",
+    "runtimeBudgetStatus": "advisory-not-enforced"
+  },
+  "nextFutureStepsPreview": [
+    {
+      "step": "graph-source-mutation-policy-boundary",
+      "status": "future-not-implemented"
+    },
+    {
+      "step": "evidence-acceptance-policy-boundary",
+      "status": "future-not-implemented"
+    },
+    {
+      "step": "apply-approved-graph-delta-command-boundary",
+      "status": "future-not-implemented"
+    }
+  ],
+  "nonExecutionBoundary": "This artifact previews the future graph delta apply boundary only. It does not add an apply CLI command, enable graph delta apply, apply a graph delta, mutate graph-source, create approved proposal state, record a human decision, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI or required checks, change branch protection, or replace user acceptance."
+}
