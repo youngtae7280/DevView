@@ -64,8 +64,8 @@
   enforcement, required checks, diff rejection, fixture approval, graph-source mutation, apply, or equivalence proof.
 - [DevView Runtime Performance Budget](concept/devview-runtime-performance-budget.md) - Advisory 5 second target for
   deterministic local runtime passes plus compact advisory `check-scope` reporting, proposal-only `propose-graph-delta`
-  preview generation, and `review-graph-delta` Human Review Packet generation, excluding AI editing time, full
-  validation, CI runtime, and human review.
+  preview generation, `review-graph-delta` Human Review Packet generation, and frontend instruction-pack generation from
+  Contract Compiler Input, excluding AI editing time, full validation, CI runtime, and human review.
 - [DevView Codex Hook Gateway Boundary](concept/devview-codex-hook-gateway-boundary.md) - Preview-only DevView ON/OFF
   and future advisory/guided Codex hook routing boundary across request intake, contract checks, edit-capable tool
   checks, post-checks, proposal-only previews, and Human Review Packets without implementing hooks, approval, apply, CI
@@ -73,8 +73,8 @@
 - [Natural Language Request Intake Boundary](concept/natural-language-request-intake-boundary.md) - DevView compiler
   frontend boundary for natural language request intake, Request IR Candidate schema/calibration fixtures, schema-only
   validation, non-traversing graph-aware validation, deterministic Graph Traversal Plan generation, Selected Graph Slice
-  generation, and selected-slice-to-contract-input generation without implementing an AI classifier, runtime LLM calls,
-  instruction-pack generation, graph-source mutation, apply, or approval.
+  generation, selected-slice-to-contract-input generation, and Contract-Input-to-Instruction-Pack generation without
+  implementing an AI classifier, runtime LLM calls, Codex execution, graph-source mutation, apply, or approval.
 - [Scope Compliance Checker Implementation Readiness](concept/scope-compliance-checker-implementation-readiness.md) -
   Readiness criteria for future scope-compliance checker inputs, missing-input states, result preview status, and
   authoritative changed-file input boundaries before executable checker logic exists.

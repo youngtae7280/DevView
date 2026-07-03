@@ -294,6 +294,23 @@ legacy dry-run artifact role. The command does not generate instruction packs, t
 graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, enforce scope, or configure
 CI.
 
+The deterministic Contract-Input-to-Instruction-Pack generator is now part of the measured advisory runtime path:
+
+```text
+graph read-model generate-instruction-pack --contract-input <contractInputPath> --json
+```
+
+The tracked Todo App generated Instruction Pack outputs are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.md
+```
+
+It turns frontend Contract Compiler Input into deterministic JSON/Markdown pack surfaces while preserving non-execution
+boundaries. It does not trigger Codex execution, mutate graph-source, apply graph deltas, approve work, record human
+decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
+
 The traversal boundary keeps graph vocabulary separate from planner semantics: `requiredNodeTypes` and
 `requiredEdgeTypes` use only the current graph-source taxonomy, while target/scope/evidence/output meanings are recorded
 as roles and selection intents.

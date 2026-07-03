@@ -372,6 +372,14 @@ field-group compatibility only; backend dry-run validation is not run. It does n
 Codex execution, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, or
 enforce scope.
 
+The first Contract-Input-to-Instruction-Pack frontend generator is exposed through
+`graph read-model generate-instruction-pack --contract-input <contractInputPath> --json`. Its Todo App calibration
+outputs are `examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.json` and
+`examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.md`. The generated
+pack preserves the narrowed allowed scope and forbidden production/graph/approval boundaries, but it does not trigger
+Codex execution, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, or
+enforce scope.
+
 The traversal boundary separates graph vocabulary from planner semantics: `*NodeTypes` and `*EdgeTypes` contain only
 actual graph taxonomy values, while target/scope/evidence/output meanings are represented as roles and selection
 intents.

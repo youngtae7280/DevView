@@ -129,6 +129,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     graphValidation: undefined as string | undefined,
     traversalPlan: undefined as string | undefined,
     selectedSlice: undefined as string | undefined,
+    contractInput: undefined as string | undefined,
     chainCommand: undefined as string | undefined,
     base: undefined as string | undefined,
     head: undefined as string | undefined,
@@ -388,6 +389,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--selected-slice requires a file path.' }
       }
       options.selectedSlice = value
+      index += 1
+    } else if (arg === '--contract-input') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--contract-input requires a file path.' }
+      }
+      options.contractInput = value
       index += 1
     } else if (arg === '--chain-command') {
       const value = argv[index + 1]

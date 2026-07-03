@@ -21,6 +21,7 @@ import {
   graphReadModelCompileContractCommand,
   graphReadModelGenerateCommand,
   graphReadModelGenerateContractInputCommand,
+  graphReadModelGenerateInstructionPackCommand,
   graphReadModelObserveCandidatesCommand,
   graphReadModelPlanTraversalCommand,
   graphReadModelProposeGraphDeltaCommand,
@@ -246,6 +247,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-contract-input') {
     return graphReadModelGenerateContractInputCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-instruction-pack') {
+    return graphReadModelGenerateInstructionPackCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-health') {
     return graphReadModelReportHealthCommand(context)

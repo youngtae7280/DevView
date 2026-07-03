@@ -225,13 +225,14 @@ Previewed validation statuses are:
 - `human-review-required`
 
 The schema-only runtime validator, graph-aware runtime validator, deterministic graph traversal plan generator,
-deterministic selected graph slice generator, and selected-slice-to-contract-input generator are implemented.
-Instruction pack generation remains future work for this frontend path.
+deterministic selected graph slice generator, selected-slice-to-contract-input generator, and
+Contract-Input-to-Instruction-Pack generator are implemented.
 
 Schema-valid does not mean validated-for-traversal. Graph-aware-valid means future traversal permission only. The
 deterministic traversal plan generator can now produce a plan from that permission. The selected slice generator can
 consume the plan and produce a bounded selected node/edge slice. The contract input generator can consume that selected
-slice and produce Contract Compiler Input, but instruction pack generation remains blocked.
+slice and produce Contract Compiler Input. The instruction pack generator can consume that Contract Compiler Input and
+produce deterministic JSON/Markdown pack surfaces without triggering Codex execution.
 
 ## Graph Traversal Plan Boundary
 
@@ -390,6 +391,27 @@ satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
 Contract compiler input cannot be generated directly from a Request IR Candidate, schema-only validation, graph-aware
 validation, or traversal plan alone. A generated selected graph slice is the required handoff artifact, and the selected
 slice itself remains distinct from the generated Contract Compiler Input.
+
+## Instruction Pack Generation
+
+The first Contract-Input-to-Instruction-Pack frontend generator is now available as:
+
+```text
+graph read-model generate-instruction-pack --contract-input <contractInputPath> --json
+```
+
+The generated Todo App calibration outputs are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.md
+```
+
+The pack consumes generated Contract Compiler Input and preserves the narrowed `allowedScope`, unresolved forbidden
+production-source boundary, graph-source mutation ban, approval/acceptance ban, required Evidence, stop conditions,
+known risks, and output requirements. It is operational input for later human-reviewed Codex work, but it does not
+trigger Codex execution, mutate graph-source, apply graph deltas, approve work, record human decisions, satisfy runtime
+Evidence, prove equivalence, enforce scope, or configure CI.
 
 ## Hook Gateway Relationship
 

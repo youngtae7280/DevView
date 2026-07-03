@@ -1966,6 +1966,19 @@ is not the legacy `compiler-input-model-dry-run` artifact and does not claim bac
 not invoke the backend dry-run compiler, generate instruction packs, trigger Codex execution, mutate graph-source, apply
 graph deltas, approve work, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
 
+The generated frontend Instruction Pack outputs for this calibration fixture are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.md
+```
+
+The Contract-Input-to-Instruction-Pack generator preserves the narrowed `allowedScope` from `TT-1` and `EV-1`, keeps
+production source changes as unresolved forbidden scope, keeps graph-source mutation and approval/acceptance changes
+forbidden, and carries required Evidence, stop conditions, known risks, and output requirements into concise
+operational instructions. The generated pack is not Codex execution, not approval, not runtime Evidence satisfaction,
+not graph-source mutation, not graph delta apply, and not scope or CI enforcement.
+
 Traversal boundary type fields are limited to actual graph taxonomy vocabulary from the Todo App projection. Abstract
 planner meanings such as target component, scope policy, required evidence, stop condition, output requirement, and risk
 are recorded as roles/intents rather than invented node kinds or edge types.

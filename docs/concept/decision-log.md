@@ -2170,3 +2170,37 @@ contract compiler dry-run, trigger Codex execution, generate instruction packs, 
 implement hook scripts, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, change
 equivalence behavior, satisfy runtime Evidence, enforce scope, introduce CI required checks, change branch protection,
 or automate user acceptance.
+
+## DEC-248 Implement Contract Input to Instruction Pack Generator
+
+DEC-248 does not supersede DEC-097 through DEC-247. It implements the first deterministic frontend generator from
+generated Contract Compiler Input to Instruction Pack JSON/Markdown.
+
+The generator is exposed through:
+
+```text
+graph read-model generate-instruction-pack --contract-input <contractInputPath> --json
+```
+
+The implementation is recorded in:
+
+```text
+cli/src/core/instruction-pack-generator.ts
+```
+
+The Todo App calibration Instruction Pack outputs are generated at:
+
+```text
+examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.md
+```
+
+The generator consumes a generated `contract-compiler-input` artifact, validates required non-execution safety fields,
+preserves the narrowed allowed scope from `TT-1` and `EV-1`, carries unresolved production-source forbidden scope,
+graph-source mutation ban, approval/acceptance ban, required Evidence, stop conditions, known risks, output
+requirements, and trace context into a deterministic pack for Codex/human review.
+
+The generated pack is not approval and does not trigger Codex execution. This decision does not call an LLM, implement
+an AI analyzer, implement hook scripts, mutate graph-source, apply graph deltas, approve graph updates, record human
+decisions, change equivalence behavior, satisfy runtime Evidence, enforce scope, introduce CI required checks, change
+branch protection, or automate user acceptance.

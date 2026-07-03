@@ -90,6 +90,7 @@ export interface CliOptions {
   graphValidation?: string
   traversalPlan?: string
   selectedSlice?: string
+  contractInput?: string
   chainCommand?: string
   base?: string
   head?: string

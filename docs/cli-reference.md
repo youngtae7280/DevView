@@ -641,6 +641,37 @@ node dist/cli/index.js graph read-model generate-contract-input `
   --json
 ```
 
+### `pbe graph read-model generate-instruction-pack`
+
+- Purpose: Generate deterministic frontend Instruction Pack JSON, and optionally Markdown, from generated Contract
+  Compiler Input.
+- Typical state before running: After `graph read-model generate-contract-input` has produced a
+  `contract-compiler-input` artifact with `contractInputGenerated: true`, `instructionPackGenerated: false`, and all
+  non-execution safety fields still false/not-approved.
+- Options: `--contract-input <contractInputPath>` is required. `--output <file>` may write the generated pack JSON.
+  `--markdown <file>` may write a concise Markdown pack. Without explicit output paths, JSON stdout is the only output.
+- What it checks: contract input role/status, generated-input flag, non-generated instruction-pack flag, graph/apply
+  safety flags, not-approved approval status, no equivalence or runtime Evidence satisfaction, required compiler input
+  groups, and absence of error findings.
+- What it writes: Nothing by default. It writes only to explicit `--output` and `--markdown` paths.
+- Success result: JSON with `artifactRole: instruction-pack`, `instructionPackGenerated: true`,
+  `codexExecutionTriggered: false`, narrowed `allowedScope`, preserved `forbiddenScope`, required Evidence, stop
+  conditions, known risks, output requirements, execution instructions, non-goals, and non-execution boundaries.
+- Common failures: unreadable contract input, unsafe boundary fields, missing required input groups, empty required
+  scope/evidence/output groups, or error findings in the source Contract Compiler Input.
+- Next command: Human review before any Codex execution. Do not treat this pack as approval, runtime Evidence
+  satisfaction, equivalence proof, graph-source mutation, graph delta apply, or enforcement.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model generate-instruction-pack `
+  --contract-input examples/valid/todo-app-pbe-run/generated/contract-compiler-input.add-todo-runtime-evidence-only.preview.json `
+  --output examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.json `
+  --markdown examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.md `
+  --json
+```
+
 ### `pbe graph operation apply-proposal`
 
 - Purpose: Preview or apply a generated graph update proposal to its graph-source.

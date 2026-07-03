@@ -4,6 +4,7 @@ import { collectGitDerivedChangedFiles } from '../core/git-derived-changed-file-
 import { generateGraphDeltaHumanReviewPacket } from '../core/graph-delta-human-review-packet.js'
 import { generateGraphTraversalPlanFile } from '../core/graph-traversal-plan.js'
 import { generateContractCompilerInputFile } from '../core/contract-input-generator.js'
+import { generateInstructionPackFile } from '../core/instruction-pack-generator.js'
 import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
 import { generateSelectedGraphSliceFile } from '../core/selected-graph-slice.js'
 import { validateRequestIrGraphAwareFile } from '../core/request-ir-graph-aware-validator.js'
@@ -1089,6 +1090,71 @@ export async function graphReadModelGenerateContractInputCommand(context: Comman
           message,
           suggestedFix:
             'Provide a readable generated Selected Graph Slice artifact. Contract input generation does not create instruction packs or execute Codex.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelGenerateInstructionPackCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.contractInput) {
+    return invalidCommand('graph read-model generate-instruction-pack requires --contract-input <contractInputPath>.')
+  }
+
+  try {
+    const instructionPack = await generateInstructionPackFile(context.options.root, context.options.contractInput, {
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    const blocked =
+      instructionPack.pack.status !== 'instruction-pack-generated' || !instructionPack.pack.instructionPackGenerated
+    const errorFindings = instructionPack.pack.validationFindings.filter((finding) => finding.severity === 'error')
+
+    return {
+      ok: !blocked,
+      command: 'graph read-model generate-instruction-pack',
+      exitCode: blocked ? ExitCode.ValidationFailed : ExitCode.Success,
+      message: blocked
+        ? 'Instruction Pack generation blocked before Codex execution.'
+        : 'Instruction Pack generated without Codex execution.',
+      issues: blocked
+        ? (errorFindings.length > 0 ? errorFindings : instructionPack.pack.validationFindings).map((finding) =>
+            issue({
+              validator: 'InstructionPackGenerator',
+              code: finding.code,
+              severity: finding.severity,
+              message: finding.message,
+              reason: finding.field ? `Field: ${finding.field}` : undefined,
+              suggestedFix:
+                finding.suggestedFix ??
+                'Fix Contract Compiler Input prerequisites before generating an Instruction Pack.',
+            }),
+          )
+        : [],
+      data: {
+        ...instructionPack.pack,
+        ...(instructionPack.outputPath ? { outputPath: instructionPack.outputPath } : {}),
+        ...(instructionPack.markdownReport ? { markdownReport: instructionPack.markdownReport } : {}),
+        next: blocked
+          ? 'Fix Contract Compiler Input prerequisites. No Codex execution, graph apply, approval, runtime Evidence satisfaction, or enforcement was generated.'
+          : 'Use this pack as deterministic Codex input only after human review. This command did not trigger Codex execution, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model generate-instruction-pack',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Instruction Pack generation could not run.',
+      issues: [
+        issue({
+          validator: 'InstructionPackGenerator',
+          code: 'INSTRUCTION_PACK_GENERATION_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a readable generated Contract Compiler Input artifact. Instruction Pack generation does not execute Codex.',
         }),
       ],
     }
