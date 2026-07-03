@@ -260,6 +260,76 @@ describe('Request IR Candidate clarification revision CLI', () => {
     expect(payload.issues[0].message).toContain('unsafe authority field')
     expect(existsSync(join(workspace, outputPath))).toBe(false)
   })
+
+  it('blocks answers from a different clarification pack without writing output', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, 'pack.json'), validNoQuestionPack())
+    writeJson(join(workspace, 'answers.json'), {
+      ...validNoQuestionAnswers(),
+      sourceClarificationInterviewPack: 'other-pack.preview.json',
+    })
+    writeJson(join(workspace, 'candidate.json'), validRequestIrCandidate())
+    const outputPath = join('.tmp', 'revised-candidate.json')
+
+    const result = await runPbeCli(
+      [
+        'graph',
+        'read-model',
+        'revise-request-ir-candidate',
+        '--clarification-pack',
+        'pack.json',
+        '--answers',
+        'answers.json',
+        '--output',
+        outputPath,
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.ok).toBe(false)
+    expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain(
+      'CLARIFICATION_ANSWERS_PACK_PROVENANCE_MISMATCH',
+    )
+    expect(existsSync(join(workspace, outputPath))).toBe(false)
+  })
+
+  it('blocks answers from a different original candidate without writing output', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, 'pack.json'), validNoQuestionPack())
+    writeJson(join(workspace, 'answers.json'), {
+      ...validNoQuestionAnswers(),
+      sourceRequestIrCandidate: 'other-candidate.preview.json',
+    })
+    writeJson(join(workspace, 'candidate.json'), validRequestIrCandidate())
+    const outputPath = join('.tmp', 'revised-candidate.json')
+
+    const result = await runPbeCli(
+      [
+        'graph',
+        'read-model',
+        'revise-request-ir-candidate',
+        '--clarification-pack',
+        'pack.json',
+        '--answers',
+        'answers.json',
+        '--output',
+        outputPath,
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.ok).toBe(false)
+    expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain(
+      'CLARIFICATION_ANSWERS_CANDIDATE_PROVENANCE_MISMATCH',
+    )
+    expect(existsSync(join(workspace, outputPath))).toBe(false)
+  })
 })
 
 function validNoQuestionPack(): Record<string, unknown> {
@@ -328,6 +398,7 @@ function validAnswersBase(): Record<string, unknown> {
     artifactRole: 'clarification-answers-preview',
     status: 'clarification-answers-previewed',
     sourceClarificationInterviewPack: 'pack.json',
+    sourceRequestIrCandidate: 'candidate.json',
     answerAuthorityStatus: 'clarification-answer-not-approval',
     candidateOnly: true,
     requestIrCandidateRevised: false,

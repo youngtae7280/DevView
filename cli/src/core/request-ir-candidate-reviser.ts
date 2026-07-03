@@ -97,16 +97,19 @@ export interface RequestIrCandidateRevisionFileResult {
   outputPath?: string
 }
 
+interface RevisionPathContext {
+  root?: string
+  packPath?: string
+  answersPath?: string
+  originalCandidatePath?: string
+  outputPath?: string
+}
+
 export function reviseRequestIrCandidateFromClarificationAnswers(
   packArtifact: unknown,
   answersArtifact: unknown,
   originalCandidateArtifact: unknown,
-  paths: {
-    packPath?: string
-    answersPath?: string
-    originalCandidatePath?: string
-    outputPath?: string
-  } = {},
+  paths: RevisionPathContext = {},
 ): RequestIrCandidateRevisionResult {
   const pack = asRecord(packArtifact)
   const answers = asRecord(answersArtifact)
@@ -114,7 +117,7 @@ export function reviseRequestIrCandidateFromClarificationAnswers(
   const findings: RequestIrCandidateRevisionFinding[] = []
 
   validateClarificationPack(pack, findings)
-  validateClarificationAnswers(answers, pack, findings)
+  validateClarificationAnswers(answers, pack, findings, paths)
   validateOriginalCandidate(originalCandidate, findings)
 
   const blockedBeforeApply = findings.some((finding) => finding.severity === 'error')
@@ -214,6 +217,7 @@ export async function reviseRequestIrCandidateFile(
 
   const outputPath = options.output ? relativePath(root, resolveRepoPath(root, options.output)) : undefined
   const result = reviseRequestIrCandidateFromClarificationAnswers(pack.value, answers.value, originalCandidate.value, {
+    root,
     packPath: relativePath(root, resolvedPackPath),
     answersPath: relativePath(root, resolvedAnswersPath),
     originalCandidatePath: relativePath(root, resolvedOriginalCandidatePath),
@@ -342,6 +346,7 @@ function validateClarificationAnswers(
   answers: JsonRecord | null,
   pack: JsonRecord | null,
   findings: RequestIrCandidateRevisionFinding[],
+  paths: RevisionPathContext = {},
 ): void {
   if (!answers) {
     findings.push({
@@ -383,6 +388,7 @@ function validateClarificationAnswers(
       })
     }
   }
+  validateClarificationAnswerProvenance(answers, pack, findings, paths)
   if (!Array.isArray(answers.answers)) {
     findings.push({
       code: 'CLARIFICATION_ANSWERS_ARRAY_MISSING',
@@ -423,6 +429,67 @@ function validateClarificationAnswers(
         suggestedFix: 'Answers may revise only allowed Request IR candidate fields from the planned question.',
       })
     }
+  }
+}
+
+function validateClarificationAnswerProvenance(
+  answers: JsonRecord,
+  pack: JsonRecord | null,
+  findings: RequestIrCandidateRevisionFinding[],
+  paths: RevisionPathContext,
+): void {
+  const answerPackPath = stringValue(answers.sourceClarificationInterviewPack)
+  if (paths.packPath) {
+    if (!answerPackPath) {
+      findings.push({
+        code: 'CLARIFICATION_ANSWERS_PACK_PROVENANCE_MISSING',
+        severity: 'error',
+        field: 'sourceClarificationInterviewPack',
+        message: 'Clarification answers must identify the source Clarification Interview Pack used by the command.',
+        expected: paths.packPath,
+        actual: answers.sourceClarificationInterviewPack,
+      })
+    } else if (!sameRepoPath(paths.root, answerPackPath, paths.packPath)) {
+      findings.push({
+        code: 'CLARIFICATION_ANSWERS_PACK_PROVENANCE_MISMATCH',
+        severity: 'error',
+        field: 'sourceClarificationInterviewPack',
+        message: 'Clarification answers point to a different Clarification Interview Pack than the command input.',
+        expected: normalizeRepoComparablePath(paths.root, paths.packPath),
+        actual: normalizeRepoComparablePath(paths.root, answerPackPath),
+        suggestedFix:
+          'Regenerate clarification answers for the exact Clarification Interview Pack passed to this command.',
+      })
+    }
+  }
+
+  const answerCandidatePath = stringValue(answers.sourceRequestIrCandidate)
+  if (!answerCandidatePath) {
+    return
+  }
+
+  const packCandidatePath = stringValue(pack?.sourceRequestIrCandidate)
+  if (packCandidatePath && !sameRepoPath(paths.root, answerCandidatePath, packCandidatePath)) {
+    findings.push({
+      code: 'CLARIFICATION_ANSWERS_CANDIDATE_PROVENANCE_MISMATCH',
+      severity: 'error',
+      field: 'sourceRequestIrCandidate',
+      message: 'Clarification answers point to a different Request IR Candidate than the source pack.',
+      expected: normalizeRepoComparablePath(paths.root, packCandidatePath),
+      actual: normalizeRepoComparablePath(paths.root, answerCandidatePath),
+      suggestedFix: 'Regenerate clarification answers for the Request IR Candidate referenced by the pack.',
+    })
+  }
+  if (paths.originalCandidatePath && !sameRepoPath(paths.root, answerCandidatePath, paths.originalCandidatePath)) {
+    findings.push({
+      code: 'CLARIFICATION_ANSWERS_CANDIDATE_PROVENANCE_MISMATCH',
+      severity: 'error',
+      field: 'sourceRequestIrCandidate',
+      message: 'Clarification answers do not match the original Request IR Candidate loaded for revision.',
+      expected: normalizeRepoComparablePath(paths.root, paths.originalCandidatePath),
+      actual: normalizeRepoComparablePath(paths.root, answerCandidatePath),
+      suggestedFix: 'Use clarification answers generated from the same original Request IR Candidate.',
+    })
   }
 }
 
@@ -765,6 +832,15 @@ function uniqueStrings(values: string[]): string[] {
 
 function resolveRepoPath(root: string, inputPath: string): string {
   return path.isAbsolute(inputPath) ? inputPath : path.resolve(root, inputPath)
+}
+
+function sameRepoPath(root: string | undefined, left: string, right: string): boolean {
+  return normalizeRepoComparablePath(root, left) === normalizeRepoComparablePath(root, right)
+}
+
+function normalizeRepoComparablePath(root: string | undefined, inputPath: string): string {
+  const base = root ?? process.cwd()
+  return resolveRepoPath(base, inputPath).replaceAll('\\', '/').toLowerCase()
 }
 
 function pathKey(filePath: string): string {
