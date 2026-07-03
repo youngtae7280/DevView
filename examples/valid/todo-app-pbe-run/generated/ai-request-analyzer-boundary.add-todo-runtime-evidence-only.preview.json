@@ -23,7 +23,7 @@
     "rawNaturalLanguageRequest": {
       "required": true,
       "authorityStatus": "human-request-text-not-compiler-authority",
-      "example": "Todo App에서 add 버튼 동작 증거만 추가해줘. production source는 건드리지 마."
+      "example": "Add Todo App runtime evidence for the add button behavior without touching production source."
     },
     "optionalRepoContext": {
       "allowed": true,

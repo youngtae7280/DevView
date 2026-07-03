@@ -32,8 +32,13 @@
   "selectedGraphSliceGeneratorImplemented": true,
   "selectedGraphSliceGenerated": true,
   "firstCalibrationSelectedGraphSliceArtifact": "examples/valid/todo-app-pbe-run/generated/selected-graph-slice.add-todo-runtime-evidence-only.preview.json",
-  "contractCompilerInputGenerated": false,
-  "instructionPackGenerated": false,
+  "contractCompilerInputGenerated": true,
+  "contractInputGenerationNowImplementedAsSeparatePass": true,
+  "firstCalibrationContractCompilerInputArtifact": "examples/valid/todo-app-pbe-run/generated/contract-compiler-input.add-todo-runtime-evidence-only.preview.json",
+  "instructionPackGenerated": true,
+  "instructionPackGenerationNowImplementedAsSeparatePass": true,
+  "firstCalibrationInstructionPackArtifact": "examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.json",
+  "firstCalibrationInstructionPackMarkdownArtifact": "examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.md",
   "graphSourceMutated": false,
   "graphDeltaApplied": false,
   "approvalStatus": "not-approved",
@@ -52,7 +57,7 @@
   "firstCalibrationGraphAwareValidationBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json",
   "firstCalibrationGraphAwareValidationArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
   "frontendFlow": {
-    "flowStatus": "previewed-not-implemented",
+    "flowStatus": "boundary-preview-with-implemented-deterministic-frontend-passes",
     "steps": [
       {
         "stepId": "natural-language-request",
@@ -90,6 +95,11 @@
         "stepId": "contract-compiler-input",
         "role": "compiler-input-candidate-after-validation",
         "authorityBoundary": "Contract compiler input must not be generated from unvalidated AI output."
+      },
+      {
+        "stepId": "instruction-pack-preview",
+        "role": "deterministic-pack-surface-after-contract-input",
+        "authorityBoundary": "Instruction Pack preview must be generated only from Contract Compiler Input, not from unvalidated AI output, and does not trigger Codex execution."
       }
     ]
   },
@@ -308,10 +318,13 @@
     "sourceGeneratedTraversalPlan": "examples/valid/todo-app-pbe-run/generated/graph-traversal-plan.add-todo-runtime-evidence-only.preview.json",
     "generatedSelectedGraphSliceArtifact": "examples/valid/todo-app-pbe-run/generated/selected-graph-slice.add-todo-runtime-evidence-only.preview.json",
     "selectedGraphSliceGenerated": true,
-    "contractInputGenerated": false,
+    "contractInputGenerated": true,
     "contractInputGenerationNowImplementedAsSeparatePass": true,
     "generatedContractCompilerInputArtifact": "examples/valid/todo-app-pbe-run/generated/contract-compiler-input.add-todo-runtime-evidence-only.preview.json",
-    "instructionPackGenerated": false,
+    "instructionPackGenerated": true,
+    "instructionPackGenerationNowImplementedAsSeparatePass": true,
+    "generatedInstructionPackArtifact": "examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.json",
+    "generatedInstructionPackMarkdownArtifact": "examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.md",
     "contractInputRequiresSelectedGraphSlice": true
   },
   "requestIrToContractInputMappingPreview": {
@@ -349,7 +362,10 @@
       "mappingStatus": "derived-by-contract-input-generator"
     },
     "contractCompilerInputGenerated": true,
-    "instructionPackGenerated": false
+    "instructionPackGenerated": true,
+    "instructionPackGenerationNowImplementedAsSeparatePass": true,
+    "generatedInstructionPackArtifact": "examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.json",
+    "generatedInstructionPackMarkdownArtifact": "examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.md"
   },
   "hookGatewayConnection": {
     "connectionStatus": "linked-as-activation-context-only",
@@ -386,7 +402,8 @@
     "link the generated graph traversal plan as deterministic plan output without selected slice generation",
     "link the selected graph slice boundary as the required contract input prerequisite",
     "link the generated selected graph slice as deterministic node/edge slice output without contract input generation",
-    "link the generated contract compiler input as deterministic selected-slice mapping output without instruction pack generation",
+    "link the generated contract compiler input as deterministic selected-slice mapping output",
+    "link the generated instruction pack preview as deterministic contract-input-to-pack output without Codex execution",
     "separate Hook Gateway activation from compiler frontend semantics"
   ],
   "forbiddenUse": [
