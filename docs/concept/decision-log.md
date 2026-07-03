@@ -1779,3 +1779,20 @@ JSON may be linked only as an `evidence-link-candidate`, compact markdown may be
 This is a proposal-only mapping decision. It does not generate graph delta proposals, mutate graph-source, apply graph
 deltas, approve graph updates, change equivalence behavior, satisfy runtime Evidence, enforce scope, reject diffs,
 introduce CI required checks, change branch protection, introduce executor automation, or automate user acceptance.
+
+## DEC-234 Preview Graph-Delta-Compatible Source Artifact
+
+DEC-234 does not supersede DEC-097 through DEC-233. It adds the preview artifact
+`examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json` as the
+future proposal-only generator input shape for the Todo App runtime Evidence-only calibration fixture.
+
+The source preview gathers references to advisory `check-scope` JSON, compact advisory runtime reports, git-derived
+changed-file collection, non-enforcing scope evaluation, the proposal boundary preview, candidate schema alignment, and
+the unresolved mapping decision. It keeps `CH-001` as a structure-only `sourceRecordId` review candidate, records
+Evidence/report links as candidate-only context, and leaves `graphDeltaPath` candidate-only/not-written until a future
+generator task selects an output policy.
+
+This source artifact is not graph-source, not a `graph-delta-v0` artifact, not a `pbe-graph-update-proposal-v0`
+artifact, and not apply. It does not generate proposals, mutate graph-source, apply graph deltas, approve graph updates,
+change equivalence behavior, satisfy runtime Evidence, enforce scope, reject diffs, introduce CI required checks, change
+branch protection, introduce executor automation, or automate user acceptance.

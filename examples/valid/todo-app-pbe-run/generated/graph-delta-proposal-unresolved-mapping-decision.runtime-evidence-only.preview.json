@@ -7,6 +7,8 @@
   "decisionScope": "sourceRecordId-graphDeltaPath-evidence-report-link-handling",
   "proposalBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-boundary.runtime-evidence-only.preview.json",
   "candidateSchemaAlignmentArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.runtime-evidence-only.preview.json",
+  "graphDeltaCompatibleSourceStatus": "graph-delta-compatible-source-previewed",
+  "graphDeltaCompatibleSourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
   "existingGraphSource": "examples/valid/todo-app-pbe-run/graph-source.json",
   "existingChangeTree": "examples/valid/todo-app-pbe-run/.pbe/control/change-tree.json",
   "boundaryState": {
@@ -53,8 +55,10 @@
     "forbiddenInterpretation": "CH-001 selection is not fixture approval, graph-source mutation, graph delta apply, runtime Evidence satisfaction, or source-authority promotion."
   },
   "graphDeltaPathDecision": {
-    "decisionStatus": "graph-delta-path-deferred-until-graph-delta-compatible-source-exists",
-    "graphDeltaPathStatus": "unresolved-graph-delta-source-required",
+    "decisionStatus": "graph-delta-path-still-deferred-after-source-preview",
+    "graphDeltaPathStatus": "unresolved-output-path-policy-required",
+    "graphDeltaCompatibleSourceStatus": "graph-delta-compatible-source-previewed",
+    "graphDeltaCompatibleSourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
     "reason": "Advisory check-scope output and git-derived changed-file collection are not graph delta artifacts. Existing pbe-graph-update-proposal-v0 expects graphDeltaPath to point to a graph-delta-v0-compatible artifact.",
     "existingOutputConvention": {
       "graphDeltaExamples": [
@@ -130,8 +134,8 @@
   "remainingUnresolvedMappings": [
     {
       "mappingId": "graph-delta-compatible-source",
-      "status": "unresolved-graph-delta-source-required",
-      "requiredBeforeProposalOnlyGenerator": true
+      "status": "graph-delta-compatible-source-previewed-input-shape-only",
+      "requiredBeforeProposalOnlyGenerator": false
     },
     {
       "mappingId": "operation-chain-record-binding",

@@ -117,6 +117,17 @@ examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mappin
 It records pre-generator decisions for `sourceRecordId`, `graphDeltaPath`, and Evidence/report link handling. It does
 not generate proposals, add runtime work, or change the advisory timing budget.
 
+The graph-delta-compatible source preview is also outside the measured runtime path:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json
+```
+
+It is a future proposal-only generator input shape that references advisory runtime output, changed-file collection,
+scope evaluation, proposal boundary, schema alignment, and mapping decisions. It is not graph-source, not a graph delta,
+not a graph update proposal, and not apply. It adds no timing smoke command and does not change the advisory 5 second
+budget.
+
 ## Health Report Boundary
 
 `graph read-model report-health --json` exposes a small runtime budget summary:

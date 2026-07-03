@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "graph-delta-compatible-source-preview",
+  "status": "graph-delta-compatible-source-previewed",
+  "sourceArtifactStatus": "graph-delta-compatible-source-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "compatibleProposalSchema": "pbe-graph-update-proposal-v0",
+  "compatibleProposalSchemaPath": "schemas/pbe/graph-update-proposal-v0.json",
+  "graphDeltaSchemaPath": "schemas/pbe/graph-delta-v0.json",
+  "proposalBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-boundary.runtime-evidence-only.preview.json",
+  "candidateSchemaAlignmentArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.runtime-evidence-only.preview.json",
+  "unresolvedMappingDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
+  "proposalOnly": true,
+  "candidateOnly": true,
+  "candidateGenerationStatus": "not-generated",
+  "proposalGenerated": false,
+  "pbeGraphUpdateProposalV0Generated": false,
+  "graphDeltaCaptured": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false,
+  "requiresHumanReview": true,
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "runtimeEvidenceSatisfied": false,
+  "enforcementStatus": "not-enforced",
+  "scopeEnforced": false,
+  "diffRejected": false,
+  "ciRequiredCheckIntroduced": false,
+  "branchProtectionChanged": false,
+  "sourceInputs": [
+    {
+      "inputId": "advisory-check-scope-json-result",
+      "sourceCommand": "graph read-model check-scope --base <baseRef> --head <headRef> --json",
+      "sourceStatus": "runtime-command-available",
+      "candidateContribution": "May supply advisory result status, finding counts, changed-file observations, and non-enforcement metadata for future proposal generation.",
+      "authorityBoundary": "Advisory scope output is not graph-source authority, approval, runtime Evidence satisfaction, enforcement, or graph delta apply."
+    },
+    {
+      "inputId": "compact-advisory-runtime-report",
+      "sourceCommand": "graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json",
+      "sourceStatus": "optional-markdown-report-available",
+      "candidateContribution": "May provide a human-readable runtime report link candidate.",
+      "authorityBoundary": "The report is review context only and is not accepted Evidence or approval."
+    },
+    {
+      "inputId": "git-derived-changed-file-collection",
+      "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-collection.runtime-evidence-only.preview.json",
+      "sourceStatus": "collection-only-artifact-available",
+      "candidateContribution": "May provide changed-file observation candidates.",
+      "authorityBoundary": "Changed-file collection is not scope compliance, graph delta capture, or graph update proposal generation."
+    },
+    {
+      "inputId": "scope-compliance-evaluation-artifact",
+      "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/scope-compliance-evaluation.runtime-evidence-only.preview.json",
+      "sourceStatus": "non-enforcing-evaluation-preview-available",
+      "candidateContribution": "May provide advisory scope-finding review note and risk update candidates.",
+      "authorityBoundary": "Evaluation remains advisory and non-enforcing."
+    },
+    {
+      "inputId": "graph-delta-proposal-boundary-preview",
+      "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-boundary.runtime-evidence-only.preview.json",
+      "sourceStatus": "proposal-boundary-preview-available",
+      "candidateContribution": "Defines non-apply and human-review boundaries that future generation must preserve.",
+      "authorityBoundary": "Boundary preview is not a graph update proposal."
+    },
+    {
+      "inputId": "graph-delta-proposal-candidate-schema-alignment-preview",
+      "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.runtime-evidence-only.preview.json",
+      "sourceStatus": "candidate-schema-alignment-preview-available",
+      "candidateContribution": "Maps advisory candidate concepts to existing pbe-graph-update-proposal-v0 fields.",
+      "authorityBoundary": "Schema alignment does not generate proposal objects."
+    },
+    {
+      "inputId": "graph-delta-proposal-unresolved-mapping-decision-preview",
+      "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
+      "sourceStatus": "mapping-decision-preview-available",
+      "candidateContribution": "Provides sourceRecordId candidate, graphDeltaPath deferral, and Evidence/report link handling decisions.",
+      "authorityBoundary": "Mapping decisions do not approve graph changes or apply deltas."
+    }
+  ],
+  "sourceRecordIdentity": {
+    "sourceRecordIdCandidate": "CH-001",
+    "sourceRecordIdAuthorityStatus": "structure-only-review-candidate",
+    "sourceRecordIdResolutionStatus": "human-review-required",
+    "candidateKind": "change",
+    "candidateAuthoritySources": [
+      {
+        "artifact": "examples/valid/todo-app-pbe-run/graph-source.json",
+        "field": "sourceRecords.nodes[]",
+        "authorityStatus": "structure-only-graph-source-context"
+      },
+      {
+        "artifact": "examples/valid/todo-app-pbe-run/.pbe/control/change-tree.json",
+        "field": "changes[].id",
+        "authorityStatus": "tree-native-compatibility-reference"
+      }
+    ],
+    "advisoryCheckScopeIsSourceAuthority": false,
+    "forbiddenInterpretation": "CH-001 remains a review candidate only. It is not an apply-ready operation-chain record, fixture approval, graph-source mutation, runtime Evidence satisfaction, or source-authority promotion."
+  },
+  "graphDeltaPathPolicy": {
+    "graphDeltaPathStatus": "unresolved-output-path-policy-required",
+    "graphDeltaPathCandidate": "outputs/devview/todo-app-pbe-run/graph-update-proposals/<proposal-id>.graph-update-proposal.json",
+    "graphDeltaPathAuthorityStatus": "candidate-only-not-written",
+    "runtimeCliDefault": "stdout-or-.tmp-only",
+    "trackedCalibrationPreviewPathCandidate": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate.runtime-evidence-only.preview.json",
+    "graphDeltaCompatibleSourcePath": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
+    "reason": "The output convention is candidate-only because this task does not create a graph-delta-v0 artifact or a pbe-graph-update-proposal-v0 artifact.",
+    "forbiddenInterpretation": "This source artifact is not itself graphDeltaPath for an apply-ready proposal and does not authorize graph-source writes."
+  },
+  "evidenceAndReportLinkCandidates": {
+    "runtimeEvidenceSatisfied": false,
+    "advisoryOutputsAcceptedAsRuntimeEvidence": false,
+    "advisoryEvaluationJsonLinkCandidate": {
+      "candidateType": "evidence-link-candidate",
+      "sourceCommand": "graph read-model check-scope --base <baseRef> --head <headRef> --json",
+      "acceptedEvidence": false,
+      "requiresHumanReview": true,
+      "candidateUse": "review-context-only"
+    },
+    "compactRuntimeReportLinkCandidate": {
+      "candidateType": "runtime-report-link-candidate",
+      "sourceCommand": "graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json",
+      "acceptedEvidence": false,
+      "requiresHumanReview": true,
+      "candidateUse": "human-readable-review-context"
+    },
+    "changedFileCollectionLinkCandidate": {
+      "candidateType": "changed-file-observation-candidate",
+      "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/git-derived-changed-file-collection.runtime-evidence-only.preview.json",
+      "acceptedEvidence": false,
+      "requiresHumanReview": true,
+      "candidateUse": "changed-file-observation-input"
+    },
+    "scopeFindingReviewNoteCandidate": {
+      "candidateType": "scope-finding-review-note-candidate",
+      "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/scope-compliance-evaluation.runtime-evidence-only.preview.json",
+      "acceptedEvidence": false,
+      "requiresHumanReview": true,
+      "candidateUse": "advisory-finding-review-context"
+    },
+    "forbiddenInterpretation": "Candidate links are not accepted Evidence, runtime Evidence satisfaction, graph update approval, fixture approval, or user acceptance."
+  },
+  "proposalV0InputAlignment": [
+    {
+      "proposalField": "changedFiles",
+      "sourceArtifactField": "sourceInputs.git-derived-changed-file-collection",
+      "mappingStatus": "candidate-source-available-not-populated",
+      "notes": "A future generator may map changed-file observations into changedFiles after sourceRecordId and graphDeltaPath policies are selected."
+    },
+    {
+      "proposalField": "proposedRecordState",
+      "sourceArtifactField": "scopeFindingReviewNoteCandidate",
+      "mappingStatus": "candidate-source-available-review-required",
+      "notes": "Advisory findings may inform remainingRisks or nextAllowedActions only after human review."
+    },
+    {
+      "proposalField": "proposedNodeUpdates",
+      "sourceArtifactField": "sourceRecordIdentity.sourceRecordIdCandidate",
+      "mappingStatus": "candidate-source-available-not-authoritative",
+      "notes": "CH-001 is structure-only review context, not an apply-ready node update target."
+    },
+    {
+      "proposalField": "edgeIntentSummary",
+      "sourceArtifactField": "evidenceAndReportLinkCandidates",
+      "mappingStatus": "unresolved-existing-schema-review-required",
+      "notes": "The existing proposal schema does not yet define a dedicated Evidence or runtime report link field."
+    },
+    {
+      "proposalField": "boundaries",
+      "sourceArtifactField": "proposalOnly-graphSourceMutated-graphDeltaApplied-requiresHumanReview-approvalStatus",
+      "mappingStatus": "existing-field-compatible-required",
+      "notes": "Future generation must preserve proposal-only, not-applied, not-approved, and human-review-required boundaries."
+    }
+  ],
+  "performanceBoundary": {
+    "designOnly": true,
+    "addsRuntimeWork": false,
+    "aiCalls": false,
+    "networkCalls": false,
+    "fullRepoScan": false,
+    "patchHunkInspection": false,
+    "fileContentSemanticAnalysis": false,
+    "fullValidation": false,
+    "futureGenerationBudgetCompatibility": "must-remain-within-advisory-5-second-runtime-path",
+    "expensiveSemanticAnalysisDeferred": true,
+    "runtimeBudgetStatus": "advisory-not-enforced"
+  },
+  "allowedUse": [
+    "define the future proposal-only generator input shape",
+    "collect advisory check-scope, compact report, changed-file collection, evaluation, boundary, schema alignment, and mapping decision references",
+    "preserve CH-001 as a structure-only sourceRecordId candidate requiring human review",
+    "record Evidence/report link candidates without accepting them as Evidence",
+    "align future generation input with pbe-graph-update-proposal-v0 fields"
+  ],
+  "forbiddenUse": [
+    "pbe-graph-update-proposal-v0 artifact generation",
+    "graph-source artifact",
+    "graph-source mutation",
+    "graph delta capture",
+    "graph delta apply",
+    "approved graph update",
+    "scope compliance enforcement",
+    "diff rejection",
+    "CI required check",
+    "branch protection",
+    "fixture approval",
+    "runtime Evidence satisfaction",
+    "equivalence proof",
+    "user acceptance automation",
+    "executor automation"
+  ],
+  "nonExecutionBoundary": "This artifact previews a graph-delta-compatible source input shape for a future proposal-only generator. It is not graph-source, not a graph-delta-v0 artifact, not a pbe-graph-update-proposal-v0 artifact, and not graph delta apply. It does not mutate graph-source, approve graph updates, enforce scope, reject diffs, satisfy runtime Evidence, prove equivalence, configure CI or required checks, change branch protection, or replace human review."
+}

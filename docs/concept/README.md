@@ -290,6 +290,12 @@ The unresolved mapping decision preview is recorded in
 It identifies `CH-001` as a structure-only source record candidate, defers `graphDeltaPath` until a graph-delta-compatible
 source exists, and keeps advisory JSON/report links candidate-only.
 
+The graph-delta-compatible source preview is recorded in
+`examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json`. It defines a
+future proposal-only generator input shape from advisory runtime outputs, changed-file collection, scope evaluation,
+proposal boundary, schema alignment, and mapping decisions. It is not graph-source, not a graph update proposal, not
+apply, and not accepted Evidence.
+
 The following readiness artifact is complete at documentation level:
 
 - [representative-runtime-feasibility-demo.md](representative-runtime-feasibility-demo.md)

@@ -1787,6 +1787,17 @@ It narrows three pre-generator decisions. `CH-001` is the existing structure-onl
 `sourceRecordId` review, `graphDeltaPath` remains deferred until a graph-delta-compatible source exists, and advisory
 JSON/report links remain candidate-only review context rather than accepted Evidence or approval.
 
+The graph-delta-compatible source preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json
+```
+
+It defines the future proposal-only generator input shape by gathering advisory `check-scope` output, compact runtime
+report references, changed-file collection, scope evaluation, proposal boundary, schema alignment, and unresolved
+mapping decisions. It is not graph-source, not a graph delta, not a graph update proposal, not apply, and not runtime
+Evidence satisfaction. `CH-001` remains a structure-only review candidate and human review remains required.
+
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
 approval or runtime Evidence satisfaction.

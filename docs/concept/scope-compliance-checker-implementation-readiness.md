@@ -669,6 +669,18 @@ node candidate, not an apply-ready operation-chain record; advisory JSON and com
 candidate links only; and `graphDeltaPath` remains unresolved because advisory `check-scope` output is not a graph delta.
 Proposal generation remains future work.
 
+The graph-delta-compatible source preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json
+```
+
+This artifact is the future proposal-only generator input shape. It gathers advisory runtime outputs, changed-file
+collection, scope evaluation, boundary, schema alignment, and mapping decision references without producing a proposal.
+It is not graph-source, not `graph-delta-v0`, not `pbe-graph-update-proposal-v0`, and not apply. `CH-001` remains a
+structure-only `sourceRecordId` review candidate, Evidence/report links remain candidate-only, and `graphDeltaPath`
+remains candidate-only/not-written until a future proposal generation task selects an output policy.
+
 ## Runtime Budget Timing Smoke
 
 The runtime performance budget is documented in

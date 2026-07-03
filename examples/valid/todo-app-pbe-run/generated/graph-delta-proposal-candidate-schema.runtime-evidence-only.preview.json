@@ -6,8 +6,10 @@
   "fixtureShape": "test-only-behavior-proof",
   "schemaAlignmentStatus": "existing-graph-update-proposal-v0-alignment-previewed",
   "unresolvedMappingDecisionStatus": "graph-delta-proposal-unresolved-mapping-decision-previewed",
+  "graphDeltaCompatibleSourceStatus": "graph-delta-compatible-source-previewed",
   "proposalBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-boundary.runtime-evidence-only.preview.json",
   "unresolvedMappingDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
+  "graphDeltaCompatibleSourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
   "existingGraphUpdateProposalSchema": "schemas/pbe/graph-update-proposal-v0.json",
   "existingGraphDeltaSchema": "schemas/pbe/graph-delta-v0.json",
   "existingGraphOperationDocs": [
@@ -87,6 +89,13 @@
       "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-boundary.runtime-evidence-only.preview.json",
       "candidateContribution": "Defines non-apply boundary fields that future candidate generation must preserve.",
       "authorityBoundary": "Boundary preview is not a graph update proposal artifact."
+    },
+    {
+      "inputId": "graph-delta-compatible-source-preview",
+      "sourceStatus": "proposal-generator-input-shape-preview-available",
+      "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
+      "candidateContribution": "Collects advisory runtime, changed-file, evaluation, boundary, schema, and mapping decision references into a future proposal-only generator input shape.",
+      "authorityBoundary": "Compatible source preview is not graph-source, not graph-delta-v0, not pbe-graph-update-proposal-v0, and not graph delta apply."
     }
   ],
   "existingProposalV0FieldAlignment": [
@@ -233,6 +242,7 @@
   "futureProposalCandidateShape": {
     "proposalCandidateId": "future-generated-id",
     "unresolvedMappingDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
+    "graphDeltaCompatibleSource": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
     "sourceEvaluationArtifact": "examples/valid/todo-app-pbe-run/generated/scope-compliance-evaluation.runtime-evidence-only.preview.json",
     "sourceRuntimeReport": ".tmp/devview-scope-runtime-report.md",
     "sourceGraphUpdateProposalSchema": "schemas/pbe/graph-update-proposal-v0.json",

@@ -91,6 +91,12 @@ The follow-on mapping decision preview is
 It keeps `graphDeltaPath` unresolved until a graph-delta-compatible source exists and treats advisory JSON/markdown links
 as candidate review context only.
 
+The graph-delta-compatible source preview is
+`examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json`. It is a
+future proposal-only generator input shape that collects advisory runtime output, changed-file collection, scope
+evaluation, proposal boundary, schema alignment, and mapping decisions. It is not graph-source, not `graph-delta-v0`,
+not `pbe-graph-update-proposal-v0`, and not apply.
+
 Retrofit graph sources can be inspected before implementation:
 
 ```powershell

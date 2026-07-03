@@ -560,6 +560,18 @@ until a graph-delta-compatible source exists, and allows advisory evaluation JSO
 linked only as candidate review context. These links do not satisfy runtime Evidence, approve graph changes, or generate
 proposals.
 
+The graph-delta-compatible source preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json
+```
+
+It collects the advisory `check-scope` result, compact runtime report, changed-file collection, scope evaluation,
+proposal boundary, schema alignment, and unresolved mapping decision references into a future proposal-only generator
+input shape. It is not graph-source, not `graph-delta-v0`, not `pbe-graph-update-proposal-v0`, and not graph delta
+apply. `CH-001` remains a structure-only review candidate, `graphDeltaPath` remains candidate-only/not-written, and
+human review remains required.
+
 ## Runtime Budget Smoke
 
 The deterministic DevView runtime budget is documented in
