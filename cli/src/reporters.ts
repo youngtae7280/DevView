@@ -184,6 +184,8 @@ Commands:
                        Generate deterministic Contract Compiler Input from a Selected Graph Slice
   graph read-model generate-instruction-pack
                        Generate deterministic Instruction Pack from Contract Compiler Input without execution
+  graph read-model report-hook-gateway-health
+                       Report Hook Gateway health boundary readiness without installing hooks or enforcement
   graph read-model report-health
                        Summarize local non-enforcing Graph-source transition health
   graph read-model observe-candidates
@@ -232,7 +234,7 @@ Options:
   --graph-delta <file> Graph delta file for graph operation propose-update.
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, or generate-instruction-pack.
+  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, or report-hook-gateway-health.
   --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, or generate-instruction-pack.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal or graph read-model review-graph-delta.
   --candidate <file>   Request IR Candidate file for graph read-model validate-request-ir.
@@ -246,6 +248,7 @@ Options:
                        Selected Graph Slice file for graph read-model generate-contract-input.
   --contract-input <file>
                        Contract Compiler Input file for graph read-model generate-instruction-pack.
+  --boundary <file>    Hook Gateway health boundary file for graph read-model report-hook-gateway-health.
   --chain-command <name>
                        Wrapped graph operation script command. Defaults to operation-chain.
   --base <ref>         Base git ref for graph read-model collect-changed-files or check-scope.

@@ -17,10 +17,13 @@ const smokeSelectedGraphSlicePath = '.tmp/devview-runtime-timing-smoke/selected-
 const smokeContractCompilerInputPath = '.tmp/devview-runtime-timing-smoke/contract-compiler-input.json'
 const smokeInstructionPackPath = '.tmp/devview-runtime-timing-smoke/instruction-pack.json'
 const smokeInstructionPackMarkdownPath = '.tmp/devview-runtime-timing-smoke/instruction-pack.md'
+const smokeHookGatewayHealthReportPath = '.tmp/devview-runtime-timing-smoke/hook-gateway-health-report.json'
 const graphDeltaCompatibleSourcePath =
   'examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json'
 const requestIrCandidatePath =
   'examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json'
+const hookGatewayHealthBoundaryPath =
+  'examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json'
 const runtimeBudgetTargetMs = 5000
 const outputArgIndex = process.argv.indexOf('--output')
 const outputPath = outputArgIndex >= 0 ? process.argv[outputArgIndex + 1] : null
@@ -116,6 +119,21 @@ const measuredSteps = [
       smokeInstructionPackPath,
       '--markdown',
       smokeInstructionPackMarkdownPath,
+      '--json',
+    ],
+    includedInRuntimeBudget: true,
+  },
+  {
+    stepName: 'hook-gateway-health-report',
+    command: `node dist/cli/index.js graph read-model report-hook-gateway-health --boundary ${hookGatewayHealthBoundaryPath} --output ${smokeHookGatewayHealthReportPath} --json`,
+    args: [
+      'graph',
+      'read-model',
+      'report-hook-gateway-health',
+      '--boundary',
+      hookGatewayHealthBoundaryPath,
+      '--output',
+      smokeHookGatewayHealthReportPath,
       '--json',
     ],
     includedInRuntimeBudget: true,

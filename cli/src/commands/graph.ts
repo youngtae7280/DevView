@@ -4,6 +4,7 @@ import { collectGitDerivedChangedFiles } from '../core/git-derived-changed-file-
 import { generateGraphDeltaHumanReviewPacket } from '../core/graph-delta-human-review-packet.js'
 import { generateGraphTraversalPlanFile } from '../core/graph-traversal-plan.js'
 import { generateContractCompilerInputFile } from '../core/contract-input-generator.js'
+import { reportHookGatewayHealthFile } from '../core/hook-gateway-health-report.js'
 import { generateInstructionPackFile } from '../core/instruction-pack-generator.js'
 import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
 import { generateSelectedGraphSliceFile } from '../core/selected-graph-slice.js'
@@ -1155,6 +1156,68 @@ export async function graphReadModelGenerateInstructionPackCommand(context: Comm
           message,
           suggestedFix:
             'Provide a readable generated Contract Compiler Input artifact. Instruction Pack generation does not execute Codex.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelReportHookGatewayHealthCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.boundary) {
+    return invalidCommand('graph read-model report-hook-gateway-health requires --boundary <boundaryPath>.')
+  }
+
+  try {
+    const health = await reportHookGatewayHealthFile(context.options.root, context.options.boundary, {
+      output: context.options.output,
+    })
+    const blocked = health.report.status !== 'devview-hook-gateway-health-report-generated'
+    const errorFindings = health.report.validationFindings.filter((finding) => finding.severity === 'error')
+
+    return {
+      ok: !blocked,
+      command: 'graph read-model report-hook-gateway-health',
+      exitCode: blocked ? ExitCode.ValidationFailed : ExitCode.Success,
+      message: blocked
+        ? 'Hook Gateway health report blocked by an unsafe boundary preview.'
+        : 'Hook Gateway health boundary reported without hook installation or enforcement.',
+      issues: blocked
+        ? (errorFindings.length > 0 ? errorFindings : health.report.validationFindings).map((finding) =>
+            issue({
+              validator: 'HookGatewayHealthReporter',
+              code: finding.code,
+              severity: finding.severity,
+              message: finding.message,
+              reason: finding.field ? `Field: ${finding.field}` : undefined,
+              suggestedFix:
+                finding.suggestedFix ??
+                'Repair the Hook Gateway health boundary preview before reporting activation readiness.',
+            }),
+          )
+        : [],
+      data: {
+        ...health.report,
+        ...(health.outputPath ? { outputPath: health.outputPath } : {}),
+        next: blocked
+          ? 'Repair the boundary preview. This command did not install hooks, trust commands, block Codex execution, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.'
+          : 'Use this report as non-enforcing readiness context only. Hook scripts, install/trust mutation, guided blocking, strict mode, Codex execution blocking, graph apply, approval, runtime Evidence satisfaction, equivalence proof, scope enforcement, and CI enforcement remain unimplemented.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model report-hook-gateway-health',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Hook Gateway health report could not run.',
+      issues: [
+        issue({
+          validator: 'HookGatewayHealthReporter',
+          code: 'HOOK_GATEWAY_HEALTH_REPORT_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a readable Hook Gateway health boundary preview and a dedicated preview/report output path.',
         }),
       ],
     }

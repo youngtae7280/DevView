@@ -28,6 +28,7 @@ import {
   graphReadModelProjectCommand,
   graphReadModelProjectIntentCommand,
   graphReadModelReviewGraphDeltaCommand,
+  graphReadModelReportHookGatewayHealthCommand,
   graphReadModelReportCompilerBoundaryCommand,
   graphReadModelReportCompilerInputCommand,
   graphReadModelReportHealthCommand,
@@ -250,6 +251,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-instruction-pack') {
     return graphReadModelGenerateInstructionPackCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-hook-gateway-health') {
+    return graphReadModelReportHookGatewayHealthCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-health') {
     return graphReadModelReportHealthCommand(context)

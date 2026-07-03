@@ -56,6 +56,9 @@ It runs:
 
 - `node dist/cli/index.js graph read-model validate-request-ir --candidate examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json --output .tmp/devview-runtime-timing-smoke/request-ir-validation.json --json`;
 - `node dist/cli/index.js graph read-model validate-request-ir-graph --candidate examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json --schema-validation .tmp/devview-runtime-timing-smoke/request-ir-validation.json --output .tmp/devview-runtime-timing-smoke/request-ir-graph-validation.json --json`;
+- frontend deterministic generation through traversal plan, selected graph slice, Contract Compiler Input, and
+  Instruction Pack preview;
+- `node dist/cli/index.js graph read-model report-hook-gateway-health --boundary examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json --output .tmp/devview-runtime-timing-smoke/hook-gateway-health-report.json --json`;
 - `node dist/cli/index.js graph read-model report-compiler-input --json`;
 - `node dist/cli/index.js graph read-model compile-contract --dry-run --json`;
 - `node dist/cli/index.js graph read-model collect-changed-files --base HEAD~1 --head HEAD --output .tmp/devview-runtime-timing-smoke/git-derived-changed-file-collection.json --json`.
@@ -68,6 +71,11 @@ The scope check step runs the advisory evaluator through the supported CLI surfa
 memory, consumes the current Todo App runtime Evidence-only scope inputs, and reports findings as non-enforcing JSON. It
 also writes a compact Markdown summary to `.tmp` during the smoke. It does not write a tracked evaluation artifact unless
 `--output` is explicitly supplied.
+
+The Hook Gateway health report step is report-only. It reads the preview health boundary and writes a `.tmp` report, but
+does not implement hook scripts, install/trust commands, block Codex execution, enable guided or strict behavior,
+mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, enforce scope, or
+configure CI.
 
 The compact scope runtime report can also be requested directly:
 

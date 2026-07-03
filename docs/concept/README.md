@@ -323,6 +323,12 @@ status, hook config/script detection, trust state, observed events, bypass readi
 availability. It does not install hooks, trust commands, block Codex execution, enable guided/strict enforcement, mutate
 graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, or enforce scope/CI.
 
+The report-only Hook Gateway health command is now exposed as
+`graph read-model report-hook-gateway-health --boundary <healthBoundaryPath> --json`. It reads the boundary preview and
+summarizes readiness without implementing hook scripts, changing trust/config, blocking Codex execution, enabling
+guided/strict behavior, mutating graph-source, applying graph deltas, approving work, satisfying runtime Evidence,
+proving equivalence, or enforcing scope/CI.
+
 The Natural Language Request Intake compiler frontend boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/natural-language-request-intake-boundary.runtime-evidence-only.preview.json`
 and documented in [natural-language-request-intake-boundary.md](natural-language-request-intake-boundary.md). It defines

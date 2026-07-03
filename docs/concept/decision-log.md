@@ -2256,3 +2256,34 @@ commands, block Codex execution, enable strict or guided enforcement, call an LL
 deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope,
 introduce CI required checks, change branch protection, or automate user acceptance. A future actual health check should
 remain lightweight and fit within the advisory 5 second deterministic DevView runtime budget.
+
+## DEC-251 Implement Hook Gateway Health Report CLI
+
+DEC-251 does not supersede DEC-097 through DEC-250. It implements a report-only deterministic CLI that reads the Hook
+Gateway health boundary preview and emits compact readiness JSON.
+
+The command is exposed through:
+
+```text
+graph read-model report-hook-gateway-health --boundary <healthBoundaryPath> --json
+```
+
+The implementation is recorded in:
+
+```text
+cli/src/core/hook-gateway-health-report.ts
+```
+
+The command reports `healthCheckImplemented: true` for the report command itself, while preserving
+`hookScriptsImplemented: false`, `actualBlockingHookBehaviorImplemented: false`, `strictModeEnabled: false`,
+`guidedEnforcementEnabled: false`, `nonEnforcing: true`, and `runtimeBudgetEnforced: false`. It summarizes future
+readiness items and frontend artifact availability from the boundary preview.
+
+Explicit report output is allowed only for dedicated preview/report paths. The command rejects output paths before
+writing when they would overwrite the source health boundary, linked source/preview artifacts, or source-authority-shaped
+JSON artifacts.
+
+This decision does not implement hook scripts, install hooks, trust commands, block Codex execution, enable strict or
+guided enforcement, call an LLM, make network calls, mutate graph-source, apply graph deltas, approve graph updates,
+record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, introduce CI required checks, change
+branch protection, or automate user acceptance.

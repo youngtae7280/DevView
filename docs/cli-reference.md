@@ -676,6 +676,36 @@ node dist/cli/index.js graph read-model generate-instruction-pack `
   --json
 ```
 
+### `pbe graph read-model report-hook-gateway-health`
+
+- Purpose: Read a DevView Hook Gateway health boundary preview and emit a compact, non-enforcing readiness report.
+- Typical state before running: After the Hook Gateway health boundary preview exists at
+  `devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json`.
+- Options: `--boundary <boundaryPath>` is required. `--output <file>` may write the JSON report. Without explicit
+  output, JSON stdout is the only output.
+- What it checks: boundary artifact role/status, preview-only hook status, strict-disabled state, no install/trust
+  mutation, no blocking hook behavior, no graph/apply/approval/evidence/equivalence/enforcement flags, frontend artifact
+  availability inventory, and future readiness item summaries.
+- What it writes: Nothing by default. It writes only to explicit `--output`.
+- Output authority guard: explicit report output is rejected before writing if it would overwrite the source health
+  boundary, linked boundary/source preview artifacts, or an existing source-authority-shaped JSON artifact.
+- Success result: JSON with `artifactRole: devview-hook-gateway-health-report`, `healthCheckImplemented: true` for this
+  report command only, `hookScriptsImplemented: false`, `actualBlockingHookBehaviorImplemented: false`,
+  `strictModeEnabled: false`, `guidedEnforcementEnabled: false`, `nonEnforcing: true`, and frontend availability
+  summary.
+- Next command: None automatic. This is readiness context only; it does not install hooks, trust commands, block Codex
+  execution, enable guided/strict behavior, mutate graph-source, apply graph deltas, approve work, satisfy runtime
+  Evidence, prove equivalence, enforce scope, or configure CI.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model report-hook-gateway-health `
+  --boundary examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json `
+  --output .tmp/review-hook-gateway-health.json `
+  --json
+```
+
 ### `pbe graph operation apply-proposal`
 
 - Purpose: Preview or apply a generated graph update proposal to its graph-source.

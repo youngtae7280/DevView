@@ -184,10 +184,23 @@ This health boundary does not implement hook scripts, install hooks, trust comma
 strict mode, enable guided enforcement, mutate graph-source, apply graph deltas, approve work, record human decisions,
 satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
 
+The report-only health command now reads that boundary without activating hooks:
+
+```text
+graph read-model report-hook-gateway-health --boundary <healthBoundaryPath> --json
+```
+
+The command emits `artifactRole: devview-hook-gateway-health-report` with `healthCheckImplemented: true` for the report
+command itself, while preserving `hookScriptsImplemented: false`, `actualBlockingHookBehaviorImplemented: false`,
+`strictModeEnabled: false`, `guidedEnforcementEnabled: false`, and `nonEnforcing: true`. Optional `--output` is allowed
+only for dedicated preview/report paths and is blocked before writing if it would overwrite the source boundary or
+linked source/preview artifacts.
+
 ## Runtime Boundary
 
 Future hook scripts must remain lightweight and compatible with the advisory 5 second deterministic runtime budget. They must avoid AI calls, network calls, full repo scans, patch/hunk inspection, file-content semantic analysis, and full validation inside the hook path unless a later explicit decision changes the boundary.
 
-The current health boundary adds no measured hook runtime. It only records the activation, routing, and future
-health/readiness boundary. A future actual health check command should remain lightweight and fit inside the advisory
-5 second deterministic DevView runtime budget.
+The current report-only health command is measured in the advisory timing smoke. It reads one boundary artifact and
+writes only explicit preview/report output, and it still does not install hooks, trust commands, block Codex execution,
+or enforce DevView. Future hook scripts should remain lightweight and fit inside the advisory 5 second deterministic
+DevView runtime budget.

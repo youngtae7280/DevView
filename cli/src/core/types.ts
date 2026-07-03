@@ -91,6 +91,7 @@ export interface CliOptions {
   traversalPlan?: string
   selectedSlice?: string
   contractInput?: string
+  boundary?: string
   chainCommand?: string
   base?: string
   head?: string
