@@ -329,6 +329,12 @@ summarizes readiness without implementing hook scripts, changing trust/config, b
 guided/strict behavior, mutating graph-source, applying graph deltas, approving work, satisfying runtime Evidence,
 proving equivalence, or enforcing scope/CI.
 
+The runtime smoke lane boundary is previewed in
+`examples/valid/todo-app-pbe-run/generated/devview-runtime-smoke-lane-boundary.runtime-evidence-only.preview.json`. It
+keeps the all-steps smoke as an advisory snapshot while reporting lane totals for analyzer preflight, core critical
+request-to-pack frontend work, hook activation readiness, and advisory backend/post-check/reporting work. Lane budgets
+are not enforced and no CI behavior changes.
+
 The Natural Language Request Intake compiler frontend boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/natural-language-request-intake-boundary.runtime-evidence-only.preview.json`
 and documented in [natural-language-request-intake-boundary.md](natural-language-request-intake-boundary.md). It defines

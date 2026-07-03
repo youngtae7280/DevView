@@ -93,12 +93,45 @@ The smoke reports JSON with:
 - `measuredTotalMs`;
 - `targetComparison`;
 - `budgetStatus`;
+- `runtimeLanePolicyStatus`;
 - `advisoryOnly`;
 - `runtimeBudgetEnforced`;
+- `laneBudgetEnforced`;
+- `laneDefinitions`;
+- `laneTotals`;
 - `steps`.
 
 The budget status is advisory. The smoke does not fail because the 5 second target is exceeded. It exits nonzero only
 when a measured deterministic command itself fails.
+
+## Runtime Smoke Lanes
+
+The runtime smoke lane boundary is previewed in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-runtime-smoke-lane-boundary.runtime-evidence-only.preview.json
+```
+
+The all-steps smoke remains an advisory snapshot of the deterministic control plane, but each measured step now reports
+a `runtimeLane` and the report includes `laneTotals`. Lane totals are informational only; no lane budget is enforced and
+no CI behavior changes.
+
+Current lanes:
+
+- `analyzer-preflight-lane`: deterministic analyzer prompt/input setup, currently
+  `generate-ai-request-analyzer-pack`. It is not a Request IR Candidate and not automatically part of every request's
+  critical path unless the pack is missing or stale.
+- `core-critical-lane`: the deterministic request-to-instruction-pack frontend path after a Request IR Candidate exists:
+  `validate-request-ir`, `validate-request-ir-graph`, `plan-traversal`, `select-slice`, `generate-contract-input`, and
+  `generate-instruction-pack`.
+- `activation-readiness-lane`: report-only hook gateway readiness checks, currently `report-hook-gateway-health`.
+- `advisory-backend-lane`: advisory backend, post-check, graph delta proposal, and review reporting commands.
+
+New report-only commands must not automatically enter the `core-critical-lane`. They may be included in the all-steps
+smoke as advisory coverage, but the lane assignment preserves the meaning of the 5 second core runtime target. This
+lane policy does not remove existing smoke coverage and does not introduce hard failure, required checks, branch
+protection, scope enforcement, graph-source mutation, graph delta apply, approval, runtime Evidence satisfaction, or
+equivalence proof.
 
 The graph delta proposal boundary preview is now recorded at:
 

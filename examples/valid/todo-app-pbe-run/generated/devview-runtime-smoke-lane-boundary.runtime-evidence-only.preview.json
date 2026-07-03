@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-runtime-smoke-lane-boundary-preview",
+  "status": "devview-runtime-smoke-lane-boundary-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "boundaryScope": "advisory-runtime-smoke-lane-policy",
+  "runtimeBudgetTargetMs": 5000,
+  "advisoryOnly": true,
+  "runtimeBudgetEnforced": false,
+  "laneBudgetEnforced": false,
+  "ciEnforcementEnabled": false,
+  "timingFailureIsBlocking": false,
+  "allStepsSmokeStatus": "advisory-snapshot-all-measured-steps",
+  "allStepsSmokeRemainsMeasured": true,
+  "commandFailureBehavior": "command failure remains blocking for the smoke command itself",
+  "timingFailureBehavior": "timing over target remains advisory and does not fail CI",
+  "laneDefinitions": [
+    {
+      "runtimeLane": "analyzer-preflight-lane",
+      "laneRole": "deterministic analyzer prompt/input setup",
+      "perRequestCriticalPath": false,
+      "budgetTargetMs": null,
+      "budgetEnforced": false,
+      "commands": [
+        "graph read-model generate-ai-request-analyzer-pack --boundary <analyzerBoundaryPath> --schema <requestIrCandidateSchemaPath> --json"
+      ],
+      "classification": "future analyzer setup/preflight; not a Request IR Candidate and not every request critical path unless the pack is missing or stale"
+    },
+    {
+      "runtimeLane": "core-critical-lane",
+      "laneRole": "deterministic user request to instruction pack frontend path",
+      "perRequestCriticalPath": true,
+      "budgetTargetMs": 5000,
+      "budgetEnforced": false,
+      "commands": [
+        "graph read-model validate-request-ir --candidate <candidatePath> --json",
+        "graph read-model validate-request-ir-graph --candidate <candidatePath> --schema-validation <schemaValidationPath> --json",
+        "graph read-model plan-traversal --graph-validation <graphAwareValidationPath> --json",
+        "graph read-model select-slice --traversal-plan <planPath> --json",
+        "graph read-model generate-contract-input --selected-slice <selectedSlicePath> --json",
+        "graph read-model generate-instruction-pack --contract-input <contractInputPath> --json"
+      ],
+      "classification": "core deterministic frontend path after a Request IR Candidate exists"
+    },
+    {
+      "runtimeLane": "activation-readiness-lane",
+      "laneRole": "report-only hook gateway readiness checks",
+      "perRequestCriticalPath": false,
+      "budgetTargetMs": null,
+      "budgetEnforced": false,
+      "commands": ["graph read-model report-hook-gateway-health --boundary <healthBoundaryPath> --json"],
+      "classification": "activation readiness reporting only; not hook script implementation or blocking behavior"
+    },
+    {
+      "runtimeLane": "advisory-backend-lane",
+      "laneRole": "advisory backend, post-check, graph delta, and review reporting",
+      "perRequestCriticalPath": false,
+      "budgetTargetMs": null,
+      "budgetEnforced": false,
+      "commands": [
+        "graph read-model report-compiler-input --json",
+        "graph read-model compile-contract --dry-run --json",
+        "graph read-model collect-changed-files --base <base> --head <head> --json",
+        "graph read-model check-scope --base <base> --head <head> --json",
+        "graph read-model propose-graph-delta --source <sourceArtifact> --json",
+        "graph read-model review-graph-delta --proposal <proposalPath> --json"
+      ],
+      "classification": "advisory/post-check/reporting path; useful in all-steps smoke but not the core request-to-pack lane"
+    }
+  ],
+  "futureCommandInclusionRule": {
+    "coreCriticalLaneRule": "Only deterministic commands required to move from validated Request IR Candidate toward execution Instruction Pack belong in core-critical-lane.",
+    "preflightRule": "Prompt-pack setup, hook health, inventory, report-only, and calibration-only commands should use non-critical lanes unless explicitly promoted by a later decision.",
+    "allStepsSmokeRule": "The all-steps smoke may continue to include additional deterministic commands as an advisory snapshot, but lane totals preserve the meaning of the core budget.",
+    "notAutomatic": "New report-only commands must not automatically enter core-critical-lane."
+  },
+  "scriptIntegration": {
+    "script": "scripts/devview-runtime-timing-smoke.mjs",
+    "reportedFields": [
+      "runtimeLanePolicyStatus",
+      "runtimeSmokeLaneBoundary",
+      "laneDefinitions",
+      "laneTotals",
+      "steps[].runtimeLane"
+    ],
+    "runtimeBudgetEnforced": false,
+    "laneBudgetEnforced": false
+  },
+  "currentSafetyBoundary": {
+    "strictModeEnabled": false,
+    "guidedEnforcementEnabled": false,
+    "hookBlockingImplemented": false,
+    "graphSourceMutated": false,
+    "graphDeltaApplied": false,
+    "approvalStatus": "not-approved",
+    "humanDecisionRecorded": false,
+    "runtimeEvidenceSatisfied": false,
+    "equivalenceProven": false,
+    "scopeEnforced": false,
+    "ciEnforcementEnabled": false
+  },
+  "forbiddenUse": [
+    "treat lane budget overage as CI failure",
+    "turn timing over target into a required check",
+    "drop existing all-steps smoke coverage without an explicit decision",
+    "promote report-only commands into the core-critical lane automatically",
+    "enable strict or guided hook blocking",
+    "mutate graph-source",
+    "apply graph deltas",
+    "record approval or human decisions",
+    "claim runtime Evidence satisfaction",
+    "prove equivalence",
+    "enforce scope or CI"
+  ],
+  "nonEnforcementBoundary": "This artifact previews DevView runtime smoke lane policy only. It does not enforce runtime budgets, fail CI on timing, reject diffs, enable strict or guided hook blocking, mutate graph-source, apply graph deltas, approve work, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI."
+}

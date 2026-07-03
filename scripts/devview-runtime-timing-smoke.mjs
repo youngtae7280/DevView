@@ -30,9 +30,42 @@ const requestIrCandidateSchemaPath =
   'examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json'
 const hookGatewayHealthBoundaryPath =
   'examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json'
+const runtimeSmokeLaneBoundaryPath =
+  'examples/valid/todo-app-pbe-run/generated/devview-runtime-smoke-lane-boundary.runtime-evidence-only.preview.json'
 const runtimeBudgetTargetMs = 5000
 const outputArgIndex = process.argv.indexOf('--output')
 const outputPath = outputArgIndex >= 0 ? process.argv[outputArgIndex + 1] : null
+
+const runtimeLaneDefinitions = [
+  {
+    runtimeLane: 'analyzer-preflight-lane',
+    laneRole: 'deterministic analyzer prompt/input setup',
+    perRequestCriticalPath: false,
+    budgetTargetMs: null,
+    budgetEnforced: false,
+  },
+  {
+    runtimeLane: 'core-critical-lane',
+    laneRole: 'deterministic user request to instruction pack frontend path',
+    perRequestCriticalPath: true,
+    budgetTargetMs: runtimeBudgetTargetMs,
+    budgetEnforced: false,
+  },
+  {
+    runtimeLane: 'activation-readiness-lane',
+    laneRole: 'report-only hook gateway readiness checks',
+    perRequestCriticalPath: false,
+    budgetTargetMs: null,
+    budgetEnforced: false,
+  },
+  {
+    runtimeLane: 'advisory-backend-lane',
+    laneRole: 'advisory backend, post-check, graph delta, and review reporting',
+    perRequestCriticalPath: false,
+    budgetTargetMs: null,
+    budgetEnforced: false,
+  },
+]
 
 const measuredSteps = [
   {
@@ -53,6 +86,7 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'analyzer-preflight-lane',
   },
   {
     stepName: 'request-ir-candidate-schema-validation',
@@ -68,6 +102,7 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'core-critical-lane',
   },
   {
     stepName: 'request-ir-graph-aware-validation',
@@ -85,6 +120,7 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'core-critical-lane',
   },
   {
     stepName: 'graph-traversal-plan-generation',
@@ -100,6 +136,7 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'core-critical-lane',
   },
   {
     stepName: 'selected-graph-slice-generation',
@@ -115,6 +152,7 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'core-critical-lane',
   },
   {
     stepName: 'contract-compiler-input-generation',
@@ -130,6 +168,7 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'core-critical-lane',
   },
   {
     stepName: 'instruction-pack-generation',
@@ -147,6 +186,7 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'core-critical-lane',
   },
   {
     stepName: 'hook-gateway-health-report',
@@ -162,18 +202,21 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'activation-readiness-lane',
   },
   {
     stepName: 'compiler-input-report',
     command: 'node dist/cli/index.js graph read-model report-compiler-input --json',
     args: ['graph', 'read-model', 'report-compiler-input', '--json'],
     includedInRuntimeBudget: true,
+    runtimeLane: 'advisory-backend-lane',
   },
   {
     stepName: 'contract-compiler-dry-run',
     command: 'node dist/cli/index.js graph read-model compile-contract --dry-run --json',
     args: ['graph', 'read-model', 'compile-contract', '--dry-run', '--json'],
     includedInRuntimeBudget: true,
+    runtimeLane: 'advisory-backend-lane',
   },
   {
     stepName: 'git-derived-changed-file-collection',
@@ -191,6 +234,7 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'advisory-backend-lane',
   },
   {
     stepName: 'non-enforcing-scope-compliance-evaluation',
@@ -208,6 +252,7 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'advisory-backend-lane',
   },
   {
     stepName: 'graph-delta-proposal-generation',
@@ -223,6 +268,7 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'advisory-backend-lane',
   },
   {
     stepName: 'graph-delta-human-review-packet',
@@ -238,6 +284,7 @@ const measuredSteps = [
       '--json',
     ],
     includedInRuntimeBudget: true,
+    runtimeLane: 'advisory-backend-lane',
   },
 ]
 
@@ -254,6 +301,7 @@ const steps = measuredSteps.map((step) => {
   const durationMs = roundMs(performance.now() - stepStarted)
   return {
     stepName: step.stepName,
+    runtimeLane: step.runtimeLane,
     command: step.command,
     durationMs,
     includedInRuntimeBudget: step.includedInRuntimeBudget,
@@ -264,6 +312,7 @@ const steps = measuredSteps.map((step) => {
 })
 const measuredTotalMs = roundMs(performance.now() - started)
 const allCommandsPassed = steps.every((step) => step.status === 'pass')
+const laneTotals = buildLaneTotals(steps)
 
 const report = {
   schemaVersion: 1,
@@ -273,13 +322,18 @@ const report = {
   measuredTotalMs,
   targetComparison: measuredTotalMs <= runtimeBudgetTargetMs ? 'within-target' : 'over-target',
   budgetStatus: 'advisory-not-enforced',
+  runtimeLanePolicyStatus: 'runtime-smoke-lanes-previewed-advisory-only',
+  runtimeSmokeLaneBoundary: runtimeSmokeLaneBoundaryPath,
   advisoryOnly: true,
   runtimeBudgetEnforced: false,
+  laneBudgetEnforced: false,
   timingFailureIsBlocking: false,
   excludesAiEditingTime: true,
   excludesFullValidationSuite: true,
   excludesCiRuntime: true,
   excludesHumanReviewTime: true,
+  laneDefinitions: runtimeLaneDefinitions,
+  laneTotals,
   steps,
   pendingDeterministicSteps,
   outputPath,
@@ -298,4 +352,28 @@ process.exit(allCommandsPassed ? 0 : 1)
 
 function roundMs(value) {
   return Math.round(value * 100) / 100
+}
+
+function buildLaneTotals(steps) {
+  return runtimeLaneDefinitions.map((definition) => {
+    const laneSteps = steps.filter((step) => step.runtimeLane === definition.runtimeLane)
+    const measuredTotalMs = roundMs(laneSteps.reduce((total, step) => total + step.durationMs, 0))
+    return {
+      runtimeLane: definition.runtimeLane,
+      laneRole: definition.laneRole,
+      perRequestCriticalPath: definition.perRequestCriticalPath,
+      stepCount: laneSteps.length,
+      measuredTotalMs,
+      budgetTargetMs: definition.budgetTargetMs,
+      targetComparison:
+        typeof definition.budgetTargetMs === 'number'
+          ? measuredTotalMs <= definition.budgetTargetMs
+            ? 'within-target'
+            : 'over-target-advisory-only'
+          : 'no-lane-target',
+      budgetEnforced: false,
+      commandFailureIsBlocking: laneSteps.some((step) => step.status === 'failed'),
+      timingFailureIsBlocking: false,
+    }
+  })
 }

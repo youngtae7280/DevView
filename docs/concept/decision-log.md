@@ -2328,3 +2328,33 @@ run Request IR validation, run graph traversal, generate selected graph slices, 
 generate execution Instruction Packs, trigger Codex execution, implement hook scripts, mutate graph-source, apply graph
 deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope,
 introduce CI required checks, change branch protection, or automate user acceptance.
+
+## DEC-253 Define Runtime Smoke Lanes
+
+DEC-253 does not supersede DEC-097 through DEC-252. It defines advisory runtime smoke lanes so the growing deterministic
+smoke can keep broad coverage without making every new report or setup command part of the core request-to-pack budget.
+
+The lane boundary preview is recorded in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-runtime-smoke-lane-boundary.runtime-evidence-only.preview.json
+```
+
+The timing smoke now reports `steps[].runtimeLane`, `runtimeLanePolicyStatus`, `runtimeSmokeLaneBoundary`,
+`laneDefinitions`, and `laneTotals` while preserving the existing all-steps `measuredTotalMs` snapshot. The lane totals
+are advisory and not enforced.
+
+Current lanes:
+
+- `analyzer-preflight-lane`: deterministic analyzer prompt/input setup, currently
+  `generate-ai-request-analyzer-pack`.
+- `core-critical-lane`: deterministic Request IR Candidate validation through Instruction Pack generation.
+- `activation-readiness-lane`: report-only Hook Gateway readiness reporting.
+- `advisory-backend-lane`: compiler dry-run/reporting, changed-file/scope advisory checks, proposal-only Graph Delta,
+  and Human Review Packet reporting.
+
+New report-only commands must not automatically enter `core-critical-lane`; they may remain in the all-steps advisory
+smoke or use a non-critical lane until a later explicit decision promotes them. This decision does not remove existing
+smoke coverage, enforce runtime budgets, fail CI on timing, reject diffs, enable strict/guided hook blocking, mutate
+graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove
+equivalence, enforce scope, introduce CI required checks, change branch protection, or automate user acceptance.
