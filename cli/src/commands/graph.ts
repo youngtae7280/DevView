@@ -1,4 +1,5 @@
 import { relativePath } from '../core/fs.js'
+import { createApprovedProposalStateFile } from '../core/approved-proposal-state.js'
 import { generateAiRequestAnalyzerPackFile } from '../core/ai-request-analyzer-pack.js'
 import { analyzeRequestFile } from '../core/ai-request-analyzer-run.js'
 import { generateClarificationInterviewPackFile } from '../core/clarification-interview-pack.js'
@@ -848,6 +849,62 @@ export async function graphReadModelRecordHumanDecisionCommand(context: CommandC
           message,
           suggestedFix:
             'Provide readable boundary, review packet, proposal-only preview, explicit human reviewer, rationale, and dedicated decision-record output paths. Do not use Codex/AI identities or overwrite source authority artifacts.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelCreateApprovedProposalStateCommand(
+  context: CommandContext,
+): Promise<CommandResult> {
+  if (!context.options.decisionRecord) {
+    return invalidCommand('graph read-model create-approved-proposal-state requires --decision-record <file>.')
+  }
+  if (!context.options.proposal) {
+    return invalidCommand('graph read-model create-approved-proposal-state requires --proposal <file>.')
+  }
+
+  try {
+    const result = await createApprovedProposalStateFile(context.options.root, {
+      boundary: context.options.boundary,
+      decisionRecord: context.options.decisionRecord,
+      proposal: context.options.proposal,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph read-model create-approved-proposal-state',
+      exitCode: ExitCode.Success,
+      message: result.state.approvedProposalStateCreated
+        ? 'Approved proposal state preview created without apply, mutation, or enforcement.'
+        : 'Approved proposal state preview blocked without apply, mutation, or enforcement.',
+      issues: [],
+      data: {
+        ...result.state,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: result.state.approvedProposalStateCreated
+          ? 'A separate future graph-delta apply command may consume this approved-state preview after its own checks. This command did not apply graph deltas, mutate graph-source, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.'
+          : 'Resolve the human decision/proposal precondition before approved state creation. This command did not apply graph deltas, mutate graph-source, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model create-approved-proposal-state',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Approved proposal state preview creation blocked.',
+      issues: [
+        issue({
+          validator: 'ApprovedProposalState',
+          code: 'APPROVED_PROPOSAL_STATE_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a readable approved-state boundary, Human Decision Record, proposal-only preview, and dedicated approved-state output paths. The decision must be an explicit human approve-proposal record before approved state can be created.',
         }),
       ],
     }

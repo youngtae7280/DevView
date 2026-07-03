@@ -89,6 +89,7 @@ export interface CliOptions {
   externalCandidate?: string
   proposal?: string
   reviewPacket?: string
+  decisionRecord?: string
   decision?: string
   reviewer?: string
   rationale?: string

@@ -1871,9 +1871,18 @@ The Approved Proposal State boundary preview is:
 examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json
 ```
 
-It previews the state that may follow a future human decision record with `decisionValue: approve-proposal`. The boundary
-requires future stale-proposal and current graph-source checks, but it creates no approved state now. It also keeps
-approved state separate from actual graph delta apply. It does not mutate graph-source, apply graph deltas, satisfy
+It defines the `graph read-model create-approved-proposal-state` command boundary. The command consumes a Human Decision
+Record plus a proposal-only preview and creates an approved-state preview only when `decisionValue: approve-proposal`
+and provenance checks pass. The first calibration artifact is blocked because the recorded decision is
+`defer-decision`:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state.blocked-defer-decision.runtime-evidence-only.preview.json
+```
+
+The blocked calibration keeps `approvedProposalStateCreated`, `graphDeltaApplied`, `graphSourceMutated`,
+`runtimeEvidenceSatisfied`, `equivalenceProven`, `scopeEnforced`, and `ciEnforcementEnabled` false. The command keeps
+approved state separate from actual graph delta apply and does not mutate graph-source, apply graph deltas, satisfy
 runtime Evidence, prove equivalence, reject diffs, enforce scope, configure required checks, or automate user acceptance.
 
 The Graph Delta Apply boundary preview is:

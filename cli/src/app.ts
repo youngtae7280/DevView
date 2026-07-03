@@ -128,6 +128,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     externalCandidate: undefined as string | undefined,
     proposal: undefined as string | undefined,
     reviewPacket: undefined as string | undefined,
+    decisionRecord: undefined as string | undefined,
     decision: undefined as string | undefined,
     reviewer: undefined as string | undefined,
     rationale: undefined as string | undefined,
@@ -404,6 +405,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--review-packet requires a file path.' }
       }
       options.reviewPacket = value
+      index += 1
+    } else if (arg === '--decision-record') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--decision-record requires a file path.' }
+      }
+      options.decisionRecord = value
       index += 1
     } else if (arg === '--decision') {
       const value = argv[index + 1]

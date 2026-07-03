@@ -2954,3 +2954,24 @@ prevents JSON output from being written first.
 This decision records decision metadata only. It does not create approved proposal state, apply graph deltas, mutate
 graph-source, accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, introduce CI required checks,
 change branch protection, automate approval, or automate user acceptance.
+
+## DEC-273 Create Approved Proposal State Preview
+
+DEC-273 does not supersede DEC-097 through DEC-272. It implements
+`graph read-model create-approved-proposal-state` as a preview-only state transition after an explicit Human Decision
+Record.
+
+The Todo App calibration artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state.blocked-defer-decision.runtime-evidence-only.preview.json
+```
+
+The command consumes an Approved Proposal State boundary, a Human Decision Record, and a proposal-only Graph Delta
+preview. It verifies the decision record role/status/provenance, proposal-only safety fields, proposal id/path
+consistency, and output authority. A `decisionValue: approve-proposal` can create an approved-state preview, while the
+calibration `defer-decision` input produces a blocked preview with `approvedProposalStateCreated: false`.
+
+This decision does not apply graph deltas, mutate graph-source, accept Evidence, satisfy runtime Evidence, prove
+equivalence, enforce scope, introduce CI required checks, change branch protection, automate approval, or automate user
+acceptance.

@@ -324,9 +324,12 @@ scope/CI.
 
 The Approved Proposal State boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json`.
-It defines the future state that may follow a human decision record with `decisionValue: approve-proposal`, while keeping
-approved state creation separate from graph delta apply. It does not create approved state, apply graph deltas, mutate
-graph-source, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
+The `graph read-model create-approved-proposal-state ...` command now creates or blocks an approved-state preview from a
+Human Decision Record and proposal-only Graph Delta preview. The first calibration artifact is blocked because the human
+decision record is `defer-decision`:
+`examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state.blocked-defer-decision.runtime-evidence-only.preview.json`.
+The command keeps approved state creation separate from graph delta apply and never mutates graph-source, satisfies
+runtime Evidence, proves equivalence, enforces scope, or configures CI.
 
 The Graph Delta Apply boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-boundary.runtime-evidence-only.preview.json`. It

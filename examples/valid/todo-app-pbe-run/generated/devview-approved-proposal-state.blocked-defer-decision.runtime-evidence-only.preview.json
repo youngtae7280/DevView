@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-approved-proposal-state-preview",
+  "status": "devview-approved-proposal-state-blocked",
+  "stateScope": "approved-proposal-state-preview-no-apply",
+  "sourceBoundary": "examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json",
+  "sourceBoundaryArtifactRole": "devview-approved-proposal-state-boundary-preview",
+  "sourceBoundaryStatus": "devview-approved-proposal-state-boundary-previewed",
+  "sourceHumanDecisionRecord": "examples/valid/todo-app-pbe-run/generated/devview-human-decision-record.defer-decision.runtime-evidence-only.preview.json",
+  "sourceGraphDeltaProposal": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal.add-todo-runtime-evidence-only.preview.json",
+  "sourceHumanReviewPacket": "examples/valid/todo-app-pbe-run/generated/graph-delta-human-review-packet.add-todo-runtime-evidence-only.preview.json",
+  "proposalId": "proposal-only-preview-ch-001",
+  "decisionValue": "defer-decision",
+  "decisionProvenance": "human-authored-explicit-decision",
+  "reviewerIdentity": "human-reviewer",
+  "approvalStatus": "not-approved",
+  "approvedProposalStateCreated": false,
+  "approvedStateCreationBlockedReason": "decision-value-defer-decision-does-not-create-approved-state",
+  "humanDecisionRecorded": true,
+  "graphDeltaApplyEnabled": false,
+  "graphDeltaApplied": false,
+  "graphSourceMutationAllowed": false,
+  "graphSourceMutated": false,
+  "runtimeEvidenceSatisfied": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "strictModeEnabled": false,
+  "guidedEnforcementEnabled": false,
+  "userAcceptanceAutomated": false,
+  "humanReviewRequired": true,
+  "allowedUse": [
+    "document why approved proposal state was not created",
+    "preserve proposal and decision provenance for human review",
+    "keep non-approval decisions from entering apply-ready state"
+  ],
+  "forbiddenUse": [
+    "graph delta apply",
+    "graph-source mutation",
+    "runtime Evidence satisfaction",
+    "equivalence proof",
+    "scope enforcement",
+    "CI required check",
+    "branch protection mutation",
+    "user acceptance automation",
+    "approval inference from Codex, AI, validators, runtime smoke, CI, or review packet generation"
+  ],
+  "validationFindings": [
+    {
+      "code": "APPROVED_STATE_DECISION_NOT_APPROVED",
+      "severity": "warning",
+      "field": "decisionValue",
+      "expected": "approve-proposal",
+      "actual": "defer-decision",
+      "message": "Decision value does not create approved proposal state."
+    }
+  ],
+  "outputWritePolicy": "explicit-output-only",
+  "writtenOutputPath": "examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state.blocked-defer-decision.runtime-evidence-only.preview.json",
+  "writtenOutputPathAuthorityStatus": "explicit-approved-state-output-not-source-authority",
+  "markdownReportPath": null,
+  "nonExecutionBoundary": "This Approved Proposal State command creates or blocks an approved-state preview only. It does not apply graph deltas, mutate graph-source, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI or required checks, change branch protection, or replace user acceptance."
+}

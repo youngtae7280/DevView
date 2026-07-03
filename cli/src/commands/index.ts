@@ -20,6 +20,7 @@ import {
   graphReadModelCollectChangedFilesCommand,
   graphReadModelCompareCommand,
   graphReadModelCompileContractCommand,
+  graphReadModelCreateApprovedProposalStateCommand,
   graphReadModelGenerateCommand,
   graphReadModelGenerateAiRequestAnalyzerPackCommand,
   graphReadModelGenerateClarificationInterviewPackCommand,
@@ -247,6 +248,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'record-human-decision') {
     return graphReadModelRecordHumanDecisionCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'create-approved-proposal-state') {
+    return graphReadModelCreateApprovedProposalStateCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-ai-request-analyzer-pack') {
     return graphReadModelGenerateAiRequestAnalyzerPackCommand(context)

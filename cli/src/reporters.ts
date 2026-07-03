@@ -174,6 +174,8 @@ Commands:
                        Generate a human review packet from a proposal-only Graph Delta preview
   graph read-model record-human-decision
                        Record an explicit human decision without approved state, apply, mutation, or enforcement
+  graph read-model create-approved-proposal-state
+                       Create or block an approved proposal state preview without apply, mutation, or enforcement
   graph read-model generate-ai-request-analyzer-pack
                        Generate deterministic AI Request Analyzer prompt/input pack without LLM calls
   graph read-model analyze-request
@@ -256,11 +258,13 @@ Options:
   --graph-delta <file> Graph delta file for graph operation propose-update.
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, record-human-decision, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, or report-hook-activation-chain.
-  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, record-human-decision, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, generate-instruction-pack, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, or report-hook-activation-chain.
+  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, record-human-decision, create-approved-proposal-state, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, or report-hook-activation-chain.
+  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, record-human-decision, create-approved-proposal-state, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, generate-instruction-pack, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, or report-hook-activation-chain.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal, graph read-model review-graph-delta, or graph read-model record-human-decision.
   --review-packet <file>
                        Human Review Packet file for graph read-model record-human-decision.
+  --decision-record <file>
+                       Human Decision Record file for graph read-model create-approved-proposal-state.
   --decision <value>   Explicit human decision value for graph read-model record-human-decision.
   --reviewer <value>   Human reviewer identity for graph read-model record-human-decision.
   --rationale <value>  Human-authored rationale for graph read-model record-human-decision.
@@ -291,7 +295,7 @@ Options:
   --clarification-pack <file>
                        Clarification Interview Pack file for graph read-model revise-request-ir-candidate.
   --answers <file>     Clarification answers file for graph read-model revise-request-ir-candidate.
-  --boundary <file>    Boundary file for graph read-model report-hook-gateway-health, record-human-decision, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, or generate-hook-script-scaffold.
+  --boundary <file>    Boundary file for graph read-model report-hook-gateway-health, record-human-decision, create-approved-proposal-state, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, or generate-hook-script-scaffold.
   --intake <file>      Natural-language request intake boundary file for graph read-model report-frontend-chain.
   --frontend-chain <file>
                        Frontend chain report file for graph read-model prepare-user-prompt-context.

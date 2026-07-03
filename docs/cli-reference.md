@@ -532,6 +532,38 @@ node dist/cli/index.js graph read-model record-human-decision `
   --json
 ```
 
+### `pbe graph read-model create-approved-proposal-state`
+
+- Purpose: Create or block an Approved Proposal State preview from an explicit Human Decision Record and proposal-only
+  Graph Delta preview.
+- Typical state before running: After `graph read-model record-human-decision` has created a human decision record.
+- Options: `--decision-record <decisionRecordPath>` and `--proposal <proposalPath>` are required.
+  `--boundary <boundaryPath>` is optional but recommended. `--output <file>` and `--markdown <file>` may write explicit
+  preview outputs.
+- What it checks: Approved Proposal State boundary role/status, Human Decision Record role/status/provenance, proposal
+  only boundaries, proposal id/path consistency, and output authority.
+- What it writes: Nothing by default. It writes only to explicit `--output` and `--markdown` paths.
+- Success result: JSON with `artifactRole: devview-approved-proposal-state-preview`. If the decision is
+  `approve-proposal` and provenance checks pass, `approvedProposalStateCreated: true`; otherwise the preview is blocked
+  with `approvedProposalStateCreated: false`. In both cases `graphDeltaApplied`, `graphSourceMutated`,
+  `runtimeEvidenceSatisfied`, `equivalenceProven`, `scopeEnforced`, and `ciEnforcementEnabled` remain false.
+- Common failures: malformed boundary, unsafe proposal, unsafe decision record, mismatched proposal provenance, or
+  output paths that would overwrite source/proposal/review/evidence/graph artifacts.
+- Next command: A separate future graph-delta apply command may consume an approved-state preview after its own checks.
+  This command itself never applies graph deltas, mutates graph-source, accepts Evidence, proves equivalence, enforces
+  scope, or configures CI.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model create-approved-proposal-state `
+  --boundary examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json `
+  --decision-record examples/valid/todo-app-pbe-run/generated/devview-human-decision-record.defer-decision.runtime-evidence-only.preview.json `
+  --proposal examples/valid/todo-app-pbe-run/generated/graph-delta-proposal.add-todo-runtime-evidence-only.preview.json `
+  --output .tmp/devview-approved-proposal-state.json `
+  --json
+```
+
 ### `pbe graph read-model generate-ai-request-analyzer-pack`
 
 - Purpose: Generate deterministic AI Request Analyzer prompt/input contract JSON, and optionally Markdown, from the
