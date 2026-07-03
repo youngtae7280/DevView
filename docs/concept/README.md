@@ -429,6 +429,13 @@ It bundles the health/context/script previews into a not-started session manifes
 or activating hooks, mutating trust/config, blocking Codex, approving work, satisfying Evidence, proving equivalence, or
 enforcing scope/CI.
 
+The Hook Gateway script bundle materializer is exposed as
+`graph read-model materialize-hook-script-bundle --script-templates <templatePreview> --session-manifest <sessionManifestPreview> --bundle-dir <dir> --json`.
+It writes repo-local advisory `.ps1` preview scripts under a dedicated bundle directory such as `.tmp/...` while still
+rejecting `.codex/hooks`, source artifacts, generated authority artifacts, and unsafe output targets. It does not
+install hooks, start a session, mutate trust/config, block Codex, approve work, accept or satisfy Evidence, prove
+equivalence, or enforce scope/CI.
+
 The Hook Gateway activation preview chain report is exposed as
 `graph read-model report-hook-activation-chain --hook-health <healthReportOrBoundary> --user-prompt-context <contextPreview> --script-scaffold <scaffoldPreview> --script-templates <templatePreview> --session-manifest <sessionManifestPreview> --json`.
 It checks preview artifact continuity and hook event readiness without installing or activating hooks, mutating

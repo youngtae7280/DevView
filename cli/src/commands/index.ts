@@ -29,6 +29,7 @@ import {
   graphReadModelGenerateHookSessionManifestCommand,
   graphReadModelGenerateHookScriptScaffoldCommand,
   graphReadModelGenerateHookScriptTemplatesCommand,
+  graphReadModelMaterializeHookScriptBundleCommand,
   graphReadModelReportHookActivationChainCommand,
   graphReadModelGenerateInstructionPackCommand,
   graphReadModelObserveCandidatesCommand,
@@ -331,6 +332,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-hook-session-manifest') {
     return graphReadModelGenerateHookSessionManifestCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'materialize-hook-script-bundle') {
+    return graphReadModelMaterializeHookScriptBundleCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-hook-activation-chain') {
     return graphReadModelReportHookActivationChainCommand(context)

@@ -3095,3 +3095,26 @@ This decision is an audit refresh only. It does not execute Codex, call an LLM, 
 approve proposals, apply graph deltas, mutate graph-source, accept Evidence, satisfy runtime Evidence, prove
 equivalence, enforce scope, configure CI, configure required checks, change branch protection, reject diffs, or replace
 user acceptance.
+
+## DEC-280 Materialize Advisory Hook Script Bundle Preview
+
+DEC-280 does not supersede DEC-097 through DEC-279. It implements
+`graph read-model materialize-hook-script-bundle` as a repo-local preview materializer for advisory Hook Gateway scripts.
+
+The Todo App calibration artifacts are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-hook-script-bundle.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-hook-script-bundle.add-todo-runtime-evidence-only.preview.md
+```
+
+The command consumes a Hook script template preview and a Hook session manifest preview, validates preview-only safety
+fields and output authority, then writes five advisory `.ps1` review files under a dedicated bundle directory such as
+`.tmp/devview-hook-script-bundle/...`. It blocks active hook/config locations, source artifact overwrites, generated
+source-authority output overwrites, unsafe bundle directories, and unsafe Markdown/output combinations before partial
+writes.
+
+This decision does not install hooks, mutate Codex configuration, trust repositories, start an active hook session,
+block tool use, execute Codex, call an LLM, run validation/traversal, mutate graph-source, apply graph deltas, automate
+approval, record human decisions, accept or satisfy Evidence, prove equivalence, enforce scope, configure CI, require
+checks, change branch protection, reject diffs, or automate user acceptance.

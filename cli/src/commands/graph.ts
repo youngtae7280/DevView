@@ -17,6 +17,7 @@ import { recordHumanDecisionFile } from '../core/human-decision-record.js'
 import { reportHookGatewayHealthFile } from '../core/hook-gateway-health-report.js'
 import { reportHookActivationChainFile } from '../core/hook-activation-chain-report.js'
 import { generateHookSessionManifestFile } from '../core/hook-session-manifest.js'
+import { materializeHookScriptBundleFile } from '../core/hook-script-bundle.js'
 import { generateHookScriptScaffoldFile } from '../core/hook-script-scaffold.js'
 import { generateHookScriptTemplatePreviewFile } from '../core/hook-script-template-preview.js'
 import { generateInstructionPackFile } from '../core/instruction-pack-generator.js'
@@ -2289,6 +2290,76 @@ export async function graphReadModelGenerateHookSessionManifestCommand(
           message,
           suggestedFix:
             'Provide readable Hook Gateway health/context/script preview artifacts and dedicated preview output paths.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelMaterializeHookScriptBundleCommand(
+  context: CommandContext,
+): Promise<CommandResult> {
+  if (!context.options.scriptTemplates) {
+    return invalidCommand('graph read-model materialize-hook-script-bundle requires --script-templates <file>.')
+  }
+  if (!context.options.sessionManifest) {
+    return invalidCommand('graph read-model materialize-hook-script-bundle requires --session-manifest <file>.')
+  }
+
+  try {
+    const result = await materializeHookScriptBundleFile(context.options.root, {
+      scriptTemplates: context.options.scriptTemplates,
+      sessionManifest: context.options.sessionManifest,
+      bundleDir: context.options.bundleDir,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    const blocked = result.bundle.status !== 'devview-hook-script-bundle-materialized-preview'
+    const errorFindings = result.bundle.validationFindings.filter((finding) => finding.severity === 'error')
+
+    return {
+      ok: !blocked,
+      command: 'graph read-model materialize-hook-script-bundle',
+      exitCode: blocked ? ExitCode.ValidationFailed : ExitCode.Success,
+      message: blocked
+        ? 'Hook script bundle preview blocked by unsafe or mismatched inputs.'
+        : 'Hook script bundle preview materialized without installing or activating hooks.',
+      issues: blocked
+        ? (errorFindings.length > 0 ? errorFindings : result.bundle.validationFindings).map((finding) =>
+            issue({
+              validator: 'HookScriptBundleMaterializer',
+              code: finding.code,
+              severity: finding.severity,
+              message: finding.message,
+              reason: finding.field ? `Field: ${finding.field}` : undefined,
+              suggestedFix: finding.suggestedFix ?? 'Regenerate Hook script templates and session manifest previews.',
+            }),
+          )
+        : [],
+      data: {
+        ...result.bundle,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: blocked
+          ? 'Repair bundle inputs. This command did not install hooks, configure trust, trigger Codex execution, mutate graph-source, approve work, satisfy Evidence, prove equivalence, or enforce scope.'
+          : 'Review the repo-local script bundle as preview-only hook material. This command did not install hooks, configure trust, trigger Codex execution, mutate graph-source, approve work, satisfy Evidence, prove equivalence, or enforce scope.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model materialize-hook-script-bundle',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Hook script bundle preview could not run.',
+      issues: [
+        issue({
+          validator: 'HookScriptBundleMaterializer',
+          code: 'HOOK_SCRIPT_BUNDLE_MATERIALIZATION_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide readable Hook script template/session manifest preview artifacts and dedicated preview output paths.',
         }),
       ],
     }

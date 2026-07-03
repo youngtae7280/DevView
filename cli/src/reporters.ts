@@ -218,6 +218,8 @@ Commands:
                        Materialize preview-only Hook Gateway script bodies without writing active hook files
   graph read-model generate-hook-session-manifest
                        Generate preview-only Hook Gateway session manifest without starting or activating hooks
+  graph read-model materialize-hook-script-bundle
+                       Materialize repo-local advisory Hook Gateway script bundle without installing hooks
   graph read-model report-hook-activation-chain
                        Report Hook Gateway activation preview chain without installing or activating hooks
   graph read-model report-health
@@ -268,8 +270,8 @@ Options:
   --graph-delta <file> Graph delta file for graph operation propose-update.
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, report-equivalence-proof-readiness, report-scope-ci-enforcement-readiness, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, or report-hook-activation-chain.
-  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, report-equivalence-proof-readiness, report-scope-ci-enforcement-readiness, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, generate-instruction-pack, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, or report-hook-activation-chain.
+  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, report-equivalence-proof-readiness, report-scope-ci-enforcement-readiness, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, or report-hook-activation-chain.
+  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, report-equivalence-proof-readiness, report-scope-ci-enforcement-readiness, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, generate-instruction-pack, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, or report-hook-activation-chain.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal, graph read-model review-graph-delta, or graph read-model record-human-decision.
   --review-packet <file>
                        Human Review Packet file for graph read-model record-human-decision.
@@ -306,9 +308,10 @@ Options:
   --script-scaffold <file>
                        Hook script scaffold preview for graph read-model generate-hook-session-manifest.
   --script-templates <file>
-                       Hook script template preview for graph read-model generate-hook-session-manifest or report-hook-activation-chain.
+                       Hook script template preview for graph read-model generate-hook-session-manifest, materialize-hook-script-bundle, or report-hook-activation-chain.
   --session-manifest <file>
-                       Hook session manifest preview for graph read-model report-hook-activation-chain.
+                       Hook session manifest preview for graph read-model materialize-hook-script-bundle or report-hook-activation-chain.
+  --bundle-dir <dir>   Optional repo-local output directory for graph read-model materialize-hook-script-bundle. Defaults to .tmp/devview-hook-script-bundle.
   --request <text>     Natural-language request text for graph read-model analyze-request.
   --pack <file>        AI Request Analyzer Pack file for graph read-model analyze-request.
   --external-candidate <file>

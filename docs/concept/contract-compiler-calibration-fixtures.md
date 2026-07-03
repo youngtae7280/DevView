@@ -2510,6 +2510,25 @@ candidates. It does not start a session, install or activate hooks, mutate trust
 validation or traversal, mutate graph-source, apply graph deltas, approve work, record human decisions, satisfy runtime
 Evidence, prove equivalence, enforce scope, or configure CI.
 
+The Hook Gateway script bundle preview for the same calibration is recorded in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-hook-script-bundle.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-hook-script-bundle.add-todo-runtime-evidence-only.preview.md
+```
+
+It is generated with:
+
+```text
+graph read-model materialize-hook-script-bundle --script-templates examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json --session-manifest examples/valid/todo-app-pbe-run/generated/devview-hook-session-manifest.add-todo-runtime-evidence-only.preview.json --bundle-dir .tmp/devview-hook-script-bundle/add-todo-runtime-evidence-only --json
+```
+
+The bundle writes repo-local advisory `.ps1` preview scripts under `.tmp/devview-hook-script-bundle/...`. It does not
+write `.codex/hooks`, install or activate hooks, start a hook session, mutate trust/config, block Codex execution, run
+validation or traversal, mutate graph-source, apply graph deltas, approve work, record human decisions, accept or satisfy
+runtime Evidence, prove equivalence, enforce scope, configure CI, require checks, change branch protection, or reject
+diffs.
+
 The Hook Gateway activation preview chain report for the same calibration is recorded in:
 
 ```text

@@ -5,7 +5,7 @@
   "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
   "auditScope": "roadmap-state-evidence-summary-no-new-authority",
   "auditDate": "2026-07-03",
-  "roadmapEndStateClaim": "frontend-to-instruction-pack, advisory backend, proposal/review, activation previews, analyzer/clarification previews, and Phase 13 controlled decision/readiness boundaries are represented; actual Codex execution, hook activation, graph delta apply, graph-source mutation, Evidence acceptance, equivalence proof, scope/CI enforcement, CI required checks, branch protection, diff rejection, and approval/user-acceptance automation remain intentionally unimplemented.",
+  "roadmapEndStateClaim": "frontend-to-instruction-pack, advisory backend, proposal/review, activation previews including repo-local advisory hook script bundle materialization, analyzer/clarification previews, and Phase 13 controlled decision/readiness boundaries are represented; actual Codex execution, hook installation/activation, graph delta apply, graph-source mutation, Evidence acceptance, equivalence proof, scope/CI enforcement, CI required checks, branch protection, diff rejection, and approval/user-acceptance automation remain intentionally unimplemented.",
   "sourceAuthorityBoundary": "This audit summarizes existing artifacts and commands. It is not graph-source, not approval, not runtime Evidence satisfaction, not equivalence proof, not enforcement, and not graph delta apply.",
   "phaseSummary": [
     {
@@ -64,6 +64,7 @@
         "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json",
         "examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json",
         "examples/valid/todo-app-pbe-run/generated/devview-hook-session-manifest.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/devview-hook-script-bundle.add-todo-runtime-evidence-only.preview.json",
         "examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.json"
       ],
       "remaining": "Actual hook install, trust mutation, active sessions, guided blocking, and strict mode remain unimplemented."
@@ -126,9 +127,10 @@
       "status": "preview-chain-connected-no-runtime-activation",
       "evidence": [
         "examples/valid/todo-app-pbe-run/generated/devview-hook-session-manifest.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/devview-hook-script-bundle.add-todo-runtime-evidence-only.preview.json",
         "examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.json"
       ],
-      "remaining": "Actual hook scripts, session runtime, bypass detection enforcement, and guided/strict blocking remain future."
+      "remaining": "Repo-local advisory hook script bundle materialization is represented; active hook installation, session runtime, bypass detection enforcement, and guided/strict blocking remain future."
     },
     {
       "phase": "Phase 13 Human Decision / Approved Apply",
@@ -170,6 +172,7 @@
     "graph read-model generate-hook-script-scaffold",
     "graph read-model generate-hook-script-templates",
     "graph read-model generate-hook-session-manifest",
+    "graph read-model materialize-hook-script-bundle",
     "graph read-model report-hook-activation-chain",
     "graph read-model collect-changed-files",
     "graph read-model check-scope",

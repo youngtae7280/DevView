@@ -110,6 +110,7 @@ export interface CliOptions {
   scriptScaffold?: string
   scriptTemplates?: string
   sessionManifest?: string
+  bundleDir?: string
   clarificationPack?: string
   answers?: string
   boundary?: string

@@ -149,6 +149,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     scriptScaffold: undefined as string | undefined,
     scriptTemplates: undefined as string | undefined,
     sessionManifest: undefined as string | undefined,
+    bundleDir: undefined as string | undefined,
     clarificationPack: undefined as string | undefined,
     answers: undefined as string | undefined,
     boundary: undefined as string | undefined,
@@ -558,6 +559,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--session-manifest requires a file path.' }
       }
       options.sessionManifest = value
+      index += 1
+    } else if (arg === '--bundle-dir') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--bundle-dir requires a directory path.' }
+      }
+      options.bundleDir = value
       index += 1
     } else if (arg === '--clarification-pack') {
       const value = argv[index + 1]

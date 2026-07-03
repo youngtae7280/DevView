@@ -264,6 +264,20 @@ and template previews for a future session. The manifest remains `sessionStatus:
 `.tmp/devview/sessions/<sessionId>/...` but does not create an active session, install hooks, activate hooks, mutate
 trust/config, block Codex execution, or enforce DevView.
 
+The first repo-local Hook Gateway script bundle preview is materialized by:
+
+```text
+graph read-model materialize-hook-script-bundle --script-templates <templatePreview> --session-manifest <sessionManifestPreview> --bundle-dir <bundleDir> --json
+```
+
+The command emits `artifactRole: devview-hook-script-bundle-preview` and writes advisory `.ps1` files to a dedicated
+repo-local bundle directory such as `.tmp/devview-hook-script-bundle/...`. These files are review material only:
+`hookScriptsImplemented: false`, `hookScriptsInstalled: false`, `hookGatewayActive: not-checked-preview-only`,
+`activeHookSessionStarted: false`, `strictModeEnabled: false`, `guidedEnforcementEnabled: false`,
+`preToolUseBlockingEnabled: false`, `scopeEnforced: false`, and `ciEnforcementEnabled: false` remain fixed. The command
+rejects active hook/config targets such as `.codex/hooks`, generated source-authority outputs, and unsafe bundle
+directories before writing scripts, JSON, or Markdown.
+
 The preview chain can now be reported with:
 
 ```text
@@ -283,8 +297,8 @@ must avoid AI calls, network calls, full repo scans, patch/hunk inspection, file
 validation inside the hook path unless a later explicit decision changes the boundary.
 
 The current report-only health command, `UserPromptSubmit` context preview command, hook script scaffold preview command,
-and hook script template preview command are measured in the advisory activation-readiness lane. The session manifest and
-activation-chain report commands are not currently included in the all-steps smoke because adding session-manifest work
-pushed one local advisory snapshot over 5 seconds while leaving the core-critical lane under budget. They remain
-lightweight and should be revisited when the smoke suite is split by lane or optimized. These commands still do not
-install hooks, trust commands, block Codex execution, or enforce DevView.
+and hook script template preview command are measured in the advisory activation-readiness lane. The session manifest,
+script bundle materializer, and activation-chain report commands are not currently included in the all-steps smoke
+because adding session-manifest work pushed one local advisory snapshot over 5 seconds while leaving the core-critical
+lane under budget. They remain lightweight and should be revisited when the smoke suite is split by lane or optimized.
+These commands still do not install hooks, trust commands, block Codex execution, or enforce DevView.

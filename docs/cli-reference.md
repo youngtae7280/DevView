@@ -1222,6 +1222,36 @@ node dist/cli/index.js graph read-model generate-hook-session-manifest `
   --json
 ```
 
+### `pbe graph read-model materialize-hook-script-bundle`
+
+- Purpose: Write repo-local advisory PowerShell preview scripts from a Hook script template preview and session
+  manifest.
+- Typical state before running: After `generate-hook-session-manifest` has produced a preview. Hooks are still not
+  installed, active, trusted, or enforcing.
+- Options: `--script-templates <file>` and `--session-manifest <file>` are required. `--bundle-dir <dir>` is optional
+  and defaults to `.tmp/devview-hook-script-bundle`. `--output <file>` may write JSON and `--markdown <file>` may write
+  compact Markdown.
+- What it checks: input roles/statuses, five hook event coverage, strict/guided/enforcement/approval/Evidence/
+  equivalence safety flags, active hook/config locations, generated/source artifact overwrite attempts, unsafe bundle
+  directories, and output authority before writing script files, JSON, or Markdown.
+- Success result: JSON with `artifactRole: devview-hook-script-bundle-preview`,
+  `status: devview-hook-script-bundle-materialized-preview`, five repo-local `.ps1` script paths, checksums, and all
+  install/active/execution/apply/approval/Evidence/equivalence/enforcement flags false.
+- Non-goals: This command does not write `.codex/hooks` files, install hooks, trust repositories, configure Codex, start
+  an active hook session, block tool use, call an LLM, run validation/traversal, mutate graph-source, apply graph
+  deltas, approve work, record human decisions, accept or satisfy Evidence, prove equivalence, enforce scope, configure
+  CI, require checks, change branch protection, or reject diffs.
+
+```powershell
+node dist/cli/index.js graph read-model materialize-hook-script-bundle `
+  --script-templates examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json `
+  --session-manifest examples/valid/todo-app-pbe-run/generated/devview-hook-session-manifest.add-todo-runtime-evidence-only.preview.json `
+  --bundle-dir .tmp/devview-hook-script-bundle/add-todo-runtime-evidence-only `
+  --output .tmp/review-hook-script-bundle.json `
+  --markdown .tmp/review-hook-script-bundle.md `
+  --json
+```
+
 ### `pbe graph read-model report-hook-activation-chain`
 
 - Purpose: Read Hook Gateway health, `UserPromptSubmit` context, hook script scaffold/template, and session manifest
