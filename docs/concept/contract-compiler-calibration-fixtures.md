@@ -1998,6 +1998,21 @@ through disabled Scope/CI enforcement readiness. The audit is not graph-source, 
 Evidence acceptance, not runtime Evidence satisfaction, not equivalence proof, not scope enforcement, not CI
 enforcement, not required-check configuration, not branch protection mutation, and not diff rejection.
 
+The DevView roadmap final handoff preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.md
+```
+
+It uses the completion audit as its source and records the safe MVP handoff lanes: compiler frontend, analyzer and
+clarification candidate-only surfaces, activation preview, advisory backend/review, and Phase 13 controlled readiness.
+It also lists the recommended continuation path: broader fixture coverage, explicit hook install/trust design, actual
+LLM analyzer provider design, and separate approved apply/mutation/evidence/equivalence/enforcement policy design. The
+handoff is not graph-source, not approval, not apply, not Evidence acceptance, not runtime Evidence satisfaction, not
+equivalence proof, not hook activation, not scope/CI enforcement, not required-check configuration, not branch
+protection mutation, and not diff rejection.
+
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
 approval or runtime Evidence satisfaction.

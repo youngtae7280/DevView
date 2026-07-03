@@ -87,6 +87,11 @@
   summarizes Phase 1 through Phase 13 evidence without adding execution, approval automation, apply, Evidence
   acceptance, graph-source mutation, equivalence proof, scope enforcement, CI authority, required checks, branch
   protection, or diff rejection.
+- DevView roadmap final handoff preview -
+  `examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.json` and
+  `examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.md` summarize
+  the safe MVP handoff lanes and recommended future productization work without adding execution, approval, apply,
+  mutation, Evidence, equivalence, hook activation, or enforcement authority.
 - [Scope Compliance Checker Implementation Readiness](concept/scope-compliance-checker-implementation-readiness.md) -
   Readiness criteria for future scope-compliance checker inputs, missing-input states, result preview status, and
   authoritative changed-file input boundaries before executable checker logic exists.

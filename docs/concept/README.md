@@ -381,6 +381,14 @@ boundaries after the controlled decision/readiness chain through disabled Scope/
 summary only and does not add execution, approval automation, apply, Evidence acceptance, graph-source mutation,
 equivalence proof, scope enforcement, CI authority, required checks, branch protection, or diff rejection.
 
+The roadmap final handoff preview is recorded in
+`examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.json` and
+`examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.md`. It states the
+safe MVP end state for this calibration: compiler frontend, analyzer/clarification candidate-only surfaces, activation
+previews, advisory backend/review surfaces, and Phase 13 readiness boundaries are connected, while product-general
+fixture coverage, hook install/trust, real LLM analyzer execution, graph apply/mutation, Evidence acceptance,
+equivalence proof, and enforcement remain future work. It is a handoff summary only and creates no new authority.
+
 The DevView Codex Hook Gateway boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json` and
 documented in [devview-codex-hook-gateway-boundary.md](devview-codex-hook-gateway-boundary.md). It defines how future

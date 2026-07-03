@@ -3118,3 +3118,26 @@ This decision does not install hooks, mutate Codex configuration, trust reposito
 block tool use, execute Codex, call an LLM, run validation/traversal, mutate graph-source, apply graph deltas, automate
 approval, record human decisions, accept or satisfy Evidence, prove equivalence, enforce scope, configure CI, require
 checks, change branch protection, reject diffs, or automate user acceptance.
+
+## DEC-281 Record Roadmap Final Handoff Preview
+
+DEC-281 does not supersede DEC-097 through DEC-280. It records the DevView roadmap final handoff preview for the Todo
+App runtime Evidence-only calibration.
+
+The handoff artifacts are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.md
+```
+
+The handoff uses the roadmap completion audit as its source and summarizes the safe MVP end state: compiler frontend to
+Instruction Pack preview, analyzer and clarification candidate-only boundaries, activation preview chain with repo-local
+advisory hook script bundle, advisory backend/review surfaces, and Phase 13 controlled readiness chain. It also separates
+future productization work from current authority: broader fixture coverage, explicit hook install/trust design, actual
+LLM analyzer provider integration, and separate approved apply/mutation/evidence/equivalence/enforcement policy design.
+
+This decision is a handoff summary only. It does not execute Codex, call an LLM, activate hooks, install hooks, mutate
+trust/config, record new human decisions, approve proposals, apply graph deltas, mutate graph-source, accept Evidence,
+satisfy runtime Evidence, prove equivalence, enforce scope, configure CI, configure required checks, change branch
+protection, reject diffs, or replace user acceptance.

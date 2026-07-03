@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-roadmap-final-handoff-preview",
+  "status": "devview-roadmap-final-handoff-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "handoffDate": "2026-07-03",
+  "handoffScope": "roadmap-end-state-handoff-no-new-authority",
+  "sourceRoadmapCompletionAudit": "examples/valid/todo-app-pbe-run/generated/devview-roadmap-completion-audit.runtime-evidence-only.preview.json",
+  "handoffConclusion": "DevView's roadmap is complete to the intended safe MVP boundary for this calibration: natural-language frontend candidate handling reaches instruction pack preview through deterministic graph/slice/contract stages; advisory backend report/proposal/review surfaces exist; analyzer and clarification are candidate-only; Hook Gateway activation is represented through non-active previews and repo-local advisory script bundle materialization; Phase 13 human decision/readiness chain is represented while apply/mutation/evidence/equivalence/enforcement remain disabled.",
+  "safeEndStateReached": true,
+  "safeEndStateMeaning": "Reached means the control/compiler path is represented and reviewable without granting execution, approval, graph mutation, Evidence acceptance, equivalence proof, scope enforcement, CI enforcement, or hook activation authority.",
+  "notProductGeneralAvailability": true,
+  "notProductionEnforcement": true,
+  "handoffLanes": [
+    {
+      "laneId": "compiler-frontend",
+      "laneStatus": "complete-for-calibration-preview",
+      "start": "Natural Language Request / Request IR Candidate",
+      "terminalArtifact": "examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.json",
+      "requiredNextHumanAction": "Review Instruction Pack before any Codex execution.",
+      "authorityBoundary": "Instruction Pack preview is not Codex execution and cannot approve or mutate graph-source."
+    },
+    {
+      "laneId": "ai-analyzer-and-clarification",
+      "laneStatus": "candidate-only-boundary-complete",
+      "terminalArtifacts": [
+        "examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-pack.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/clarification-interview-pack.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/request-ir-candidate.revised.add-todo-runtime-evidence-only.preview.json"
+      ],
+      "requiredNextHumanAction": "Use external or future analyzer output only as Request IR Candidate input, then rerun validation before traversal.",
+      "authorityBoundary": "No LLM provider is implemented; external candidate import remains candidate-only."
+    },
+    {
+      "laneId": "activation-preview",
+      "laneStatus": "preview-chain-complete-no-active-hooks",
+      "terminalArtifacts": [
+        "examples/valid/todo-app-pbe-run/generated/devview-hook-session-manifest.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/devview-hook-script-bundle.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.json"
+      ],
+      "requiredNextHumanAction": "Decide separately whether to design an explicit hook install/trust flow.",
+      "authorityBoundary": "Repo-local advisory scripts are review artifacts only; hooks are not installed, active, trusted, or blocking."
+    },
+    {
+      "laneId": "advisory-backend-and-review",
+      "laneStatus": "mvp-connected-advisory-only",
+      "terminalArtifacts": [
+        "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/graph-delta-human-review-packet.add-todo-runtime-evidence-only.preview.json"
+      ],
+      "requiredNextHumanAction": "Human review decides whether to defer, request revision, or future-approve a proposal.",
+      "authorityBoundary": "Proposal/review packet generation does not apply graph deltas or mutate graph-source."
+    },
+    {
+      "laneId": "phase-13-controlled-apply-readiness",
+      "laneStatus": "readiness-chain-connected-currently-blocked-by-defer-decision",
+      "terminalArtifacts": [
+        "examples/valid/todo-app-pbe-run/generated/devview-human-decision-record.defer-decision.runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state.blocked-defer-decision.runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/devview-scope-ci-enforcement-readiness.blocked-defer-decision.runtime-evidence-only.preview.json"
+      ],
+      "requiredNextHumanAction": "A future explicit approval decision and separate policy work would be required before any apply/mutation/enforcement path.",
+      "authorityBoundary": "Current calibration uses defer-decision, so approved state, graph apply, mutation, Evidence acceptance, equivalence proof, and enforcement stay blocked."
+    }
+  ],
+  "doNextIfContinuingRoadmap": [
+    {
+      "priority": 1,
+      "workItem": "Broaden fixtures and external project coverage",
+      "reason": "The safe MVP path is complete for the Todo App calibration but not product-generalized across graph/source shapes.",
+      "forbiddenShortcut": "Do not use broader fixture coverage to claim automatic approval, graph-source mutation, or enforcement."
+    },
+    {
+      "priority": 2,
+      "workItem": "Design explicit hook install/trust flow",
+      "reason": "Activation previews and repo-local script bundle exist, but active hooks are intentionally not installed or trusted.",
+      "forbiddenShortcut": "Do not mutate Codex config, install hooks, enable guided/strict blocking, or trust repositories without an explicit human decision boundary."
+    },
+    {
+      "priority": 3,
+      "workItem": "Design actual LLM analyzer provider integration",
+      "reason": "Analyzer pack and provider-disabled import surface exist; actual provider execution remains future.",
+      "forbiddenShortcut": "Do not allow unvalidated analyzer output to drive traversal, selected slice, contract input, instruction pack generation, or Codex execution."
+    },
+    {
+      "priority": 4,
+      "workItem": "Design approved apply/mutation/evidence/equivalence/enforcement policies",
+      "reason": "Phase 13 readiness chain is connected but blocked by defer-decision and disabled policies.",
+      "forbiddenShortcut": "Do not apply graph deltas, mutate graph-source, accept Evidence, prove equivalence, enforce scope, configure CI, require checks, change branch protection, or reject diffs from current readiness previews."
+    }
+  ],
+  "explicitlyStillDisabled": [
+    "Codex execution",
+    "active hook installation",
+    "active hook session runtime",
+    "guided or strict blocking",
+    "LLM/API provider execution",
+    "automatic Request IR generation",
+    "approval automation",
+    "approved proposal state creation in the current defer-decision calibration",
+    "graph delta apply",
+    "graph-source mutation",
+    "Evidence acceptance",
+    "runtime Evidence satisfaction",
+    "equivalence proof",
+    "scope enforcement",
+    "CI required checks",
+    "branch protection changes",
+    "diff rejection",
+    "user acceptance automation"
+  ],
+  "verificationSnapshot": {
+    "lastKnownCommit": "4737a9f Materialize advisory hook script bundle",
+    "verificationCommands": [
+      "npm run build:cli",
+      "npx vitest run cli/src/__tests__/hook-gateway-health-report.test.ts cli/src/__tests__/user-prompt-context.test.ts cli/src/__tests__/hook-script-scaffold.test.ts cli/src/__tests__/hook-script-template-preview.test.ts cli/src/__tests__/hook-session-manifest.test.ts cli/src/__tests__/hook-script-bundle.test.ts cli/src/__tests__/hook-activation-chain-report.test.ts",
+      "npm run devview:runtime:smoke",
+      "npm run validate:pbe",
+      "npm run format:check",
+      "git -c core.longpaths=true diff --check",
+      "git -c core.longpaths=true diff --cached --check"
+    ],
+    "runtimeSmokeLastMeasuredMs": 4934.24,
+    "coreCriticalLaneLastMeasuredMs": 1550.27,
+    "runtimeBudgetTargetMs": 5000,
+    "runtimeBudgetEnforced": false
+  },
+  "safetyInvariantSummary": {
+    "graphSourceMutated": false,
+    "graphDeltaApplied": false,
+    "approvalStatus": "not-approved",
+    "runtimeEvidenceSatisfied": false,
+    "evidenceAccepted": false,
+    "equivalenceProven": false,
+    "scopeEnforced": false,
+    "ciEnforcementEnabled": false,
+    "requiredChecksConfigured": false,
+    "branchProtectionChanged": false,
+    "diffRejectionEnabled": false,
+    "strictModeEnabled": false,
+    "guidedEnforcementEnabled": false,
+    "hookScriptsInstalled": false,
+    "hookGatewayActive": false,
+    "llmInvoked": false,
+    "codexExecutionTriggered": false
+  },
+  "humanReviewRequired": true,
+  "nonExecutionBoundary": "This final handoff preview summarizes roadmap readiness only. It does not execute Codex, call an LLM, activate hooks, record new human decisions, approve proposals, apply graph deltas, mutate graph-source, accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI, configure required checks, change branch protection, reject diffs, or replace user acceptance."
+}
