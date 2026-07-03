@@ -2013,3 +2013,37 @@ traversal, create graph traversal plans, select nodes or edges, generate selecte
 contract compiler input, generate instruction packs, mutate graph-source, apply graph deltas, approve graph updates,
 record human decisions, change equivalence behavior, satisfy runtime Evidence, enforce scope, introduce CI required
 checks, change branch protection, or automate user acceptance.
+
+## DEC-244 Define Graph Traversal Plan and Selected Graph Slice Boundary
+
+DEC-244 does not supersede DEC-097 through DEC-243. It defines the next compiler frontend boundary after graph-aware
+Request IR validation: a future Graph Traversal Plan and a future Selected Graph Slice.
+
+The traversal plan boundary is recorded in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-traversal-plan-boundary.add-todo-runtime-evidence-only.preview.json
+```
+
+The selected graph slice boundary is recorded in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/selected-graph-slice-boundary.add-todo-runtime-evidence-only.preview.json
+```
+
+The traversal boundary records that a future planner may run only after schema-only validation and graph-aware
+validation have passed, `graphTraversalAllowed: true` is present, target record/component resolution is complete,
+changeType compatibility is resolved, and required evidence policy is resolvable. For the Todo App calibration fixture,
+the future traversal intent starts from `CH-001` and may later confirm the target component, scope policy,
+allowed/forbidden scope sources, required evidence policy, stop conditions, output requirements, and linked risks.
+
+The selected graph slice boundary defines the future selected node/edge slice shape and contract input readiness policy.
+It keeps `selectedGraphSliceStatus: not-generated`, `selectedGraphSliceGenerated: false`,
+`contractInputGenerated: false`, and `instructionPackGenerated: false`. Contract input cannot be generated directly
+from the Request IR Candidate, schema-only validation, graph-aware validation, or traversal boundary preview.
+
+This decision is preview-only. It does not implement graph traversal, execute graph traversal, select nodes or edges,
+generate selected graph slice artifacts as actual traversal output, generate contract compiler input, generate
+instruction packs, call an LLM, implement an AI classifier, mutate graph-source, apply graph deltas, approve graph
+updates, record human decisions, change equivalence behavior, satisfy runtime Evidence, enforce scope, introduce CI
+required checks, change branch protection, or automate user acceptance.

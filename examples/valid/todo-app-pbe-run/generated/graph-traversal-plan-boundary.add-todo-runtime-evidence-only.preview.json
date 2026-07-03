@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "graph-traversal-plan-boundary-preview",
+  "status": "graph-traversal-plan-boundary-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "traversalPlanId": "traversal-plan-boundary-add-todo-runtime-evidence-only-preview",
+  "traversalPlanStatus": "boundary-preview-only",
+  "sourceRequestIrCandidate": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json",
+  "sourceSchemaValidation": "examples/valid/todo-app-pbe-run/generated/request-ir-validation.add-todo-runtime-evidence-only.preview.json",
+  "sourceGraphAwareValidation": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
+  "selectedGraphSliceBoundary": "examples/valid/todo-app-pbe-run/generated/selected-graph-slice-boundary.add-todo-runtime-evidence-only.preview.json",
+  "graphTraversalExecuted": false,
+  "selectedGraphSliceGenerated": false,
+  "contractInputGenerated": false,
+  "instructionPackGenerated": false,
+  "aiClassifierImplemented": false,
+  "llmCallsIntroduced": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false,
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "runtimeEvidenceSatisfied": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "traversalPrerequisites": {
+    "schemaOnlyValidationPassed": true,
+    "graphAwareValidationPassed": true,
+    "graphTraversalAllowedByGraphValidation": true,
+    "targetRecordResolved": true,
+    "targetComponentResolved": true,
+    "changeTypeCompatibilityResolved": true,
+    "requiredEvidencePolicyResolvable": true,
+    "unresolvedAmbiguityPresent": false,
+    "graphTraversalExecutionAllowedForFuturePlanner": true,
+    "permissionMeaning": "future-planner-may-attempt-traversal-only"
+  },
+  "traversalPlanShape": {
+    "traversalPlanId": "string",
+    "sourceRequestIrCandidate": "artifact-path",
+    "sourceSchemaValidation": "artifact-path",
+    "sourceGraphAwareValidation": "artifact-path",
+    "startNodeCandidates": "array",
+    "startNodeResolutionStatus": "resolved|unresolved|ambiguous|review-required",
+    "nodeSelectionRules": "array",
+    "edgeSelectionRules": "array",
+    "requiredNodeTypes": "array",
+    "optionalNodeTypes": "array",
+    "excludedNodeTypes": "array",
+    "requiredEdgeTypes": "array",
+    "optionalEdgeTypes": "array",
+    "excludedEdgeTypes": "array",
+    "traversalDepthLimit": "integer",
+    "selectionTracePolicy": "object",
+    "ambiguityPolicy": "object",
+    "contractInputReadinessPolicy": "object"
+  },
+  "calibrationTraversalIntent": {
+    "targetRecordIdCandidate": "CH-001",
+    "targetComponentCandidate": "Todo App",
+    "requestTypeCandidate": "runtime-evidence-only",
+    "changeTypeCandidate": "test-only-behavior-proof",
+    "startNodeCandidates": [
+      {
+        "candidateId": "CH-001",
+        "candidateKind": "change",
+        "resolutionStatus": "future-traversal-start-candidate",
+        "sourceAuthorityStatus": "resolved-by-graph-aware-validation-for-future-traversal-only"
+      }
+    ],
+    "expectedFutureNodeCandidateKinds": [
+      "target change/request node",
+      "target component node",
+      "source or scope policy node",
+      "allowed scope source",
+      "forbidden scope source",
+      "required evidence policy",
+      "stop condition",
+      "output requirement",
+      "known risk when linked"
+    ],
+    "actualSelectedNodes": [],
+    "actualSelectedEdges": []
+  },
+  "nodeSelectionRules": [
+    {
+      "ruleId": "start-from-resolved-target-record",
+      "description": "Future traversal should begin from the graph-aware-resolved target record candidate.",
+      "required": true
+    },
+    {
+      "ruleId": "include-target-component-context",
+      "description": "Future traversal should include component context only when it resolves to the same calibration fixture scope.",
+      "required": true
+    },
+    {
+      "ruleId": "include-contract-policy-context",
+      "description": "Future traversal should include scope, evidence, stop-condition, output-requirement, and risk policy context needed for contract input readiness.",
+      "required": true
+    }
+  ],
+  "edgeSelectionRules": [
+    {
+      "ruleId": "follow-authoritative-structure-edges-only",
+      "description": "Future traversal should follow graph-source/read-model structural edges only and record every selected edge in a trace.",
+      "required": true
+    },
+    {
+      "ruleId": "exclude-unrelated-sibling-work",
+      "description": "Future traversal should not include unrelated sibling nodes unless a required policy or evidence edge justifies inclusion.",
+      "required": true
+    }
+  ],
+  "requiredNodeTypes": [
+    "change",
+    "component-or-product-context",
+    "scope-policy",
+    "evidence-policy",
+    "output-requirement"
+  ],
+  "optionalNodeTypes": ["risk", "stop-condition", "decision-note"],
+  "excludedNodeTypes": ["approval", "accepted-evidence", "graph-delta-apply-result"],
+  "requiredEdgeTypes": [
+    "target-record-to-component",
+    "target-record-to-scope-policy",
+    "target-record-to-evidence-policy"
+  ],
+  "optionalEdgeTypes": ["target-record-to-risk", "target-record-to-output-requirement"],
+  "excludedEdgeTypes": ["approval-edge", "apply-edge", "acceptance-edge"],
+  "traversalDepthLimit": 3,
+  "selectionTracePolicy": {
+    "selectionTraceRequired": true,
+    "traceMustInclude": [
+      "start node reason",
+      "selected node reason",
+      "selected edge reason",
+      "excluded node reason",
+      "ambiguity handling",
+      "contract input readiness blocker when present"
+    ],
+    "traceMayNotClaimApproval": true
+  },
+  "ambiguityPolicy": {
+    "multipleTargetRecordsHandling": "ambiguous-human-review-required",
+    "multipleTargetComponentsHandling": "ambiguous-human-review-required",
+    "missingRequiredPolicyHandling": "slice-incomplete-do-not-generate-contract-input",
+    "unprovenSourceAuthorityHandling": "human-review-required-do-not-proceed-silently"
+  },
+  "contractInputReadinessPolicy": {
+    "selectedGraphSliceRequired": true,
+    "contractInputAllowedDirectlyFromRequestIrCandidate": false,
+    "contractInputAllowedDirectlyFromGraphAwareValidation": false,
+    "contractInputAllowedFromTraversalPlanBoundary": false,
+    "futureContractInputAllowedOnlyAfterCompleteSelectedSlice": true
+  },
+  "allowedUse": [
+    "define future deterministic graph traversal planner prerequisites",
+    "define start node, node selection, edge selection, and trace policy",
+    "define selected graph slice readiness expectations",
+    "link graph-aware validation permission to a future traversal planner"
+  ],
+  "forbiddenUse": [
+    "graph traversal execution",
+    "actual selected node or edge claim",
+    "selected graph slice generation",
+    "contract compiler input generation",
+    "instruction pack generation",
+    "AI classifier implementation",
+    "runtime LLM call",
+    "graph-source mutation",
+    "graph delta apply",
+    "approval recording",
+    "runtime Evidence satisfaction",
+    "equivalence proof",
+    "scope enforcement",
+    "diff rejection",
+    "CI required check",
+    "branch protection",
+    "user acceptance automation"
+  ],
+  "nonExecutionBoundary": "This artifact previews the Graph Traversal Plan boundary only. It defines how a future deterministic planner may consume graph-aware Request IR validation output after graphTraversalAllowed is true, but it does not execute graph traversal, select nodes or edges, generate a selected graph slice, generate contract compiler input, generate instruction packs, call an LLM, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, reject diffs, configure required checks, change branch protection, or automate user acceptance."
+}

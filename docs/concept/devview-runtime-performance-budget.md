@@ -236,6 +236,17 @@ The validator resolves schema-valid candidate fields such as `CH-001`, `Todo App
 permission. The validator does not run graph traversal, select nodes or edges, generate contract input, generate
 instruction packs, call an LLM, or mutate graph-source.
 
+The next frontend boundaries are previewed, but not executed:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-traversal-plan-boundary.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/selected-graph-slice-boundary.add-todo-runtime-evidence-only.preview.json
+```
+
+They define future traversal planner prerequisites, selection trace policy, selected slice shape, and contract input
+readiness rules. They are not runtime commands yet and do not add slow work to the measured smoke. Contract input still
+requires a future generated selected graph slice.
+
 ## Health Report Boundary
 
 `graph read-model report-health --json` exposes a small runtime budget summary:

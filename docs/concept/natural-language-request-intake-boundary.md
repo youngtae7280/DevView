@@ -232,22 +232,78 @@ traversal, selected graph slice generation, contract input generation, and instr
 
 ## Graph Traversal Plan Boundary
 
+The traversal plan boundary preview for the Todo App calibration request is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-traversal-plan-boundary.add-todo-runtime-evidence-only.preview.json
+```
+
 The previewed traversal plan shape includes:
 
 - `traversalPlanId`
-- `sourceRequestIr`
-- `startNodes`
+- `sourceRequestIrCandidate`
+- `sourceSchemaValidation`
+- `sourceGraphAwareValidation`
+- `startNodeCandidates`
+- `startNodeResolutionStatus`
 - `nodeSelectionRules`
 - `edgeSelectionRules`
-- `selectedNodeCandidates`
-- `selectedEdgeCandidates`
+- `requiredNodeTypes`
+- `optionalNodeTypes`
+- `excludedNodeTypes`
+- `requiredEdgeTypes`
+- `optionalEdgeTypes`
+- `excludedEdgeTypes`
+- `traversalDepthLimit`
+- `selectionTracePolicy`
+- `ambiguityPolicy`
+- `contractInputReadinessPolicy`
+
+For the add-todo runtime-Evidence-only calibration, the future traversal intent starts from `CH-001` and should confirm
+the target component, scope policy, allowed/forbidden scope sources, required evidence policy, stop conditions, output
+requirements, and linked risks when present. These are future candidates only; no node or edge is selected by this
+boundary artifact.
+
+AI does not directly select the final graph slice. AI may suggest candidates; deterministic traversal selects the final
+node/edge slice only after schema-only validation and graph-aware validation have succeeded.
+
+## Selected Graph Slice Boundary
+
+The selected graph slice boundary preview for the Todo App calibration request is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/selected-graph-slice-boundary.add-todo-runtime-evidence-only.preview.json
+```
+
+It defines the future selected slice shape:
+
+- `selectedGraphSliceId`
+- `sourceTraversalPlan`
+- `sourceGraphAwareValidation`
+- `selectedNodes`
+- `selectedEdges`
+- `includedPolicyNodes`
+- `includedScopeNodes`
+- `includedEvidenceNodes`
+- `includedRiskNodes`
 - `excludedNodes`
 - `excludedEdges`
 - `selectionTrace`
-- `confidence`
-- `requiresHumanReview`
+- `sliceCompletenessStatus`
+- `contractInputReadinessStatus`
 
-AI does not directly select the final graph slice. AI may suggest candidates; deterministic traversal selects the final node/edge slice after Request IR validation.
+Current required values remain:
+
+```text
+selectedGraphSliceStatus: not-generated
+selectedGraphSliceGenerated: false
+contractInputGenerated: false
+instructionPackGenerated: false
+```
+
+If multiple target records/components match, if required policy/evidence nodes are missing, or if source authority
+cannot be proven, the future slice must be marked ambiguous or incomplete and contract input generation must remain
+blocked.
 
 ## Contract Input Mapping
 
@@ -262,6 +318,9 @@ A validated Request IR may later feed:
 - `outputRequirements`
 
 The mapping is previewed only. No contract compiler input is generated here.
+
+Contract compiler input cannot be generated directly from a Request IR Candidate, schema-only validation, graph-aware
+validation, or traversal boundary preview. A future complete selected graph slice is the required handoff artifact.
 
 ## Hook Gateway Relationship
 

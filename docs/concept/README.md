@@ -346,6 +346,14 @@ It resolves `CH-001`, `Todo App`, `runtime-evidence-only`, and `test-only-behavi
 authority after schema-only validation. It is not graph traversal, not selected graph slice generation, not contract
 compiler input generation, and not instruction pack generation.
 
+The Graph Traversal Plan and Selected Graph Slice boundaries are previewed in
+`examples/valid/todo-app-pbe-run/generated/graph-traversal-plan-boundary.add-todo-runtime-evidence-only.preview.json`
+and
+`examples/valid/todo-app-pbe-run/generated/selected-graph-slice-boundary.add-todo-runtime-evidence-only.preview.json`.
+They define the next deterministic frontend pass and contract input handoff shape, but do not execute traversal, select
+nodes or edges, generate contract input, generate instruction packs, mutate graph-source, apply graph deltas, approve
+work, or enforce scope.
+
 The following readiness artifact is complete at documentation level:
 
 - [representative-runtime-feasibility-demo.md](representative-runtime-feasibility-demo.md)

@@ -11,6 +11,8 @@
   "graphAwareValidatorCore": "cli/src/core/request-ir-graph-aware-validator.ts",
   "graphAwareValidatorCommand": "graph read-model validate-request-ir-graph --candidate <candidatePath> --schema-validation <schemaValidationPath> --json",
   "firstCalibrationGraphAwareValidationArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
+  "graphTraversalPlanBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/graph-traversal-plan-boundary.add-todo-runtime-evidence-only.preview.json",
+  "selectedGraphSliceBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/selected-graph-slice-boundary.add-todo-runtime-evidence-only.preview.json",
   "graphTraversalExecuted": false,
   "selectedGraphSliceGenerated": false,
   "contractInputGenerated": false,
@@ -188,6 +190,8 @@
     "identify graph/read-model authority inputs for candidate field validation",
     "document that schema-only validation is prerequisite but not traversal authority",
     "document the implemented graph-aware validator as non-traversing",
+    "link the graph traversal plan boundary as the next compiler frontend pass",
+    "link the selected graph slice boundary as the required contract input prerequisite",
     "prepare a later graph traversal plan implementation slice"
   ],
   "forbiddenUse": [

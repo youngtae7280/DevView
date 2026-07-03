@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "selected-graph-slice-boundary-preview",
+  "status": "selected-graph-slice-boundary-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "selectedGraphSliceId": "selected-graph-slice-boundary-add-todo-runtime-evidence-only-preview",
+  "selectedGraphSliceStatus": "not-generated",
+  "sourceTraversalPlan": "examples/valid/todo-app-pbe-run/generated/graph-traversal-plan-boundary.add-todo-runtime-evidence-only.preview.json",
+  "sourceGraphAwareValidation": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-validation.add-todo-runtime-evidence-only.preview.json",
+  "graphTraversalExecuted": false,
+  "selectedGraphSliceGenerated": false,
+  "contractInputGenerated": false,
+  "instructionPackGenerated": false,
+  "aiClassifierImplemented": false,
+  "llmCallsIntroduced": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false,
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "runtimeEvidenceSatisfied": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "futureSelectedGraphSliceShape": {
+    "selectedGraphSliceId": "string",
+    "sourceTraversalPlan": "artifact-path",
+    "sourceGraphAwareValidation": "artifact-path",
+    "selectedNodes": "array",
+    "selectedEdges": "array",
+    "includedPolicyNodes": "array",
+    "includedScopeNodes": "array",
+    "includedEvidenceNodes": "array",
+    "includedRiskNodes": "array",
+    "excludedNodes": "array",
+    "excludedEdges": "array",
+    "selectionTrace": "array",
+    "sliceCompletenessStatus": "complete|incomplete|ambiguous|review-required",
+    "contractInputReadinessStatus": "ready|not-ready|review-required"
+  },
+  "currentBoundaryValues": {
+    "selectedNodes": [],
+    "selectedEdges": [],
+    "includedPolicyNodes": [],
+    "includedScopeNodes": [],
+    "includedEvidenceNodes": [],
+    "includedRiskNodes": [],
+    "excludedNodes": [],
+    "excludedEdges": [],
+    "selectionTrace": [],
+    "sliceCompletenessStatus": "not-generated",
+    "contractInputReadinessStatus": "not-ready-selected-slice-not-generated"
+  },
+  "futureExpectedSliceCandidateKinds": {
+    "targetChangeOrRequestNode": {
+      "candidateValue": "CH-001",
+      "selectionStatus": "future-selection-required"
+    },
+    "targetComponentNode": {
+      "candidateValue": "Todo App",
+      "selectionStatus": "future-selection-required"
+    },
+    "includedPolicyNodes": [
+      "scope policy",
+      "allowed scope source",
+      "forbidden scope source",
+      "required evidence policy",
+      "stop condition",
+      "output requirement"
+    ],
+    "includedRiskNodes": ["known risk when linked by traversal"],
+    "actualSelectedNodes": [],
+    "actualSelectedEdges": []
+  },
+  "ambiguityAndReviewPolicy": {
+    "multipleTargetNodesHandling": "mark-ambiguous-require-human-review",
+    "multipleComponentNodesHandling": "mark-ambiguous-require-human-review",
+    "missingPolicyNodeHandling": "mark-slice-incomplete-do-not-generate-contract-input",
+    "missingEvidenceNodeHandling": "mark-slice-incomplete-do-not-generate-contract-input",
+    "sourceAuthorityUnprovenHandling": "require-human-review-do-not-proceed-silently",
+    "contractInputGeneratedWhenAmbiguous": false
+  },
+  "contractInputHandoffBoundary": {
+    "selectedGraphSliceRequiredForContractInput": true,
+    "contractInputAllowedDirectlyFromRequestIrCandidate": false,
+    "contractInputAllowedDirectlyFromSchemaValidation": false,
+    "contractInputAllowedDirectlyFromGraphAwareValidation": false,
+    "contractInputAllowedDirectlyFromTraversalBoundary": false,
+    "contractInputGenerated": false,
+    "contractInputGenerationStatus": "future-work"
+  },
+  "allowedUse": [
+    "define future selected graph slice artifact shape",
+    "define contract input readiness boundary",
+    "define ambiguity and missing policy handling",
+    "document that selected graph slice generation remains future work"
+  ],
+  "forbiddenUse": [
+    "claiming selected nodes or edges exist",
+    "graph traversal execution",
+    "selected graph slice generation",
+    "contract compiler input generation",
+    "instruction pack generation",
+    "AI classifier implementation",
+    "runtime LLM call",
+    "graph-source mutation",
+    "graph delta apply",
+    "approval recording",
+    "runtime Evidence satisfaction",
+    "equivalence proof",
+    "scope enforcement",
+    "diff rejection",
+    "CI required check",
+    "branch protection",
+    "user acceptance automation"
+  ],
+  "nonExecutionBoundary": "This artifact previews the Selected Graph Slice boundary only. It defines the future selected node/edge slice shape and contract input readiness policy, but it does not claim that a slice has been generated, does not execute traversal, does not select nodes or edges, does not generate contract compiler input, does not generate instruction packs, does not call an LLM, does not mutate graph-source, does not apply graph deltas, does not approve graph updates, does not record human decisions, does not satisfy runtime Evidence, does not prove equivalence, does not enforce scope, does not reject diffs, does not configure required checks, does not change branch protection, and does not automate user acceptance."
+}
