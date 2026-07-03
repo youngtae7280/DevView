@@ -7,6 +7,7 @@ import { generateGraphTraversalPlanFile } from '../core/graph-traversal-plan.js'
 import { generateContractCompilerInputFile } from '../core/contract-input-generator.js'
 import { reportHookGatewayHealthFile } from '../core/hook-gateway-health-report.js'
 import { generateInstructionPackFile } from '../core/instruction-pack-generator.js'
+import { reportFrontendChainFile } from '../core/frontend-chain-report.js'
 import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
 import { generateSelectedGraphSliceFile } from '../core/selected-graph-slice.js'
 import { validateRequestIrGraphAwareFile } from '../core/request-ir-graph-aware-validator.js'
@@ -1293,6 +1294,70 @@ export async function graphReadModelReportHookGatewayHealthCommand(context: Comm
           message,
           suggestedFix:
             'Provide a readable Hook Gateway health boundary preview and a dedicated preview/report output path.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelReportFrontendChainCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.intake) {
+    return invalidCommand('graph read-model report-frontend-chain requires --intake <intakeBoundaryPath>.')
+  }
+
+  try {
+    const result = await reportFrontendChainFile(context.options.root, context.options.intake, {
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    const blocked = result.report.status !== 'devview-frontend-chain-report-generated'
+    const errorFindings = result.report.blockingFindings
+
+    return {
+      ok: !blocked,
+      command: 'graph read-model report-frontend-chain',
+      exitCode: blocked ? ExitCode.ValidationFailed : ExitCode.Success,
+      message: blocked
+        ? 'DevView frontend artifact chain report blocked by missing or mismatched artifacts.'
+        : 'DevView frontend artifact chain report generated without execution.',
+      issues: blocked
+        ? (errorFindings.length > 0 ? errorFindings : result.report.validationFindings).map((finding) =>
+            issue({
+              validator: 'FrontendChainReporter',
+              code: finding.code,
+              severity: finding.severity,
+              message: finding.message,
+              reason: finding.stage ? `Stage: ${finding.stage}` : undefined,
+              suggestedFix:
+                finding.suggestedFix ??
+                'Regenerate or relink the frontend calibration artifact chain before treating it as instruction-pack-ready.',
+            }),
+          )
+        : [],
+      data: {
+        ...result.report,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: blocked
+          ? 'Repair the chain inputs. This report did not call an LLM, generate Request IR, implement hook sessions, execute Codex, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.'
+          : 'Review the instruction pack preview and chain manifest as human-readable context only. This report did not call an LLM, implement hook sessions, execute Codex, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model report-frontend-chain',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'DevView frontend artifact chain report could not run.',
+      issues: [
+        issue({
+          validator: 'FrontendChainReporter',
+          code: 'FRONTEND_CHAIN_REPORT_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a readable natural-language intake boundary and dedicated manifest/report output paths.',
         }),
       ],
     }

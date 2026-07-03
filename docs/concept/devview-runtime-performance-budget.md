@@ -133,6 +133,19 @@ lane policy does not remove existing smoke coverage and does not introduce hard 
 protection, scope enforcement, graph-source mutation, graph delta apply, approval, runtime Evidence satisfaction, or
 equivalence proof.
 
+The frontend artifact chain manifest command is intentionally report-only and is not part of the current all-steps smoke
+by default:
+
+```text
+graph read-model report-frontend-chain --intake <naturalLanguageIntakeBoundaryPath> --json
+```
+
+It reads already-generated calibration artifacts from natural-language intake through Instruction Pack preview and
+summarizes their roles, statuses, and authority boundaries for human review. It does not belong to
+`core-critical-lane` unless a later explicit decision promotes it, and it does not call an LLM, generate Request IR,
+implement hook sessions, trigger Codex execution, mutate graph-source, apply graph deltas, approve work, satisfy
+runtime Evidence, prove equivalence, enforce scope, or configure CI.
+
 The graph delta proposal boundary preview is now recorded at:
 
 ```text

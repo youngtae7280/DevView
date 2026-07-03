@@ -92,6 +92,7 @@ export interface CliOptions {
   selectedSlice?: string
   contractInput?: string
   boundary?: string
+  intake?: string
   schema?: string
   chainCommand?: string
   base?: string

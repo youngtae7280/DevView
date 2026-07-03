@@ -481,6 +481,38 @@ source Contract Compiler Input, graph/source authority artifacts, selected front
 paths, graph snapshot artifacts, Evidence authority artifacts, selected scope candidate paths, or existing
 graph-source/source-authority-shaped JSON files.
 
+## Frontend Artifact Chain Manifest
+
+The frontend chain manifest command is now available as:
+
+```text
+graph read-model report-frontend-chain --intake <naturalLanguageIntakeBoundaryPath> --json
+```
+
+The Todo App calibration outputs are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-frontend-chain.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-frontend-chain.add-todo-runtime-evidence-only.preview.md
+```
+
+The report starts from the natural-language request intake boundary and reads the linked calibration artifacts through
+AI Request Analyzer boundary, analyzer prompt pack, Request IR Candidate schema, calibration candidate, schema-only
+validation, graph-aware validation, traversal plan, selected graph slice, Contract Compiler Input, and Instruction Pack
+preview. It records each artifact role, status, path, and authority boundary in order.
+
+The terminal stage for the current calibration is:
+
+```text
+instruction-pack-preview-generated-no-codex-execution
+```
+
+This manifest is review/report surface only. It does not call an LLM, generate a Request IR Candidate, implement hook
+sessions, trigger Codex execution, mutate graph-source, apply graph deltas, approve work, record human decisions,
+satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI. It also must not overwrite linked intake,
+frontend, graph-source, read-model, selected slice, Contract Compiler Input, or Instruction Pack source artifacts when
+explicit JSON/Markdown output paths are provided.
+
 ## Hook Gateway Relationship
 
 The DevView Codex Hook Gateway controls activation and routing. Natural Language Request Intake controls compiler frontend semantics.

@@ -744,6 +744,37 @@ node dist/cli/index.js graph read-model report-hook-gateway-health `
   --json
 ```
 
+### `pbe graph read-model report-frontend-chain`
+
+- Purpose: Read the natural-language request intake boundary and linked calibration frontend artifacts, then emit a
+  compact DevView frontend artifact chain manifest.
+- Typical state before running: After the calibration frontend has produced artifacts from Request IR Candidate schema
+  through Instruction Pack preview.
+- Options: `--intake <intakeBoundaryPath>` is required. `--output <file>` may write the JSON manifest.
+  `--markdown <file>` may write a concise table report. Without explicit output paths, JSON stdout is the only output.
+- What it checks: linked artifact readability, artifact roles, statuses, terminal Instruction Pack preview presence, and
+  non-execution boundary flags.
+- What it writes: Nothing by default. It writes only to explicit `--output` and `--markdown` paths.
+- Output authority guard: explicit report output is rejected before writing if it would overwrite the source intake
+  boundary, any linked frontend/source artifact in the chain, graph-source/read-model source authority, or selected
+  frontend/source artifacts. If either JSON or Markdown output path is unsafe, no output is written.
+- Success result: JSON with `artifactRole: devview-frontend-chain-report`, ordered stage summaries from natural-language
+  intake through Instruction Pack Markdown, `terminalStage: instruction-pack-preview-generated-no-codex-execution`, and
+  all execution/apply/approval/evidence/equivalence/enforcement flags false.
+- Next command: Human review of the generated instruction pack. This report does not call an LLM, generate Request IR,
+  implement hook sessions, trigger Codex execution, mutate graph-source, apply graph deltas, approve work, satisfy
+  runtime Evidence, prove equivalence, enforce scope, or configure CI.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model report-frontend-chain `
+  --intake examples/valid/todo-app-pbe-run/generated/natural-language-request-intake-boundary.runtime-evidence-only.preview.json `
+  --output .tmp/review-frontend-chain.json `
+  --markdown .tmp/review-frontend-chain.md `
+  --json
+```
+
 ### `pbe graph operation apply-proposal`
 
 - Purpose: Preview or apply a generated graph update proposal to its graph-source.

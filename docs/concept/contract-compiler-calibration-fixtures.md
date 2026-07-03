@@ -2185,3 +2185,24 @@ proposal-only command, but it should not reject diffs, enforce scope, broaden co
 into the supported command path, create promotion review packets, approve fixtures, claim runtime Evidence is satisfied,
 inspect patch contents, turn candidate checks into required checks, apply graph deltas, turn test Evidence into user
 acceptance, allow production source edits, enforce CI, or change the existing Todo App structure-only status.
+
+## Todo App Frontend Chain Manifest
+
+The Todo App runtime-Evidence-only calibration frontend now has a report-only artifact chain manifest:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-frontend-chain.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-frontend-chain.add-todo-runtime-evidence-only.preview.md
+```
+
+It is generated with:
+
+```text
+graph read-model report-frontend-chain --intake examples/valid/todo-app-pbe-run/generated/natural-language-request-intake-boundary.runtime-evidence-only.preview.json --json
+```
+
+The manifest reads the existing calibration chain from natural-language intake through Instruction Pack preview and
+reports artifact roles, statuses, paths, terminal stage, and authority boundaries. It is not a compiler input, not an
+Instruction Pack, not runtime Evidence, and not approval. It does not call an LLM, generate Request IR, implement hook
+sessions, trigger Codex execution, mutate graph-source, apply graph deltas, prove equivalence, enforce scope, or
+configure CI.

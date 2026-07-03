@@ -131,6 +131,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     selectedSlice: undefined as string | undefined,
     contractInput: undefined as string | undefined,
     boundary: undefined as string | undefined,
+    intake: undefined as string | undefined,
     schema: undefined as string | undefined,
     chainCommand: undefined as string | undefined,
     base: undefined as string | undefined,
@@ -405,6 +406,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--boundary requires a file path.' }
       }
       options.boundary = value
+      index += 1
+    } else if (arg === '--intake') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--intake requires a file path.' }
+      }
+      options.intake = value
       index += 1
     } else if (arg === '--schema') {
       const value = argv[index + 1]

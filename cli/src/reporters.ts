@@ -188,6 +188,8 @@ Commands:
                        Generate deterministic Instruction Pack from Contract Compiler Input without execution
   graph read-model report-hook-gateway-health
                        Report Hook Gateway health boundary readiness without installing hooks or enforcement
+  graph read-model report-frontend-chain
+                       Report the DevView frontend artifact chain from intake through Instruction Pack preview
   graph read-model report-health
                        Summarize local non-enforcing Graph-source transition health
   graph read-model observe-candidates
@@ -236,8 +238,8 @@ Options:
   --graph-delta <file> Graph delta file for graph operation propose-update.
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, generate-ai-request-analyzer-pack, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, or report-hook-gateway-health.
-  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, generate-ai-request-analyzer-pack, or generate-instruction-pack.
+  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, generate-ai-request-analyzer-pack, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-hook-gateway-health, or report-frontend-chain.
+  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, generate-ai-request-analyzer-pack, generate-instruction-pack, or report-frontend-chain.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal or graph read-model review-graph-delta.
   --candidate <file>   Request IR Candidate file for graph read-model validate-request-ir.
   --schema-validation <file>
@@ -251,6 +253,7 @@ Options:
   --contract-input <file>
                        Contract Compiler Input file for graph read-model generate-instruction-pack.
   --boundary <file>    Hook Gateway health boundary file for graph read-model report-hook-gateway-health.
+  --intake <file>      Natural-language request intake boundary file for graph read-model report-frontend-chain.
   --schema <file>      Request IR Candidate schema file for graph read-model generate-ai-request-analyzer-pack.
   --chain-command <name>
                        Wrapped graph operation script command. Defaults to operation-chain.

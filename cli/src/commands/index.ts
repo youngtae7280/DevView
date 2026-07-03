@@ -32,6 +32,7 @@ import {
   graphReadModelReportHookGatewayHealthCommand,
   graphReadModelReportCompilerBoundaryCommand,
   graphReadModelReportCompilerInputCommand,
+  graphReadModelReportFrontendChainCommand,
   graphReadModelReportHealthCommand,
   graphReadModelReportIntentCommand,
   graphReadModelSelectSliceCommand,
@@ -258,6 +259,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-hook-gateway-health') {
     return graphReadModelReportHookGatewayHealthCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-frontend-chain') {
+    return graphReadModelReportFrontendChainCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-health') {
     return graphReadModelReportHealthCommand(context)

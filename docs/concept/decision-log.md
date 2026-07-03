@@ -2358,3 +2358,41 @@ smoke or use a non-critical lane until a later explicit decision promotes them. 
 smoke coverage, enforce runtime budgets, fail CI on timing, reject diffs, enable strict/guided hook blocking, mutate
 graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove
 equivalence, enforce scope, introduce CI required checks, change branch protection, or automate user acceptance.
+
+## DEC-254 Report DevView Frontend Artifact Chain
+
+DEC-254 does not supersede DEC-097 through DEC-253. It implements a deterministic report-only manifest for the current
+Todo App frontend calibration artifact chain from natural-language intake through Instruction Pack preview.
+
+The command is exposed through:
+
+```text
+graph read-model report-frontend-chain --intake <naturalLanguageIntakeBoundaryPath> --json
+```
+
+The implementation is recorded in:
+
+```text
+cli/src/core/frontend-chain-report.ts
+```
+
+The Todo App calibration outputs are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-frontend-chain.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-frontend-chain.add-todo-runtime-evidence-only.preview.md
+```
+
+The manifest reads linked calibration artifacts and records each stage's artifact role, status, path, generated or
+implemented state, and authority boundary. The current terminal stage is
+`instruction-pack-preview-generated-no-codex-execution`.
+
+Explicit JSON/Markdown report output is allowed only for dedicated manifest/report paths. The command rejects output
+paths before writing when they would overwrite the source intake boundary, linked frontend artifacts, graph-source or
+read-model source authority, selected slices, Contract Compiler Input, Instruction Pack artifacts, or other selected
+frontend/source artifacts. Unsafe Markdown output also prevents safe JSON output from being written first.
+
+This decision does not add the manifest to the core-critical runtime lane by default, call an LLM, generate a Request IR
+Candidate, implement hook sessions, trigger Codex execution, mutate graph-source, apply graph deltas, approve graph
+updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, introduce CI required
+checks, change branch protection, or automate user acceptance.
