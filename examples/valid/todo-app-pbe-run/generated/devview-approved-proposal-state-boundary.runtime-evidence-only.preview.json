@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-approved-proposal-state-boundary-preview",
+  "status": "devview-approved-proposal-state-boundary-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "boundaryScope": "future-approved-proposal-state-preview-only",
+  "phase": "phase-13-human-decision-approved-apply-boundary",
+  "sourceHumanDecisionRecordBoundary": "examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-boundary.runtime-evidence-only.preview.json",
+  "sourceHumanDecisionRecordCommandBoundary": "examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-command-boundary.runtime-evidence-only.preview.json",
+  "futureInputDecisionRecord": {
+    "artifactRole": "devview-human-decision-record",
+    "requiredDecisionValue": "approve-proposal",
+    "requiredDecisionProvenance": "human-authored-explicit-decision",
+    "codexSelfApprovalAllowed": false,
+    "aiGeneratedDecisionAllowed": false,
+    "approvalAutomationAllowed": false,
+    "implementedNow": false
+  },
+  "approvedProposalStateImplemented": false,
+  "approvedProposalStateCreated": false,
+  "approvalStatus": "not-approved-future-approved-state-not-created",
+  "humanDecisionRecorded": false,
+  "graphDeltaApplyEnabled": false,
+  "graphDeltaApplied": false,
+  "graphSourceMutationAllowed": false,
+  "graphSourceMutated": false,
+  "runtimeEvidenceSatisfied": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "strictModeEnabled": false,
+  "guidedEnforcementEnabled": false,
+  "futureApprovedProposalStateShape": {
+    "artifactRole": "devview-approved-proposal-state",
+    "status": "future-approved-proposal-state-created-after-human-decision",
+    "sourceHumanDecisionRecord": "<future-human-decision-record-path>",
+    "sourceGraphDeltaProposal": "<future-proposal-path>",
+    "sourceHumanReviewPacket": "<future-human-review-packet-path>",
+    "approvalStatus": "approved-by-human-decision-record",
+    "approvedProposalStateCreated": true,
+    "graphDeltaApplyEnabled": false,
+    "graphDeltaApplied": false,
+    "graphSourceMutated": false,
+    "runtimeEvidenceSatisfied": false,
+    "equivalenceProven": false,
+    "scopeEnforced": false,
+    "ciEnforcementEnabled": false
+  },
+  "futurePreconditionChecks": [
+    {
+      "checkId": "decision-record-approved-value",
+      "description": "Future approved state creation must require a human decision record with decisionValue approve-proposal.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "checkId": "decision-record-provenance",
+      "description": "Future approved state creation must reject Codex/AI/validator/CI self-approval and require human-authored provenance.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "checkId": "proposal-id-match",
+      "description": "Future approved state must verify the human decision record, review packet, and proposal all reference the same proposal id.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "checkId": "proposal-not-stale",
+      "description": "Future approved state must verify the proposal was generated against the current expected graph-source/read-model baseline.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "checkId": "current-graph-source-check",
+      "description": "Future approved state must require a current graph-source identity or hash check before any later apply can be considered.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "checkId": "no-implicit-apply",
+      "description": "Future approved state creation must not apply graph deltas or mutate graph-source.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    }
+  ],
+  "futureOutputAuthorityPolicyPreview": {
+    "outputWritePolicy": "explicit-output-only",
+    "forbiddenOverwriteTargets": [
+      "source Human Decision Record boundary",
+      "source Human Decision Record command boundary",
+      "source human decision record",
+      "source Human Review Packet",
+      "source Graph Delta proposal",
+      "graph-source artifacts",
+      "generated read-model projections",
+      "evidence artifacts",
+      "runtime reports",
+      "active hook/config paths"
+    ],
+    "safeOutputRequirement": "Future approved state output must be a dedicated approved proposal state artifact, not graph-source and not graph delta apply output.",
+    "unsafeMarkdownPreventsJsonWrite": true
+  },
+  "futureApplySeparation": {
+    "approvedStateIsApplyReadyInputOnly": true,
+    "approvedStateAppliesGraphDelta": false,
+    "requiresSeparateApplyBoundary": true,
+    "requiresSeparateApplyCommand": true,
+    "requiresCurrentGraphSourceRecheckAtApplyTime": true,
+    "requiresHumanReviewBeforeApply": true
+  },
+  "allowedUse": [
+    "document future approved proposal state shape",
+    "define future preconditions after approve-proposal decision",
+    "separate human decision from approved state creation",
+    "separate approved state from graph delta apply",
+    "preserve current graph-source/staleness checks as future requirements"
+  ],
+  "forbiddenUse": [
+    "treat this boundary as an approved proposal state",
+    "create approved proposal state",
+    "apply graph delta",
+    "mutate graph-source",
+    "infer approval from Codex, AI, validators, runtime smoke, CI, or review packet generation",
+    "satisfy runtime Evidence",
+    "prove equivalence",
+    "enforce scope",
+    "configure CI or branch protection",
+    "automate user acceptance"
+  ],
+  "runtimePerformanceBoundary": {
+    "designOnly": true,
+    "addsRuntimeWork": false,
+    "aiCalls": false,
+    "networkCalls": false,
+    "fullRepoScan": false,
+    "patchHunkInspection": false,
+    "fullValidation": false,
+    "timingSmokeIntegrationStatus": "not-integrated-boundary-preview-only",
+    "runtimeBudgetStatus": "advisory-not-enforced"
+  },
+  "nextFutureStepsPreview": [
+    {
+      "step": "approved-proposal-state-command-boundary",
+      "status": "future-not-implemented"
+    },
+    {
+      "step": "graph-delta-apply-boundary",
+      "status": "future-not-implemented"
+    },
+    {
+      "step": "evidence-acceptance-policy-boundary",
+      "status": "future-not-implemented"
+    },
+    {
+      "step": "graph-source-mutation-policy-boundary",
+      "status": "future-not-implemented"
+    }
+  ],
+  "nonExecutionBoundary": "This artifact previews the future approved proposal state boundary only. It does not create approved proposal state, apply a graph delta, mutate graph-source, record a human decision, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI or required checks, change branch protection, or replace user acceptance."
+}

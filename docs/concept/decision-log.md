@@ -2811,3 +2811,25 @@ decision recording separate from approved proposal state creation and graph delt
 This decision does not add a CLI command, record a human decision, approve a proposal, create approved proposal state,
 apply a graph delta, mutate graph-source, accept runtime Evidence, prove equivalence, enforce scope, introduce CI
 required checks, change branch protection, or automate user acceptance.
+
+## DEC-267 Define Approved Proposal State Boundary
+
+DEC-267 does not supersede DEC-097 through DEC-266. It previews the future state that may follow a human-authored
+`approve-proposal` decision, while keeping that state separate from graph delta apply.
+
+The Todo App calibration artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json
+```
+
+The boundary points back to the Human Decision Record boundary and command boundary. It requires future tooling to check
+that the decision record is human-authored, uses `decisionValue: approve-proposal`, matches the reviewed proposal, and
+is not stale against the current graph-source/read-model baseline.
+
+The approved state is still not apply. A future approved proposal state may become input to a separate apply boundary,
+but it must not itself mutate graph-source or apply deltas.
+
+This decision does not implement approved proposal state creation, create approved proposal state, apply a graph delta,
+mutate graph-source, record a human decision, accept runtime Evidence, prove equivalence, enforce scope, introduce CI
+required checks, change branch protection, or automate user acceptance.

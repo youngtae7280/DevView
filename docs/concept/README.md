@@ -323,6 +323,12 @@ authority policy before implementation. No CLI surface is added yet, and it stil
 proposals, create approved proposal state, apply graph deltas, mutate graph-source, satisfy Evidence, prove equivalence,
 or enforce scope/CI.
 
+The Approved Proposal State boundary is previewed in
+`examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json`.
+It defines the future state that may follow a human decision record with `decisionValue: approve-proposal`, while keeping
+approved state creation separate from graph delta apply. It does not create approved state, apply graph deltas, mutate
+graph-source, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
+
 The DevView Codex Hook Gateway boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json` and
 documented in [devview-codex-hook-gateway-boundary.md](devview-codex-hook-gateway-boundary.md). It defines how future
