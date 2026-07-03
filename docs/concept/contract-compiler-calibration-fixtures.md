@@ -1895,6 +1895,20 @@ CI passes, runtime smoke, and Codex claims cannot self-accept Evidence. The boun
 `runtimeEvidenceSatisfied: true`, prove equivalence, enforce scope, mutate graph-source, apply graph deltas, configure
 required checks, or automate user acceptance.
 
+The Graph-source Mutation Policy boundary preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-policy-boundary.runtime-evidence-only.preview.json
+```
+
+It previews future graph-source mutation policy after approved proposal state and apply boundary work. Future mutation
+may target only the explicit current graph-source and must exclude read-model outputs, Evidence artifacts,
+proposal/review/decision inputs, hook/config files, CI or branch protection config, unrelated graph-source files, and
+production source. It also previews pre-mutation backup/rollback/fallback requirements and post-mutation read-model
+regeneration, consistency check, and mutation report requirements. The boundary performs no write and does not apply
+graph deltas, accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, configure required checks, or
+automate user acceptance.
+
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
 approval or runtime Evidence satisfaction.

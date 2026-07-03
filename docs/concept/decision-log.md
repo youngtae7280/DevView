@@ -2883,3 +2883,27 @@ the relevant runtime obligation.
 This decision does not implement Evidence acceptance, accept Evidence, set `runtimeEvidenceSatisfied: true`, prove
 equivalence, enforce scope, apply graph deltas, mutate graph-source, introduce CI required checks, change branch
 protection, or automate user acceptance.
+
+## DEC-270 Define Graph-source Mutation Policy Boundary
+
+DEC-270 does not supersede DEC-097 through DEC-269. It previews the future graph-source mutation policy without allowing
+or performing any graph-source writes.
+
+The Todo App calibration artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-policy-boundary.runtime-evidence-only.preview.json
+```
+
+The boundary defines the only future mutation target class as an explicit current graph-source after approved proposal
+state and apply preconditions. It forbids mutation of unrelated graph-source files, generated read-model outputs,
+Evidence artifacts, proposal/review/decision inputs, Codex hook/config files, CI or branch protection configuration, and
+production source.
+
+It also previews required pre-mutation backup, rollback, fallback, path containment, dry-run review, and post-mutation
+read-model regeneration, consistency check, mutation report, and rollback-on-failure requirements.
+
+This decision does not implement mutation policy execution, allow graph-source mutation, write graph-source, apply graph
+deltas, create approved proposal state, record human decisions, accept Evidence, satisfy runtime Evidence, prove
+equivalence, enforce scope, introduce CI required checks, change branch protection, mutate production source, mutate
+Codex hook/config files, or automate user acceptance.

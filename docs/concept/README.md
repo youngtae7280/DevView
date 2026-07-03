@@ -342,6 +342,13 @@ It separates linked Evidence, accepted Evidence, and `runtimeEvidenceSatisfied` 
 validators, Codex output, or review packets as self-acceptance. It does not accept Evidence, satisfy runtime Evidence,
 prove equivalence, enforce scope, apply graph deltas, mutate graph-source, or configure CI.
 
+The Graph-source Mutation Policy boundary is previewed in
+`examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-policy-boundary.runtime-evidence-only.preview.json`.
+It defines future mutation target restrictions, pre-mutation backup/rollback/fallback requirements, and post-mutation
+read-model regeneration/consistency/report requirements. It does not allow graph-source writes, apply graph deltas,
+accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, mutate production source, mutate hook/config
+files, or configure CI.
+
 The DevView Codex Hook Gateway boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json` and
 documented in [devview-codex-hook-gateway-boundary.md](devview-codex-hook-gateway-boundary.md). It defines how future

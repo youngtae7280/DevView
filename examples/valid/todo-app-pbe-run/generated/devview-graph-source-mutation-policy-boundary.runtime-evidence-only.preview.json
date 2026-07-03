@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-graph-source-mutation-policy-boundary-preview",
+  "status": "devview-graph-source-mutation-policy-boundary-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "boundaryScope": "future-graph-source-mutation-policy-preview-only",
+  "phase": "phase-13-human-decision-approved-apply-boundary",
+  "sourceGraphDeltaApplyBoundary": "examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-boundary.runtime-evidence-only.preview.json",
+  "sourceEvidenceAcceptancePolicyBoundary": "examples/valid/todo-app-pbe-run/generated/devview-evidence-acceptance-policy-boundary.runtime-evidence-only.preview.json",
+  "sourceApprovedProposalStateBoundary": "examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json",
+  "mutationPolicyImplemented": false,
+  "mutationCommandImplemented": false,
+  "graphSourceMutationAllowed": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplyEnabled": false,
+  "graphDeltaApplied": false,
+  "approvedProposalStateCreated": false,
+  "humanDecisionRecorded": false,
+  "runtimeEvidenceSatisfied": false,
+  "evidenceAccepted": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "approvalStatus": "not-approved-mutation-policy-not-implemented",
+  "futureMutationTargetPolicy": {
+    "mutationAllowedNow": false,
+    "futureAllowedTarget": "explicit-current-graph-source-only",
+    "requiresResolvedAbsolutePathCheck": true,
+    "requiresRepoRootContainmentCheck": true,
+    "requiresCurrentGraphSourceIdentityCheck": true,
+    "requiresApprovedProposalState": true,
+    "requiresDryRunReview": true,
+    "requiresRollbackFallbackPlan": true,
+    "requiresPostMutationValidationPlan": true
+  },
+  "futureForbiddenMutationTargets": [
+    {
+      "targetClass": "unrelated-graph-source",
+      "reason": "Future apply must write only the explicitly selected current graph-source."
+    },
+    {
+      "targetClass": "generated-read-model-output",
+      "reason": "Read-model outputs are generated projections, not mutation targets."
+    },
+    {
+      "targetClass": "runtime-evidence-artifact",
+      "reason": "Evidence artifacts are review inputs and must not be rewritten as part of graph-source mutation."
+    },
+    {
+      "targetClass": "proposal-review-decision-input",
+      "reason": "Proposal, review packet, decision record, and approved state inputs are provenance inputs, not mutation targets."
+    },
+    {
+      "targetClass": "codex-hook-or-config",
+      "reason": "Graph-source mutation policy must never mutate hook scripts or Codex configuration."
+    },
+    {
+      "targetClass": "ci-or-branch-protection-config",
+      "reason": "CI and branch protection are separate governance surfaces and must not be changed by graph apply."
+    },
+    {
+      "targetClass": "production-source",
+      "reason": "Graph-source mutation is not production code mutation."
+    }
+  ],
+  "futurePreMutationRequirements": [
+    {
+      "requirementId": "explicit-current-graph-source",
+      "description": "Future mutation must name exactly one graph-source artifact and verify it is current.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "requirementId": "path-containment",
+      "description": "Future mutation must verify resolved paths remain inside the intended repo/workspace target.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "requirementId": "approved-proposal-state",
+      "description": "Future mutation requires approved proposal state created from an explicit human decision.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "requirementId": "dry-run-reviewed",
+      "description": "Future mutation requires a dry-run mutation report reviewed before apply.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "requirementId": "backup-or-reversible-patch",
+      "description": "Future mutation must have a backup, reversible patch, or equivalent rollback material.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "requirementId": "fallback-plan",
+      "description": "Future mutation must define what to do if post-mutation validation fails.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    }
+  ],
+  "futurePostMutationRequirements": [
+    {
+      "requirementId": "regenerate-read-model",
+      "description": "Future mutation must regenerate the affected read-model projection after graph-source write.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "requirementId": "consistency-check",
+      "description": "Future mutation must run a consistency check between graph-source and generated read-model.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "requirementId": "mutation-report",
+      "description": "Future mutation must write an explicit mutation report with changed graph-source paths and validation status.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "requirementId": "evidence-acceptance-remains-separate",
+      "description": "Future post-mutation validation output may feed Evidence review but must not self-accept runtime Evidence.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    },
+    {
+      "requirementId": "rollback-on-failure-policy",
+      "description": "Future mutation must define whether failed post-checks require rollback, halt, or human intervention.",
+      "blockingIfMissing": true,
+      "implementedNow": false
+    }
+  ],
+  "futureMutationReportShape": {
+    "artifactRole": "devview-graph-source-mutation-report",
+    "status": "future-mutation-report-not-created-here",
+    "sourceApprovedProposalState": "<future-approved-proposal-state-path>",
+    "targetGraphSource": "<future-explicit-current-graph-source-path>",
+    "changedGraphSourcePaths": [],
+    "readModelRegenerated": false,
+    "consistencyCheckStatus": "future-not-run",
+    "rollbackFallbackStatus": "future-not-run",
+    "runtimeEvidenceSatisfied": false,
+    "equivalenceProven": false,
+    "scopeEnforced": false,
+    "ciEnforcementEnabled": false
+  },
+  "allowedUse": [
+    "document future graph-source mutation target policy",
+    "define forbidden mutation target classes",
+    "define pre-mutation backup, rollback, fallback, and dry-run requirements",
+    "define post-mutation regeneration, consistency, and report requirements",
+    "preserve current no-mutation boundary until explicit future implementation"
+  ],
+  "forbiddenUse": [
+    "treat this boundary as mutation permission",
+    "write graph-source",
+    "apply graph delta",
+    "create approved proposal state",
+    "record a human decision",
+    "accept Evidence or set runtimeEvidenceSatisfied true",
+    "prove equivalence",
+    "enforce scope",
+    "configure CI or branch protection",
+    "mutate production source",
+    "mutate Codex hook/config files",
+    "automate user acceptance"
+  ],
+  "runtimePerformanceBoundary": {
+    "designOnly": true,
+    "addsRuntimeWork": false,
+    "aiCalls": false,
+    "networkCalls": false,
+    "fullRepoScan": false,
+    "patchHunkInspection": false,
+    "fullValidation": false,
+    "timingSmokeIntegrationStatus": "not-integrated-boundary-preview-only",
+    "runtimeBudgetStatus": "advisory-not-enforced"
+  },
+  "nextFutureStepsPreview": [
+    {
+      "step": "apply-approved-graph-delta-command-boundary",
+      "status": "future-not-implemented"
+    },
+    {
+      "step": "post-mutation-consistency-check-boundary",
+      "status": "future-not-implemented"
+    },
+    {
+      "step": "rollback-fallback-command-boundary",
+      "status": "future-not-implemented"
+    }
+  ],
+  "nonExecutionBoundary": "This artifact previews the future graph-source mutation policy boundary only. It does not allow graph-source mutation, write graph-source, apply graph deltas, create approved proposal state, record human decisions, accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI or required checks, change branch protection, mutate production source, mutate Codex hook/config files, or replace user acceptance."
+}
