@@ -366,6 +366,14 @@ pack is a question-plan preview only; it does not implement an interview UI, cal
 validation, run traversal, generate selected slices, generate compiler input, generate instruction packs, or execute
 Codex.
 
+Clarification answers can produce a revised Request IR Candidate preview through
+`graph read-model revise-request-ir-candidate --clarification-pack <packPath> --answers <answersPath> --output <revisedCandidatePath> --json`.
+The current no-op calibration answer and revised candidate artifacts are
+`examples/valid/todo-app-pbe-run/generated/clarification-answers.add-todo-runtime-evidence-only.preview.json` and
+`examples/valid/todo-app-pbe-run/generated/request-ir-candidate.revised.add-todo-runtime-evidence-only.preview.json`.
+The revised candidate is still candidate-only and must rerun deterministic validation before graph-aware validation or
+traversal.
+
 The Request IR Candidate schema and first calibration fixture are recorded in
 `examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json` and
 `examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json`. They

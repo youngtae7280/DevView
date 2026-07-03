@@ -10,6 +10,7 @@ import { reportHookGatewayHealthFile } from '../core/hook-gateway-health-report.
 import { generateInstructionPackFile } from '../core/instruction-pack-generator.js'
 import { reportFrontendChainFile } from '../core/frontend-chain-report.js'
 import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
+import { reviseRequestIrCandidateFile } from '../core/request-ir-candidate-reviser.js'
 import { generateSelectedGraphSliceFile } from '../core/selected-graph-slice.js'
 import { validateRequestIrGraphAwareFile } from '../core/request-ir-graph-aware-validator.js'
 import { validateRequestIrCandidateFile } from '../core/request-ir-candidate-validator.js'
@@ -925,6 +926,80 @@ export async function graphReadModelGenerateClarificationInterviewPackCommand(
           message,
           suggestedFix:
             'Provide readable clarification boundary and candidate-only Request IR artifacts, plus dedicated preview output paths.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelReviseRequestIrCandidateCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.clarificationPack) {
+    return invalidCommand('graph read-model revise-request-ir-candidate requires --clarification-pack <packPath>.')
+  }
+  if (!context.options.answers) {
+    return invalidCommand('graph read-model revise-request-ir-candidate requires --answers <answersPath>.')
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph read-model revise-request-ir-candidate requires --output <revisedCandidatePath>.')
+  }
+
+  try {
+    const revision = await reviseRequestIrCandidateFile(
+      context.options.root,
+      context.options.clarificationPack,
+      context.options.answers,
+      {
+        output: context.options.output,
+      },
+    )
+    const blocked =
+      revision.result.status !== 'request-ir-candidate-revision-generated' || !revision.result.revisedCandidateGenerated
+    const errorFindings = revision.result.validationFindings.filter((finding) => finding.severity === 'error')
+
+    return {
+      ok: !blocked,
+      command: 'graph read-model revise-request-ir-candidate',
+      exitCode: blocked ? ExitCode.ValidationFailed : ExitCode.Success,
+      message: blocked
+        ? 'Request IR Candidate revision from clarification answers blocked.'
+        : 'Revised Request IR Candidate preview generated without validation, traversal, contract input, instruction pack, or execution.',
+      issues: blocked
+        ? (errorFindings.length > 0 ? errorFindings : revision.result.validationFindings).map((finding) =>
+            issue({
+              validator: 'RequestIrCandidateClarificationReviser',
+              code: finding.code,
+              severity: finding.severity,
+              message: finding.message,
+              reason: finding.field ? `Field: ${finding.field}` : undefined,
+              suggestedFix:
+                finding.suggestedFix ??
+                'Fix the clarification pack, answers, or original Request IR Candidate before generating a revised candidate.',
+            }),
+          )
+        : [],
+      data: {
+        ...revision.result,
+        ...(revision.outputPath ? { outputPath: revision.outputPath } : {}),
+        next: blocked
+          ? 'Repair the clarification pack or answers. This command did not write a trusted candidate, run validation, run traversal, generate contract input, generate instruction packs, execute Codex, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.'
+          : 'Run graph read-model validate-request-ir on the revised candidate before any graph-aware validation or traversal. This command did not run validation, run traversal, generate selected slices, generate contract input, generate instruction packs, execute Codex, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model revise-request-ir-candidate',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Request IR Candidate revision could not run.',
+      issues: [
+        issue({
+          validator: 'RequestIrCandidateClarificationReviser',
+          code: 'REQUEST_IR_CANDIDATE_REVISION_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide readable clarification pack and answers artifacts, plus a dedicated revised candidate preview output path.',
         }),
       ],
     }

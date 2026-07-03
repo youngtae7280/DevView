@@ -155,6 +155,27 @@ work, record human decisions, satisfy runtime Evidence, prove equivalence, enfor
 JSON/Markdown output paths are guarded so they cannot overwrite the boundary, candidate, linked schema/intake/analyzer
 artifacts, source authority, evidence artifacts, or selected frontend/source artifacts.
 
+Clarification answers can now feed a deterministic revised Request IR Candidate preview:
+
+```text
+graph read-model revise-request-ir-candidate --clarification-pack <packPath> --answers <answersPath> --output <revisedCandidatePath> --json
+```
+
+The current no-op calibration answer and revised candidate artifacts are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/clarification-answers.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate.revised.add-todo-runtime-evidence-only.preview.json
+```
+
+The revised candidate uses `artifactRole: request-ir-candidate`,
+`revisionAuthorityStatus: clarification-derived-candidate-not-validated`,
+`authorityStatus: not-authoritative-until-validated`, and `validationRequiredAgain: true`. It preserves
+`graphTraversalAllowed: false`, `contractGenerationAllowed: false`, and `instructionPackGenerationAllowed: false`.
+Only answers whose `questionId` and `mapsToRequestIrField` match the generated question plan can update candidate fields,
+and only the clarification boundary vocabulary may be revised. Answers cannot set approval, graph apply, runtime
+Evidence satisfaction, equivalence proof, enforcement, traversal, contract, or instruction-pack authority.
+
 ## Frontend Flow
 
 The intended frontend flow is:

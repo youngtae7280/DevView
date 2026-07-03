@@ -296,6 +296,20 @@ in `analyzer-preflight-lane` or another non-critical advisory lane, but it is no
 candidate-to-instruction-pack critical path. For the current calibration candidate it generates no questions and records
 `questionPlanStatus: no-questions-required-for-current-calibration-candidate`.
 
+The clarification answer revision command is also an alternate clarification branch outside the core-critical lane by
+default:
+
+```text
+graph read-model revise-request-ir-candidate --clarification-pack <packPath> --answers <answersPath> --output <revisedCandidatePath> --json
+```
+
+It generates only a revised Request IR Candidate preview and does not run validation itself. Once created, a revised
+candidate must re-enter the deterministic runtime path through `validate-request-ir` and then
+`validate-request-ir-graph`; those validation steps are inside the deterministic runtime lanes. The answer revision
+command must not call an LLM/API, run graph traversal, generate selected slices, generate Contract Compiler Input,
+generate Instruction Packs, trigger Codex execution, mutate graph-source, apply graph deltas, approve work, satisfy
+runtime Evidence, prove equivalence, enforce scope, or configure CI.
+
 Clarification interview time is human interaction time and is outside the 5 second deterministic DevView runtime budget.
 If a future clarification flow produces a revised Request IR Candidate, that revised candidate must re-enter the
 deterministic validation path with `validate-request-ir` and `validate-request-ir-graph`; those validation commands stay

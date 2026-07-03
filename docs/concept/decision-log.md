@@ -2470,3 +2470,49 @@ make network calls, run Request IR validation, run graph traversal, generate sel
 Compiler Input, generate Instruction Packs, trigger Codex execution, mutate graph-source, apply graph deltas, approve
 graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, introduce CI
 required checks, change branch protection, or automate user acceptance.
+
+## DEC-257 Generate Revised Request IR Candidate From Clarification Answers
+
+DEC-257 does not supersede DEC-097 through DEC-256. It implements a deterministic clarification-answer revision pass
+that consumes a Clarification Interview Pack plus clarification answers and emits a revised Request IR Candidate preview.
+
+The command is exposed through:
+
+```text
+graph read-model revise-request-ir-candidate --clarification-pack <packPath> --answers <answersPath> --output <revisedCandidatePath> --json
+```
+
+The implementation is recorded in:
+
+```text
+cli/src/core/request-ir-candidate-reviser.ts
+```
+
+The Todo App no-op calibration answer and revised candidate artifacts are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/clarification-answers.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate.revised.add-todo-runtime-evidence-only.preview.json
+```
+
+For the current calibration, the Clarification Interview Pack has `questionCount: 0`, so the answers artifact records
+`answerSetStatus: no-answers-required-for-current-calibration-candidate` and the revision is
+`no-op-revision-generated`. Ambiguous future answers may revise only fields mapped by generated questions and only within
+the Clarification Interview boundary vocabulary: `requestTypeCandidate`, `targetRecordIdCandidate`,
+`targetComponentCandidate`, `allowedScopeIntentCandidate`, `forbiddenScopeIntentCandidate`,
+`requiredEvidenceIntentCandidate`, and `riskIntentCandidate`.
+
+The revised candidate preserves `requestIrCandidateStatus: candidate-only`,
+`revisionAuthorityStatus: clarification-derived-candidate-not-validated`,
+`authorityStatus: not-authoritative-until-validated`, `validationRequiredAgain: true`,
+`graphTraversalAllowed: false`, `contractGenerationAllowed: false`, and `instructionPackGenerationAllowed: false`.
+Answers cannot set approval, graph apply, runtime Evidence satisfaction, equivalence proof, enforcement, traversal,
+contract, or instruction-pack authority. Unknown `questionId` values and unsafe answer authority fields block revision.
+The command guards explicit output paths before writing so they cannot overwrite the pack, answers, original candidate,
+linked schema/intake/analyzer artifacts, graph-source/read-model authority, evidence paths, or source-authority-shaped
+JSON.
+
+This decision does not call an LLM/API, implement an interview UI, run Request IR validation, run graph traversal,
+generate selected graph slices, generate Contract Compiler Input, generate Instruction Packs, trigger Codex execution,
+mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove
+equivalence, enforce scope, introduce CI required checks, change branch protection, or automate user acceptance.

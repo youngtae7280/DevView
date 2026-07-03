@@ -30,6 +30,7 @@ import {
   graphReadModelProjectCommand,
   graphReadModelProjectIntentCommand,
   graphReadModelReviewGraphDeltaCommand,
+  graphReadModelReviseRequestIrCandidateCommand,
   graphReadModelReportHookGatewayHealthCommand,
   graphReadModelReportCompilerBoundaryCommand,
   graphReadModelReportCompilerInputCommand,
@@ -246,6 +247,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
     positionals[2] === 'generate-clarification-interview-pack'
   ) {
     return graphReadModelGenerateClarificationInterviewPackCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'revise-request-ir-candidate') {
+    return graphReadModelReviseRequestIrCandidateCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'validate-request-ir') {
     return graphReadModelValidateRequestIrCommand(context)

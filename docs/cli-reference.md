@@ -569,6 +569,41 @@ node dist/cli/index.js graph read-model generate-clarification-interview-pack `
   --json
 ```
 
+### `pbe graph read-model revise-request-ir-candidate`
+
+- Purpose: Generate a revised Request IR Candidate preview from a Clarification Interview Pack and clarification
+  answers. The output is candidate-only and must be validated again before graph-aware validation or traversal.
+- Typical state before running: After `generate-clarification-interview-pack` has produced a question-plan pack and a
+  clarification answers artifact exists. For the current calibration, the pack has zero questions, so the answers
+  artifact records a no-op revision.
+- Options: `--clarification-pack <packPath>`, `--answers <answersPath>`, and `--output <revisedCandidatePath>` are
+  required.
+- What it checks: pack role/status, generated pack boundary flags, answer role/status, no approval/source authority in
+  answers, known `questionId`, planned-question field matching, allowed Request IR revision fields, original candidate
+  schema-only safety, and explicit output authority.
+- What it writes: Only the explicit revised candidate output. It writes nothing by default and writes no output when
+  revision is blocked.
+- Output authority guard: the output path is rejected before writing if it would overwrite the pack, answers, original
+  candidate, linked schema/intake/analyzer artifacts, graph-source/read-model source authority, evidence/source paths,
+  or source-authority-shaped JSON.
+- Success result: a `request-ir-candidate` artifact with `requestIrCandidateStatus: candidate-only`,
+  `revisionAuthorityStatus: clarification-derived-candidate-not-validated`,
+  `authorityStatus: not-authoritative-until-validated`, `validationRequiredAgain: true`, `graphTraversalAllowed: false`,
+  `contractGenerationAllowed: false`, and `instructionPackGenerationAllowed: false`.
+- Next command: Run `graph read-model validate-request-ir --candidate <revisedCandidatePath> --json`. Do not treat the
+  revised candidate as graph traversal, contract input, instruction pack, approval, runtime Evidence satisfaction,
+  equivalence proof, or enforcement authority.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model revise-request-ir-candidate `
+  --clarification-pack examples/valid/todo-app-pbe-run/generated/clarification-interview-pack.add-todo-runtime-evidence-only.preview.json `
+  --answers examples/valid/todo-app-pbe-run/generated/clarification-answers.add-todo-runtime-evidence-only.preview.json `
+  --output .tmp/review-request-ir-candidate.revised.json `
+  --json
+```
+
 ### `pbe graph read-model validate-request-ir`
 
 - Purpose: Validate a Request IR Candidate artifact's schema and candidate-only safety boundaries.

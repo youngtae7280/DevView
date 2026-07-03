@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "request-ir-candidate",
+  "status": "request-ir-candidate-revised-previewed",
+  "schemaId": "devview-request-ir-candidate-v0-preview",
+  "requestIrCandidateStatus": "candidate-only",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "candidateFixtureId": "request-ir-candidate-add-todo-runtime-evidence-only",
+  "requestIrCandidateSchema": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json",
+  "naturalLanguageRequestIntakeBoundary": "examples/valid/todo-app-pbe-run/generated/natural-language-request-intake-boundary.runtime-evidence-only.preview.json",
+  "sourceNaturalLanguageRequest": {
+    "sourceKind": "human-natural-language-request",
+    "language": "ko",
+    "text": "Todo App에서 add 버튼 동작 증거만 추가해줘. production source는 건드리지 마.",
+    "authorityStatus": "raw-request-text-not-compiler-authority"
+  },
+  "requestText": "Todo App에서 add 버튼 동작 증거만 추가해줘. production source는 건드리지 마.",
+  "requestLanguage": "ko",
+  "requestTypeCandidate": "runtime-evidence-only",
+  "changeTypeCandidate": "test-only-behavior-proof",
+  "targetRecordIdCandidate": "CH-001",
+  "targetRecordIdAuthorityStatus": "candidate-only-requires-graph-record-existence-validation",
+  "targetComponentCandidate": "Todo App",
+  "targetComponentAuthorityStatus": "candidate-only-requires-component-existence-validation",
+  "intentSummaryCandidate": "Add or strengthen evidence for the Todo App add button behavior without touching production source.",
+  "allowedScopeIntentCandidate": [
+    "runtime behavior evidence",
+    "test output or evidence artifact updates",
+    "review/report-only artifacts"
+  ],
+  "forbiddenScopeIntentCandidate": [
+    "production source changes",
+    "graph-source mutation",
+    "approval or acceptance changes"
+  ],
+  "requiredEvidenceIntentCandidate": [
+    "add-todo behavior proof",
+    "runtime or test evidence link candidate",
+    "report artifact candidate"
+  ],
+  "riskIntentCandidate": [
+    "attached evidence may not satisfy runtime Evidence policy",
+    "target record CH-001 remains structure-only until validation confirms authority",
+    "production source must remain untouched"
+  ],
+  "confidence": {
+    "score": 0.74,
+    "band": "medium",
+    "reason": "The request explicitly asks for add-button evidence only and forbids production source changes, but target record and policy compatibility still require deterministic validation."
+  },
+  "confidenceThresholdForValidation": {
+    "low": "clarification-required-or-human-review-required",
+    "medium": "may-proceed-only-to-deterministic-validation",
+    "high": "still-requires-deterministic-validation-before-traversal"
+  },
+  "ambiguities": [
+    {
+      "ambiguityId": "target-record-authority",
+      "status": "requires-deterministic-validation",
+      "question": "Does CH-001 remain the correct structure-only review candidate for this request?"
+    },
+    {
+      "ambiguityId": "runtime-evidence-policy",
+      "status": "requires-deterministic-validation",
+      "question": "Which evidence artifact shape is acceptable before runtime Evidence can be considered satisfied?"
+    }
+  ],
+  "requiresClarification": false,
+  "humanReviewRequired": true,
+  "candidateOnly": true,
+  "authorityStatus": "not-authoritative-until-validated",
+  "validatedRequestIr": false,
+  "requestIrValidationStatus": "not-validated-after-clarification-revision",
+  "validatorImplemented": true,
+  "validatorScope": "schema-and-boundary-only",
+  "schemaOnlyValidationResult": null,
+  "graphAwareValidatorImplemented": true,
+  "graphAwareValidationBoundaryStatus": "request-ir-graph-aware-validation-boundary-previewed",
+  "graphAwareValidationBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json",
+  "graphAwareValidationResultStatus": "not-run-after-clarification-revision",
+  "graphAwareValidationResultArtifact": null,
+  "graphTraversalAllowed": false,
+  "contractGenerationAllowed": false,
+  "instructionPackGenerationAllowed": false,
+  "graphTraversalAllowedFromUnvalidatedAiOutput": false,
+  "contractGenerationAllowedFromUnvalidatedAiOutput": false,
+  "instructionPackGenerationAllowedFromUnvalidatedAiOutput": false,
+  "selectedGraphSliceGenerated": false,
+  "contractCompilerInputGenerated": false,
+  "instructionPackGenerated": false,
+  "aiClassifierImplemented": false,
+  "llmCallsIntroduced": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false,
+  "approvalStatus": "not-approved",
+  "humanDecisionRecorded": false,
+  "equivalenceProven": false,
+  "runtimeEvidenceSatisfied": false,
+  "futureValidatorExpectations": {
+    "inputSchema": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json",
+    "graphSourceMetadata": "examples/valid/todo-app-pbe-run/graph-source.json",
+    "schemaOnlyValidationResult": null,
+    "graphAwareValidationBoundary": "examples/valid/todo-app-pbe-run/generated/request-ir-graph-aware-validation-boundary.runtime-evidence-only.preview.json",
+    "expectedChecks": [
+      "schema id and required fields",
+      "requestTypeCandidate enum value",
+      "candidate-only safety fields",
+      "graph traversal disallowed from unvalidated candidate",
+      "contract generation disallowed from unvalidated candidate",
+      "instruction pack generation disallowed from unvalidated candidate"
+    ],
+    "futureGraphAwareChecks": [
+      "targetRecordIdCandidate existence",
+      "targetComponentCandidate existence",
+      "changeTypeCandidate compatibility",
+      "forbidden production source policy compatibility",
+      "evidence availability"
+    ],
+    "possibleOutputStatuses": ["schema-valid-graph-validation-not-run", "validation-blocked"],
+    "graphAwareValidationResult": null,
+    "futureGraphAwareOutputStatuses": [
+      "graph-aware-valid",
+      "validation-blocked",
+      "clarification-required",
+      "human-review-required"
+    ],
+    "revisedCandidateValidationRequiredAgain": true
+  },
+  "futureGraphTraversalBoundary": {
+    "validatedRequestIrRequired": true,
+    "graphTraversalPlanGenerated": false,
+    "selectedNodeCandidatesGenerated": false,
+    "selectedEdgeCandidatesGenerated": false,
+    "contractCompilerInputGenerated": false
+  },
+  "allowedUse": [
+    "serve as the first Request IR candidate calibration fixture",
+    "exercise schema-only Request IR validation",
+    "exercise graph-aware validation as non-traversing review context",
+    "document candidate-only classification for a runtime-evidence-only Todo App request",
+    "preserve the boundary that medium confidence may only proceed to deterministic validation"
+  ],
+  "forbiddenUse": [
+    "validated Request IR",
+    "graph traversal input",
+    "selected graph slice",
+    "contract compiler input",
+    "instruction pack input",
+    "runtime Evidence satisfaction",
+    "graph-source mutation",
+    "graph delta apply",
+    "approval recording",
+    "equivalence proof",
+    "scope enforcement",
+    "diff rejection",
+    "CI required check"
+  ],
+  "nonExecutionBoundary": "This revised Request IR Candidate is clarification-derived and candidate-only. It has not run schema-only validation, graph-aware validation, graph traversal, selected slice generation, Contract Compiler Input generation, Instruction Pack generation, Codex execution, graph-source mutation, graph delta apply, approval, runtime Evidence satisfaction, equivalence proof, scope enforcement, or CI enforcement.",
+  "revisionAuthorityStatus": "clarification-derived-candidate-not-validated",
+  "sourceClarificationInterviewPack": "examples/valid/todo-app-pbe-run/generated/clarification-interview-pack.add-todo-runtime-evidence-only.preview.json",
+  "sourceClarificationAnswers": "examples/valid/todo-app-pbe-run/generated/clarification-answers.add-todo-runtime-evidence-only.preview.json",
+  "sourceOriginalRequestIrCandidate": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json",
+  "clarificationRevisionStatus": "no-op-revision-generated",
+  "clarificationAnswersApplied": [],
+  "clarificationAnswersAppliedCount": 0,
+  "clarificationAnswersAuthorityStatus": "clarification-answer-not-approval",
+  "validationRequiredAgain": true,
+  "validationChainRequiredAgain": [
+    {
+      "step": "schema-only-request-ir-validation",
+      "command": "graph read-model validate-request-ir --candidate <revisedCandidatePath> --json"
+    },
+    {
+      "step": "graph-aware-request-ir-validation",
+      "command": "graph read-model validate-request-ir-graph --candidate <revisedCandidatePath> --schema-validation <schemaValidationPath> --json"
+    }
+  ],
+  "nextValidationCommands": [
+    {
+      "step": "schema-only-request-ir-validation",
+      "command": "graph read-model validate-request-ir --candidate examples/valid/todo-app-pbe-run/generated/request-ir-candidate.revised.add-todo-runtime-evidence-only.preview.json --json"
+    },
+    {
+      "step": "graph-aware-request-ir-validation",
+      "command": "graph read-model validate-request-ir-graph --candidate <revisedCandidatePath> --schema-validation <schemaValidationPath> --json"
+    }
+  ],
+  "contractInputGenerated": false,
+  "codexExecutionTriggered": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "outputWritePolicy": "explicit-output-only",
+  "writtenOutputPath": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate.revised.add-todo-runtime-evidence-only.preview.json",
+  "writtenOutputPathAuthorityStatus": "explicit-preview-output-not-source-authority"
+}

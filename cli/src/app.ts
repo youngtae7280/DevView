@@ -130,6 +130,8 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     traversalPlan: undefined as string | undefined,
     selectedSlice: undefined as string | undefined,
     contractInput: undefined as string | undefined,
+    clarificationPack: undefined as string | undefined,
+    answers: undefined as string | undefined,
     boundary: undefined as string | undefined,
     intake: undefined as string | undefined,
     schema: undefined as string | undefined,
@@ -399,6 +401,20 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--contract-input requires a file path.' }
       }
       options.contractInput = value
+      index += 1
+    } else if (arg === '--clarification-pack') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--clarification-pack requires a file path.' }
+      }
+      options.clarificationPack = value
+      index += 1
+    } else if (arg === '--answers') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--answers requires a file path.' }
+      }
+      options.answers = value
       index += 1
     } else if (arg === '--boundary') {
       const value = argv[index + 1]
