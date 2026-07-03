@@ -217,7 +217,7 @@ Options:
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
   --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, or check-scope.
-  --markdown <file>    Optional Markdown summary output for graph read-model report-health.
+  --markdown <file>    Optional Markdown summary output for graph read-model report-health or check-scope.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal.
   --chain-command <name>
                        Wrapped graph operation script command. Defaults to operation-chain.

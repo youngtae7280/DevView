@@ -410,6 +410,31 @@ node dist/cli/index.js graph execution-contract report --slice examples/adoption
 
 For the practical end-to-end sequence, see [Graph Operation Runbook](graph-operation-runbook.md).
 
+### `pbe graph read-model check-scope`
+
+- Purpose: Run the local advisory scope compliance evaluator for explicit Git refs.
+- Typical state before running: After building the CLI, when a local DevView runtime slice needs a fast scope summary.
+- Options: `--base <baseRef>` and `--head <headRef>` are required. `--output <file>` may write the full advisory JSON
+  artifact. `--markdown <file>` may write a compact advisory runtime report.
+- What it checks: Git-derived changed-file names/status, current Todo App runtime Evidence-only scope inputs, and the
+  non-enforcing scope evaluator. It does not inspect patch hunks or read full file contents.
+- What it writes: Nothing by default. It writes only when `--output` or `--markdown` is supplied.
+- Success result: Advisory JSON with `nonEnforcing: true`, `enforcementStatus: not-enforced`, finding counts, and result
+  state. Advisory findings do not fail the command.
+- Common failures: invalid base/head refs, unreadable calibration draft input, malformed internal scope input.
+- Next command: Review the advisory output. Do not treat it as approval, rejection, required-check status, runtime
+  Evidence satisfaction, equivalence proof, or graph delta apply.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model check-scope `
+  --base HEAD~1 `
+  --head HEAD `
+  --markdown .tmp/devview-scope-runtime-report.md `
+  --json
+```
+
 ### `pbe graph operation apply-proposal`
 
 - Purpose: Preview or apply a generated graph update proposal to its graph-source.

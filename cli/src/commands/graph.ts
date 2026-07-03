@@ -647,6 +647,7 @@ export async function graphReadModelCheckScopeCommand(context: CommandContext): 
       baseRef: context.options.base,
       headRef: context.options.head,
       output: context.options.output,
+      markdown: context.options.markdown,
     })
     return {
       ok: true,
@@ -656,7 +657,9 @@ export async function graphReadModelCheckScopeCommand(context: CommandContext): 
       issues: [],
       data: {
         ...result.artifact,
+        compactRuntimeReport: result.compactRuntimeReport,
         ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
         next: 'Review advisory findings only. This command does not reject diffs, enforce scope, configure required checks, approve fixtures, satisfy runtime Evidence, prove equivalence, or apply graph deltas.',
       },
     }

@@ -56,14 +56,24 @@ It runs:
 - `node dist/cli/index.js graph read-model report-compiler-input --json`;
 - `node dist/cli/index.js graph read-model compile-contract --dry-run --json`;
 - `node dist/cli/index.js graph read-model collect-changed-files --base HEAD~1 --head HEAD --output .tmp/devview-runtime-timing-smoke/git-derived-changed-file-collection.json --json`.
-- `node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --json`.
+- `node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --markdown .tmp/devview-runtime-timing-smoke/scope-compliance-runtime-report.md --json`.
 
 The changed-file collection step writes to a `.tmp` smoke artifact so the timing smoke does not refresh the tracked
 Todo App preview collection artifact during ordinary measurement.
 
 The scope check step runs the advisory evaluator through the supported CLI surface. It collects changed-file names in
-memory, consumes the current Todo App runtime Evidence-only scope inputs, and reports findings as non-enforcing JSON.
-It does not write an artifact unless `--output` is explicitly supplied.
+memory, consumes the current Todo App runtime Evidence-only scope inputs, and reports findings as non-enforcing JSON. It
+also writes a compact Markdown summary to `.tmp` during the smoke. It does not write a tracked evaluation artifact unless
+`--output` is explicitly supplied.
+
+The compact scope runtime report can also be requested directly:
+
+```text
+node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --markdown .tmp/devview-scope-runtime-report.md --json
+```
+
+That report summarizes base/head refs, changed/evaluated file counts, advisory result status, non-enforcement status,
+and finding counts. It does not include patch hunks or full file contents.
 
 The smoke reports JSON with:
 
@@ -97,6 +107,7 @@ It also names the advisory scope evaluator CLI:
 ```text
 scopeComplianceEvaluatorStatus: advisory-cli-available
 command: graph read-model check-scope --base <baseRef> --head <headRef> --json
+compactReportCommand: graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json
 enforcementStatus: not-enforced
 ```
 

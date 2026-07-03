@@ -3,7 +3,7 @@ import {
   collectGitDerivedChangedFileArtifact,
   type GitDerivedChangedFileCollectionArtifact,
 } from './git-derived-changed-file-collection.js'
-import { readJsonSafe, relativePath, writeJsonAtomic } from './fs.js'
+import { readJsonSafe, relativePath, writeJsonAtomic, writeTextAtomic } from './fs.js'
 import {
   evaluateScopeCompliance,
   type ScopeComplianceEvaluationResult,
@@ -20,6 +20,34 @@ export interface AdvisoryScopeComplianceCheckOptions {
   baseRef: string
   headRef: string
   output?: string
+  markdown?: string
+}
+
+export interface CompactScopeComplianceRuntimeReport {
+  reportStatus: 'compact-advisory-runtime-report-ready'
+  command: 'graph read-model check-scope'
+  baseRef: string
+  headRef: string
+  changedFileCount: number
+  evaluatedFileCount: number
+  scopeComplianceEvaluationStatus: AdvisoryScopeComplianceCheckArtifact['scopeComplianceEvaluationStatus']
+  scopeComplianceResult: AdvisoryScopeComplianceCheckArtifact['scopeComplianceResult']
+  nonEnforcing: true
+  enforcementStatus: 'not-enforced'
+  evaluatedViolationCount: number
+  blockingFindingCount: number
+  reviewRequiredFindingCount: number
+  unknownFindingCount: number
+  advisoryFindingCount: number
+  runtimeBudgetTargetMs: 5000
+  runtimeBudgetStatus: 'advisory-not-enforced'
+  reportIsBlocking: false
+  diffRejected: false
+  scopeEnforced: false
+  approvalStatus: 'not-approved'
+  equivalenceProven: false
+  runtimeEvidenceSatisfied: false
+  graphDeltaApplied: false
 }
 
 export interface AdvisoryScopeComplianceCheckArtifact extends ScopeComplianceEvaluationResult {
@@ -36,6 +64,7 @@ export interface AdvisoryScopeComplianceCheckArtifact extends ScopeComplianceEva
   resolvedBaseRef?: string
   resolvedHeadRef?: string
   changedFilesCollected: true
+  changedFileCount: number
   inputConsumedForEvaluation: true
   changedFileInputConsumedForEvaluation: true
   scopeInputsConsumedForEvaluation: true
@@ -74,7 +103,9 @@ export interface AdvisoryScopeComplianceCheckArtifact extends ScopeComplianceEva
 
 export interface AdvisoryScopeComplianceCheckResult {
   artifact: AdvisoryScopeComplianceCheckArtifact
+  compactRuntimeReport: CompactScopeComplianceRuntimeReport
   outputPath?: string
+  markdownReport?: string
 }
 
 interface ScopePatternSource {
@@ -106,16 +137,30 @@ export async function runAdvisoryScopeComplianceCheck(
     scopePatterns,
     evaluation,
   })
+  const compactRuntimeReport = buildCompactScopeComplianceRuntimeReport(artifact)
 
-  if (!options.output) {
-    return { artifact }
+  let outputPath: string | undefined
+  if (options.output) {
+    const resolvedOutputPath = path.resolve(root, options.output)
+    await writeJsonAtomic(resolvedOutputPath, artifact)
+    outputPath = relativePath(root, resolvedOutputPath)
   }
 
-  const outputPath = path.resolve(root, options.output)
-  await writeJsonAtomic(outputPath, artifact)
+  let markdownReport: string | undefined
+  if (options.markdown) {
+    const resolvedMarkdownPath = path.resolve(root, options.markdown)
+    await writeTextAtomic(
+      resolvedMarkdownPath,
+      renderCompactScopeComplianceRuntimeReport(artifact, compactRuntimeReport),
+    )
+    markdownReport = relativePath(root, resolvedMarkdownPath)
+  }
+
   return {
     artifact,
-    outputPath: relativePath(root, outputPath),
+    compactRuntimeReport,
+    ...(outputPath ? { outputPath } : {}),
+    ...(markdownReport ? { markdownReport } : {}),
   }
 }
 
@@ -146,6 +191,7 @@ export function buildAdvisoryScopeComplianceCheckArtifact(input: {
     ...(input.collectionArtifact.resolvedBaseRef ? { resolvedBaseRef: input.collectionArtifact.resolvedBaseRef } : {}),
     ...(input.collectionArtifact.resolvedHeadRef ? { resolvedHeadRef: input.collectionArtifact.resolvedHeadRef } : {}),
     changedFilesCollected: true,
+    changedFileCount: input.collectionArtifact.normalizedChangedFiles.length,
     inputConsumedForEvaluation: true,
     changedFileInputConsumedForEvaluation: true,
     scopeInputsConsumedForEvaluation: true,
@@ -209,6 +255,70 @@ export function buildAdvisoryScopeComplianceCheckArtifact(input: {
       'production source edit permission',
     ],
   }
+}
+
+export function buildCompactScopeComplianceRuntimeReport(
+  artifact: AdvisoryScopeComplianceCheckArtifact,
+): CompactScopeComplianceRuntimeReport {
+  return {
+    reportStatus: 'compact-advisory-runtime-report-ready',
+    command: 'graph read-model check-scope',
+    baseRef: artifact.baseRef,
+    headRef: artifact.headRef,
+    changedFileCount: artifact.changedFileCount,
+    evaluatedFileCount: artifact.evaluatedFiles.length,
+    scopeComplianceEvaluationStatus: artifact.scopeComplianceEvaluationStatus,
+    scopeComplianceResult: artifact.scopeComplianceResult,
+    nonEnforcing: true,
+    enforcementStatus: 'not-enforced',
+    evaluatedViolationCount: artifact.evaluatedViolationCount,
+    blockingFindingCount: artifact.blockingFindingCount,
+    reviewRequiredFindingCount: artifact.reviewRequiredFindingCount,
+    unknownFindingCount: artifact.unknownFindingCount,
+    advisoryFindingCount: artifact.advisoryFindingCount,
+    runtimeBudgetTargetMs: 5000,
+    runtimeBudgetStatus: 'advisory-not-enforced',
+    reportIsBlocking: false,
+    diffRejected: false,
+    scopeEnforced: false,
+    approvalStatus: 'not-approved',
+    equivalenceProven: false,
+    runtimeEvidenceSatisfied: false,
+    graphDeltaApplied: false,
+  }
+}
+
+export function renderCompactScopeComplianceRuntimeReport(
+  artifact: AdvisoryScopeComplianceCheckArtifact,
+  report: CompactScopeComplianceRuntimeReport = buildCompactScopeComplianceRuntimeReport(artifact),
+): string {
+  const lines = [
+    '# Scope Compliance Advisory Runtime Report',
+    '',
+    '| Field | Value |',
+    '| --- | --- |',
+    `| Command | \`${report.command}\` |`,
+    `| Base ref | \`${report.baseRef}\` |`,
+    `| Head ref | \`${report.headRef}\` |`,
+    `| Changed files | ${report.changedFileCount} |`,
+    `| Evaluated files | ${report.evaluatedFileCount} |`,
+    `| Evaluation status | \`${report.scopeComplianceEvaluationStatus}\` |`,
+    `| Result | \`${report.scopeComplianceResult}\` |`,
+    `| Non-enforcing | \`${report.nonEnforcing}\` |`,
+    `| Enforcement status | \`${report.enforcementStatus}\` |`,
+    `| Blocking findings | ${report.blockingFindingCount} |`,
+    `| Review-required findings | ${report.reviewRequiredFindingCount} |`,
+    `| Unknown findings | ${report.unknownFindingCount} |`,
+    `| Evaluated violations | ${report.evaluatedViolationCount} |`,
+    `| Runtime budget | ${report.runtimeBudgetTargetMs}ms, \`${report.runtimeBudgetStatus}\` |`,
+    '',
+    'Boundary:',
+    '',
+    '- This report summarizes the advisory `check-scope` result only.',
+    '- It does not reject diffs, enforce scope, configure CI or required checks, approve fixtures, satisfy runtime Evidence, prove equivalence, apply graph deltas, or replace user acceptance.',
+    '- It does not include patch hunks or full file contents.',
+  ]
+  return `${lines.join('\n')}\n`
 }
 
 async function loadScopeCompliancePatterns(root: string): Promise<ScopePatternSource> {

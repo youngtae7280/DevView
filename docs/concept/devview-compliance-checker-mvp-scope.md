@@ -512,6 +512,16 @@ code failure is reserved for command/runtime problems such as invalid refs or un
 The command may write an advisory evaluation artifact only when `--output <file>` is explicitly provided. Without
 `--output`, it does not refresh tracked preview artifacts.
 
+The command can also write a compact advisory runtime report:
+
+```text
+graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json
+```
+
+The compact report summarizes base/head refs, changed/evaluated file counts, advisory evaluation status, advisory result
+state, non-enforcement status, and finding counts. It is a readability surface over the same advisory result. It is not
+enforcement, approval, runtime Evidence satisfaction, equivalence proof, graph delta apply, or user acceptance.
+
 ## Runtime Budget Smoke
 
 The deterministic DevView runtime budget is documented in
@@ -526,9 +536,9 @@ npm run devview:runtime:smoke
 It measures selected deterministic commands and reports `runtimeBudgetTargetMs: 5000`, `budgetStatus:
 advisory-not-enforced`, and `runtimeBudgetEnforced: false`. The timing smoke excludes AI editing time, full validation,
 CI runtime, and human review. The changed-file collection measurement writes to a `.tmp` smoke artifact rather than the
-tracked Todo App preview artifact. The smoke now includes the advisory `check-scope` command without writing an
-evaluation artifact. It does not turn scope compliance into a gate and does not reject diffs or configure required
-checks.
+tracked Todo App preview artifact. The smoke includes the advisory `check-scope` command and writes its compact report to
+`.tmp` without writing a tracked evaluation artifact. It does not turn scope compliance into a gate and does not reject
+diffs or configure required checks.
 
 ## Decision
 

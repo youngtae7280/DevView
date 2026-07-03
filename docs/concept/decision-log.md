@@ -1715,6 +1715,19 @@ automation, or replace user acceptance. Runtime failures such as invalid refs or
 return a nonzero exit code. The timing smoke includes this command as part of the advisory runtime budget, and
 `report-health` names the CLI surface without running it as a gate.
 
+## DEC-230 Add Compact Advisory Scope Runtime Report
+
+DEC-230 does not supersede DEC-097 through DEC-229. It adds the compact advisory report surface
+`graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json`. The report summarizes the
+same advisory `check-scope` result with base/head refs, changed/evaluated file counts, result state, non-enforcement
+status, finding counts, and advisory runtime-budget status. It is a readability layer over the advisory evaluator, not a
+new checker mode.
+
+The compact report is advisory only. It does not enforce scope, reject diffs, fail based on advisory findings, introduce
+CI required checks, change branch protection, approve fixtures, set `equivalenceProven: true`, satisfy runtime Evidence,
+apply graph deltas, introduce executor automation, or replace user acceptance. Runtime timing smoke may write the compact
+report under `.tmp` while keeping the runtime budget advisory and avoiding tracked preview artifact churn.
+
 Potential older language in public docs should be read through the compatibility terms in [glossary.md](glossary.md). If
 future review finds a public doc still presenting superseded terminology as active architecture, record it in
 [open-questions.md](open-questions.md) or [superseded-items.md](superseded-items.md) before changing product meaning.

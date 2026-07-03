@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { runPbeCli } from '../app'
@@ -92,6 +93,65 @@ describe('scope compliance advisory CLI', () => {
         severity: 'error',
       }),
     ])
+  })
+
+  it('writes a compact advisory markdown report without enforcing findings', async () => {
+    const workspace = createScopeWorkspace({
+      allowedScopePatterns: ['src/**'],
+      forbiddenScopePatterns: ['src/todos.ts'],
+      changedPath: 'src/todos.ts',
+    })
+    const markdownPath = join('.tmp', 'scope-compliance-runtime-report.md')
+
+    const result = await runPbeCli(
+      [
+        'graph',
+        'read-model',
+        'check-scope',
+        '--base',
+        'HEAD~1',
+        '--head',
+        'HEAD',
+        '--markdown',
+        markdownPath,
+        '--json',
+      ],
+      {
+        cwd: workspace,
+        pluginRoot,
+      },
+    )
+    const payload = JSON.parse(result.stdout)
+    const markdown = readFileSync(join(workspace, markdownPath), 'utf8')
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.ok).toBe(true)
+    expect(payload.markdownReport).toBe(markdownPath.replaceAll('\\', '/'))
+    expect(payload.compactRuntimeReport).toEqual(
+      expect.objectContaining({
+        reportStatus: 'compact-advisory-runtime-report-ready',
+        changedFileCount: 1,
+        evaluatedFileCount: 1,
+        nonEnforcing: true,
+        enforcementStatus: 'not-enforced',
+        blockingFindingCount: 1,
+        runtimeBudgetStatus: 'advisory-not-enforced',
+        reportIsBlocking: false,
+        diffRejected: false,
+        scopeEnforced: false,
+        approvalStatus: 'not-approved',
+        equivalenceProven: false,
+        runtimeEvidenceSatisfied: false,
+        graphDeltaApplied: false,
+      }),
+    )
+    expect(markdown).toContain('# Scope Compliance Advisory Runtime Report')
+    expect(markdown).toContain('| Non-enforcing | `true` |')
+    expect(markdown).toContain('| Enforcement status | `not-enforced` |')
+    expect(markdown).toContain('does not reject diffs')
+    expect(markdown).not.toContain('equivalence proven')
+    expect(markdown).not.toContain('approved')
+    expect(existsSync(join(workspace, defaultEvaluationPath))).toBe(false)
   })
 })
 

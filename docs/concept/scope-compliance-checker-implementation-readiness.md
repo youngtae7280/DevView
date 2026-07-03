@@ -611,6 +611,17 @@ graph read-model check-scope --base <baseRef> --head <headRef> --output <file> -
 
 Without `--output`, the command does not refresh tracked preview artifacts.
 
+Optional compact runtime reporting is also explicit:
+
+```text
+graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json
+```
+
+The compact report summarizes base/head refs, changed/evaluated file counts, advisory result state, non-enforcement
+status, and finding counts. It is a readability layer over the same advisory evaluator result. It does not inspect patch
+contents, read full file contents, reject diffs, enforce scope, approve fixtures, satisfy runtime Evidence, prove
+equivalence, apply graph deltas, or replace user acceptance.
+
 ## Runtime Budget Timing Smoke
 
 The runtime performance budget is documented in
@@ -623,7 +634,7 @@ npm run devview:runtime:smoke
 ```
 
 It measures selected deterministic runtime commands after `npm run build:cli` has produced `dist/cli/index.js`.
-Measured commands currently include compiler input reporting, contract compiler dry-run, and git-derived changed-file
+Measured commands currently include compiler input reporting, contract compiler dry-run, git-derived changed-file
 collection, and advisory scope evaluation through `graph read-model check-scope`. The smoke reports
 `runtimeBudgetTargetMs: 5000`, `budgetStatus: advisory-not-enforced`, and `runtimeBudgetEnforced: false`.
 
@@ -631,7 +642,8 @@ The git-derived changed-file collection measurement writes to `.tmp/devview-runt
 not rewrite the tracked Todo App preview collection artifact.
 
 The scope evaluator measurement runs without `--output`, so it does not write an advisory evaluation artifact during
-ordinary timing checks.
+ordinary timing checks. It may write the compact runtime report to `.tmp/devview-runtime-timing-smoke/`, which keeps
+runtime reporting visible without changing tracked preview artifacts.
 
 The timing smoke is not a CI gate. It excludes AI editing time, full validation, CI runtime, and human review time. It
 does not make the evaluator blocking, reject diffs, approve fixtures, satisfy runtime Evidence, prove equivalence, or

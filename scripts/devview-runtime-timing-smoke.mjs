@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const cliPath = join(repoRoot, 'dist/cli/index.js')
 const smokeArtifactPath = '.tmp/devview-runtime-timing-smoke/git-derived-changed-file-collection.json'
+const smokeScopeReportPath = '.tmp/devview-runtime-timing-smoke/scope-compliance-runtime-report.md'
 const runtimeBudgetTargetMs = 5000
 const outputArgIndex = process.argv.indexOf('--output')
 const outputPath = outputArgIndex >= 0 ? process.argv[outputArgIndex + 1] : null
@@ -43,8 +44,19 @@ const measuredSteps = [
   },
   {
     stepName: 'non-enforcing-scope-compliance-evaluation',
-    command: 'node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --json',
-    args: ['graph', 'read-model', 'check-scope', '--base', 'HEAD~1', '--head', 'HEAD', '--json'],
+    command: `node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --markdown ${smokeScopeReportPath} --json`,
+    args: [
+      'graph',
+      'read-model',
+      'check-scope',
+      '--base',
+      'HEAD~1',
+      '--head',
+      'HEAD',
+      '--markdown',
+      smokeScopeReportPath,
+      '--json',
+    ],
     includedInRuntimeBudget: true,
   },
 ]

@@ -62,7 +62,8 @@
   selecting `scope-compliance-preview` as the first future checker axis without implementing enforcement, required
   checks, diff rejection, fixture approval, or equivalence proof.
 - [DevView Runtime Performance Budget](concept/devview-runtime-performance-budget.md) - Advisory 5 second target for
-  deterministic local runtime passes, excluding AI editing time, full validation, CI runtime, and human review.
+  deterministic local runtime passes plus compact advisory `check-scope` reporting, excluding AI editing time, full
+  validation, CI runtime, and human review.
 - [Scope Compliance Checker Implementation Readiness](concept/scope-compliance-checker-implementation-readiness.md) -
   Readiness criteria for future scope-compliance checker inputs, missing-input states, result preview status, and
   authoritative changed-file input boundaries before executable checker logic exists.

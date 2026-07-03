@@ -270,6 +270,11 @@ out of scope. It now decides that fixture-provided changed files remain preview-
 not authoritative, and git-derived changed files are the first real authoritative candidate for a later implementation
 task.
 
+The first advisory scope evaluator is now exposed through `graph read-model check-scope --base <baseRef> --head
+<headRef> --json`, with an optional compact report at `--markdown <file>`. The compact report is a readability surface
+for the same non-enforcing result; it does not reject diffs, create required checks, approve fixtures, satisfy runtime
+Evidence, prove equivalence, apply graph deltas, or replace user acceptance.
+
 The following readiness artifact is complete at documentation level:
 
 - [representative-runtime-feasibility-demo.md](representative-runtime-feasibility-demo.md)

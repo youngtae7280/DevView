@@ -1745,6 +1745,16 @@ graph read-model check-scope --base <baseRef> --head <headRef> --json
 The command prints advisory JSON, may write an artifact only with explicit `--output`, and does not fail solely because
 advisory findings exist.
 
+The same command can write a compact advisory runtime report when a Markdown path is supplied:
+
+```text
+graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json
+```
+
+The compact report summarizes base/head refs, changed/evaluated file counts, advisory result state, non-enforcement
+status, and finding counts. It is not enforcement, fixture approval, runtime Evidence satisfaction, equivalence proof,
+graph delta apply, or user acceptance.
+
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
 approval or runtime Evidence satisfaction.
@@ -1763,8 +1773,9 @@ npm run devview:runtime:smoke
 It measures selected deterministic local commands and reports the 5 second target as advisory only. Full validation,
 full test suites, CI runtime, human review, and AI editing time are outside this budget. The changed-file collection
 step writes to a `.tmp` smoke artifact rather than refreshing the tracked Todo App collection preview. The smoke
-includes advisory `check-scope` without writing an evaluation artifact. It does not enforce scope, reject diffs,
-configure required checks, approve fixtures, satisfy runtime Evidence, or prove equivalence.
+includes advisory `check-scope` and writes its compact runtime report to `.tmp` without writing an evaluation artifact.
+It does not enforce scope, reject diffs, configure required checks, approve fixtures, satisfy runtime Evidence, or prove
+equivalence.
 
 ## Fixture-Provided Changed-File List Preview
 
@@ -1937,8 +1948,9 @@ This selection does not:
 
 ## Next Step
 
-The next task may decide how to summarize advisory `check-scope` output inside a broader DevView runtime report. It
-should not reject diffs, enforce scope, broaden compiler support, wire additional fixtures into the supported command
-path, create promotion review packets, approve fixtures, claim runtime Evidence is satisfied, inspect patch contents,
-turn candidate checks into required checks, apply graph deltas, turn test Evidence into user acceptance, allow
-production source edits, enforce CI, or change the existing Todo App structure-only status.
+The compact advisory scope runtime report is now the readability surface for `check-scope`. A later task may decide how
+to connect advisory scope findings to graph delta proposal planning, but it should not reject diffs, enforce scope,
+broaden compiler support, wire additional fixtures into the supported command path, create promotion review packets,
+approve fixtures, claim runtime Evidence is satisfied, inspect patch contents, turn candidate checks into required
+checks, apply graph deltas, turn test Evidence into user acceptance, allow production source edits, enforce CI, or change
+the existing Todo App structure-only status.
