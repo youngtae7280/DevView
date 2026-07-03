@@ -22,6 +22,10 @@
   "runtimeEvidenceSatisfied": false,
   "ciEnforcementEnabled": false,
   "activationBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json",
+  "requestIrCandidateSchemaStatus": "request-ir-candidate-schema-previewed",
+  "requestIrCandidateSchemaArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json",
+  "firstCalibrationRequestIrCandidateStatus": "request-ir-candidate-calibration-fixture-previewed",
+  "firstCalibrationRequestIrCandidateArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json",
   "frontendFlow": {
     "flowStatus": "previewed-not-implemented",
     "steps": [
@@ -64,6 +68,8 @@
   },
   "requestIrCandidateShape": {
     "candidateStatus": "ai-produced-fields-candidate-only",
+    "schemaPreviewArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json",
+    "firstCalibrationFixtureArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json",
     "fields": {
       "requestText": {
         "source": "human-natural-language",
@@ -138,6 +144,7 @@
   },
   "requestTypeTaxonomy": {
     "taxonomyStatus": "narrow-initial-enum-previewed",
+    "sourceSchemaArtifact": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json",
     "allowedValues": [
       "runtime-evidence-only",
       "behavior-change",
@@ -164,6 +171,8 @@
   },
   "requestIrValidationBoundary": {
     "validationStatus": "previewed-not-implemented",
+    "futureValidatorInputSchema": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json",
+    "firstCalibrationCandidateInput": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json",
     "validationChecks": [
       "enum values",
       "required fields",
@@ -181,6 +190,7 @@
   },
   "graphTraversalPlanPreviewShape": {
     "planStatus": "previewed-not-generated",
+    "validatedRequestIrRequired": true,
     "fields": [
       "traversalPlanId",
       "sourceRequestIr",
@@ -203,6 +213,7 @@
   "requestIrToContractInputMappingPreview": {
     "mappingStatus": "previewed-not-generated",
     "validatedRequestIrRequired": true,
+    "requestIrCandidateSchema": "examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json",
     "targetScopeCandidates": {
       "source": "validated request type, target record/component, and deterministic graph traversal",
       "mappingStatus": "future-mapping-required"
@@ -256,6 +267,7 @@
   "allowedUse": [
     "define natural language as the human request intake surface",
     "define AI Request IR candidate fields as candidate-only",
+    "link the Request IR Candidate schema preview and first calibration fixture",
     "define deterministic Request IR validation boundary before traversal",
     "preview graph traversal plan shape",
     "preview Request IR to contract input mapping",
@@ -278,5 +290,5 @@
     "branch protection",
     "user acceptance automation"
   ],
-  "nonExecutionBoundary": "This artifact defines the Natural Language Request Intake compiler frontend boundary only. It does not implement an AI classifier, call an LLM from runtime code, implement hook scripts, run graph traversal, generate selected graph slices, generate contract compiler input, generate instruction packs, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, create required checks, change branch protection, or automate user acceptance."
+  "nonExecutionBoundary": "This artifact defines the Natural Language Request Intake compiler frontend boundary only. It links the Request IR Candidate schema preview and first calibration candidate fixture as candidate-only inputs for future validation. It does not implement an AI classifier, call an LLM from runtime code, implement hook scripts, run Request IR validation, run graph traversal, generate selected graph slices, generate contract compiler input, generate instruction packs, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, create required checks, change branch protection, or automate user acceptance."
 }

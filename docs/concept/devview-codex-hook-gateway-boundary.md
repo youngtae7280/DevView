@@ -114,6 +114,16 @@ semantics boundary. Future `UserPromptSubmit` hooks may route a request toward R
 must not let unvalidated AI output drive graph traversal, contract compiler input generation, or instruction pack
 generation.
 
+The Request IR Candidate schema and first calibration fixture are previewed as future analyzer outputs:
+
+```text
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json
+```
+
+These files do not implement hook behavior or AI classification. They only define the candidate shape that a future
+intake path may validate before any traversal or contract generation.
+
 ## Trust Boundary
 
 Project-local hooks require explicit trust and enablement. DevView must not assume a hook gateway is active until a future health check confirms:

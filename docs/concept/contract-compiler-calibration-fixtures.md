@@ -1882,6 +1882,18 @@ validation before graph traversal, selected node/edge slice generation, contract
 instruction pack generation. AI-produced fields are candidate-only and do not become fixture support, approval, runtime
 Evidence, graph-source authority, or equivalence proof.
 
+The Request IR Candidate schema and first calibration candidate fixture are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json
+```
+
+The calibration candidate models a Korean natural-language request to add evidence for the Todo App add button without
+touching production source. It classifies the request as `runtime-evidence-only` and `test-only-behavior-proof`, with
+`CH-001` and `Todo App` as candidate targets. The candidate is not validated, not an instruction pack, not contract
+compiler input, and not graph traversal authority.
+
 ## Fixture-Provided Changed-File List Preview
 
 The first fixture-provided changed-file list preview artifact is:

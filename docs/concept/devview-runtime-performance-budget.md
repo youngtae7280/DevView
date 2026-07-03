@@ -186,6 +186,16 @@ is candidate-only and outside the deterministic runtime compiler path until vali
 graph traversal and contract compiler input generation must remain local and deterministic. This task adds no AI runtime
 call, graph traversal, contract input generation, instruction pack generation, or measured runtime step.
 
+The Request IR Candidate schema and first calibration fixture are preview artifacts only:
+
+```text
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json
+```
+
+They do not add a measured runtime command. A future schema-only validator may consume them, but graph traversal and
+contract generation remain blocked until validation exists and passes.
+
 ## Health Report Boundary
 
 `graph read-model report-health --json` exposes a small runtime budget summary:

@@ -72,6 +72,32 @@ The previewed Request IR candidate includes:
 
 All AI-produced fields are candidate-only. Target record and component candidates require deterministic existence checks before they can influence graph traversal.
 
+The Request IR Candidate schema preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json
+```
+
+It defines the future AI analyzer output shape, required fields, narrow request type taxonomy, confidence policy, and
+future validator expectations. The schema is not a validated Request IR schema implementation; it is candidate-only and
+does not permit graph traversal, contract generation, or instruction pack generation.
+
+The first calibration Request IR candidate fixture is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json
+```
+
+It models the natural-language request:
+
+```text
+Todo App에서 add 버튼 동작 증거만 추가해줘. production source는 건드리지 마.
+```
+
+The candidate is conservatively classified as `requestTypeCandidate: runtime-evidence-only`,
+`changeTypeCandidate: test-only-behavior-proof`, `targetRecordIdCandidate: CH-001`, and
+`targetComponentCandidate: Todo App`. It remains candidate-only and not validated.
+
 ## Request Type Taxonomy
 
 The first taxonomy is deliberately narrow:

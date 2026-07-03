@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "request-ir-candidate-schema-preview",
+  "status": "request-ir-candidate-schema-previewed",
+  "schemaId": "devview-request-ir-candidate-v0-preview",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "naturalLanguageRequestIntakeBoundary": "examples/valid/todo-app-pbe-run/generated/natural-language-request-intake-boundary.runtime-evidence-only.preview.json",
+  "schemaScope": "future-ai-request-analyzer-output-shape",
+  "schemaImplementationStatus": "preview-only",
+  "requestIrCandidateStatus": "candidate-only",
+  "candidateOnly": true,
+  "authorityStatus": "not-authoritative-until-validated",
+  "validatedRequestIr": false,
+  "graphTraversalAllowed": false,
+  "contractGenerationAllowed": false,
+  "instructionPackGenerationAllowed": false,
+  "aiClassifierImplemented": false,
+  "llmCallsIntroduced": false,
+  "requestIrValidatorImplemented": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false,
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "runtimeEvidenceSatisfied": false,
+  "requiredFields": [
+    "schemaId",
+    "requestIrCandidateStatus",
+    "sourceNaturalLanguageRequest",
+    "requestText",
+    "requestLanguage",
+    "requestTypeCandidate",
+    "changeTypeCandidate",
+    "targetRecordIdCandidate",
+    "targetComponentCandidate",
+    "intentSummaryCandidate",
+    "allowedScopeIntentCandidate",
+    "forbiddenScopeIntentCandidate",
+    "requiredEvidenceIntentCandidate",
+    "riskIntentCandidate",
+    "confidence",
+    "ambiguities",
+    "requiresClarification",
+    "humanReviewRequired",
+    "candidateOnly",
+    "authorityStatus"
+  ],
+  "fieldDefinitions": {
+    "schemaId": {
+      "type": "string",
+      "requiredValue": "devview-request-ir-candidate-v0-preview",
+      "authorityStatus": "schema-shape-marker"
+    },
+    "requestIrCandidateStatus": {
+      "type": "string",
+      "requiredValue": "candidate-only",
+      "authorityStatus": "must-not-be-treated-as-validated"
+    },
+    "sourceNaturalLanguageRequest": {
+      "type": "object",
+      "required": true,
+      "fields": ["sourceKind", "text", "language"],
+      "authorityStatus": "raw-human-request-context-not-compiler-authority"
+    },
+    "requestText": {
+      "type": "string",
+      "required": true,
+      "authorityStatus": "raw-request-text-not-compiler-authority"
+    },
+    "requestLanguage": {
+      "type": "string",
+      "required": true,
+      "authorityStatus": "candidate-only"
+    },
+    "requestTypeCandidate": {
+      "type": "enum",
+      "required": true,
+      "allowedValues": [
+        "runtime-evidence-only",
+        "behavior-change",
+        "bug-fix",
+        "refactor",
+        "documentation-only",
+        "investigation-only",
+        "unknown"
+      ],
+      "authorityStatus": "candidate-only"
+    },
+    "changeTypeCandidate": {
+      "type": "string",
+      "required": true,
+      "authorityStatus": "candidate-only-requires-policy-compatibility-validation"
+    },
+    "targetRecordIdCandidate": {
+      "type": "string-or-null",
+      "required": true,
+      "authorityStatus": "candidate-only-requires-graph-record-existence-validation"
+    },
+    "targetComponentCandidate": {
+      "type": "string-or-null",
+      "required": true,
+      "authorityStatus": "candidate-only-requires-component-existence-validation"
+    },
+    "intentSummaryCandidate": {
+      "type": "string",
+      "required": true,
+      "authorityStatus": "candidate-only"
+    },
+    "allowedScopeIntentCandidate": {
+      "type": "array-of-strings",
+      "required": true,
+      "authorityStatus": "candidate-only-requires-policy-validation"
+    },
+    "forbiddenScopeIntentCandidate": {
+      "type": "array-of-strings",
+      "required": true,
+      "authorityStatus": "candidate-only-requires-policy-validation"
+    },
+    "requiredEvidenceIntentCandidate": {
+      "type": "array-of-strings",
+      "required": true,
+      "authorityStatus": "candidate-only-requires-evidence-policy-validation"
+    },
+    "riskIntentCandidate": {
+      "type": "array-of-strings",
+      "required": true,
+      "authorityStatus": "candidate-only"
+    },
+    "confidence": {
+      "type": "object",
+      "required": true,
+      "fields": ["score", "band", "reason"],
+      "authorityStatus": "candidate-only-validation-input"
+    },
+    "ambiguities": {
+      "type": "array-of-objects",
+      "required": true,
+      "authorityStatus": "candidate-only-human-review-input"
+    },
+    "requiresClarification": {
+      "type": "boolean",
+      "required": true,
+      "authorityStatus": "candidate-or-validation-controlled"
+    },
+    "humanReviewRequired": {
+      "type": "boolean",
+      "required": true,
+      "authorityStatus": "candidate-or-validation-controlled"
+    },
+    "candidateOnly": {
+      "type": "boolean",
+      "requiredValue": true,
+      "authorityStatus": "safety-boundary"
+    },
+    "authorityStatus": {
+      "type": "string",
+      "requiredValue": "not-authoritative-until-validated",
+      "authorityStatus": "safety-boundary"
+    }
+  },
+  "requestTypeTaxonomy": {
+    "taxonomyStatus": "narrow-initial-enum-previewed",
+    "allowedValues": [
+      "runtime-evidence-only",
+      "behavior-change",
+      "bug-fix",
+      "refactor",
+      "documentation-only",
+      "investigation-only",
+      "unknown"
+    ],
+    "arbitraryRequestTypesAllowed": false,
+    "unknownHandling": "unknown or low-confidence classification remains clarification-required or human-review-required"
+  },
+  "confidenceAndAmbiguityPolicy": {
+    "confidenceThresholdForValidation": {
+      "low": "clarification-required-or-human-review-required",
+      "medium": "may-proceed-only-to-deterministic-validation",
+      "high": "still-requires-deterministic-validation-before-traversal"
+    },
+    "lowConfidenceHandling": "requires clarification or human review",
+    "unresolvedTargetMappingHandling": "human-review-required",
+    "mediumConfidenceBoundary": "medium confidence does not permit graph traversal or contract generation",
+    "highConfidenceBoundary": "high confidence still does not permit graph traversal until deterministic validation succeeds"
+  },
+  "futureValidatorExpectations": {
+    "validatorStatus": "future-schema-only-validator-not-implemented",
+    "inputs": [
+      "request-ir-candidate-schema.runtime-evidence-only.preview.json",
+      "request-ir-candidate.add-todo-runtime-evidence-only.preview.json",
+      "graph-source metadata"
+    ],
+    "checks": [
+      "schema id",
+      "required fields",
+      "candidate-only safety fields",
+      "enum values",
+      "confidence band",
+      "ambiguity state",
+      "target record existence",
+      "target component existence",
+      "changeType compatibility",
+      "policy compatibility",
+      "required evidence availability"
+    ],
+    "outputStatuses": ["validated", "validation-blocked", "clarification-required", "human-review-required"]
+  },
+  "futureGraphTraversalBoundary": {
+    "validatedRequestIrRequired": true,
+    "graphTraversalAllowedFromUnvalidatedAiOutput": false,
+    "contractGenerationAllowedFromUnvalidatedAiOutput": false,
+    "futureInputsAfterValidation": [
+      "graphTraversalPlan",
+      "selectedNodeCandidates",
+      "selectedEdgeCandidates",
+      "contractCompilerInput"
+    ]
+  },
+  "allowedUse": [
+    "define future AI request analyzer output shape",
+    "validate candidate fixture shape in a later schema-only validator",
+    "preserve candidate-only Request IR boundary",
+    "document narrow request type taxonomy and confidence policy"
+  ],
+  "forbiddenUse": [
+    "validated Request IR",
+    "graph traversal input",
+    "contract compiler input",
+    "instruction pack input",
+    "AI classifier implementation",
+    "runtime LLM call",
+    "graph-source mutation",
+    "graph delta apply",
+    "approval recording",
+    "runtime Evidence satisfaction",
+    "equivalence proof",
+    "scope enforcement",
+    "CI required check"
+  ],
+  "nonExecutionBoundary": "This artifact previews the Request IR Candidate schema only. It does not implement an AI classifier, call an LLM, validate Request IR candidates, run graph traversal, select nodes or edges, generate contract compiler input, generate instruction packs, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, configure required checks, or automate user acceptance."
+}

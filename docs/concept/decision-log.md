@@ -1904,3 +1904,27 @@ This decision does not implement an AI classifier, call an LLM from runtime code
 health/install/trust checks, mutate graph-source, apply graph deltas, approve graph updates, record human decisions,
 change equivalence behavior, satisfy runtime Evidence, enforce scope, introduce CI required checks, change branch
 protection, or automate user acceptance.
+
+## DEC-240 Define Request IR Candidate Schema And Calibration Fixture
+
+DEC-240 does not supersede DEC-097 through DEC-239. It defines the first Request IR Candidate schema preview and the
+first Todo App runtime-Evidence-only calibration candidate fixture for natural-language request intake.
+
+The schema and fixture are recorded in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json
+```
+
+The Request IR Candidate shape is candidate-only. A future AI analyzer may produce fields such as
+`requestTypeCandidate`, `changeTypeCandidate`, `targetRecordIdCandidate`, scope intent candidates, required Evidence
+intent candidates, confidence, ambiguities, clarification state, and human-review state. The first calibration fixture
+models a Korean request to add Todo App add-button behavior evidence without touching production source, classifying it
+as `runtime-evidence-only` and `test-only-behavior-proof` with `CH-001` and `Todo App` as candidate targets.
+
+No AI classifier is implemented. No runtime LLM call is introduced. No Request IR validator is implemented. Unvalidated
+AI output cannot drive graph traversal, selected graph slice generation, contract compiler input generation, or
+instruction pack generation. The schema and fixture do not mutate graph-source, apply graph deltas, approve graph
+updates, record human decisions, change equivalence behavior, satisfy runtime Evidence, enforce scope, introduce CI
+required checks, change branch protection, or automate user acceptance.

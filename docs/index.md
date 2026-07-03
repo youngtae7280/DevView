@@ -71,9 +71,10 @@
   checks, post-checks, proposal-only previews, and Human Review Packets without implementing hooks, approval, apply, CI
   enforcement, or strict mode.
 - [Natural Language Request Intake Boundary](concept/natural-language-request-intake-boundary.md) - Preview-only DevView
-  compiler frontend boundary for natural language request intake, AI Request IR candidates, deterministic validation,
-  graph traversal planning, selected graph slices, and contract compiler input without implementing an AI classifier,
-  runtime LLM calls, graph traversal, instruction-pack generation, graph-source mutation, apply, or approval.
+  compiler frontend boundary for natural language request intake, Request IR Candidate schema/calibration fixtures,
+  deterministic validation, graph traversal planning, selected graph slices, and contract compiler input without
+  implementing an AI classifier, runtime LLM calls, graph traversal, instruction-pack generation, graph-source mutation,
+  apply, or approval.
 - [Scope Compliance Checker Implementation Readiness](concept/scope-compliance-checker-implementation-readiness.md) -
   Readiness criteria for future scope-compliance checker inputs, missing-input states, result preview status, and
   authoritative changed-file input boundaries before executable checker logic exists.

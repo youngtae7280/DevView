@@ -323,6 +323,12 @@ how a human request may become an AI Request IR candidate and then require deter
 traversal, selected node/edge slice generation, contract compiler input generation, or instruction pack generation. AI
 output remains candidate-only and cannot become source authority without validation.
 
+The Request IR Candidate schema and first calibration fixture are recorded in
+`examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json` and
+`examples/valid/todo-app-pbe-run/generated/request-ir-candidate.add-todo-runtime-evidence-only.preview.json`. They
+define the future AI analyzer output shape and the first Todo App runtime-Evidence-only candidate, but they are not
+validated Request IR, graph traversal input, contract compiler input, or instruction packs.
+
 The following readiness artifact is complete at documentation level:
 
 - [representative-runtime-feasibility-demo.md](representative-runtime-feasibility-demo.md)
