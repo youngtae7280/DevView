@@ -1793,7 +1793,7 @@ The graph-delta-compatible source preview is:
 examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json
 ```
 
-It defines the future proposal-only generator input shape by gathering advisory `check-scope` output, compact runtime
+It defines the proposal-only generator input shape by gathering advisory `check-scope` output, compact runtime
 report references, changed-file collection, scope evaluation, proposal boundary, schema alignment, and unresolved
 mapping decisions. It is not graph-source, not a graph delta, not a graph update proposal, not apply, and not runtime
 Evidence satisfaction. `CH-001` remains a structure-only review candidate and human review remains required.
@@ -1804,9 +1804,20 @@ The proposal-only generator scope decision is:
 examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json
 ```
 
-It defines the next implementation boundary but does not implement it. A future CLI may read the source artifact and
-produce proposal-shaped preview JSON only through stdout or explicit `--output`; the output remains unapproved,
-non-enforcing, human-review-required, and separate from graph-source apply.
+It defines the implementation boundary that the first proposal-only generator now follows. The CLI may read the source
+artifact and produce proposal-shaped preview JSON only through stdout or explicit `--output`; the output remains
+unapproved, non-enforcing, human-review-required, and separate from graph-source apply.
+
+The proposal-only generator CLI is:
+
+```text
+graph read-model propose-graph-delta --source <sourceArtifact> --json
+graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json
+```
+
+It emits `artifactRole: graph-delta-proposal-only-preview` with `schemaId: pbe-graph-update-proposal-v0`. It does not
+create an apply-ready graph update proposal, mutate graph-source, apply graph deltas, approve updates, satisfy runtime
+Evidence, prove equivalence, reject diffs, enforce scope, or configure required checks.
 
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
@@ -1827,8 +1838,9 @@ It measures selected deterministic local commands and reports the 5 second targe
 full test suites, CI runtime, human review, and AI editing time are outside this budget. The changed-file collection
 step writes to a `.tmp` smoke artifact rather than refreshing the tracked Todo App collection preview. The smoke
 includes advisory `check-scope` and writes its compact runtime report to `.tmp` without writing an evaluation artifact.
-It does not enforce scope, reject diffs, configure required checks, approve fixtures, satisfy runtime Evidence, or prove
-equivalence.
+It also includes proposal-only graph delta preview generation and writes any generated preview to `.tmp` through explicit
+`--output`. It does not enforce scope, reject diffs, configure required checks, approve fixtures, satisfy runtime
+Evidence, prove equivalence, or apply graph deltas.
 
 ## Fixture-Provided Changed-File List Preview
 

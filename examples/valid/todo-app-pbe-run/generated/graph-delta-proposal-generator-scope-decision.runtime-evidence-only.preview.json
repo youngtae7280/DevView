@@ -12,9 +12,9 @@
   "candidateSchemaAlignmentArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.runtime-evidence-only.preview.json",
   "unresolvedMappingDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
   "decisionStatus": "proposal-only-generator-scope-decided",
-  "generatorImplementationStatus": "not-implemented",
-  "proposalGenerationStatus": "not-generated",
-  "candidateGenerationStatus": "not-generated",
+  "generatorImplementationStatus": "implemented-proposal-only-cli",
+  "proposalGenerationStatus": "supported-on-demand-not-generated-in-this-artifact",
+  "candidateGenerationStatus": "supported-on-demand-not-generated-in-this-artifact",
   "proposalOnly": true,
   "candidateOnly": true,
   "graphSourceMutated": false,
@@ -30,12 +30,12 @@
   "ciRequiredCheckIntroduced": false,
   "branchProtectionChanged": false,
   "firstGeneratorSlice": {
-    "sliceStatus": "decided-not-implemented",
+    "sliceStatus": "implemented-proposal-only-cli",
     "allowedActions": [
       "read graph-delta-compatible source artifact",
       "validate required boundary fields",
       "derive proposal-shaped preview data only",
-      "write output only when explicit --output is provided in a future implementation",
+      "write output only when explicit --output is provided",
       "preserve all candidate updates as unapproved",
       "preserve human-review-required boundaries"
     ],
@@ -48,7 +48,7 @@
       "diff rejection",
       "runtime Evidence acceptance"
     ],
-    "firstSliceOutputStatus": "proposal-shaped-preview-only-future-task"
+    "firstSliceOutputStatus": "proposal-shaped-preview-only-cli-implemented"
   },
   "futureCliDecision": {
     "proposedCommand": "graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json",
@@ -68,7 +68,7 @@
         "inputId": "outputPath",
         "flag": "--output <proposalPath>",
         "required": false,
-        "meaning": "Explicitly write proposal-shaped preview output in a future implementation."
+        "meaning": "Explicitly write proposal-shaped preview output."
       },
       {
         "inputId": "markdownReportPath",
@@ -96,17 +96,18 @@
     "defaultOutputPath": "none-stdout-only",
     "trackedCalibrationPreviewOutputCandidate": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate.runtime-evidence-only.preview.json",
     "tmpRuntimeOutputCandidate": ".tmp/devview-graph-delta-proposal/proposal-shaped-preview.json",
-    "writePolicy": "future-cli-must-require-explicit-output-for-file-writes",
+    "writePolicy": "cli-requires-explicit-output-for-file-writes",
     "forbiddenInterpretation": "The candidate path is not authoritative, not written by this task, and not an apply-ready graphDeltaPath."
   },
   "minimumFutureProposalShape": {
-    "shapeStatus": "minimum-proposal-shaped-preview-decided-not-generated",
+    "shapeStatus": "minimum-proposal-shaped-preview-implemented",
     "alignedSchema": "pbe-graph-update-proposal-v0",
     "fields": {
-      "schemaVersion": "future-value-1",
-      "artifactRole": "future-pbe-graph-update-proposal-v0-or-preview-role",
-      "status": "future-proposal-shaped-preview-generated",
-      "proposalId": "future-generated-id",
+      "schemaVersion": 1,
+      "schemaId": "pbe-graph-update-proposal-v0",
+      "artifactRole": "graph-delta-proposal-only-preview",
+      "status": "generated-proposal-only-preview",
+      "proposalId": "proposal-only-preview-<source-record-id-candidate>",
       "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
       "graphDeltaPath": "candidate-only-not-written",
       "sourceRecordIdCandidate": "CH-001",
@@ -197,19 +198,19 @@
   "futureImplementationPrerequisites": [
     {
       "prerequisiteId": "source-artifact-loader",
-      "status": "future-task"
+      "status": "implemented"
     },
     {
       "prerequisiteId": "boundary-field-validator",
-      "status": "future-task"
+      "status": "implemented"
     },
     {
       "prerequisiteId": "proposal-shaped-preview-builder",
-      "status": "future-task"
+      "status": "implemented"
     },
     {
       "prerequisiteId": "explicit-output-writer",
-      "status": "future-task"
+      "status": "implemented"
     },
     {
       "prerequisiteId": "compact-proposal-review-report",
@@ -218,14 +219,13 @@
   ],
   "allowedUse": [
     "decide the first proposal-only generator and CLI scope",
-    "define future CLI input, output, artifact write, and exit-code policies",
-    "define the minimum future proposal-shaped preview object",
+    "record CLI input, output, artifact write, and exit-code policies",
+    "record the minimum implemented proposal-shaped preview object",
     "preserve candidate-only Evidence/report link policy",
-    "prepare a later implementation task without generating proposals"
+    "support the first proposal-only implementation while preserving non-apply boundaries"
   ],
   "forbiddenUse": [
-    "implemented proposal generator",
-    "actual graph update proposal generation",
+    "apply-ready graph update proposal generation",
     "pbe-graph-update-proposal-v0 artifact generation",
     "graph-source mutation",
     "graph delta apply",
@@ -241,5 +241,5 @@
     "user acceptance automation",
     "executor automation"
   ],
-  "nonExecutionBoundary": "This artifact decides the narrow scope for a future proposal-only Graph Delta generator/CLI. It does not implement the generator, generate graph update proposals, mutate graph-source, apply graph deltas, approve graph updates, enforce scope, reject diffs, satisfy runtime Evidence, prove equivalence, configure CI or required checks, change branch protection, or automate user acceptance."
+  "nonExecutionBoundary": "This artifact records the narrow scope for the proposal-only Graph Delta generator/CLI now implemented as graph read-model propose-graph-delta. The implementation emits proposal-shaped preview JSON only; it does not generate apply-ready graph update proposals, mutate graph-source, apply graph deltas, approve graph updates, enforce scope, reject diffs, satisfy runtime Evidence, prove equivalence, configure CI or required checks, change branch protection, or automate user acceptance."
 }

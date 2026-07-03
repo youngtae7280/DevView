@@ -1814,3 +1814,25 @@ This is a scope decision only. It does not implement the generator, generate gra
 apply graph deltas, approve graph updates, change equivalence behavior, satisfy runtime Evidence, enforce scope, reject
 diffs, introduce CI required checks, change branch protection, introduce executor automation, or automate user
 acceptance.
+
+## DEC-236 Implement Proposal-Only Graph Delta Generator
+
+DEC-236 does not supersede DEC-097 through DEC-235. It implements the first small proposal-only generator/CLI selected by
+DEC-235:
+
+```text
+graph read-model propose-graph-delta --source <sourceArtifact> --json
+graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json
+```
+
+The generator reads a graph-delta-compatible source artifact, validates required non-apply boundaries, and emits a
+`graph-delta-proposal-only-preview` object aligned to `pbe-graph-update-proposal-v0` through `schemaId`. It writes
+nothing by default and writes only to an explicit `--output` path. It preserves `CH-001` as a
+`structure-only-review-candidate`, keeps advisory Evidence/report links candidate-only, and records human review
+questions for source record identity, Evidence acceptance, and default output path policy.
+
+The implementation is proposal-only and unapproved. It does not create an apply-ready `pbe-graph-update-proposal-v0`
+artifact, mutate graph-source, apply graph deltas, approve graph updates, change equivalence behavior, satisfy runtime
+Evidence, enforce scope, reject diffs, introduce CI required checks, change branch protection, introduce executor
+automation, or automate user acceptance. The default graphDeltaPath policy remains unresolved except for explicit preview
+output paths supplied by the caller.

@@ -95,9 +95,8 @@ examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-boundary.runtime-
 ```
 
 This preview explains how advisory `check-scope` JSON, compact runtime reports, changed-file collection, and
-non-enforcing evaluation artifacts may later feed proposal candidates. It is design-only and adds no measured runtime
-work. The timing smoke still lists graph delta proposal generation as pending because no supported runtime proposal
-command is part of this budget slice yet.
+non-enforcing evaluation artifacts may later feed proposal candidates. It is design-only and does not apply graph
+deltas.
 
 The candidate schema alignment preview is also design-only:
 
@@ -123,10 +122,9 @@ The graph-delta-compatible source preview is also outside the measured runtime p
 examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json
 ```
 
-It is a future proposal-only generator input shape that references advisory runtime output, changed-file collection,
-scope evaluation, proposal boundary, schema alignment, and mapping decisions. It is not graph-source, not a graph delta,
-not a graph update proposal, and not apply. It adds no timing smoke command and does not change the advisory 5 second
-budget.
+It is the proposal-only generator input shape that references advisory runtime output, changed-file collection, scope
+evaluation, proposal boundary, schema alignment, and mapping decisions. It is not graph-source, not a graph delta, not a
+graph update proposal, and not apply.
 
 The proposal-only generator scope decision is also outside the measured runtime path:
 
@@ -134,9 +132,19 @@ The proposal-only generator scope decision is also outside the measured runtime 
 examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json
 ```
 
-It records the intended future CLI shape, stdout/explicit-output policy, exit-code policy, and minimum proposal-shaped
-preview object. No generator command is added in this task, so the timing smoke continues to list graph delta proposal
-generation as a future runtime step.
+It records the CLI shape, stdout/explicit-output policy, exit-code policy, and minimum proposal-shaped preview object
+that the first implementation now follows.
+
+The proposal-only generator CLI is now part of the measured advisory runtime path:
+
+```text
+graph read-model propose-graph-delta --source <sourceArtifact> --json
+graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json
+```
+
+The command reads a graph-delta-compatible source artifact, validates non-apply boundaries, and emits a
+`graph-delta-proposal-only-preview` object. It writes no file by default; timing smoke uses an explicit `.tmp` output.
+The preview is unapproved, non-enforcing, human-review-required, and not graph-source apply.
 
 ## Health Report Boundary
 
@@ -158,8 +166,17 @@ compactReportCommand: graph read-model check-scope --base <baseRef> --head <head
 enforcementStatus: not-enforced
 ```
 
-The health report does not run the timing smoke or the evaluator. It only names the advisory surfaces and preserves the
-non-enforcement boundary.
+It also names the proposal-only Graph Delta generator CLI:
+
+```text
+graphDeltaProposalGeneratorStatus: proposal-only-cli-available
+command: graph read-model propose-graph-delta --source <sourceArtifact> --json
+approvalStatus: not-approved
+graphDeltaApplied: false
+```
+
+The health report does not run the timing smoke, evaluator, or generator. It only names the advisory surfaces and
+preserves the non-enforcement/non-apply boundary.
 
 ## Non-Goals
 

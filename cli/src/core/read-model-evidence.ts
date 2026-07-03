@@ -562,6 +562,19 @@ interface GraphSourceHealthReport {
     compactReportIsBlocking: false
     advisoryFindingsAreBlocking: false
   }
+  graphDeltaProposalGenerator: {
+    graphDeltaProposalGeneratorStatus: 'proposal-only-cli-available'
+    command: 'graph read-model propose-graph-delta --source <sourceArtifact> --json'
+    explicitOutputCommand: 'graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json'
+    proposalOnly: true
+    graphSourceMutated: false
+    graphDeltaApplied: false
+    approvalStatus: 'not-approved'
+    nonEnforcing: true
+    enforcementStatus: 'not-enforced'
+    lastProposalPreviewArtifact: string
+    reportHealthRunsGenerator: false
+  }
   enforcementStatus: 'non-enforcing'
   nonEnforcementStatement: string
   requiredCheckBoundary: string
@@ -1544,6 +1557,21 @@ export async function reportGraphSourceHealth(root: string): Promise<GraphSource
       compactReportIsBlocking: false,
       advisoryFindingsAreBlocking: false,
     },
+    graphDeltaProposalGenerator: {
+      graphDeltaProposalGeneratorStatus: 'proposal-only-cli-available',
+      command: 'graph read-model propose-graph-delta --source <sourceArtifact> --json',
+      explicitOutputCommand:
+        'graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json',
+      proposalOnly: true,
+      graphSourceMutated: false,
+      graphDeltaApplied: false,
+      approvalStatus: 'not-approved',
+      nonEnforcing: true,
+      enforcementStatus: 'not-enforced',
+      lastProposalPreviewArtifact:
+        'examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json',
+      reportHealthRunsGenerator: false,
+    },
     enforcementStatus: 'non-enforcing',
     nonEnforcementStatement:
       'Graph-source health report is local/non-enforcing summary only. It does not create required checks, branch protection, merge enforcement, or user acceptance.',
@@ -1612,6 +1640,7 @@ Status: \`${report.status}\`
 | Contract semantic diff review | \`${report.contractCompilerDryRun.compilerPromotionReadiness}\`; severity \`${report.contractCompilerDryRun.highestReviewSeverity}\`; unknown semantic diffs ${report.contractCompilerDryRun.semanticDiffRuleCoverage.unknownDiffs}; unknown fields ${unknownSemanticFields}; ${semanticDiffSummary} |
 | DevView runtime timing smoke | target ${report.runtimeBudget.runtimeBudgetTargetMs}ms; last \`${report.runtimeBudget.lastTimingSmokeStatus}\`; advisory \`${report.runtimeBudget.advisoryOnly}\`; enforced \`${report.runtimeBudget.runtimeBudgetEnforced}\`; command \`${report.runtimeBudget.timingSmokeCommand}\` |
 | Scope compliance evaluator CLI | \`${report.scopeComplianceEvaluator.scopeComplianceEvaluatorStatus}\`; compact report \`${report.scopeComplianceEvaluator.compactReportStatus}\`; non-enforcing \`${report.scopeComplianceEvaluator.nonEnforcing}\`; enforced \`${report.scopeComplianceEvaluator.enforcementStatus}\`; health runs evaluator \`${report.scopeComplianceEvaluator.reportHealthRunsEvaluator}\`; command \`${report.scopeComplianceEvaluator.command}\`; compact command \`${report.scopeComplianceEvaluator.compactReportCommand}\` |
+| Graph Delta proposal-only generator CLI | \`${report.graphDeltaProposalGenerator.graphDeltaProposalGeneratorStatus}\`; proposal-only \`${report.graphDeltaProposalGenerator.proposalOnly}\`; graph-source mutated \`${report.graphDeltaProposalGenerator.graphSourceMutated}\`; graph delta applied \`${report.graphDeltaProposalGenerator.graphDeltaApplied}\`; approval \`${report.graphDeltaProposalGenerator.approvalStatus}\`; health runs generator \`${report.graphDeltaProposalGenerator.reportHealthRunsGenerator}\`; command \`${report.graphDeltaProposalGenerator.command}\` |
 
 ${report.contractCompilerDryRun.diffReviewBoundary}
 
@@ -1645,6 +1674,7 @@ ${blockingReasons}
 - ${report.requiredCheckBoundary}
 - DevView runtime timing smoke is advisory only. It excludes AI editing time, full validation, CI runtime, and human review time, and it does not enforce the ${report.runtimeBudget.runtimeBudgetTargetMs}ms target.
 - Scope compliance evaluator findings from \`${report.scopeComplianceEvaluator.command}\` are advisory only. The compact report surface \`${report.scopeComplianceEvaluator.compactReportCommand}\` summarizes the same result without making it blocking. Report-health does not run the evaluator and advisory findings do not reject diffs or create required checks.
+- Graph Delta proposal-only previews from \`${report.graphDeltaProposalGenerator.command}\` are unapproved review artifacts only. Report-health does not run the generator, mutate graph-source, apply graph deltas, approve updates, satisfy runtime Evidence, or enforce scope.
 
 ## Reproduce
 
@@ -1653,6 +1683,7 @@ npm run build:cli
 npm run devview:runtime:smoke
 node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --json
 node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --markdown .tmp/devview-scope-runtime-report.md --json
+node dist/cli/index.js graph read-model propose-graph-delta --source examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json --json
 node dist/cli/index.js graph read-model validate --all --json
 npm run test:read-model:e2e
 node dist/cli/index.js graph read-model report-compiler-boundary --json

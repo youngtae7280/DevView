@@ -149,7 +149,7 @@
       "proposalField": "changedFiles",
       "sourceArtifactField": "sourceInputs.git-derived-changed-file-collection",
       "mappingStatus": "candidate-source-available-not-populated",
-      "notes": "A future generator may map changed-file observations into changedFiles after sourceRecordId and graphDeltaPath policies are selected."
+      "notes": "The current proposal-only generator leaves changedFiles empty and preserves changed-file observations as candidate context until graphDeltaPath policy is selected."
     },
     {
       "proposalField": "proposedRecordState",
@@ -173,32 +173,32 @@
       "proposalField": "boundaries",
       "sourceArtifactField": "proposalOnly-graphSourceMutated-graphDeltaApplied-requiresHumanReview-approvalStatus",
       "mappingStatus": "existing-field-compatible-required",
-      "notes": "Future generation must preserve proposal-only, not-applied, not-approved, and human-review-required boundaries."
+      "notes": "Proposal-only generation must preserve proposal-only, not-applied, not-approved, and human-review-required boundaries."
     }
   ],
   "performanceBoundary": {
-    "designOnly": true,
-    "addsRuntimeWork": false,
+    "designOnly": false,
+    "addsRuntimeWork": true,
     "aiCalls": false,
     "networkCalls": false,
     "fullRepoScan": false,
     "patchHunkInspection": false,
     "fileContentSemanticAnalysis": false,
     "fullValidation": false,
-    "futureGenerationBudgetCompatibility": "must-remain-within-advisory-5-second-runtime-path",
+    "futureGenerationBudgetCompatibility": "implemented-and-included-in-advisory-5-second-runtime-path",
     "expensiveSemanticAnalysisDeferred": true,
     "runtimeBudgetStatus": "advisory-not-enforced"
   },
   "futureGeneratorScopeDecision": {
     "status": "proposal-only-generator-scope-decided",
     "artifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
-    "generatorImplementationStatus": "not-implemented",
-    "proposalGenerationStatus": "not-generated",
+    "generatorImplementationStatus": "implemented-proposal-only-cli",
+    "proposalGenerationStatus": "supported-on-demand-not-generated-in-this-source-artifact",
     "defaultOutputBehavior": "json-stdout-only",
     "artifactWritePolicy": "no-tracked-artifact-churn-without-explicit-output"
   },
   "allowedUse": [
-    "define the future proposal-only generator input shape",
+    "serve as the proposal-only generator input shape",
     "collect advisory check-scope, compact report, changed-file collection, evaluation, boundary, schema alignment, and mapping decision references",
     "preserve CH-001 as a structure-only sourceRecordId candidate requiring human review",
     "record Evidence/report link candidates without accepting them as Evidence",
@@ -221,5 +221,5 @@
     "user acceptance automation",
     "executor automation"
   ],
-  "nonExecutionBoundary": "This artifact previews a graph-delta-compatible source input shape for a future proposal-only generator. It is not graph-source, not a graph-delta-v0 artifact, not a pbe-graph-update-proposal-v0 artifact, and not graph delta apply. It does not mutate graph-source, approve graph updates, enforce scope, reject diffs, satisfy runtime Evidence, prove equivalence, configure CI or required checks, change branch protection, or replace human review."
+  "nonExecutionBoundary": "This artifact is the graph-delta-compatible source input shape for the proposal-only generator. It is not graph-source, not a graph-delta-v0 artifact, not a pbe-graph-update-proposal-v0 artifact, and not graph delta apply. The generator emits graph-delta-proposal-only-preview JSON without mutating graph-source, approving graph updates, enforcing scope, rejecting diffs, satisfying runtime Evidence, proving equivalence, configuring CI or required checks, changing branch protection, or replacing human review."
 }

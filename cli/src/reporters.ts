@@ -168,6 +168,8 @@ Commands:
                        Collect git-derived changed-file names/status between explicit refs without scope evaluation
   graph read-model check-scope
                        Run advisory non-enforcing scope compliance evaluation for explicit refs
+  graph read-model propose-graph-delta
+                       Generate proposal-only Graph Delta preview JSON from an advisory source artifact
   graph read-model report-health
                        Summarize local non-enforcing Graph-source transition health
   graph read-model observe-candidates
@@ -196,7 +198,7 @@ Options:
   --files <list>       Candidate changed/expected files for profile recommend, comma-separated.
   --stage <value>      trace/context stage. Trace uses wpd, vd, execution, review, or accept.
   --summary <text>     change create summary.
-  --source <value>     change source. Defaults to user_feedback.
+  --source <value>     change source or graph read-model proposal source artifact.
   --change <id>        Change node id for impact/revision commands.
   --patch <id>         Product Patch node id for product patch apply.
   --operation <value>  Product Patch operation.
@@ -216,7 +218,7 @@ Options:
   --graph-delta <file> Graph delta file for graph operation propose-update.
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, or check-scope.
+  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, or propose-graph-delta.
   --markdown <file>    Optional Markdown summary output for graph read-model report-health or check-scope.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal.
   --chain-command <name>

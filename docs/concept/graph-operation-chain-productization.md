@@ -93,16 +93,18 @@ as candidate review context only.
 
 The graph-delta-compatible source preview is
 `examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json`. It is a
-future proposal-only generator input shape that collects advisory runtime output, changed-file collection, scope
+proposal-only generator input shape that collects advisory runtime output, changed-file collection, scope
 evaluation, proposal boundary, schema alignment, and mapping decisions. It is not graph-source, not `graph-delta-v0`,
 not `pbe-graph-update-proposal-v0`, and not apply.
 
 The proposal-only generator scope decision is
 `examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json`.
-It prefers a future advisory command shape of
-`graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json` for the first slice. The
-command is not implemented yet, and the decision keeps output proposal-shaped, unapproved, non-enforcing, and separate
-from `graph operation apply-proposal`.
+It selected the advisory command shape
+`graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json` for the first slice.
+That proposal-only CLI is now implemented. It emits `graph-delta-proposal-only-preview` JSON through stdout by default
+or an explicit `--output` path, preserves unapproved/non-enforcing/human-review-required boundaries, and remains separate
+from `graph operation apply-proposal`. It does not mutate graph-source, apply graph deltas, approve updates, satisfy
+runtime Evidence, prove equivalence, enforce scope, or reject diffs.
 
 Retrofit graph sources can be inspected before implementation:
 

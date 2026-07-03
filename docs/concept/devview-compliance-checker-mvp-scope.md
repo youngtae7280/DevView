@@ -567,7 +567,7 @@ examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-
 ```
 
 It collects the advisory `check-scope` result, compact runtime report, changed-file collection, scope evaluation,
-proposal boundary, schema alignment, and unresolved mapping decision references into a future proposal-only generator
+proposal boundary, schema alignment, and unresolved mapping decision references into a proposal-only generator
 input shape. It is not graph-source, not `graph-delta-v0`, not `pbe-graph-update-proposal-v0`, and not graph delta
 apply. `CH-001` remains a structure-only review candidate, `graphDeltaPath` remains candidate-only/not-written, and
 human review remains required.
@@ -578,10 +578,20 @@ The proposal-only generator scope decision is:
 examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json
 ```
 
-It decides that the first future generator slice may read the graph-delta-compatible source, validate boundary fields,
-and produce proposal-shaped preview output only through JSON stdout or an explicit output path. It does not implement the
-generator, generate proposals, mutate graph-source, apply graph deltas, approve updates, enforce scope, or satisfy
-runtime Evidence.
+It decided that the first generator slice may read the graph-delta-compatible source, validate boundary fields, and
+produce proposal-shaped preview output only through JSON stdout or an explicit output path.
+
+The first proposal-only generator CLI is now implemented:
+
+```text
+graph read-model propose-graph-delta --source <sourceArtifact> --json
+graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json
+```
+
+It emits a `graph-delta-proposal-only-preview` object aligned to `pbe-graph-update-proposal-v0`, preserves `CH-001` as a
+structure-only review candidate, keeps Evidence/report links candidate-only, and writes no file unless `--output` is
+explicitly supplied. The generated preview is not graph-source, not graph delta apply, not approval, not runtime Evidence
+satisfaction, and not enforcement.
 
 ## Runtime Budget Smoke
 
@@ -598,8 +608,9 @@ It measures selected deterministic commands and reports `runtimeBudgetTargetMs: 
 advisory-not-enforced`, and `runtimeBudgetEnforced: false`. The timing smoke excludes AI editing time, full validation,
 CI runtime, and human review. The changed-file collection measurement writes to a `.tmp` smoke artifact rather than the
 tracked Todo App preview artifact. The smoke includes the advisory `check-scope` command and writes its compact report to
-`.tmp` without writing a tracked evaluation artifact. It does not turn scope compliance into a gate and does not reject
-diffs or configure required checks.
+`.tmp` without writing a tracked evaluation artifact. It also includes the proposal-only generator with an explicit
+`.tmp` output path. It does not turn scope compliance or proposal generation into a gate and does not reject diffs,
+configure required checks, approve updates, or apply graph deltas.
 
 ## Decision
 

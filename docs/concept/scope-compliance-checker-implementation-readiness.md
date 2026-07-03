@@ -656,7 +656,7 @@ This preview compares advisory `check-scope` candidate categories with the exist
 `schemas/pbe/graph-update-proposal-v0.json`. Changed-file observations partially align with `changedFiles`, risk and
 decision-note candidates partially align with `proposedRecordState`, and boundary requirements align with the existing
 `boundaries` object. Evidence links, runtime report links, graph-delta source selection, and record binding remain
-explicitly unresolved until a future proposal-only generator is designed.
+explicitly unresolved until the proposal-only generator boundary is designed.
 
 The narrow mapping decision preview is:
 
@@ -675,7 +675,7 @@ The graph-delta-compatible source preview is:
 examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json
 ```
 
-This artifact is the future proposal-only generator input shape. It gathers advisory runtime outputs, changed-file
+This artifact is the proposal-only generator input shape. It gathers advisory runtime outputs, changed-file
 collection, scope evaluation, boundary, schema alignment, and mapping decision references without producing a proposal.
 It is not graph-source, not `graph-delta-v0`, not `pbe-graph-update-proposal-v0`, and not apply. `CH-001` remains a
 structure-only `sourceRecordId` review candidate, Evidence/report links remain candidate-only, and `graphDeltaPath`
@@ -687,10 +687,22 @@ The proposal-only generator scope decision is:
 examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json
 ```
 
-It narrows the next implementation to a local deterministic generator that reads the source artifact, validates required
+It narrows the first implementation to a local deterministic generator that reads the source artifact, validates required
 boundary fields, and emits proposal-shaped preview JSON. Default behavior must be stdout-only, tracked writes require an
 explicit `--output`, advisory findings must not fail the command, and all generated values remain unapproved
-candidate-only review material. The generator is not implemented by this decision.
+candidate-only review material.
+
+The first proposal-only generator CLI now implements that slice:
+
+```text
+graph read-model propose-graph-delta --source <sourceArtifact> --json
+graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json
+```
+
+It produces a `graph-delta-proposal-only-preview` aligned to `pbe-graph-update-proposal-v0` while preserving
+`graphSourceMutated: false`, `graphDeltaApplied: false`, `requiresHumanReview: true`, `approvalStatus: not-approved`,
+`nonEnforcing: true`, and `enforcementStatus: not-enforced`. It is not an apply-ready graph update proposal and does not
+mutate graph-source, apply graph deltas, satisfy runtime Evidence, prove equivalence, enforce scope, or reject diffs.
 
 ## Runtime Budget Timing Smoke
 
@@ -705,7 +717,8 @@ npm run devview:runtime:smoke
 
 It measures selected deterministic runtime commands after `npm run build:cli` has produced `dist/cli/index.js`.
 Measured commands currently include compiler input reporting, contract compiler dry-run, git-derived changed-file
-collection, and advisory scope evaluation through `graph read-model check-scope`. The smoke reports
+collection, advisory scope evaluation through `graph read-model check-scope`, and proposal-only graph delta preview
+generation through `graph read-model propose-graph-delta`. The smoke reports
 `runtimeBudgetTargetMs: 5000`, `budgetStatus: advisory-not-enforced`, and `runtimeBudgetEnforced: false`.
 
 The git-derived changed-file collection measurement writes to `.tmp/devview-runtime-timing-smoke/` so timing checks do
@@ -714,6 +727,9 @@ not rewrite the tracked Todo App preview collection artifact.
 The scope evaluator measurement runs without `--output`, so it does not write an advisory evaluation artifact during
 ordinary timing checks. It may write the compact runtime report to `.tmp/devview-runtime-timing-smoke/`, which keeps
 runtime reporting visible without changing tracked preview artifacts.
+
+The proposal-only generator measurement writes only to `.tmp/devview-runtime-timing-smoke/` through explicit `--output`.
+It does not create a tracked proposal artifact or graph-source mutation.
 
 The timing smoke is not a CI gate. It excludes AI editing time, full validation, CI runtime, and human review time. It
 does not make the evaluator blocking, reject diffs, approve fixtures, satisfy runtime Evidence, prove equivalence, or

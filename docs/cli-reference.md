@@ -435,6 +435,33 @@ node dist/cli/index.js graph read-model check-scope `
   --json
 ```
 
+### `pbe graph read-model propose-graph-delta`
+
+- Purpose: Generate a proposal-only Graph Delta preview from a graph-delta-compatible source artifact.
+- Typical state before running: After advisory `check-scope`, compact runtime report, proposal boundary, schema
+  alignment, unresolved mapping, compatible source, and generator scope decision artifacts exist.
+- Options: `--source <sourceArtifact>` is required. `--output <file>` may write the proposal-only preview. Without
+  `--output`, JSON stdout is the only output.
+- What it checks: Required proposal-only boundary fields on the source artifact, including
+  `compatibleProposalSchema: pbe-graph-update-proposal-v0`, `proposalOnly: true`, `graphSourceMutated: false`,
+  `graphDeltaApplied: false`, `requiresHumanReview: true`, and `approvalStatus: not-approved`.
+- What it writes: Nothing by default. It writes only to the explicit `--output` path.
+- Success result: JSON with `artifactRole: graph-delta-proposal-only-preview`, `proposalGenerated: true`,
+  `proposalOnly: true`, `graphSourceMutated: false`, `graphDeltaApplied: false`, `approvalStatus: not-approved`,
+  `nonEnforcing: true`, and `enforcementStatus: not-enforced`.
+- Common failures: unreadable source artifact, malformed JSON, unsupported schema id, or unsafe boundary fields.
+- Next command: Review the preview and human-review questions. Do not treat it as graph-source, graph delta apply,
+  approval, runtime Evidence satisfaction, equivalence proof, enforcement, or user acceptance.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model propose-graph-delta `
+  --source examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json `
+  --output .tmp/devview-graph-delta-proposal.preview.json `
+  --json
+```
+
 ### `pbe graph operation apply-proposal`
 
 - Purpose: Preview or apply a generated graph update proposal to its graph-source.

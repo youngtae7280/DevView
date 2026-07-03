@@ -307,8 +307,8 @@
   "graphDeltaProposalGeneratorScopeDecisionPreview": {
     "path": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
     "status": "proposal-only-generator-scope-decided",
-    "generatorImplementationStatus": "not-implemented",
-    "proposalGenerationStatus": "not-generated",
+    "generatorImplementationStatus": "implemented-proposal-only-cli",
+    "proposalGenerationStatus": "supported-on-demand-not-generated-in-this-observation",
     "proposedCommand": "graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json",
     "defaultOutputBehavior": "json-stdout-only",
     "artifactWritePolicy": "no-tracked-artifact-churn-without-explicit-output",
@@ -325,6 +325,8 @@
     "remainingSupportStatus": "not-supported"
   },
   "graphDeltaProposalGeneratorScopeDecisionStatus": "proposal-only-generator-scope-decided",
+  "graphDeltaProposalGeneratorImplementationStatus": "implemented-proposal-only-cli",
+  "graphDeltaProposalGenerationStatus": "supported-on-demand-not-generated-in-this-observation",
   "fixtureProvidedChangedFileListPreview": {
     "path": "examples/valid/todo-app-pbe-run/generated/fixture-provided-changed-file-list.runtime-evidence-only.preview.json",
     "status": "fixture-provided-changed-file-list-previewed",

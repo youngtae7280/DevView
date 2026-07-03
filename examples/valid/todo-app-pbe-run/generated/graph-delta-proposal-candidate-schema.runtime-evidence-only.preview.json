@@ -96,15 +96,15 @@
       "inputId": "graph-delta-compatible-source-preview",
       "sourceStatus": "proposal-generator-input-shape-preview-available",
       "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
-      "candidateContribution": "Collects advisory runtime, changed-file, evaluation, boundary, schema, and mapping decision references into a future proposal-only generator input shape.",
+      "candidateContribution": "Collects advisory runtime, changed-file, evaluation, boundary, schema, and mapping decision references into the proposal-only generator input shape.",
       "authorityBoundary": "Compatible source preview is not graph-source, not graph-delta-v0, not pbe-graph-update-proposal-v0, and not graph delta apply."
     },
     {
       "inputId": "proposal-only-generator-scope-decision",
       "sourceStatus": "proposal-generator-scope-decision-preview-available",
       "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
-      "candidateContribution": "Defines the future proposal-only generator CLI scope, output policy, exit-code policy, and minimum proposal-shaped preview object.",
-      "authorityBoundary": "Scope decision is not an implemented generator and does not generate proposal artifacts."
+      "candidateContribution": "Defines the proposal-only generator CLI scope, output policy, exit-code policy, and minimum proposal-shaped preview object.",
+      "authorityBoundary": "Scope decision is not graph-source apply, approval, runtime Evidence satisfaction, or enforcement."
     }
   ],
   "existingProposalV0FieldAlignment": [

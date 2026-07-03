@@ -21,6 +21,7 @@ import {
   graphReadModelCompileContractCommand,
   graphReadModelGenerateCommand,
   graphReadModelObserveCandidatesCommand,
+  graphReadModelProposeGraphDeltaCommand,
   graphReadModelProjectCommand,
   graphReadModelProjectIntentCommand,
   graphReadModelReportCompilerBoundaryCommand,
@@ -218,6 +219,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'check-scope') {
     return graphReadModelCheckScopeCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'propose-graph-delta') {
+    return graphReadModelProposeGraphDeltaCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-health') {
     return graphReadModelReportHealthCommand(context)

@@ -292,15 +292,17 @@ source exists, and keeps advisory JSON/report links candidate-only.
 
 The graph-delta-compatible source preview is recorded in
 `examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json`. It defines a
-future proposal-only generator input shape from advisory runtime outputs, changed-file collection, scope evaluation,
+proposal-only generator input shape from advisory runtime outputs, changed-file collection, scope evaluation,
 proposal boundary, schema alignment, and mapping decisions. It is not graph-source, not a graph update proposal, not
 apply, and not accepted Evidence.
 
 The proposal-only generator scope decision is recorded in
 `examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json`.
-It defines a future stdout-or-explicit-output CLI boundary for proposal-shaped preview generation without implementing
-the generator, generating proposals, mutating graph-source, applying graph deltas, approving updates, enforcing scope, or
-satisfying runtime Evidence.
+It defines the stdout-or-explicit-output CLI boundary now implemented by
+`graph read-model propose-graph-delta --source <sourceArtifact> --json`. The command emits a
+`graph-delta-proposal-only-preview` object and writes only when explicit `--output` is supplied. It does not mutate
+graph-source, apply graph deltas, approve updates, enforce scope, satisfy runtime Evidence, prove equivalence, or reject
+diffs.
 
 The following readiness artifact is complete at documentation level:
 

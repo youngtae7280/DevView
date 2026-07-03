@@ -37,6 +37,7 @@ Status: `graph-source-health-pass`
 | Contract semantic diff review               | `compiler-promotion-review-required`; severity `medium`; unknown semantic diffs 0; unknown fields none; validation-superset-review-only: 1, source-mode-metadata-only: 1, boundary-wording-review-required: 1                                                                                                                                                  |
 | DevView runtime timing smoke                | target 5000ms; last `not-run-by-report-health`; advisory `true`; enforced `false`; command `npm run devview:runtime:smoke`                                                                                                                                                                                                                                     |
 | Scope compliance evaluator CLI              | `advisory-cli-available`; compact report `compact-advisory-runtime-report-available`; non-enforcing `true`; enforced `not-enforced`; health runs evaluator `false`; command `graph read-model check-scope --base <baseRef> --head <headRef> --json`; compact command `graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json` |
+| Graph Delta proposal-only generator CLI     | `proposal-only-cli-available`; proposal-only `true`; graph-source mutated `false`; graph delta applied `false`; approval `not-approved`; health runs generator `false`; command `graph read-model propose-graph-delta --source <sourceArtifact> --json`                                                                                                        |
 
 The compiler candidate is valid, but equivalence with the hand-written contract is not proven. Review the differing
 fields before relying on the candidate.
@@ -81,6 +82,9 @@ artifacts.
   `graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json` summarizes the same result
   without making it blocking. Report-health does not run the evaluator and advisory findings do not reject diffs or
   create required checks.
+- Graph Delta proposal-only previews from `graph read-model propose-graph-delta --source <sourceArtifact> --json` are
+  unapproved review artifacts only. Report-health does not run the generator, mutate graph-source, apply graph deltas,
+  approve updates, satisfy runtime Evidence, or enforce scope.
 
 ## Reproduce
 
@@ -89,6 +93,7 @@ npm run build:cli
 npm run devview:runtime:smoke
 node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --json
 node dist/cli/index.js graph read-model check-scope --base HEAD~1 --head HEAD --markdown .tmp/devview-scope-runtime-report.md --json
+node dist/cli/index.js graph read-model propose-graph-delta --source examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json --json
 node dist/cli/index.js graph read-model validate --all --json
 npm run test:read-model:e2e
 node dist/cli/index.js graph read-model report-compiler-boundary --json

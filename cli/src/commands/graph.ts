@@ -1,6 +1,7 @@
 import { relativePath } from '../core/fs.js'
 import { compileExecutionContractDryRun } from '../core/contract-compiler-dry-run.js'
 import { collectGitDerivedChangedFiles } from '../core/git-derived-changed-file-collection.js'
+import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
 import { buildGraphExecutionContractReport } from '../core/graph-execution-contract.js'
 import { reportCompilerBoundary } from '../core/compiler-boundary.js'
 import { reportCompilerInputModel } from '../core/compiler-input-model.js'
@@ -678,6 +679,48 @@ export async function graphReadModelCheckScopeCommand(context: CommandContext): 
           message,
           suggestedFix:
             'Provide valid explicit --base and --head refs and keep the Todo App runtime Evidence-only calibration draft readable. Advisory findings are non-enforcing once the command can run.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelProposeGraphDeltaCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.source) {
+    return invalidCommand('graph read-model propose-graph-delta requires --source <sourceArtifact>.')
+  }
+
+  try {
+    const result = await generateProposalOnlyGraphDeltaPreview(context.options.root, context.options.source, {
+      output: context.options.output,
+    })
+    return {
+      ok: true,
+      command: 'graph read-model propose-graph-delta',
+      exitCode: ExitCode.Success,
+      message: 'Proposal-only Graph Delta preview generated without apply.',
+      issues: [],
+      data: {
+        ...result.proposal,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        next: 'Review the proposal-only preview. This command does not mutate graph-source, apply graph deltas, approve updates, satisfy runtime Evidence, prove equivalence, enforce scope, reject diffs, or create required checks.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model propose-graph-delta',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Proposal-only Graph Delta preview generation blocked.',
+      issues: [
+        issue({
+          validator: 'ProposalOnlyGraphDeltaGenerator',
+          code: 'GRAPH_DELTA_PROPOSAL_ONLY_GENERATION_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a readable graph-delta-compatible source artifact with proposalOnly=true, graphSourceMutated=false, graphDeltaApplied=false, requiresHumanReview=true, and approvalStatus=not-approved.',
         }),
       ],
     }

@@ -53,7 +53,7 @@
     "whyNotFinal": "Todo App runtime-evidence-only remains a calibration fixture and its graph-source uses structure-only sourceRecords rather than the operation-chain graph-source records expected by pbe-graph-update-proposal-v0 apply flow.",
     "advisoryCheckScopeIsSourceAuthority": false,
     "requiresHumanReview": true,
-    "proposalGeneratorUse": "A future proposal-only generator may use CH-001 as the default sourceRecordId candidate only when explicitly operating in Todo App runtime-evidence-only calibration preview mode.",
+    "proposalGeneratorUse": "The proposal-only generator may use CH-001 as the default sourceRecordId candidate only when explicitly operating in Todo App runtime-evidence-only calibration preview mode.",
     "forbiddenInterpretation": "CH-001 selection is not fixture approval, graph-source mutation, graph delta apply, runtime Evidence satisfaction, or source-authority promotion."
   },
   "graphDeltaPathDecision": {
@@ -80,7 +80,7 @@
       "operationChainOutputConventionCandidate": "outputs/devview/todo-app-pbe-run/graph-update-proposals/<proposal-id>.graph-update-proposal.json",
       "pathPolicyStatus": "proposal-output-path-candidates-identified-not-selected-for-implementation"
     },
-    "proposalGeneratorUse": "A future proposal-only generator must not populate graphDeltaPath from check-scope output unless a graph-delta-compatible source artifact is explicitly created or selected.",
+    "proposalGeneratorUse": "The proposal-only generator must not populate graphDeltaPath from check-scope output unless a graph-delta-compatible source artifact is explicitly created or selected.",
     "forbiddenInterpretation": "No graph delta is captured, no proposal file is generated, and no graph-source update path is authorized by this decision."
   },
   "evidenceAndReportLinkDecision": {
@@ -141,7 +141,7 @@
     },
     {
       "mappingId": "proposal-only-generator-scope",
-      "status": "proposal-only-generator-scope-decided-not-implemented",
+      "status": "proposal-only-generator-scope-decided-implemented-proposal-only-cli",
       "requiredBeforeProposalOnlyGenerator": false
     },
     {
@@ -161,13 +161,13 @@
     }
   ],
   "allowedUse": [
-    "document the narrow sourceRecordId, graphDeltaPath, and Evidence/report link decisions before proposal-only generation",
-    "identify CH-001 as a structure-only sourceRecordId candidate for future review",
+    "document the narrow sourceRecordId, graphDeltaPath, and Evidence/report link decisions used by proposal-only generation",
+    "identify CH-001 as a structure-only sourceRecordId candidate for review",
     "keep graphDeltaPath unresolved until a graph-delta-compatible source exists",
     "allow advisory outputs to be linked only as candidate review context"
   ],
   "forbiddenUse": [
-    "actual graph delta proposal generation",
+    "apply-ready graph delta proposal generation",
     "pbe-graph-update-proposal-v0 artifact generation",
     "graph-source mutation",
     "graph delta apply",
@@ -182,5 +182,5 @@
     "user acceptance automation",
     "executor automation"
   ],
-  "nonExecutionBoundary": "This artifact resolves or defers narrow mapping decisions for a future proposal-only generator. It does not generate graph delta proposals, capture graph deltas, mutate graph-source, apply graph deltas, approve graph updates, enforce scope, reject diffs, satisfy runtime Evidence, prove equivalence, configure CI or required checks, change branch protection, or replace user acceptance."
+  "nonExecutionBoundary": "This artifact resolves or defers narrow mapping decisions used by the proposal-only generator. It does not generate apply-ready graph delta proposals, capture graph deltas, mutate graph-source, apply graph deltas, approve graph updates, enforce scope, reject diffs, satisfy runtime Evidence, prove equivalence, configure CI or required checks, change branch protection, or replace user acceptance."
 }

@@ -8,6 +8,9 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const cliPath = join(repoRoot, 'dist/cli/index.js')
 const smokeArtifactPath = '.tmp/devview-runtime-timing-smoke/git-derived-changed-file-collection.json'
 const smokeScopeReportPath = '.tmp/devview-runtime-timing-smoke/scope-compliance-runtime-report.md'
+const smokeGraphDeltaProposalPath = '.tmp/devview-runtime-timing-smoke/graph-delta-proposal.preview.json'
+const graphDeltaCompatibleSourcePath =
+  'examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json'
 const runtimeBudgetTargetMs = 5000
 const outputArgIndex = process.argv.indexOf('--output')
 const outputPath = outputArgIndex >= 0 ? process.argv[outputArgIndex + 1] : null
@@ -59,16 +62,24 @@ const measuredSteps = [
     ],
     includedInRuntimeBudget: true,
   },
-]
-
-const pendingDeterministicSteps = [
   {
     stepName: 'graph-delta-proposal-generation',
-    status: 'future-runtime-step-not-implemented',
-    includedInRuntimeBudget: false,
-    reason: 'Graph delta proposal generation remains a future deterministic pass and is not part of this smoke.',
+    command: `node dist/cli/index.js graph read-model propose-graph-delta --source ${graphDeltaCompatibleSourcePath} --output ${smokeGraphDeltaProposalPath} --json`,
+    args: [
+      'graph',
+      'read-model',
+      'propose-graph-delta',
+      '--source',
+      graphDeltaCompatibleSourcePath,
+      '--output',
+      smokeGraphDeltaProposalPath,
+      '--json',
+    ],
+    includedInRuntimeBudget: true,
   },
 ]
+
+const pendingDeterministicSteps = []
 
 const started = performance.now()
 const steps = measuredSteps.map((step) => {
