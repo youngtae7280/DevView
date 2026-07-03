@@ -62,6 +62,7 @@ It runs:
 - `node dist/cli/index.js graph read-model report-hook-gateway-health --boundary examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json --output .tmp/devview-runtime-timing-smoke/hook-gateway-health-report.json --json`;
 - `node dist/cli/index.js graph read-model prepare-user-prompt-context --frontend-chain examples/valid/todo-app-pbe-run/generated/devview-frontend-chain.add-todo-runtime-evidence-only.preview.json --hook-health .tmp/devview-runtime-timing-smoke/hook-gateway-health-report.json --instruction-pack .tmp/devview-runtime-timing-smoke/instruction-pack.json --instruction-markdown .tmp/devview-runtime-timing-smoke/instruction-pack.md --output .tmp/devview-runtime-timing-smoke/user-prompt-context.json --markdown .tmp/devview-runtime-timing-smoke/user-prompt-context.md --json`;
 - `node dist/cli/index.js graph read-model generate-hook-script-scaffold --boundary examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json --hook-health examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json --install-trust examples/valid/todo-app-pbe-run/generated/devview-hook-install-trust-boundary.runtime-evidence-only.preview.json --user-prompt-context .tmp/devview-runtime-timing-smoke/user-prompt-context.json --output .tmp/devview-runtime-timing-smoke/hook-script-scaffold.json --markdown .tmp/devview-runtime-timing-smoke/hook-script-scaffold.md --json`;
+- `node dist/cli/index.js graph read-model generate-hook-script-templates --scaffold .tmp/devview-runtime-timing-smoke/hook-script-scaffold.json --output .tmp/devview-runtime-timing-smoke/hook-script-template.json --markdown .tmp/devview-runtime-timing-smoke/hook-script-template.md --json`;
 - `node dist/cli/index.js graph read-model report-compiler-input --json`;
 - `node dist/cli/index.js graph read-model compile-contract --dry-run --json`;
 - `node dist/cli/index.js graph read-model collect-changed-files --base HEAD~1 --head HEAD --output .tmp/devview-runtime-timing-smoke/git-derived-changed-file-collection.json --json`.
@@ -127,7 +128,8 @@ Current lanes:
   `validate-request-ir`, `validate-request-ir-graph`, `plan-traversal`, `select-slice`, `generate-contract-input`, and
   `generate-instruction-pack`.
 - `activation-readiness-lane`: report-only hook gateway readiness checks and advisory context preparation, currently
-  `report-hook-gateway-health`, `prepare-user-prompt-context`, and `generate-hook-script-scaffold`.
+  `report-hook-gateway-health`, `prepare-user-prompt-context`, `generate-hook-script-scaffold`, and
+  `generate-hook-script-templates`.
 - `advisory-backend-lane`: advisory backend, post-check, graph delta proposal, and review reporting commands.
 
 The Hook Gateway install/trust scope decision boundary is a preview artifact only:

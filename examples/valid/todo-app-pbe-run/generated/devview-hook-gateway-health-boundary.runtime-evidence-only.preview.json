@@ -189,6 +189,13 @@
       "availabilityStatus": "preview-generated-not-installed",
       "command": "graph read-model generate-hook-script-scaffold --boundary <gatewayBoundary> --hook-health <healthBoundary> --install-trust <installTrustBoundary> --user-prompt-context <contextPreview> --json",
       "nonExecutionStatus": "does-not-install-or-activate-hooks"
+    },
+    {
+      "artifactRole": "devview-hook-script-template-preview",
+      "artifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json",
+      "availabilityStatus": "preview-generated-not-installed",
+      "command": "graph read-model generate-hook-script-templates --scaffold <hookScriptScaffold> --json",
+      "nonExecutionStatus": "does-not-write-active-hook-files"
     }
   ],
   "healthResultPreviewShape": {
@@ -232,5 +239,6 @@
   "userPromptSubmitContextPreviewMarkdownArtifact": "examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.md",
   "hookInstallTrustBoundaryStatus": "devview-hook-install-trust-boundary-previewed",
   "hookInstallTrustBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-install-trust-boundary.runtime-evidence-only.preview.json",
-  "firstCalibrationHookScriptScaffoldPreviewArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json"
+  "firstCalibrationHookScriptScaffoldPreviewArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json",
+  "firstCalibrationHookScriptTemplatePreviewArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json"
 }

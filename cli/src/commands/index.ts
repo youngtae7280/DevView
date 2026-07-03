@@ -25,6 +25,7 @@ import {
   graphReadModelGenerateClarificationInterviewPackCommand,
   graphReadModelGenerateContractInputCommand,
   graphReadModelGenerateHookScriptScaffoldCommand,
+  graphReadModelGenerateHookScriptTemplatesCommand,
   graphReadModelGenerateInstructionPackCommand,
   graphReadModelObserveCandidatesCommand,
   graphReadModelPlanTraversalCommand,
@@ -286,6 +287,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-hook-script-scaffold') {
     return graphReadModelGenerateHookScriptScaffoldCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-hook-script-templates') {
+    return graphReadModelGenerateHookScriptTemplatesCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-health') {
     return graphReadModelReportHealthCommand(context)

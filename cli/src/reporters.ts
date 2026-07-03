@@ -200,6 +200,8 @@ Commands:
                        Prepare advisory UserPromptSubmit additionalContext preview without installing hooks or execution
   graph read-model generate-hook-script-scaffold
                        Generate preview-only Hook Gateway script scaffold without installing or activating hooks
+  graph read-model generate-hook-script-templates
+                       Materialize preview-only Hook Gateway script bodies without writing active hook files
   graph read-model report-health
                        Summarize local non-enforcing Graph-source transition health
   graph read-model observe-candidates
@@ -248,8 +250,8 @@ Options:
   --graph-delta <file> Graph delta file for graph operation propose-update.
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, or generate-hook-script-scaffold.
-  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, generate-instruction-pack, report-frontend-chain, prepare-user-prompt-context, or generate-hook-script-scaffold.
+  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, or generate-hook-script-templates.
+  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, generate-instruction-pack, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, or generate-hook-script-templates.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal or graph read-model review-graph-delta.
   --candidate <file>   Request IR Candidate file for graph read-model validate-request-ir or generate-clarification-interview-pack.
   --schema-validation <file>
@@ -262,6 +264,7 @@ Options:
                        Selected Graph Slice file for graph read-model generate-contract-input.
   --contract-input <file>
                        Contract Compiler Input file for graph read-model generate-instruction-pack.
+  --scaffold <file>    Hook script scaffold preview for graph read-model generate-hook-script-templates.
   --request <text>     Natural-language request text for graph read-model analyze-request.
   --pack <file>        AI Request Analyzer Pack file for graph read-model analyze-request.
   --external-candidate <file>

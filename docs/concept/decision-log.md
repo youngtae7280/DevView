@@ -2659,3 +2659,35 @@ This decision does not install hook scripts, write active hook config, trust rep
 activate hooks, block Codex execution, call an LLM/API, make network calls, mutate graph-source, apply graph deltas,
 approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, introduce CI
 required checks, change branch protection, or automate user acceptance.
+
+## DEC-262 Generate Hook Script Template Preview
+
+DEC-262 does not supersede DEC-097 through DEC-261. It materializes the Hook Gateway script scaffold into review-only
+script body previews while preserving the no-install/no-activation boundary.
+
+The command is:
+
+```text
+graph read-model generate-hook-script-templates --scaffold <hookScriptScaffold> --json
+```
+
+The Todo App calibration artifacts are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.md
+```
+
+The output has `artifactRole: devview-hook-script-template-preview` and contains `powershell-preview` body lines for
+`SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, and `Stop`. The bodies are review artifacts only and
+remain `not-installed-preview-only`, `not-active-preview-only`, and `no-mutation-no-blocking-preview`. Output guards
+reject active hook/config paths such as `.codex/hooks/...` and source artifact overwrites before writing either JSON or
+Markdown.
+
+The runtime smoke includes this command in the `activation-readiness-lane`, not the `core-critical-lane`. The timing
+budget remains advisory and non-enforced.
+
+This decision does not write active hook files, install hooks, trust repositories, mutate Codex or repo config, activate
+hooks, block Codex execution, call an LLM/API, make network calls, run validation or traversal, mutate graph-source,
+apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce
+scope, introduce CI required checks, change branch protection, or automate user acceptance.

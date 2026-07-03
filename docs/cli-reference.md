@@ -952,6 +952,31 @@ node dist/cli/index.js graph read-model generate-hook-script-scaffold `
   --json
 ```
 
+### `pbe graph read-model generate-hook-script-templates`
+
+- Purpose: Read a Hook script scaffold preview and materialize review-only PowerShell script body previews for future
+  Hook Gateway events.
+- Typical state before running: After `generate-hook-script-scaffold` has produced a preview scaffold. Hook scripts are
+  still not installed, active, trusted, or enforcing.
+- Options: `--scaffold <file>` is required. `--output <file>` may write JSON and `--markdown <file>` may write a compact
+  script preview.
+- What it checks: scaffold role/status, required hook events, strict/guided/enforcement/approval/Evidence/equivalence
+  safety flags, active hook path targets, source artifact overwrite attempts, and output authority before any writes.
+- Success result: JSON with `artifactRole: devview-hook-script-template-preview`, one `powershell-preview` body each for
+  `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, and `Stop`, plus all install/active/execution/apply/
+  approval/Evidence/equivalence/enforcement flags false.
+- Non-goals: This command does not write `.codex/hooks` files, install hooks, trust repositories, configure Codex, block
+  Codex execution, call an LLM, run validation/traversal, mutate graph-source, apply graph deltas, approve work, record
+  human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
+
+```powershell
+node dist/cli/index.js graph read-model generate-hook-script-templates `
+  --scaffold examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json `
+  --output .tmp/review-hook-script-template.json `
+  --markdown .tmp/review-hook-script-template.md `
+  --json
+```
+
 ### `pbe graph operation apply-proposal`
 
 - Purpose: Preview or apply a generated graph update proposal to its graph-source.

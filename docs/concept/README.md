@@ -346,6 +346,11 @@ It produces preview-only `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `Post
 without writing active hook scripts, mutating trust/config, blocking Codex, approving work, satisfying Evidence, proving
 equivalence, or enforcing scope/CI.
 
+The Hook Gateway script template preview command is exposed as
+`graph read-model generate-hook-script-templates --scaffold <hookScriptScaffold> --json`. It materializes review-only
+PowerShell body previews from the scaffold without writing `.codex/hooks` files, installing hooks, activating hooks,
+blocking Codex, approving work, satisfying Evidence, proving equivalence, or enforcing scope/CI.
+
 The runtime smoke lane boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-runtime-smoke-lane-boundary.runtime-evidence-only.preview.json`. It
 keeps the all-steps smoke as an advisory snapshot while reporting lane totals for analyzer preflight, core critical

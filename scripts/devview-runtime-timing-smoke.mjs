@@ -24,6 +24,8 @@ const smokeUserPromptContextPath = '.tmp/devview-runtime-timing-smoke/user-promp
 const smokeUserPromptContextMarkdownPath = '.tmp/devview-runtime-timing-smoke/user-prompt-context.md'
 const smokeHookScriptScaffoldPath = '.tmp/devview-runtime-timing-smoke/hook-script-scaffold.json'
 const smokeHookScriptScaffoldMarkdownPath = '.tmp/devview-runtime-timing-smoke/hook-script-scaffold.md'
+const smokeHookScriptTemplatePath = '.tmp/devview-runtime-timing-smoke/hook-script-template.json'
+const smokeHookScriptTemplateMarkdownPath = '.tmp/devview-runtime-timing-smoke/hook-script-template.md'
 const graphDeltaCompatibleSourcePath =
   'examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json'
 const requestIrCandidatePath =
@@ -257,6 +259,24 @@ const measuredSteps = [
       smokeHookScriptScaffoldPath,
       '--markdown',
       smokeHookScriptScaffoldMarkdownPath,
+      '--json',
+    ],
+    includedInRuntimeBudget: true,
+    runtimeLane: 'activation-readiness-lane',
+  },
+  {
+    stepName: 'hook-script-template-preview',
+    command: `node dist/cli/index.js graph read-model generate-hook-script-templates --scaffold ${smokeHookScriptScaffoldPath} --output ${smokeHookScriptTemplatePath} --markdown ${smokeHookScriptTemplateMarkdownPath} --json`,
+    args: [
+      'graph',
+      'read-model',
+      'generate-hook-script-templates',
+      '--scaffold',
+      smokeHookScriptScaffoldPath,
+      '--output',
+      smokeHookScriptTemplatePath,
+      '--markdown',
+      smokeHookScriptTemplateMarkdownPath,
       '--json',
     ],
     includedInRuntimeBudget: true,

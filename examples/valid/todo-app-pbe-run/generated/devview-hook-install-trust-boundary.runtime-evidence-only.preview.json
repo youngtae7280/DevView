@@ -167,5 +167,7 @@
   ],
   "nonExecutionBoundary": "This artifact previews Hook Gateway install/trust scope decision criteria only. It does not install hook scripts, trust commands, mutate Codex or repo config, activate hooks, block Codex execution, call an LLM, mutate graph-source, apply graph deltas, approve work, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI, or automate user acceptance.",
   "firstCalibrationHookScriptScaffoldPreviewArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json",
-  "hookScriptScaffoldPreviewGenerated": true
+  "hookScriptScaffoldPreviewGenerated": true,
+  "firstCalibrationHookScriptTemplatePreviewArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json",
+  "hookScriptTemplatePreviewGenerated": true
 }

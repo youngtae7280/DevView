@@ -2306,3 +2306,21 @@ The scaffold records preview-only roles for `SessionStart`, `UserPromptSubmit`, 
 It does not write active hook scripts, install hooks, mutate trust/config, block Codex execution, mutate graph-source,
 apply graph deltas, approve work, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or
 configure CI.
+
+The materialized Hook Gateway script template preview for the same calibration is recorded in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.md
+```
+
+It is generated with:
+
+```text
+graph read-model generate-hook-script-templates --scaffold examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json --json
+```
+
+The template preview materializes review-only PowerShell bodies for `SessionStart`, `UserPromptSubmit`, `PreToolUse`,
+`PostToolUse`, and `Stop`. It does not write `.codex/hooks` files, install or activate hooks, mutate trust/config, block
+Codex execution, run validation or traversal, mutate graph-source, apply graph deltas, approve work, record human
+decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.

@@ -285,5 +285,7 @@
   "hookInstallTrustBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-install-trust-boundary.runtime-evidence-only.preview.json",
   "firstCalibrationHookScriptScaffoldPreviewArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json",
   "hookScriptScaffoldPreviewGenerated": true,
-  "hookScriptsInstalled": false
+  "hookScriptsInstalled": false,
+  "firstCalibrationHookScriptTemplatePreviewArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json",
+  "hookScriptTemplatePreviewGenerated": true
 }

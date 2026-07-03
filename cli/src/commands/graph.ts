@@ -9,6 +9,7 @@ import { generateGraphTraversalPlanFile } from '../core/graph-traversal-plan.js'
 import { generateContractCompilerInputFile } from '../core/contract-input-generator.js'
 import { reportHookGatewayHealthFile } from '../core/hook-gateway-health-report.js'
 import { generateHookScriptScaffoldFile } from '../core/hook-script-scaffold.js'
+import { generateHookScriptTemplatePreviewFile } from '../core/hook-script-template-preview.js'
 import { generateInstructionPackFile } from '../core/instruction-pack-generator.js'
 import { reportFrontendChainFile } from '../core/frontend-chain-report.js'
 import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
@@ -1740,6 +1741,70 @@ export async function graphReadModelGenerateHookScriptScaffoldCommand(context: C
           message,
           suggestedFix:
             'Provide readable Hook Gateway boundary, health, install/trust, UserPromptSubmit context, and dedicated preview output paths.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelGenerateHookScriptTemplatesCommand(
+  context: CommandContext,
+): Promise<CommandResult> {
+  if (!context.options.scaffold) {
+    return invalidCommand('graph read-model generate-hook-script-templates requires --scaffold <file>.')
+  }
+
+  try {
+    const result = await generateHookScriptTemplatePreviewFile(context.options.root, {
+      scaffold: context.options.scaffold,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    const blocked = result.preview.status !== 'devview-hook-script-template-preview-generated'
+    const errorFindings = result.preview.validationFindings.filter((finding) => finding.severity === 'error')
+
+    return {
+      ok: !blocked,
+      command: 'graph read-model generate-hook-script-templates',
+      exitCode: blocked ? ExitCode.ValidationFailed : ExitCode.Success,
+      message: blocked
+        ? 'Hook script template preview blocked by unsafe or mismatched scaffold input.'
+        : 'Hook script template preview generated without writing active hook files.',
+      issues: blocked
+        ? (errorFindings.length > 0 ? errorFindings : result.preview.validationFindings).map((finding) =>
+            issue({
+              validator: 'HookScriptTemplatePreviewGenerator',
+              code: finding.code,
+              severity: finding.severity,
+              message: finding.message,
+              reason: finding.field ? `Field: ${finding.field}` : undefined,
+              suggestedFix: finding.suggestedFix ?? 'Regenerate the Hook script scaffold preview.',
+            }),
+          )
+        : [],
+      data: {
+        ...result.preview,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: blocked
+          ? 'Repair scaffold input. This command did not write active hook files, configure trust, trigger Codex execution, mutate graph-source, approve work, satisfy Evidence, prove equivalence, or enforce scope.'
+          : 'Review these script bodies as preview-only artifacts. This command did not write active hook files, configure trust, trigger Codex execution, mutate graph-source, approve work, satisfy Evidence, prove equivalence, or enforce scope.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model generate-hook-script-templates',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Hook script template preview could not run.',
+      issues: [
+        issue({
+          validator: 'HookScriptTemplatePreviewGenerator',
+          code: 'HOOK_SCRIPT_TEMPLATE_PREVIEW_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix: 'Provide a readable Hook script scaffold and dedicated preview output paths.',
         }),
       ],
     }
