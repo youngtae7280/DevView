@@ -247,6 +247,10 @@ They define future traversal planner prerequisites, selection trace policy, sele
 readiness rules. They are not runtime commands yet and do not add slow work to the measured smoke. Contract input still
 requires a future generated selected graph slice.
 
+The traversal boundary keeps graph vocabulary separate from planner semantics: `requiredNodeTypes` and
+`requiredEdgeTypes` use only the current graph-source taxonomy, while target/scope/evidence/output meanings are recorded
+as roles and selection intents.
+
 ## Health Report Boundary
 
 `graph read-model report-health --json` exposes a small runtime budget summary:

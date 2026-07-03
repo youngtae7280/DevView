@@ -354,6 +354,10 @@ They define the next deterministic frontend pass and contract input handoff shap
 nodes or edges, generate contract input, generate instruction packs, mutate graph-source, apply graph deltas, approve
 work, or enforce scope.
 
+The traversal boundary separates graph vocabulary from planner semantics: `*NodeTypes` and `*EdgeTypes` contain only
+actual graph taxonomy values, while target/scope/evidence/output meanings are represented as roles and selection
+intents.
+
 The following readiness artifact is complete at documentation level:
 
 - [representative-runtime-feasibility-demo.md](representative-runtime-feasibility-demo.md)

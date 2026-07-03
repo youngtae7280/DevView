@@ -1929,6 +1929,10 @@ input readiness policy for `CH-001`. The selected graph slice boundary defines t
 shape and keeps `selectedGraphSliceStatus: not-generated`. Neither artifact executes traversal, selects graph nodes or
 edges, generates contract compiler input, or generates instruction packs.
 
+Traversal boundary type fields are limited to actual graph taxonomy vocabulary from the Todo App projection. Abstract
+planner meanings such as target component, scope policy, required evidence, stop condition, output requirement, and risk
+are recorded as roles/intents rather than invented node kinds or edge types.
+
 ## Fixture-Provided Changed-File List Preview
 
 The first fixture-provided changed-file list preview artifact is:

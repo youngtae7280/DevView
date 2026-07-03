@@ -254,10 +254,19 @@ The previewed traversal plan shape includes:
 - `requiredEdgeTypes`
 - `optionalEdgeTypes`
 - `excludedEdgeTypes`
+- `requiredNodeRoles`
+- `requiredEdgeRoles`
+- `selectionIntents`
+- `contractInputSourceRoles`
 - `traversalDepthLimit`
 - `selectionTracePolicy`
 - `ambiguityPolicy`
 - `contractInputReadinessPolicy`
+
+Type fields use the graph-source taxonomy vocabulary only. For the Todo App projection, node type values come from
+`taxonomy.nodeKindsUsed` and edge type values come from `taxonomy.edgeTypesUsed`. Planner meanings such as "target
+component", "scope policy", "required evidence", and "output requirement" live in role/intent fields, not in
+`requiredNodeTypes` or `requiredEdgeTypes`.
 
 For the add-todo runtime-Evidence-only calibration, the future traversal intent starts from `CH-001` and should confirm
 the target component, scope policy, allowed/forbidden scope sources, required evidence policy, stop conditions, output

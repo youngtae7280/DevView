@@ -50,10 +50,44 @@
     "requiredEdgeTypes": "array",
     "optionalEdgeTypes": "array",
     "excludedEdgeTypes": "array",
+    "requiredNodeRoles": "array",
+    "requiredEdgeRoles": "array",
+    "selectionIntents": "array",
+    "contractInputSourceRoles": "array",
     "traversalDepthLimit": "integer",
     "selectionTracePolicy": "object",
     "ambiguityPolicy": "object",
     "contractInputReadinessPolicy": "object"
+  },
+  "graphVocabularyBoundary": {
+    "taxonomySource": "examples/valid/todo-app-pbe-run/generated/graph-source-read-model-projection.json#taxonomy",
+    "typeFieldsUseGraphVocabularyOnly": true,
+    "roleFieldsCarryPlannerSemantics": true,
+    "nodeKindVocabulary": [
+      "requirement",
+      "code",
+      "task",
+      "check",
+      "evidence",
+      "decision",
+      "change",
+      "finding",
+      "document",
+      "log",
+      "view-instance"
+    ],
+    "edgeTypeVocabulary": [
+      "targets",
+      "requires",
+      "satisfies",
+      "touches",
+      "verifies",
+      "evidences",
+      "approves",
+      "preserves",
+      "reports-on",
+      "derives-view"
+    ]
   },
   "calibrationTraversalIntent": {
     "targetRecordIdCandidate": "CH-001",
@@ -68,7 +102,7 @@
         "sourceAuthorityStatus": "resolved-by-graph-aware-validation-for-future-traversal-only"
       }
     ],
-    "expectedFutureNodeCandidateKinds": [
+    "expectedFutureNodeCandidateRoles": [
       "target change/request node",
       "target component node",
       "source or scope policy node",
@@ -111,22 +145,40 @@
       "required": true
     }
   ],
-  "requiredNodeTypes": [
-    "change",
-    "component-or-product-context",
-    "scope-policy",
-    "evidence-policy",
-    "output-requirement"
+  "requiredNodeTypes": ["change", "requirement", "code", "task", "check", "evidence"],
+  "optionalNodeTypes": ["finding", "decision", "document", "log", "view-instance"],
+  "excludedNodeTypes": [],
+  "requiredEdgeTypes": ["targets", "requires", "verifies", "evidences"],
+  "optionalEdgeTypes": ["touches", "satisfies", "preserves", "reports-on", "derives-view"],
+  "excludedEdgeTypes": ["approves"],
+  "requiredNodeRoles": [
+    "target change/request node",
+    "target component or implementation context node",
+    "source or scope policy source node",
+    "required evidence policy/check node",
+    "output requirement source node"
   ],
-  "optionalNodeTypes": ["risk", "stop-condition", "decision-note"],
-  "excludedNodeTypes": ["approval", "accepted-evidence", "graph-delta-apply-result"],
-  "requiredEdgeTypes": [
-    "target-record-to-component",
-    "target-record-to-scope-policy",
-    "target-record-to-evidence-policy"
+  "requiredEdgeRoles": [
+    "target record to component relationship",
+    "target record to scope policy relationship",
+    "target record to evidence/check relationship",
+    "evidence/report relationship"
   ],
-  "optionalEdgeTypes": ["target-record-to-risk", "target-record-to-output-requirement"],
-  "excludedEdgeTypes": ["approval-edge", "apply-edge", "acceptance-edge"],
+  "selectionIntents": [
+    "confirm the future traversal start node",
+    "include only graph-source/read-model vocabulary-backed node kinds and edge types",
+    "collect planner semantics in role fields instead of overloading graph vocabulary fields",
+    "preserve selection trace for every future selected or excluded node and edge"
+  ],
+  "contractInputSourceRoles": [
+    "target scope candidates",
+    "allowed scope source",
+    "forbidden scope source",
+    "required evidence source",
+    "stop condition source",
+    "known risk source",
+    "output requirement source"
+  ],
   "traversalDepthLimit": 3,
   "selectionTracePolicy": {
     "selectionTraceRequired": true,
@@ -156,6 +208,7 @@
   "allowedUse": [
     "define future deterministic graph traversal planner prerequisites",
     "define start node, node selection, edge selection, and trace policy",
+    "separate graph vocabulary type fields from planner semantic role fields",
     "define selected graph slice readiness expectations",
     "link graph-aware validation permission to a future traversal planner"
   ],

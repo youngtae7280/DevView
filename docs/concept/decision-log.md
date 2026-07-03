@@ -2036,6 +2036,10 @@ validation have passed, `graphTraversalAllowed: true` is present, target record/
 changeType compatibility is resolved, and required evidence policy is resolvable. For the Todo App calibration fixture,
 the future traversal intent starts from `CH-001` and may later confirm the target component, scope policy,
 allowed/forbidden scope sources, required evidence policy, stop conditions, output requirements, and linked risks.
+`requiredNodeTypes`, `optionalNodeTypes`, `excludedNodeTypes`, `requiredEdgeTypes`, `optionalEdgeTypes`, and
+`excludedEdgeTypes` are limited to actual graph-source taxonomy vocabulary. Planner semantics such as target component,
+scope policy, required Evidence, output requirement, and risk are recorded separately as node roles, edge roles,
+selection intents, and contract input source roles.
 
 The selected graph slice boundary defines the future selected node/edge slice shape and contract input readiness policy.
 It keeps `selectedGraphSliceStatus: not-generated`, `selectedGraphSliceGenerated: false`,
