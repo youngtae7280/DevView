@@ -84,8 +84,9 @@
   execution, graph-source mutation, apply, or approval.
 - DevView roadmap completion audit preview -
   `examples/valid/todo-app-pbe-run/generated/devview-roadmap-completion-audit.runtime-evidence-only.preview.json`
-  summarizes Phase 1 through Phase 13 evidence without adding execution, approval, apply, Evidence acceptance,
-  graph-source mutation, equivalence, scope enforcement, or CI authority.
+  summarizes Phase 1 through Phase 13 evidence without adding execution, approval automation, apply, Evidence
+  acceptance, graph-source mutation, equivalence proof, scope enforcement, CI authority, required checks, branch
+  protection, or diff rejection.
 - [Scope Compliance Checker Implementation Readiness](concept/scope-compliance-checker-implementation-readiness.md) -
   Readiness criteria for future scope-compliance checker inputs, missing-input states, result preview status, and
   authoritative changed-file input boundaries before executable checker logic exists.

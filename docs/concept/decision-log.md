@@ -3074,3 +3074,24 @@ blocked.
 This decision does not implement scope enforcement, CI required checks, branch protection mutation, diff rejection,
 strict/guided blocking activation, equivalence proof, Evidence acceptance, runtime Evidence satisfaction, graph delta
 apply, graph-source mutation, approval automation, or user acceptance automation.
+
+## DEC-279 Refresh Roadmap Completion Audit After Readiness Chain
+
+DEC-279 does not supersede DEC-097 through DEC-278. It refreshes the static roadmap completion audit preview after the
+Phase 13 controlled decision/readiness chain was connected through disabled Scope/CI enforcement readiness.
+
+The refreshed audit artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-roadmap-completion-audit.runtime-evidence-only.preview.json
+```
+
+The audit now lists the implemented command surfaces for explicit human decision recording, approved proposal state
+preview, Graph Delta apply readiness, graph-source mutation readiness, Evidence acceptance readiness, equivalence proof
+readiness, and disabled Scope/CI enforcement readiness. It also records that the calibration remains `defer-decision`
+and blocked for approved-state/apply/mutation/evidence/equivalence/enforcement readiness.
+
+This decision is an audit refresh only. It does not execute Codex, call an LLM, activate hooks, record new decisions,
+approve proposals, apply graph deltas, mutate graph-source, accept Evidence, satisfy runtime Evidence, prove
+equivalence, enforce scope, configure CI, configure required checks, change branch protection, reject diffs, or replace
+user acceptance.

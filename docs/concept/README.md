@@ -377,8 +377,9 @@ runtime Evidence, prove equivalence, enforce scope, mutate production source, mu
 The roadmap completion audit preview is recorded in
 `examples/valid/todo-app-pbe-run/generated/devview-roadmap-completion-audit.runtime-evidence-only.preview.json`. It
 summarizes Phase 1 through Phase 13 evidence, implemented command surfaces, and explicitly future/non-implemented safety
-boundaries. It is an audit summary only and does not add execution, approval, apply, Evidence acceptance, graph-source
-mutation, equivalence, scope enforcement, or CI authority.
+boundaries after the controlled decision/readiness chain through disabled Scope/CI enforcement readiness. It is an audit
+summary only and does not add execution, approval automation, apply, Evidence acceptance, graph-source mutation,
+equivalence proof, scope enforcement, CI authority, required checks, branch protection, or diff rejection.
 
 The DevView Codex Hook Gateway boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json` and

@@ -1993,9 +1993,10 @@ examples/valid/todo-app-pbe-run/generated/devview-roadmap-completion-audit.runti
 
 It summarizes the current end-to-end roadmap state for this calibration: frontend request intake through instruction
 pack is implemented as deterministic preview output, advisory backend/proposal/review surfaces are connected, activation
-is preview-only, analyzer execution is disabled, and Phase 13 controlled-apply policies are boundary-only. The audit is
-not graph-source, not approval, not apply, not Evidence acceptance, not runtime Evidence satisfaction, not equivalence
-proof, and not enforcement.
+is preview-only, analyzer execution is disabled, and Phase 13 controlled decision/readiness surfaces are connected
+through disabled Scope/CI enforcement readiness. The audit is not graph-source, not approval automation, not apply, not
+Evidence acceptance, not runtime Evidence satisfaction, not equivalence proof, not scope enforcement, not CI
+enforcement, not required-check configuration, not branch protection mutation, and not diff rejection.
 
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
