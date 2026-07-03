@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-codex-hook-gateway-boundary-preview",
+  "status": "devview-codex-hook-gateway-boundary-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "gatewayScope": "codex-lifecycle-hook-activation-boundary",
+  "devviewRuntimePipelineStatus": "later-deterministic-runtime-path-available",
+  "implementationStatus": "boundary-preview-only",
+  "hookScriptsImplemented": false,
+  "actualBlockingHookBehaviorImplemented": false,
+  "llmCallsIntroduced": false,
+  "networkCallsIntroduced": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false,
+  "approvalStatus": "not-approved",
+  "humanDecisionRecorded": false,
+  "equivalenceProven": false,
+  "runtimeEvidenceSatisfied": false,
+  "ciEnforcementEnabled": false,
+  "graphApplyEnabled": false,
+  "approvalAutomationEnabled": false,
+  "strictModeEnabled": false,
+  "devviewActivationModes": [
+    {
+      "mode": "off",
+      "availability": "available",
+      "behavior": "No automatic DevView hook intervention. Codex runs without DevView gateway context unless explicitly invoked by the user.",
+      "mayBlock": false
+    },
+    {
+      "mode": "advisory",
+      "availability": "future-candidate",
+      "behavior": "Hooks may add DevView context, detect missing preflight/contract/post-check/review packet steps, and report bypass risk without blocking editing.",
+      "mayBlock": false
+    },
+    {
+      "mode": "guided",
+      "availability": "future-candidate",
+      "behavior": "Hooks may block unsafe prompt/tool/stop flow when required DevView session artifacts or contract boundaries are missing.",
+      "mayBlock": true,
+      "blockingBoundary": "Guided blocking is hook-gateway flow control only. It is not CI enforcement, branch protection, diff rejection, graph-source apply, or approval."
+    },
+    {
+      "mode": "strict-disabled",
+      "availability": "reserved-disabled",
+      "behavior": "Reserved future strict mode. Not available now and must not be treated as enabled.",
+      "mayBlock": false
+    }
+  ],
+  "currentModePolicy": {
+    "defaultMode": "off",
+    "supportedNow": ["off"],
+    "documentedFutureModes": ["advisory", "guided"],
+    "reservedDisabledModes": ["strict-disabled"],
+    "strictModeEnabled": false,
+    "ciEnforcementEnabled": false,
+    "graphApplyEnabled": false,
+    "approvalAutomationEnabled": false
+  },
+  "hookResponsibilities": [
+    {
+      "event": "SessionStart",
+      "responsibilityStatus": "boundary-previewed",
+      "futureResponsibilities": [
+        "load DevView enabled/mode state",
+        "inject project-level DevView developer context",
+        "remind that unvalidated AI output is candidate-only"
+      ],
+      "forbiddenResponsibilities": [
+        "graph-source mutation",
+        "graph delta apply",
+        "approval recording",
+        "runtime Evidence satisfaction"
+      ]
+    },
+    {
+      "event": "UserPromptSubmit",
+      "responsibilityStatus": "boundary-previewed",
+      "futureResponsibilities": [
+        "append DevView additionalContext when DevView is ON",
+        "route natural language request toward Request IR candidate creation",
+        "in guided mode, require DevView preflight/session before editing begins",
+        "optionally block prompt submission when required gateway state is missing"
+      ],
+      "forbiddenResponsibilities": [
+        "generate instruction packs from unvalidated AI analyzer output",
+        "treat AI analyzer output as source authority",
+        "approve user intent"
+      ]
+    },
+    {
+      "event": "PreToolUse",
+      "responsibilityStatus": "boundary-previewed",
+      "futureResponsibilities": [
+        "check for DevView session and execution contract before edit-capable tools",
+        "warn in advisory mode when apply_patch, shell write paths, or MCP edit paths lack a contract",
+        "block in guided mode when required contract/session artifacts are missing"
+      ],
+      "editCapableToolFamilies": ["apply_patch", "shell write paths", "MCP edit tools"],
+      "forbiddenResponsibilities": [
+        "semantic patch inspection",
+        "file-content semantic analysis",
+        "CI enforcement",
+        "branch protection"
+      ]
+    },
+    {
+      "event": "PostToolUse",
+      "responsibilityStatus": "boundary-previewed",
+      "futureResponsibilities": [
+        "observe changed files and update transient session state when safe",
+        "record that a tool action happened for later post-check planning"
+      ],
+      "forbiddenResponsibilities": ["undo side effects", "apply graph deltas", "approve changed files"]
+    },
+    {
+      "event": "Stop",
+      "responsibilityStatus": "boundary-previewed",
+      "futureResponsibilities": [
+        "verify post-check/report/proposal/review packet requirements",
+        "in guided mode, request continuation when required DevView post-checks are missing",
+        "surface missing review packet or proposal-only preview before final answer"
+      ],
+      "forbiddenResponsibilities": [
+        "record human acceptance",
+        "approve graph update proposals",
+        "mutate graph-source",
+        "apply graph deltas"
+      ]
+    }
+  ],
+  "sessionArtifactPreview": {
+    "pathPattern": ".tmp/devview/sessions/<sessionId>/session.json",
+    "artifactRole": "devview-transient-session-state",
+    "storedInTrackedArtifacts": false,
+    "shape": {
+      "devviewEnabled": true,
+      "mode": "advisory-or-guided",
+      "sessionId": "<sessionId>",
+      "requestText": "<original-user-request>",
+      "requestIntakeStatus": "pending",
+      "requestIrCandidatePath": ".tmp/devview/sessions/<sessionId>/request-ir-candidate.json",
+      "validatedRequestIrPath": ".tmp/devview/sessions/<sessionId>/validated-request-ir.json",
+      "graphTraversalStatus": "not-run",
+      "executionContractPath": ".tmp/devview/sessions/<sessionId>/execution-contract.json",
+      "instructionPackPath": ".tmp/devview/sessions/<sessionId>/instruction-pack.json",
+      "codexExecutionStarted": false,
+      "postCheckStatus": "not-run",
+      "scopeReportPath": ".tmp/devview/sessions/<sessionId>/scope-report.json",
+      "proposalPreviewPath": ".tmp/devview/sessions/<sessionId>/graph-delta-proposal.preview.json",
+      "humanReviewPacketPath": ".tmp/devview/sessions/<sessionId>/human-review-packet.md",
+      "approvalStatus": "not-approved",
+      "humanDecisionRecorded": false,
+      "graphSourceMutated": false,
+      "graphDeltaApplied": false
+    },
+    "requiredSafetyValues": {
+      "approvalStatus": "not-approved",
+      "humanDecisionRecorded": false,
+      "graphSourceMutated": false,
+      "graphDeltaApplied": false
+    }
+  },
+  "bypassDetectionPolicy": {
+    "devviewBypassStatus": "previewed-not-implemented",
+    "missingPreflight": "reported-in-advisory-mode-blockable-in-guided-mode",
+    "missingContract": "reported-in-advisory-mode-blockable-in-guided-mode",
+    "missingPostCheck": "reported-in-advisory-mode-continuation-request-in-guided-mode",
+    "missingHumanReviewPacket": "reported-in-advisory-mode-continuation-request-in-guided-mode",
+    "strictMode": "disabled",
+    "advisoryModeBehavior": "report bypass and missing pipeline steps without blocking",
+    "guidedModeBehavior": "block or request continuation when required gateway state is missing"
+  },
+  "userPromptSubmitAdditionalContextPolicy": {
+    "status": "previewed-not-implemented",
+    "whenApplied": "DevView ON",
+    "contextTextPreview": [
+      "DevView is ON for this Codex session.",
+      "Analyze the natural language request into a Request IR candidate before editing.",
+      "AI analyzer output is candidate-only and must be validated by DevView before it becomes execution authority.",
+      "Do not edit until a DevView execution contract and instruction pack exist, unless the gateway mode explicitly allows advisory bypass.",
+      "After editing, run DevView post-checks, advisory check-scope, proposal-only graph delta generation, and Human Review Packet generation.",
+      "Do not approve, apply graph deltas, mutate graph-source, satisfy runtime Evidence, or record human decisions automatically."
+    ],
+    "forbiddenUse": [
+      "generate contract candidates from unvalidated natural language alone",
+      "treat AI analyzer output as source authority",
+      "approve user intent"
+    ]
+  },
+  "hookTrustAndInstallBoundary": {
+    "projectLocalHooksRequireTrust": true,
+    "hookGatewayConfigured": "not-checked",
+    "hookGatewayTrusted": "not-checked",
+    "hookGatewayActive": "not-checked",
+    "lastObservedHookEvent": null,
+    "futureHealthCheckRequirements": [
+      "hooks enabled",
+      "project hook config present",
+      "DevView hook commands trusted",
+      "expected events observed"
+    ],
+    "forbiddenAssumption": "DevView must not assume hooks are active until gateway health confirms configuration, trust, and observed lifecycle events."
+  },
+  "runtimePerformanceBoundary": {
+    "runtimeBudgetTargetMs": 5000,
+    "runtimeBudgetStatus": "advisory-not-enforced",
+    "hooksMustBeLightweight": true,
+    "aiCallsAllowedInDeterministicHooks": false,
+    "networkCallsAllowed": false,
+    "fullRepoScanAllowed": false,
+    "patchHunkInspectionAllowed": false,
+    "fileContentSemanticAnalysisAllowed": false,
+    "fullValidationInsideHooksAllowed": false
+  },
+  "relatedRuntimeSurfaces": {
+    "checkScope": "graph read-model check-scope --base <baseRef> --head <headRef> --json",
+    "compactScopeReport": "graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json",
+    "proposalOnlyGenerator": "graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json",
+    "humanReviewPacket": "graph read-model review-graph-delta --proposal <proposalPath> --markdown <file> --json",
+    "timingSmoke": "npm run devview:runtime:smoke"
+  },
+  "allowedUse": [
+    "define DevView ON/OFF and advisory/guided activation boundaries",
+    "define future Codex hook lifecycle responsibilities",
+    "preview transient DevView session artifact shape",
+    "define bypass detection statuses for missing preflight, contract, post-check, and review packet",
+    "document hook trust and health prerequisites"
+  ],
+  "forbiddenUse": [
+    "full Codex hook script implementation",
+    "actual blocking hook behavior",
+    "LLM calls from hooks",
+    "graph-source mutation",
+    "graph delta apply",
+    "approval recording",
+    "human decision recording",
+    "runtime Evidence satisfaction",
+    "equivalence proof",
+    "CI required check",
+    "branch protection",
+    "scope compliance enforcement as CI",
+    "user acceptance automation"
+  ],
+  "nonExecutionBoundary": "This artifact previews the DevView Codex Hook Gateway boundary only. It does not implement hook scripts, call an LLM, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope as CI, create required checks, change branch protection, or automate user acceptance."
+}

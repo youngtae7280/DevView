@@ -158,6 +158,21 @@ The command reads a proposal-only preview, validates non-apply/non-approval boun
 packet is review input only and does not record approval, human decisions, runtime Evidence satisfaction, graph-source
 apply, or enforcement.
 
+## Hook Gateway Boundary
+
+The DevView Codex Hook Gateway boundary is previewed in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json
+```
+
+It defines future `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, and `Stop` responsibilities for
+routing DevView ON sessions through preflight, contract, post-check, proposal-only preview, and Human Review Packet
+expectations. This is not part of the measured runtime path yet because hook scripts and hook health checks are not
+implemented. Future hook scripts must remain lightweight, local, deterministic, and compatible with the advisory
+5 second budget. They must not call an LLM, make network calls, run full validation, mutate graph-source, apply graph
+deltas, approve work, satisfy runtime Evidence, or turn the budget into CI enforcement.
+
 ## Health Report Boundary
 
 `graph read-model report-health --json` exposes a small runtime budget summary:

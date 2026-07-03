@@ -66,6 +66,10 @@
   deterministic local runtime passes plus compact advisory `check-scope` reporting, proposal-only `propose-graph-delta`
   preview generation, and `review-graph-delta` Human Review Packet generation, excluding AI editing time, full
   validation, CI runtime, and human review.
+- [DevView Codex Hook Gateway Boundary](concept/devview-codex-hook-gateway-boundary.md) - Preview-only DevView ON/OFF
+  and future advisory/guided Codex hook routing boundary across request intake, contract checks, edit-capable tool
+  checks, post-checks, proposal-only previews, and Human Review Packets without implementing hooks, approval, apply, CI
+  enforcement, or strict mode.
 - [Scope Compliance Checker Implementation Readiness](concept/scope-compliance-checker-implementation-readiness.md) -
   Readiness criteria for future scope-compliance checker inputs, missing-input states, result preview status, and
   authoritative changed-file input boundaries before executable checker logic exists.

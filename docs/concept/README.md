@@ -309,6 +309,13 @@ The Human Review Packet surface is now implemented by
 with explicit `--markdown <file>`. The packet is review input only: it does not record approval, record human decisions,
 mutate graph-source, apply graph deltas, satisfy runtime Evidence, enforce scope, prove equivalence, or reject diffs.
 
+The DevView Codex Hook Gateway boundary is previewed in
+`examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json` and
+documented in [devview-codex-hook-gateway-boundary.md](devview-codex-hook-gateway-boundary.md). It defines how future
+Codex lifecycle hooks may route DevView ON sessions through preflight, contract, post-check, proposal-only preview, and
+Human Review Packet expectations. It does not implement hook scripts, add blocking behavior, call an LLM from hooks,
+mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, enforce CI, or enable strict mode.
+
 The following readiness artifact is complete at documentation level:
 
 - [representative-runtime-feasibility-demo.md](representative-runtime-feasibility-demo.md)

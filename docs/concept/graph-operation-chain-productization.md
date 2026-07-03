@@ -112,6 +112,12 @@ proposal-only preview for human developers, but it is review input only. It does
 decision, mutate graph-source, apply graph deltas, satisfy runtime Evidence, prove equivalence, enforce scope, or reject
 diffs.
 
+The DevView Codex Hook Gateway boundary is previewed in
+`examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json`.
+It defines future hook-level routing for DevView ON sessions across request intake, contract checks, edit-capable tool
+checks, post-checks, proposal-only previews, and Human Review Packets. It does not implement hooks, add blocking
+behavior, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, or enable CI enforcement.
+
 Retrofit graph sources can be inspected before implementation:
 
 ```powershell

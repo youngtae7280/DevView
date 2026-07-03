@@ -14,6 +14,8 @@
   "proposalGeneratorScopeDecisionStatus": "proposal-only-generator-scope-decided",
   "proposalGeneratorScopeDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
   "humanReviewPacketSurfaceStatus": "review-packet-cli-available-after-explicit-proposal-output",
+  "devViewCodexHookGatewayBoundaryStatus": "devview-codex-hook-gateway-boundary-previewed",
+  "devViewCodexHookGatewayBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json",
   "proposalOnly": true,
   "candidateOnly": true,
   "candidateGenerationStatus": "not-generated",
@@ -199,14 +201,16 @@
     "defaultOutputBehavior": "json-stdout-only",
     "artifactWritePolicy": "no-tracked-artifact-churn-without-explicit-output",
     "reviewPacketCommand": "graph read-model review-graph-delta --proposal <proposalPath> --markdown <file> --json",
-    "reviewPacketBoundary": "The review packet consumes an explicit proposal-only preview output and remains review input only; it does not record approval or human decisions."
+    "reviewPacketBoundary": "The review packet consumes an explicit proposal-only preview output and remains review input only; it does not record approval or human decisions.",
+    "devViewCodexHookGatewayBoundary": "The hook gateway boundary is a future activation/routing preview for DevView ON sessions; it is not implemented hook automation, graph-source mutation, graph delta apply, approval, or runtime Evidence satisfaction."
   },
   "allowedUse": [
     "serve as the proposal-only generator input shape",
     "collect advisory check-scope, compact report, changed-file collection, evaluation, boundary, schema alignment, and mapping decision references",
     "preserve CH-001 as a structure-only sourceRecordId candidate requiring human review",
     "record Evidence/report link candidates without accepting them as Evidence",
-    "align future generation input with pbe-graph-update-proposal-v0 fields"
+    "align future generation input with pbe-graph-update-proposal-v0 fields",
+    "link to the DevView Codex Hook Gateway boundary as a later activation preview without treating it as generator input authority"
   ],
   "forbiddenUse": [
     "pbe-graph-update-proposal-v0 artifact generation",
@@ -226,5 +230,5 @@
     "user acceptance automation",
     "executor automation"
   ],
-  "nonExecutionBoundary": "This artifact is the graph-delta-compatible source input shape for the proposal-only generator. It is not graph-source, not a graph-delta-v0 artifact, not a pbe-graph-update-proposal-v0 artifact, and not graph delta apply. The generator emits graph-delta-proposal-only-preview JSON without mutating graph-source, approving graph updates, enforcing scope, rejecting diffs, satisfying runtime Evidence, proving equivalence, configuring CI or required checks, changing branch protection, or replacing human review. The Human Review Packet surface consumes explicit proposal preview output only and does not record approval, record human decisions, or replace human review."
+  "nonExecutionBoundary": "This artifact is the graph-delta-compatible source input shape for the proposal-only generator. It is not graph-source, not a graph-delta-v0 artifact, not a pbe-graph-update-proposal-v0 artifact, and not graph delta apply. The generator emits graph-delta-proposal-only-preview JSON without mutating graph-source, approving graph updates, enforcing scope, rejecting diffs, satisfying runtime Evidence, proving equivalence, configuring CI or required checks, changing branch protection, or replacing human review. The Human Review Packet surface consumes explicit proposal preview output only and does not record approval, record human decisions, or replace human review. The DevView Codex Hook Gateway boundary is linked only as a future activation/routing preview; it does not implement hook scripts or blocking behavior."
 }

@@ -751,6 +751,23 @@ The timing smoke is not a CI gate. It excludes AI editing time, full validation,
 does not make the evaluator blocking, reject diffs, approve fixtures, satisfy runtime Evidence, prove equivalence, or
 apply graph deltas.
 
+## DevView Codex Hook Gateway Boundary
+
+The DevView Codex Hook Gateway boundary preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json
+```
+
+It defines future DevView ON routing through Codex lifecycle hooks: `SessionStart`, `UserPromptSubmit`, `PreToolUse`,
+`PostToolUse`, and `Stop`. The preview introduces activation modes (`off`, future `advisory`, future `guided`, and
+reserved `strict-disabled`), a transient session artifact shape under `.tmp/devview/sessions/<sessionId>/session.json`,
+bypass detection statuses, UserPromptSubmit additional context policy, and hook trust/health prerequisites.
+
+This readiness step is boundary-only. It does not implement hook scripts, add blocking hook behavior, call an LLM from
+hooks, mutate graph-source, apply graph deltas, approve proposals, record human decisions, satisfy runtime Evidence,
+prove equivalence, enforce CI, or enable strict mode.
+
 ## Fixture-Provided Changed-File List Preview
 
 The first fixture-provided changed-file list preview is:

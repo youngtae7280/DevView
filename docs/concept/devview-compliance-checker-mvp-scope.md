@@ -605,6 +605,21 @@ review input only: it does not record approval, record a human decision, mutate 
 runtime Evidence, prove equivalence, enforce scope, or reject diffs. Markdown is written only when `--markdown` is
 explicitly supplied.
 
+## DevView Codex Hook Gateway Boundary
+
+The DevView Codex Hook Gateway boundary is now previewed:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json
+```
+
+It defines how future Codex lifecycle hooks can sit in front of DevView ON execution. `SessionStart` may load DevView
+state and context, `UserPromptSubmit` may append DevView routing context, `PreToolUse` may check for session/contract
+boundaries before edit-capable tools, `PostToolUse` may observe changed files in transient state, and `Stop` may verify
+post-check, proposal-only preview, and Human Review Packet requirements. This is activation/routing design only. It does
+not implement hook scripts, block tool calls, call an LLM from hooks, mutate graph-source, apply graph deltas, approve
+work, satisfy runtime Evidence, enforce CI, or enable strict mode.
+
 ## Runtime Budget Smoke
 
 The deterministic DevView runtime budget is documented in

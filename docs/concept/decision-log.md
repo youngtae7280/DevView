@@ -1854,3 +1854,24 @@ questions. JSON is stdout by default. Markdown is written only when explicit `--
 The review packet is review input only. It does not record approval, record human decisions, mutate graph-source, apply
 graph deltas, approve graph updates, change equivalence behavior, satisfy runtime Evidence, enforce scope, reject diffs,
 introduce CI required checks, change branch protection, introduce executor automation, or automate user acceptance.
+
+## DEC-238 Define DevView Codex Hook Gateway Boundary
+
+DEC-238 does not supersede DEC-097 through DEC-237. It previews the DevView Codex Hook Gateway boundary for future
+DevView ON activation and routing through Codex lifecycle hooks.
+
+The boundary preview is recorded in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json
+```
+
+It defines future responsibilities for `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, and `Stop`;
+activation modes (`off`, future `advisory`, future `guided`, and reserved `strict-disabled`); a transient session
+artifact shape under `.tmp/devview/sessions/<sessionId>/session.json`; bypass detection statuses; UserPromptSubmit
+additional context policy; and hook trust/health prerequisites.
+
+This is an activation/routing boundary only. It does not implement hook scripts, introduce actual blocking hook
+behavior, call an LLM from hooks, mutate graph-source, apply graph deltas, approve graph updates, record human
+decisions, change equivalence behavior, satisfy runtime Evidence, enforce scope as CI, introduce required checks, change
+branch protection, introduce executor automation, or automate user acceptance. Strict mode remains disabled.

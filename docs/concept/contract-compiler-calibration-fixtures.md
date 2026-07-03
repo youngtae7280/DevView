@@ -1855,6 +1855,20 @@ It also includes proposal-only graph delta preview generation and writes any gen
 `.tmp` through explicit `--markdown`. It does not enforce scope, reject diffs, configure required checks, approve
 fixtures, record human decisions, satisfy runtime Evidence, prove equivalence, or apply graph deltas.
 
+## DevView Codex Hook Gateway Boundary
+
+The DevView Codex Hook Gateway boundary preview for the Todo App runtime Evidence-only calibration fixture is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json
+```
+
+It records how future DevView ON sessions may be routed through Codex lifecycle hooks before and after editing:
+preflight/request intake, execution contract availability, edit-capable tool checks, post-checks, advisory scope reports,
+proposal-only previews, and Human Review Packets. Current status remains preview-only: hook scripts are not implemented,
+actual blocking hook behavior is not implemented, strict mode is disabled, CI enforcement is disabled, graph apply is
+disabled, approval automation is disabled, and graph-source remains unmutated.
+
 ## Fixture-Provided Changed-File List Preview
 
 The first fixture-provided changed-file list preview artifact is:
