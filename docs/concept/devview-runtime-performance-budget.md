@@ -128,6 +128,16 @@ scope evaluation, proposal boundary, schema alignment, and mapping decisions. It
 not a graph update proposal, and not apply. It adds no timing smoke command and does not change the advisory 5 second
 budget.
 
+The proposal-only generator scope decision is also outside the measured runtime path:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json
+```
+
+It records the intended future CLI shape, stdout/explicit-output policy, exit-code policy, and minimum proposal-shaped
+preview object. No generator command is added in this task, so the timing smoke continues to list graph delta proposal
+generation as a future runtime step.
+
 ## Health Report Boundary
 
 `graph read-model report-health --json` exposes a small runtime budget summary:

@@ -7,9 +7,11 @@
   "schemaAlignmentStatus": "existing-graph-update-proposal-v0-alignment-previewed",
   "unresolvedMappingDecisionStatus": "graph-delta-proposal-unresolved-mapping-decision-previewed",
   "graphDeltaCompatibleSourceStatus": "graph-delta-compatible-source-previewed",
+  "proposalGeneratorScopeDecisionStatus": "proposal-only-generator-scope-decided",
   "proposalBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-boundary.runtime-evidence-only.preview.json",
   "unresolvedMappingDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
   "graphDeltaCompatibleSourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
+  "proposalGeneratorScopeDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
   "existingGraphUpdateProposalSchema": "schemas/pbe/graph-update-proposal-v0.json",
   "existingGraphDeltaSchema": "schemas/pbe/graph-delta-v0.json",
   "existingGraphOperationDocs": [
@@ -96,6 +98,13 @@
       "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
       "candidateContribution": "Collects advisory runtime, changed-file, evaluation, boundary, schema, and mapping decision references into a future proposal-only generator input shape.",
       "authorityBoundary": "Compatible source preview is not graph-source, not graph-delta-v0, not pbe-graph-update-proposal-v0, and not graph delta apply."
+    },
+    {
+      "inputId": "proposal-only-generator-scope-decision",
+      "sourceStatus": "proposal-generator-scope-decision-preview-available",
+      "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
+      "candidateContribution": "Defines the future proposal-only generator CLI scope, output policy, exit-code policy, and minimum proposal-shaped preview object.",
+      "authorityBoundary": "Scope decision is not an implemented generator and does not generate proposal artifacts."
     }
   ],
   "existingProposalV0FieldAlignment": [
@@ -243,6 +252,7 @@
     "proposalCandidateId": "future-generated-id",
     "unresolvedMappingDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
     "graphDeltaCompatibleSource": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
+    "proposalGeneratorScopeDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
     "sourceEvaluationArtifact": "examples/valid/todo-app-pbe-run/generated/scope-compliance-evaluation.runtime-evidence-only.preview.json",
     "sourceRuntimeReport": ".tmp/devview-scope-runtime-report.md",
     "sourceGraphUpdateProposalSchema": "schemas/pbe/graph-update-proposal-v0.json",

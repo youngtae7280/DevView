@@ -681,6 +681,17 @@ It is not graph-source, not `graph-delta-v0`, not `pbe-graph-update-proposal-v0`
 structure-only `sourceRecordId` review candidate, Evidence/report links remain candidate-only, and `graphDeltaPath`
 remains candidate-only/not-written until a future proposal generation task selects an output policy.
 
+The proposal-only generator scope decision is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json
+```
+
+It narrows the next implementation to a local deterministic generator that reads the source artifact, validates required
+boundary fields, and emits proposal-shaped preview JSON. Default behavior must be stdout-only, tracked writes require an
+explicit `--output`, advisory findings must not fail the command, and all generated values remain unapproved
+candidate-only review material. The generator is not implemented by this decision.
+
 ## Runtime Budget Timing Smoke
 
 The runtime performance budget is documented in

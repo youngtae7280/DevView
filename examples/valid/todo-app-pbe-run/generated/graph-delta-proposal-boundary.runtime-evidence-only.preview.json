@@ -22,6 +22,7 @@
   "candidateSchemaAlignmentStatus": "graph-delta-proposal-candidate-schema-alignment-previewed",
   "unresolvedMappingDecisionStatus": "graph-delta-proposal-unresolved-mapping-decision-previewed",
   "graphDeltaCompatibleSourceStatus": "graph-delta-compatible-source-previewed",
+  "proposalGeneratorScopeDecisionStatus": "proposal-only-generator-scope-decided",
   "sourceArtifacts": {
     "advisoryCheckScopeJsonCommand": "graph read-model check-scope --base <baseRef> --head <headRef> --json",
     "compactAdvisoryRuntimeReportCommand": "graph read-model check-scope --base <baseRef> --head <headRef> --markdown <file> --json",
@@ -32,6 +33,7 @@
     "proposalCandidateSchemaAlignment": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.runtime-evidence-only.preview.json",
     "proposalUnresolvedMappingDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
     "graphDeltaCompatibleSource": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
+    "proposalGeneratorScopeDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
     "existingGraphSource": "examples/valid/todo-app-pbe-run/graph-source.json"
   },
   "inputSources": [
@@ -103,6 +105,7 @@
     "candidateSchemaAlignment": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.runtime-evidence-only.preview.json",
     "unresolvedMappingDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
     "graphDeltaCompatibleSource": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
+    "proposalGeneratorScopeDecision": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
     "sourceEvaluationArtifact": "examples/valid/todo-app-pbe-run/generated/scope-compliance-evaluation.runtime-evidence-only.preview.json",
     "sourceRuntimeReport": ".tmp/devview-scope-runtime-report.md",
     "candidateNodes": [],

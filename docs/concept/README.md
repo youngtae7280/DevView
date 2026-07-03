@@ -296,6 +296,12 @@ future proposal-only generator input shape from advisory runtime outputs, change
 proposal boundary, schema alignment, and mapping decisions. It is not graph-source, not a graph update proposal, not
 apply, and not accepted Evidence.
 
+The proposal-only generator scope decision is recorded in
+`examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json`.
+It defines a future stdout-or-explicit-output CLI boundary for proposal-shaped preview generation without implementing
+the generator, generating proposals, mutating graph-source, applying graph deltas, approving updates, enforcing scope, or
+satisfying runtime Evidence.
+
 The following readiness artifact is complete at documentation level:
 
 - [representative-runtime-feasibility-demo.md](representative-runtime-feasibility-demo.md)

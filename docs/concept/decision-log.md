@@ -1796,3 +1796,21 @@ This source artifact is not graph-source, not a `graph-delta-v0` artifact, not a
 artifact, and not apply. It does not generate proposals, mutate graph-source, apply graph deltas, approve graph updates,
 change equivalence behavior, satisfy runtime Evidence, enforce scope, reject diffs, introduce CI required checks, change
 branch protection, introduce executor automation, or automate user acceptance.
+
+## DEC-235 Decide Proposal-Only Graph Delta Generator Scope
+
+DEC-235 does not supersede DEC-097 through DEC-234. It adds the preview artifact
+`examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json`
+to define the narrow future generator/CLI scope before any proposal-only implementation begins.
+
+The decision selects a first future slice that reads the graph-delta-compatible source artifact, validates required
+boundary fields, and emits proposal-shaped preview JSON through stdout by default or a file only when explicit `--output`
+is supplied. It records the preferred future advisory command shape
+`graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json`, keeps advisory findings
+non-failing, and reserves nonzero exits for malformed input, unreadable sources, boundary validation failures, or runtime
+errors.
+
+This is a scope decision only. It does not implement the generator, generate graph update proposals, mutate graph-source,
+apply graph deltas, approve graph updates, change equivalence behavior, satisfy runtime Evidence, enforce scope, reject
+diffs, introduce CI required checks, change branch protection, introduce executor automation, or automate user
+acceptance.

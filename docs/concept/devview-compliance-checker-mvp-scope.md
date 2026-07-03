@@ -572,6 +572,17 @@ input shape. It is not graph-source, not `graph-delta-v0`, not `pbe-graph-update
 apply. `CH-001` remains a structure-only review candidate, `graphDeltaPath` remains candidate-only/not-written, and
 human review remains required.
 
+The proposal-only generator scope decision is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json
+```
+
+It decides that the first future generator slice may read the graph-delta-compatible source, validate boundary fields,
+and produce proposal-shaped preview output only through JSON stdout or an explicit output path. It does not implement the
+generator, generate proposals, mutate graph-source, apply graph deltas, approve updates, enforce scope, or satisfy
+runtime Evidence.
+
 ## Runtime Budget Smoke
 
 The deterministic DevView runtime budget is documented in

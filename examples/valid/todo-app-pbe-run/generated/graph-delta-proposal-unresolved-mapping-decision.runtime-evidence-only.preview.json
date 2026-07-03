@@ -9,6 +9,8 @@
   "candidateSchemaAlignmentArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.runtime-evidence-only.preview.json",
   "graphDeltaCompatibleSourceStatus": "graph-delta-compatible-source-previewed",
   "graphDeltaCompatibleSourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
+  "proposalGeneratorScopeDecisionStatus": "proposal-only-generator-scope-decided",
+  "proposalGeneratorScopeDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
   "existingGraphSource": "examples/valid/todo-app-pbe-run/graph-source.json",
   "existingChangeTree": "examples/valid/todo-app-pbe-run/.pbe/control/change-tree.json",
   "boundaryState": {
@@ -135,6 +137,11 @@
     {
       "mappingId": "graph-delta-compatible-source",
       "status": "graph-delta-compatible-source-previewed-input-shape-only",
+      "requiredBeforeProposalOnlyGenerator": false
+    },
+    {
+      "mappingId": "proposal-only-generator-scope",
+      "status": "proposal-only-generator-scope-decided-not-implemented",
       "requiredBeforeProposalOnlyGenerator": false
     },
     {

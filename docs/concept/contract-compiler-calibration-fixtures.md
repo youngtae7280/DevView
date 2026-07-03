@@ -1798,6 +1798,16 @@ report references, changed-file collection, scope evaluation, proposal boundary,
 mapping decisions. It is not graph-source, not a graph delta, not a graph update proposal, not apply, and not runtime
 Evidence satisfaction. `CH-001` remains a structure-only review candidate and human review remains required.
 
+The proposal-only generator scope decision is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json
+```
+
+It defines the next implementation boundary but does not implement it. A future CLI may read the source artifact and
+produce proposal-shaped preview JSON only through stdout or explicit `--output`; the output remains unapproved,
+non-enforcing, human-review-required, and separate from graph-source apply.
+
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
 approval or runtime Evidence satisfaction.

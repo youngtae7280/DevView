@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "graph-delta-proposal-generator-scope-decision-preview",
+  "status": "graph-delta-proposal-generator-scope-decision-previewed",
+  "fixtureId": "calibration-fixture-todo-app-runtime-evidence-only",
+  "fixtureShape": "test-only-behavior-proof",
+  "decisionScope": "proposal-only-generator-cli-first-slice",
+  "graphDeltaCompatibleSourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
+  "compatibleProposalSchema": "pbe-graph-update-proposal-v0",
+  "compatibleProposalSchemaPath": "schemas/pbe/graph-update-proposal-v0.json",
+  "proposalBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-boundary.runtime-evidence-only.preview.json",
+  "candidateSchemaAlignmentArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.runtime-evidence-only.preview.json",
+  "unresolvedMappingDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
+  "decisionStatus": "proposal-only-generator-scope-decided",
+  "generatorImplementationStatus": "not-implemented",
+  "proposalGenerationStatus": "not-generated",
+  "candidateGenerationStatus": "not-generated",
+  "proposalOnly": true,
+  "candidateOnly": true,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false,
+  "requiresHumanReview": true,
+  "approvalStatus": "not-approved",
+  "equivalenceProven": false,
+  "runtimeEvidenceSatisfied": false,
+  "nonEnforcing": true,
+  "enforcementStatus": "not-enforced",
+  "scopeEnforced": false,
+  "diffRejected": false,
+  "ciRequiredCheckIntroduced": false,
+  "branchProtectionChanged": false,
+  "firstGeneratorSlice": {
+    "sliceStatus": "decided-not-implemented",
+    "allowedActions": [
+      "read graph-delta-compatible source artifact",
+      "validate required boundary fields",
+      "derive proposal-shaped preview data only",
+      "write output only when explicit --output is provided in a future implementation",
+      "preserve all candidate updates as unapproved",
+      "preserve human-review-required boundaries"
+    ],
+    "forbiddenActions": [
+      "graph-source apply",
+      "graph-source mutation",
+      "graph delta apply",
+      "proposal approval",
+      "scope enforcement",
+      "diff rejection",
+      "runtime Evidence acceptance"
+    ],
+    "firstSliceOutputStatus": "proposal-shaped-preview-only-future-task"
+  },
+  "futureCliDecision": {
+    "proposedCommand": "graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json",
+    "commandNamespaceStatus": "read-model-advisory-runtime-surface-preferred",
+    "alternateCommandConsidered": "graph operation propose-update --graph-delta <delta.json> --json",
+    "alternateCommandDecision": "deferred-because-this-slice-starts-from-advisory-source-preview-not-graph-delta-v0",
+    "requiredInputs": [
+      {
+        "inputId": "sourceArtifact",
+        "flag": "--source <sourceArtifact>",
+        "required": true,
+        "expectedArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json"
+      }
+    ],
+    "optionalInputs": [
+      {
+        "inputId": "outputPath",
+        "flag": "--output <proposalPath>",
+        "required": false,
+        "meaning": "Explicitly write proposal-shaped preview output in a future implementation."
+      },
+      {
+        "inputId": "markdownReportPath",
+        "flag": "--markdown <file>",
+        "required": false,
+        "meaning": "Future optional compact proposal review report; not required for the first generator slice."
+      }
+    ],
+    "requiredOutputs": ["json-stdout", "proposal-shaped-preview-object"],
+    "defaultOutputBehavior": "json-stdout-only",
+    "artifactWritePolicy": "no-tracked-artifact-churn-without-explicit-output",
+    "exitCodePolicy": {
+      "advisoryFindingsFailCommand": false,
+      "malformedInputFailsCommand": true,
+      "unreadableSourceFailsCommand": true,
+      "schemaBoundaryFailureFailsCommand": true,
+      "runtimeErrorsFailCommand": true,
+      "timingBudgetFailureFailsCommand": false
+    }
+  },
+  "proposalOutputPathPolicy": {
+    "graphDeltaPathStatus": "unresolved-output-path-policy-required",
+    "graphDeltaPathCandidate": "outputs/devview/todo-app-pbe-run/graph-update-proposals/<proposal-id>.graph-update-proposal.json",
+    "graphDeltaPathAuthorityStatus": "candidate-only-not-written",
+    "defaultOutputPath": "none-stdout-only",
+    "trackedCalibrationPreviewOutputCandidate": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate.runtime-evidence-only.preview.json",
+    "tmpRuntimeOutputCandidate": ".tmp/devview-graph-delta-proposal/proposal-shaped-preview.json",
+    "writePolicy": "future-cli-must-require-explicit-output-for-file-writes",
+    "forbiddenInterpretation": "The candidate path is not authoritative, not written by this task, and not an apply-ready graphDeltaPath."
+  },
+  "minimumFutureProposalShape": {
+    "shapeStatus": "minimum-proposal-shaped-preview-decided-not-generated",
+    "alignedSchema": "pbe-graph-update-proposal-v0",
+    "fields": {
+      "schemaVersion": "future-value-1",
+      "artifactRole": "future-pbe-graph-update-proposal-v0-or-preview-role",
+      "status": "future-proposal-shaped-preview-generated",
+      "proposalId": "future-generated-id",
+      "sourceArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
+      "graphDeltaPath": "candidate-only-not-written",
+      "sourceRecordIdCandidate": "CH-001",
+      "sourceRecordIdAuthorityStatus": "structure-only-review-candidate",
+      "changedFiles": [],
+      "proposedRecordState": {
+        "candidateOnly": true,
+        "approvalStatus": "not-approved"
+      },
+      "proposedNodeUpdates": [],
+      "edgeIntentSummary": {
+        "mappingStatus": "unresolved-existing-schema-review-required"
+      },
+      "boundaries": {
+        "proposalOnly": true,
+        "mutatesGraphSource": false,
+        "graphSourceMutated": false,
+        "graphDeltaApplied": false,
+        "requiresHumanReview": true,
+        "requiresReviewBeforeApply": true,
+        "approvalStatus": "not-approved",
+        "nonEnforcing": true,
+        "enforcementStatus": "not-enforced"
+      },
+      "candidateEvidenceLinks": [],
+      "candidateRuntimeReportLinks": [],
+      "humanReviewQuestions": []
+    },
+    "unapprovedByDefault": true,
+    "approvedNodeUpdatesAllowed": false,
+    "approvedEdgeUpdatesAllowed": false
+  },
+  "requiredFutureProposalBoundaries": {
+    "proposalOnly": true,
+    "graphSourceMutated": false,
+    "graphDeltaApplied": false,
+    "requiresHumanReview": true,
+    "approvalStatus": "not-approved",
+    "nonEnforcing": true,
+    "enforcementStatus": "not-enforced",
+    "runtimeEvidenceSatisfied": false,
+    "equivalenceProven": false,
+    "scopeEnforced": false,
+    "diffRejected": false
+  },
+  "evidenceAndReportLinkPolicy": {
+    "policyStatus": "candidate-only-link-policy-preserved",
+    "advisoryEvaluationJson": {
+      "futureCandidateType": "evidence-link-candidate",
+      "acceptedEvidence": false,
+      "requiresHumanReview": true
+    },
+    "compactRuntimeReport": {
+      "futureCandidateType": "runtime-report-link-candidate",
+      "acceptedEvidence": false,
+      "requiresHumanReview": true
+    },
+    "changedFileCollection": {
+      "futureCandidateType": "changed-file-observation-candidate",
+      "acceptedEvidence": false,
+      "requiresHumanReview": true
+    },
+    "scopeFindingReviewNotes": {
+      "futureCandidateType": "scope-finding-review-note-candidate",
+      "acceptedEvidence": false,
+      "requiresHumanReview": true
+    },
+    "runtimeEvidenceSatisfied": false,
+    "futureAcceptedEvidenceRequiresExplicitPolicy": true,
+    "futureAcceptedEvidenceRequiresHumanReview": true
+  },
+  "runtimePerformanceBoundary": {
+    "futureGeneratorMustBeLocal": true,
+    "futureGeneratorMustBeDeterministic": true,
+    "aiCallsAllowed": false,
+    "networkCallsAllowed": false,
+    "fullRepoScanAllowed": false,
+    "patchHunkInspectionAllowed": false,
+    "fileContentSemanticAnalysisAllowed": false,
+    "workingTreeModeAllowed": false,
+    "stagedModeAllowed": false,
+    "untrackedModeAllowed": false,
+    "generatedChurnExclusionAllowed": false,
+    "runtimeBudgetTargetMs": 5000,
+    "runtimeBudgetStatus": "advisory-not-enforced",
+    "expensiveSemanticAnalysis": "deferred"
+  },
+  "futureImplementationPrerequisites": [
+    {
+      "prerequisiteId": "source-artifact-loader",
+      "status": "future-task"
+    },
+    {
+      "prerequisiteId": "boundary-field-validator",
+      "status": "future-task"
+    },
+    {
+      "prerequisiteId": "proposal-shaped-preview-builder",
+      "status": "future-task"
+    },
+    {
+      "prerequisiteId": "explicit-output-writer",
+      "status": "future-task"
+    },
+    {
+      "prerequisiteId": "compact-proposal-review-report",
+      "status": "deferred-optional"
+    }
+  ],
+  "allowedUse": [
+    "decide the first proposal-only generator and CLI scope",
+    "define future CLI input, output, artifact write, and exit-code policies",
+    "define the minimum future proposal-shaped preview object",
+    "preserve candidate-only Evidence/report link policy",
+    "prepare a later implementation task without generating proposals"
+  ],
+  "forbiddenUse": [
+    "implemented proposal generator",
+    "actual graph update proposal generation",
+    "pbe-graph-update-proposal-v0 artifact generation",
+    "graph-source mutation",
+    "graph delta apply",
+    "approved graph update",
+    "proposal apply behavior",
+    "scope compliance enforcement",
+    "diff rejection",
+    "CI required check",
+    "branch protection",
+    "fixture approval",
+    "runtime Evidence satisfaction",
+    "equivalence proof",
+    "user acceptance automation",
+    "executor automation"
+  ],
+  "nonExecutionBoundary": "This artifact decides the narrow scope for a future proposal-only Graph Delta generator/CLI. It does not implement the generator, generate graph update proposals, mutate graph-source, apply graph deltas, approve graph updates, enforce scope, reject diffs, satisfy runtime Evidence, prove equivalence, configure CI or required checks, change branch protection, or automate user acceptance."
+}

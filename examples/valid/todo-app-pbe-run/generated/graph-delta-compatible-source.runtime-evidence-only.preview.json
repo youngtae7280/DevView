@@ -11,6 +11,8 @@
   "proposalBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-boundary.runtime-evidence-only.preview.json",
   "candidateSchemaAlignmentArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-candidate-schema.runtime-evidence-only.preview.json",
   "unresolvedMappingDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-unresolved-mapping-decision.runtime-evidence-only.preview.json",
+  "proposalGeneratorScopeDecisionStatus": "proposal-only-generator-scope-decided",
+  "proposalGeneratorScopeDecisionArtifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
   "proposalOnly": true,
   "candidateOnly": true,
   "candidateGenerationStatus": "not-generated",
@@ -186,6 +188,14 @@
     "futureGenerationBudgetCompatibility": "must-remain-within-advisory-5-second-runtime-path",
     "expensiveSemanticAnalysisDeferred": true,
     "runtimeBudgetStatus": "advisory-not-enforced"
+  },
+  "futureGeneratorScopeDecision": {
+    "status": "proposal-only-generator-scope-decided",
+    "artifact": "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json",
+    "generatorImplementationStatus": "not-implemented",
+    "proposalGenerationStatus": "not-generated",
+    "defaultOutputBehavior": "json-stdout-only",
+    "artifactWritePolicy": "no-tracked-artifact-churn-without-explicit-output"
   },
   "allowedUse": [
     "define the future proposal-only generator input shape",

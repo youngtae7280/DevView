@@ -97,6 +97,13 @@ future proposal-only generator input shape that collects advisory runtime output
 evaluation, proposal boundary, schema alignment, and mapping decisions. It is not graph-source, not `graph-delta-v0`,
 not `pbe-graph-update-proposal-v0`, and not apply.
 
+The proposal-only generator scope decision is
+`examples/valid/todo-app-pbe-run/generated/graph-delta-proposal-generator-scope-decision.runtime-evidence-only.preview.json`.
+It prefers a future advisory command shape of
+`graph read-model propose-graph-delta --source <sourceArtifact> --output <proposalPath> --json` for the first slice. The
+command is not implemented yet, and the decision keeps output proposal-shaped, unapproved, non-enforcing, and separate
+from `graph operation apply-proposal`.
+
 Retrofit graph sources can be inspected before implementation:
 
 ```powershell
