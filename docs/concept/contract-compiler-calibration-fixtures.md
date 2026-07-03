@@ -1843,6 +1843,24 @@ state. The allowed future decision vocabulary is `approve-proposal`, `reject-pro
 recording command, create approved proposal state, mutate graph-source, apply graph deltas, satisfy runtime Evidence,
 prove equivalence, reject diffs, enforce scope, configure required checks, or automate user acceptance.
 
+The Human Decision Record command boundary preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-command-boundary.runtime-evidence-only.preview.json
+```
+
+It previews the future command:
+
+```text
+graph read-model record-human-decision --review-packet <packet> --proposal <proposal> --decision <value> --output <decisionRecord> --json
+```
+
+The command is not implemented. The preview defines expected inputs, future validation checks, and output authority
+guards so the eventual command cannot overwrite source review/proposal/graph artifacts or silently apply a graph delta.
+It still does not record a decision, approve a proposal, create approved proposal state, mutate graph-source, apply graph
+deltas, satisfy runtime Evidence, prove equivalence, reject diffs, enforce scope, configure required checks, or automate
+user acceptance.
+
 The current Todo App runtime Evidence-only evaluation is blocked rather than clean because the draft still contains
 `unresolved:todo-app-runtime-proof-report`. Empty `evaluatedViolations: []` in this artifact must not be read as fixture
 approval or runtime Evidence satisfaction.

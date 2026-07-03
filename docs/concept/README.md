@@ -316,6 +316,13 @@ as `approve-proposal`, `reject-proposal`, `request-revision`, and `defer-decisio
 recording command, create approved proposal state, mutate graph-source, apply graph deltas, satisfy runtime Evidence,
 prove equivalence, enforce scope, or configure CI.
 
+The Human Decision Record command boundary is previewed in
+`examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-command-boundary.runtime-evidence-only.preview.json`.
+It defines the future `graph read-model record-human-decision ...` command contract, input validation, and output
+authority policy before implementation. No CLI surface is added yet, and it still does not record decisions, approve
+proposals, create approved proposal state, apply graph deltas, mutate graph-source, satisfy Evidence, prove equivalence,
+or enforce scope/CI.
+
 The DevView Codex Hook Gateway boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json` and
 documented in [devview-codex-hook-gateway-boundary.md](devview-codex-hook-gateway-boundary.md). It defines how future

@@ -2786,3 +2786,28 @@ CI success, review packet generation, or proposal generation cannot self-approve
 This decision does not implement a decision recording CLI, record a human decision, approve a proposal, create approved
 proposal state, apply a graph delta, mutate graph-source, accept runtime Evidence, prove equivalence, enforce scope,
 introduce CI required checks, change branch protection, or automate user acceptance.
+
+## DEC-266 Define Human Decision Record Command Boundary
+
+DEC-266 does not supersede DEC-097 through DEC-265. It previews the future command contract for recording a
+human-authored decision while still leaving the command unimplemented.
+
+The Todo App calibration artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-command-boundary.runtime-evidence-only.preview.json
+```
+
+The future command shape is:
+
+```text
+graph read-model record-human-decision --review-packet <packet> --proposal <proposal> --decision <value> --output <decisionRecord> --json
+```
+
+The boundary defines required future inputs, allowed decision values, provenance checks, and output authority guard
+expectations. The eventual command must require explicit human provenance, reject Codex/AI self-approval, and keep
+decision recording separate from approved proposal state creation and graph delta apply.
+
+This decision does not add a CLI command, record a human decision, approve a proposal, create approved proposal state,
+apply a graph delta, mutate graph-source, accept runtime Evidence, prove equivalence, enforce scope, introduce CI
+required checks, change branch protection, or automate user acceptance.
