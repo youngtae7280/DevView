@@ -1008,6 +1008,33 @@ node dist/cli/index.js graph read-model generate-hook-session-manifest `
   --json
 ```
 
+### `pbe graph read-model report-hook-activation-chain`
+
+- Purpose: Read Hook Gateway health, `UserPromptSubmit` context, hook script scaffold/template, and session manifest
+  previews, then emit a report-only activation chain summary.
+- Typical state before running: After `generate-hook-session-manifest` has produced a preview. Hooks are still not
+  installed, active, trusted, or enforcing.
+- Options: `--hook-health <file>`, `--user-prompt-context <file>`, `--script-scaffold <file>`,
+  `--script-templates <file>`, and `--session-manifest <file>` are required. `--output <file>` may write JSON and
+  `--markdown <file>` may write compact Markdown.
+- Output: `artifactRole: devview-hook-activation-chain-report` with
+  `terminalActivationStage: session-manifest-preview-generated-no-hook-activation`.
+- Boundary: validates preview chain continuity and hook event readiness only. It does not install hooks, activate hooks,
+  configure trust, block Codex execution, mutate graph-source, apply graph deltas, approve work, satisfy runtime
+  Evidence, prove equivalence, enforce scope, or configure CI.
+
+```powershell
+node dist/cli/index.js graph read-model report-hook-activation-chain `
+  --hook-health examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json `
+  --user-prompt-context examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.json `
+  --script-scaffold examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json `
+  --script-templates examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json `
+  --session-manifest examples/valid/todo-app-pbe-run/generated/devview-hook-session-manifest.add-todo-runtime-evidence-only.preview.json `
+  --output .tmp/review-hook-activation-chain.json `
+  --markdown .tmp/review-hook-activation-chain.md `
+  --json
+```
+
 ### `pbe graph operation apply-proposal`
 
 - Purpose: Preview or apply a generated graph update proposal to its graph-source.

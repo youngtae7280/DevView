@@ -2342,3 +2342,20 @@ The manifest remains `not-started-preview-only` and records hook readiness plus 
 candidates. It does not start a session, install or activate hooks, mutate trust/config, block Codex execution, run
 validation or traversal, mutate graph-source, apply graph deltas, approve work, record human decisions, satisfy runtime
 Evidence, prove equivalence, enforce scope, or configure CI.
+
+The Hook Gateway activation preview chain report for the same calibration is recorded in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.md
+```
+
+It is generated with:
+
+```text
+graph read-model report-hook-activation-chain --hook-health examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json --user-prompt-context examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.json --script-scaffold examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json --script-templates examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json --session-manifest examples/valid/todo-app-pbe-run/generated/devview-hook-session-manifest.add-todo-runtime-evidence-only.preview.json --json
+```
+
+The report verifies preview chain continuity and hook event readiness only. It does not install or activate hooks, mutate
+trust/config, block Codex execution, run validation or traversal, mutate graph-source, apply graph deltas, approve work,
+record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.

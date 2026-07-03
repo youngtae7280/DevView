@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-hook-activation-chain-report",
+  "status": "devview-hook-activation-chain-report-generated",
+  "reporterName": "HookActivationChainReporter",
+  "reportScope": "hook-activation-preview-chain-report-only",
+  "terminalActivationStage": "session-manifest-preview-generated-no-hook-activation",
+  "sourceHookGatewayHealth": "examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json",
+  "sourceUserPromptSubmitContextPreview": "examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.json",
+  "sourceHookScriptScaffold": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json",
+  "sourceHookScriptTemplatePreview": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json",
+  "sourceHookSessionManifest": "examples/valid/todo-app-pbe-run/generated/devview-hook-session-manifest.add-todo-runtime-evidence-only.preview.json",
+  "chainStages": [
+    {
+      "stage": "hook-gateway-health",
+      "sourcePath": "examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json",
+      "artifactRole": "devview-hook-gateway-health-boundary-preview",
+      "status": "devview-hook-gateway-health-boundary-previewed",
+      "authorityStatus": "preview-or-report-only"
+    },
+    {
+      "stage": "user-prompt-submit-context",
+      "sourcePath": "examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.json",
+      "artifactRole": "devview-user-prompt-submit-context-preview",
+      "status": "user-prompt-submit-context-preview-generated",
+      "authorityStatus": "preview-or-report-only"
+    },
+    {
+      "stage": "hook-script-scaffold",
+      "sourcePath": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json",
+      "artifactRole": "devview-hook-script-scaffold-preview",
+      "status": "devview-hook-script-scaffold-preview-generated",
+      "authorityStatus": "preview-or-report-only"
+    },
+    {
+      "stage": "hook-script-templates",
+      "sourcePath": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-template.add-todo-runtime-evidence-only.preview.json",
+      "artifactRole": "devview-hook-script-template-preview",
+      "status": "devview-hook-script-template-preview-generated",
+      "authorityStatus": "preview-or-report-only"
+    },
+    {
+      "stage": "hook-session-manifest",
+      "sourcePath": "examples/valid/todo-app-pbe-run/generated/devview-hook-session-manifest.add-todo-runtime-evidence-only.preview.json",
+      "artifactRole": "devview-hook-session-manifest-preview",
+      "status": "devview-hook-session-manifest-preview-generated",
+      "authorityStatus": "preview-or-report-only"
+    }
+  ],
+  "hookEventReadiness": [
+    {
+      "hookEvent": "SessionStart",
+      "readinessStatus": "preview-ready-not-active",
+      "hookActive": false,
+      "blockingEnabled": false,
+      "sourceSessionManifestReady": true
+    },
+    {
+      "hookEvent": "UserPromptSubmit",
+      "readinessStatus": "preview-ready-not-active",
+      "hookActive": false,
+      "blockingEnabled": false,
+      "sourceSessionManifestReady": true
+    },
+    {
+      "hookEvent": "PreToolUse",
+      "readinessStatus": "preview-ready-not-active",
+      "hookActive": false,
+      "blockingEnabled": false,
+      "sourceSessionManifestReady": true
+    },
+    {
+      "hookEvent": "PostToolUse",
+      "readinessStatus": "preview-ready-not-active",
+      "hookActive": false,
+      "blockingEnabled": false,
+      "sourceSessionManifestReady": true
+    },
+    {
+      "hookEvent": "Stop",
+      "readinessStatus": "preview-ready-not-active",
+      "hookActive": false,
+      "blockingEnabled": false,
+      "sourceSessionManifestReady": true
+    }
+  ],
+  "hooksActive": false,
+  "hookScriptsInstalled": false,
+  "strictModeEnabled": false,
+  "guidedEnforcementEnabled": false,
+  "actualBlockingHookBehaviorImplemented": false,
+  "codexExecutionTriggered": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false,
+  "approvalStatus": "not-approved",
+  "humanDecisionRecorded": false,
+  "runtimeEvidenceSatisfied": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "humanReviewRequired": true,
+  "nonEnforcing": true,
+  "runtimeBudgetEnforced": false,
+  "bypassDetectionStatus": "preview-only-non-enforcing",
+  "validationFindings": [],
+  "outputWritePolicy": "explicit-output-only",
+  "writtenOutputPath": "examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.json",
+  "markdownReportPath": "examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.md",
+  "writtenOutputPathAuthorityStatus": "explicit-preview-output-not-source-authority",
+  "markdownReportAuthorityStatus": "explicit-preview-output-not-source-authority",
+  "nonExecutionBoundary": "This Hook Activation Chain report verifies preview artifact continuity only. It does not install hooks, activate hooks, trust repositories, configure Codex, block Codex execution, call an LLM, make network calls, run graph traversal, mutate graph-source, apply graph deltas, approve work, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI."
+}

@@ -97,6 +97,7 @@ export interface CliOptions {
   scaffold?: string
   scriptScaffold?: string
   scriptTemplates?: string
+  sessionManifest?: string
   clarificationPack?: string
   answers?: string
   boundary?: string

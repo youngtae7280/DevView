@@ -132,10 +132,10 @@ Current lanes:
   `generate-hook-script-templates`.
 - `advisory-backend-lane`: advisory backend, post-check, graph delta proposal, and review reporting commands.
 
-`generate-hook-session-manifest` is intentionally not included in the current all-steps smoke. A local trial including
-the step produced an advisory over-target all-steps snapshot while the `core-critical-lane` stayed well inside 5 seconds.
-The command remains preview-only and should be added to a future lane-specific smoke or reintroduced after the all-steps
-suite is optimized.
+`generate-hook-session-manifest` and `report-hook-activation-chain` are intentionally not included in the current
+all-steps smoke. A local trial including session-manifest work produced an advisory over-target all-steps snapshot while
+the `core-critical-lane` stayed well inside 5 seconds. Both commands remain preview/report-only and should be added to a
+future lane-specific smoke or reintroduced after the all-steps suite is optimized.
 
 The Hook Gateway install/trust scope decision boundary is a preview artifact only:
 

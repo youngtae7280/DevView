@@ -70,8 +70,8 @@
   and future advisory/guided Codex hook routing boundary across request intake, contract checks, edit-capable tool
   checks, post-checks, proposal-only previews, Human Review Packets, hook gateway health/readiness checks, and advisory
   `UserPromptSubmit` additionalContext preview generation plus install/trust scope, hook script scaffold preview, and
-  hook script template/session manifest preview boundaries without implementing hooks, approval, apply, CI enforcement,
-  or strict mode.
+  hook script template/session manifest/activation chain report preview boundaries without implementing hooks, approval,
+  apply, CI enforcement, or strict mode.
 - [Natural Language Request Intake Boundary](concept/natural-language-request-intake-boundary.md) - DevView compiler
   frontend boundary for natural language request intake, AI Request Analyzer candidate-only boundaries, Request IR
   Candidate schema/calibration fixtures, schema-only validation, non-traversing graph-aware validation, deterministic

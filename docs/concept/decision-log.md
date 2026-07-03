@@ -2723,3 +2723,35 @@ This decision does not start a hook session, install hooks, activate hooks, writ
 mutate Codex or repo config, block Codex execution, call an LLM/API, make network calls, run validation or traversal,
 mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove
 equivalence, enforce scope, introduce CI required checks, change branch protection, or automate user acceptance.
+
+## DEC-264 Report Hook Activation Preview Chain
+
+DEC-264 does not supersede DEC-097 through DEC-263. It adds a deterministic report-only command that checks continuity
+across the Hook Gateway activation preview artifacts without activating hooks.
+
+The command is:
+
+```text
+graph read-model report-hook-activation-chain --hook-health <healthReportOrBoundary> --user-prompt-context <contextPreview> --script-scaffold <scaffoldPreview> --script-templates <templatePreview> --session-manifest <sessionManifestPreview> --json
+```
+
+The Todo App calibration artifacts are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.md
+```
+
+The output has `artifactRole: devview-hook-activation-chain-report` and
+`terminalActivationStage: session-manifest-preview-generated-no-hook-activation`. It checks source-path continuity from
+health/context/scaffold/templates into the session manifest and requires each hook event to remain
+`preview-ready-not-active`, `hookActive: false`, and `blockingEnabled: false`.
+
+The command is not included in the current all-steps runtime smoke because the related session manifest preview already
+pushed one local advisory snapshot over target while the `core-critical-lane` stayed under 5 seconds. The command should
+be added to a future lane-specific smoke or reintroduced after timing optimization.
+
+This decision does not install hooks, activate hooks, trust repositories, mutate Codex or repo config, block Codex
+execution, call an LLM/API, make network calls, run validation or traversal, mutate graph-source, apply graph deltas,
+approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, introduce CI
+required checks, change branch protection, or automate user acceptance.

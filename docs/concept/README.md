@@ -357,6 +357,11 @@ It bundles the health/context/script previews into a not-started session manifes
 or activating hooks, mutating trust/config, blocking Codex, approving work, satisfying Evidence, proving equivalence, or
 enforcing scope/CI.
 
+The Hook Gateway activation preview chain report is exposed as
+`graph read-model report-hook-activation-chain --hook-health <healthReportOrBoundary> --user-prompt-context <contextPreview> --script-scaffold <scaffoldPreview> --script-templates <templatePreview> --session-manifest <sessionManifestPreview> --json`.
+It checks preview artifact continuity and hook event readiness without installing or activating hooks, mutating
+trust/config, blocking Codex, approving work, satisfying Evidence, proving equivalence, or enforcing scope/CI.
+
 The runtime smoke lane boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-runtime-smoke-lane-boundary.runtime-evidence-only.preview.json`. It
 keeps the all-steps smoke as an advisory snapshot while reporting lane totals for analyzer preflight, core critical

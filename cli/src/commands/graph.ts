@@ -8,6 +8,7 @@ import { generateGraphDeltaHumanReviewPacket } from '../core/graph-delta-human-r
 import { generateGraphTraversalPlanFile } from '../core/graph-traversal-plan.js'
 import { generateContractCompilerInputFile } from '../core/contract-input-generator.js'
 import { reportHookGatewayHealthFile } from '../core/hook-gateway-health-report.js'
+import { reportHookActivationChainFile } from '../core/hook-activation-chain-report.js'
 import { generateHookSessionManifestFile } from '../core/hook-session-manifest.js'
 import { generateHookScriptScaffoldFile } from '../core/hook-script-scaffold.js'
 import { generateHookScriptTemplatePreviewFile } from '../core/hook-script-template-preview.js'
@@ -1883,6 +1884,87 @@ export async function graphReadModelGenerateHookSessionManifestCommand(
           message,
           suggestedFix:
             'Provide readable Hook Gateway health/context/script preview artifacts and dedicated preview output paths.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelReportHookActivationChainCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.hookHealth) {
+    return invalidCommand('graph read-model report-hook-activation-chain requires --hook-health <file>.')
+  }
+  if (!context.options.userPromptContext) {
+    return invalidCommand('graph read-model report-hook-activation-chain requires --user-prompt-context <file>.')
+  }
+  if (!context.options.scriptScaffold) {
+    return invalidCommand('graph read-model report-hook-activation-chain requires --script-scaffold <file>.')
+  }
+  if (!context.options.scriptTemplates) {
+    return invalidCommand('graph read-model report-hook-activation-chain requires --script-templates <file>.')
+  }
+  if (!context.options.sessionManifest) {
+    return invalidCommand('graph read-model report-hook-activation-chain requires --session-manifest <file>.')
+  }
+
+  try {
+    const result = await reportHookActivationChainFile(context.options.root, {
+      hookHealth: context.options.hookHealth,
+      userPromptContext: context.options.userPromptContext,
+      scriptScaffold: context.options.scriptScaffold,
+      scriptTemplates: context.options.scriptTemplates,
+      sessionManifest: context.options.sessionManifest,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    const blocked = result.report.status !== 'devview-hook-activation-chain-report-generated'
+    const errorFindings = result.report.validationFindings.filter((finding) => finding.severity === 'error')
+
+    return {
+      ok: !blocked,
+      command: 'graph read-model report-hook-activation-chain',
+      exitCode: blocked ? ExitCode.ValidationFailed : ExitCode.Success,
+      message: blocked
+        ? 'Hook activation preview chain report blocked by unsafe or mismatched inputs.'
+        : 'Hook activation preview chain report generated without activating hooks.',
+      issues: blocked
+        ? (errorFindings.length > 0 ? errorFindings : result.report.validationFindings).map((finding) =>
+            issue({
+              validator: 'HookActivationChainReporter',
+              code: finding.code,
+              severity: finding.severity,
+              message: finding.message,
+              reason: finding.field ? `Field: ${finding.field}` : undefined,
+              suggestedFix:
+                finding.suggestedFix ??
+                'Regenerate Hook Gateway health/context/script/session preview artifacts before reporting activation readiness.',
+            }),
+          )
+        : [],
+      data: {
+        ...result.report,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: blocked
+          ? 'Repair activation-chain inputs. This command did not activate hooks, configure trust, trigger Codex execution, mutate graph-source, approve work, satisfy Evidence, prove equivalence, or enforce scope.'
+          : 'Review this as preview-only activation readiness context. This command did not activate hooks, configure trust, trigger Codex execution, mutate graph-source, approve work, satisfy Evidence, prove equivalence, or enforce scope.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model report-hook-activation-chain',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Hook activation preview chain report could not run.',
+      issues: [
+        issue({
+          validator: 'HookActivationChainReporter',
+          code: 'HOOK_ACTIVATION_CHAIN_REPORT_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide readable Hook Gateway health/context/script/session preview artifacts and dedicated report output paths.',
         }),
       ],
     }
