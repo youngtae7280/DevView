@@ -22,6 +22,8 @@ const smokeInstructionPackMarkdownPath = '.tmp/devview-runtime-timing-smoke/inst
 const smokeHookGatewayHealthReportPath = '.tmp/devview-runtime-timing-smoke/hook-gateway-health-report.json'
 const smokeUserPromptContextPath = '.tmp/devview-runtime-timing-smoke/user-prompt-context.json'
 const smokeUserPromptContextMarkdownPath = '.tmp/devview-runtime-timing-smoke/user-prompt-context.md'
+const smokeHookScriptScaffoldPath = '.tmp/devview-runtime-timing-smoke/hook-script-scaffold.json'
+const smokeHookScriptScaffoldMarkdownPath = '.tmp/devview-runtime-timing-smoke/hook-script-scaffold.md'
 const graphDeltaCompatibleSourcePath =
   'examples/valid/todo-app-pbe-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json'
 const requestIrCandidatePath =
@@ -32,6 +34,10 @@ const requestIrCandidateSchemaPath =
   'examples/valid/todo-app-pbe-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json'
 const hookGatewayHealthBoundaryPath =
   'examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json'
+const hookGatewayBoundaryPath =
+  'examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json'
+const hookInstallTrustBoundaryPath =
+  'examples/valid/todo-app-pbe-run/generated/devview-hook-install-trust-boundary.runtime-evidence-only.preview.json'
 const frontendChainReportPath =
   'examples/valid/todo-app-pbe-run/generated/devview-frontend-chain.add-todo-runtime-evidence-only.preview.json'
 const runtimeSmokeLaneBoundaryPath =
@@ -227,6 +233,30 @@ const measuredSteps = [
       smokeUserPromptContextPath,
       '--markdown',
       smokeUserPromptContextMarkdownPath,
+      '--json',
+    ],
+    includedInRuntimeBudget: true,
+    runtimeLane: 'activation-readiness-lane',
+  },
+  {
+    stepName: 'hook-script-scaffold-preview',
+    command: `node dist/cli/index.js graph read-model generate-hook-script-scaffold --boundary ${hookGatewayBoundaryPath} --hook-health ${hookGatewayHealthBoundaryPath} --install-trust ${hookInstallTrustBoundaryPath} --user-prompt-context ${smokeUserPromptContextPath} --output ${smokeHookScriptScaffoldPath} --markdown ${smokeHookScriptScaffoldMarkdownPath} --json`,
+    args: [
+      'graph',
+      'read-model',
+      'generate-hook-script-scaffold',
+      '--boundary',
+      hookGatewayBoundaryPath,
+      '--hook-health',
+      hookGatewayHealthBoundaryPath,
+      '--install-trust',
+      hookInstallTrustBoundaryPath,
+      '--user-prompt-context',
+      smokeUserPromptContextPath,
+      '--output',
+      smokeHookScriptScaffoldPath,
+      '--markdown',
+      smokeHookScriptScaffoldMarkdownPath,
       '--json',
     ],
     includedInRuntimeBudget: true,

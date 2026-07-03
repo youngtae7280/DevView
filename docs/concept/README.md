@@ -340,6 +340,12 @@ The Hook Gateway install/trust decision boundary is previewed in
 defines future repo-local hook config/script scope candidates, explicit user/repo trust prerequisites, and forbidden
 global config/hidden install/auto-trust/CI mutations. It is preview-only and does not install hooks or mutate trust.
 
+The Hook Gateway script scaffold preview command is exposed as
+`graph read-model generate-hook-script-scaffold --boundary <gatewayBoundary> --hook-health <healthBoundary> --install-trust <installTrustBoundary> --user-prompt-context <contextPreview> --json`.
+It produces preview-only `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, and `Stop` template records
+without writing active hook scripts, mutating trust/config, blocking Codex, approving work, satisfying Evidence, proving
+equivalence, or enforcing scope/CI.
+
 The runtime smoke lane boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-runtime-smoke-lane-boundary.runtime-evidence-only.preview.json`. It
 keeps the all-steps smoke as an advisory snapshot while reporting lane totals for analyzer preflight, core critical

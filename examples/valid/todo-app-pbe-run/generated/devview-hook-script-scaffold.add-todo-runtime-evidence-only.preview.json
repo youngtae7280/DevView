@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-hook-script-scaffold-preview",
+  "status": "devview-hook-script-scaffold-preview-generated",
+  "generatorName": "HookScriptScaffoldPreviewGenerator",
+  "scaffoldScope": "hook-script-template-preview-no-install",
+  "sourceHookGatewayBoundary": "examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json",
+  "sourceHookGatewayHealthBoundary": "examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json",
+  "sourceHookInstallTrustBoundary": "examples/valid/todo-app-pbe-run/generated/devview-hook-install-trust-boundary.runtime-evidence-only.preview.json",
+  "sourceUserPromptSubmitContextPreview": "examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.json",
+  "devviewMode": "advisory",
+  "hookScriptsImplemented": false,
+  "hookScriptsInstalled": false,
+  "hookGatewayConfigured": "not-checked-preview-only",
+  "hookGatewayTrusted": "not-checked-preview-only",
+  "hookGatewayActive": "not-checked-preview-only",
+  "installTrustDecisionImplemented": false,
+  "actualInstallOrTrustMutationImplemented": false,
+  "strictModeEnabled": false,
+  "guidedEnforcementEnabled": false,
+  "actualBlockingHookBehaviorImplemented": false,
+  "codexExecutionTriggered": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false,
+  "approvalStatus": "not-approved",
+  "humanDecisionRecorded": false,
+  "runtimeEvidenceSatisfied": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "humanReviewRequired": true,
+  "nonEnforcing": true,
+  "runtimeBudgetEnforced": false,
+  "additionalContextInjectionReady": true,
+  "scaffoldTemplates": [
+    {
+      "hookEvent": "SessionStart",
+      "templateRole": "read DevView mode and report advisory readiness only",
+      "installStatus": "not-installed-preview-only",
+      "activeStatus": "not-active-preview-only",
+      "enforcementStatus": "non-enforcing-advisory-only",
+      "scriptPathCandidate": ".codex/hooks/devview-session-start.ps1",
+      "behaviorSummary": "Would report DevView advisory readiness if explicitly installed in the future.",
+      "forbiddenBehavior": ["block session start", "trust repo automatically", "mutate config"]
+    },
+    {
+      "hookEvent": "UserPromptSubmit",
+      "templateRole": "attach generated DevView additionalContext preview",
+      "installStatus": "not-installed-preview-only",
+      "activeStatus": "not-active-preview-only",
+      "enforcementStatus": "non-enforcing-advisory-only",
+      "scriptPathCandidate": ".codex/hooks/devview-user-prompt-submit.ps1",
+      "behaviorSummary": "Would provide the prepared UserPromptSubmit context as advisory additionalContext.",
+      "forbiddenBehavior": ["execute Codex", "generate Request IR without validation", "claim approval"]
+    },
+    {
+      "hookEvent": "PreToolUse",
+      "templateRole": "future advisory scope reminder before tool use",
+      "installStatus": "not-installed-preview-only",
+      "activeStatus": "not-active-preview-only",
+      "enforcementStatus": "non-enforcing-advisory-only",
+      "scriptPathCandidate": ".codex/hooks/devview-pre-tool-use.ps1",
+      "behaviorSummary": "Would summarize allowed and forbidden scope without blocking tool use.",
+      "forbiddenBehavior": ["block tools", "enforce scope", "mutate graph-source"]
+    },
+    {
+      "hookEvent": "PostToolUse",
+      "templateRole": "future advisory changed-output observation",
+      "installStatus": "not-installed-preview-only",
+      "activeStatus": "not-active-preview-only",
+      "enforcementStatus": "non-enforcing-advisory-only",
+      "scriptPathCandidate": ".codex/hooks/devview-post-tool-use.ps1",
+      "behaviorSummary": "Would record advisory observations for later report-only checks.",
+      "forbiddenBehavior": ["apply graph deltas", "record human decision", "satisfy Evidence"]
+    },
+    {
+      "hookEvent": "Stop",
+      "templateRole": "future advisory post-run reminder",
+      "installStatus": "not-installed-preview-only",
+      "activeStatus": "not-active-preview-only",
+      "enforcementStatus": "non-enforcing-advisory-only",
+      "scriptPathCandidate": ".codex/hooks/devview-stop.ps1",
+      "behaviorSummary": "Would remind the session to run report/proposal/review packet commands.",
+      "forbiddenBehavior": ["approve output", "apply graph deltas", "enable CI enforcement"]
+    }
+  ],
+  "installCandidates": [
+    {
+      "id": "repo-local-hook-config-candidate",
+      "pathPattern": ".codex/hooks/devview/*.json",
+      "scopeStatus": "future-candidate-not-created",
+      "authorityRequirement": "explicit-user-decision-required",
+      "allowedFutureUse": "repo-local-advisory-hook-configuration-only"
+    },
+    {
+      "id": "repo-local-hook-script-candidate",
+      "pathPattern": ".codex/hooks/devview/*.ps1|*.js",
+      "scopeStatus": "future-candidate-not-created",
+      "authorityRequirement": "explicit-user-decision-required",
+      "allowedFutureUse": "repo-local-hook-script-only-after-user-approved-advisory-install"
+    },
+    {
+      "id": "session-local-context-artifact-candidate",
+      "pathPattern": ".tmp/devview/sessions/<sessionId>/*.json|*.md",
+      "scopeStatus": "future-transient-runtime-candidate",
+      "authorityRequirement": "session-explicitness-required",
+      "allowedFutureUse": "transient-session-context-no-source-authority"
+    },
+    {
+      "id": "generated-preview-artifact-candidate",
+      "pathPattern": "examples/valid/todo-app-pbe-run/generated/devview-*.preview.json|*.preview.md",
+      "scopeStatus": "calibration-preview-existing",
+      "authorityRequirement": "tracked-preview-review-only",
+      "allowedFutureUse": "documentation-and-calibration-only"
+    }
+  ],
+  "trustPrerequisites": [
+    {
+      "id": "explicit-user-decision-required",
+      "required": true,
+      "currentStatus": "missing-future-decision",
+      "meaning": "A user must explicitly request or approve advisory hook install/trust before any hook config is written."
+    },
+    {
+      "id": "explicit-repo-path-required",
+      "required": true,
+      "currentStatus": "not-checked-preview-only",
+      "meaning": "The target repository path must be explicit and cannot be inferred from global state."
+    },
+    {
+      "id": "advisory-mode-first",
+      "required": true,
+      "currentStatus": "boundary-previewed",
+      "meaning": "First install/trust decision can only target advisory mode; guided behavior remains future work."
+    },
+    {
+      "id": "strict-mode-disabled",
+      "required": true,
+      "currentStatus": "satisfied-by-preview-boundary",
+      "expectedValue": false
+    },
+    {
+      "id": "health-and-context-preview-available",
+      "required": true,
+      "currentStatus": "preview-artifacts-linked",
+      "dependsOn": [
+        "examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.json"
+      ]
+    }
+  ],
+  "disallowedMutations": [
+    "global-codex-config-mutation",
+    "hidden-hook-install",
+    "automatic-trust-acceptance",
+    "active-hook-config-write",
+    "strict-or-guided-blocking-activation",
+    "codex-execution-trigger",
+    "graph-source-mutation",
+    "graph-delta-apply",
+    "approval-or-human-decision-automation",
+    "runtime-evidence-satisfaction",
+    "equivalence-proof",
+    "scope-or-ci-enforcement"
+  ],
+  "validationFindings": [],
+  "outputWritePolicy": "explicit-output-only",
+  "writtenOutputPath": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json",
+  "markdownReportPath": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.md",
+  "writtenOutputPathAuthorityStatus": "explicit-preview-output-not-source-authority",
+  "markdownReportAuthorityStatus": "explicit-preview-output-not-source-authority",
+  "nonExecutionBoundary": "This Hook Gateway script scaffold is a preview of future repo-local hook templates only. It does not write hook scripts to active locations, install hooks, trust repositories, configure Codex, block Codex execution, call an LLM, make network calls, mutate graph-source, apply graph deltas, approve work, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI."
+}

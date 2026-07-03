@@ -100,6 +100,8 @@ export interface CliOptions {
   intake?: string
   frontendChain?: string
   hookHealth?: string
+  installTrust?: string
+  userPromptContext?: string
   instructionMarkdown?: string
   schema?: string
   chainCommand?: string

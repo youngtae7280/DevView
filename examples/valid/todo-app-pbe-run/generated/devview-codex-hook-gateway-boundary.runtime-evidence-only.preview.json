@@ -282,5 +282,8 @@
   ],
   "nonExecutionBoundary": "This artifact previews the DevView Codex Hook Gateway boundary only. It links to the Natural Language Request Intake compiler frontend boundary as semantics for future UserPromptSubmit routing, but it does not implement hook scripts, call an LLM, run Request IR validation, run graph traversal, generate contract compiler input, mutate graph-source, apply graph deltas, approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope as CI, create required checks, change branch protection, or automate user acceptance.",
   "hookInstallTrustBoundaryStatus": "devview-hook-install-trust-boundary-previewed",
-  "hookInstallTrustBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-install-trust-boundary.runtime-evidence-only.preview.json"
+  "hookInstallTrustBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-install-trust-boundary.runtime-evidence-only.preview.json",
+  "firstCalibrationHookScriptScaffoldPreviewArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json",
+  "hookScriptScaffoldPreviewGenerated": true,
+  "hookScriptsInstalled": false
 }

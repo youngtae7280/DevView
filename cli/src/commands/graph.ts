@@ -8,6 +8,7 @@ import { generateGraphDeltaHumanReviewPacket } from '../core/graph-delta-human-r
 import { generateGraphTraversalPlanFile } from '../core/graph-traversal-plan.js'
 import { generateContractCompilerInputFile } from '../core/contract-input-generator.js'
 import { reportHookGatewayHealthFile } from '../core/hook-gateway-health-report.js'
+import { generateHookScriptScaffoldFile } from '../core/hook-script-scaffold.js'
 import { generateInstructionPackFile } from '../core/instruction-pack-generator.js'
 import { reportFrontendChainFile } from '../core/frontend-chain-report.js'
 import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
@@ -1662,6 +1663,83 @@ export async function graphReadModelPrepareUserPromptContextCommand(context: Com
           message,
           suggestedFix:
             'Provide readable frontend chain, Hook Gateway health, Instruction Pack JSON/Markdown, and dedicated preview output paths.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelGenerateHookScriptScaffoldCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.boundary) {
+    return invalidCommand('graph read-model generate-hook-script-scaffold requires --boundary <file>.')
+  }
+  if (!context.options.hookHealth) {
+    return invalidCommand('graph read-model generate-hook-script-scaffold requires --hook-health <file>.')
+  }
+  if (!context.options.installTrust) {
+    return invalidCommand('graph read-model generate-hook-script-scaffold requires --install-trust <file>.')
+  }
+  if (!context.options.userPromptContext) {
+    return invalidCommand('graph read-model generate-hook-script-scaffold requires --user-prompt-context <file>.')
+  }
+
+  try {
+    const result = await generateHookScriptScaffoldFile(context.options.root, {
+      boundary: context.options.boundary,
+      hookHealth: context.options.hookHealth,
+      installTrust: context.options.installTrust,
+      userPromptContext: context.options.userPromptContext,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    const blocked = result.scaffold.status !== 'devview-hook-script-scaffold-preview-generated'
+    const errorFindings = result.scaffold.validationFindings.filter((finding) => finding.severity === 'error')
+
+    return {
+      ok: !blocked,
+      command: 'graph read-model generate-hook-script-scaffold',
+      exitCode: blocked ? ExitCode.ValidationFailed : ExitCode.Success,
+      message: blocked
+        ? 'Hook script scaffold preview blocked by unsafe or mismatched inputs.'
+        : 'Hook script scaffold preview generated without installing or activating hooks.',
+      issues: blocked
+        ? (errorFindings.length > 0 ? errorFindings : result.scaffold.validationFindings).map((finding) =>
+            issue({
+              validator: 'HookScriptScaffoldPreviewGenerator',
+              code: finding.code,
+              severity: finding.severity,
+              message: finding.message,
+              reason: finding.field ? `Field: ${finding.field}` : undefined,
+              suggestedFix:
+                finding.suggestedFix ??
+                'Regenerate Hook Gateway boundary, health, install/trust, and UserPromptSubmit context previews.',
+            }),
+          )
+        : [],
+      data: {
+        ...result.scaffold,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: blocked
+          ? 'Repair scaffold inputs. This command did not install hooks, configure trust, trigger Codex execution, mutate graph-source, approve work, satisfy Evidence, prove equivalence, or enforce scope.'
+          : 'Review this scaffold as preview-only hook template context. This command did not install hooks, configure trust, trigger Codex execution, mutate graph-source, approve work, satisfy Evidence, prove equivalence, or enforce scope.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model generate-hook-script-scaffold',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Hook script scaffold preview could not run.',
+      issues: [
+        issue({
+          validator: 'HookScriptScaffoldPreviewGenerator',
+          code: 'HOOK_SCRIPT_SCAFFOLD_GENERATION_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide readable Hook Gateway boundary, health, install/trust, UserPromptSubmit context, and dedicated preview output paths.',
         }),
       ],
     }

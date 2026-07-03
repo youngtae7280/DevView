@@ -198,6 +198,8 @@ Commands:
                        Report the DevView frontend artifact chain from intake through Instruction Pack preview
   graph read-model prepare-user-prompt-context
                        Prepare advisory UserPromptSubmit additionalContext preview without installing hooks or execution
+  graph read-model generate-hook-script-scaffold
+                       Generate preview-only Hook Gateway script scaffold without installing or activating hooks
   graph read-model report-health
                        Summarize local non-enforcing Graph-source transition health
   graph read-model observe-candidates
@@ -246,8 +248,8 @@ Options:
   --graph-delta <file> Graph delta file for graph operation propose-update.
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-hook-gateway-health, report-frontend-chain, or prepare-user-prompt-context.
-  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, generate-instruction-pack, report-frontend-chain, or prepare-user-prompt-context.
+  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, or generate-hook-script-scaffold.
+  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, generate-instruction-pack, report-frontend-chain, prepare-user-prompt-context, or generate-hook-script-scaffold.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal or graph read-model review-graph-delta.
   --candidate <file>   Request IR Candidate file for graph read-model validate-request-ir or generate-clarification-interview-pack.
   --schema-validation <file>
@@ -267,11 +269,15 @@ Options:
   --clarification-pack <file>
                        Clarification Interview Pack file for graph read-model revise-request-ir-candidate.
   --answers <file>     Clarification answers file for graph read-model revise-request-ir-candidate.
-  --boundary <file>    Boundary file for graph read-model report-hook-gateway-health, generate-ai-request-analyzer-pack, or generate-clarification-interview-pack.
+  --boundary <file>    Boundary file for graph read-model report-hook-gateway-health, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, or generate-hook-script-scaffold.
   --intake <file>      Natural-language request intake boundary file for graph read-model report-frontend-chain.
   --frontend-chain <file>
                        Frontend chain report file for graph read-model prepare-user-prompt-context.
-  --hook-health <file> Hook Gateway health report or boundary file for graph read-model prepare-user-prompt-context.
+  --hook-health <file> Hook Gateway health report or boundary file for graph read-model prepare-user-prompt-context, or Hook Gateway health boundary for generate-hook-script-scaffold.
+  --install-trust <file>
+                       Hook install/trust boundary for graph read-model generate-hook-script-scaffold.
+  --user-prompt-context <file>
+                       UserPromptSubmit context preview for graph read-model generate-hook-script-scaffold.
   --instruction-markdown <file>
                        Instruction Pack Markdown file for graph read-model prepare-user-prompt-context.
   --schema <file>      Request IR Candidate schema file for graph read-model generate-ai-request-analyzer-pack.

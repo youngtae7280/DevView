@@ -182,6 +182,13 @@
       "command": "graph read-model prepare-user-prompt-context --frontend-chain <frontendChainReport> --hook-health <healthReportOrBoundary> --instruction-pack <instructionPackJson> --instruction-markdown <instructionPackMarkdown> --json",
       "path": "examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.json",
       "markdownPath": "examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.md"
+    },
+    {
+      "artifactRole": "devview-hook-script-scaffold-preview",
+      "artifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json",
+      "availabilityStatus": "preview-generated-not-installed",
+      "command": "graph read-model generate-hook-script-scaffold --boundary <gatewayBoundary> --hook-health <healthBoundary> --install-trust <installTrustBoundary> --user-prompt-context <contextPreview> --json",
+      "nonExecutionStatus": "does-not-install-or-activate-hooks"
     }
   ],
   "healthResultPreviewShape": {
@@ -224,5 +231,6 @@
   "userPromptSubmitContextPreviewArtifact": "examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.json",
   "userPromptSubmitContextPreviewMarkdownArtifact": "examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.md",
   "hookInstallTrustBoundaryStatus": "devview-hook-install-trust-boundary-previewed",
-  "hookInstallTrustBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-install-trust-boundary.runtime-evidence-only.preview.json"
+  "hookInstallTrustBoundaryArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-install-trust-boundary.runtime-evidence-only.preview.json",
+  "firstCalibrationHookScriptScaffoldPreviewArtifact": "examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json"
 }

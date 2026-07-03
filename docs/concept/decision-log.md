@@ -2627,3 +2627,35 @@ This decision does not install hooks, trust commands, mutate Codex or repo confi
 execution, call an LLM/API, make network calls, mutate graph-source, apply graph deltas, approve graph updates, record
 human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, introduce CI required checks, change branch
 protection, or automate user acceptance.
+
+## DEC-261 Generate Hook Script Scaffold Preview
+
+DEC-261 does not supersede DEC-097 through DEC-260. It adds a deterministic preview-only Hook Gateway script scaffold
+surface for Phase 12 session integration.
+
+The command is:
+
+```text
+graph read-model generate-hook-script-scaffold --boundary <gatewayBoundary> --hook-health <healthBoundary> --install-trust <installTrustBoundary> --user-prompt-context <contextPreview> --json
+```
+
+The Todo App calibration artifacts are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-hook-script-scaffold.add-todo-runtime-evidence-only.preview.md
+```
+
+The scaffold emits preview template records for `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, and
+`Stop`. Each template is `not-installed-preview-only`, `not-active-preview-only`, and
+`non-enforcing-advisory-only`. The generator reads the Hook Gateway boundary, Hook Gateway health boundary,
+install/trust boundary, and UserPromptSubmit context preview, then blocks unsafe authority signals and active hook/config
+output paths before writing either JSON or Markdown.
+
+The runtime smoke includes this command in the `activation-readiness-lane`, not the `core-critical-lane`. The timing
+budget remains advisory and non-enforced.
+
+This decision does not install hook scripts, write active hook config, trust repositories, mutate Codex or repo config,
+activate hooks, block Codex execution, call an LLM/API, make network calls, mutate graph-source, apply graph deltas,
+approve graph updates, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, introduce CI
+required checks, change branch protection, or automate user acceptance.

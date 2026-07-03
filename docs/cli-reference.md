@@ -923,6 +923,35 @@ node dist/cli/index.js graph read-model prepare-user-prompt-context `
   --json
 ```
 
+### `pbe graph read-model generate-hook-script-scaffold`
+
+- Purpose: Read the Hook Gateway boundary, Hook Gateway health boundary, install/trust boundary, and `UserPromptSubmit`
+  context preview, then emit a preview-only hook script scaffold manifest.
+- Typical state before running: After install/trust scope has been previewed and the `UserPromptSubmit` context preview
+  exists. Hook scripts are still not installed or active.
+- Options: `--boundary <file>`, `--hook-health <file>`, `--install-trust <file>`, and `--user-prompt-context <file>` are
+  required. `--output <file>` may write JSON and `--markdown <file>` may write a compact scaffold summary.
+- What it checks: source artifact roles/statuses, strict/guided/enforcement/approval/Evidence/equivalence safety flags,
+  active hook path targets, source artifact overwrite attempts, and output authority before any writes.
+- Success result: JSON with `artifactRole: devview-hook-script-scaffold-preview`, preview templates for `SessionStart`,
+  `UserPromptSubmit`, `PreToolUse`, `PostToolUse`, and `Stop`, plus `hookScriptsInstalled: false`,
+  `hookGatewayActive: not-checked-preview-only`, `strictModeEnabled: false`, and all execution/apply/approval/Evidence/
+  equivalence/enforcement flags false.
+- Non-goals: This command does not install hook scripts, write active hook config, mutate trust state, trigger Codex
+  execution, call an LLM, mutate graph-source, apply graph deltas, approve work, record human decisions, satisfy runtime
+  Evidence, prove equivalence, enforce scope, or configure CI.
+
+```powershell
+node dist/cli/index.js graph read-model generate-hook-script-scaffold `
+  --boundary examples/valid/todo-app-pbe-run/generated/devview-codex-hook-gateway-boundary.runtime-evidence-only.preview.json `
+  --hook-health examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json `
+  --install-trust examples/valid/todo-app-pbe-run/generated/devview-hook-install-trust-boundary.runtime-evidence-only.preview.json `
+  --user-prompt-context examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-context.add-todo-runtime-evidence-only.preview.json `
+  --output .tmp/review-hook-script-scaffold.json `
+  --markdown .tmp/review-hook-script-scaffold.md `
+  --json
+```
+
 ### `pbe graph operation apply-proposal`
 
 - Purpose: Preview or apply a generated graph update proposal to its graph-source.

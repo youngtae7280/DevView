@@ -139,6 +139,8 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     intake: undefined as string | undefined,
     frontendChain: undefined as string | undefined,
     hookHealth: undefined as string | undefined,
+    installTrust: undefined as string | undefined,
+    userPromptContext: undefined as string | undefined,
     instructionMarkdown: undefined as string | undefined,
     schema: undefined as string | undefined,
     chainCommand: undefined as string | undefined,
@@ -470,6 +472,20 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--hook-health requires a file path.' }
       }
       options.hookHealth = value
+      index += 1
+    } else if (arg === '--install-trust') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--install-trust requires a file path.' }
+      }
+      options.installTrust = value
+      index += 1
+    } else if (arg === '--user-prompt-context') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--user-prompt-context requires a file path.' }
+      }
+      options.userPromptContext = value
       index += 1
     } else if (arg === '--instruction-markdown') {
       const value = argv[index + 1]

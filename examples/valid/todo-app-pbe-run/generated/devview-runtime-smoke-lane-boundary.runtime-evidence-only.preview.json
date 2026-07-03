@@ -50,7 +50,8 @@
       "budgetEnforced": false,
       "commands": [
         "graph read-model report-hook-gateway-health --boundary <healthBoundaryPath> --json",
-        "graph read-model prepare-user-prompt-context --frontend-chain <frontendChainReport> --hook-health <healthReportOrBoundary> --instruction-pack <instructionPackJson> --instruction-markdown <instructionPackMarkdown> --json"
+        "graph read-model prepare-user-prompt-context --frontend-chain <frontendChainReport> --hook-health <healthReportOrBoundary> --instruction-pack <instructionPackJson> --instruction-markdown <instructionPackMarkdown> --json",
+        "graph read-model generate-hook-script-scaffold --boundary <gatewayBoundary> --hook-health <healthBoundary> --install-trust <installTrustBoundary> --user-prompt-context <contextPreview> --json"
       ],
       "classification": "activation readiness reporting only; not hook script implementation or blocking behavior"
     },
