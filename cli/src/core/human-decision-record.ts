@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { readJsonSafe, relativePath, writeJsonAtomic, writeTextAtomic } from './fs.js'
+import { readJsonSafe, readTextSafe, relativePath, writeJsonAtomic, writeTextAtomic } from './fs.js'
 import { validateProposalOnlyGraphDeltaPreview } from './graph-delta-human-review-packet.js'
 
 type JsonRecord = Record<string, unknown>
@@ -10,6 +10,18 @@ const COMMAND_BOUNDARY_ROLE = 'devview-human-decision-record-command-boundary-pr
 const COMMAND_BOUNDARY_STATUS = 'devview-human-decision-record-command-boundary-previewed'
 const REVIEW_PACKET_ROLE = 'graph-delta-human-review-packet'
 const DECISION_RECORD_ROLE = 'devview-human-decision-record'
+const HARDENING_STATUS = 'hardened-human-decision-record-v1'
+const DEFAULT_DECISION_ACTOR_TYPE = 'human'
+const DEFAULT_DECISION_SOURCE = 'explicit-cli-input'
+
+type DecisionKind = 'approve' | 'reject' | 'request-changes' | 'defer'
+type DecisionTimestampAuthorityStatus = 'cli-provided' | 'runtime-generated'
+type DecisionSource = 'explicit-cli-input' | 'imported-human-review'
+type ReviewPacketCompletenessStatus =
+  | 'complete'
+  | 'incomplete-blocking-items'
+  | 'incomplete-review-items'
+  | 'missing-json-review-packet'
 
 export interface HumanDecisionRecordOptions {
   boundary?: string
@@ -18,6 +30,9 @@ export interface HumanDecisionRecordOptions {
   decision: string
   reviewer: string
   rationale: string
+  decisionActorType?: string
+  decisionSource?: string
+  decisionTimestamp?: string
   runtimeReport?: string
   output?: string
   markdown?: string
@@ -39,16 +54,30 @@ export interface HumanDecisionRecord {
   sourceBoundaryStatus: string | null
   sourceReviewPacket: string
   sourceReviewPacketAuthorityStatus: string
+  sourceProposal: string
   sourceGraphDeltaProposal: string
   sourceRuntimeReport: string | null
   proposalId: string
   proposalSchemaId: string
+  decisionLifecycleHardeningStatus: typeof HARDENING_STATUS
   decisionValue: string
+  decisionKind: DecisionKind
   decisionSummary: string
   decisionRationale: string
+  decisionActorType: 'human'
+  decisionActorLabel: string
+  decisionTimestamp: string
+  decisionTimestampAuthorityStatus: DecisionTimestampAuthorityStatus
+  decisionSource: DecisionSource
   reviewerIdentity: string
   reviewedAt: string
   decisionProvenance: 'human-authored-explicit-decision'
+  reviewPacketCompletenessStatus: ReviewPacketCompletenessStatus
+  reviewPacketQuestionCount: number
+  reviewRequiredItemCount: number
+  blockingReviewItemCount: number
+  selfApprovalCheckStatus: 'passed-human-actor'
+  selfApprovalRejected: false
   humanDecisionRecorded: true
   approvalStatus: 'human-approved-no-approved-state-created' | 'not-approved'
   approvedProposalStateCreated: false
@@ -66,6 +95,8 @@ export interface HumanDecisionRecord {
   aiGeneratedDecisionAllowed: false
   codexSelfApprovalAllowed: false
   approvalAutomationAllowed: false
+  approvalAutomationEnabled: false
+  graphDeltaApplyTriggered: false
   allowedUse: string[]
   forbiddenUse: string[]
   outputWritePolicy: 'explicit-output-only'
@@ -92,8 +123,12 @@ export async function recordHumanDecisionFile(
   validateProposalOnlyGraphDeltaPreview(proposal)
 
   const resolvedReviewPacketPath = resolveRepoPath(root, options.reviewPacket)
+  await ensureReadableReviewPacket(resolvedReviewPacketPath)
   const reviewPacket = await readOptionalJson(resolvedReviewPacketPath)
-  validateReviewPacket(reviewPacket, relativePath(root, resolvedProposalPath))
+  const reviewPacketSummary = validateReviewPacket(reviewPacket, {
+    sourceProposal: relativePath(root, resolvedProposalPath),
+    proposal,
+  })
 
   const resolvedRuntimeReportPath = options.runtimeReport ? resolveRepoPath(root, options.runtimeReport) : undefined
   if (resolvedRuntimeReportPath) {
@@ -112,8 +147,13 @@ export async function recordHumanDecisionFile(
     markdown: options.markdown,
   })
 
-  const decisionValues = allowedDecisionValues(boundary)
-  if (!decisionValues.has(options.decision)) {
+  const decision = normalizeDecision(options.decision, allowedDecisionValues(boundary))
+  validateDecisionAuthorityOptions(options)
+  if (decision.kind === 'approve') {
+    validateApprovalReviewPacketCompleteness(reviewPacket, reviewPacketSummary)
+  }
+
+  if (!decision.allowed) {
     throw new Error(
       `Unsafe human decision value: ${JSON.stringify(options.decision)} is not in the boundary allowedDecisionValues vocabulary.`,
     )
@@ -127,6 +167,8 @@ export async function recordHumanDecisionFile(
     proposal,
     resolvedProposalPath,
     resolvedRuntimeReportPath,
+    reviewPacketSummary,
+    decision,
   })
 
   let outputPath: string | undefined
@@ -159,13 +201,17 @@ function buildHumanDecisionRecord(
     proposal: JsonRecord
     resolvedProposalPath: string
     resolvedRuntimeReportPath?: string
+    reviewPacketSummary: ReviewPacketSummary
+    decision: NormalizedDecision
   },
 ): HumanDecisionRecord {
   const proposalId = stringValue(sources.proposal.proposalId) || 'unknown-proposal'
+  const decisionActorLabel = options.reviewer.trim()
+  const timestamp = normalizeDecisionTimestamp(options.decisionTimestamp)
   const decisionSummary =
-    options.decision === 'approve-proposal'
+    sources.decision.kind === 'approve'
       ? 'Human approval decision recorded; approved proposal state was not created.'
-      : `Human decision recorded as ${options.decision}; proposal remains unapproved.`
+      : `Human decision recorded as ${sources.decision.value}; proposal remains unapproved.`
 
   return {
     schemaVersion: 1,
@@ -179,21 +225,34 @@ function buildHumanDecisionRecord(
     sourceReviewPacketAuthorityStatus: sources.reviewPacket
       ? 'json-human-review-packet-validated'
       : 'review-packet-path-readable-not-json-parsed',
+    sourceProposal: relativePath(root, sources.resolvedProposalPath),
     sourceGraphDeltaProposal: relativePath(root, sources.resolvedProposalPath),
     sourceRuntimeReport: sources.resolvedRuntimeReportPath
       ? relativePath(root, sources.resolvedRuntimeReportPath)
       : null,
     proposalId,
     proposalSchemaId: stringValue(sources.proposal.schemaId) || 'pbe-graph-update-proposal-v0',
-    decisionValue: options.decision,
+    decisionLifecycleHardeningStatus: HARDENING_STATUS,
+    decisionValue: sources.decision.value,
+    decisionKind: sources.decision.kind,
     decisionSummary,
     decisionRationale: options.rationale.trim(),
-    reviewerIdentity: options.reviewer.trim(),
-    reviewedAt: new Date().toISOString(),
+    decisionActorType: 'human',
+    decisionActorLabel,
+    decisionTimestamp: timestamp.value,
+    decisionTimestampAuthorityStatus: timestamp.authority,
+    decisionSource: normalizeDecisionSource(options.decisionSource),
+    reviewerIdentity: decisionActorLabel,
+    reviewedAt: timestamp.value,
     decisionProvenance: 'human-authored-explicit-decision',
+    reviewPacketCompletenessStatus: sources.reviewPacketSummary.completenessStatus,
+    reviewPacketQuestionCount: sources.reviewPacketSummary.questionCount,
+    reviewRequiredItemCount: sources.reviewPacketSummary.reviewRequiredItemCount,
+    blockingReviewItemCount: sources.reviewPacketSummary.blockingReviewItemCount,
+    selfApprovalCheckStatus: 'passed-human-actor',
+    selfApprovalRejected: false,
     humanDecisionRecorded: true,
-    approvalStatus:
-      options.decision === 'approve-proposal' ? 'human-approved-no-approved-state-created' : 'not-approved',
+    approvalStatus: sources.decision.kind === 'approve' ? 'human-approved-no-approved-state-created' : 'not-approved',
     approvedProposalStateCreated: false,
     graphDeltaApplyEnabled: false,
     graphDeltaApplied: false,
@@ -209,6 +268,8 @@ function buildHumanDecisionRecord(
     aiGeneratedDecisionAllowed: false,
     codexSelfApprovalAllowed: false,
     approvalAutomationAllowed: false,
+    approvalAutomationEnabled: false,
+    graphDeltaApplyTriggered: false,
     allowedUse: [
       'record an explicit human-authored proposal decision for review traceability',
       'feed a future approved proposal state command only when decisionValue is approve-proposal',
@@ -242,11 +303,14 @@ Status: \`${record.status}\`
 | Field | Value |
 | --- | --- |
 | Decision | \`${record.decisionValue}\` |
+| Decision kind | \`${record.decisionKind}\` |
 | Approval status | \`${record.approvalStatus}\` |
 | Proposal | \`${record.sourceGraphDeltaProposal}\` |
 | Proposal ID | \`${record.proposalId}\` |
 | Review packet | \`${record.sourceReviewPacket}\` |
+| Review packet completeness | \`${record.reviewPacketCompletenessStatus}\` |
 | Reviewer | \`${record.reviewerIdentity}\` |
+| Decision source | \`${record.decisionSource}\` |
 
 ## Rationale
 
@@ -288,6 +352,20 @@ function validateRequiredInputs(options: HumanDecisionRecordOptions): void {
   }
 }
 
+function validateDecisionAuthorityOptions(options: HumanDecisionRecordOptions): void {
+  const actorType = normalizeDecisionActorType(options.decisionActorType)
+  if (actorType !== DEFAULT_DECISION_ACTOR_TYPE) {
+    throw new Error('Unsafe decision actor type: --decision-actor-type must be "human".')
+  }
+  const source = normalizeDecisionSource(options.decisionSource)
+  if (source !== 'explicit-cli-input' && source !== 'imported-human-review') {
+    throw new Error(
+      'Unsafe decision source: --decision-source must be one of explicit-cli-input or imported-human-review.',
+    )
+  }
+  normalizeDecisionTimestamp(options.decisionTimestamp)
+}
+
 function validateBoundary(boundary: JsonRecord | null): void {
   if (!boundary) {
     return
@@ -318,9 +396,24 @@ function validateBoundary(boundary: JsonRecord | null): void {
   }
 }
 
-function validateReviewPacket(reviewPacket: JsonRecord | null, sourceProposal: string): void {
+interface ReviewPacketSummary {
+  completenessStatus: ReviewPacketCompletenessStatus
+  questionCount: number
+  reviewRequiredItemCount: number
+  blockingReviewItemCount: number
+}
+
+function validateReviewPacket(
+  reviewPacket: JsonRecord | null,
+  input: { sourceProposal: string; proposal: JsonRecord },
+): ReviewPacketSummary {
   if (!reviewPacket) {
-    return
+    return {
+      completenessStatus: 'missing-json-review-packet',
+      questionCount: 0,
+      reviewRequiredItemCount: 0,
+      blockingReviewItemCount: 0,
+    }
   }
   if (reviewPacket.artifactRole !== REVIEW_PACKET_ROLE) {
     throw new Error(`Unsafe review packet input: artifactRole must be ${JSON.stringify(REVIEW_PACKET_ROLE)}.`)
@@ -328,8 +421,18 @@ function validateReviewPacket(reviewPacket: JsonRecord | null, sourceProposal: s
   if (reviewPacket.reviewPacketStatus !== 'review-required') {
     throw new Error('Unsafe review packet input: reviewPacketStatus must be "review-required".')
   }
-  if (reviewPacket.sourceProposal !== sourceProposal) {
+  if (reviewPacket.sourceProposal !== input.sourceProposal) {
     throw new Error('Unsafe review packet provenance: sourceProposal does not match the proposal under decision.')
+  }
+  const reviewPacketProposalId = stringValue(reviewPacket.proposalId)
+  const proposalId = stringValue(input.proposal.proposalId)
+  if (reviewPacketProposalId && proposalId && reviewPacketProposalId !== proposalId) {
+    throw new Error('Unsafe review packet provenance: proposalId does not match the proposal under decision.')
+  }
+  const reviewPacketSchemaId = stringValue(reviewPacket.schemaId)
+  const proposalSchemaId = stringValue(input.proposal.schemaId)
+  if (reviewPacketSchemaId && proposalSchemaId && reviewPacketSchemaId !== proposalSchemaId) {
+    throw new Error('Unsafe review packet provenance: schemaId does not match the proposal under decision.')
   }
   for (const field of [
     'graphSourceMutated',
@@ -345,6 +448,28 @@ function validateReviewPacket(reviewPacket: JsonRecord | null, sourceProposal: s
   }
   if (reviewPacket.approvalStatus !== 'not-approved') {
     throw new Error('Unsafe review packet boundary: approvalStatus must be "not-approved".')
+  }
+  for (const field of ['evidenceAccepted', 'scopeEnforced', 'ciEnforcementEnabled']) {
+    if (field in reviewPacket && reviewPacket[field] !== false) {
+      throw new Error(`Unsafe review packet boundary: ${field} must be false when present.`)
+    }
+  }
+
+  const questionCount = arrayLength(reviewPacket.humanReviewQuestions)
+  const reviewRequiredItemCount = arrayLength(reviewPacket.reviewRequiredItems)
+  const blockingReviewItemCount = arrayLength(reviewPacket.blockingReviewItems)
+  const completenessStatus =
+    blockingReviewItemCount > 0
+      ? 'incomplete-blocking-items'
+      : questionCount > 0 || reviewRequiredItemCount > 0
+        ? 'incomplete-review-items'
+        : 'complete'
+
+  return {
+    completenessStatus,
+    questionCount,
+    reviewRequiredItemCount,
+    blockingReviewItemCount,
   }
 }
 
@@ -371,11 +496,102 @@ function allowedDecisionValues(boundary: JsonRecord | null): Set<string> {
     }
   }
   if (values.size === 0) {
-    for (const fallback of ['approve-proposal', 'reject-proposal', 'request-revision', 'defer-decision']) {
+    for (const fallback of [
+      'approve-proposal',
+      'reject-proposal',
+      'request-revision',
+      'request-changes',
+      'defer-decision',
+    ]) {
       values.add(fallback)
     }
   }
+  if (values.has('request-revision')) {
+    values.add('request-changes')
+  }
   return values
+}
+
+interface NormalizedDecision {
+  value: string
+  kind: DecisionKind
+  allowed: boolean
+}
+
+function normalizeDecision(value: string, allowedValues: Set<string>): NormalizedDecision {
+  const trimmed = value.trim()
+  const kind = decisionKindForValue(trimmed)
+  return {
+    value: trimmed,
+    kind,
+    allowed: Boolean(kind) && allowedValues.has(trimmed),
+  }
+}
+
+function decisionKindForValue(value: string): DecisionKind {
+  if (value === 'approve-proposal') {
+    return 'approve'
+  }
+  if (value === 'reject-proposal') {
+    return 'reject'
+  }
+  if (value === 'request-revision' || value === 'request-changes') {
+    return 'request-changes'
+  }
+  if (value === 'defer-decision') {
+    return 'defer'
+  }
+  throw new Error(`Unsafe human decision value: ${JSON.stringify(value)} is not recognized.`)
+}
+
+function validateApprovalReviewPacketCompleteness(reviewPacket: JsonRecord | null, summary: ReviewPacketSummary): void {
+  if (!reviewPacket) {
+    throw new Error('Approval decision requires a parseable JSON Human Review Packet.')
+  }
+  if (summary.completenessStatus !== 'complete') {
+    throw new Error(
+      `Approval decision requires a complete Human Review Packet; current reviewPacketCompletenessStatus is ${summary.completenessStatus}.`,
+    )
+  }
+}
+
+function normalizeDecisionActorType(value: string | undefined): string {
+  return (value ?? DEFAULT_DECISION_ACTOR_TYPE).trim().toLowerCase()
+}
+
+function normalizeDecisionSource(value: string | undefined): DecisionSource {
+  const source = (value ?? DEFAULT_DECISION_SOURCE).trim()
+  if (source === 'explicit-cli-input' || source === 'imported-human-review') {
+    return source
+  }
+  throw new Error(
+    'Unsafe decision source: --decision-source must be one of explicit-cli-input or imported-human-review.',
+  )
+}
+
+function normalizeDecisionTimestamp(value: string | undefined): {
+  value: string
+  authority: DecisionTimestampAuthorityStatus
+} {
+  if (!value) {
+    return { value: new Date().toISOString(), authority: 'runtime-generated' }
+  }
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error('Unsafe decision timestamp: --decision-timestamp must be a valid ISO8601 timestamp.')
+  }
+  return { value: parsed.toISOString(), authority: 'cli-provided' }
+}
+
+async function ensureReadableReviewPacket(filePath: string): Promise<void> {
+  const text = await readTextSafe(filePath)
+  if (!text.ok) {
+    throw new Error(`Unable to read Human Review Packet: ${text.error}`)
+  }
+}
+
+function arrayLength(value: unknown): number {
+  return Array.isArray(value) ? value.length : 0
 }
 
 async function assertDecisionRecordOutputAuthority(

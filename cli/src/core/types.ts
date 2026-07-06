@@ -109,6 +109,9 @@ export interface CliOptions {
   decision?: string
   reviewer?: string
   rationale?: string
+  decisionActorType?: string
+  decisionSource?: string
+  decisionTimestamp?: string
   runtimeReport?: string
   candidate?: string
   schemaValidation?: string

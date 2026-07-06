@@ -1843,8 +1843,8 @@ examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-boundary
 ```
 
 It defines the human-authored decision record shape after a Human Review Packet and before any approved proposal
-state. The allowed future decision vocabulary is `approve-proposal`, `reject-proposal`, `request-revision`, and
-`defer-decision`, but the boundary itself records no decision and creates no approval.
+state. The allowed decision vocabulary is `approve-proposal`, `reject-proposal`, `request-revision`,
+`request-changes`, and `defer-decision`, but the boundary itself records no decision and creates no approval.
 
 The Human Decision Record command boundary preview is:
 
@@ -1855,7 +1855,7 @@ examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-command-
 It previews the command:
 
 ```text
-graph read-model record-human-decision --review-packet <packet> --proposal <proposal> --decision <value> --output <decisionRecord> --json
+graph read-model record-human-decision --review-packet <packet> --proposal <proposal> --decision <value> --reviewer <identity> --rationale <text> --decision-actor-type human --decision-source explicit-cli-input --output <decisionRecord> --json
 ```
 
 The command is now implemented as explicit human decision metadata recording. The first calibration decision record is:
@@ -1864,11 +1864,13 @@ The command is now implemented as explicit human decision metadata recording. Th
 examples/valid/todo-app-pbe-run/generated/devview-human-decision-record.defer-decision.runtime-evidence-only.preview.json
 ```
 
-It records `decisionValue: defer-decision` and `humanDecisionRecorded: true`, while keeping
-`approvedProposalStateCreated`, `graphDeltaApplied`, `graphSourceMutated`, `runtimeEvidenceSatisfied`,
-`equivalenceProven`, `scopeEnforced`, and `ciEnforcementEnabled` false. It still does not approve a proposal, create
-approved proposal state, mutate graph-source, apply graph deltas, satisfy runtime Evidence, prove equivalence, reject
-diffs, enforce scope, configure required checks, or automate user acceptance.
+It records `decisionValue: defer-decision`, `decisionKind: defer`, `decisionActorType: human`,
+`decisionSource: explicit-cli-input`, and `humanDecisionRecorded: true`, while keeping `approvedProposalStateCreated`,
+`graphDeltaApplied`, `graphSourceMutated`, `runtimeEvidenceSatisfied`, `equivalenceProven`, `scopeEnforced`, and
+`ciEnforcementEnabled` false. Approval decisions require a complete JSON Human Review Packet; the calibration packet has
+open review questions, so the calibration remains a non-approval defer record. It still does not approve a proposal,
+create approved proposal state, mutate graph-source, apply graph deltas, satisfy runtime Evidence, prove equivalence,
+reject diffs, enforce scope, configure required checks, or automate user acceptance.
 
 The Approved Proposal State boundary preview is:
 
@@ -1877,9 +1879,9 @@ examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-bounda
 ```
 
 It defines the `graph read-model create-approved-proposal-state` command boundary. The command consumes a Human Decision
-Record plus a proposal-only preview and creates an approved-state preview only when `decisionValue: approve-proposal`
-and provenance checks pass. The first calibration artifact is blocked because the recorded decision is
-`defer-decision`:
+Record plus a proposal-only preview and creates an approved-state preview only when a hardened human
+`decisionValue: approve-proposal` / `decisionKind: approve` record has complete review-packet provenance and matching
+proposal checks. The first calibration artifact is blocked because the recorded decision is `defer-decision`:
 
 ```text
 examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state.blocked-defer-decision.runtime-evidence-only.preview.json

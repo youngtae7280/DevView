@@ -3795,3 +3795,36 @@ file content inspection, no destructive Git behavior, no scope enforcement, no d
 branch protection, no approval or human decision automation, no Evidence acceptance or runtime Evidence satisfaction, no
 equivalence proof, no graph-source mutation, no graph delta apply, no LLM/API/network call, and no Project Memory
 extension authority.
+
+## DEC-305 Harden Human Decision Record Lifecycle
+
+DEC-305 does not supersede DEC-097 through DEC-304. It hardens the existing
+`graph read-model record-human-decision` and `graph read-model create-approved-proposal-state` lifecycle so approval
+can only flow through an explicit hardened human decision record.
+
+`record-human-decision` now records `decisionLifecycleHardeningStatus: hardened-human-decision-record-v1`,
+`decisionKind`, `decisionActorType: human`, explicit `decisionSource`, decision timestamp authority, review-packet
+completeness counts, `selfApprovalCheckStatus: passed-human-actor`, `approvalAutomationEnabled: false`, and
+`graphDeltaApplyTriggered: false`. The command accepts `request-changes` as an alias for the request-changes decision
+kind while preserving the existing decision vocabulary. `--decision-actor-type` defaults to `human` and any non-human
+value is blocked. `--decision-source` defaults to `explicit-cli-input` and only `explicit-cli-input` or
+`imported-human-review` are accepted.
+
+Approval decisions are stricter than non-approval records. `approve-proposal` requires a parseable JSON Human Review
+Packet with matching proposal provenance, safe no-apply/no-mutation/no-evidence/no-proof boundaries, and complete
+review-packet status. Incomplete or non-JSON review packets block approval record creation at the decision-record stage.
+Reject, defer, and request-changes decisions may still be recorded as hardened non-approval records, but they cannot
+create approved proposal state.
+
+`create-approved-proposal-state` now creates an approved-state preview only from a hardened human approve record with
+`decisionValue: approve-proposal`, `decisionKind: approve`, `decisionActorType: human`, allowed decision source,
+`decisionProvenance: human-authored-explicit-decision`, `reviewPacketCompletenessStatus: complete`, source review
+packet provenance, and matching proposal id/path. Legacy or unhardened approval-looking records, Codex/AI/tool/CI
+reviewer signals, unsafe authority flags, and reject/defer/request-changes records produce blocked previews with
+`approvedProposalStateCreated: false`.
+
+This decision adds no new standalone validator command and no default runtime smoke step. It adds no automatic approval,
+no Codex self-approval, no inferred approval from review packets, tests, validators, runtime smoke, CI, or reports, no
+graph-source mutation, no graph delta apply, no Evidence acceptance or runtime Evidence satisfaction, no equivalence
+proof, no scope enforcement, no CI enforcement, no required checks, no branch protection, no LLM/API/network call, and
+no Project Memory extension authority.

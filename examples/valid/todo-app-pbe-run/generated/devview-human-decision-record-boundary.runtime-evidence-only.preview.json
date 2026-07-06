@@ -38,17 +38,33 @@
     "artifactRole": "devview-human-decision-record",
     "recordStatus": "created-by-explicit-human-decision-record-command",
     "sourceHumanReviewPacket": "<future-human-review-packet-path>",
+    "sourceProposal": "<future-graph-delta-proposal-path>",
     "sourceGraphDeltaProposal": "<future-graph-delta-proposal-path>",
     "sourceRuntimeReport": "<future-advisory-runtime-report-path>",
+    "decisionLifecycleHardeningStatus": "hardened-human-decision-record-v1",
     "decisionValue": "<one-of-allowedDecisionValues>",
+    "decisionKind": "approve | reject | request-changes | defer",
     "decisionSummary": "<human-authored-summary>",
     "decisionRationale": "<human-authored-rationale>",
+    "decisionActorType": "human",
+    "decisionActorLabel": "<human-provided-or-local-configured-identity>",
+    "decisionTimestamp": "<future-human-provided-or-command-generated-timestamp>",
+    "decisionTimestampAuthorityStatus": "cli-provided | runtime-generated",
+    "decisionSource": "explicit-cli-input | imported-human-review",
     "reviewerIdentity": "<human-provided-or-local-configured-identity>",
     "reviewedAt": "<future-human-provided-or-command-generated-timestamp>",
     "decisionProvenance": "human-authored-explicit-decision",
+    "reviewPacketCompletenessStatus": "complete | incomplete-blocking-items | incomplete-review-items | missing-json-review-packet",
+    "reviewPacketQuestionCount": 0,
+    "reviewRequiredItemCount": 0,
+    "blockingReviewItemCount": 0,
+    "selfApprovalCheckStatus": "passed-human-actor",
+    "selfApprovalRejected": false,
     "codexSelfApprovalAllowed": false,
     "aiGeneratedDecisionAllowed": false,
     "approvalAutomationAllowed": false,
+    "approvalAutomationEnabled": false,
+    "graphDeltaApplyTriggered": false,
     "runtimeEvidenceSatisfactionAllowed": false,
     "equivalenceProofAllowed": false,
     "scopeEnforcementAllowed": false
@@ -69,6 +85,12 @@
     {
       "decisionValue": "request-revision",
       "meaning": "Human requests changes before any approval can be considered.",
+      "createsApprovedProposalStateHere": false,
+      "appliesGraphDeltaHere": false
+    },
+    {
+      "decisionValue": "request-changes",
+      "meaning": "Alias for a human request for changes before any approval can be considered.",
       "createsApprovedProposalStateHere": false,
       "appliesGraphDeltaHere": false
     },
@@ -104,6 +126,21 @@
       "requirementId": "human-rationale",
       "description": "The decision must include a human-authored rationale or explicit note for auditability.",
       "required": true
+    },
+    {
+      "requirementId": "human-actor-type",
+      "description": "The decision actor type must be human; Codex, AI, tool, validator, CI, generated, and automation actors are not approval authority.",
+      "required": true
+    },
+    {
+      "requirementId": "human-decision-source",
+      "description": "The decision source must be explicit-cli-input or imported-human-review; it cannot be inferred from generated artifacts, validators, runtime smoke, CI, or reports.",
+      "required": true
+    },
+    {
+      "requirementId": "approval-review-packet-completeness",
+      "description": "An approve decision requires a parseable JSON Human Review Packet with complete review-packet status and matching proposal provenance.",
+      "requiredForDecisionKind": "approve"
     }
   ],
   "futureStateTransitionsPreview": [
@@ -126,6 +163,14 @@
     {
       "from": "human-review-packet-generated",
       "decisionValue": "request-revision",
+      "to": "future-revision-request-decision-record-candidate",
+      "implementedNow": false,
+      "requiresSeparateCommand": true,
+      "appliesGraphDelta": false
+    },
+    {
+      "from": "human-review-packet-generated",
+      "decisionValue": "request-changes",
       "to": "future-revision-request-decision-record-candidate",
       "implementedNow": false,
       "requiresSeparateCommand": true,

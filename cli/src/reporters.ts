@@ -315,6 +315,12 @@ Options:
   --decision <value>   Explicit human decision value for graph read-model record-human-decision.
   --reviewer <value>   Human reviewer identity for graph read-model record-human-decision.
   --rationale <value>  Human-authored rationale for graph read-model record-human-decision.
+  --decision-actor-type <value>
+                       Optional decision actor type for graph read-model record-human-decision; only human is accepted.
+  --decision-source <value>
+                       Optional decision source for graph read-model record-human-decision; explicit-cli-input or imported-human-review.
+  --decision-timestamp <iso8601>
+                       Optional explicit ISO8601 timestamp for graph read-model record-human-decision.
   --runtime-report <file>
                        Optional runtime report input for graph read-model record-human-decision or report-stop-post-run-advisory.
   --candidate <file>   Request IR Candidate file for graph read-model validate-request-ir, generate-clarification-interview-pack, run-preflight-session, or report-user-prompt-submit-advisory.

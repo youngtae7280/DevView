@@ -6,8 +6,8 @@
   "boundaryScope": "future-human-decision-record-command-preview-only",
   "phase": "phase-13-human-decision-approved-apply-boundary",
   "sourceBoundary": "examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-boundary.runtime-evidence-only.preview.json",
-  "command": "graph read-model record-human-decision --review-packet <packet> --proposal <proposal> --decision <value> --reviewer <identity> --rationale <text> --output <decisionRecord> --json",
-  "markdownCommand": "graph read-model record-human-decision --review-packet <packet> --proposal <proposal> --decision <value> --reviewer <identity> --rationale <text> --output <decisionRecord> --markdown <decisionRecordSummary> --json",
+  "command": "graph read-model record-human-decision --review-packet <packet> --proposal <proposal> --decision <value> --reviewer <identity> --rationale <text> --decision-actor-type human --decision-source explicit-cli-input --decision-timestamp <iso8601> --output <decisionRecord> --json",
+  "markdownCommand": "graph read-model record-human-decision --review-packet <packet> --proposal <proposal> --decision <value> --reviewer <identity> --rationale <text> --decision-actor-type human --decision-source explicit-cli-input --decision-timestamp <iso8601> --output <decisionRecord> --markdown <decisionRecordSummary> --json",
   "commandImplemented": true,
   "cliSurfaceAdded": true,
   "humanDecisionRecordImplemented": true,
@@ -44,7 +44,7 @@
       "option": "--decision",
       "inputRole": "human-decision-value",
       "required": true,
-      "allowedValues": ["approve-proposal", "reject-proposal", "request-revision", "defer-decision"],
+      "allowedValues": ["approve-proposal", "reject-proposal", "request-revision", "request-changes", "defer-decision"],
       "authorityBoundary": "Decision value must be explicit input, not inferred from generated artifacts."
     },
     {
@@ -58,6 +58,28 @@
       "inputRole": "human-authored-rationale",
       "required": true,
       "authorityBoundary": "Rationale must be authored by the human reviewer."
+    },
+    {
+      "option": "--decision-actor-type",
+      "inputRole": "human-decision-actor-type",
+      "required": false,
+      "defaultValue": "human",
+      "allowedValues": ["human"],
+      "authorityBoundary": "Actor type must remain human; Codex, AI, tool, validator, CI, generated, and automation actors are not approval authority."
+    },
+    {
+      "option": "--decision-source",
+      "inputRole": "human-decision-source",
+      "required": false,
+      "defaultValue": "explicit-cli-input",
+      "allowedValues": ["explicit-cli-input", "imported-human-review"],
+      "authorityBoundary": "Decision source must be explicit human input or imported human review, not inferred from generated artifacts, validators, runtime smoke, CI, or reports."
+    },
+    {
+      "option": "--decision-timestamp",
+      "inputRole": "human-decision-timestamp",
+      "required": false,
+      "authorityBoundary": "Timestamp is provenance metadata only; it does not grant approval, apply, evidence, proof, scope, or CI authority."
     },
     {
       "option": "--output",
@@ -93,6 +115,11 @@
       "implementedNow": true
     },
     {
+      "checkId": "approval-review-packet-completeness",
+      "description": "Approve decisions must require a parseable JSON Human Review Packet with complete review-packet status and matching proposal provenance.",
+      "implementedNow": true
+    },
+    {
       "checkId": "no-implicit-apply",
       "description": "Command must not apply graph deltas or mutate graph-source while recording a decision.",
       "implementedNow": true
@@ -120,9 +147,16 @@
   "futureDecisionRecordOutputPreview": {
     "artifactRole": "devview-human-decision-record",
     "status": "devview-human-decision-record-created",
+    "decisionLifecycleHardeningStatus": "hardened-human-decision-record-v1",
     "decisionValue": "<one-of-allowed-values>",
+    "decisionKind": "approve | reject | request-changes | defer",
+    "decisionActorType": "human",
+    "decisionSource": "explicit-cli-input | imported-human-review",
+    "reviewPacketCompletenessStatus": "complete | incomplete-blocking-items | incomplete-review-items | missing-json-review-packet",
     "approvalStatus": "depends-on-decision-value-in-future-command",
     "approvedProposalStateCreated": false,
+    "approvalAutomationEnabled": false,
+    "graphDeltaApplyTriggered": false,
     "graphDeltaApplied": false,
     "graphSourceMutated": false,
     "runtimeEvidenceSatisfied": false,

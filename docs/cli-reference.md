@@ -570,16 +570,21 @@ node dist/cli/index.js graph read-model review-graph-delta `
   have produced proposal and review-packet inputs.
 - Options: `--review-packet <packetPath>`, `--proposal <proposalPath>`, `--decision <value>`, `--reviewer <identity>`,
   and `--rationale <text>` are required. `--boundary <file>` is optional but recommended. `--output <file>` and
-  `--markdown <file>` may write explicit decision-record outputs.
+  `--markdown <file>` may write explicit decision-record outputs. Optional hardening metadata includes
+  `--decision-actor-type human`, `--decision-source explicit-cli-input|imported-human-review`, and
+  `--decision-timestamp <iso8601>`.
 - What it checks: proposal-only boundaries, review-packet provenance, decision vocabulary, explicit human reviewer and
-  rationale, no Codex/AI reviewer identity, and output authority.
+  rationale, no Codex/AI reviewer identity, human-only actor/source metadata, and output authority. An
+  `approve-proposal` decision requires a parseable JSON Human Review Packet with matching proposal provenance and
+  complete review-packet status.
 - What it writes: Nothing by default. It writes only to explicit `--output` and `--markdown` paths.
 - Success result: JSON with `artifactRole: devview-human-decision-record`, `humanDecisionRecorded: true`, and
   `approvedProposalStateCreated: false`, `graphDeltaApplied: false`, `graphSourceMutated: false`,
   `runtimeEvidenceSatisfied: false`, `equivalenceProven: false`, `scopeEnforced: false`, and
   `ciEnforcementEnabled: false`.
-- Common failures: invalid decision value, missing human provenance, proposal/review mismatch, unsafe proposal or review
-  packet boundary fields, or output paths that would overwrite source/proposal/review/evidence/graph artifacts.
+- Common failures: invalid decision value, missing human provenance, non-human decision actor/source metadata,
+  incomplete approval review packet, proposal/review mismatch, unsafe proposal or review packet boundary fields, or
+  output paths that would overwrite source/proposal/review/evidence/graph artifacts.
 - Next command: For `approve-proposal`, a separate future approved-proposal-state command may consume the record. This
   command itself never creates approved state, applies graph deltas, mutates graph-source, accepts Evidence, proves
   equivalence, enforces scope, or configures CI.
@@ -594,6 +599,8 @@ node dist/cli/index.js graph read-model record-human-decision `
   --decision defer-decision `
   --reviewer human-reviewer `
   --rationale "Calibration defers approval; no graph-source mutation is authorized." `
+  --decision-actor-type human `
+  --decision-source explicit-cli-input `
   --output .tmp/devview-human-decision-record.json `
   --json
 ```
@@ -606,13 +613,15 @@ node dist/cli/index.js graph read-model record-human-decision `
 - Options: `--decision-record <decisionRecordPath>` and `--proposal <proposalPath>` are required.
   `--boundary <boundaryPath>` is optional but recommended. `--output <file>` and `--markdown <file>` may write explicit
   preview outputs.
-- What it checks: Approved Proposal State boundary role/status, Human Decision Record role/status/provenance, proposal
-  only boundaries, proposal id/path consistency, and output authority.
+- What it checks: Approved Proposal State boundary role/status, hardened Human Decision Record role/status/provenance,
+  human-only decision actor/source metadata, complete review-packet provenance for approvals, proposal only boundaries,
+  proposal id/path consistency, and output authority.
 - What it writes: Nothing by default. It writes only to explicit `--output` and `--markdown` paths.
-- Success result: JSON with `artifactRole: devview-approved-proposal-state-preview`. If the decision is
-  `approve-proposal` and provenance checks pass, `approvedProposalStateCreated: true`; otherwise the preview is blocked
-  with `approvedProposalStateCreated: false`. In both cases `graphDeltaApplied`, `graphSourceMutated`,
-  `runtimeEvidenceSatisfied`, `equivalenceProven`, `scopeEnforced`, and `ciEnforcementEnabled` remain false.
+- Success result: JSON with `artifactRole: devview-approved-proposal-state-preview`. If the decision is a hardened human
+  `approve-proposal`/`decisionKind: approve` record with complete review-packet provenance and proposal checks pass,
+  `approvedProposalStateCreated: true`; otherwise the preview is blocked with `approvedProposalStateCreated: false`. In
+  both cases `graphDeltaApplied`, `graphSourceMutated`, `runtimeEvidenceSatisfied`, `equivalenceProven`,
+  `scopeEnforced`, and `ciEnforcementEnabled` remain false.
 - Common failures: malformed boundary, unsafe proposal, unsafe decision record, mismatched proposal provenance, or
   output paths that would overwrite source/proposal/review/evidence/graph artifacts.
 - Next command: A separate future graph-delta apply command may consume an approved-state preview after its own checks.

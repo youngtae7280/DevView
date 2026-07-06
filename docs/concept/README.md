@@ -312,7 +312,7 @@ mutate graph-source, apply graph deltas, satisfy runtime Evidence, enforce scope
 The Human Decision Record boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-boundary.runtime-evidence-only.preview.json`.
 It defines the human-authored decision record shape after a Human Review Packet, including decision values such as
-`approve-proposal`, `reject-proposal`, `request-revision`, and `defer-decision`.
+`approve-proposal`, `reject-proposal`, `request-revision`, `request-changes`, and `defer-decision`.
 
 The Human Decision Record command boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-human-decision-record-command-boundary.runtime-evidence-only.preview.json`.
@@ -320,7 +320,9 @@ The `graph read-model record-human-decision ...` command now records an explicit
 `examples/valid/todo-app-pbe-run/generated/devview-human-decision-record.defer-decision.runtime-evidence-only.preview.json`.
 It requires proposal/review provenance, explicit human reviewer identity, and a rationale. It still does not create
 approved proposal state, apply graph deltas, mutate graph-source, satisfy Evidence, prove equivalence, or enforce
-scope/CI.
+scope/CI. The hardened command records `decisionActorType: human`, an explicit decision source, decision timestamp
+authority, and review-packet completeness. Approval decisions require a complete JSON Human Review Packet and cannot be
+inferred from generated artifacts, validators, runtime smoke, CI, or review packet generation.
 
 The Approved Proposal State boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state-boundary.runtime-evidence-only.preview.json`.
@@ -328,8 +330,10 @@ The `graph read-model create-approved-proposal-state ...` command now creates or
 Human Decision Record and proposal-only Graph Delta preview. The first calibration artifact is blocked because the human
 decision record is `defer-decision`:
 `examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state.blocked-defer-decision.runtime-evidence-only.preview.json`.
-The command keeps approved state creation separate from graph delta apply and never mutates graph-source, satisfies
-runtime Evidence, proves equivalence, enforces scope, or configures CI.
+Approved state creation now requires a hardened explicit human approve record with complete review-packet provenance.
+Legacy/unhardened approval-looking records, non-human actor/source metadata, and reject/defer/request-changes decisions
+remain blocked. The command keeps approved state creation separate from graph delta apply and never mutates graph-source,
+satisfies runtime Evidence, proves equivalence, enforces scope, or configures CI.
 
 The Graph Delta Apply boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-boundary.runtime-evidence-only.preview.json`. It

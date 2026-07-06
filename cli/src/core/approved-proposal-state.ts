@@ -9,6 +9,7 @@ const BOUNDARY_STATUS = 'devview-approved-proposal-state-boundary-previewed'
 const DECISION_RECORD_ROLE = 'devview-human-decision-record'
 const PROPOSAL_ROLE = 'graph-delta-proposal-only-preview'
 const APPROVED_STATE_ROLE = 'devview-approved-proposal-state-preview'
+const HARDENED_DECISION_RECORD_STATUS = 'hardened-human-decision-record-v1'
 
 export interface ApprovedProposalStateOptions {
   boundary?: string
@@ -37,7 +38,11 @@ export interface ApprovedProposalStatePreview {
   sourceHumanReviewPacket: string | null
   proposalId: string
   decisionValue: string
+  decisionKind: string
   decisionProvenance: string
+  decisionActorType: string
+  decisionSource: string
+  reviewPacketCompletenessStatus: string
   reviewerIdentity: string
   approvalStatus: 'approved-by-human-decision-record' | 'not-approved'
   approvedProposalStateCreated: boolean
@@ -172,7 +177,11 @@ function buildApprovedProposalState(
     proposalId:
       stringValue(input.proposal.proposalId) || stringValue(input.decisionRecord.proposalId) || 'unknown-proposal',
     decisionValue,
+    decisionKind: stringValue(input.decisionRecord.decisionKind),
     decisionProvenance: stringValue(input.decisionRecord.decisionProvenance),
+    decisionActorType: stringValue(input.decisionRecord.decisionActorType),
+    decisionSource: stringValue(input.decisionRecord.decisionSource),
+    reviewPacketCompletenessStatus: stringValue(input.decisionRecord.reviewPacketCompletenessStatus),
     reviewerIdentity: stringValue(input.decisionRecord.reviewerIdentity),
     approvalStatus: created ? 'approved-by-human-decision-record' : 'not-approved',
     approvedProposalStateCreated: created,
@@ -230,11 +239,13 @@ Status: \`${state.status}\`
 | Field | Value |
 | --- | --- |
 | Decision | \`${state.decisionValue}\` |
+| Decision kind | \`${state.decisionKind || 'missing'}\` |
 | Approval status | \`${state.approvalStatus}\` |
 | Approved state created | \`${state.approvedProposalStateCreated}\` |
 | Proposal | \`${state.sourceGraphDeltaProposal}\` |
 | Proposal ID | \`${state.proposalId}\` |
 | Decision record | \`${state.sourceHumanDecisionRecord}\` |
+| Review packet completeness | \`${state.reviewPacketCompletenessStatus || 'missing'}\` |
 
 ## Blocked Reason
 
@@ -311,6 +322,18 @@ function validateDecisionRecord(decisionRecord: JsonRecord): void {
       throw new Error(`Unsafe Human Decision Record boundary: ${field} must be false.`)
     }
   }
+  for (const field of [
+    'approvalAutomationEnabled',
+    'graphDeltaApplyTriggered',
+    'selfApprovalRejected',
+    'aiGeneratedDecisionAllowed',
+    'codexSelfApprovalAllowed',
+    'approvalAutomationAllowed',
+  ]) {
+    if (field in decisionRecord && decisionRecord[field] !== false) {
+      throw new Error(`Unsafe Human Decision Record boundary: ${field} must be false when present.`)
+    }
+  }
 }
 
 function validateDecisionProposalConsistency(
@@ -345,6 +368,17 @@ function validateDecisionProposalConsistency(
       message: 'Human Decision Record sourceGraphDeltaProposal does not match the proposal input path.',
     })
   }
+  const sourceProposalAlias = stringValue(decisionRecord.sourceProposal)
+  if (sourceProposalAlias && sourceProposalAlias !== actualProposalPath) {
+    findings.push({
+      code: 'APPROVED_STATE_SOURCE_PROPOSAL_ALIAS_MISMATCH',
+      severity: 'error',
+      field: 'sourceProposal',
+      expected: actualProposalPath,
+      actual: sourceProposalAlias,
+      message: 'Human Decision Record sourceProposal does not match the proposal input path.',
+    })
+  }
 
   if (decisionRecord.decisionValue !== 'approve-proposal') {
     findings.push({
@@ -356,6 +390,120 @@ function validateDecisionProposalConsistency(
       message: 'Decision value does not create approved proposal state.',
     })
   }
+  findings.push(...validateHardenedApprovalDecision(decisionRecord))
+  return findings
+}
+
+function validateHardenedApprovalDecision(decisionRecord: JsonRecord): ApprovedProposalStateFinding[] {
+  const findings: ApprovedProposalStateFinding[] = []
+  const decisionValue = stringValue(decisionRecord.decisionValue)
+  if (decisionValue !== 'approve-proposal') {
+    return findings
+  }
+
+  const expectations: Array<{
+    field: string
+    expected: unknown
+    code: string
+    message: string
+  }> = [
+    {
+      field: 'decisionLifecycleHardeningStatus',
+      expected: HARDENED_DECISION_RECORD_STATUS,
+      code: 'APPROVED_STATE_DECISION_NOT_HARDENED',
+      message: 'Approval requires a hardened Human Decision Record.',
+    },
+    {
+      field: 'decisionKind',
+      expected: 'approve',
+      code: 'APPROVED_STATE_DECISION_KIND_NOT_APPROVE',
+      message: 'Approval requires decisionKind approve.',
+    },
+    {
+      field: 'decisionActorType',
+      expected: 'human',
+      code: 'APPROVED_STATE_DECISION_ACTOR_NOT_HUMAN',
+      message: 'Approval requires decisionActorType human.',
+    },
+    {
+      field: 'reviewPacketCompletenessStatus',
+      expected: 'complete',
+      code: 'APPROVED_STATE_REVIEW_PACKET_INCOMPLETE',
+      message: 'Approval requires a complete Human Review Packet.',
+    },
+    {
+      field: 'selfApprovalCheckStatus',
+      expected: 'passed-human-actor',
+      code: 'APPROVED_STATE_SELF_APPROVAL_CHECK_MISSING',
+      message: 'Approval requires a passed human-actor self-approval check.',
+    },
+  ]
+
+  for (const expectation of expectations) {
+    const actual = decisionRecord[expectation.field]
+    if (actual !== expectation.expected) {
+      findings.push({
+        code: expectation.code,
+        severity: 'error',
+        field: expectation.field,
+        expected: expectation.expected,
+        actual,
+        message: expectation.message,
+      })
+    }
+  }
+
+  const source = stringValue(decisionRecord.decisionSource)
+  if (source !== 'explicit-cli-input' && source !== 'imported-human-review') {
+    findings.push({
+      code: 'APPROVED_STATE_DECISION_SOURCE_UNSAFE',
+      severity: 'error',
+      field: 'decisionSource',
+      expected: ['explicit-cli-input', 'imported-human-review'],
+      actual: source || null,
+      message: 'Approval requires an explicit human decision source.',
+    })
+  }
+
+  if (!stringValue(decisionRecord.sourceReviewPacket)) {
+    findings.push({
+      code: 'APPROVED_STATE_REVIEW_PACKET_MISSING',
+      severity: 'error',
+      field: 'sourceReviewPacket',
+      expected: 'non-empty source Human Review Packet path',
+      actual: decisionRecord.sourceReviewPacket,
+      message: 'Approval requires sourceReviewPacket provenance.',
+    })
+  }
+
+  const reviewer = stringValue(decisionRecord.reviewerIdentity).toLowerCase()
+  for (const forbidden of ['codex', 'ai', 'assistant', 'bot', 'automation', 'tool', 'validator', 'ci']) {
+    if (reviewer.includes(forbidden)) {
+      findings.push({
+        code: 'APPROVED_STATE_REVIEWER_SELF_APPROVAL_RISK',
+        severity: 'error',
+        field: 'reviewerIdentity',
+        expected: 'human reviewer identity without AI/Codex/tool/CI markers',
+        actual: decisionRecord.reviewerIdentity,
+        message: 'Approval requires a human reviewer identity and cannot use Codex/AI/tool/CI identities.',
+      })
+      break
+    }
+  }
+
+  for (const field of ['approvalAutomationEnabled', 'graphDeltaApplyTriggered', 'selfApprovalRejected']) {
+    if (decisionRecord[field] !== false) {
+      findings.push({
+        code: 'APPROVED_STATE_DECISION_AUTHORITY_FLAG_UNSAFE',
+        severity: 'error',
+        field,
+        expected: false,
+        actual: decisionRecord[field],
+        message: `${field} must be false before approved state creation.`,
+      })
+    }
+  }
+
   return findings
 }
 

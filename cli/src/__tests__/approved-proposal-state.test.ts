@@ -80,6 +80,10 @@ describe('Approved Proposal State CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     expect(payload.status).toBe('devview-approved-proposal-state-created')
+    expect(payload.decisionKind).toBe('approve')
+    expect(payload.decisionActorType).toBe('human')
+    expect(payload.decisionSource).toBe('explicit-cli-input')
+    expect(payload.reviewPacketCompletenessStatus).toBe('complete')
     expect(payload.approvedProposalStateCreated).toBe(true)
     expect(payload.approvalStatus).toBe('approved-by-human-decision-record')
     expect(payload.graphDeltaApplyEnabled).toBe(false)
@@ -90,6 +94,68 @@ describe('Approved Proposal State CLI', () => {
     expect(payload.equivalenceProven).toBe(false)
     expect(payload.scopeEnforced).toBe(false)
     expect(payload.ciEnforcementEnabled).toBe(false)
+  })
+
+  it('blocks legacy approval-looking records that are not hardened', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, 'boundary.json'), validBoundary())
+    writeJson(join(workspace, 'proposal.json'), validProposal())
+    writeJson(join(workspace, 'decision.json'), legacyApprovalLookingDecisionRecord())
+
+    const result = await runPbeCli(
+      [
+        'graph',
+        'read-model',
+        'create-approved-proposal-state',
+        '--boundary',
+        'boundary.json',
+        '--decision-record',
+        'decision.json',
+        '--proposal',
+        'proposal.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.status).toBe('devview-approved-proposal-state-blocked')
+    expect(payload.approvedProposalStateCreated).toBe(false)
+    expect(payload.validationFindings.map((finding: { code: string }) => finding.code)).toContain(
+      'APPROVED_STATE_DECISION_NOT_HARDENED',
+    )
+  })
+
+  it('blocks request-changes and rejects from approved-state creation', async () => {
+    for (const decisionValue of ['reject-proposal', 'request-revision', 'request-changes', 'defer-decision']) {
+      const workspace = createWorkspace()
+      writeJson(join(workspace, 'boundary.json'), validBoundary())
+      writeJson(join(workspace, 'proposal.json'), validProposal())
+      writeJson(join(workspace, 'decision.json'), validDecisionRecord({ decisionValue }))
+
+      const result = await runPbeCli(
+        [
+          'graph',
+          'read-model',
+          'create-approved-proposal-state',
+          '--boundary',
+          'boundary.json',
+          '--decision-record',
+          'decision.json',
+          '--proposal',
+          'proposal.json',
+          '--json',
+        ],
+        { cwd: workspace, pluginRoot },
+      )
+      const payload = JSON.parse(result.stdout)
+
+      expect(result.exitCode).toBe(ExitCode.Success)
+      expect(payload.status).toBe('devview-approved-proposal-state-blocked')
+      expect(payload.approvedProposalStateCreated).toBe(false)
+      expect(payload.approvalStatus).toBe('not-approved')
+    }
   })
 
   it('blocks mismatched proposal provenance by writing a blocked preview', async () => {
@@ -123,6 +189,46 @@ describe('Approved Proposal State CLI', () => {
     expect(payload.approvedProposalStateCreated).toBe(false)
     expect(payload.validationFindings.map((finding: { code: string }) => finding.code)).toContain(
       'APPROVED_STATE_PROPOSAL_ID_MISMATCH',
+    )
+  })
+
+  it('blocks mismatched sourceReviewPacket/sourceProposal provenance by writing a blocked preview', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, 'boundary.json'), validBoundary())
+    writeJson(join(workspace, 'proposal.json'), validProposal())
+    writeJson(
+      join(workspace, 'decision.json'),
+      validDecisionRecord({
+        decisionValue: 'approve-proposal',
+        sourceReviewPacket: '',
+        sourceProposal: 'other-proposal.json',
+      }),
+    )
+
+    const result = await runPbeCli(
+      [
+        'graph',
+        'read-model',
+        'create-approved-proposal-state',
+        '--boundary',
+        'boundary.json',
+        '--decision-record',
+        'decision.json',
+        '--proposal',
+        'proposal.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.status).toBe('devview-approved-proposal-state-blocked')
+    expect(payload.validationFindings.map((finding: { code: string }) => finding.code)).toContain(
+      'APPROVED_STATE_SOURCE_PROPOSAL_ALIAS_MISMATCH',
+    )
+    expect(payload.validationFindings.map((finding: { code: string }) => finding.code)).toContain(
+      'APPROVED_STATE_REVIEW_PACKET_MISSING',
     )
   })
 
@@ -229,15 +335,41 @@ function validProposal(): Record<string, unknown> {
   }
 }
 
-function validDecisionRecord(input: { decisionValue: string }): Record<string, unknown> {
+function validDecisionRecord(input: {
+  decisionValue: string
+  sourceReviewPacket?: string
+  sourceProposal?: string
+}): Record<string, unknown> {
+  const decisionKind =
+    input.decisionValue === 'approve-proposal'
+      ? 'approve'
+      : input.decisionValue === 'reject-proposal'
+        ? 'reject'
+        : input.decisionValue === 'defer-decision'
+          ? 'defer'
+          : 'request-changes'
   return {
     artifactRole: 'devview-human-decision-record',
     status: 'devview-human-decision-record-created',
-    sourceReviewPacket: 'review.json',
+    decisionLifecycleHardeningStatus: 'hardened-human-decision-record-v1',
+    sourceReviewPacket: input.sourceReviewPacket ?? 'review.json',
+    sourceProposal: input.sourceProposal ?? 'proposal.json',
     sourceGraphDeltaProposal: 'proposal.json',
     proposalId: 'GDP-TEST',
     decisionValue: input.decisionValue,
+    decisionKind,
     decisionProvenance: 'human-authored-explicit-decision',
+    decisionActorType: 'human',
+    decisionActorLabel: 'human-reviewer',
+    decisionSource: 'explicit-cli-input',
+    decisionTimestamp: '2026-07-06T00:00:00.000Z',
+    decisionTimestampAuthorityStatus: 'cli-provided',
+    reviewPacketCompletenessStatus: 'complete',
+    reviewPacketQuestionCount: 0,
+    reviewRequiredItemCount: 0,
+    blockingReviewItemCount: 0,
+    selfApprovalCheckStatus: 'passed-human-actor',
+    selfApprovalRejected: false,
     reviewerIdentity: 'human-reviewer',
     humanDecisionRecorded: true,
     approvalStatus:
@@ -249,5 +381,17 @@ function validDecisionRecord(input: { decisionValue: string }): Record<string, u
     equivalenceProven: false,
     scopeEnforced: false,
     ciEnforcementEnabled: false,
+    approvalAutomationEnabled: false,
+    graphDeltaApplyTriggered: false,
   }
+}
+
+function legacyApprovalLookingDecisionRecord(): Record<string, unknown> {
+  const legacy = validDecisionRecord({
+    decisionValue: 'approve-proposal',
+  })
+  delete legacy.decisionLifecycleHardeningStatus
+  delete legacy.decisionKind
+  delete legacy.decisionActorType
+  return legacy
 }

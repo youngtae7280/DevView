@@ -148,6 +148,9 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     decision: undefined as string | undefined,
     reviewer: undefined as string | undefined,
     rationale: undefined as string | undefined,
+    decisionActorType: undefined as string | undefined,
+    decisionSource: undefined as string | undefined,
+    decisionTimestamp: undefined as string | undefined,
     runtimeReport: undefined as string | undefined,
     candidate: undefined as string | undefined,
     schemaValidation: undefined as string | undefined,
@@ -556,6 +559,27 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--rationale requires a value.' }
       }
       options.rationale = value
+      index += 1
+    } else if (arg === '--decision-actor-type') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--decision-actor-type requires a value.' }
+      }
+      options.decisionActorType = value
+      index += 1
+    } else if (arg === '--decision-source') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--decision-source requires a value.' }
+      }
+      options.decisionSource = value
+      index += 1
+    } else if (arg === '--decision-timestamp') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--decision-timestamp requires a value.' }
+      }
+      options.decisionTimestamp = value
       index += 1
     } else if (arg === '--runtime-report') {
       const value = argv[index + 1]
