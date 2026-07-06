@@ -3331,3 +3331,25 @@ This decision remains read-only/report-only/visualization-only. It does not appr
 taxonomy or view tree extensions, mutate graph-source, change traversal, generate selected slices, generate contract
 input, generate instruction packs from Project Memory, execute Codex, satisfy runtime Evidence, prove equivalence,
 enforce scope, configure CI, or replace human review.
+
+## DEC-289 Add DevViewGraph Current Work Flow Stepper
+
+DEC-289 does not supersede DEC-097 through DEC-288. It extends DevViewGraph with a linked-list style Current Work Flow
+stepper for replaying one selected request inside the graph inspector.
+
+The DevViewGraph data JSON now records `workflowSteps[]`. The WindowsUtility/CardPrinterConfig demo uses six read-only
+steps:
+
+```text
+1 Request -> 2 Domain Tree -> 3 Change Tree -> 4 Risk Tree -> 5 SubGraph -> 6 Pack
+```
+
+Each workflow step carries node ids, edge ids, tree ids, subgraph ids, and instruction source ids derived from the
+already-rendered graph, viewpoint trees, selected subgraph, and instruction pack preview. Clicking a step changes only
+the HTML inspector highlight, selection banner, and detail panel. It does not create a new traversal result, selected
+slice, contract input, instruction pack, approval state, or source mutation.
+
+This keeps the top work-history navigation separate: `<`, `>`, and the numeric index move between graph-source retrofit
+records, while the Current Work Flow stepper replays the inside of the current request. The feature remains
+visualization-only and does not execute Codex, call an LLM, mutate graph-source, apply graph deltas, approve work,
+satisfy runtime Evidence, prove equivalence, enforce scope, configure CI, or replace human review.

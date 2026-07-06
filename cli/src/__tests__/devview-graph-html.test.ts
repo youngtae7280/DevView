@@ -70,6 +70,23 @@ describe('DevViewGraph HTML inspector CLI', () => {
     )
     expect(data.packMapping.length).toBeGreaterThan(0)
     expect(data.compilationTrace.length).toBeGreaterThan(0)
+    expect(data.workflowSteps.map((step: { id: string }) => step.id)).toEqual([
+      'workflow.request-ir',
+      'workflow.domain-tree',
+      'workflow.change-tree',
+      'workflow.risk-tree',
+      'workflow.selected-subgraph',
+      'workflow.instruction-pack',
+    ])
+    expect(data.workflowSteps[0].nodeIds).toContain('change.laminator-tag-layout')
+    expect(data.workflowSteps[4].nodeIds).toEqual(
+      expect.arrayContaining([
+        'change.laminator-tag-layout',
+        'ui.laminator-tag-param-columns',
+        'boundary.laminator-layout-only',
+      ]),
+    )
+    expect(data.workflowSteps[5].packMappingIds.length).toBeGreaterThan(0)
     expect(selected.nodeIds).toEqual(
       expect.arrayContaining([
         'change.laminator-tag-layout',
@@ -84,6 +101,7 @@ describe('DevViewGraph HTML inspector CLI', () => {
     expect(html).toContain('function selectEdge')
     expect(html).toContain('function selectTree')
     expect(html).toContain('function selectSubgraph')
+    expect(html).toContain('function selectWorkflowStep')
     expect(html).toContain('function zoomGraph')
     expect(html).toContain('function beginPan')
     expect(html).toContain('function edgePath')
@@ -92,7 +110,10 @@ describe('DevViewGraph HTML inspector CLI', () => {
     expect(html).toContain('id="history-prev"')
     expect(html).toContain('id="history-index"')
     expect(html).toContain('id="history-next"')
+    expect(html).toContain('id="workflow-step-list"')
     expect(html).toContain('edge-hit')
+    expect(html).toContain('Current Work Flow')
+    expect(html).toContain('workflow-step')
     expect(html).toContain('Current Request')
     expect(html).toContain('Selected Viewpoint Trees')
     expect(html).toContain('Selected Node')
@@ -255,7 +276,14 @@ describe('DevViewGraph HTML inspector CLI', () => {
     expect(data.projectMemorySummary.currentDirection).toBe('legacy-preserving-retrofit')
     expect(data.projectMemorySummary.taxonomyProfileId).toBe('legacy-retrofit-windowsutility-v0')
     expect(data.projectMemorySummary.taxonomyAuthorityStatus).toBe('preview-only-not-approved')
+    expect(data.workflowSteps.length).toBe(6)
+    expect(data.workflowSteps[1].treeIds).toContain('tree.domain-source')
+    expect(data.workflowSteps[3].treeIds).toContain('tree.risk-boundary')
+    expect(data.workflowSteps[5].output).toContain('instruction source entries')
     expect(html).toContain('Project Memory')
+    expect(html).toContain('Current Work Flow')
+    expect(html).toContain('1 Request')
+    expect(html).toContain('6 Pack')
     expect(html).toContain('Project Mode')
     expect(html).toContain('legacy-preserving-retrofit')
     expect(html).toContain('Detailed Slice')

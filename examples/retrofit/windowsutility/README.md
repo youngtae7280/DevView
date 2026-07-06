@@ -22,6 +22,15 @@ node dist/cli/index.js graph read-model render-devview-graph `
   --json
 ```
 
+The generated inspector includes a Current Work Flow stepper for the active request:
+
+```text
+1 Request -> 2 Domain Tree -> 3 Change Tree -> 4 Risk Tree -> 5 SubGraph -> 6 Pack
+```
+
+Clicking those steps changes graph highlight and inspector detail only. It does not run traversal, generate a new
+contract, execute Codex, mutate graph-source, approve work, or satisfy runtime Evidence.
+
 This fixture does not mutate `Utility_Windows`, mutate `WindowsUtility`, apply graph deltas, approve work, satisfy
 runtime Evidence, prove equivalence, enforce scope, or configure CI.
 

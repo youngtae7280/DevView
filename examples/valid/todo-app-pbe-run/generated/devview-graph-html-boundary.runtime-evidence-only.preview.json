@@ -32,6 +32,7 @@
       "subgraphs[]",
       "packMapping[]",
       "compilationTrace[]",
+      "workflowSteps[]",
       "safetyFlags",
       "artifacts",
       "graph.layoutMode",
@@ -45,6 +46,7 @@
   "interactionModel": {
     "requestPanel": "the current user-confirmed request, source record, selected node count, and selected edge count are visible before interaction",
     "projectMemoryPanel": "optional Project Memory context shows mode, direction, portfolio role, detailed slice, taxonomy profile, and preview-only authority without changing graph selection",
+    "workflowStepper": "a linked-list style 1 -> 2 -> 3 -> 4 -> 5 -> 6 stepper replays the current request flow from source record, through viewpoint trees, to selected subgraph and final instruction-pack preview; each step changes graph highlight and inspector detail only",
     "workHistoryNavigation": "top-level previous/next buttons plus a 1-based index input navigate graph-source retrofit records only; selecting a prior record highlights its graph record node and connected context",
     "selectedViewpointTreePanel": "the trees selected by the current request are shown with directly clickable node and edge chips",
     "panZoom": "mouse drag pans the graph; mouse wheel zooms around the pointer; +/-/R buttons provide bounded semantic zoom where node boxes, labels, and edge strokes keep stable screen size",

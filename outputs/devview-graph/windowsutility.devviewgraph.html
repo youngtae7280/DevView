@@ -151,6 +151,101 @@
         box-shadow: var(--graph-shadow);
         overflow: hidden;
       }
+      .workflow-panel {
+        min-width: 780px;
+        margin-bottom: 10px;
+        border: 1px solid var(--graph-line);
+        border-radius: 8px;
+        background: var(--graph-surface);
+        box-shadow: var(--graph-shadow);
+      }
+      .workflow-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 9px 11px;
+        border-bottom: 1px solid var(--graph-line);
+        font-size: 12px;
+      }
+      .workflow-heading strong {
+        font-size: 13px;
+      }
+      .workflow-heading span {
+        color: var(--graph-muted);
+      }
+      .workflow-step-list {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        padding: 8px;
+        overflow-x: auto;
+      }
+      .workflow-step {
+        min-width: 126px;
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr);
+        gap: 7px;
+        align-items: center;
+        border: 1px solid var(--graph-line);
+        border-radius: 7px;
+        padding: 7px 8px;
+        background: #fff;
+        color: var(--graph-ink);
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+      .workflow-step:hover,
+      .workflow-step.active {
+        border-color: var(--graph-selected);
+        background: #f4f8ff;
+        color: var(--graph-selected);
+      }
+      .workflow-index {
+        width: 22px;
+        height: 22px;
+        display: inline-grid;
+        place-items: center;
+        border: 1px solid var(--graph-line);
+        border-radius: 999px;
+        color: var(--graph-muted);
+        background: #fbfbfc;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .workflow-step.active .workflow-index {
+        border-color: var(--graph-selected);
+        color: var(--graph-selected);
+        background: #fff;
+      }
+      .workflow-text {
+        min-width: 0;
+      }
+      .workflow-text strong,
+      .workflow-text span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .workflow-text strong {
+        font-size: 12px;
+      }
+      .workflow-text span {
+        margin-top: 2px;
+        color: var(--graph-muted);
+        font-size: 11px;
+      }
+      .workflow-arrow {
+        width: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--graph-muted);
+        font-size: 15px;
+        user-select: none;
+      }
       svg {
         display: block;
         width: 100%;
@@ -550,6 +645,13 @@
         </div>
       </aside>
       <main class="workspace">
+        <div class="workflow-panel" aria-label="Current work graph flow">
+          <div class="workflow-heading">
+            <strong>Current Work Flow</strong>
+            <span>Click a step to replay how this request narrows the graph.</span>
+          </div>
+          <div id="workflow-step-list" class="workflow-step-list"></div>
+        </div>
         <div class="graph-frame">
           <div id="selection-banner" class="selection-banner"></div>
           <div class="graph-tools" aria-label="Graph controls">
@@ -2168,6 +2270,188 @@
             "authority": "report artifact only"
           }
         ],
+        "workflowSteps": [
+          {
+            "index": 1,
+            "id": "workflow.request-ir",
+            "label": "1 Request",
+            "phase": "Natural request target",
+            "summary": "Start from the current user request and source change record before any broader graph context is highlighted.",
+            "nodeIds": ["change.laminator-tag-layout"],
+            "edgeIds": [],
+            "treeIds": [],
+            "subgraphIds": [],
+            "packMappingIds": [],
+            "output": "change.laminator-tag-layout",
+            "authority": "read-only visualization; no traversal, contract, approval, or apply authority"
+          },
+          {
+            "index": 2,
+            "id": "workflow.domain-tree",
+            "label": "2 Domain Tree",
+            "phase": "Project/source viewpoint",
+            "summary": "Show the product, module, execution-flow, UI-surface, and integration context that explains where the task lives.",
+            "nodeIds": [
+              "product.windowsutility-legacy",
+              "product.windowsutility-integrated",
+              "module.cardprinterconfig",
+              "module.cardprinterdiagnostics",
+              "module.cardprinterfirmware",
+              "module.cardprinterlcd",
+              "module.cardprinterlock",
+              "module.cardprintermodel",
+              "module.cardprintermodel2",
+              "module.cardprinterribbon",
+              "module.cardprintersubencoder",
+              "module.cardprintertest",
+              "module.netadmin",
+              "module.simpleprinterinfo",
+              "module.simpleprinterinfo2",
+              "module.sm8serial",
+              "module.smart51-cmdtool",
+              "module.smartcomm2",
+              "module.smartdump",
+              "module.smartdumpview",
+              "module.smartprinterlib",
+              "integration.config",
+              "integration.diagnostics",
+              "integration.dump",
+              "integration.printerinfo",
+              "product.cardprinterconfig",
+              "module.smart51-printer",
+              "module.smart51-laminator",
+              "module.smart52-laminator",
+              "flow.smart51-getconfig-index-000",
+              "ui.laminator-tag-param-columns"
+            ],
+            "edgeIds": [
+              "edge.windowsutility-scopes-cardprinterconfig",
+              "edge.cardprinterconfig-opens-detailed-retrofit",
+              "edge.windowsutility-scopes-cardprinterdiagnostics",
+              "edge.windowsutility-scopes-cardprinterfirmware",
+              "edge.windowsutility-scopes-cardprinterlcd",
+              "edge.windowsutility-scopes-cardprinterlock",
+              "edge.windowsutility-scopes-cardprintermodel",
+              "edge.windowsutility-scopes-cardprintermodel2",
+              "edge.windowsutility-scopes-cardprinterribbon",
+              "edge.windowsutility-scopes-cardprintersubencoder",
+              "edge.windowsutility-scopes-cardprintertest",
+              "edge.windowsutility-scopes-netadmin",
+              "edge.windowsutility-scopes-simpleprinterinfo",
+              "edge.windowsutility-scopes-simpleprinterinfo2",
+              "edge.windowsutility-scopes-sm8serial",
+              "edge.windowsutility-scopes-smart51-cmdtool",
+              "edge.windowsutility-scopes-smartcomm2",
+              "edge.windowsutility-scopes-smartdump",
+              "edge.windowsutility-scopes-smartdumpview",
+              "edge.windowsutility-scopes-smartprinterlib",
+              "edge.integrated-scopes-config",
+              "edge.integrated-scopes-diagnostics",
+              "edge.integrated-scopes-dump",
+              "edge.integrated-scopes-printerinfo",
+              "edge.product-scopes-smart51-printer",
+              "edge.smart51-printer-owns-getconfig-index-000",
+              "edge.product-scopes-smart51-laminator",
+              "edge.product-scopes-smart52-laminator",
+              "edge.smart51-laminator-uses-tag-layout",
+              "edge.smart52-laminator-uses-tag-layout"
+            ],
+            "treeIds": ["tree.domain-source"],
+            "subgraphIds": [],
+            "packMappingIds": [],
+            "output": "Domain Source Tree: 31 nodes / 30 edges",
+            "authority": "read-only visualization; no traversal, contract, approval, or apply authority"
+          },
+          {
+            "index": 3,
+            "id": "workflow.change-tree",
+            "label": "3 Change Tree",
+            "phase": "Retrofit change viewpoint",
+            "summary": "Show the change records and driver edges that separate current work from older or reverted retrofit work.",
+            "nodeIds": ["change.smart51-test-setting", "change.laminator-tag-layout"],
+            "edgeIds": [
+              "edge.getconfig-drives-smart51-test-record",
+              "edge.smart51-test-guards-forbidden-flows",
+              "edge.tag-layout-drives-laminator-record",
+              "edge.laminator-record-guards-logic"
+            ],
+            "treeIds": ["tree.retrofit-change"],
+            "subgraphIds": [],
+            "packMappingIds": [],
+            "output": "Retrofit Change Tree: 2 nodes / 4 edges",
+            "authority": "read-only visualization; no traversal, contract, approval, or apply authority"
+          },
+          {
+            "index": 4,
+            "id": "workflow.risk-tree",
+            "label": "4 Risk Tree",
+            "phase": "Forbidden-flow viewpoint",
+            "summary": "Show the guard nodes and edges that define what this work must not open.",
+            "nodeIds": ["boundary.smart51-test-read-only", "boundary.laminator-layout-only"],
+            "edgeIds": ["edge.smart51-test-guards-forbidden-flows", "edge.laminator-record-guards-logic"],
+            "treeIds": ["tree.risk-boundary"],
+            "subgraphIds": [],
+            "packMappingIds": [],
+            "output": "Risk Boundary Tree: 2 nodes / 2 edges",
+            "authority": "read-only visualization; no traversal, contract, approval, or apply authority"
+          },
+          {
+            "index": 5,
+            "id": "workflow.selected-subgraph",
+            "label": "5 SubGraph",
+            "phase": "Selected work slice",
+            "summary": "Collapse the viewpoint trees into the exact graph slice carried by the current instruction pack.",
+            "nodeIds": [
+              "change.laminator-tag-layout",
+              "ui.laminator-tag-param-columns",
+              "boundary.laminator-layout-only"
+            ],
+            "edgeIds": ["edge.tag-layout-drives-laminator-record", "edge.laminator-record-guards-logic"],
+            "treeIds": [
+              "tree.domain-source",
+              "tree.retrofit-change",
+              "tree.risk-boundary",
+              "tree.selected-pack-context"
+            ],
+            "subgraphIds": ["subgraph.change.laminator-tag-layout"],
+            "packMappingIds": [],
+            "output": "subgraph.change.laminator-tag-layout: 3 nodes / 2 edges",
+            "authority": "read-only visualization; no traversal, contract, approval, or apply authority"
+          },
+          {
+            "index": 6,
+            "id": "workflow.instruction-pack",
+            "label": "6 Pack",
+            "phase": "Instruction pack preview",
+            "summary": "Show the final read-only instruction sources: selected graph context, allowed file, forbidden scope, and verification requirements.",
+            "nodeIds": [
+              "change.laminator-tag-layout",
+              "ui.laminator-tag-param-columns",
+              "boundary.laminator-layout-only"
+            ],
+            "edgeIds": ["edge.tag-layout-drives-laminator-record", "edge.laminator-record-guards-logic"],
+            "treeIds": [
+              "tree.domain-source",
+              "tree.retrofit-change",
+              "tree.risk-boundary",
+              "tree.selected-pack-context"
+            ],
+            "subgraphIds": ["subgraph.change.laminator-tag-layout"],
+            "packMappingIds": [
+              "mapping.source-record",
+              "mapping.node.change.laminator-tag-layout",
+              "mapping.node.ui.laminator-tag-param-columns",
+              "mapping.node.boundary.laminator-layout-only",
+              "mapping.edge.edge.tag-layout-drives-laminator-record",
+              "mapping.edge.edge.laminator-record-guards-logic",
+              "mapping.file.src-cardprinterconfig-cardprinterconfig-rc",
+              "mapping.flow.forbidden-scope",
+              "mapping.verification.required"
+            ],
+            "output": "9 instruction source entries",
+            "authority": "instruction-pack preview only; no Codex execution, runtime Evidence satisfaction, approval, or enforcement"
+          }
+        ],
         "safetyFlags": {
           "readOnlyVisualizationOnly": true,
           "graphSourceMutated": false,
@@ -2197,7 +2481,10 @@
       const svg = document.getElementById('graph-svg')
       const detail = document.getElementById('detail')
       const selectionBanner = document.getElementById('selection-banner')
-      const state = { selectedType: 'subgraph', selectedId: data.subgraphs[0]?.id || '' }
+      const state = {
+        selectedType: 'workflow-step',
+        selectedId: data.workflowSteps?.[0]?.id || data.subgraphs[0]?.id || '',
+      }
       const viewport = {
         scale: 1,
         x: 0,
@@ -2224,12 +2511,14 @@
         if (state.selectedType === 'node') selectNode(state.selectedId)
         else if (state.selectedType === 'edge') selectEdge(state.selectedId)
         else if (state.selectedType === 'tree') selectTree(state.selectedId)
+        else if (state.selectedType === 'workflow-step') selectWorkflowStep(state.selectedId)
         else selectSubgraph(state.selectedId || data.subgraphs[0]?.id)
       }
 
       function renderLists() {
         renderRequestPanel()
         renderProjectMemoryPanel()
+        renderWorkflowSteps()
         const selectedTreeIds = data.requestSummary?.selectedTreeIds || data.subgraphs[0]?.requiredTreeIds || []
         document.getElementById('selected-tree-list').innerHTML = treeBreakdownHtml(selectedTreeIds, 4)
         document.getElementById('tree-list').innerHTML = data.trees
@@ -2278,12 +2567,42 @@
             const id = button.getAttribute('data-id')
             if (kind === 'tree') selectTree(id)
             if (kind === 'subgraph') selectSubgraph(id)
+            if (kind === 'workflow-step') selectWorkflowStep(id)
             if (kind === 'mapping') selectMapping(id)
             if (kind === 'node') selectNode(id)
             if (kind === 'edge') selectEdge(id)
           })
         })
         updateActiveButtons()
+      }
+
+      function renderWorkflowSteps() {
+        const target = document.getElementById('workflow-step-list')
+        const steps = data.workflowSteps || []
+        if (!target) return
+        if (steps.length === 0) {
+          target.innerHTML =
+            '<button class="workflow-step" disabled><span class="workflow-index">0</span><span class="workflow-text"><strong>No steps</strong><span>Compilation trace unavailable</span></span></button>'
+          return
+        }
+        target.innerHTML = steps
+          .map(
+            (step, index) =>
+              '<button class="workflow-step" data-kind="workflow-step" data-id="' +
+              esc(step.id) +
+              '">' +
+              '<span class="workflow-index">' +
+              esc(String(step.index)) +
+              '</span>' +
+              '<span class="workflow-text"><strong>' +
+              esc(step.label) +
+              '</strong><span>' +
+              esc(step.phase) +
+              '</span></span>' +
+              '</button>' +
+              (index < steps.length - 1 ? '<span class="workflow-arrow" aria-hidden="true">-&gt;</span>' : ''),
+          )
+          .join('')
       }
 
       function bindHistoryControls() {
@@ -2694,6 +3013,30 @@
         bindDetailChips()
       }
 
+      function selectWorkflowStep(id) {
+        state.selectedType = 'workflow-step'
+        state.selectedId = id
+        const step = (data.workflowSteps || []).find((entry) => entry.id === id)
+        if (!step) return
+        detail.innerHTML =
+          '<h2>' +
+          esc(step.label) +
+          '</h2><div class="sub">Current Work Flow Step</div>' +
+          kv([
+            ['phase', step.phase],
+            ['summary', step.summary],
+            ['nodes', chipList(step.nodeIds, 'node')],
+            ['edges', chipList(step.edgeIds, 'edge')],
+            ['viewpoint trees', treeBreakdownHtml(step.treeIds, 4)],
+            ['subgraphs', chipList(step.subgraphIds, 'subgraph')],
+            ['instruction sources', chipList(step.packMappingIds, 'mapping')],
+            ['output', step.output],
+            ['authority', step.authority],
+          ])
+        updateState()
+        bindDetailChips()
+      }
+
       function selectMapping(id) {
         const mapping = data.packMapping.find((entry) => entry.id === id)
         if (!mapping) return
@@ -2734,9 +3077,11 @@
         const selectedRecordId =
           state.selectedType === 'subgraph'
             ? data.sourceRecordId
-            : state.selectedType === 'node' || state.selectedType === 'history'
-              ? state.selectedId
-              : ''
+            : state.selectedType === 'workflow-step'
+              ? data.sourceRecordId
+              : state.selectedType === 'node' || state.selectedType === 'history'
+                ? state.selectedId
+                : ''
         const nextIndex = history.findIndex((entry) => entry.recordId === selectedRecordId)
         if (nextIndex >= 0) {
           historyIndex = nextIndex
@@ -2824,6 +3169,13 @@
             subgraph.edgeIds.forEach((id) => edges.add(id))
           }
         }
+        if (state.selectedType === 'workflow-step') {
+          const step = (data.workflowSteps || []).find((entry) => entry.id === state.selectedId)
+          if (step) {
+            step.nodeIds.forEach((id) => nodes.add(id))
+            step.edgeIds.forEach((id) => edges.add(id))
+          }
+        }
         return { nodes, edges }
       }
 
@@ -2886,6 +3238,8 @@
             if (kind === 'tree') selectTree(id)
             if (kind === 'node') selectNode(id)
             if (kind === 'edge') selectEdge(id)
+            if (kind === 'subgraph') selectSubgraph(id)
+            if (kind === 'mapping') selectMapping(id)
           })
         })
         updateActiveButtons()
@@ -2918,6 +3272,15 @@
           return {
             title: 'Selected work: ' + (entry?.label || state.selectedId),
             subtitle: entry ? entry.status + ' / ' + entry.activeCodeState : 'work history',
+          }
+        }
+        if (state.selectedType === 'workflow-step') {
+          const step = (data.workflowSteps || []).find((entry) => entry.id === state.selectedId)
+          return {
+            title: 'Flow step: ' + (step?.label || state.selectedId),
+            subtitle: step
+              ? step.phase + ' / ' + step.nodeIds.length + ' nodes / ' + step.edgeIds.length + ' edges'
+              : 'workflow step',
           }
         }
         const subgraph = data.subgraphs.find((entry) => entry.id === state.selectedId)

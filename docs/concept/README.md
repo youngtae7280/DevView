@@ -570,8 +570,11 @@ The WindowsUtility retrofit demo output is tracked at `outputs/devview-graph/win
 `deterministic-network-orbit` layout, highlights the selected CardPrinterConfig Instruction Pack subgraph and viewpoint
 trees in-place, and keeps the current request plus selected viewpoint trees visible before any click. Mouse wheel and
 buttons use semantic zoom: graph distances change, but node boxes, labels, and edge strokes keep stable screen size.
-Node, edge, tree, and subgraph clicks update both the inspector and the graph selection banner. Trees are not rendered
-as separate tree layouts; they are clickable graph viewpoints with node/edge chip lists. The top history controls
+The center workspace now includes a linked-list style Current Work Flow stepper (`1 Request -> 2 Domain Tree -> 3
+Change Tree -> 4 Risk Tree -> 5 SubGraph -> 6 Pack`) so a reviewer can replay how one request narrows the graph before
+it becomes the final Instruction Pack preview. Node, edge, tree, subgraph, and workflow-step clicks update both the
+inspector and the graph selection banner. Trees are not rendered as separate tree layouts; they are clickable graph
+viewpoints with node/edge chip lists. The top history controls
 `<`, `>`, and the numeric index input navigate only graph-source retrofit records, so older recorded work can be
 inspected without implying git-history scraping or scope expansion. It is visualization/report-only: no Codex execution,
 graph-source mutation, graph delta apply, approval, runtime Evidence satisfaction, equivalence proof, scope enforcement,

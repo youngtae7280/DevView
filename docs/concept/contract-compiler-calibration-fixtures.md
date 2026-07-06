@@ -2589,9 +2589,11 @@ viewpoint trees are visible in the left rail, and each selected tree shows direc
 selected subgraph includes `change.laminator-tag-layout`, `ui.laminator-tag-param-columns`, and
 `boundary.laminator-layout-only`; the reverted/context record `change.smart51-test-setting` remains visible in the full
 graph but outside the selected subgraph. The graph supports mouse drag, semantic wheel zoom with stable node/edge screen
-size, visible selection banners, click inspector feedback, compact Instruction Sources, and top-level `<` / `>` /
-numeric index controls for navigating graph-source retrofit records. That history navigation is graph-source-record
-only; it does not inspect arbitrary git history or expand editable scope.
+size, visible selection banners, click inspector feedback, compact Instruction Sources, and a linked-list Current Work
+Flow stepper that replays `1 Request -> 2 Domain Tree -> 3 Change Tree -> 4 Risk Tree -> 5 SubGraph -> 6 Pack` for the
+current task. It also keeps the top-level `<` / `>` / numeric index controls for navigating graph-source retrofit
+records. That history navigation is graph-source-record only; it does not inspect arbitrary git history or expand
+editable scope.
 
 This is a read-only visualization/report artifact. It does not execute Codex, call an LLM, mutate graph-source, apply
 graph deltas, approve work, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or

@@ -101,6 +101,21 @@ export interface DevViewGraphCompilationTraceEntry {
   authority: string
 }
 
+export interface DevViewGraphWorkflowStep {
+  index: number
+  id: string
+  label: string
+  phase: string
+  summary: string
+  nodeIds: string[]
+  edgeIds: string[]
+  treeIds: string[]
+  subgraphIds: string[]
+  packMappingIds: string[]
+  output: string
+  authority: string
+}
+
 export interface DevViewGraphRequestSummary {
   sourceRecordId: string
   userRequest: string
@@ -169,6 +184,7 @@ export interface DevViewGraphData {
   subgraphs: DevViewGraphSubgraph[]
   packMapping: DevViewGraphPackMapping[]
   compilationTrace: DevViewGraphCompilationTraceEntry[]
+  workflowSteps: DevViewGraphWorkflowStep[]
   safetyFlags: {
     readOnlyVisualizationOnly: true
     graphSourceMutated: false
@@ -348,6 +364,7 @@ function buildDevViewGraphData(root: string, input: GraphInput): DevViewGraphDat
   const requestSummary = buildRequestSummary(input.instructionPack, input.recordId, subgraphs[0])
   const projectMemorySummary = buildProjectMemorySummary(root, input)
   const workHistory = buildWorkHistory(input.graphSource, graphNodeById, input.recordId)
+  const workflowSteps = buildWorkflowSteps(requestSummary, trees, subgraphs, packMapping)
 
   return {
     schemaVersion: 1,
@@ -367,6 +384,7 @@ function buildDevViewGraphData(root: string, input: GraphInput): DevViewGraphDat
     subgraphs,
     packMapping,
     compilationTrace: buildCompilationTrace(root, input),
+    workflowSteps,
     safetyFlags: {
       readOnlyVisualizationOnly: true,
       graphSourceMutated: false,
@@ -872,6 +890,136 @@ function buildCompilationTrace(root: string, input: GraphInput): DevViewGraphCom
   ]
 }
 
+function buildWorkflowSteps(
+  requestSummary: DevViewGraphRequestSummary,
+  trees: DevViewGraphTree[],
+  subgraphs: DevViewGraphSubgraph[],
+  packMapping: DevViewGraphPackMapping[],
+): DevViewGraphWorkflowStep[] {
+  const treeById = new Map(trees.map((tree) => [tree.id, tree]))
+  const subgraph = subgraphs[0]
+  const sourceRecordId = requestSummary.sourceRecordId
+  const selectedNodeIds = requestSummary.selectedNodeIds
+  const selectedEdgeIds = requestSummary.selectedEdgeIds
+  const stepSource = (
+    index: number,
+    id: string,
+    label: string,
+    phase: string,
+    summary: string,
+    options: {
+      nodeIds?: string[]
+      edgeIds?: string[]
+      treeIds?: string[]
+      subgraphIds?: string[]
+      packMappingIds?: string[]
+      output: string
+      authority?: string
+    },
+  ): DevViewGraphWorkflowStep => ({
+    index,
+    id,
+    label,
+    phase,
+    summary,
+    nodeIds: uniqueStrings(options.nodeIds ?? []),
+    edgeIds: uniqueStrings(options.edgeIds ?? []),
+    treeIds: uniqueStrings(options.treeIds ?? []),
+    subgraphIds: uniqueStrings(options.subgraphIds ?? []),
+    packMappingIds: uniqueStrings(options.packMappingIds ?? []),
+    output: options.output,
+    authority: options.authority ?? 'read-only visualization; no traversal, contract, approval, or apply authority',
+  })
+
+  const treeStep = (
+    index: number,
+    id: string,
+    label: string,
+    phase: string,
+    summary: string,
+    treeId: string,
+  ): DevViewGraphWorkflowStep => {
+    const tree = treeById.get(treeId)
+    return stepSource(index, id, label, phase, summary, {
+      nodeIds: tree?.nodeIds ?? [],
+      edgeIds: tree?.edgeIds ?? [],
+      treeIds: tree ? [tree.id] : [],
+      output: tree ? `${tree.label}: ${tree.nodeIds.length} nodes / ${tree.edgeIds.length} edges` : 'tree missing',
+    })
+  }
+
+  return [
+    stepSource(
+      1,
+      'workflow.request-ir',
+      '1 Request',
+      'Natural request target',
+      'Start from the current user request and source change record before any broader graph context is highlighted.',
+      {
+        nodeIds: [sourceRecordId],
+        output: sourceRecordId,
+      },
+    ),
+    treeStep(
+      2,
+      'workflow.domain-tree',
+      '2 Domain Tree',
+      'Project/source viewpoint',
+      'Show the product, module, execution-flow, UI-surface, and integration context that explains where the task lives.',
+      'tree.domain-source',
+    ),
+    treeStep(
+      3,
+      'workflow.change-tree',
+      '3 Change Tree',
+      'Retrofit change viewpoint',
+      'Show the change records and driver edges that separate current work from older or reverted retrofit work.',
+      'tree.retrofit-change',
+    ),
+    treeStep(
+      4,
+      'workflow.risk-tree',
+      '4 Risk Tree',
+      'Forbidden-flow viewpoint',
+      'Show the guard nodes and edges that define what this work must not open.',
+      'tree.risk-boundary',
+    ),
+    stepSource(
+      5,
+      'workflow.selected-subgraph',
+      '5 SubGraph',
+      'Selected work slice',
+      'Collapse the viewpoint trees into the exact graph slice carried by the current instruction pack.',
+      {
+        nodeIds: subgraph?.nodeIds ?? selectedNodeIds,
+        edgeIds: subgraph?.edgeIds ?? selectedEdgeIds,
+        treeIds: subgraph?.requiredTreeIds ?? requestSummary.selectedTreeIds,
+        subgraphIds: subgraph ? [subgraph.id] : [],
+        output: subgraph
+          ? `${subgraph.id}: ${subgraph.nodeIds.length} nodes / ${subgraph.edgeIds.length} edges`
+          : 'selected subgraph',
+      },
+    ),
+    stepSource(
+      6,
+      'workflow.instruction-pack',
+      '6 Pack',
+      'Instruction pack preview',
+      'Show the final read-only instruction sources: selected graph context, allowed file, forbidden scope, and verification requirements.',
+      {
+        nodeIds: selectedNodeIds,
+        edgeIds: selectedEdgeIds,
+        treeIds: subgraph?.requiredTreeIds ?? requestSummary.selectedTreeIds,
+        subgraphIds: subgraph ? [subgraph.id] : [],
+        packMappingIds: packMapping.map((entry) => entry.id),
+        output: `${packMapping.length} instruction source entries`,
+        authority:
+          'instruction-pack preview only; no Codex execution, runtime Evidence satisfaction, approval, or enforcement',
+      },
+    ),
+  ]
+}
+
 function renderDevViewGraphHtml(data: DevViewGraphData): string {
   const embedded = JSON.stringify(data).replaceAll('</script', '<\\/script')
   return `<!doctype html>
@@ -1017,6 +1165,101 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       background: var(--graph-surface);
       box-shadow: var(--graph-shadow);
       overflow: hidden;
+    }
+    .workflow-panel {
+      min-width: 780px;
+      margin-bottom: 10px;
+      border: 1px solid var(--graph-line);
+      border-radius: 8px;
+      background: var(--graph-surface);
+      box-shadow: var(--graph-shadow);
+    }
+    .workflow-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--graph-line);
+      font-size: 12px;
+    }
+    .workflow-heading strong {
+      font-size: 13px;
+    }
+    .workflow-heading span {
+      color: var(--graph-muted);
+    }
+    .workflow-step-list {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      padding: 8px;
+      overflow-x: auto;
+    }
+    .workflow-step {
+      min-width: 126px;
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr);
+      gap: 7px;
+      align-items: center;
+      border: 1px solid var(--graph-line);
+      border-radius: 7px;
+      padding: 7px 8px;
+      background: #fff;
+      color: var(--graph-ink);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .workflow-step:hover,
+    .workflow-step.active {
+      border-color: var(--graph-selected);
+      background: #f4f8ff;
+      color: var(--graph-selected);
+    }
+    .workflow-index {
+      width: 22px;
+      height: 22px;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid var(--graph-line);
+      border-radius: 999px;
+      color: var(--graph-muted);
+      background: #fbfbfc;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .workflow-step.active .workflow-index {
+      border-color: var(--graph-selected);
+      color: var(--graph-selected);
+      background: #fff;
+    }
+    .workflow-text {
+      min-width: 0;
+    }
+    .workflow-text strong,
+    .workflow-text span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .workflow-text strong {
+      font-size: 12px;
+    }
+    .workflow-text span {
+      margin-top: 2px;
+      color: var(--graph-muted);
+      font-size: 11px;
+    }
+    .workflow-arrow {
+      width: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--graph-muted);
+      font-size: 15px;
+      user-select: none;
     }
     svg {
       display: block;
@@ -1406,6 +1649,13 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       </div>
     </aside>
     <main class="workspace">
+      <div class="workflow-panel" aria-label="Current work graph flow">
+        <div class="workflow-heading">
+          <strong>Current Work Flow</strong>
+          <span>Click a step to replay how this request narrows the graph.</span>
+        </div>
+        <div id="workflow-step-list" class="workflow-step-list"></div>
+      </div>
       <div class="graph-frame">
         <div id="selection-banner" class="selection-banner"></div>
         <div class="graph-tools" aria-label="Graph controls">
@@ -1426,7 +1676,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     const svg = document.getElementById('graph-svg');
     const detail = document.getElementById('detail');
     const selectionBanner = document.getElementById('selection-banner');
-    const state = { selectedType: 'subgraph', selectedId: data.subgraphs[0]?.id || '' };
+    const state = { selectedType: 'workflow-step', selectedId: data.workflowSteps?.[0]?.id || data.subgraphs[0]?.id || '' };
     const viewport = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0, moved: false };
     let historyIndex = Math.max(0, (data.workHistory || []).findIndex((entry) => entry.recordId === data.sourceRecordId));
     const nodeById = new Map(data.graph.nodes.map((node) => [node.id, node]));
@@ -1440,12 +1690,14 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       if (state.selectedType === 'node') selectNode(state.selectedId);
       else if (state.selectedType === 'edge') selectEdge(state.selectedId);
       else if (state.selectedType === 'tree') selectTree(state.selectedId);
+      else if (state.selectedType === 'workflow-step') selectWorkflowStep(state.selectedId);
       else selectSubgraph(state.selectedId || data.subgraphs[0]?.id);
     }
 
     function renderLists() {
       renderRequestPanel();
       renderProjectMemoryPanel();
+      renderWorkflowSteps();
       const selectedTreeIds = data.requestSummary?.selectedTreeIds || data.subgraphs[0]?.requiredTreeIds || [];
       document.getElementById('selected-tree-list').innerHTML = treeBreakdownHtml(selectedTreeIds, 4);
       document.getElementById('tree-list').innerHTML = data.trees.map((tree) =>
@@ -1463,12 +1715,30 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
           const id = button.getAttribute('data-id');
           if (kind === 'tree') selectTree(id);
           if (kind === 'subgraph') selectSubgraph(id);
+          if (kind === 'workflow-step') selectWorkflowStep(id);
           if (kind === 'mapping') selectMapping(id);
           if (kind === 'node') selectNode(id);
           if (kind === 'edge') selectEdge(id);
         });
       });
       updateActiveButtons();
+    }
+
+    function renderWorkflowSteps() {
+      const target = document.getElementById('workflow-step-list');
+      const steps = data.workflowSteps || [];
+      if (!target) return;
+      if (steps.length === 0) {
+        target.innerHTML = '<button class="workflow-step" disabled><span class="workflow-index">0</span><span class="workflow-text"><strong>No steps</strong><span>Compilation trace unavailable</span></span></button>';
+        return;
+      }
+      target.innerHTML = steps.map((step, index) =>
+        '<button class="workflow-step" data-kind="workflow-step" data-id="' + esc(step.id) + '">' +
+        '<span class="workflow-index">' + esc(String(step.index)) + '</span>' +
+        '<span class="workflow-text"><strong>' + esc(step.label) + '</strong><span>' + esc(step.phase) + '</span></span>' +
+        '</button>' +
+        (index < steps.length - 1 ? '<span class="workflow-arrow" aria-hidden="true">-&gt;</span>' : '')
+      ).join('');
     }
 
     function bindHistoryControls() {
@@ -1825,6 +2095,26 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       bindDetailChips();
     }
 
+    function selectWorkflowStep(id) {
+      state.selectedType = 'workflow-step';
+      state.selectedId = id;
+      const step = (data.workflowSteps || []).find((entry) => entry.id === id);
+      if (!step) return;
+      detail.innerHTML = '<h2>' + esc(step.label) + '</h2><div class="sub">Current Work Flow Step</div>' + kv([
+        ['phase', step.phase],
+        ['summary', step.summary],
+        ['nodes', chipList(step.nodeIds, 'node')],
+        ['edges', chipList(step.edgeIds, 'edge')],
+        ['viewpoint trees', treeBreakdownHtml(step.treeIds, 4)],
+        ['subgraphs', chipList(step.subgraphIds, 'subgraph')],
+        ['instruction sources', chipList(step.packMappingIds, 'mapping')],
+        ['output', step.output],
+        ['authority', step.authority]
+      ]);
+      updateState();
+      bindDetailChips();
+    }
+
     function selectMapping(id) {
       const mapping = data.packMapping.find((entry) => entry.id === id);
       if (!mapping) return;
@@ -1861,6 +2151,8 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       const selectedRecordId =
         state.selectedType === 'subgraph'
           ? data.sourceRecordId
+          : state.selectedType === 'workflow-step'
+            ? data.sourceRecordId
           : state.selectedType === 'node' || state.selectedType === 'history'
             ? state.selectedId
             : '';
@@ -1943,6 +2235,13 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
           subgraph.edgeIds.forEach((id) => edges.add(id));
         }
       }
+      if (state.selectedType === 'workflow-step') {
+        const step = (data.workflowSteps || []).find((entry) => entry.id === state.selectedId);
+        if (step) {
+          step.nodeIds.forEach((id) => nodes.add(id));
+          step.edgeIds.forEach((id) => edges.add(id));
+        }
+      }
       return { nodes, edges };
     }
 
@@ -1977,6 +2276,8 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
           if (kind === 'tree') selectTree(id);
           if (kind === 'node') selectNode(id);
           if (kind === 'edge') selectEdge(id);
+          if (kind === 'subgraph') selectSubgraph(id);
+          if (kind === 'mapping') selectMapping(id);
         });
       });
       updateActiveButtons();
@@ -1998,6 +2299,10 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       if (state.selectedType === 'history') {
         const entry = (data.workHistory || []).find((item) => item.recordId === state.selectedId);
         return { title: 'Selected work: ' + (entry?.label || state.selectedId), subtitle: entry ? entry.status + ' / ' + entry.activeCodeState : 'work history' };
+      }
+      if (state.selectedType === 'workflow-step') {
+        const step = (data.workflowSteps || []).find((entry) => entry.id === state.selectedId);
+        return { title: 'Flow step: ' + (step?.label || state.selectedId), subtitle: step ? step.phase + ' / ' + step.nodeIds.length + ' nodes / ' + step.edgeIds.length + ' edges' : 'workflow step' };
       }
       const subgraph = data.subgraphs.find((entry) => entry.id === state.selectedId);
       return { title: 'Selected subgraph: ' + (subgraph?.label || state.selectedId), subtitle: subgraph ? subgraph.nodeIds.length + ' nodes / ' + subgraph.edgeIds.length + ' edges from the current request' : 'subgraph' };
