@@ -25,8 +25,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 380,
-        "y": 416
+        "x": 430,
+        "y": 360
       },
       {
         "id": "module.smart51-printer",
@@ -44,8 +44,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 380,
-        "y": 64
+        "x": 450,
+        "y": 130
       },
       {
         "id": "module.smart51-laminator",
@@ -63,8 +63,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 380,
-        "y": 328
+        "x": 440,
+        "y": 560
       },
       {
         "id": "module.smart52-laminator",
@@ -82,8 +82,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 380,
-        "y": 504
+        "x": 600,
+        "y": 600
       },
       {
         "id": "flow.smart51-getconfig-index-000",
@@ -101,8 +101,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 560,
-        "y": 64
+        "x": 640,
+        "y": 65
       },
       {
         "id": "ui.laminator-tag-param-columns",
@@ -120,8 +120,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source", "tree.selected-pack-context"],
         "subgraphIds": ["subgraph.change.laminator-tag-layout"],
-        "x": 560,
-        "y": 416
+        "x": 725,
+        "y": 480
       },
       {
         "id": "boundary.smart51-test-read-only",
@@ -153,8 +153,8 @@
         "riskBoundary": true,
         "treeIds": ["tree.risk-boundary"],
         "subgraphIds": [],
-        "x": 920,
-        "y": 64
+        "x": 970,
+        "y": 240
       },
       {
         "id": "boundary.laminator-layout-only",
@@ -187,8 +187,8 @@
         "riskBoundary": true,
         "treeIds": ["tree.risk-boundary", "tree.selected-pack-context"],
         "subgraphIds": ["subgraph.change.laminator-tag-layout"],
-        "x": 920,
-        "y": 416
+        "x": 990,
+        "y": 515
       },
       {
         "id": "change.smart51-test-setting",
@@ -208,8 +208,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.retrofit-change"],
         "subgraphIds": [],
-        "x": 740,
-        "y": 64
+        "x": 835,
+        "y": 110
       },
       {
         "id": "change.laminator-tag-layout",
@@ -230,8 +230,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.retrofit-change", "tree.selected-pack-context"],
         "subgraphIds": ["subgraph.change.laminator-tag-layout"],
-        "x": 740,
-        "y": 416
+        "x": 860,
+        "y": 385
       }
     ],
     "edges": [
@@ -386,9 +386,10 @@
         "subgraphIds": ["subgraph.change.laminator-tag-layout"]
       }
     ],
+    "layoutMode": "deterministic-network-orbit",
     "viewport": {
-      "width": 1130,
-      "height": 760
+      "width": 1262,
+      "height": 820
     }
   },
   "trees": [

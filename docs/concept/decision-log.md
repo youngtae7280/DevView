@@ -3202,3 +3202,25 @@ This decision implements visualization/report improvements only. It does not mut
 `WindowsUtility`, execute Codex, call an LLM/API, apply graph deltas, approve work, record human decisions, satisfy
 runtime Evidence, prove equivalence, enforce scope, configure CI, configure required checks, change branch protection,
 reject diffs, or replace user acceptance.
+
+## DEC-284 Use Network Layout For DevViewGraph
+
+DEC-284 does not supersede DEC-097 through DEC-283. It corrects the DevViewGraph presentation model so the inspector
+looks like a graph, not a left-to-right tree or pipeline.
+
+The DevViewGraph data model now records:
+
+```text
+graph.layoutMode: deterministic-network-orbit
+```
+
+The renderer places WindowsUtility legacy portfolio modules around the legacy product node, integration targets around
+the WindowsUtility integration product node, and the selected CardPrinterConfig retrofit slice as a highlighted network
+inside the same graph. Viewpoint trees remain clickable highlight sets over that graph; they are not rendered as
+separate tree layouts. Edges are drawn as directional node-to-node curves based on actual node centers rather than
+left-to-right column curves.
+
+This decision changes visualization/layout only. It does not change graph source authority, selected subgraph semantics,
+instruction pack authority, output authority guards, Codex execution, graph mutation, graph delta apply, approval,
+runtime Evidence satisfaction, equivalence proof, scope enforcement, CI enforcement, required checks, branch
+protection, diff rejection, or user acceptance.

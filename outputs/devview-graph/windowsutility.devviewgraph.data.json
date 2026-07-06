@@ -25,8 +25,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 40,
-        "y": 152
+        "x": 520,
+        "y": 430
       },
       {
         "id": "product.windowsutility-integrated",
@@ -44,8 +44,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 40,
-        "y": 680
+        "x": 1170,
+        "y": 745
       },
       {
         "id": "module.cardprinterconfig",
@@ -63,8 +63,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 64
+        "x": 830,
+        "y": 400
       },
       {
         "id": "module.cardprinterdiagnostics",
@@ -82,8 +82,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 152
+        "x": 407,
+        "y": 747
       },
       {
         "id": "module.cardprinterfirmware",
@@ -101,8 +101,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 240
+        "x": 405,
+        "y": 853
       },
       {
         "id": "module.cardprinterlcd",
@@ -120,8 +120,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 328
+        "x": 330,
+        "y": 697
       },
       {
         "id": "module.cardprinterlock",
@@ -139,8 +139,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 416
+        "x": 263,
+        "y": 797
       },
       {
         "id": "module.cardprintermodel",
@@ -158,8 +158,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 504
+        "x": 270,
+        "y": 626
       },
       {
         "id": "module.cardprintermodel2",
@@ -177,8 +177,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 592
+        "x": 149,
+        "y": 703
       },
       {
         "id": "module.cardprinterribbon",
@@ -196,8 +196,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 680
+        "x": 232,
+        "y": 537
       },
       {
         "id": "module.cardprintersubencoder",
@@ -215,8 +215,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 768
+        "x": 75,
+        "y": 579
       },
       {
         "id": "module.cardprintertest",
@@ -234,8 +234,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 64
+        "x": 219,
+        "y": 441
       },
       {
         "id": "module.netadmin",
@@ -253,8 +253,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 856
+        "x": 49,
+        "y": 441
       },
       {
         "id": "module.simpleprinterinfo",
@@ -272,8 +272,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 944
+        "x": 232,
+        "y": 345
       },
       {
         "id": "module.simpleprinterinfo2",
@@ -291,8 +291,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 1032
+        "x": 75,
+        "y": 303
       },
       {
         "id": "module.sm8serial",
@@ -310,8 +310,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 1120
+        "x": 270,
+        "y": 256
       },
       {
         "id": "module.smart51-cmdtool",
@@ -329,8 +329,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 1208
+        "x": 149,
+        "y": 179
       },
       {
         "id": "module.smartcomm2",
@@ -348,8 +348,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 1296
+        "x": 330,
+        "y": 185
       },
       {
         "id": "module.smartdump",
@@ -367,8 +367,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 1384
+        "x": 263,
+        "y": 85
       },
       {
         "id": "module.smartdumpview",
@@ -386,8 +386,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 1472
+        "x": 407,
+        "y": 135
       },
       {
         "id": "module.smartprinterlib",
@@ -405,8 +405,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 210,
-        "y": 1560
+        "x": 405,
+        "y": 29
       },
       {
         "id": "integration.config",
@@ -424,8 +424,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 560,
-        "y": 64
+        "x": 942,
+        "y": 683
       },
       {
         "id": "integration.diagnostics",
@@ -443,8 +443,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 560,
-        "y": 152
+        "x": 1077,
+        "y": 607
       },
       {
         "id": "integration.dump",
@@ -462,8 +462,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 560,
-        "y": 240
+        "x": 1261,
+        "y": 607
       },
       {
         "id": "integration.printerinfo",
@@ -481,8 +481,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 560,
-        "y": 328
+        "x": 1396,
+        "y": 683
       },
       {
         "id": "product.cardprinterconfig",
@@ -500,8 +500,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 380,
-        "y": 416
+        "x": 1040,
+        "y": 400
       },
       {
         "id": "module.smart51-printer",
@@ -519,8 +519,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 380,
-        "y": 64
+        "x": 970,
+        "y": 170
       },
       {
         "id": "module.smart51-laminator",
@@ -538,8 +538,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 380,
-        "y": 328
+        "x": 960,
+        "y": 600
       },
       {
         "id": "module.smart52-laminator",
@@ -557,8 +557,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 380,
-        "y": 504
+        "x": 1120,
+        "y": 640
       },
       {
         "id": "flow.smart51-getconfig-index-000",
@@ -576,8 +576,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source"],
         "subgraphIds": [],
-        "x": 560,
-        "y": 64
+        "x": 1160,
+        "y": 105
       },
       {
         "id": "ui.laminator-tag-param-columns",
@@ -595,8 +595,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.domain-source", "tree.selected-pack-context"],
         "subgraphIds": ["subgraph.change.laminator-tag-layout"],
-        "x": 560,
-        "y": 416
+        "x": 1245,
+        "y": 520
       },
       {
         "id": "boundary.smart51-test-read-only",
@@ -633,8 +633,8 @@
         "riskBoundary": true,
         "treeIds": ["tree.risk-boundary"],
         "subgraphIds": [],
-        "x": 920,
-        "y": 64
+        "x": 1490,
+        "y": 280
       },
       {
         "id": "boundary.laminator-layout-only",
@@ -672,8 +672,8 @@
         "riskBoundary": true,
         "treeIds": ["tree.risk-boundary", "tree.selected-pack-context"],
         "subgraphIds": ["subgraph.change.laminator-tag-layout"],
-        "x": 920,
-        "y": 416
+        "x": 1510,
+        "y": 555
       },
       {
         "id": "change.smart51-test-setting",
@@ -693,8 +693,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.retrofit-change"],
         "subgraphIds": [],
-        "x": 740,
-        "y": 64
+        "x": 1355,
+        "y": 150
       },
       {
         "id": "change.laminator-tag-layout",
@@ -715,8 +715,8 @@
         "riskBoundary": false,
         "treeIds": ["tree.retrofit-change", "tree.selected-pack-context"],
         "subgraphIds": ["subgraph.change.laminator-tag-layout"],
-        "x": 740,
-        "y": 416
+        "x": 1380,
+        "y": 425
       }
     ],
     "edges": [
@@ -1231,9 +1231,10 @@
         "subgraphIds": ["subgraph.change.laminator-tag-layout"]
       }
     ],
+    "layoutMode": "deterministic-network-orbit",
     "viewport": {
-      "width": 1130,
-      "height": 1700
+      "width": 1782,
+      "height": 1031
     }
   },
   "trees": [

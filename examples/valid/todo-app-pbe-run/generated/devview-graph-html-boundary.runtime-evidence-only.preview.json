@@ -27,10 +27,12 @@
       "compilationTrace[]",
       "safetyFlags",
       "artifacts",
+      "graph.layoutMode",
       "graph.viewport"
     ],
     "treeIds": ["tree.domain-source", "tree.retrofit-change", "tree.risk-boundary", "tree.selected-pack-context"],
-    "selectionModel": "single full graph rendered once; selected subgraph, trees, nodes, and edges are highlighted in-place"
+    "layoutModel": "deterministic-network-orbit; not a tree/column pipeline layout",
+    "selectionModel": "single full network graph rendered once; selected subgraph, viewpoint trees, nodes, and edges are highlighted in-place"
   },
   "interactionModel": {
     "panZoom": "mouse drag pans the graph; mouse wheel zooms around the pointer; +/-/R buttons provide bounded zoom and reset",

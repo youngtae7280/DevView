@@ -566,11 +566,12 @@ graph read-model render-devview-graph --graph-source <graphSource> --record <rec
 ```
 
 The WindowsUtility retrofit demo output is tracked at `outputs/devview-graph/windowsutility.devviewgraph.html` and
-`outputs/devview-graph/windowsutility.devviewgraph.data.json`. DevViewGraph renders one full portfolio graph, highlights
-the selected CardPrinterConfig Instruction Pack subgraph and viewpoint trees, supports mouse drag and wheel zoom, and
-lets reviewers inspect node, edge, tree, subgraph, and Instruction Sources details. It is visualization/report-only: no
-Codex execution, graph-source mutation, graph delta apply, approval, runtime Evidence satisfaction, equivalence proof,
-scope enforcement, or CI enforcement is introduced.
+`outputs/devview-graph/windowsutility.devviewgraph.data.json`. DevViewGraph renders one full portfolio graph with the
+`deterministic-network-orbit` layout, highlights the selected CardPrinterConfig Instruction Pack subgraph and viewpoint
+trees in-place, supports mouse drag and wheel zoom, and lets reviewers inspect node, edge, tree, subgraph, and
+Instruction Sources details. Trees are not rendered as separate tree layouts; they are clickable graph viewpoints. It is
+visualization/report-only: no Codex execution, graph-source mutation, graph delta apply, approval, runtime Evidence
+satisfaction, equivalence proof, scope enforcement, or CI enforcement is introduced.
 
 The traversal boundary separates graph vocabulary from planner semantics: `*NodeTypes` and `*EdgeTypes` contain only
 actual graph taxonomy values, while target/scope/evidence/output meanings are represented as roles and selection

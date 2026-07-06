@@ -47,8 +47,10 @@ describe('DevViewGraph HTML inspector CLI', () => {
     expect(payload.ok).toBe(true)
     expect(payload.command).toBe('graph read-model render-devview-graph')
     expect(data.artifactRole).toBe('devview-graph-html-data-preview')
+    expect(data.graph.layoutMode).toBe('deterministic-network-orbit')
     expect(data.graph.nodes.length).toBeGreaterThan(0)
     expect(data.graph.edges.length).toBeGreaterThan(0)
+    expect(new Set(data.graph.nodes.map((node: { x: number }) => node.x)).size).toBeGreaterThan(6)
     expect(data.trees.map((tree: { id: string }) => tree.id)).toEqual(
       expect.arrayContaining([
         'tree.domain-source',
@@ -75,6 +77,8 @@ describe('DevViewGraph HTML inspector CLI', () => {
     expect(html).toContain('function selectSubgraph')
     expect(html).toContain('function zoomGraph')
     expect(html).toContain('function beginPan')
+    expect(html).toContain('function edgePath')
+    expect(html).toContain('deterministic-network-orbit')
     expect(html).toContain('Instruction Sources')
     expect(html).not.toContain('Pack Mapping')
     expect(html).toContain('SMART-51')

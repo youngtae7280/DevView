@@ -1049,7 +1049,8 @@ node dist/cli/index.js graph read-model generate-instruction-pack `
 ### `pbe graph read-model render-devview-graph`
 
 - Purpose: Render a static, read-only DevViewGraph HTML inspector and matching data JSON from a retrofit graph-source
-  plus a retrofit instruction pack.
+  plus a retrofit instruction pack. The v1 layout is a deterministic network/orbit graph; viewpoint trees are highlight
+  sets over the same graph, not separate tree-shaped renderings.
 - Typical state before running: After a retrofit graph-source and instruction pack exist for the same source record.
 - Options: `--graph-source <file>`, `--record <id>`, `--instruction-pack <file>`, `--output <htmlFile>`, and
   `--data-output <jsonFile>` are required.
@@ -1061,7 +1062,7 @@ node dist/cli/index.js graph read-model generate-instruction-pack `
   source instruction pack, source record artifacts, linked source/generated authority artifacts, or if `--output` and
   `--data-output` resolve to the same path.
 - Success result: JSON summary with node/edge/tree/subgraph counts, selected node and edge ids, HTML/data output paths,
-  and safety flags.
+  deterministic graph layout data, and safety flags.
 - Non-goals: This command does not execute Codex, call an LLM, mutate graph-source, apply graph deltas, approve work,
   record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
 

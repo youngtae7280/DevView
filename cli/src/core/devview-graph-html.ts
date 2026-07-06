@@ -5,6 +5,8 @@ import type { IssueSeverity } from './types.js'
 const RENDERER_NAME = 'DevViewGraphHtmlRenderer'
 const EXPECTED_GRAPH_SOURCE_ROLE = 'retrofit-graph-source-v0'
 const EXPECTED_INSTRUCTION_PACK_ROLE = 'retrofit-instruction-pack-v0'
+const GRAPH_NODE_WIDTH = 142
+const GRAPH_NODE_HEIGHT = 58
 
 type JsonRecord = Record<string, unknown>
 
@@ -111,6 +113,7 @@ export interface DevViewGraphData {
   graph: {
     nodes: DevViewGraphNode[]
     edges: DevViewGraphEdge[]
+    layoutMode: 'deterministic-network-orbit'
     viewport: {
       width: number
       height: number
@@ -250,11 +253,11 @@ function buildDevViewGraphData(root: string, input: GraphInput): DevViewGraphDat
       recordById,
     ),
   )
-  applyDeterministicLayout(nodes)
   const contextOnlyNodeIds = new Set(nodes.filter((node) => node.contextOnly).map((node) => node.id))
   const edges = graphEdges.map((edge) =>
     buildEdge(edge, selectedEdgeIds, selectedSubgraphId, contextOnlyNodeIds, graphNodeById),
   )
+  applyDeterministicLayout(nodes, edges, selectedNodeIds, input.recordId)
   const trees = buildTrees(nodes, edges)
   applyTreeMembership(nodes, edges, trees)
 
@@ -293,7 +296,7 @@ function buildDevViewGraphData(root: string, input: GraphInput): DevViewGraphDat
     sourceGraphSource: relativePath(root, input.graphSourcePath),
     sourceInstructionPack: relativePath(root, input.instructionPackPath),
     sourceRecordId: input.recordId,
-    graph: { nodes, edges, viewport: buildViewport(nodes) },
+    graph: { nodes, edges, layoutMode: 'deterministic-network-orbit', viewport: buildViewport(nodes) },
     trees,
     subgraphs,
     packMapping,
@@ -409,7 +412,6 @@ function buildNode(
   if (riskBoundary) {
     codeLocations.push(...forbiddenFlows)
   }
-  const position = layoutPosition(kind, id, index)
   return {
     id,
     label: shortLabel(id),
@@ -432,8 +434,8 @@ function buildNode(
     riskBoundary,
     treeIds: [],
     subgraphIds: selected ? [selectedSubgraphId] : [],
-    x: position.x,
-    y: position.y,
+    x: 0,
+    y: 0,
   }
 }
 
@@ -782,7 +784,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     svg {
       display: block;
       width: 100%;
-      height: 760px;
+      height: 820px;
       cursor: grab;
       touch-action: none;
       user-select: none;
@@ -894,6 +896,28 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       stroke: #c7cbd1;
       stroke-width: 1.2;
     }
+    .node.kind-product-intent rect {
+      fill: #f8fafc;
+      stroke: #8792a2;
+    }
+    .node.kind-legacy-utility-module rect,
+    .node.kind-module rect {
+      fill: #ffffff;
+      stroke: #aeb5bf;
+    }
+    .node.kind-integration-target rect {
+      fill: #f4fbf7;
+      stroke: #78a58a;
+    }
+    .node.kind-execution-flow rect,
+    .node.kind-ui-layout-surface rect {
+      fill: #f8fbff;
+      stroke: #8fb1d8;
+    }
+    .node.kind-retrofit-change-record rect {
+      fill: #fffaf0;
+      stroke: #d0a85e;
+    }
     .node text {
       font-size: 12px;
       fill: var(--graph-ink);
@@ -947,8 +971,8 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       fill: var(--graph-muted);
       pointer-events: none;
     }
-    .dim .node:not(.highlight):not(.selected) { opacity: 0.28; }
-    .dim .edge:not(.highlight):not(.selected) { opacity: 0.18; }
+    .dim .node:not(.highlight):not(.selected) { opacity: 0.72; }
+    .dim .edge:not(.highlight):not(.selected) { opacity: 0.48; }
     @media (max-width: 980px) {
       .shell {
         grid-template-columns: 1fr;
@@ -970,6 +994,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       <div class="meta">
         <span class="badge">${escapeHtml(data.artifacts.graphSourcePath)}</span>
         <span class="badge">${escapeHtml(data.artifacts.instructionPackPath)}</span>
+        <span class="badge">${escapeHtml(data.graph.layoutMode)}</span>
         <span class="badge">read-only</span>
       </div>
     </header>
@@ -1063,15 +1088,11 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
           if (!viewport.moved) selectEdge(edge.id);
         });
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        const x1 = from.x + 68;
-        const y1 = from.y + 18;
-        const x2 = to.x - 8;
-        const y2 = to.y + 18;
-        const mid = Math.max(40, Math.abs(x2 - x1) / 2);
-        path.setAttribute('d', 'M ' + x1 + ' ' + y1 + ' C ' + (x1 + mid) + ' ' + y1 + ', ' + (x2 - mid) + ' ' + y2 + ', ' + x2 + ' ' + y2);
+        path.setAttribute('d', edgePath(edge, from, to));
+        const labelPoint = edgeLabelPosition(edge, from, to);
         const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label.setAttribute('x', String((x1 + x2) / 2 - 34));
-        label.setAttribute('y', String((y1 + y2) / 2 - 5));
+        label.setAttribute('x', String(labelPoint.x));
+        label.setAttribute('y', String(labelPoint.y));
         label.textContent = edge.kind;
         group.appendChild(path);
         group.appendChild(label);
@@ -1104,6 +1125,56 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       }
       updateViewportTransform();
       applyHighlight();
+    }
+
+    function edgePath(edge, from, to) {
+      const source = nodeCenter(from);
+      const target = nodeCenter(to);
+      const dx = target.x - source.x;
+      const dy = target.y - source.y;
+      const distance = Math.max(1, Math.hypot(dx, dy));
+      const trimX = (dx / distance) * 72;
+      const trimY = (dy / distance) * 30;
+      const start = { x: source.x + trimX, y: source.y + trimY };
+      const end = { x: target.x - trimX, y: target.y - trimY };
+      const curve = curveOffset(edge, distance);
+      const normal = { x: -dy / distance, y: dx / distance };
+      const control = {
+        x: (start.x + end.x) / 2 + normal.x * curve,
+        y: (start.y + end.y) / 2 + normal.y * curve
+      };
+      return 'M ' + start.x + ' ' + start.y + ' Q ' + control.x + ' ' + control.y + ' ' + end.x + ' ' + end.y;
+    }
+
+    function edgeLabelPosition(edge, from, to) {
+      const source = nodeCenter(from);
+      const target = nodeCenter(to);
+      const dx = target.x - source.x;
+      const dy = target.y - source.y;
+      const distance = Math.max(1, Math.hypot(dx, dy));
+      const normal = { x: -dy / distance, y: dx / distance };
+      const curve = curveOffset(edge, distance) * 0.56;
+      return {
+        x: (source.x + target.x) / 2 + normal.x * curve - 30,
+        y: (source.y + target.y) / 2 + normal.y * curve - 4
+      };
+    }
+
+    function curveOffset(edge, distance) {
+      const direction = edge.riskBoundary ? -1 : edge.selected ? 1 : stableDirection(edge.id);
+      return direction * Math.min(96, Math.max(26, distance * 0.16));
+    }
+
+    function stableDirection(value) {
+      let total = 0;
+      for (let index = 0; index < value.length; index += 1) {
+        total += value.charCodeAt(index);
+      }
+      return total % 2 === 0 ? 1 : -1;
+    }
+
+    function nodeCenter(node) {
+      return { x: node.x + 71, y: node.y + 29 };
     }
 
     function bindViewportControls() {
@@ -1334,7 +1405,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     }
 
     function nodeClass(node) {
-      return ['node', node.selected ? 'selected' : '', node.contextOnly ? 'context' : '', node.riskBoundary ? 'risk' : ''].filter(Boolean).join(' ');
+      return ['node', 'kind-' + slugClass(node.kind), node.selected ? 'selected' : '', node.contextOnly ? 'context' : '', node.riskBoundary ? 'risk' : ''].filter(Boolean).join(' ');
     }
 
     function edgeClass(edge) {
@@ -1357,6 +1428,10 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     function trimLabel(value, maxLength) {
       const text = String(value ?? '');
       return text.length > maxLength ? text.slice(0, maxLength - 1) + '...' : text;
+    }
+
+    function slugClass(value) {
+      return String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'unknown';
     }
 
     render();
@@ -1533,112 +1608,183 @@ function inferNodeRoles(
   return uniqueStrings(roles)
 }
 
-function applyDeterministicLayout(nodes: DevViewGraphNode[]): void {
-  const rowCounters = new Map<number, number>()
-  for (const node of nodes) {
-    const x = layoutColumnForNode(node)
-    const fixedRow = fixedRowForNode(node)
-    const row =
-      fixedRow ??
-      (() => {
-        const next = rowCounters.get(x) ?? 0
-        rowCounters.set(x, next + 1)
-        return next
-      })()
-    node.x = x
-    node.y = 64 + row * 88
+function applyDeterministicLayout(
+  nodes: DevViewGraphNode[],
+  edges: DevViewGraphEdge[],
+  selectedNodeIds: Set<string>,
+  recordId: string,
+): void {
+  const assigned = new Set<string>()
+  const byId = new Map(nodes.map((node) => [node.id, node]))
+  const setNode = (id: string, x: number, y: number): void => {
+    const node = byId.get(id)
+    if (!node) {
+      return
+    }
+    node.x = Math.round(x)
+    node.y = Math.round(y)
+    assigned.add(id)
   }
+
+  if (byId.has('product.windowsutility-legacy')) {
+    applyWindowsUtilityPortfolioLayout(nodes, setNode, assigned)
+  } else {
+    applyCardPrinterConfigNetworkLayout(nodes, setNode, assigned)
+  }
+
+  const recordNode = byId.get(recordId)
+  const remainingSelected = sortLayoutNodes(
+    nodes.filter((node) => selectedNodeIds.has(node.id) && !assigned.has(node.id)),
+  )
+  placeOrbit(remainingSelected, {
+    centerX: (recordNode?.x ?? 980) + GRAPH_NODE_WIDTH / 2,
+    centerY: (recordNode?.y ?? 420) + GRAPH_NODE_HEIGHT / 2,
+    radiusX: 230,
+    radiusY: 150,
+    startDegrees: -35,
+    endDegrees: 145,
+    assigned,
+  })
+
+  const attachedNodeIds = new Set(edges.flatMap((edge) => [edge.from, edge.to]))
+  const attachedRemaining = sortLayoutNodes(
+    nodes.filter((node) => !assigned.has(node.id) && attachedNodeIds.has(node.id)),
+  )
+  placeOrbit(attachedRemaining, {
+    centerX: 900,
+    centerY: 500,
+    radiusX: 520,
+    radiusY: 360,
+    startDegrees: 20,
+    endDegrees: 340,
+    assigned,
+  })
+
+  const detachedRemaining = sortLayoutNodes(nodes.filter((node) => !assigned.has(node.id)))
+  placeOrbit(detachedRemaining, {
+    centerX: 900,
+    centerY: 500,
+    radiusX: 650,
+    radiusY: 440,
+    startDegrees: 35,
+    endDegrees: 325,
+    assigned,
+  })
 }
 
 function buildViewport(nodes: DevViewGraphNode[]): { width: number; height: number } {
-  const maxX = Math.max(920, ...nodes.map((node) => node.x + 210))
-  const maxY = Math.max(760, ...nodes.map((node) => node.y + 140))
+  const maxX = Math.max(1120, ...nodes.map((node) => node.x + GRAPH_NODE_WIDTH + 130))
+  const maxY = Math.max(820, ...nodes.map((node) => node.y + GRAPH_NODE_HEIGHT + 120))
   return {
     width: maxX,
     height: maxY,
   }
 }
 
-function layoutColumnForNode(node: DevViewGraphNode): number {
-  if (node.selected && node.kind === 'ui-layout-surface') {
-    return 560
-  }
-  if (node.selected && node.kind === 'retrofit-change-record') {
-    return 740
-  }
-  if (node.selected && node.kind === 'forbidden-flow-boundary') {
-    return 920
-  }
+function applyWindowsUtilityPortfolioLayout(
+  nodes: DevViewGraphNode[],
+  setNode: (id: string, x: number, y: number) => void,
+  assigned: Set<string>,
+): void {
+  setNode('product.windowsutility-legacy', 520, 430)
+  setNode('module.cardprinterconfig', 830, 400)
+  setNode('product.cardprinterconfig', 1040, 400)
+  setNode('product.windowsutility-integrated', 1170, 745)
 
-  const columns: Record<string, number> = {
-    'product-intent': node.id.includes('windowsutility') ? 40 : 380,
-    'legacy-utility-module': 210,
-    module: 380,
-    'integration-target': 560,
-    'execution-flow': 560,
-    'ui-layout-surface': 560,
-    'retrofit-change-record': 740,
-    'forbidden-flow-boundary': 920,
-  }
-  return columns[node.kind] ?? 560
+  const legacyModules = sortLayoutNodes(
+    nodes.filter((node) => node.kind === 'legacy-utility-module' && node.id !== 'module.cardprinterconfig'),
+  )
+  const innerLegacy = legacyModules.filter((_, index) => index % 2 === 0)
+  const outerLegacy = legacyModules.filter((_, index) => index % 2 === 1)
+  placeOrbit(innerLegacy, {
+    centerX: 590,
+    centerY: 470,
+    radiusX: 300,
+    radiusY: 330,
+    startDegrees: 112,
+    endDegrees: 248,
+    assigned,
+  })
+  placeOrbit(outerLegacy, {
+    centerX: 590,
+    centerY: 470,
+    radiusX: 470,
+    radiusY: 425,
+    startDegrees: 104,
+    endDegrees: 256,
+    assigned,
+  })
+
+  const integrationTargets = sortLayoutNodes(nodes.filter((node) => node.kind === 'integration-target'))
+  placeOrbit(integrationTargets, {
+    centerX: 1240,
+    centerY: 775,
+    radiusX: 250,
+    radiusY: 150,
+    startDegrees: 205,
+    endDegrees: 335,
+    assigned,
+  })
+
+  setCardPrinterDetailPositions(setNode, 0, 0)
 }
 
-function fixedRowForNode(node: DevViewGraphNode): number | null {
-  if (node.selected) {
-    return 4
-  }
-  if (node.id === 'product.windowsutility-legacy') {
-    return 1
-  }
-  if (node.id === 'product.windowsutility-integrated') {
-    return 7
-  }
-  if (node.id === 'product.cardprinterconfig') {
-    return 4
-  }
-  if (node.id.includes('smart51-printer') || node.id.includes('getconfig') || node.id.includes('test')) {
-    return 0
-  }
-  if (node.id.includes('smart51-laminator')) {
-    return 3
-  }
-  if (node.id.includes('smart52-laminator')) {
-    return 5
-  }
-  return null
+function applyCardPrinterConfigNetworkLayout(
+  _nodes: DevViewGraphNode[],
+  setNode: (id: string, x: number, y: number) => void,
+  _assigned: Set<string>,
+): void {
+  setNode('product.cardprinterconfig', 430, 360)
+  setCardPrinterDetailPositions(setNode, -520, -40)
 }
 
-function layoutPosition(kind: string, id: string, index: number): { x: number; y: number } {
-  const columns: Record<string, number> = {
-    'product-intent': 40,
-    module: 200,
-    'execution-flow': 360,
-    'ui-layout-surface': 360,
-    'retrofit-change-record': 540,
-    'forbidden-flow-boundary': 720,
-  }
-  const column = columns[kind] ?? 360
-  const rowHint = rowHintForNode(kind, id, index)
-  return { x: column, y: 64 + rowHint * 112 }
+function setCardPrinterDetailPositions(
+  setNode: (id: string, x: number, y: number) => void,
+  offsetX: number,
+  offsetY: number,
+): void {
+  setNode('module.smart51-printer', 970 + offsetX, 170 + offsetY)
+  setNode('flow.smart51-getconfig-index-000', 1160 + offsetX, 105 + offsetY)
+  setNode('change.smart51-test-setting', 1355 + offsetX, 150 + offsetY)
+  setNode('boundary.smart51-test-read-only', 1490 + offsetX, 280 + offsetY)
+  setNode('module.smart51-laminator', 960 + offsetX, 600 + offsetY)
+  setNode('module.smart52-laminator', 1120 + offsetX, 640 + offsetY)
+  setNode('ui.laminator-tag-param-columns', 1245 + offsetX, 520 + offsetY)
+  setNode('change.laminator-tag-layout', 1380 + offsetX, 425 + offsetY)
+  setNode('boundary.laminator-layout-only', 1510 + offsetX, 555 + offsetY)
 }
 
-function rowHintForNode(kind: string, id: string, index: number): number {
-  if (kind === 'product-intent') {
-    return 2
+function placeOrbit(
+  nodes: DevViewGraphNode[],
+  options: {
+    centerX: number
+    centerY: number
+    radiusX: number
+    radiusY: number
+    startDegrees: number
+    endDegrees: number
+    assigned: Set<string>
+  },
+): void {
+  if (nodes.length === 0) {
+    return
   }
-  if (id.includes('smart51-printer') || id.includes('getconfig') || id.includes('test')) {
-    return 0
-  }
-  if (id.includes('smart51-laminator')) {
-    return 2
-  }
-  if (id.includes('smart52-laminator')) {
-    return 4
-  }
-  if (id.includes('laminator')) {
-    return 3
-  }
-  return index
+  const span = options.endDegrees - options.startDegrees
+  const denominator = Math.max(1, nodes.length - 1)
+  nodes.forEach((node, index) => {
+    const angle =
+      nodes.length === 1
+        ? (options.startDegrees + options.endDegrees) / 2
+        : options.startDegrees + (span * index) / denominator
+    const radians = (angle * Math.PI) / 180
+    node.x = Math.round(options.centerX + Math.cos(radians) * options.radiusX - GRAPH_NODE_WIDTH / 2)
+    node.y = Math.round(options.centerY + Math.sin(radians) * options.radiusY - GRAPH_NODE_HEIGHT / 2)
+    options.assigned.add(node.id)
+  })
+}
+
+function sortLayoutNodes(nodes: DevViewGraphNode[]): DevViewGraphNode[] {
+  return [...nodes].sort((left, right) => left.id.localeCompare(right.id))
 }
 
 function shortLabel(id: string): string {
