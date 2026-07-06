@@ -571,9 +571,11 @@ The WindowsUtility retrofit demo output is tracked at `outputs/devview-graph/win
 trees in-place, and keeps the current request plus selected viewpoint trees visible before any click. Mouse wheel and
 buttons use semantic zoom: graph distances change, but node boxes, labels, and edge strokes keep stable screen size.
 Node, edge, tree, and subgraph clicks update both the inspector and the graph selection banner. Trees are not rendered
-as separate tree layouts; they are clickable graph viewpoints with node/edge chip lists. It is visualization/report-only:
-no Codex execution, graph-source mutation, graph delta apply, approval, runtime Evidence satisfaction, equivalence
-proof, scope enforcement, or CI enforcement is introduced.
+as separate tree layouts; they are clickable graph viewpoints with node/edge chip lists. The top history controls
+`<`, `>`, and the numeric index input navigate only graph-source retrofit records, so older recorded work can be
+inspected without implying git-history scraping or scope expansion. It is visualization/report-only: no Codex execution,
+graph-source mutation, graph delta apply, approval, runtime Evidence satisfaction, equivalence proof, scope enforcement,
+or CI enforcement is introduced.
 
 The traversal boundary separates graph vocabulary from planner semantics: `*NodeTypes` and `*EdgeTypes` contain only
 actual graph taxonomy values, while target/scope/evidence/output meanings are represented as roles and selection

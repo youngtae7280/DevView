@@ -1051,14 +1051,16 @@ node dist/cli/index.js graph read-model generate-instruction-pack `
 - Purpose: Render a static, read-only DevViewGraph HTML inspector and matching data JSON from a retrofit graph-source
   plus a retrofit instruction pack. The v1 layout is a deterministic network/orbit graph; viewpoint trees are highlight
   sets over the same graph, not separate tree-shaped renderings. The inspector keeps the current request and selected
-  viewpoint trees visible and uses semantic zoom so node labels, node boxes, and edge strokes remain readable.
+  viewpoint trees visible, provides top-level record history controls, and uses semantic zoom so node labels, node
+  boxes, and edge strokes remain readable.
 - Typical state before running: After a retrofit graph-source and instruction pack exist for the same source record.
 - Options: `--graph-source <file>`, `--record <id>`, `--instruction-pack <file>`, `--output <htmlFile>`, and
   `--data-output <jsonFile>` are required.
 - What it checks: input artifact roles/statuses, instruction-pack record and graph-source provenance, selected
   graphContext nodes/edges, and output authority before any writes.
 - What it writes: Only the explicit HTML and data JSON outputs. The HTML embeds the same data model written to
-  `--data-output`, including `requestSummary`, graph layout data, selected tree breakdowns, and safety flags.
+  `--data-output`, including `requestSummary`, `workHistory[]`, graph layout data, selected tree breakdowns, and safety
+  flags.
 - Output authority guard: explicit outputs are rejected before writing if they would overwrite the source graph-source,
   source instruction pack, source record artifacts, linked source/generated authority artifacts, or if `--output` and
   `--data-output` resolve to the same path.

@@ -27,6 +27,28 @@
     ],
     "selectedEdgeIds": ["edge.tag-layout-drives-laminator-record", "edge.laminator-record-guards-logic"]
   },
+  "workHistory": [
+    {
+      "index": 1,
+      "recordId": "change.smart51-test-setting",
+      "label": "smart51-test-setting",
+      "status": "validated-then-reverted",
+      "activeCodeState": "reverted",
+      "recordPath": "examples/retrofit/cardprinterconfig/records/smart51-test-setting.validated-then-reverted.json",
+      "nodeKind": "retrofit-change-record",
+      "isCurrentRequest": false
+    },
+    {
+      "index": 2,
+      "recordId": "change.laminator-tag-layout",
+      "label": "laminator-tag-layout",
+      "status": "implemented-build-pass-ui-review-pass",
+      "activeCodeState": "active",
+      "recordPath": "examples/retrofit/cardprinterconfig/records/laminator-tag-layout.active.json",
+      "nodeKind": "retrofit-change-record",
+      "isCurrentRequest": true
+    }
+  ],
   "graph": {
     "nodes": [
       {

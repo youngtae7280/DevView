@@ -51,6 +51,11 @@ describe('DevViewGraph HTML inspector CLI', () => {
     expect(data.requestSummary.selectedTreeIds).toEqual(
       expect.arrayContaining(['tree.domain-source', 'tree.selected-pack-context']),
     )
+    expect(data.workHistory.map((entry: { recordId: string }) => entry.recordId)).toEqual([
+      'change.smart51-test-setting',
+      'change.laminator-tag-layout',
+    ])
+    expect(data.workHistory[1].isCurrentRequest).toBe(true)
     expect(data.graph.layoutMode).toBe('deterministic-network-orbit')
     expect(data.graph.nodes.length).toBeGreaterThan(0)
     expect(data.graph.edges.length).toBeGreaterThan(0)
@@ -83,6 +88,10 @@ describe('DevViewGraph HTML inspector CLI', () => {
     expect(html).toContain('function beginPan')
     expect(html).toContain('function edgePath')
     expect(html).toContain('function projectNode')
+    expect(html).toContain('function selectHistoryEntry')
+    expect(html).toContain('id="history-prev"')
+    expect(html).toContain('id="history-index"')
+    expect(html).toContain('id="history-next"')
     expect(html).toContain('edge-hit')
     expect(html).toContain('Current Request')
     expect(html).toContain('Selected Viewpoint Trees')

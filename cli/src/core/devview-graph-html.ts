@@ -113,6 +113,17 @@ export interface DevViewGraphRequestSummary {
   selectedEdgeIds: string[]
 }
 
+export interface DevViewGraphWorkHistoryEntry {
+  index: number
+  recordId: string
+  label: string
+  status: string
+  activeCodeState: string
+  recordPath: string
+  nodeKind: string
+  isCurrentRequest: boolean
+}
+
 export interface DevViewGraphData {
   schemaVersion: 1
   artifactRole: 'devview-graph-html-data-preview'
@@ -123,6 +134,7 @@ export interface DevViewGraphData {
   sourceInstructionPack: string
   sourceRecordId: string
   requestSummary: DevViewGraphRequestSummary
+  workHistory: DevViewGraphWorkHistoryEntry[]
   graph: {
     nodes: DevViewGraphNode[]
     edges: DevViewGraphEdge[]
@@ -300,6 +312,7 @@ function buildDevViewGraphData(root: string, input: GraphInput): DevViewGraphDat
   const packMapping = buildPackMapping(input.instructionPack, selectedNodeIds, selectedEdgeIds)
   subgraphs[0].packMappingIds = packMapping.map((entry) => entry.id)
   const requestSummary = buildRequestSummary(input.instructionPack, input.recordId, subgraphs[0])
+  const workHistory = buildWorkHistory(input.graphSource, graphNodeById, input.recordId)
 
   return {
     schemaVersion: 1,
@@ -311,6 +324,7 @@ function buildDevViewGraphData(root: string, input: GraphInput): DevViewGraphDat
     sourceInstructionPack: relativePath(root, input.instructionPackPath),
     sourceRecordId: input.recordId,
     requestSummary,
+    workHistory,
     graph: { nodes, edges, layoutMode: 'deterministic-network-orbit', viewport: buildViewport(nodes) },
     trees,
     subgraphs,
@@ -695,6 +709,43 @@ function buildRequestSummary(
   }
 }
 
+function buildWorkHistory(
+  graphSource: JsonRecord,
+  graphNodeById: Map<string, JsonRecord>,
+  currentRecordId: string,
+): DevViewGraphWorkHistoryEntry[] {
+  const sourceRecords = arrayRecords(graphSource.records)
+  const records =
+    sourceRecords.length > 0
+      ? sourceRecords
+      : arrayRecords(graphSource.nodes).filter((node) => stringValue(node.kind) === 'retrofit-change-record')
+  return records.map((record, index) => {
+    const recordId = stringValue(record.id) || `record.${index + 1}`
+    const node = graphNodeById.get(recordId)
+    const status = stringValue(record.expectedStatus) || stringValue(node?.state) || 'unknown'
+    return {
+      index: index + 1,
+      recordId,
+      label: shortLabel(recordId),
+      status,
+      activeCodeState: stringValue(record.expectedActiveCodeState) || inferActiveCodeState(status),
+      recordPath: stringValue(record.path) || stringValue(node?.recordPath),
+      nodeKind: stringValue(node?.kind) || 'retrofit-change-record',
+      isCurrentRequest: recordId === currentRecordId,
+    }
+  })
+}
+
+function inferActiveCodeState(status: string): string {
+  if (status.includes('reverted')) {
+    return 'reverted'
+  }
+  if (status.includes('active') || status.includes('implemented')) {
+    return 'active'
+  }
+  return 'unknown'
+}
+
 function buildCompilationTrace(root: string, input: GraphInput): DevViewGraphCompilationTraceEntry[] {
   return [
     {
@@ -773,11 +824,64 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       border-bottom: 1px solid var(--graph-line);
       background: var(--graph-surface);
     }
+    .title-block {
+      min-width: 0;
+    }
     h1 {
       margin: 0;
       font-size: 18px;
       font-weight: 650;
       letter-spacing: 0;
+    }
+    .history-nav {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px;
+      border: 1px solid var(--graph-line);
+      border-radius: 8px;
+      background: #fbfbfc;
+      white-space: nowrap;
+    }
+    .history-nav button {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--graph-line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--graph-ink);
+      font: inherit;
+      cursor: pointer;
+    }
+    .history-nav button:hover {
+      border-color: var(--graph-selected);
+      color: var(--graph-selected);
+    }
+    .history-nav button:disabled {
+      cursor: default;
+      opacity: 0.45;
+      border-color: var(--graph-line);
+      color: var(--graph-muted);
+    }
+    .history-nav input {
+      width: 44px;
+      height: 28px;
+      border: 1px solid var(--graph-line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--graph-ink);
+      font: inherit;
+      text-align: center;
+    }
+    .history-count,
+    .history-label {
+      color: var(--graph-muted);
+      font-size: 12px;
+    }
+    .history-label {
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .meta {
       display: flex;
@@ -1140,7 +1244,16 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
 <body>
   <div class="shell">
     <header>
-      <h1>DevViewGraph - ${escapeHtml(data.sourceRecordId)}</h1>
+      <div class="title-block">
+        <h1>DevViewGraph - ${escapeHtml(data.sourceRecordId)}</h1>
+      </div>
+      <div class="history-nav" aria-label="Work history navigation">
+        <button id="history-prev" title="Previous work" aria-label="Previous work">&lt;</button>
+        <input id="history-index" inputmode="numeric" aria-label="Work history index" />
+        <span id="history-count" class="history-count"></span>
+        <button id="history-next" title="Next work" aria-label="Next work">&gt;</button>
+        <span id="history-label" class="history-label"></span>
+      </div>
       <div class="meta">
         <span class="badge">${escapeHtml(data.artifacts.graphSourcePath)}</span>
         <span class="badge">${escapeHtml(data.artifacts.instructionPackPath)}</span>
@@ -1193,6 +1306,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     const selectionBanner = document.getElementById('selection-banner');
     const state = { selectedType: 'subgraph', selectedId: data.subgraphs[0]?.id || '' };
     const viewport = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0, moved: false };
+    let historyIndex = Math.max(0, (data.workHistory || []).findIndex((entry) => entry.recordId === data.sourceRecordId));
     const nodeById = new Map(data.graph.nodes.map((node) => [node.id, node]));
     const edgeById = new Map(data.graph.edges.map((edge) => [edge.id, edge]));
 
@@ -1200,6 +1314,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       renderLists();
       renderGraph();
       bindViewportControls();
+      bindHistoryControls();
       if (state.selectedType === 'node') selectNode(state.selectedId);
       else if (state.selectedType === 'edge') selectEdge(state.selectedId);
       else if (state.selectedType === 'tree') selectTree(state.selectedId);
@@ -1231,6 +1346,45 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
         });
       });
       updateActiveButtons();
+    }
+
+    function bindHistoryControls() {
+      const prev = document.getElementById('history-prev');
+      const next = document.getElementById('history-next');
+      const input = document.getElementById('history-index');
+      prev?.addEventListener('click', () => selectHistoryEntry(historyIndex - 1));
+      next?.addEventListener('click', () => selectHistoryEntry(historyIndex + 1));
+      input?.addEventListener('change', () => selectHistoryEntry(Number(input.value) - 1));
+      input?.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          selectHistoryEntry(Number(input.value) - 1);
+        }
+      });
+      updateHistoryControls();
+    }
+
+    function selectHistoryEntry(nextIndex) {
+      const history = data.workHistory || [];
+      if (history.length === 0) return;
+      const bounded = Math.max(0, Math.min(history.length - 1, Number.isFinite(nextIndex) ? nextIndex : historyIndex));
+      historyIndex = bounded;
+      const entry = history[historyIndex];
+      if (entry.recordId === data.sourceRecordId && data.requestSummary?.selectedSubgraphId) {
+        selectSubgraph(data.requestSummary.selectedSubgraphId);
+      } else if (nodeById.has(entry.recordId)) {
+        selectNode(entry.recordId);
+      } else {
+        state.selectedType = 'history';
+        state.selectedId = entry.recordId;
+        detail.innerHTML = '<h2>' + esc(entry.recordId) + '</h2><div class="sub">Work History</div>' + kv([
+          ['index', String(entry.index)],
+          ['status', entry.status],
+          ['active code state', entry.activeCodeState],
+          ['record path', entry.recordPath || 'none']
+        ]);
+        updateState();
+      }
+      updateHistoryControls();
     }
 
     function renderRequestPanel() {
@@ -1545,9 +1699,41 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     }
 
     function updateState() {
+      syncHistoryIndexFromSelection();
       updateActiveButtons();
+      updateHistoryControls();
       updateSelectionBanner();
       applyHighlight();
+    }
+
+    function syncHistoryIndexFromSelection() {
+      const history = data.workHistory || [];
+      if (history.length === 0) return;
+      const selectedRecordId =
+        state.selectedType === 'subgraph'
+          ? data.sourceRecordId
+          : state.selectedType === 'node' || state.selectedType === 'history'
+            ? state.selectedId
+            : '';
+      const nextIndex = history.findIndex((entry) => entry.recordId === selectedRecordId);
+      if (nextIndex >= 0) {
+        historyIndex = nextIndex;
+      }
+    }
+
+    function updateHistoryControls() {
+      const history = data.workHistory || [];
+      const input = document.getElementById('history-index');
+      const count = document.getElementById('history-count');
+      const label = document.getElementById('history-label');
+      const prev = document.getElementById('history-prev');
+      const next = document.getElementById('history-next');
+      const entry = history[historyIndex];
+      if (input) input.value = history.length > 0 ? String(historyIndex + 1) : '';
+      if (count) count.textContent = history.length > 0 ? '/ ' + history.length : '/ 0';
+      if (label) label.textContent = entry ? entry.label + ' - ' + entry.status : 'no recorded work';
+      if (prev) prev.disabled = historyIndex <= 0;
+      if (next) next.disabled = historyIndex >= history.length - 1;
     }
 
     function updateActiveButtons() {
@@ -1659,6 +1845,10 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       if (state.selectedType === 'tree') {
         const tree = data.trees.find((entry) => entry.id === state.selectedId);
         return { title: 'Selected viewpoint tree: ' + (tree?.label || state.selectedId), subtitle: tree ? tree.nodeIds.length + ' nodes / ' + tree.edgeIds.length + ' edges' : 'tree' };
+      }
+      if (state.selectedType === 'history') {
+        const entry = (data.workHistory || []).find((item) => item.recordId === state.selectedId);
+        return { title: 'Selected work: ' + (entry?.label || state.selectedId), subtitle: entry ? entry.status + ' / ' + entry.activeCodeState : 'work history' };
       }
       const subgraph = data.subgraphs.find((entry) => entry.id === state.selectedId);
       return { title: 'Selected subgraph: ' + (subgraph?.label || state.selectedId), subtitle: subgraph ? subgraph.nodeIds.length + ' nodes / ' + subgraph.edgeIds.length + ' edges from the current request' : 'subgraph' };

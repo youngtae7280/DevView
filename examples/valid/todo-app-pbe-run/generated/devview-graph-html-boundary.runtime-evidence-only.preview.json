@@ -20,6 +20,7 @@
   "dataModel": {
     "requiredSections": [
       "requestSummary",
+      "workHistory[]",
       "graph.nodes[]",
       "graph.edges[]",
       "trees[]",
@@ -37,6 +38,7 @@
   },
   "interactionModel": {
     "requestPanel": "the current user-confirmed request, source record, selected node count, and selected edge count are visible before interaction",
+    "workHistoryNavigation": "top-level previous/next buttons plus a 1-based index input navigate graph-source retrofit records only; selecting a prior record highlights its graph record node and connected context",
     "selectedViewpointTreePanel": "the trees selected by the current request are shown with directly clickable node and edge chips",
     "panZoom": "mouse drag pans the graph; mouse wheel zooms around the pointer; +/-/R buttons provide bounded semantic zoom where node boxes, labels, and edge strokes keep stable screen size",
     "nodeClick": "show node kind, state, intent claim, record path, code locations, pack role, tree membership, subgraph membership, selection banner, and visible selected-node stroke",

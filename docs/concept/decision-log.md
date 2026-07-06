@@ -3246,3 +3246,25 @@ This decision changes read-only visualization and interaction only. It does not 
 subgraph semantics, instruction pack authority, output authority guards, Codex execution, graph mutation, graph delta
 apply, approval, runtime Evidence satisfaction, equivalence proof, scope enforcement, CI enforcement, required checks,
 branch protection, diff rejection, or user acceptance.
+
+## DEC-286 Add DevViewGraph Record History Navigation
+
+DEC-286 does not supersede DEC-097 through DEC-285. It adds simple top-level navigation for graph-source retrofit
+records so reviewers can move from the current request to earlier recorded work without opening a separate history
+panel.
+
+The DevViewGraph data model now includes:
+
+```text
+workHistory[]
+```
+
+The HTML inspector shows `<` and `>` buttons plus a 1-based numeric index input in the top header. The index is derived
+from `graphSource.records` order. Selecting the current record returns to the selected Instruction Pack subgraph;
+selecting an older record selects that record node and its connected graph context. This is graph-source-record
+navigation only. It does not scrape arbitrary git history, infer unrecorded work, or expand editable scope.
+
+This decision changes read-only visualization and navigation only. It does not change graph source authority, selected
+subgraph semantics, instruction pack authority, output authority guards, Codex execution, graph mutation, graph delta
+apply, approval, runtime Evidence satisfaction, equivalence proof, scope enforcement, CI enforcement, required checks,
+branch protection, diff rejection, or user acceptance.
