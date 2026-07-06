@@ -2126,10 +2126,11 @@ provider adapter:
 examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config-boundary.runtime-evidence-only.preview.json
 examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.disabled.runtime-evidence-only.preview.json
 examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.invocation-enabled.runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.openai-live-disabled-by-default.runtime-evidence-only.preview.json
 ```
 
 The default config is `providerState: disabled`. The taxonomy also reserves `configured-not-invoked`,
-`configured-invocation-enabled-preview`, `unavailable`, `blocked-invalid-config`, and
+`configured-invocation-enabled-preview`, `configured-openai-invocation-enabled`, `unavailable`, `blocked-invalid-config`, and
 `future-invocation-allowed-only-after-explicit-config`. Provider/model/environment references are provenance only;
 environment variable names such as `OPENAI_API_KEY` may be recorded, but API key, token, password, and secret values
 must never be stored or inspected. The boundary keeps `networkCallsAllowed`, `llmInvoked`, and
@@ -2138,6 +2139,12 @@ must never be stored or inspected. The boundary keeps `networkCallsAllowed`, `ll
 `configured-invocation-enabled-preview` records the future explicit invocation enablement shape only. It still requires
 a later provider adapter implementation and future `--invoke-provider` flag, and policy blocks combining that future flag
 with `--external-candidate`.
+
+`configured-openai-invocation-enabled` records the OpenAI live-provider config shape for a future adapter. The
+calibration fixture is disabled by default: it records `providerNameCandidate: openai`, `modelNameCandidate: gpt-5.5`,
+`apiKeySourceRef: OPENAI_API_KEY`, timeout/token limits, structured-output mode, and future requirements for
+`--invoke-provider`, future `--allow-network-provider`, and future provider mode `openai`. It is still not an OpenAI
+call, not an SDK dependency, not network authority, not a provider response, and not Request IR Candidate generation.
 
 The provider-config-aware analyzer run calibration is:
 

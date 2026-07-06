@@ -169,11 +169,18 @@ The future explicit invocation enablement preview is:
 examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.invocation-enabled.runtime-evidence-only.preview.json
 ```
 
+The OpenAI live provider config shape preview is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.openai-live-disabled-by-default.runtime-evidence-only.preview.json
+```
+
 This boundary fixes provider state vocabulary before any provider adapter is implemented:
 
 - `disabled`
 - `configured-not-invoked`
 - `configured-invocation-enabled-preview`
+- `configured-openai-invocation-enabled`
 - `unavailable`
 - `blocked-invalid-config`
 - `future-invocation-allowed-only-after-explicit-config`
@@ -187,6 +194,13 @@ secret values.
 two-part enablement boundary only: a later provider adapter must exist, and a future explicit `--invoke-provider` flag
 must be supplied. Future `--external-candidate` plus `--invoke-provider` is blocked by policy so external imports do not
 accidentally trigger provider execution.
+
+`configured-openai-invocation-enabled` is the live-provider-specific config shape for a future OpenAI adapter. It is
+distinct from `configured-invocation-enabled-preview`, but still does not grant current invocation authority. Future live
+OpenAI invocation would require `--invoke-provider`, a future explicit `--allow-network-provider` gate, future provider
+mode `openai`, an implemented adapter/SDK dependency, and runtime secret handling that stores no API key value. The
+calibration artifact records `apiKeySourceRef: OPENAI_API_KEY` as an environment variable name only; it does not read,
+inspect, print, or persist the value.
 
 The current provider config boundary keeps `providerInvocationAuthority: none-preview-only`, `networkCallsAllowed:
 false`, `llmInvoked: false`, `requestIrCandidateGenerated: false`, and `candidateOnly: true`. Future

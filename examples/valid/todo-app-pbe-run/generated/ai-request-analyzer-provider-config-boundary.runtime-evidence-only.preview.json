@@ -10,6 +10,7 @@
   "sourceCoreBaselineFreeze": "examples/valid/todo-app-pbe-run/generated/devview-core-baseline-freeze.runtime-evidence-only.preview.json",
   "firstCalibrationDisabledConfigPreview": "examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.disabled.runtime-evidence-only.preview.json",
   "firstCalibrationInvocationEnabledConfigPreview": "examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.invocation-enabled.runtime-evidence-only.preview.json",
+  "firstCalibrationOpenAiLiveConfigPreview": "examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.openai-live-disabled-by-default.runtime-evidence-only.preview.json",
   "providerConfigBoundaryPreviewed": true,
   "providerConfigReaderImplemented": false,
   "providerAdapterImplemented": false,
@@ -35,6 +36,19 @@
       "meaning": "Future explicit invocation candidate state. It records that a provider config could be eligible for a future adapter only when a separate --invoke-provider flag is explicitly provided. This state grants no current invocation authority.",
       "futureExplicitInvocationFlagRequired": "--invoke-provider",
       "explicitInvocationFlagImplemented": false,
+      "networkCallsAllowed": false,
+      "llmInvoked": false,
+      "requestIrCandidateGenerated": false
+    },
+    {
+      "providerState": "configured-openai-invocation-enabled",
+      "meaning": "OpenAI live-provider-specific config shape for a future adapter. It is distinct from configured-invocation-enabled-preview and still grants no current invocation authority. Future live invocation would require --invoke-provider, --allow-network-provider, provider mode openai, an implemented adapter, and runtime secret handling that stores no secret values.",
+      "providerNameCandidate": "openai",
+      "futureExplicitInvocationFlagRequired": "--invoke-provider",
+      "futureExplicitNetworkFlagRequired": "--allow-network-provider",
+      "futureProviderModeRequired": "openai",
+      "providerAdapterImplemented": false,
+      "providerInvocationImplemented": false,
       "networkCallsAllowed": false,
       "llmInvoked": false,
       "requestIrCandidateGenerated": false
@@ -84,7 +98,10 @@
     "providerConfigSourceField": "providerConfigSource",
     "apiKeySourceRefField": "apiKeySourceRef",
     "invocationEnablementState": "configured-invocation-enabled-preview",
+    "openAiLiveInvocationEnablementState": "configured-openai-invocation-enabled",
     "explicitInvocationFlagRequired": "--invoke-provider",
+    "explicitNetworkFlagRequired": "--allow-network-provider",
+    "providerModeRequiredForOpenAi": "openai",
     "externalCandidateWithInvokeProviderPolicy": "blocked-future-policy",
     "allowedProviderConfigSources": [
       "disabled-default-preview",
@@ -98,11 +115,22 @@
   "futureAnalyzeRequestIntegration": {
     "futureOptionCandidate": "--provider-config <providerConfigPath>",
     "futureExplicitInvocationFlagCandidate": "--invoke-provider",
+    "futureExplicitNetworkFlagCandidate": "--allow-network-provider",
+    "futureProviderModeCandidate": "--provider-mode openai",
     "futureInvocationEnablementRequirements": [
       "providerState must be configured-invocation-enabled-preview",
       "--invoke-provider must be explicitly supplied",
       "external candidate import must not be supplied in the same command",
       "provider adapter implementation must exist in a later slice"
+    ],
+    "futureOpenAiLiveInvocationEnablementRequirements": [
+      "providerState must be configured-openai-invocation-enabled",
+      "--invoke-provider must be explicitly supplied",
+      "--allow-network-provider must be explicitly supplied",
+      "--provider-mode openai must be explicitly supplied",
+      "external candidate import and mock provider response input must not be supplied in the same command",
+      "OpenAI adapter and SDK dependency must exist in a later slice",
+      "API key value may be read only at runtime from apiKeySourceRef and must not be stored, printed, or committed"
     ],
     "externalCandidateWithInvokeProviderPolicy": "blocked-future-policy",
     "currentAnalyzeRequestBehavior": "provider-disabled-or-external-candidate-import-only",
@@ -143,7 +171,10 @@
     "inspect or print secret values",
     "treat providerState=configured-not-invoked as network-call authority",
     "treat providerState=configured-invocation-enabled-preview as current network-call authority",
+    "treat providerState=configured-openai-invocation-enabled as current network-call authority",
     "treat the future --invoke-provider flag as implemented in this slice",
+    "treat the future --allow-network-provider flag as implemented in this slice",
+    "treat the future --provider-mode openai flag as implemented in this slice",
     "combine future --invoke-provider with --external-candidate",
     "generate Request IR Candidate JSON from provider config alone",
     "skip analyze-request provider-disabled behavior without a future explicit provider adapter",

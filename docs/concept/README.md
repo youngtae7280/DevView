@@ -497,15 +497,21 @@ The default disabled provider config preview is
 `examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.disabled.runtime-evidence-only.preview.json`.
 The future explicit invocation enablement config preview is
 `examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.invocation-enabled.runtime-evidence-only.preview.json`.
-The boundary defines `disabled`, `configured-not-invoked`, `configured-invocation-enabled-preview`, `unavailable`,
-`blocked-invalid-config`, and `future-invocation-allowed-only-after-explicit-config` states before any provider adapter
-exists. Provider config may record environment variable references such as `OPENAI_API_KEY`, but it must not store,
-inspect, or print secret values; configured provider references still do not allow network calls or Request IR Candidate
-generation.
+The OpenAI live provider config shape preview is
+`examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.openai-live-disabled-by-default.runtime-evidence-only.preview.json`.
+The boundary defines `disabled`, `configured-not-invoked`, `configured-invocation-enabled-preview`,
+`configured-openai-invocation-enabled`, `unavailable`, `blocked-invalid-config`, and
+`future-invocation-allowed-only-after-explicit-config` states before any live provider adapter exists. Provider config
+may record environment variable references such as `OPENAI_API_KEY`, but it must not store, inspect, or print secret
+values; configured provider references still do not allow network calls or Request IR Candidate generation.
 
 `configured-invocation-enabled-preview` is a future-only enablement candidate. It still keeps network/LLM/candidate
 generation false and requires a later provider adapter plus a future explicit `--invoke-provider` flag. Future
 `--external-candidate` plus `--invoke-provider` is blocked by policy.
+
+`configured-openai-invocation-enabled` is OpenAI-live-specific config shape only. It records future requirements for
+`--invoke-provider`, future `--allow-network-provider`, future provider mode `openai`, and an SDK/adapter slice, while
+keeping `networkCallsAllowed`, `llmInvoked`, provider invocation, and candidate generation false.
 
 `analyze-request` can now read `--provider-config <providerConfigPath>` without invoking it. The first provider-config
 disabled calibration result is

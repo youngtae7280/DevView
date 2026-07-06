@@ -88,8 +88,10 @@
   `examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.disabled.runtime-evidence-only.preview.json`
   plus
   `examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.invocation-enabled.runtime-evidence-only.preview.json`
-  define disabled/configured/invocation-enabled-preview/unavailable/blocked/future provider states and secret-reference
-  policy without invoking an LLM/API or generating Request IR.
+  plus
+  `examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.openai-live-disabled-by-default.runtime-evidence-only.preview.json`
+  define disabled/configured/invocation-enabled-preview/OpenAI-live-shape/unavailable/blocked/future provider states and
+  secret-reference policy without invoking an LLM/API or generating Request IR.
 - AI Request Analyzer mock provider response pipeline -
   `examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-mock-provider-response.add-todo-runtime-evidence-only.preview.json`
   and

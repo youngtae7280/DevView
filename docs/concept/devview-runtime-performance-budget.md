@@ -356,6 +356,17 @@ graph read-model analyze-request --provider-config <invocationEnabledConfig> --i
 It parses a local mock response fixture and writes candidate-only Request IR output without network calls. Real provider
 network time remains outside the 5 second deterministic budget and is still unimplemented.
 
+The OpenAI live provider config shape preview is also outside the measured runtime path:
+
+```text
+examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.openai-live-disabled-by-default.runtime-evidence-only.preview.json
+```
+
+It records only future live-provider configuration fields such as provider name, model candidate, environment variable
+reference name, timeout/token limits, structured-output mode, and future explicit gates. It does not add an SDK
+dependency, implement `--allow-network-provider` or `--provider-mode openai`, call OpenAI/API/LLM/network, read API key
+values, generate Request IR, or change the current advisory smoke lanes.
+
 The clarification interview boundary preview is outside the measured runtime path:
 
 ```text

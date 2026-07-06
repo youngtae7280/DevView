@@ -14,11 +14,16 @@ const invocationEnabledConfigPath = resolve(
   process.cwd(),
   'examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.invocation-enabled.runtime-evidence-only.preview.json',
 )
+const openAiLiveConfigPath = resolve(
+  process.cwd(),
+  'examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.openai-live-disabled-by-default.runtime-evidence-only.preview.json',
+)
 
 const expectedProviderStates = [
   'disabled',
   'configured-not-invoked',
   'configured-invocation-enabled-preview',
+  'configured-openai-invocation-enabled',
   'unavailable',
   'blocked-invalid-config',
   'future-invocation-allowed-only-after-explicit-config',
@@ -42,6 +47,7 @@ describe('AI Request Analyzer provider config boundary previews', () => {
     const boundary = readJson(boundaryPath)
     const disabledConfig = readJson(disabledConfigPath)
     const invocationEnabledConfig = readJson(invocationEnabledConfigPath)
+    const openAiLiveConfig = readJson(openAiLiveConfigPath)
 
     expect(boundary.artifactRole).toBe('ai-request-analyzer-provider-config-boundary-preview')
     expect(boundary.status).toBe('ai-request-analyzer-provider-config-boundary-previewed')
@@ -51,6 +57,11 @@ describe('AI Request Analyzer provider config boundary previews', () => {
     expect(invocationEnabledConfig.artifactRole).toBe('ai-request-analyzer-provider-config-preview')
     expect(invocationEnabledConfig.status).toBe('ai-request-analyzer-provider-config-invocation-enabled-previewed')
     expect(invocationEnabledConfig.providerState).toBe('configured-invocation-enabled-preview')
+    expect(openAiLiveConfig.artifactRole).toBe('ai-request-analyzer-provider-config-preview')
+    expect(openAiLiveConfig.status).toBe(
+      'ai-request-analyzer-provider-config-openai-live-disabled-by-default-previewed',
+    )
+    expect(openAiLiveConfig.providerState).toBe('configured-openai-invocation-enabled')
   })
 
   it('defines the provider state taxonomy', () => {
@@ -94,14 +105,56 @@ describe('AI Request Analyzer provider config boundary previews', () => {
     expect(invocationEnabledConfig.candidateOnly).toBe(true)
   })
 
+  it('keeps OpenAI live config distinct from preview-only invocation state without granting authority', () => {
+    const invocationEnabledConfig = readJson(invocationEnabledConfigPath)
+    const openAiLiveConfig = readJson(openAiLiveConfigPath)
+
+    expect(invocationEnabledConfig.providerState).toBe('configured-invocation-enabled-preview')
+    expect(openAiLiveConfig.providerState).toBe('configured-openai-invocation-enabled')
+    expect(openAiLiveConfig.providerNameCandidate).toBe('openai')
+    expect(openAiLiveConfig.modelNameCandidate).toBe('gpt-5.5')
+    expect(openAiLiveConfig.providerInvocationAuthority).toBe(
+      'explicit-invocation-and-network-flags-required-not-implemented',
+    )
+    expect(openAiLiveConfig.explicitInvocationFlagRequired).toBe('--invoke-provider')
+    expect(openAiLiveConfig.explicitNetworkFlagRequired).toBe('--allow-network-provider')
+    expect(openAiLiveConfig.providerModeRequired).toBe('openai')
+    expect(openAiLiveConfig.providerAdapterImplemented).toBe(false)
+    expect(openAiLiveConfig.providerInvocationImplemented).toBe(false)
+    expect(openAiLiveConfig.explicitNetworkFlagImplemented).toBe(false)
+    expect(openAiLiveConfig.providerModeFlagImplemented).toBe(false)
+    expect(openAiLiveConfig.sdkDependencyAdded).toBe(false)
+    expect(openAiLiveConfig.openAiSdkDependencyAdded).toBe(false)
+    expect(openAiLiveConfig.networkCallsAllowed).toBe(false)
+    expect(openAiLiveConfig.llmInvoked).toBe(false)
+    expect(openAiLiveConfig.runtimeAiCallsAllowed).toBe(false)
+    expect(openAiLiveConfig.requestIrCandidateGenerated).toBe(false)
+    expect(openAiLiveConfig.candidateOnly).toBe(true)
+  })
+
+  it('records only an OpenAI API key environment variable name reference', () => {
+    const openAiLiveConfig = readJson(openAiLiveConfigPath)
+
+    expect(openAiLiveConfig.apiKeySourceRef).toBe('OPENAI_API_KEY')
+    expect(openAiLiveConfig.environmentVariableRefs).toEqual(['OPENAI_API_KEY'])
+    expect(openAiLiveConfig.secretValueStored).toBe(false)
+    expect(openAiLiveConfig.secretValueInspected).toBe(false)
+    expect(openAiLiveConfig.apiKeyValueStored).toBe(false)
+    expect(openAiLiveConfig.apiKeyValueRead).toBe(false)
+    expect(openAiLiveConfig.apiKeyValuePrinted).toBe(false)
+    expect(openAiLiveConfig.providerResponseStored).toBe(false)
+  })
+
   it('does not store secret-looking literal values while allowing env var references', () => {
     const boundaryText = readFileSync(boundaryPath, 'utf8')
     const disabledConfigText = readFileSync(disabledConfigPath, 'utf8')
     const invocationEnabledConfigText = readFileSync(invocationEnabledConfigPath, 'utf8')
+    const openAiLiveConfigText = readFileSync(openAiLiveConfigPath, 'utf8')
     const testSourceText = readFileSync(new URL(import.meta.url), 'utf8')
 
     expect(boundaryText).toContain('OPENAI_API_KEY')
     expect(invocationEnabledConfigText).toContain('OPENAI_API_KEY')
+    expect(openAiLiveConfigText).toContain('OPENAI_API_KEY')
     expect(readJson(boundaryPath).secretPolicy).toMatchObject({
       secretValueStored: false,
       secretValueInspected: false,
@@ -111,6 +164,7 @@ describe('AI Request Analyzer provider config boundary previews', () => {
       expect(boundaryText).not.toMatch(pattern)
       expect(disabledConfigText).not.toMatch(pattern)
       expect(invocationEnabledConfigText).not.toMatch(pattern)
+      expect(openAiLiveConfigText).not.toMatch(pattern)
       expect(testSourceText).not.toMatch(pattern)
     }
   })
@@ -119,12 +173,15 @@ describe('AI Request Analyzer provider config boundary previews', () => {
     const boundary = readJson(boundaryPath)
     const disabledConfig = readJson(disabledConfigPath)
     const invocationEnabledConfig = readJson(invocationEnabledConfigPath)
+    const openAiLiveConfig = readJson(openAiLiveConfigPath)
 
     expectFalseFlags(boundary.currentBoundaryFlags as Record<string, unknown>)
     expectFalseFlags(disabledConfig.currentBoundaryFlags as Record<string, unknown>)
     expectFalseFlags(disabledConfig.downstreamAuthorityBoundaries as Record<string, unknown>)
     expectFalseFlags(invocationEnabledConfig.currentBoundaryFlags as Record<string, unknown>)
     expectFalseFlags(invocationEnabledConfig.downstreamAuthorityBoundaries as Record<string, unknown>)
+    expectFalseFlags(openAiLiveConfig.currentBoundaryFlags as Record<string, unknown>)
+    expectFalseFlags(openAiLiveConfig.downstreamAuthorityBoundaries as Record<string, unknown>)
     expect(boundary.currentBoundaryFlags).toMatchObject({
       approvalStatus: 'not-approved',
       candidateOnly: true,
@@ -135,6 +192,10 @@ describe('AI Request Analyzer provider config boundary previews', () => {
       projectMemoryExtensionAuthorityGranted: false,
     })
     expect(invocationEnabledConfig.currentBoundaryFlags).toMatchObject({
+      approvalStatus: 'not-approved',
+      projectMemoryExtensionAuthorityGranted: false,
+    })
+    expect(openAiLiveConfig.currentBoundaryFlags).toMatchObject({
       approvalStatus: 'not-approved',
       projectMemoryExtensionAuthorityGranted: false,
     })

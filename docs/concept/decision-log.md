@@ -3529,3 +3529,36 @@ provider-backed authoritative Request IR, run graph validation, run traversal, g
 contract input, generate instruction packs, execute Codex, install hooks, mutate graph-source, apply graph deltas,
 automate approval or human decisions, accept or satisfy Evidence, prove equivalence, enforce scope/CI, or activate
 strict/guided blocking.
+
+## DEC-296 Define OpenAI Analyzer Provider Live Config Boundary
+
+DEC-296 does not supersede DEC-097 through DEC-295. It adds the live-provider-specific provider state
+`configured-openai-invocation-enabled` to the AI Request Analyzer provider config boundary.
+
+The new calibration preview artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-provider-config.openai-live-disabled-by-default.runtime-evidence-only.preview.json
+```
+
+This state is distinct from `configured-invocation-enabled-preview`. It records the OpenAI live config shape for a future
+adapter, including `providerNameCandidate: openai`, `modelNameCandidate: gpt-5.5`, `apiKeySourceRef: OPENAI_API_KEY`,
+timeout/token limits, structured-output mode, and future explicit gates:
+
+```text
+--invoke-provider
+--allow-network-provider
+--provider-mode openai
+```
+
+The artifact itself remains disabled by default. It keeps `providerAdapterImplemented: false`,
+`providerInvocationImplemented: false`, `networkCallsAllowed: false`, `llmInvoked: false`,
+`runtimeAiCallsAllowed: false`, and `requestIrCandidateGenerated: false`. It records only the API key environment
+variable name and must not store, inspect, print, or persist the API key value or any token/secret value.
+
+This decision adds no SDK dependency, no `--allow-network-provider` parser support, no `--provider-mode openai` parser
+support, no OpenAI adapter, no OpenAI/API/LLM/network call, no API key value read, no Request IR Candidate generation,
+no graph validation, no traversal, no selected slice generation, no contract input generation, no instruction pack
+generation, no hook execution/install, no Codex execution, no graph-source mutation, no graph delta apply, no
+approval/human decision automation, no Evidence acceptance, no runtime Evidence satisfaction, no equivalence proof, no
+scope/CI enforcement, no strict/guided blocking, and no Project Memory extension authority.
