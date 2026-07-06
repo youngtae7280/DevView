@@ -13,6 +13,7 @@ import { collectGitDerivedChangedFiles } from '../core/git-derived-changed-file-
 import { generateGraphDeltaHumanReviewPacket } from '../core/graph-delta-human-review-packet.js'
 import { generateGraphTraversalPlanFile } from '../core/graph-traversal-plan.js'
 import { generateContractCompilerInputFile } from '../core/contract-input-generator.js'
+import { reportDevViewBaselineFile } from '../core/devview-baseline-report.js'
 import { recordHumanDecisionFile } from '../core/human-decision-record.js'
 import { reportHookGatewayHealthFile } from '../core/hook-gateway-health-report.js'
 import { reportHookActivationChainFile } from '../core/hook-activation-chain-report.js'
@@ -2627,6 +2628,77 @@ export async function graphReadModelReportHookActivationChainCommand(context: Co
           message,
           suggestedFix:
             'Provide readable Hook Gateway health/context/script/session preview artifacts and dedicated report output paths.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelReportDevViewBaselineCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.roadmapAudit) {
+    return invalidCommand('graph read-model report-devview-baseline requires --roadmap-audit <file>.')
+  }
+  if (!context.options.finalHandoff) {
+    return invalidCommand('graph read-model report-devview-baseline requires --final-handoff <file>.')
+  }
+
+  try {
+    const result = await reportDevViewBaselineFile(context.options.root, {
+      roadmapAudit: context.options.roadmapAudit,
+      finalHandoff: context.options.finalHandoff,
+      frontendChain: context.options.frontendChain,
+      hookActivationChain: context.options.hookActivationChain,
+      applyReadiness: context.options.applyReadiness,
+      mutationReadiness: context.options.mutationReadiness,
+      evidenceAcceptanceReadiness: context.options.evidenceAcceptanceReadiness,
+      equivalenceProofReadiness: context.options.equivalenceProofReadiness,
+      scopeCiEnforcementReadiness: context.options.scopeCiEnforcementReadiness,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    const partial = result.report.baselineCompletenessStatus === 'partial-with-warnings'
+
+    return {
+      ok: true,
+      command: 'graph read-model report-devview-baseline',
+      exitCode: ExitCode.Success,
+      message: partial
+        ? 'DevView core baseline freeze report generated with optional-input warnings.'
+        : 'DevView core baseline freeze report generated.',
+      issues: result.report.validationFindings.map((finding) =>
+        issue({
+          validator: 'DevViewBaselineReporter',
+          code: finding.code,
+          severity: finding.severity,
+          message: finding.message,
+          reason: finding.field ? `Field: ${finding.field}` : undefined,
+          suggestedFix: finding.suggestedFix,
+        }),
+      ),
+      data: {
+        ...result.report,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: partial
+          ? 'Review optional-input warnings. This command created no execution, hook, graph mutation, approval, Evidence, equivalence, enforcement, or Project Memory extension authority.'
+          : 'Review the baseline freeze report. This command created no execution, hook, graph mutation, approval, Evidence, equivalence, enforcement, or Project Memory extension authority.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model report-devview-baseline',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'DevView core baseline freeze report could not run.',
+      issues: [
+        issue({
+          validator: 'DevViewBaselineReporter',
+          code: 'DEVVIEW_BASELINE_REPORT_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide the roadmap audit and final handoff artifacts, use optional preview/readiness artifacts only, and choose dedicated output paths.',
         }),
       ],
     }

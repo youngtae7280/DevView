@@ -53,6 +53,7 @@ import {
   graphReadModelReportHealthCommand,
   graphReadModelReportIntentCommand,
   graphReadModelReportGraphSourceMutationReadinessCommand,
+  graphReadModelReportDevViewBaselineCommand,
   graphReadModelReportScopeCiEnforcementReadinessCommand,
   graphReadModelSelectSliceCommand,
   graphReadModelSummarizeCommand,
@@ -350,6 +351,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-hook-activation-chain') {
     return graphReadModelReportHookActivationChainCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-devview-baseline') {
+    return graphReadModelReportDevViewBaselineCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-health') {
     return graphReadModelReportHealthCommand(context)

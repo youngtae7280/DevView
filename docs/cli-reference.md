@@ -1362,6 +1362,37 @@ node dist/cli/index.js graph read-model report-hook-activation-chain `
   --json
 ```
 
+### `pbe graph read-model report-devview-baseline`
+
+- Purpose: Freeze a machine-readable summary of the current DevView deterministic spine, advisory surfaces, blocked
+  readiness chain, and intentionally future-only authority boundaries.
+- Required inputs: `--roadmap-audit <file>` and `--final-handoff <file>`.
+- Optional inputs: `--frontend-chain <file>`, `--hook-activation-chain <file>`, `--apply-readiness <file>`,
+  `--mutation-readiness <file>`, `--evidence-acceptance-readiness <file>`, `--equivalence-proof-readiness <file>`, and
+  `--scope-ci-enforcement-readiness <file>`. Missing optional inputs produce a partial baseline with warnings, not a
+  blocked report.
+- Output: `artifactRole: devview-core-baseline-freeze-report` with completed/advisory/blocked/future-only
+  classifications. `--output <file>` writes JSON and `--markdown <file>` writes a compact human-readable summary.
+- Boundary: this command summarizes existing artifacts only. It does not call an LLM, execute Codex, install or run
+  hooks, mutate graph-source, apply graph deltas, automate approval/human decisions, accept or satisfy Evidence, prove
+  equivalence, enforce scope, configure CI, enable strict/guided blocking, or grant Project Memory extension authority.
+
+```powershell
+node dist/cli/index.js graph read-model report-devview-baseline `
+  --roadmap-audit examples/valid/todo-app-pbe-run/generated/devview-roadmap-completion-audit.runtime-evidence-only.preview.json `
+  --final-handoff examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.json `
+  --frontend-chain examples/valid/todo-app-pbe-run/generated/devview-frontend-chain.add-todo-runtime-evidence-only.preview.json `
+  --hook-activation-chain examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.json `
+  --apply-readiness examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-readiness.blocked-defer-decision.runtime-evidence-only.preview.json `
+  --mutation-readiness examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-readiness.blocked-defer-decision.runtime-evidence-only.preview.json `
+  --evidence-acceptance-readiness examples/valid/todo-app-pbe-run/generated/devview-evidence-acceptance-readiness.blocked-defer-decision.runtime-evidence-only.preview.json `
+  --equivalence-proof-readiness examples/valid/todo-app-pbe-run/generated/devview-equivalence-proof-readiness.blocked-defer-decision.runtime-evidence-only.preview.json `
+  --scope-ci-enforcement-readiness examples/valid/todo-app-pbe-run/generated/devview-scope-ci-enforcement-readiness.blocked-defer-decision.runtime-evidence-only.preview.json `
+  --output .tmp/review-devview-baseline.json `
+  --markdown .tmp/review-devview-baseline.md `
+  --json
+```
+
 ### `pbe graph operation apply-proposal`
 
 - Purpose: Preview or apply a generated graph update proposal to its graph-source.

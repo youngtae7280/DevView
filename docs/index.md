@@ -96,6 +96,11 @@
   `examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.md` summarize
   the safe MVP handoff lanes and recommended future productization work without adding execution, approval, apply,
   mutation, Evidence, equivalence, hook activation, or enforcement authority.
+- DevView core baseline freeze report -
+  `examples/valid/todo-app-pbe-run/generated/devview-core-baseline-freeze.runtime-evidence-only.preview.json` and
+  `examples/valid/todo-app-pbe-run/generated/devview-core-baseline-freeze.runtime-evidence-only.preview.md` classify the
+  current deterministic spine as completed, advisory, blocked, or future-only without adding Project Memory extension,
+  execution, apply, mutation, approval, Evidence, equivalence, hook activation, or enforcement authority.
 - [Scope Compliance Checker Implementation Readiness](concept/scope-compliance-checker-implementation-readiness.md) -
   Readiness criteria for future scope-compliance checker inputs, missing-input states, result preview status, and
   authoritative changed-file input boundaries before executable checker logic exists.

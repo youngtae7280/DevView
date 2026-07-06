@@ -170,6 +170,18 @@ summarizes their roles, statuses, and authority boundaries for human review. It 
 implement hook sessions, trigger Codex execution, mutate graph-source, apply graph deltas, approve work, satisfy
 runtime Evidence, prove equivalence, enforce scope, or configure CI.
 
+The DevView core baseline freeze report is also outside the current all-steps smoke:
+
+```text
+graph read-model report-devview-baseline --roadmap-audit <roadmapAudit> --final-handoff <finalHandoff> --json
+```
+
+It is a human/worker orientation report over already-generated roadmap, frontend, hook activation, and readiness
+artifacts. It is not a per-request compiler step and must not be added to `core-critical-lane` without a later explicit
+decision. Missing optional inputs are warnings, not runtime blockers. The command creates no execution, hook
+activation, apply, mutation, approval, Evidence, equivalence, scope, CI, strict/guided blocking, or Project Memory
+extension authority.
+
 The graph delta proposal boundary preview is now recorded at:
 
 ```text

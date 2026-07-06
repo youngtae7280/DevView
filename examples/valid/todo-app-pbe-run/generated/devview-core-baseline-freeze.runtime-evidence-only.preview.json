@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-core-baseline-freeze-report",
+  "status": "devview-core-baseline-freeze-report-generated",
+  "reporterName": "DevViewBaselineReporter",
+  "reportScope": "devview-deterministic-spine-baseline-no-new-authority",
+  "baselineCompletenessStatus": "complete",
+  "sourceRoadmapCompletionAudit": "examples/valid/todo-app-pbe-run/generated/devview-roadmap-completion-audit.runtime-evidence-only.preview.json",
+  "sourceFinalHandoff": "examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.json",
+  "sourceFrontendChain": "examples/valid/todo-app-pbe-run/generated/devview-frontend-chain.add-todo-runtime-evidence-only.preview.json",
+  "sourceHookActivationChain": "examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.json",
+  "sourceApplyReadiness": "examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+  "sourceGraphSourceMutationReadiness": "examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+  "sourceEvidenceAcceptanceReadiness": "examples/valid/todo-app-pbe-run/generated/devview-evidence-acceptance-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+  "sourceEquivalenceProofReadiness": "examples/valid/todo-app-pbe-run/generated/devview-equivalence-proof-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+  "sourceScopeCiEnforcementReadiness": "examples/valid/todo-app-pbe-run/generated/devview-scope-ci-enforcement-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+  "sourceArtifacts": [
+    {
+      "sourceId": "roadmap-audit",
+      "label": "Roadmap completion audit",
+      "path": "examples/valid/todo-app-pbe-run/generated/devview-roadmap-completion-audit.runtime-evidence-only.preview.json",
+      "required": true,
+      "readStatus": "read",
+      "artifactRole": "devview-roadmap-completion-audit-preview",
+      "status": "devview-roadmap-completion-audit-previewed",
+      "classification": "completed",
+      "authorityStatus": "source-summary-only-no-new-authority"
+    },
+    {
+      "sourceId": "final-handoff",
+      "label": "Roadmap final handoff",
+      "path": "examples/valid/todo-app-pbe-run/generated/devview-roadmap-final-handoff.runtime-evidence-only.preview.json",
+      "required": true,
+      "readStatus": "read",
+      "artifactRole": "devview-roadmap-final-handoff-preview",
+      "status": "devview-roadmap-final-handoff-previewed",
+      "classification": "completed",
+      "authorityStatus": "source-summary-only-no-new-authority"
+    },
+    {
+      "sourceId": "frontend-chain",
+      "label": "Frontend chain report",
+      "path": "examples/valid/todo-app-pbe-run/generated/devview-frontend-chain.add-todo-runtime-evidence-only.preview.json",
+      "required": false,
+      "readStatus": "read",
+      "artifactRole": "devview-frontend-chain-report",
+      "status": "devview-frontend-chain-report-generated",
+      "classification": "advisory",
+      "authorityStatus": "source-summary-only-no-new-authority"
+    },
+    {
+      "sourceId": "hook-activation-chain",
+      "label": "Hook activation chain report",
+      "path": "examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.json",
+      "required": false,
+      "readStatus": "read",
+      "artifactRole": "devview-hook-activation-chain-report",
+      "status": "devview-hook-activation-chain-report-generated",
+      "classification": "advisory",
+      "authorityStatus": "source-summary-only-no-new-authority"
+    },
+    {
+      "sourceId": "graph-delta-apply-readiness",
+      "label": "Graph Delta apply readiness",
+      "path": "examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+      "required": false,
+      "readStatus": "read",
+      "artifactRole": "devview-graph-delta-apply-readiness-preview",
+      "status": "devview-graph-delta-apply-readiness-blocked",
+      "classification": "blocked",
+      "authorityStatus": "source-summary-only-no-new-authority"
+    },
+    {
+      "sourceId": "graph-source-mutation-readiness",
+      "label": "Graph-source mutation readiness",
+      "path": "examples/valid/todo-app-pbe-run/generated/devview-graph-source-mutation-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+      "required": false,
+      "readStatus": "read",
+      "artifactRole": "devview-graph-source-mutation-readiness-preview",
+      "status": "devview-graph-source-mutation-readiness-blocked",
+      "classification": "blocked",
+      "authorityStatus": "source-summary-only-no-new-authority"
+    },
+    {
+      "sourceId": "evidence-acceptance-readiness",
+      "label": "Evidence acceptance readiness",
+      "path": "examples/valid/todo-app-pbe-run/generated/devview-evidence-acceptance-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+      "required": false,
+      "readStatus": "read",
+      "artifactRole": "devview-evidence-acceptance-readiness-preview",
+      "status": "devview-evidence-acceptance-readiness-blocked",
+      "classification": "blocked",
+      "authorityStatus": "source-summary-only-no-new-authority"
+    },
+    {
+      "sourceId": "equivalence-proof-readiness",
+      "label": "Equivalence proof readiness",
+      "path": "examples/valid/todo-app-pbe-run/generated/devview-equivalence-proof-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+      "required": false,
+      "readStatus": "read",
+      "artifactRole": "devview-equivalence-proof-readiness-preview",
+      "status": "devview-equivalence-proof-readiness-blocked",
+      "classification": "blocked",
+      "authorityStatus": "source-summary-only-no-new-authority"
+    },
+    {
+      "sourceId": "scope-ci-enforcement-readiness",
+      "label": "Scope/CI enforcement readiness",
+      "path": "examples/valid/todo-app-pbe-run/generated/devview-scope-ci-enforcement-readiness.blocked-defer-decision.runtime-evidence-only.preview.json",
+      "required": false,
+      "readStatus": "read",
+      "artifactRole": "devview-scope-ci-enforcement-readiness-preview",
+      "status": "devview-scope-ci-enforcement-readiness-blocked",
+      "classification": "blocked",
+      "authorityStatus": "source-summary-only-no-new-authority"
+    }
+  ],
+  "classificationTaxonomy": [
+    {
+      "classification": "completed",
+      "definition": "Deterministic preview/report surface and calibration artifact exist for the current safe MVP baseline."
+    },
+    {
+      "classification": "advisory",
+      "definition": "Preview/report-only surface exists, but it grants no execution, mutation, approval, evidence, proof, or enforcement authority."
+    },
+    {
+      "classification": "blocked",
+      "definition": "Readiness/report surface exists but current calibration prerequisites intentionally prevent progression."
+    },
+    {
+      "classification": "future-only",
+      "definition": "Intentionally unimplemented authority-changing capability that requires a separate future decision before implementation."
+    }
+  ],
+  "baselineLanes": [
+    {
+      "laneId": "compiler-frontend",
+      "classification": "completed",
+      "sourceStatus": "complete-for-calibration-preview",
+      "terminalArtifacts": [
+        "examples/valid/todo-app-pbe-run/generated/instruction-pack.add-todo-runtime-evidence-only.preview.json"
+      ],
+      "baselineMeaning": "Request IR candidate validation through Instruction Pack preview is represented for the calibration.",
+      "authorityBoundary": "Instruction Pack preview is not Codex execution and cannot approve or mutate graph-source."
+    },
+    {
+      "laneId": "ai-analyzer-and-clarification",
+      "classification": "advisory",
+      "sourceStatus": "candidate-only-boundary-complete",
+      "terminalArtifacts": [
+        "examples/valid/todo-app-pbe-run/generated/ai-request-analyzer-pack.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/clarification-interview-pack.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/request-ir-candidate.revised.add-todo-runtime-evidence-only.preview.json"
+      ],
+      "baselineMeaning": "Analyzer and clarification surfaces remain candidate-only and non-authoritative until validation reruns.",
+      "authorityBoundary": "No LLM provider is implemented; external candidate import remains candidate-only."
+    },
+    {
+      "laneId": "activation-preview",
+      "classification": "advisory",
+      "sourceStatus": "preview-chain-complete-no-active-hooks",
+      "terminalArtifacts": [
+        "examples/valid/todo-app-pbe-run/generated/devview-hook-session-manifest.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/devview-hook-script-bundle.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/devview-hook-activation-chain.add-todo-runtime-evidence-only.preview.json"
+      ],
+      "baselineMeaning": "Hook Gateway activation is represented by non-active previews and repo-local script bundle materialization.",
+      "authorityBoundary": "Repo-local advisory scripts are review artifacts only; hooks are not installed, active, trusted, or blocking."
+    },
+    {
+      "laneId": "advisory-backend-and-review",
+      "classification": "advisory",
+      "sourceStatus": "mvp-connected-advisory-only",
+      "terminalArtifacts": [
+        "examples/valid/todo-app-pbe-run/generated/graph-delta-proposal.add-todo-runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/graph-delta-human-review-packet.add-todo-runtime-evidence-only.preview.json"
+      ],
+      "baselineMeaning": "Proposal-only and Human Review Packet surfaces are connected without apply authority.",
+      "authorityBoundary": "Proposal/review packet generation does not apply graph deltas or mutate graph-source."
+    },
+    {
+      "laneId": "phase-13-controlled-apply-readiness",
+      "classification": "blocked",
+      "sourceStatus": "readiness-chain-connected-currently-blocked-by-defer-decision",
+      "terminalArtifacts": [
+        "examples/valid/todo-app-pbe-run/generated/devview-human-decision-record.defer-decision.runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/devview-approved-proposal-state.blocked-defer-decision.runtime-evidence-only.preview.json",
+        "examples/valid/todo-app-pbe-run/generated/devview-scope-ci-enforcement-readiness.blocked-defer-decision.runtime-evidence-only.preview.json"
+      ],
+      "baselineMeaning": "Phase 13 readiness chain is connected but current calibration is blocked by defer-decision.",
+      "authorityBoundary": "Current calibration uses defer-decision, so approved state, graph apply, mutation, Evidence acceptance, equivalence proof, and enforcement stay blocked."
+    }
+  ],
+  "futureOnlyBoundaries": [
+    "active hook installation",
+    "active hook session runtime",
+    "approval automation",
+    "approved proposal state creation in the current defer-decision calibration",
+    "automatic Request IR generation",
+    "branch protection changes",
+    "CI required checks",
+    "Codex execution",
+    "diff rejection",
+    "equivalence proof",
+    "Evidence acceptance",
+    "graph delta apply",
+    "graph-source mutation",
+    "guided or strict blocking",
+    "LLM/API provider execution",
+    "Project Memory extension authority",
+    "runtime Evidence satisfaction",
+    "scope enforcement",
+    "user acceptance automation"
+  ],
+  "safetyInvariantSummary": {
+    "codexExecutionTriggered": false,
+    "llmInvoked": false,
+    "networkCallsAllowed": false,
+    "automaticRequestIrGenerationEnabled": false,
+    "hookScriptsInstalled": false,
+    "hooksActive": false,
+    "strictModeEnabled": false,
+    "guidedEnforcementEnabled": false,
+    "actualBlockingHookBehaviorImplemented": false,
+    "graphSourceMutated": false,
+    "graphDeltaApplied": false,
+    "approvalAutomationEnabled": false,
+    "projectMemoryExtensionAuthorityGranted": false,
+    "runtimeEvidenceSatisfied": false,
+    "evidenceAccepted": false,
+    "equivalenceProven": false,
+    "scopeEnforced": false,
+    "ciEnforcementEnabled": false,
+    "requiredChecksConfigured": false,
+    "branchProtectionChanged": false,
+    "diffRejectionEnabled": false
+  },
+  "validationFindings": [],
+  "outputWritePolicy": "explicit-output-only",
+  "writtenOutputPath": "examples/valid/todo-app-pbe-run/generated/devview-core-baseline-freeze.runtime-evidence-only.preview.json",
+  "markdownReportPath": "examples/valid/todo-app-pbe-run/generated/devview-core-baseline-freeze.runtime-evidence-only.preview.md",
+  "writtenOutputPathAuthorityStatus": "explicit-baseline-output-not-source-authority",
+  "markdownReportAuthorityStatus": "explicit-baseline-output-not-source-authority",
+  "nonExecutionBoundary": "This DevView core baseline freeze report summarizes existing deterministic spine, advisory, blocked, and future-only states only. It does not execute Codex, call an LLM/API, install or run hooks, activate strict/guided blocking, grant Project Memory extension authority, mutate graph-source, apply graph deltas, automate approval or human decisions, accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI required checks, change branch protection, reject diffs, or replace user acceptance."
+}

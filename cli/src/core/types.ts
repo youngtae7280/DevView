@@ -120,6 +120,10 @@ export interface CliOptions {
   boundary?: string
   intake?: string
   frontendChain?: string
+  roadmapAudit?: string
+  finalHandoff?: string
+  hookActivationChain?: string
+  scopeCiEnforcementReadiness?: string
   hookHealth?: string
   installTrust?: string
   userPromptContext?: string

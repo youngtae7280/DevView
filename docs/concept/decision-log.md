@@ -3368,3 +3368,30 @@ preserving all existing inspector evidence behind clicks.
 This decision changes presentation only. It does not change graph-source, Project Memory, traversal, selected slice,
 contract input, instruction-pack authority, Codex execution, approval, apply, runtime Evidence, equivalence, scope
 enforcement, CI, or human review boundaries.
+
+## DEC-291 Report DevView Core Baseline Freeze
+
+DEC-291 does not supersede DEC-097 through DEC-290. It implements
+`graph read-model report-devview-baseline`, a deterministic report-only command that freezes the current DevView core
+baseline classification for the Todo App runtime Evidence-only calibration.
+
+The command requires the roadmap completion audit and roadmap final handoff previews. It may also read optional
+frontend chain, Hook Gateway activation chain, and Phase 13 readiness artifacts. Missing optional inputs produce
+`partial-with-warnings` rather than blocking baseline generation. The report classifies sources and lanes as
+`completed`, `advisory`, `blocked`, or `future-only` so later workers do not confuse disabled readiness with completed
+authority.
+
+The first calibration artifacts are:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-core-baseline-freeze.runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-core-baseline-freeze.runtime-evidence-only.preview.md
+```
+
+The baseline freeze report is not part of the current runtime smoke. It is not a per-request compiler step and is not
+added to `core-critical-lane`.
+
+This decision is report-only. It does not call an LLM/API, execute Codex, install or run hooks, activate strict/guided
+blocking, grant Project Memory extension authority, mutate graph-source, apply graph deltas, automate approval or human
+decisions, accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI required checks,
+change branch protection, reject diffs, or replace user acceptance.
