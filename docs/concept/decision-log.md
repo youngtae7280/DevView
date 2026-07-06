@@ -3677,3 +3677,33 @@ This decision adds no runtime smoke step because the chain overlaps the already 
 candidate-to-instruction-pack lane. It adds no LLM/API/network call, Codex execution, graph-source mutation, graph delta
 apply, approval/human decision automation, Evidence acceptance, runtime Evidence satisfaction, equivalence proof,
 scope/CI enforcement, strict/guided blocking activation, or Project Memory extension authority.
+
+## DEC-301 Implement UserPromptSubmit Advisory Report
+
+DEC-301 does not supersede DEC-097 through DEC-300. It adds
+`graph read-model report-user-prompt-submit-advisory` as an event-level Hook Gateway advisory surface for concrete
+`UserPromptSubmit` prompts.
+
+The command requires a prompt source and Hook Gateway health boundary/report. It may read an existing
+`devview-preflight-session-chain-report`, plus optional candidate/analyzer/provider provenance paths. With a ready
+preflight terminal stage of `instruction-pack-preview-generated-no-codex-execution`, it writes
+`artifactRole: devview-user-prompt-submit-advisory-report` and compact Markdown suitable for future advisory
+additionalContext injection. The Markdown summarizes DevView status, prompt preview, validation chain, allowed scope,
+forbidden scope/non-goals, evidence/output requirements, stop conditions, known risks, and boundary language.
+
+If DevView mode is `off`, the command writes a no-op report with `additionalContextInjectionReady: false`. If preflight
+is missing or blocked, it writes a report-only status and a next `run-preflight-session` command instead of running
+preflight itself. `guided` and `strict-disabled` modes remain non-enforcing: requested mode is represented, but
+`guidedEnforcementEnabled`, `strictModeEnabled`, tool blocking, PreToolUse/PostToolUse blocking, and Codex execution all
+remain false.
+
+The command validates JSON and Markdown output targets before writing either file. It rejects overwrite attempts against
+prompt files, Hook Gateway health artifacts, preflight reports and child artifacts, Instruction Pack JSON/Markdown,
+candidate/analyzer/provider artifacts, Project Memory artifacts, hook config/script paths, PBE source/control paths,
+Evidence artifacts, graph-source/read-model authority, and source-authority-shaped JSON.
+
+This decision adds no default runtime smoke step. It adds no hook install/trust mutation, active hook session, Codex
+execution or blocking, PreToolUse/PostToolUse blocking, guided/strict enforcement activation, AI/LLM/API/network call,
+provider invocation, automatic validation/traversal/preflight, graph-source mutation, graph delta apply, approval/human
+decision automation, Evidence acceptance, runtime Evidence satisfaction, equivalence proof, scope enforcement, CI
+enforcement, required checks, branch protection, or diff rejection.

@@ -2675,6 +2675,28 @@ This report is a deterministic preflight convenience surface only. It does not c
 graph-source, apply graph deltas, automate approval or human decisions, accept or satisfy Evidence, prove equivalence,
 enforce scope, enable strict/guided blocking, configure CI, require checks, change branch protection, or reject diffs.
 
+## UserPromptSubmit Advisory Report
+
+The Hook Gateway `UserPromptSubmit` event-level advisory report for the same calibration is recorded in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-advisory.add-todo-runtime-evidence-only.preview.json
+examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-advisory.add-todo-runtime-evidence-only.preview.md
+```
+
+It is generated with:
+
+```text
+graph read-model report-user-prompt-submit-advisory --prompt "Add Todo App runtime evidence for the add button behavior without touching production source." --hook-health examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json --devview-mode advisory --preflight-session examples/valid/todo-app-pbe-run/generated/devview-preflight-session-chain.add-todo-runtime-evidence-only.preview.json --output examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-advisory.add-todo-runtime-evidence-only.preview.json --markdown examples/valid/todo-app-pbe-run/generated/devview-user-prompt-submit-advisory.add-todo-runtime-evidence-only.preview.md --json
+```
+
+The report reads an existing preflight session chain and renders concise additionalContext Markdown with allowed scope,
+forbidden scope/non-goals, evidence/output requirements, stop conditions, known risks, and boundary language. If
+preflight is missing or blocked, the same command reports why context injection is not ready and suggests the next
+`run-preflight-session` command. It does not run preflight, invoke analyzer providers, install hooks, block tools,
+trigger Codex execution, mutate graph-source, apply graph deltas, automate approval or human decisions, accept or
+satisfy Evidence, prove equivalence, enforce scope, or configure CI.
+
 ## DevViewGraph HTML Inspector Demo
 
 The DevViewGraph HTML inspector boundary is recorded in:

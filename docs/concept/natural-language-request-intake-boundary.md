@@ -723,6 +723,17 @@ The chain is a preflight/report surface only. It does not call an LLM/API, execu
 graph deltas, automate approval or human decisions, accept or satisfy Evidence, prove equivalence, enforce scope,
 enable strict/guided blocking, or configure CI.
 
+The preflight report can be summarized for a concrete `UserPromptSubmit` prompt with:
+
+```text
+graph read-model report-user-prompt-submit-advisory --prompt <promptText> --hook-health <healthReportOrBoundary> --preflight-session <preflightSessionChain> --json
+```
+
+This event-level advisory report either writes concise additionalContext Markdown from the preflight Instruction Pack
+summary or reports `missing-preflight`/blocked preflight with the next deterministic command. It never runs analyzer
+providers, validation, traversal, preflight, hooks, Codex execution, approval, Evidence acceptance, equivalence proof,
+scope enforcement, or CI enforcement.
+
 ## Frontend Artifact Chain Manifest
 
 The frontend chain manifest command is now available as:

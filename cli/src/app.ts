@@ -128,7 +128,11 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     dataOutput: undefined as string | undefined,
     markdown: undefined as string | undefined,
     request: undefined as string | undefined,
+    prompt: undefined as string | undefined,
+    promptFile: undefined as string | undefined,
     pack: undefined as string | undefined,
+    analyzerRun: undefined as string | undefined,
+    analyzerPack: undefined as string | undefined,
     providerConfig: undefined as string | undefined,
     externalCandidate: undefined as string | undefined,
     invokeProvider: false,
@@ -173,6 +177,8 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     hookActivationChain: undefined as string | undefined,
     scopeCiEnforcementReadiness: undefined as string | undefined,
     hookHealth: undefined as string | undefined,
+    preflightSession: undefined as string | undefined,
+    devviewMode: undefined as string | undefined,
     installTrust: undefined as string | undefined,
     userPromptContext: undefined as string | undefined,
     instructionMarkdown: undefined as string | undefined,
@@ -430,12 +436,40 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.request = value
       index += 1
+    } else if (arg === '--prompt') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--prompt requires text.' }
+      }
+      options.prompt = value
+      index += 1
+    } else if (arg === '--prompt-file') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--prompt-file requires a file path.' }
+      }
+      options.promptFile = value
+      index += 1
     } else if (arg === '--pack') {
       const value = argv[index + 1]
       if (!value) {
         return { error: '--pack requires a file path.' }
       }
       options.pack = value
+      index += 1
+    } else if (arg === '--analyzer-run') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--analyzer-run requires a file path.' }
+      }
+      options.analyzerRun = value
+      index += 1
+    } else if (arg === '--analyzer-pack') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--analyzer-pack requires a file path.' }
+      }
+      options.analyzerPack = value
       index += 1
     } else if (arg === '--provider-config') {
       const value = argv[index + 1]
@@ -734,6 +768,20 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--hook-health requires a file path.' }
       }
       options.hookHealth = value
+      index += 1
+    } else if (arg === '--preflight-session') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--preflight-session requires a file path.' }
+      }
+      options.preflightSession = value
+      index += 1
+    } else if (arg === '--devview-mode') {
+      const value = argv[index + 1]
+      if (!value || !['off', 'advisory', 'guided', 'strict-disabled'].includes(value)) {
+        return { error: '--devview-mode requires one of: off, advisory, guided, strict-disabled.' }
+      }
+      options.devviewMode = value
       index += 1
     } else if (arg === '--install-trust') {
       const value = argv[index + 1]

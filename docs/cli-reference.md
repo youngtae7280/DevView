@@ -1357,6 +1357,37 @@ node dist/cli/index.js graph read-model prepare-user-prompt-context `
   --json
 ```
 
+### `pbe graph read-model report-user-prompt-submit-advisory`
+
+- Purpose: Read a raw `UserPromptSubmit` prompt, Hook Gateway health boundary/report, and optional preflight session
+  chain report, then emit an event-level advisory report and compact additionalContext Markdown when preflight is ready.
+- Typical state before running: After `run-preflight-session` has produced a `devview-preflight-session-chain-report`,
+  or when a caller needs a deterministic report explaining why preflight context is missing or blocked.
+- Options: one of `--prompt <text>` or `--prompt-file <file>` is required. `--hook-health <file>` and `--output <file>`
+  are required. `--devview-mode <off|advisory|guided|strict-disabled>` defaults to `advisory`.
+  `--preflight-session <file>`, `--candidate <file>`, `--analyzer-run <file>`, `--analyzer-pack <file>`,
+  `--provider-config <file>`, and `--markdown <file>` are optional report/provenance inputs.
+- What it checks: Hook Gateway health role/status and safety flags, optional preflight terminal stage and Instruction
+  Pack summary, optional provenance artifacts, and output authority before writing JSON or Markdown. Unsafe output paths
+  produce zero writes.
+- Success result: JSON with `artifactRole: devview-user-prompt-submit-advisory-report`. Ready preflight produces
+  `additionalContextInjectionReady: true`; missing or blocked preflight produces a report-only status with
+  `additionalContextInjectionReady: false` and a next `run-preflight-session` command.
+- Non-goals: This command does not install or activate hooks, mutate trust/config, block tools, trigger Codex execution,
+  invoke providers, call an LLM/API, run preflight/validation/traversal, mutate graph-source, apply graph deltas,
+  approve work, satisfy or accept Evidence, prove equivalence, enforce scope, or configure CI.
+
+```powershell
+node dist/cli/index.js graph read-model report-user-prompt-submit-advisory `
+  --prompt "Add Todo App runtime evidence for the add button behavior without touching production source." `
+  --hook-health examples/valid/todo-app-pbe-run/generated/devview-hook-gateway-health-boundary.runtime-evidence-only.preview.json `
+  --devview-mode advisory `
+  --preflight-session examples/valid/todo-app-pbe-run/generated/devview-preflight-session-chain.add-todo-runtime-evidence-only.preview.json `
+  --output .tmp/review-user-prompt-submit-advisory.json `
+  --markdown .tmp/review-user-prompt-submit-advisory.md `
+  --json
+```
+
 ### `pbe graph read-model generate-hook-script-scaffold`
 
 - Purpose: Read the Hook Gateway boundary, Hook Gateway health boundary, install/trust boundary, and `UserPromptSubmit`

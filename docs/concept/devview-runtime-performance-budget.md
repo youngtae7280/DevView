@@ -425,6 +425,12 @@ terminal stopped stage. It does not trigger Codex execution, mutate graph-source
 or human decisions, accept or satisfy Evidence, prove equivalence, enforce scope, enable strict/guided blocking, or
 configure CI.
 
+The `report-user-prompt-submit-advisory` command is an event-level Hook Gateway advisory surface that reads an existing
+preflight report and renders concise additionalContext Markdown or a missing/blocked-preflight report. It is not added
+to the default smoke lane because it duplicates preflight/instruction context already covered by other deterministic
+checks. It does not run preflight, invoke providers, call an LLM/API, install hooks, block tools, trigger Codex
+execution, mutate graph-source, accept Evidence, prove equivalence, enforce scope, or configure CI.
+
 Clarification interview time is human interaction time and is outside the 5 second deterministic DevView runtime budget.
 If a future clarification flow produces a revised Request IR Candidate, that revised candidate must re-enter the
 deterministic validation path with `validate-request-ir` and `validate-request-ir-graph`; those validation commands stay

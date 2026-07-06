@@ -222,6 +222,8 @@ Commands:
                        Report the DevView frontend artifact chain from intake through Instruction Pack preview
   graph read-model prepare-user-prompt-context
                        Prepare advisory UserPromptSubmit additionalContext preview without installing hooks or execution
+  graph read-model report-user-prompt-submit-advisory
+                       Report UserPromptSubmit advisory context readiness without installing hooks, blocking tools, or executing Codex
   graph read-model generate-hook-script-scaffold
                        Generate preview-only Hook Gateway script scaffold without installing or activating hooks
   graph read-model generate-hook-script-templates
@@ -287,9 +289,9 @@ Options:
   --graph-delta <file> Graph delta file for graph operation propose-update.
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, report-equivalence-proof-readiness, report-scope-ci-enforcement-readiness, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, run-clarification-chain, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-project-memory-extension-gaps, report-project-memory-impact, render-devview-graph, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, report-hook-activation-chain, or report-devview-baseline.
+  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, report-equivalence-proof-readiness, report-scope-ci-enforcement-readiness, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, run-clarification-chain, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-project-memory-extension-gaps, report-project-memory-impact, render-devview-graph, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, report-user-prompt-submit-advisory, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, report-hook-activation-chain, or report-devview-baseline.
   --data-output <file> Data JSON output for graph read-model render-devview-graph.
-  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, report-equivalence-proof-readiness, report-scope-ci-enforcement-readiness, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, run-clarification-chain, run-preflight-session, generate-instruction-pack, report-project-memory-extension-gaps, report-project-memory-impact, report-frontend-chain, prepare-user-prompt-context, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, report-hook-activation-chain, or report-devview-baseline.
+  --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, report-equivalence-proof-readiness, report-scope-ci-enforcement-readiness, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, run-clarification-chain, run-preflight-session, generate-instruction-pack, report-project-memory-extension-gaps, report-project-memory-impact, report-frontend-chain, prepare-user-prompt-context, report-user-prompt-submit-advisory, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, report-hook-activation-chain, or report-devview-baseline.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal, graph read-model review-graph-delta, or graph read-model record-human-decision.
   --review-packet <file>
                        Human Review Packet file for graph read-model record-human-decision.
@@ -313,7 +315,7 @@ Options:
   --rationale <value>  Human-authored rationale for graph read-model record-human-decision.
   --runtime-report <file>
                        Optional runtime report input for graph read-model record-human-decision.
-  --candidate <file>   Request IR Candidate file for graph read-model validate-request-ir, generate-clarification-interview-pack, or run-preflight-session.
+  --candidate <file>   Request IR Candidate file for graph read-model validate-request-ir, generate-clarification-interview-pack, run-preflight-session, or report-user-prompt-submit-advisory.
   --schema-validation <file>
                        Schema-only Request IR validation file for graph read-model validate-request-ir-graph.
   --graph-validation <file>
@@ -335,9 +337,11 @@ Options:
   --output-dir <dir>   Required output directory for graph read-model run-preflight-session.
   --session-id <id>    Optional deterministic session id for graph read-model run-preflight-session.
   --request <text>     Natural-language request text for graph read-model analyze-request.
+  --prompt <text>      Raw UserPromptSubmit prompt text for graph read-model report-user-prompt-submit-advisory.
+  --prompt-file <file> Prompt file for graph read-model report-user-prompt-submit-advisory.
   --pack <file>        AI Request Analyzer Pack file for graph read-model analyze-request.
   --provider-config <file>
-                       Optional AI Request Analyzer provider config preview for graph read-model analyze-request.
+                       Optional AI Request Analyzer provider config preview for graph read-model analyze-request or report-user-prompt-submit-advisory provenance.
   --external-candidate <file>
                        Explicit precomputed Request IR Candidate import for graph read-model analyze-request.
   --invoke-provider    Enable analyzer provider parsing for graph read-model analyze-request. Mock mode remains no-network; live OpenAI mode also requires --allow-network-provider and --provider-mode openai.
@@ -364,7 +368,15 @@ Options:
                        Roadmap final handoff file for graph read-model report-devview-baseline.
   --hook-activation-chain <file>
                        Hook activation chain report file for graph read-model report-devview-baseline.
-  --hook-health <file> Hook Gateway health report or boundary file for graph read-model prepare-user-prompt-context, or Hook Gateway health boundary for generate-hook-script-scaffold.
+  --hook-health <file> Hook Gateway health report or boundary file for graph read-model prepare-user-prompt-context, report-user-prompt-submit-advisory, or Hook Gateway health boundary for generate-hook-script-scaffold.
+  --preflight-session <file>
+                       Preflight session chain report for graph read-model report-user-prompt-submit-advisory.
+  --devview-mode <mode>
+                       UserPromptSubmit advisory mode for graph read-model report-user-prompt-submit-advisory: off, advisory, guided, or strict-disabled.
+  --analyzer-run <file>
+                       Optional analyzer run provenance for graph read-model report-user-prompt-submit-advisory.
+  --analyzer-pack <file>
+                       Optional analyzer pack provenance for graph read-model report-user-prompt-submit-advisory.
   --install-trust <file>
                        Hook install/trust boundary for graph read-model generate-hook-script-scaffold.
   --user-prompt-context <file>

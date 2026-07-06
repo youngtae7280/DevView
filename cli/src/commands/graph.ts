@@ -32,6 +32,7 @@ import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-propo
 import { reviseRequestIrCandidateFile } from '../core/request-ir-candidate-reviser.js'
 import { generateSelectedGraphSliceFile } from '../core/selected-graph-slice.js'
 import { prepareUserPromptContextFile } from '../core/user-prompt-context.js'
+import { reportUserPromptSubmitAdvisoryFile } from '../core/user-prompt-submit-advisory.js'
 import { validateRequestIrGraphAwareFile } from '../core/request-ir-graph-aware-validator.js'
 import { validateRequestIrCandidateFile } from '../core/request-ir-candidate-validator.js'
 import { buildGraphExecutionContractReport } from '../core/graph-execution-contract.js'
@@ -2433,6 +2434,102 @@ export async function graphReadModelPrepareUserPromptContextCommand(context: Com
           message,
           suggestedFix:
             'Provide readable frontend chain, Hook Gateway health, Instruction Pack JSON/Markdown, and dedicated preview output paths.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelReportUserPromptSubmitAdvisoryCommand(
+  context: CommandContext,
+): Promise<CommandResult> {
+  if (!context.options.prompt && !context.options.promptFile) {
+    return invalidCommand(
+      'graph read-model report-user-prompt-submit-advisory requires --prompt <text> or --prompt-file <file>.',
+    )
+  }
+  if (context.options.prompt && context.options.promptFile) {
+    return invalidCommand('graph read-model report-user-prompt-submit-advisory accepts only one prompt source.')
+  }
+  if (!context.options.hookHealth) {
+    return invalidCommand('graph read-model report-user-prompt-submit-advisory requires --hook-health <file>.')
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph read-model report-user-prompt-submit-advisory requires --output <file>.')
+  }
+
+  try {
+    const result = await reportUserPromptSubmitAdvisoryFile(context.options.root, {
+      prompt: context.options.prompt,
+      promptFile: context.options.promptFile,
+      hookHealth: context.options.hookHealth,
+      devviewMode: context.options.devviewMode,
+      preflightSession: context.options.preflightSession,
+      candidate: context.options.candidate,
+      analyzerRun: context.options.analyzerRun,
+      analyzerPack: context.options.analyzerPack,
+      providerConfig: context.options.providerConfig,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    const blocked = [
+      'user-prompt-submit-advisory-blocked-preflight',
+      'user-prompt-submit-advisory-preflight-artifact-missing',
+    ].includes(result.report.status)
+    const errorFindings = result.report.validationFindings.filter((finding) => finding.severity === 'error')
+
+    return {
+      ok: errorFindings.length === 0,
+      command: 'graph read-model report-user-prompt-submit-advisory',
+      exitCode: errorFindings.length > 0 ? ExitCode.ValidationFailed : ExitCode.Success,
+      message:
+        result.report.status === 'user-prompt-submit-advisory-noop-devview-off'
+          ? 'UserPromptSubmit advisory report generated with DevView off; no additionalContext injection is ready.'
+          : blocked
+            ? 'UserPromptSubmit advisory report generated without context injection because preflight is not ready.'
+            : result.report.additionalContextInjectionReady
+              ? 'UserPromptSubmit advisory additionalContext preview generated without hook blocking or Codex execution.'
+              : 'UserPromptSubmit advisory report generated without additionalContext injection.',
+      issues:
+        errorFindings.length > 0
+          ? errorFindings.map((finding) =>
+              issue({
+                validator: 'UserPromptSubmitAdvisoryReporter',
+                code: finding.code,
+                severity: finding.severity,
+                message: finding.message,
+                reason: finding.field ? `Field: ${finding.field}` : undefined,
+                suggestedFix:
+                  finding.suggestedFix ??
+                  'Repair the UserPromptSubmit advisory inputs and rerun into dedicated output paths.',
+              }),
+            )
+          : [],
+      data: {
+        ...result.report,
+        outputPath: result.outputPath,
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: result.report.additionalContextInjectionReady
+          ? 'Use this Markdown as advisory additionalContext only. This command did not install hooks, block tools, trigger Codex execution, invoke providers, mutate graph-source, approve work, satisfy Evidence, prove equivalence, or enforce scope.'
+          : (result.report.nextRequiredCommand ??
+            'No advisory additionalContext is ready. This command did not run preflight, invoke providers, install hooks, block tools, or trigger Codex execution.'),
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model report-user-prompt-submit-advisory',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'UserPromptSubmit advisory report could not run.',
+      issues: [
+        issue({
+          validator: 'UserPromptSubmitAdvisoryReporter',
+          code: 'USER_PROMPT_SUBMIT_ADVISORY_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a prompt, Hook Gateway health artifact, optional preflight session chain, and dedicated safe output paths.',
         }),
       ],
     }

@@ -89,7 +89,11 @@ export interface CliOptions {
   dataOutput?: string
   markdown?: string
   request?: string
+  prompt?: string
+  promptFile?: string
   pack?: string
+  analyzerRun?: string
+  analyzerPack?: string
   providerConfig?: string
   externalCandidate?: string
   invokeProvider: boolean
@@ -134,6 +138,8 @@ export interface CliOptions {
   hookActivationChain?: string
   scopeCiEnforcementReadiness?: string
   hookHealth?: string
+  preflightSession?: string
+  devviewMode?: string
   installTrust?: string
   userPromptContext?: string
   instructionMarkdown?: string
