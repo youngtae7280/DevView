@@ -19,6 +19,7 @@
   },
   "dataModel": {
     "requiredSections": [
+      "requestSummary",
       "graph.nodes[]",
       "graph.edges[]",
       "trees[]",
@@ -35,11 +36,13 @@
     "selectionModel": "single full network graph rendered once; selected subgraph, viewpoint trees, nodes, and edges are highlighted in-place"
   },
   "interactionModel": {
-    "panZoom": "mouse drag pans the graph; mouse wheel zooms around the pointer; +/-/R buttons provide bounded zoom and reset",
-    "nodeClick": "show node kind, state, intent claim, record path, code locations, pack role, tree membership, and subgraph membership",
-    "edgeClick": "show from/to node ids, edge kind, edgeIntent classification, claim, confidence, tree membership, and subgraph membership",
-    "treeClick": "highlight all nodes and edges in that viewpoint tree and show viewpoint summary",
-    "subgraphClick": "highlight selected task subgraph and show task type, start node, selected nodes/edges, required trees, pack mapping, allowed files, forbidden flows, and verification requirements"
+    "requestPanel": "the current user-confirmed request, source record, selected node count, and selected edge count are visible before interaction",
+    "selectedViewpointTreePanel": "the trees selected by the current request are shown with directly clickable node and edge chips",
+    "panZoom": "mouse drag pans the graph; mouse wheel zooms around the pointer; +/-/R buttons provide bounded semantic zoom where node boxes, labels, and edge strokes keep stable screen size",
+    "nodeClick": "show node kind, state, intent claim, record path, code locations, pack role, tree membership, subgraph membership, selection banner, and visible selected-node stroke",
+    "edgeClick": "show from/to node ids, edge kind, edgeIntent classification, claim, confidence, tree membership, subgraph membership, selection banner, and visible selected-edge stroke",
+    "treeClick": "highlight all nodes and edges in that viewpoint tree and show clickable node/edge chips plus viewpoint summary",
+    "subgraphClick": "highlight selected task subgraph and show task type, start node, selected node/edge chips, required viewpoint tree breakdown, allowed files, forbidden flows, and verification requirements"
   },
   "demoCalibration": {
     "graphSource": "examples/retrofit/windowsutility/graph-source.json",

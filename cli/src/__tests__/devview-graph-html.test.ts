@@ -47,6 +47,10 @@ describe('DevViewGraph HTML inspector CLI', () => {
     expect(payload.ok).toBe(true)
     expect(payload.command).toBe('graph read-model render-devview-graph')
     expect(data.artifactRole).toBe('devview-graph-html-data-preview')
+    expect(data.requestSummary.sourceRecordId).toBe('change.laminator-tag-layout')
+    expect(data.requestSummary.selectedTreeIds).toEqual(
+      expect.arrayContaining(['tree.domain-source', 'tree.selected-pack-context']),
+    )
     expect(data.graph.layoutMode).toBe('deterministic-network-orbit')
     expect(data.graph.nodes.length).toBeGreaterThan(0)
     expect(data.graph.edges.length).toBeGreaterThan(0)
@@ -78,6 +82,12 @@ describe('DevViewGraph HTML inspector CLI', () => {
     expect(html).toContain('function zoomGraph')
     expect(html).toContain('function beginPan')
     expect(html).toContain('function edgePath')
+    expect(html).toContain('function projectNode')
+    expect(html).toContain('edge-hit')
+    expect(html).toContain('Current Request')
+    expect(html).toContain('Selected Viewpoint Trees')
+    expect(html).toContain('Selected Node')
+    expect(html).toContain('Selected Edge')
     expect(html).toContain('deterministic-network-orbit')
     expect(html).toContain('Instruction Sources')
     expect(html).not.toContain('Pack Mapping')

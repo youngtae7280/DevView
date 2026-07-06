@@ -101,6 +101,18 @@ export interface DevViewGraphCompilationTraceEntry {
   authority: string
 }
 
+export interface DevViewGraphRequestSummary {
+  sourceRecordId: string
+  userRequest: string
+  projectName: string
+  targetSlice: string
+  writeBoundary: string
+  selectedSubgraphId: string
+  selectedTreeIds: string[]
+  selectedNodeIds: string[]
+  selectedEdgeIds: string[]
+}
+
 export interface DevViewGraphData {
   schemaVersion: 1
   artifactRole: 'devview-graph-html-data-preview'
@@ -110,6 +122,7 @@ export interface DevViewGraphData {
   sourceGraphSource: string
   sourceInstructionPack: string
   sourceRecordId: string
+  requestSummary: DevViewGraphRequestSummary
   graph: {
     nodes: DevViewGraphNode[]
     edges: DevViewGraphEdge[]
@@ -286,6 +299,7 @@ function buildDevViewGraphData(root: string, input: GraphInput): DevViewGraphDat
 
   const packMapping = buildPackMapping(input.instructionPack, selectedNodeIds, selectedEdgeIds)
   subgraphs[0].packMappingIds = packMapping.map((entry) => entry.id)
+  const requestSummary = buildRequestSummary(input.instructionPack, input.recordId, subgraphs[0])
 
   return {
     schemaVersion: 1,
@@ -296,6 +310,7 @@ function buildDevViewGraphData(root: string, input: GraphInput): DevViewGraphDat
     sourceGraphSource: relativePath(root, input.graphSourcePath),
     sourceInstructionPack: relativePath(root, input.instructionPackPath),
     sourceRecordId: input.recordId,
+    requestSummary,
     graph: { nodes, edges, layoutMode: 'deterministic-network-orbit', viewport: buildViewport(nodes) },
     trees,
     subgraphs,
@@ -655,6 +670,31 @@ function buildPackMapping(
   return uniqueMappings(mappings)
 }
 
+function buildRequestSummary(
+  instructionPack: JsonRecord,
+  recordId: string,
+  subgraph: DevViewGraphSubgraph,
+): DevViewGraphRequestSummary {
+  const target = asRecord(instructionPack.target) ?? {}
+  const userConfirmedIntent = asRecord(instructionPack.userConfirmedIntent) ?? {}
+  const userRequest =
+    stringValue(userConfirmedIntent.summary) ||
+    stringValue(target.slice) ||
+    stringValue(instructionPack.sourceRecordId) ||
+    recordId
+  return {
+    sourceRecordId: recordId,
+    userRequest,
+    projectName: stringValue(target.projectName),
+    targetSlice: stringValue(target.slice),
+    writeBoundary: stringValue(target.writeBoundary),
+    selectedSubgraphId: subgraph.id,
+    selectedTreeIds: subgraph.requiredTreeIds,
+    selectedNodeIds: subgraph.nodeIds,
+    selectedEdgeIds: subgraph.edgeIds,
+  }
+}
+
 function buildCompilationTrace(root: string, input: GraphInput): DevViewGraphCompilationTraceEntry[] {
   return [
     {
@@ -719,7 +759,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     }
     .shell {
       display: grid;
-      grid-template-columns: 270px minmax(560px, 1fr) 350px;
+      grid-template-columns: 340px minmax(620px, 1fr) 410px;
       grid-template-rows: auto 1fr;
       min-height: 100vh;
     }
@@ -859,6 +899,101 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       color: var(--graph-muted);
       font-size: 11px;
     }
+    .request-card,
+    .tree-card,
+    .selection-banner {
+      border: 1px solid var(--graph-line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .request-card {
+      padding: 10px;
+    }
+    .request-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .request-card p {
+      margin: 0;
+      color: var(--graph-muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .mini-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .mini-pill {
+      border: 1px solid var(--graph-line);
+      border-radius: 999px;
+      padding: 2px 7px;
+      color: var(--graph-muted);
+      background: #fbfbfc;
+      font-size: 11px;
+    }
+    .tree-card {
+      margin: 8px 0;
+      padding: 8px;
+    }
+    .tree-card button.item {
+      margin: 0 0 7px;
+    }
+    .tree-mini-title {
+      margin: 7px 0 4px;
+      color: var(--graph-muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    button.chip {
+      max-width: 100%;
+      border: 1px solid var(--graph-line);
+      border-radius: 999px;
+      padding: 3px 7px;
+      color: var(--graph-ink);
+      background: #fff;
+      font: inherit;
+      font-size: 11px;
+      cursor: pointer;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    button.chip:hover,
+    button.chip.active {
+      border-color: var(--graph-selected);
+      color: var(--graph-selected);
+      background: #f4f8ff;
+    }
+    .selection-banner {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      z-index: 2;
+      max-width: min(560px, calc(100% - 132px));
+      padding: 8px 10px;
+      box-shadow: var(--graph-shadow);
+      font-size: 12px;
+      line-height: 1.35;
+      pointer-events: none;
+    }
+    .selection-banner strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+    .selection-banner span {
+      color: var(--graph-muted);
+    }
     .detail h2 {
       margin: 0 0 4px;
       font-size: 16px;
@@ -941,6 +1076,11 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       stroke: var(--graph-focus);
       stroke-width: 3;
     }
+    .node.inspecting rect {
+      stroke: var(--graph-focus);
+      stroke-width: 3.4;
+      filter: drop-shadow(0 0 0.12rem rgba(15, 23, 42, 0.35));
+    }
     .edge {
       cursor: pointer;
     }
@@ -950,21 +1090,31 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       stroke-width: 1.6;
       marker-end: url(#arrow);
     }
-    .edge.context path {
+    .edge path.edge-hit {
+      stroke: transparent;
+      stroke-width: 18;
+      marker-end: none;
+      pointer-events: stroke;
+    }
+    .edge.context path:not(.edge-hit) {
       stroke: #d28b8b;
       stroke-dasharray: 7 5;
     }
-    .edge.risk path {
+    .edge.risk path:not(.edge-hit) {
       stroke: var(--graph-risk);
       stroke-width: 2;
     }
-    .edge.selected path {
+    .edge.selected path:not(.edge-hit) {
       stroke: var(--graph-selected);
       stroke-width: 2.4;
     }
-    .edge.highlight path {
+    .edge.highlight path:not(.edge-hit) {
       stroke: var(--graph-focus);
       stroke-width: 3.2;
+    }
+    .edge.inspecting path:not(.edge-hit) {
+      stroke: var(--graph-focus);
+      stroke-width: 4;
     }
     .edge text {
       font-size: 11px;
@@ -1000,7 +1150,15 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     </header>
     <aside class="rail">
       <div class="section">
-        <h2>Trees</h2>
+        <h2>Current Request</h2>
+        <div id="current-request"></div>
+      </div>
+      <div class="section">
+        <h2>Selected Viewpoint Trees</h2>
+        <div id="selected-tree-list"></div>
+      </div>
+      <div class="section">
+        <h2>All Trees</h2>
         <div id="tree-list"></div>
       </div>
       <div class="section">
@@ -1014,6 +1172,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     </aside>
     <main class="workspace">
       <div class="graph-frame">
+        <div id="selection-banner" class="selection-banner"></div>
         <div class="graph-tools" aria-label="Graph controls">
           <button id="zoom-out" title="Zoom out" aria-label="Zoom out">-</button>
           <button id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
@@ -1031,6 +1190,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     const data = JSON.parse(document.getElementById('devview-data').textContent);
     const svg = document.getElementById('graph-svg');
     const detail = document.getElementById('detail');
+    const selectionBanner = document.getElementById('selection-banner');
     const state = { selectedType: 'subgraph', selectedId: data.subgraphs[0]?.id || '' };
     const viewport = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0, moved: false };
     const nodeById = new Map(data.graph.nodes.map((node) => [node.id, node]));
@@ -1047,6 +1207,9 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     }
 
     function renderLists() {
+      renderRequestPanel();
+      const selectedTreeIds = data.requestSummary?.selectedTreeIds || data.subgraphs[0]?.requiredTreeIds || [];
+      document.getElementById('selected-tree-list').innerHTML = treeBreakdownHtml(selectedTreeIds, 4);
       document.getElementById('tree-list').innerHTML = data.trees.map((tree) =>
         '<button class="item" data-kind="tree" data-id="' + esc(tree.id) + '"><span>' + esc(tree.label) + '</span><span class="count">' + tree.nodeIds.length + '/' + tree.edgeIds.length + '</span></button>'
       ).join('');
@@ -1056,16 +1219,33 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       document.getElementById('mapping-list').innerHTML = data.packMapping.map((mapping) =>
         '<button class="item" data-kind="mapping" data-id="' + esc(mapping.id) + '"><span>' + esc(mapping.displayLabel || mapping.packSection) + '</span><span class="count">' + esc(mapping.role || mapping.elementKind) + '</span></button>'
       ).join('');
-      document.querySelectorAll('button.item').forEach((button) => {
+      document.querySelectorAll('[data-kind][data-id]').forEach((button) => {
         button.addEventListener('click', () => {
           const kind = button.getAttribute('data-kind');
           const id = button.getAttribute('data-id');
           if (kind === 'tree') selectTree(id);
           if (kind === 'subgraph') selectSubgraph(id);
           if (kind === 'mapping') selectMapping(id);
+          if (kind === 'node') selectNode(id);
+          if (kind === 'edge') selectEdge(id);
         });
       });
       updateActiveButtons();
+    }
+
+    function renderRequestPanel() {
+      const summary = data.requestSummary || {};
+      document.getElementById('current-request').innerHTML =
+        '<div class="request-card">' +
+        '<strong>' + esc(summary.userRequest || data.sourceRecordId) + '</strong>' +
+        '<p>' + esc(summary.writeBoundary || summary.targetSlice || 'Read-only graph inspection.') + '</p>' +
+        '<div class="mini-row">' +
+        '<span class="mini-pill">' + esc(summary.sourceRecordId || data.sourceRecordId) + '</span>' +
+        '<span class="mini-pill">' + esc(summary.projectName || 'project') + '</span>' +
+        '<span class="mini-pill">' + esc((summary.selectedNodeIds || []).length + ' nodes') + '</span>' +
+        '<span class="mini-pill">' + esc((summary.selectedEdgeIds || []).length + ' edges') + '</span>' +
+        '</div>' +
+        '</div>';
     }
 
     function renderGraph() {
@@ -1078,31 +1258,41 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       contentLayer.appendChild(nodeLayer);
       svg.appendChild(contentLayer);
       for (const edge of data.graph.edges) {
-        const from = nodeById.get(edge.from);
-        const to = nodeById.get(edge.to);
+        const fromNode = nodeById.get(edge.from);
+        const toNode = nodeById.get(edge.to);
+        const from = fromNode ? projectNode(fromNode) : null;
+        const to = toNode ? projectNode(toNode) : null;
         if (!from || !to) continue;
         const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         group.setAttribute('class', edgeClass(edge));
         group.setAttribute('data-edge-id', edge.id);
+        group.addEventListener('pointerdown', (event) => event.stopPropagation());
         group.addEventListener('click', () => {
           if (!viewport.moved) selectEdge(edge.id);
         });
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', edgePath(edge, from, to));
+        const d = edgePath(edge, from, to);
+        path.setAttribute('d', d);
+        const hitPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        hitPath.setAttribute('class', 'edge-hit');
+        hitPath.setAttribute('d', d);
         const labelPoint = edgeLabelPosition(edge, from, to);
         const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         label.setAttribute('x', String(labelPoint.x));
         label.setAttribute('y', String(labelPoint.y));
         label.textContent = edge.kind;
         group.appendChild(path);
+        group.appendChild(hitPath);
         group.appendChild(label);
         edgeLayer.appendChild(group);
       }
       for (const node of data.graph.nodes) {
         const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         group.setAttribute('class', nodeClass(node));
-        group.setAttribute('transform', 'translate(' + node.x + ' ' + node.y + ')');
+        const projected = projectNode(node);
+        group.setAttribute('transform', 'translate(' + projected.x + ' ' + projected.y + ')');
         group.setAttribute('data-node-id', node.id);
+        group.addEventListener('pointerdown', (event) => event.stopPropagation());
         group.addEventListener('click', () => {
           if (!viewport.moved) selectNode(node.id);
         });
@@ -1123,8 +1313,11 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
         group.appendChild(kind);
         nodeLayer.appendChild(group);
       }
-      updateViewportTransform();
       applyHighlight();
+    }
+
+    function projectNode(node) {
+      return { ...node, x: node.x * viewport.scale + viewport.x, y: node.y * viewport.scale + viewport.y };
     }
 
     function edgePath(edge, from, to) {
@@ -1190,10 +1383,11 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
 
     function beginPan(event) {
       if (event.button !== 0) return;
+      const point = graphPoint(event);
       viewport.dragging = true;
       viewport.moved = false;
-      viewport.startX = event.clientX;
-      viewport.startY = event.clientY;
+      viewport.startX = point.x;
+      viewport.startY = point.y;
       viewport.originX = viewport.x;
       viewport.originY = viewport.y;
       svg.classList.add('dragging');
@@ -1202,11 +1396,12 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
 
     function movePan(event) {
       if (!viewport.dragging) return;
-      const dx = event.clientX - viewport.startX;
-      const dy = event.clientY - viewport.startY;
+      const point = graphPoint(event);
+      const dx = point.x - viewport.startX;
+      const dy = point.y - viewport.startY;
       if (Math.abs(dx) + Math.abs(dy) > 3) viewport.moved = true;
-      viewport.x = viewport.originX + dx / viewport.scale;
-      viewport.y = viewport.originY + dy / viewport.scale;
+      viewport.x = viewport.originX + dx;
+      viewport.y = viewport.originY + dy;
       updateViewportTransform();
     }
 
@@ -1229,9 +1424,12 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     function zoomGraph(factor, origin) {
       const point = origin || { x: data.graph.viewport.width / 2, y: data.graph.viewport.height / 2 };
       const nextScale = Math.max(0.35, Math.min(3.5, viewport.scale * factor));
-      const applied = nextScale / viewport.scale;
-      viewport.x = point.x - (point.x - viewport.x) / applied;
-      viewport.y = point.y - (point.y - viewport.y) / applied;
+      const world = {
+        x: (point.x - viewport.x) / viewport.scale,
+        y: (point.y - viewport.y) / viewport.scale
+      };
+      viewport.x = point.x - world.x * nextScale;
+      viewport.y = point.y - world.y * nextScale;
       viewport.scale = nextScale;
       updateViewportTransform();
     }
@@ -1251,9 +1449,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     }
 
     function updateViewportTransform() {
-      const content = document.getElementById('graph-content');
-      if (!content) return;
-      content.setAttribute('transform', 'translate(' + viewport.x + ' ' + viewport.y + ') scale(' + viewport.scale + ')');
+      renderGraph();
     }
 
     function selectNode(id) {
@@ -1261,7 +1457,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       state.selectedId = id;
       const node = nodeById.get(id);
       if (!node) return;
-      detail.innerHTML = '<h2>' + esc(node.id) + '</h2><div class="sub">Node</div>' + kv([
+      detail.innerHTML = '<h2>' + esc(node.id) + '</h2><div class="sub">Selected Node</div>' + kv([
         ['kind', node.kind],
         ['state', node.state],
         ['pack role', node.packRole || 'none'],
@@ -1279,7 +1475,7 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       state.selectedId = id;
       const edge = edgeById.get(id);
       if (!edge) return;
-      detail.innerHTML = '<h2>' + esc(edge.id) + '</h2><div class="sub">Edge</div>' + kv([
+      detail.innerHTML = '<h2>' + esc(edge.id) + '</h2><div class="sub">Selected Edge</div>' + kv([
         ['from', edge.from],
         ['to', edge.to],
         ['kind', edge.kind],
@@ -1297,13 +1493,14 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       state.selectedId = id;
       const tree = data.trees.find((entry) => entry.id === id);
       if (!tree) return;
-      detail.innerHTML = '<h2>' + esc(tree.label) + '</h2><div class="sub">Tree</div>' + kv([
+      detail.innerHTML = '<h2>' + esc(tree.label) + '</h2><div class="sub">Selected Viewpoint Tree</div>' + kv([
         ['viewpoint', tree.viewpoint],
-        ['nodes', list(tree.nodeIds)],
-        ['edges', list(tree.edgeIds)],
+        ['nodes', chipList(tree.nodeIds, 'node')],
+        ['edges', chipList(tree.edgeIds, 'edge')],
         ['pack sections', list(tree.packSections)]
       ]);
       updateState();
+      bindDetailChips();
     }
 
     function selectSubgraph(id) {
@@ -1314,14 +1511,15 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       detail.innerHTML = '<h2>' + esc(subgraph.label) + '</h2><div class="sub">SubGraph</div>' + kv([
         ['task type', subgraph.taskType],
         ['start node', subgraph.startNodeId],
-        ['nodes', list(subgraph.nodeIds)],
-        ['edges', list(subgraph.edgeIds)],
-        ['required trees', list(subgraph.requiredTreeIds)],
+        ['nodes', chipList(subgraph.nodeIds, 'node')],
+        ['edges', chipList(subgraph.edgeIds, 'edge')],
+        ['required trees', treeBreakdownHtml(subgraph.requiredTreeIds, 5)],
         ['allowed files', list(subgraph.allowedFiles)],
         ['forbidden flows', list(subgraph.forbiddenFlows)],
         ['verification', JSON.stringify(subgraph.verificationRequired)]
       ]);
       updateState();
+      bindDetailChips();
     }
 
     function selectMapping(id) {
@@ -1348,13 +1546,20 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
 
     function updateState() {
       updateActiveButtons();
+      updateSelectionBanner();
       applyHighlight();
     }
 
     function updateActiveButtons() {
-      document.querySelectorAll('button.item').forEach((button) => {
+      document.querySelectorAll('[data-kind][data-id]').forEach((button) => {
         button.classList.toggle('active', button.getAttribute('data-id') === state.selectedId);
       });
+    }
+
+    function updateSelectionBanner() {
+      if (!selectionBanner) return;
+      const label = selectionLabel();
+      selectionBanner.innerHTML = '<strong>' + esc(label.title) + '</strong><span>' + esc(label.subtitle) + '</span>';
     }
 
     function applyHighlight() {
@@ -1362,9 +1567,11 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       svg.classList.toggle('dim', highlight.nodes.size > 0 || highlight.edges.size > 0);
       svg.querySelectorAll('[data-node-id]').forEach((nodeEl) => {
         nodeEl.classList.toggle('highlight', highlight.nodes.has(nodeEl.getAttribute('data-node-id')));
+        nodeEl.classList.toggle('inspecting', state.selectedType === 'node' && nodeEl.getAttribute('data-node-id') === state.selectedId);
       });
       svg.querySelectorAll('[data-edge-id]').forEach((edgeEl) => {
         edgeEl.classList.toggle('highlight', highlight.edges.has(edgeEl.getAttribute('data-edge-id')));
+        edgeEl.classList.toggle('inspecting', state.selectedType === 'edge' && edgeEl.getAttribute('data-edge-id') === state.selectedId);
       });
     }
 
@@ -1404,6 +1611,59 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
       return { nodes, edges };
     }
 
+    function treeBreakdownHtml(treeIds, limit) {
+      const selected = (treeIds || [])
+        .map((id) => data.trees.find((tree) => tree.id === id))
+        .filter(Boolean);
+      if (selected.length === 0) return 'none';
+      return selected.map((tree) =>
+        '<div class="tree-card">' +
+        '<button class="item" data-kind="tree" data-id="' + esc(tree.id) + '"><span>' + esc(tree.label) + '</span><span class="count">' + tree.nodeIds.length + '/' + tree.edgeIds.length + '</span></button>' +
+        '<div class="tree-mini-title">Nodes</div>' +
+        chipList(tree.nodeIds.slice(0, limit), 'node') +
+        (tree.nodeIds.length > limit ? '<div class="tree-mini-title">+' + esc(String(tree.nodeIds.length - limit)) + ' more nodes</div>' : '') +
+        '<div class="tree-mini-title">Edges</div>' +
+        chipList(tree.edgeIds.slice(0, limit), 'edge') +
+        (tree.edgeIds.length > limit ? '<div class="tree-mini-title">+' + esc(String(tree.edgeIds.length - limit)) + ' more edges</div>' : '') +
+        '</div>'
+      ).join('');
+    }
+
+    function chipList(values, kind) {
+      if (!Array.isArray(values) || values.length === 0) return 'none';
+      return '<div class="chip-row">' + values.map((value) => '<button class="chip" data-kind="' + esc(kind) + '" data-id="' + esc(String(value)) + '">' + esc(shortDisplay(String(value))) + '</button>').join('') + '</div>';
+    }
+
+    function bindDetailChips() {
+      detail.querySelectorAll('[data-kind][data-id]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const kind = button.getAttribute('data-kind');
+          const id = button.getAttribute('data-id');
+          if (kind === 'tree') selectTree(id);
+          if (kind === 'node') selectNode(id);
+          if (kind === 'edge') selectEdge(id);
+        });
+      });
+      updateActiveButtons();
+    }
+
+    function selectionLabel() {
+      if (state.selectedType === 'node') {
+        const node = nodeById.get(state.selectedId);
+        return { title: 'Selected node: ' + state.selectedId, subtitle: node ? node.kind + ' / ' + (node.packRole || 'graph context') : 'node' };
+      }
+      if (state.selectedType === 'edge') {
+        const edge = edgeById.get(state.selectedId);
+        return { title: 'Selected edge: ' + state.selectedId, subtitle: edge ? edge.from + ' -> ' + edge.to + ' / ' + edge.kind : 'edge' };
+      }
+      if (state.selectedType === 'tree') {
+        const tree = data.trees.find((entry) => entry.id === state.selectedId);
+        return { title: 'Selected viewpoint tree: ' + (tree?.label || state.selectedId), subtitle: tree ? tree.nodeIds.length + ' nodes / ' + tree.edgeIds.length + ' edges' : 'tree' };
+      }
+      const subgraph = data.subgraphs.find((entry) => entry.id === state.selectedId);
+      return { title: 'Selected subgraph: ' + (subgraph?.label || state.selectedId), subtitle: subgraph ? subgraph.nodeIds.length + ' nodes / ' + subgraph.edgeIds.length + ' edges from the current request' : 'subgraph' };
+    }
+
     function nodeClass(node) {
       return ['node', 'kind-' + slugClass(node.kind), node.selected ? 'selected' : '', node.contextOnly ? 'context' : '', node.riskBoundary ? 'risk' : ''].filter(Boolean).join(' ');
     }
@@ -1428,6 +1688,11 @@ function renderDevViewGraphHtml(data: DevViewGraphData): string {
     function trimLabel(value, maxLength) {
       const text = String(value ?? '');
       return text.length > maxLength ? text.slice(0, maxLength - 1) + '...' : text;
+    }
+
+    function shortDisplay(value) {
+      const parts = String(value ?? '').split('.');
+      return trimLabel(parts.length > 1 ? parts.slice(1).join('.') : value, 30);
     }
 
     function slugClass(value) {

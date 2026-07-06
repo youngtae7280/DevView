@@ -7,6 +7,26 @@
   "sourceGraphSource": "examples/retrofit/windowsutility/graph-source.json",
   "sourceInstructionPack": "outputs/retrofit/instruction-packs/windowsutility-laminator-tag-layout.instruction-pack.json",
   "sourceRecordId": "change.laminator-tag-layout",
+  "requestSummary": {
+    "sourceRecordId": "change.laminator-tag-layout",
+    "userRequest": "Align the Tag Param and Active Param edit control left edges with their header text left edges inside the SMART-51 and SMART-52 Laminator Tag tabs.",
+    "projectName": "WindowsUtility / CardPrinterConfig",
+    "targetSlice": "SMART-51 and SMART-52 Laminator Tag tab layout inside the WindowsUtility legacy portfolio",
+    "writeBoundary": "layout-only CardPrinterConfig resource coordinate change; broader WindowsUtility portfolio context is read-only",
+    "selectedSubgraphId": "subgraph.change.laminator-tag-layout",
+    "selectedTreeIds": [
+      "tree.domain-source",
+      "tree.retrofit-change",
+      "tree.risk-boundary",
+      "tree.selected-pack-context"
+    ],
+    "selectedNodeIds": [
+      "change.laminator-tag-layout",
+      "ui.laminator-tag-param-columns",
+      "boundary.laminator-layout-only"
+    ],
+    "selectedEdgeIds": ["edge.tag-layout-drives-laminator-record", "edge.laminator-record-guards-logic"]
+  },
   "graph": {
     "nodes": [
       {

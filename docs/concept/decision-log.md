@@ -3224,3 +3224,25 @@ This decision changes visualization/layout only. It does not change graph source
 instruction pack authority, output authority guards, Codex execution, graph mutation, graph delta apply, approval,
 runtime Evidence satisfaction, equivalence proof, scope enforcement, CI enforcement, required checks, branch
 protection, diff rejection, or user acceptance.
+
+## DEC-285 Improve DevViewGraph Inspection Readability
+
+DEC-285 does not supersede DEC-097 through DEC-284. It improves DevViewGraph presentation so reviewers can immediately
+see the current request, the selected viewpoint trees, and each selected tree's node/edge membership without needing to
+infer those relationships from the full graph.
+
+The DevViewGraph data model now includes:
+
+```text
+requestSummary
+```
+
+The HTML inspector shows the current request in the left rail, shows the request-selected viewpoint trees with clickable
+node/edge chips, and mirrors selected tree breakdowns in the detail inspector. Node and edge clicks update the detail
+panel, selection banner, and visible selected stroke. Edge hit paths are widened invisibly for reliable clicking. Zoom is
+semantic: graph coordinates scale, but node boxes, node labels, and edge strokes remain stable on screen.
+
+This decision changes read-only visualization and interaction only. It does not change graph source authority, selected
+subgraph semantics, instruction pack authority, output authority guards, Codex execution, graph mutation, graph delta
+apply, approval, runtime Evidence satisfaction, equivalence proof, scope enforcement, CI enforcement, required checks,
+branch protection, diff rejection, or user acceptance.

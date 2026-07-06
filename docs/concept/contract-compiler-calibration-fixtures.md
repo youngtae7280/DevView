@@ -2584,11 +2584,13 @@ graph read-model render-devview-graph --graph-source examples/retrofit/windowsut
 
 The inspector renders one full WindowsUtility portfolio graph with a deterministic network/orbit layout and highlights
 only the selected Instruction Pack context for `change.laminator-tag-layout`. Viewpoint trees are not alternate
-tree-shaped renderings; they are clickable highlight sets over the same graph. The selected subgraph includes
-`change.laminator-tag-layout`, `ui.laminator-tag-param-columns`, and `boundary.laminator-layout-only`; the
-reverted/context record `change.smart51-test-setting` remains visible in the full graph but outside the selected
-subgraph. The graph supports mouse drag, wheel zoom, and compact Instruction Sources instead of the earlier raw pack
-mapping list.
+tree-shaped renderings; they are clickable highlight sets over the same graph. The current request and the selected
+viewpoint trees are visible in the left rail, and each selected tree shows directly clickable node/edge chips. The
+selected subgraph includes `change.laminator-tag-layout`, `ui.laminator-tag-param-columns`, and
+`boundary.laminator-layout-only`; the reverted/context record `change.smart51-test-setting` remains visible in the full
+graph but outside the selected subgraph. The graph supports mouse drag, semantic wheel zoom with stable node/edge screen
+size, visible selection banners, click inspector feedback, and compact Instruction Sources instead of the earlier raw
+pack mapping list.
 
 This is a read-only visualization/report artifact. It does not execute Codex, call an LLM, mutate graph-source, apply
 graph deltas, approve work, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or
