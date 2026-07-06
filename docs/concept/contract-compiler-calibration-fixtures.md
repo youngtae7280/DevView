@@ -2560,3 +2560,33 @@ graph read-model report-hook-activation-chain --hook-health examples/valid/todo-
 The report verifies preview chain continuity and hook event readiness only. It does not install or activate hooks, mutate
 trust/config, block Codex execution, run validation or traversal, mutate graph-source, apply graph deltas, approve work,
 record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
+
+## DevViewGraph HTML Inspector Demo
+
+The DevViewGraph HTML inspector boundary is recorded in:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-graph-html-boundary.runtime-evidence-only.preview.json
+```
+
+The CardPrinterConfig retrofit demo artifacts are:
+
+```text
+outputs/devview-graph/cardprinterconfig.devviewgraph.html
+outputs/devview-graph/cardprinterconfig.devviewgraph.data.json
+```
+
+They are generated with:
+
+```text
+graph read-model render-devview-graph --graph-source examples/retrofit/cardprinterconfig/graph-source.json --record change.laminator-tag-layout --instruction-pack outputs/retrofit/instruction-packs/laminator-tag-layout.instruction-pack.json --output outputs/devview-graph/cardprinterconfig.devviewgraph.html --data-output outputs/devview-graph/cardprinterconfig.devviewgraph.data.json --json
+```
+
+The inspector renders one full graph and highlights only the selected Instruction Pack context for
+`change.laminator-tag-layout`. The selected subgraph includes `change.laminator-tag-layout`,
+`ui.laminator-tag-param-columns`, and `boundary.laminator-layout-only`; the reverted/context record
+`change.smart51-test-setting` remains visible in the full graph but outside the selected subgraph.
+
+This is a read-only visualization/report artifact. It does not execute Codex, call an LLM, mutate graph-source, apply
+graph deltas, approve work, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or
+configure CI.

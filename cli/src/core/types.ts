@@ -83,6 +83,7 @@ export interface CliOptions {
   targetRepo?: string
   manual?: string
   output?: string
+  dataOutput?: string
   markdown?: string
   request?: string
   pack?: string

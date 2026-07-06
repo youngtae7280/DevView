@@ -122,6 +122,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     targetRepo: undefined as string | undefined,
     manual: undefined as string | undefined,
     output: undefined as string | undefined,
+    dataOutput: undefined as string | undefined,
     markdown: undefined as string | undefined,
     request: undefined as string | undefined,
     pack: undefined as string | undefined,
@@ -370,6 +371,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--output requires a file path.' }
       }
       options.output = value
+      index += 1
+    } else if (arg === '--data-output') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--data-output requires a file path.' }
+      }
+      options.dataOutput = value
       index += 1
     } else if (arg === '--markdown') {
       const value = argv[index + 1]

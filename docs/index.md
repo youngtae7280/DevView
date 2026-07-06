@@ -176,3 +176,4 @@
 - [Self-dogfooding: Windows sequential validation guidance](../examples/dogfooding/windows-validation-sequential-run/README.md)
 - [Native graph operation examples](../examples/native/README.md)
 - [Retrofit graph operation examples](../examples/retrofit/README.md)
+- DevViewGraph CardPrinterConfig inspector demo - `outputs/devview-graph/cardprinterconfig.devviewgraph.html`

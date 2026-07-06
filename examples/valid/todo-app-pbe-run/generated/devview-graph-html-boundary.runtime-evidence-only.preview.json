@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-graph-html-boundary-preview",
+  "status": "devview-graph-html-boundary-previewed",
+  "boundaryName": "DevViewGraph HTML Inspector Boundary",
+  "boundaryScope": "read-only-graph-source-and-instruction-pack-visualization",
+  "rendererImplemented": true,
+  "commandSurface": {
+    "command": "graph read-model render-devview-graph",
+    "requiredInputs": [
+      "--graph-source <retrofitGraphSource>",
+      "--record <recordId>",
+      "--instruction-pack <retrofitInstructionPack>",
+      "--output <htmlOutputPath>",
+      "--data-output <dataOutputPath>"
+    ],
+    "outputArtifacts": ["static HTML inspector", "DevViewGraph data JSON"],
+    "supportedInputArtifactRolesV1": ["retrofit-graph-source-v0", "retrofit-instruction-pack-v0"]
+  },
+  "dataModel": {
+    "requiredSections": [
+      "graph.nodes[]",
+      "graph.edges[]",
+      "trees[]",
+      "subgraphs[]",
+      "packMapping[]",
+      "compilationTrace[]",
+      "safetyFlags",
+      "artifacts"
+    ],
+    "treeIds": ["tree.domain-source", "tree.retrofit-change", "tree.risk-boundary", "tree.selected-pack-context"],
+    "selectionModel": "single full graph rendered once; selected subgraph, trees, nodes, and edges are highlighted in-place"
+  },
+  "interactionModel": {
+    "nodeClick": "show node kind, state, intent claim, record path, code locations, pack role, tree membership, and subgraph membership",
+    "edgeClick": "show from/to node ids, edge kind, edgeIntent classification, claim, confidence, tree membership, and subgraph membership",
+    "treeClick": "highlight all nodes and edges in that viewpoint tree and show viewpoint summary",
+    "subgraphClick": "highlight selected task subgraph and show task type, start node, selected nodes/edges, required trees, pack mapping, allowed files, forbidden flows, and verification requirements"
+  },
+  "demoCalibration": {
+    "graphSource": "examples/retrofit/cardprinterconfig/graph-source.json",
+    "record": "change.laminator-tag-layout",
+    "instructionPack": "outputs/retrofit/instruction-packs/laminator-tag-layout.instruction-pack.json",
+    "htmlOutput": "outputs/devview-graph/cardprinterconfig.devviewgraph.html",
+    "dataOutput": "outputs/devview-graph/cardprinterconfig.devviewgraph.data.json",
+    "selectedSubgraphMustInclude": [
+      "change.laminator-tag-layout",
+      "ui.laminator-tag-param-columns",
+      "boundary.laminator-layout-only"
+    ],
+    "contextRecordMustRemainUnselected": "change.smart51-test-setting"
+  },
+  "outputAuthorityGuard": {
+    "outputAndDataOutputSamePathForbidden": true,
+    "forbiddenOverwriteTargets": [
+      "source graph-source",
+      "source instruction pack",
+      "source record artifacts",
+      "graph-source source candidate",
+      "linked generated/source-authority artifacts",
+      "existing graph-source-shaped JSON artifacts",
+      "existing instruction-pack-shaped JSON artifacts",
+      "existing boundary/readiness/proposal authority artifacts"
+    ],
+    "partialWriteForbidden": true
+  },
+  "safetyFlags": {
+    "readOnlyVisualizationOnly": true,
+    "graphSourceMutated": false,
+    "graphDeltaApplied": false,
+    "codexExecutionTriggered": false,
+    "runtimeEvidenceSatisfied": false,
+    "scopeEnforced": false,
+    "ciEnforcementEnabled": false,
+    "approvalStatus": "not-approved",
+    "humanDecisionRecorded": false,
+    "equivalenceProven": false
+  },
+  "nonExecutionBoundary": "DevViewGraph is a read-only visualization/report artifact. It does not execute Codex, call an LLM, mutate graph-source, apply graph deltas, approve work, record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI, or replace user review."
+}

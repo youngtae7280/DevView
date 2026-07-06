@@ -557,6 +557,20 @@ pack preserves the narrowed allowed scope and forbidden production/graph/approva
 Codex execution, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, or
 enforce scope.
 
+The first DevViewGraph HTML inspector boundary is recorded in
+`examples/valid/todo-app-pbe-run/generated/devview-graph-html-boundary.runtime-evidence-only.preview.json`. The
+implemented command is:
+
+```text
+graph read-model render-devview-graph --graph-source <graphSource> --record <recordId> --instruction-pack <pack> --output <html> --data-output <json> --json
+```
+
+The CardPrinterConfig retrofit demo output is tracked at `outputs/devview-graph/cardprinterconfig.devviewgraph.html` and
+`outputs/devview-graph/cardprinterconfig.devviewgraph.data.json`. DevViewGraph renders one full graph, highlights the
+selected Instruction Pack subgraph and viewpoint trees, and lets reviewers inspect node, edge, tree, subgraph, and pack
+mapping details. It is visualization/report-only: no Codex execution, graph-source mutation, graph delta apply,
+approval, runtime Evidence satisfaction, equivalence proof, scope enforcement, or CI enforcement is introduced.
+
 The traversal boundary separates graph vocabulary from planner semantics: `*NodeTypes` and `*EdgeTypes` contain only
 actual graph taxonomy values, while target/scope/evidence/output meanings are represented as roles and selection
 intents.

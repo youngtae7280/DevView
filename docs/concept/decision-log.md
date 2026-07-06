@@ -3141,3 +3141,35 @@ This decision is a handoff summary only. It does not execute Codex, call an LLM,
 trust/config, record new human decisions, approve proposals, apply graph deltas, mutate graph-source, accept Evidence,
 satisfy runtime Evidence, prove equivalence, enforce scope, configure CI, configure required checks, change branch
 protection, reject diffs, or replace user acceptance.
+
+## DEC-282 Implement DevViewGraph HTML Inspector MVP
+
+DEC-282 does not supersede DEC-097 through DEC-281. It implements `graph read-model render-devview-graph` as a
+read-only HTML/data inspector for the CardPrinterConfig retrofit demo.
+
+The boundary artifact is:
+
+```text
+examples/valid/todo-app-pbe-run/generated/devview-graph-html-boundary.runtime-evidence-only.preview.json
+```
+
+The demo artifacts are:
+
+```text
+outputs/devview-graph/cardprinterconfig.devviewgraph.html
+outputs/devview-graph/cardprinterconfig.devviewgraph.data.json
+```
+
+The command consumes a `retrofit-graph-source-v0` graph source and a `retrofit-instruction-pack-v0` instruction pack,
+then renders one full graph with highlighted selected subgraph, viewpoint trees, node/edge inspector details, subgraph
+summary, pack mapping, and compilation trace. For the CardPrinterConfig demo, the selected subgraph includes
+`change.laminator-tag-layout`, `ui.laminator-tag-param-columns`, and `boundary.laminator-layout-only`, while
+`change.smart51-test-setting` remains visible only as reverted/context graph history.
+
+Output authority guards reject attempts to overwrite the source graph-source, source instruction pack, source record
+artifacts, linked generated/source-authority artifacts, or identical HTML/data output paths before any partial write.
+
+This decision implements a visualization/report artifact only. It does not execute Codex, call an LLM/API, mutate
+graph-source, apply graph deltas, approve work, record human decisions, satisfy runtime Evidence, prove equivalence,
+enforce scope, configure CI, configure required checks, change branch protection, reject diffs, or replace user
+acceptance.

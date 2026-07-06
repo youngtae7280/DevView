@@ -1046,6 +1046,37 @@ node dist/cli/index.js graph read-model generate-instruction-pack `
   --json
 ```
 
+### `pbe graph read-model render-devview-graph`
+
+- Purpose: Render a static, read-only DevViewGraph HTML inspector and matching data JSON from a retrofit graph-source
+  plus a retrofit instruction pack.
+- Typical state before running: After a retrofit graph-source and instruction pack exist for the same source record.
+- Options: `--graph-source <file>`, `--record <id>`, `--instruction-pack <file>`, `--output <htmlFile>`, and
+  `--data-output <jsonFile>` are required.
+- What it checks: input artifact roles/statuses, instruction-pack record and graph-source provenance, selected
+  graphContext nodes/edges, and output authority before any writes.
+- What it writes: Only the explicit HTML and data JSON outputs. The HTML embeds the same data model written to
+  `--data-output`.
+- Output authority guard: explicit outputs are rejected before writing if they would overwrite the source graph-source,
+  source instruction pack, source record artifacts, linked source/generated authority artifacts, or if `--output` and
+  `--data-output` resolve to the same path.
+- Success result: JSON summary with node/edge/tree/subgraph counts, selected node and edge ids, HTML/data output paths,
+  and safety flags.
+- Non-goals: This command does not execute Codex, call an LLM, mutate graph-source, apply graph deltas, approve work,
+  record human decisions, satisfy runtime Evidence, prove equivalence, enforce scope, or configure CI.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model render-devview-graph `
+  --graph-source examples/retrofit/cardprinterconfig/graph-source.json `
+  --record change.laminator-tag-layout `
+  --instruction-pack outputs/retrofit/instruction-packs/laminator-tag-layout.instruction-pack.json `
+  --output outputs/devview-graph/cardprinterconfig.devviewgraph.html `
+  --data-output outputs/devview-graph/cardprinterconfig.devviewgraph.data.json `
+  --json
+```
+
 ### `pbe graph read-model report-hook-gateway-health`
 
 - Purpose: Read a DevView Hook Gateway health boundary preview and emit a compact, non-enforcing readiness report.

@@ -21,6 +21,7 @@ import { materializeHookScriptBundleFile } from '../core/hook-script-bundle.js'
 import { generateHookScriptScaffoldFile } from '../core/hook-script-scaffold.js'
 import { generateHookScriptTemplatePreviewFile } from '../core/hook-script-template-preview.js'
 import { generateInstructionPackFile } from '../core/instruction-pack-generator.js'
+import { renderDevViewGraphHtmlFile } from '../core/devview-graph-html.js'
 import { reportFrontendChainFile } from '../core/frontend-chain-report.js'
 import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
 import { reviseRequestIrCandidateFile } from '../core/request-ir-candidate-reviser.js'
@@ -1869,6 +1870,77 @@ export async function graphReadModelGenerateInstructionPackCommand(context: Comm
           message,
           suggestedFix:
             'Provide a readable generated Contract Compiler Input artifact. Instruction Pack generation does not execute Codex.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelRenderDevViewGraphCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.graphSource) {
+    return invalidCommand('graph read-model render-devview-graph requires --graph-source <graphSourcePath>.')
+  }
+  if (!context.options.record) {
+    return invalidCommand('graph read-model render-devview-graph requires --record <recordId>.')
+  }
+  if (!context.options.instructionPack) {
+    return invalidCommand('graph read-model render-devview-graph requires --instruction-pack <instructionPackPath>.')
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph read-model render-devview-graph requires --output <htmlOutputPath>.')
+  }
+  if (!context.options.dataOutput) {
+    return invalidCommand('graph read-model render-devview-graph requires --data-output <dataOutputPath>.')
+  }
+
+  try {
+    const result = await renderDevViewGraphHtmlFile(context.options.root, {
+      graphSource: context.options.graphSource,
+      record: context.options.record,
+      instructionPack: context.options.instructionPack,
+      output: context.options.output,
+      dataOutput: context.options.dataOutput,
+    })
+    const selectedSubgraph = result.data.subgraphs[0]
+    return {
+      ok: true,
+      command: 'graph read-model render-devview-graph',
+      exitCode: ExitCode.Success,
+      message: 'DevViewGraph read-only HTML inspector generated.',
+      issues: [],
+      data: {
+        artifactRole: result.data.artifactRole,
+        status: result.data.status,
+        outputPath: result.outputPath,
+        dataOutputPath: result.dataOutputPath,
+        sourceGraphSource: result.data.sourceGraphSource,
+        sourceInstructionPack: result.data.sourceInstructionPack,
+        sourceRecordId: result.data.sourceRecordId,
+        nodeCount: result.data.graph.nodes.length,
+        edgeCount: result.data.graph.edges.length,
+        treeCount: result.data.trees.length,
+        subgraphCount: result.data.subgraphs.length,
+        selectedNodeIds: selectedSubgraph?.nodeIds ?? [],
+        selectedEdgeIds: selectedSubgraph?.edgeIds ?? [],
+        safetyFlags: result.data.safetyFlags,
+        next: 'Open the generated HTML as a read-only inspector. This command did not execute Codex, mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, enforce scope, or configure CI.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model render-devview-graph',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'DevViewGraph HTML rendering could not run.',
+      issues: [
+        issue({
+          validator: 'DevViewGraphHtmlRenderer',
+          code: 'DEVVIEW_GRAPH_HTML_RENDER_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a readable retrofit graph-source, matching retrofit instruction pack, and dedicated HTML/data output paths.',
         }),
       ],
     }

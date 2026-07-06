@@ -81,6 +81,10 @@ does not implement hook scripts, install/trust commands, block Codex execution, 
 mutate graph-source, apply graph deltas, approve work, satisfy runtime Evidence, prove equivalence, enforce scope, or
 configure CI.
 
+The DevViewGraph HTML inspector command is intentionally not part of the core-critical runtime lane. It is a
+presentation/review surface for existing graph-source and instruction-pack artifacts. Future timing smoke coverage may
+add a separate visualization lane, but the current command remains read-only and non-enforcing.
+
 The compact scope runtime report can also be requested directly:
 
 ```text
