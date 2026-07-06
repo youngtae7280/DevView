@@ -822,6 +822,51 @@ node dist/cli/index.js graph read-model report-evidence-acceptance-readiness `
   --json
 ```
 
+### `pbe graph read-model record-evidence-decision`
+
+- Purpose: Record an explicit human Evidence decision without creating accepted Evidence and without satisfying runtime
+  Evidence.
+- Typical state before running: After a human has reviewed a candidate/source evidence artifact and, optionally, an
+  Evidence Acceptance readiness report. The command treats runtime reports, scope reports, apply reports, instruction
+  packs, request candidates, and proposals as provenance/context only.
+- Options: `--policy <policyBoundaryPath>`, `--source-evidence <evidenceCandidateArtifact>`,
+  `--decision <accept-evidence|reject-evidence|request-changes|defer>`, `--reviewer <humanReviewerIdentity>`,
+  `--rationale <humanAuthoredRationale>`, and `--output <file>` are required. `--readiness <file>`,
+  `--runtime-report <file>`, `--scope-report <file>`, `--apply-report <file>`, `--instruction-pack <file>`,
+  `--request-candidate <file>`, `--proposal <file>`, `--decision-actor-type human`,
+  `--decision-source <explicit-cli-input|imported-human-review>`, `--decision-timestamp <iso8601>`, and
+  `--markdown <file>` are optional.
+- What it checks: Evidence Acceptance Policy boundary role/status, source evidence readability, unsafe source authority
+  flags, optional provenance safety flags, human-only actor/source, decision vocabulary, and output authority.
+- What it writes: A `devview-evidence-decision-record` JSON artifact and optional Markdown summary only at explicit
+  output paths.
+- Success result: A hardened human Evidence decision record with
+  `decisionLifecycleHardeningStatus: hardened-human-evidence-decision-record-v1`. Even `accept-evidence` is only a
+  decision record in this slice; `acceptedEvidenceRecordCreated`, `evidenceAccepted`, `runtimeEvidenceSatisfied`,
+  `equivalenceProven`, `scopeEnforced`, `ciEnforcementEnabled`, `graphSourceMutated`, and `graphDeltaApplied` remain
+  false.
+- Next command: A separate future `create-accepted-evidence-record` command must revalidate provenance before accepted
+  Evidence can exist. This command never infers acceptance from green tests, runtime smoke, scope checks, apply reports,
+  validators, Codex, AI, or CI.
+
+Example:
+
+```powershell
+node dist/cli/index.js graph read-model record-evidence-decision `
+  --policy examples/valid/todo-app-pbe-run/generated/devview-evidence-acceptance-policy-boundary.runtime-evidence-only.preview.json `
+  --readiness examples/valid/todo-app-pbe-run/generated/devview-evidence-acceptance-readiness.blocked-defer-decision.runtime-evidence-only.preview.json `
+  --source-evidence examples/valid/todo-app-pbe-run/generated/devview-graph-delta-apply.blocked-no-concrete-operations.runtime-evidence-only.preview.json `
+  --decision defer `
+  --reviewer "human-reviewer" `
+  --rationale "Evidence acceptance deferred for calibration; no accepted evidence recorded." `
+  --decision-actor-type human `
+  --decision-source explicit-cli-input `
+  --decision-timestamp 2026-07-06T00:00:00.000Z `
+  --output .tmp/devview-evidence-decision.json `
+  --markdown .tmp/devview-evidence-decision.md `
+  --json
+```
+
 ### `pbe graph read-model report-equivalence-proof-readiness`
 
 - Purpose: Report equivalence proof readiness from an Evidence Acceptance readiness preview without proving equivalence.

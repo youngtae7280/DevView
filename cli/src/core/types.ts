@@ -128,9 +128,13 @@ export interface CliOptions {
   backupDir?: string
   readModelOutput?: string
   mutationReadiness?: string
+  readiness?: string
+  sourceEvidence?: string
   evidenceAcceptanceReadiness?: string
   equivalenceProofReadiness?: string
   policy?: string
+  applyReport?: string
+  requestCandidate?: string
   scaffold?: string
   scriptScaffold?: string
   scriptTemplates?: string

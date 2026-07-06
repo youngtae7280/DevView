@@ -362,6 +362,12 @@ validators, Codex output, or review packets as self-acceptance. The command repo
 Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, apply graph deltas, mutate graph-source, or
 configure CI.
 
+The first hardened Evidence decision record calibration is
+`examples/valid/todo-app-pbe-run/generated/devview-evidence-decision-record.defer-evidence.runtime-evidence-only.preview.json`.
+It is produced by `graph read-model record-evidence-decision ...` with one candidate/source evidence artifact and a
+human `defer` decision. The record preserves human review intent but still keeps `acceptedEvidenceRecordCreated`,
+`evidenceAccepted`, `runtimeEvidenceSatisfied`, equivalence, scope/CI, graph mutation, and graph apply flags false.
+
 The Equivalence Proof Policy boundary is previewed in
 `examples/valid/todo-app-pbe-run/generated/devview-equivalence-proof-policy-boundary.runtime-evidence-only.preview.json`.
 It anchors the `graph read-model report-equivalence-proof-readiness ...` command. The first calibration equivalence

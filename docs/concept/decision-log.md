@@ -3887,3 +3887,33 @@ proposal, review, decision, hook, or config mutation target, no natural-language
 acceptance or runtime Evidence satisfaction, no equivalence proof, no scope enforcement, no CI enforcement, no required
 checks, no branch protection, no automatic approval, no Codex self-approval, no provider invocation, no LLM/API or
 network call, and no Project Memory extension authority.
+
+## DEC-308 Record Evidence Decision Without Accepting Evidence
+
+DEC-308 does not supersede DEC-097 through DEC-307. It adds
+`graph read-model record-evidence-decision` as the first Evidence Acceptance lifecycle command that records a hardened
+human Evidence decision while deliberately stopping short of accepted Evidence creation.
+
+The command consumes an Evidence Acceptance Policy boundary, one `--source-evidence` artifact, an explicit decision
+value (`accept-evidence`, `reject-evidence`, `request-changes`, or `defer`), reviewer identity, rationale, and optional
+readiness/runtime/scope/apply/instruction/request/proposal provenance. It records
+`decisionLifecycleHardeningStatus: hardened-human-evidence-decision-record-v1`, `decisionActorType: human`,
+`decisionSource: explicit-cli-input | imported-human-review`, timestamp authority, source evidence provenance, and the
+human rationale. Non-human actor/source values and Codex/AI/tool/validator/CI-looking reviewer identities are blocked.
+
+`accept-evidence` remains a decision record only in this slice. The command never creates an accepted Evidence record
+and keeps `acceptedEvidenceRecordCreated`, `evidenceAccepted`, `runtimeEvidenceSatisfied`, `equivalenceProven`,
+`scopeEnforced`, `ciEnforcementEnabled`, `graphSourceMutated`, and `graphDeltaApplied` false. Source evidence may be
+JSON or text, but JSON evidence with unsafe authority flags such as `evidenceAccepted: true`,
+`runtimeEvidenceSatisfied: true`, equivalence, scope, CI, graph mutation, or graph apply claims is blocked before
+output write. Runtime reports, scope reports, apply reports, green tests, validators, Codex, AI, and CI remain candidate
+evidence/provenance only and cannot self-accept Evidence.
+
+The first tracked calibration records a defer decision against the blocked Graph Delta Apply report as candidate/source
+evidence:
+`examples/valid/todo-app-pbe-run/generated/devview-evidence-decision-record.defer-evidence.runtime-evidence-only.preview.json`.
+
+This decision adds no default runtime smoke step. It adds no accepted Evidence record creation, no runtime Evidence
+satisfaction, no equivalence proof, no scope enforcement, no CI enforcement, no graph-source mutation, no graph delta
+apply, no automatic approval, no user acceptance automation, no Codex self-acceptance, no provider invocation, no
+LLM/API or network call, and no Project Memory extension authority.

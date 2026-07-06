@@ -4,6 +4,7 @@ import { reportApprovedApplyDryRunFile } from '../core/approved-apply-dry-run.js
 import { createApprovedProposalStateFile } from '../core/approved-proposal-state.js'
 import { generateAiRequestAnalyzerPackFile } from '../core/ai-request-analyzer-pack.js'
 import { checkGraphDeltaApplyReadinessFile } from '../core/graph-delta-apply-readiness.js'
+import { recordEvidenceDecisionFile } from '../core/evidence-decision-record.js'
 import { reportEvidenceAcceptanceReadinessFile } from '../core/evidence-acceptance-readiness.js'
 import { reportEquivalenceProofReadinessFile } from '../core/equivalence-proof-readiness.js'
 import { reportGraphSourceMutationReadinessFile } from '../core/graph-source-mutation-readiness.js'
@@ -1319,6 +1320,81 @@ export async function graphReadModelReportEvidenceAcceptanceReadinessCommand(
           message,
           suggestedFix:
             'Provide a readable Evidence Acceptance Policy boundary, Graph-source Mutation readiness preview, and dedicated evidence-acceptance-readiness output paths. This command is read-only and never accepts Evidence.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelRecordEvidenceDecisionCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.policy) {
+    return invalidCommand('graph read-model record-evidence-decision requires --policy <file>.')
+  }
+  if (!context.options.sourceEvidence) {
+    return invalidCommand('graph read-model record-evidence-decision requires --source-evidence <file>.')
+  }
+  if (!context.options.decision) {
+    return invalidCommand('graph read-model record-evidence-decision requires --decision <value>.')
+  }
+  if (!context.options.reviewer) {
+    return invalidCommand('graph read-model record-evidence-decision requires --reviewer <humanReviewerIdentity>.')
+  }
+  if (!context.options.rationale) {
+    return invalidCommand('graph read-model record-evidence-decision requires --rationale <humanAuthoredRationale>.')
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph read-model record-evidence-decision requires --output <file>.')
+  }
+
+  try {
+    const result = await recordEvidenceDecisionFile(context.options.root, {
+      policy: context.options.policy,
+      readiness: context.options.readiness,
+      sourceEvidence: context.options.sourceEvidence,
+      decision: context.options.decision,
+      reviewer: context.options.reviewer,
+      rationale: context.options.rationale,
+      decisionActorType: context.options.decisionActorType,
+      decisionSource: context.options.decisionSource,
+      decisionTimestamp: context.options.decisionTimestamp,
+      runtimeReport: context.options.runtimeReport,
+      scopeReport: context.options.scopeReport,
+      applyReport: context.options.applyReport,
+      instructionPack: context.options.instructionPack,
+      requestCandidate: context.options.requestCandidate,
+      proposal: context.options.proposal,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph read-model record-evidence-decision',
+      exitCode: ExitCode.Success,
+      message:
+        'Evidence decision record created without creating accepted Evidence, satisfying runtime Evidence, proving equivalence, applying, mutating, or enforcing.',
+      issues: [],
+      data: {
+        ...result.record,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: 'Use this as a human evidence decision record only. A separate future accepted-evidence command must revalidate provenance before any accepted Evidence record can exist.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model record-evidence-decision',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Evidence decision record blocked.',
+      issues: [
+        issue({
+          validator: 'EvidenceDecisionRecord',
+          code: 'EVIDENCE_DECISION_RECORD_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a readable policy boundary, one readable source evidence artifact, explicit human reviewer/rationale, and dedicated evidence decision output paths. This command never accepts Evidence.',
         }),
       ],
     }

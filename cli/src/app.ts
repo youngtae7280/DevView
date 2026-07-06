@@ -167,9 +167,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     backupDir: undefined as string | undefined,
     readModelOutput: undefined as string | undefined,
     mutationReadiness: undefined as string | undefined,
+    readiness: undefined as string | undefined,
+    sourceEvidence: undefined as string | undefined,
     evidenceAcceptanceReadiness: undefined as string | undefined,
     equivalenceProofReadiness: undefined as string | undefined,
     policy: undefined as string | undefined,
+    applyReport: undefined as string | undefined,
+    requestCandidate: undefined as string | undefined,
     scaffold: undefined as string | undefined,
     scriptScaffold: undefined as string | undefined,
     scriptTemplates: undefined as string | undefined,
@@ -699,6 +703,20 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.mutationReadiness = value
       index += 1
+    } else if (arg === '--readiness') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--readiness requires a file path.' }
+      }
+      options.readiness = value
+      index += 1
+    } else if (arg === '--source-evidence') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--source-evidence requires a file path.' }
+      }
+      options.sourceEvidence = value
+      index += 1
     } else if (arg === '--evidence-acceptance-readiness') {
       const value = argv[index + 1]
       if (!value) {
@@ -719,6 +737,27 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--policy requires a file path.' }
       }
       options.policy = value
+      index += 1
+    } else if (arg === '--scope-report') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--scope-report requires a file path.' }
+      }
+      options.scopeReport = value
+      index += 1
+    } else if (arg === '--apply-report') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--apply-report requires a file path.' }
+      }
+      options.applyReport = value
+      index += 1
+    } else if (arg === '--request-candidate') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--request-candidate requires a file path.' }
+      }
+      options.requestCandidate = value
       index += 1
     } else if (arg === '--scaffold') {
       const value = argv[index + 1]
