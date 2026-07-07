@@ -119,6 +119,8 @@ Commands:
                        Aggregate enterprise hardening readiness as a report-only assessment
   security report-provider-network-policy
                        Record provider/network default-deny policy posture without provider or network activity
+  security validate-rbac-policy
+                       Validate declarative RBAC role assignment policy without enforcing RBAC
   security report-rbac-readiness
                        Record RBAC actor identity readiness without signing or enforcement
   security report-signing-readiness
@@ -431,7 +433,7 @@ Options:
                        Signing/key governance readiness report for security report-enterprise-readiness; repeat or comma-separate for multiples.
   --authorize-graph-source-mutation
                        Required explicit authorization flag for graph read-model apply-guarded-graph-update.
-  --policy <file>      Policy boundary file for graph read-model report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-equivalence-proof-readiness, record-equivalence-proof, report-scope-ci-enforcement-readiness, or security report-provider-network-policy.
+  --policy <file>      Policy boundary file for graph read-model report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-equivalence-proof-readiness, record-equivalence-proof, report-scope-ci-enforcement-readiness, security report-provider-network-policy, or security validate-rbac-policy.
   --readiness <file>   Optional Evidence Acceptance readiness provenance for graph read-model record-evidence-decision or create-accepted-evidence-record.
   --source-evidence <file>
                        Single candidate/source Evidence artifact for graph read-model record-evidence-decision, create-accepted-evidence-record, report-runtime-evidence-satisfaction-readiness, or record-runtime-evidence-satisfaction.

@@ -245,6 +245,27 @@ identity/RBAC, project-level grants, audit records, no-network defaults, and san
 The command never invokes providers, makes network/API calls, executes extensions, runs Graphify, mutates graph-source,
 configures CI, activates hooks, or automates approval.
 
+### RBAC Role Assignment Policy Validation
+
+```bash
+devview security validate-rbac-policy \
+  --policy <rbac-policy.json> \
+  --rbac-readiness <rbac-readiness.json> \
+  --signing-readiness <signing-readiness.json> \
+  --output <rbac-policy-validation.json> \
+  --markdown <rbac-policy-validation.md> \
+  --json
+```
+
+Validates a declarative `devview-rbac-policy` role-assignment policy as a report-only readiness artifact. The policy
+must use `defaultAuthorityPolicy: deny` and can declare actors, role assignments, permission grants, automation
+restrictions, and extension-author restrictions. Optional RBAC readiness and signing readiness reports are summarized as
+source facts. Validation detects unknown actors, roles, permissions, duplicate actor IDs, artifact-role coverage, and
+overgrant risks. It blocks default-allow policy, key/private material, provider/network/API allowlists or grants,
+automation overgrants, extension-author overgrants, unsafe authority flags, and real signing/RBAC claims with zero-write
+behavior. The command does not enforce RBAC, verify permissions, sign records, generate/store keys, call providers,
+execute extensions, mutate graph-source, configure CI/hooks, activate enterprise gates, or automate approval.
+
 ### RBAC / Actor Identity Readiness
 
 ```bash

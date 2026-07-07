@@ -6,6 +6,7 @@ import {
   ProviderNetworkPolicyReportValidationError,
   reportProviderNetworkPolicy,
 } from '../core/provider-network-policy-report.js'
+import { RbacPolicyValidationError, validateRbacPolicy } from '../core/rbac-policy-validation.js'
 import { RbacReadinessReportValidationError, reportRbacReadiness } from '../core/rbac-readiness-report.js'
 import { RecordEnvelopePreviewValidationError, previewRecordEnvelope } from '../core/record-envelope-preview.js'
 import {
@@ -139,6 +140,69 @@ export async function securityReportProviderNetworkPolicyCommand(context: Comman
           message,
           suggestedFix:
             'Provide --output and write provider/network policy outputs outside source/control artifacts and source inputs.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function securityValidateRbacPolicyCommand(context: CommandContext): Promise<CommandResult> {
+  try {
+    const report = await validateRbacPolicy(context.options.root, {
+      policy: context.options.policy,
+      rbacReadiness: context.options.rbacReadiness,
+      signingReadiness: context.options.signingReadiness,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'security validate-rbac-policy',
+      exitCode: ExitCode.Success,
+      message: 'RBAC role assignment policy validated as a report-only readiness artifact.',
+      issues: [],
+      data: { ...report },
+    }
+  } catch (error) {
+    if (error instanceof RbacPolicyValidationError) {
+      const report = error.report
+      const blockers = report.policyFindings.filter((finding) => finding.severity === 'blocker')
+      return {
+        ok: false,
+        command: 'security validate-rbac-policy',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'RBAC policy validation is blocked before any RBAC enforcement or signing.',
+        issues: blockers.map((finding) =>
+          issue({
+            validator: 'RbacPolicyValidation',
+            code: finding.code,
+            severity: 'error',
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide a declarative default-deny RBAC policy with known actors, roles, and permissions, no key material, and no execution/provider/network/approval authority claims.',
+          }),
+        ),
+        data: { ...report },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'security validate-rbac-policy',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'RBAC policy validation could not run.',
+      issues: [
+        issue({
+          validator: 'RbacPolicyValidation',
+          code: 'RBAC_POLICY_VALIDATION_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide --policy and --output and write RBAC policy validation outputs outside source/control artifacts and source inputs.',
         }),
       ],
     }
