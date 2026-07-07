@@ -252,6 +252,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     governancePolicy: undefined as string | undefined,
     benchmarkGovernanceVerification: undefined as string | undefined,
     releaseSurfaceValidation: undefined as string | undefined,
+    enterpriseReadiness: undefined as string | undefined,
     graphifyExport: undefined as string | undefined,
     mapping: undefined as string | undefined,
     base: undefined as string | undefined,
@@ -1332,6 +1333,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--release-surface-validation requires a file path.' }
       }
       options.releaseSurfaceValidation = value
+      index += 1
+    } else if (arg === '--enterprise-readiness') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--enterprise-readiness requires a file path.' }
+      }
+      options.enterpriseReadiness = value
       index += 1
     } else if (arg === '--graphify-export') {
       const value = argv[index + 1]

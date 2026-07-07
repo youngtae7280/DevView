@@ -217,6 +217,25 @@ guarded graph update governance, provider/network default-deny policy, Scope/CI 
 audit, and tamper-evidence. It does not activate enterprise gates, execute extensions, call providers, make network
 calls, mutate graph-source, configure CI, activate hooks, or automate approval.
 
+### Provider/Network Default-Deny Policy
+
+```bash
+devview security report-provider-network-policy \
+  --policy <provider-network-policy.json> \
+  --enterprise-readiness <enterprise-readiness.json> \
+  --output <provider-network-policy-report.json> \
+  --markdown <provider-network-policy-report.md> \
+  --json
+```
+
+Records provider and network policy posture as a report-only default-deny artifact. Without `--policy`, the command
+emits the canonical default-deny policy report. With `--policy`, the source must be a strict
+`devview-provider-network-policy` configured with provider and network defaults set to `deny`, empty allowlists, and all
+provider/network/API/execution flags false. Explicit allow policies remain future-only until signed policy, actor
+identity/RBAC, project-level grants, audit records, no-network defaults, and sandbox/provider isolation are designed.
+The command never invokes providers, makes network/API calls, executes extensions, runs Graphify, mutates graph-source,
+configures CI, activates hooks, or automates approval.
+
 ### Graphify Import Validation
 
 ```bash

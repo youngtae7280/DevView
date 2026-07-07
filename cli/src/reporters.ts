@@ -117,6 +117,8 @@ Commands:
                        Validate static Graphify export and mapping fixtures without live Graphify activity
   security report-enterprise-readiness
                        Aggregate enterprise hardening readiness as a report-only assessment
+  security report-provider-network-policy
+                       Record provider/network default-deny policy posture without provider or network activity
   work-journal render  Render static cumulative DevView Work Journal HTML/data without execution or authority
   init                 Internal compatibility initializer for legacy migration inputs
   status               Internal compatibility status for legacy migration inputs
@@ -403,7 +405,7 @@ Options:
                        Human-authored authorization rationale for graph read-model apply-guarded-graph-update.
   --authorize-graph-source-mutation
                        Required explicit authorization flag for graph read-model apply-guarded-graph-update.
-  --policy <file>      Policy boundary file for graph read-model report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-equivalence-proof-readiness, record-equivalence-proof, or report-scope-ci-enforcement-readiness.
+  --policy <file>      Policy boundary file for graph read-model report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-equivalence-proof-readiness, record-equivalence-proof, report-scope-ci-enforcement-readiness, or security report-provider-network-policy.
   --readiness <file>   Optional Evidence Acceptance readiness provenance for graph read-model record-evidence-decision or create-accepted-evidence-record.
   --source-evidence <file>
                        Single candidate/source Evidence artifact for graph read-model record-evidence-decision, create-accepted-evidence-record, report-runtime-evidence-satisfaction-readiness, or record-runtime-evidence-satisfaction.
