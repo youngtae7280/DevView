@@ -54,6 +54,21 @@ describe('DevView legacy artifact audit CLI', () => {
     expect(readFileSync(join(workspace, 'docs/old.md'), 'utf8')).toBe(before)
   })
 
+  it('classifies docs internal legacy archive findings as hidden compatibility', async () => {
+    const workspace = createWorkspace()
+    await mkdir(join(workspace, 'docs/internal-legacy'), { recursive: true })
+    writeFileSync(join(workspace, 'docs/internal-legacy/old.md'), 'Historical PBE migration note.\n', 'utf8')
+
+    const result = await runPbeCli(['report-legacy-artifacts', '--json'], { cwd: workspace, pluginRoot })
+    const payload = JSON.parse(result.stdout)
+    const finding = payload.findings.find(
+      (entry: Record<string, unknown>) => entry.path === 'docs/internal-legacy/old.md',
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(finding.classification).toBe('internal-hidden-compatibility')
+  })
+
   it('writes an optional report file only when requested', async () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, 'package.json'), { scripts: { legacy: 'pbe validate' } })

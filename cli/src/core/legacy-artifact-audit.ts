@@ -218,6 +218,10 @@ function classifyPath(relativeFile: string): LegacyArtifactClassification {
     return 'migration-fixture-only'
   }
 
+  if (relativeFile.startsWith('docs/internal-legacy/') || relativeFile.startsWith('docs/archive/')) {
+    return 'internal-hidden-compatibility'
+  }
+
   if (relativeFile.startsWith('docs/')) {
     return 'delete-candidate'
   }
