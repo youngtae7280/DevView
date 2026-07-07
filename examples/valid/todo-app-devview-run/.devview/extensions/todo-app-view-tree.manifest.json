@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-extension-manifest",
+  "status": "devview-extension-manifest-declared",
+  "extensionId": "todo-app-view-tree-extractor",
+  "displayName": "Todo App View Tree Extractor",
+  "extensionKind": "view-tree-extractor",
+  "capabilities": ["view-tree-extractor-extension", "context-pack-extension"],
+  "requiredPermissions": [
+    "read-project-profile",
+    "read-maintainability-graph",
+    "read-view-tree",
+    "write-report-output"
+  ],
+  "execution": {
+    "executionKind": "declarative-manifest-only",
+    "entrypoint": null,
+    "command": null,
+    "script": null,
+    "module": null
+  },
+  "runtimeEvidenceSatisfied": false,
+  "evidenceAccepted": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false
+}

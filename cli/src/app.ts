@@ -215,6 +215,8 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     changedFiles: undefined as string | undefined,
     scopeReport: undefined as string | undefined,
     schema: undefined as string | undefined,
+    projectProfile: undefined as string | undefined,
+    extensionsDir: undefined as string | undefined,
     chainCommand: undefined as string | undefined,
     base: undefined as string | undefined,
     head: undefined as string | undefined,
@@ -1038,6 +1040,20 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--schema requires a file path.' }
       }
       options.schema = value
+      index += 1
+    } else if (arg === '--project-profile') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--project-profile requires a file path.' }
+      }
+      options.projectProfile = value
+      index += 1
+    } else if (arg === '--extensions-dir') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--extensions-dir requires a directory path.' }
+      }
+      options.extensionsDir = value
       index += 1
     } else if (arg === '--chain-command') {
       const value = argv[index + 1]

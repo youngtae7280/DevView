@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://devview.local/schemas/devview-project-profile.schema.json",
+  "title": "DevView Project Profile",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schemaVersion", "artifactRole", "status", "projectProfileId"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "artifactRole": { "const": "devview-project-profile" },
+    "status": { "const": "devview-project-profile-configured" },
+    "projectProfileId": { "type": "string", "minLength": 1 },
+    "projectName": { "type": "string" },
+    "domain": { "type": "string" },
+    "stack": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "extensionManifestLocations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "extensionPolicy": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "executionAllowed": { "const": false },
+        "networkAllowed": { "const": false },
+        "providerInvocationAllowed": { "const": false }
+      }
+    }
+  }
+}

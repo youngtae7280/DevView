@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://devview.local/schemas/devview-extension-manifest.schema.json",
+  "title": "DevView Extension Manifest",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schemaVersion", "artifactRole", "status", "extensionId", "extensionKind"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "artifactRole": { "const": "devview-extension-manifest" },
+    "status": { "const": "devview-extension-manifest-declared" },
+    "extensionId": { "type": "string", "minLength": 1 },
+    "displayName": { "type": "string" },
+    "extensionKind": {
+      "enum": ["analyzer", "view-tree-extractor", "context-pack", "evidence-adapter", "policy", "skill-workflow"]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "analyzer-extension",
+          "view-tree-extractor-extension",
+          "context-pack-extension",
+          "evidence-adapter",
+          "policy-extension",
+          "skill-workflow-extension"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "requiredPermissions": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "read-project-profile",
+          "read-maintainability-graph",
+          "read-view-tree",
+          "read-context-pack",
+          "read-evidence",
+          "read-policy",
+          "write-report-output"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "executionKind": { "const": "declarative-manifest-only" },
+        "entrypoint": { "type": "null" },
+        "command": { "type": "null" },
+        "script": { "type": "null" },
+        "module": { "type": "null" }
+      }
+    }
+  }
+}

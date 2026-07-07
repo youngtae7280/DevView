@@ -19,6 +19,7 @@
     "docs/troubleshooting.md",
     "docs/concept/README.md",
     "docs/concept/devview-terminology.md",
+    "docs/concept/devview-extensions.md",
     "skills/**"
   ],
   "scripts": {

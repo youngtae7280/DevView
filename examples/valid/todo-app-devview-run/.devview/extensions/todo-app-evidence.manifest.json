@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-extension-manifest",
+  "status": "devview-extension-manifest-declared",
+  "extensionId": "todo-app-runtime-evidence-adapter",
+  "displayName": "Todo App Runtime Evidence Adapter",
+  "extensionKind": "evidence-adapter",
+  "capabilities": ["evidence-adapter", "policy-extension"],
+  "requiredPermissions": ["read-project-profile", "read-evidence", "read-policy", "write-report-output"],
+  "execution": {
+    "executionKind": "declarative-manifest-only",
+    "entrypoint": null,
+    "command": null,
+    "script": null,
+    "module": null
+  },
+  "runtimeEvidenceSatisfied": false,
+  "evidenceAccepted": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false
+}

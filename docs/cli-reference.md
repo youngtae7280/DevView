@@ -37,6 +37,21 @@ devview graph read-model run-preflight-session \
 Runs the deterministic frontend chain from Request IR Candidate through Instruction Pack preview. It never executes
 Codex.
 
+### Project-Specific Extension Readiness
+
+```bash
+devview extensions report-readiness \
+  --project-profile .devview/project-profile.json \
+  --extensions-dir .devview/extensions \
+  --output <extension-readiness.json> \
+  --markdown <extension-readiness.md> \
+  --json
+```
+
+Discovers Project Profile and Extension Manifest declarations. It validates capabilities and permissions, but does not
+execute extension code, call providers, make network calls, mutate the Maintainability Graph, satisfy runtime Evidence,
+prove equivalence, or enforce scope/CI.
+
 ### UserPromptSubmit Advisory
 
 ```bash

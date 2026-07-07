@@ -16,10 +16,11 @@ Maintainability Graph
 
 1. [DevView terminology](devview-terminology.md)
 2. [Maintainability Graph](maintainability-graph.md)
-3. [Natural-language request intake boundary](natural-language-request-intake-boundary.md)
-4. [DevView Hook Gateway boundary](devview-codex-hook-gateway-boundary.md)
-5. [DevView Runtime Performance Budget](devview-runtime-performance-budget.md)
-6. [DevView Project Memory](devview-project-memory.md)
+3. [Project-specific extensions](devview-extensions.md)
+4. [Natural-language request intake boundary](natural-language-request-intake-boundary.md)
+5. [DevView Hook Gateway boundary](devview-codex-hook-gateway-boundary.md)
+6. [DevView Runtime Performance Budget](devview-runtime-performance-budget.md)
+7. [DevView Project Memory](devview-project-memory.md)
 
 ## Current Safe MVP
 
@@ -27,6 +28,7 @@ The current safe MVP has deterministic local surfaces for:
 
 - request intake and candidate validation;
 - View Tree preview and Context Pack generation;
+- project-specific extension readiness for Project Profiles and Extension Manifests;
 - Instruction Pack preview;
 - advisory UserPromptSubmit and Stop/Post Run reports;
 - changed-file collection and non-enforcing scope checks;

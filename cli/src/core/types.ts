@@ -173,6 +173,8 @@ export interface CliOptions {
   changedFiles?: string
   scopeReport?: string
   schema?: string
+  projectProfile?: string
+  extensionsDir?: string
   chainCommand?: string
   base?: string
   head?: string

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-project-profile",
+  "status": "devview-project-profile-configured",
+  "projectProfileId": "todo-app-devview-profile",
+  "projectName": "Todo App DevView Run",
+  "domain": "todo-application",
+  "stack": ["typescript", "browser-ui", "deterministic-fixture"],
+  "extensionManifestLocations": [".devview/extensions"],
+  "extensionPolicy": {
+    "executionAllowed": false,
+    "networkAllowed": false,
+    "providerInvocationAllowed": false
+  },
+  "runtimeEvidenceSatisfied": false,
+  "evidenceAccepted": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false
+}

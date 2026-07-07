@@ -12,6 +12,8 @@
 
 - [DevView terminology](concept/devview-terminology.md) - Maintainability Graph, View Tree, Context Pack, AI Work Plan,
   Runtime Evidence, Graph Delta, and Guarded Graph Update.
+- [Project-specific extensions](concept/devview-extensions.md) - Project Profiles, Extension Manifests, and report-only
+  extension readiness.
 - [Runtime architecture concepts](concept/README.md) - Public concept overview and safe MVP boundaries.
 
 ## Safe MVP Baseline

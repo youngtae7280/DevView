@@ -99,6 +99,8 @@ Commands:
   report-legacy-artifacts
                        Report remaining legacy names and migration inputs without mutating files
   cleanup-legacy       Plan legacy example migration/delete/compatibility operations; requires --dry-run
+  extensions report-readiness
+                       Report Project Profile and Extension Manifest readiness without executing extension code
   init                 Internal compatibility initializer for legacy migration inputs
   status               Internal compatibility status for legacy migration inputs
   gate <stage>         Check whether a stage can be entered, including review-result
@@ -455,6 +457,10 @@ Options:
   --check-report <file>
                        Optional check report provenance for graph read-model report-runtime-evidence-satisfaction-readiness.
   --schema <file>      Request IR Candidate schema file for graph read-model generate-ai-request-analyzer-pack.
+  --project-profile <file>
+                       Project Profile file for extensions report-readiness. Defaults to .devview/project-profile.json.
+  --extensions-dir <dir>
+                       Extension Manifest directory for extensions report-readiness. Defaults to .devview/extensions.
   --chain-command <name>
                        Wrapped graph operation script command. Defaults to operation-chain.
   --base <ref>         Base git ref for graph read-model collect-changed-files or check-scope.
