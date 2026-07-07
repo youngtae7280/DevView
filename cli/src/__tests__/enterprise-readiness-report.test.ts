@@ -580,6 +580,93 @@ describe('security report-enterprise-readiness CLI', () => {
     expectSafetyFalse(payload)
   })
 
+  it('summarizes package provenance inputs without treating them as package digest or attestation', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/package-provenance-inputs.json'), packageProvenanceInputsRecord())
+
+    const result = await runDevViewCli(
+      [
+        'security',
+        'report-enterprise-readiness',
+        '--package-provenance-inputs',
+        '.tmp/package-provenance-inputs.json',
+        '--output',
+        '.tmp/enterprise-readiness.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.readinessLevel).toBe('not-ready')
+    expect(payload.sourcePackageProvenanceInputsRecords).toHaveLength(1)
+    expect(payload.sourcePackageProvenanceInputsRecords[0]).toEqual(
+      expect.objectContaining({
+        path: '.tmp/package-provenance-inputs.json',
+        artifactRole: 'devview-package-provenance-inputs-record',
+        status: 'devview-package-provenance-inputs-recorded',
+        packageProvenanceInputsStatus: 'recorded-source-inputs-only',
+        packageName: 'devview',
+        packageVersion: '0.2.0-alpha',
+        sourceArtifactDigestCount: 4,
+        sourceRefStatus: 'supplied-explicit-cli-input',
+        sourceRefSupplied: true,
+        buildCommandLabelStatus: 'supplied-metadata-only',
+        buildCommandLabelSupplied: true,
+        buildCommandExecuted: false,
+        packageDigestStatus: 'not-computed-no-package-artifact-supplied',
+        packageArtifactSupplied: false,
+        packageArtifactSha256Present: false,
+        provenanceAttestationStatus: 'not-generated',
+        releaseSurfaceSourceSupplied: true,
+        releaseProvenanceReadinessSupplied: true,
+        sbomValidationSupplied: true,
+        findingCount: 5,
+        downstreamActionCount: 3,
+        packageSigned: false,
+        packageSigningPresent: false,
+        sbomGenerated: false,
+        sbomAttested: false,
+        provenanceAttested: false,
+      }),
+    )
+    expect(payload.packageProvenanceInputsReadiness.status).toBe('inputs-recorded')
+    expect(payload.packageProvenanceInputsReadiness.sourceCount).toBe(1)
+    expect(payload.packageProvenanceInputsReadiness.sourceStatuses).toEqual([
+      'devview-package-provenance-inputs-recorded',
+    ])
+    expect(payload.packageProvenanceInputsReadiness.packageProvenanceInputsStatuses).toEqual([
+      'recorded-source-inputs-only',
+    ])
+    expect(payload.packageProvenanceInputsReadiness.packageNames).toEqual(['devview'])
+    expect(payload.packageProvenanceInputsReadiness.packageVersions).toEqual(['0.2.0-alpha'])
+    expect(payload.packageProvenanceInputsReadiness.sourceArtifactDigestCount).toBe(4)
+    expect(payload.packageProvenanceInputsReadiness.sourceRefSuppliedCount).toBe(1)
+    expect(payload.packageProvenanceInputsReadiness.buildCommandLabelSuppliedCount).toBe(1)
+    expect(payload.packageProvenanceInputsReadiness.packageDigestComputedCount).toBe(0)
+    expect(payload.packageProvenanceInputsReadiness.packageDigestStatuses).toEqual([
+      'not-computed-no-package-artifact-supplied',
+    ])
+    expect(payload.packageProvenanceInputsReadiness.provenanceAttestationGeneratedCount).toBe(0)
+    expect(payload.packageProvenanceInputsReadiness.provenanceAttestationStatuses).toEqual(['not-generated'])
+    expect(payload.packageProvenanceInputsReadiness.releaseSurfaceSourceLinkedCount).toBe(1)
+    expect(payload.packageProvenanceInputsReadiness.sbomValidationLinkedCount).toBe(1)
+    expect(payload.packageProvenanceInputsReadiness.findingCount).toBe(5)
+    expect(payload.packageProvenanceInputsReadiness.downstreamActionCount).toBe(3)
+    expect(payload.enterpriseReadinessFindings.map((entry: { code: string }) => entry.code)).toEqual(
+      expect.arrayContaining([
+        'ENTERPRISE_PACKAGE_PROVENANCE_INPUTS_RECORDED',
+        'ENTERPRISE_RELEASE_PROVENANCE_ARTIFACTS_MISSING',
+        'ENTERPRISE_RBAC_SIGNING_MISSING',
+      ]),
+    )
+    expect(payload.enterpriseReadinessFindings.map((entry: { code: string }) => entry.code)).not.toContain(
+      'ENTERPRISE_PACKAGE_PROVENANCE_INPUTS_NOT_SUPPLIED',
+    )
+    expectSafetyFalse(payload)
+  })
+
   it('blocks invalid or authority-claiming release provenance readiness sources with zero writes', async () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, '.tmp/wrong-release-provenance.json'), {
@@ -750,6 +837,95 @@ describe('security report-enterprise-readiness CLI', () => {
       'ENTERPRISE_READINESS_UNSAFE_SOURCE_AUTHORITY_FLAG',
     )
     expect(existsSync(join(workspace, '.tmp/network-sbom-enterprise.json'))).toBe(false)
+  })
+
+  it('blocks invalid or authority-claiming package provenance inputs sources with zero writes', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/wrong-package-provenance-inputs.json'), {
+      ...packageProvenanceInputsRecord(),
+      status: 'devview-package-provenance-inputs-blocked',
+    })
+    writeJson(join(workspace, '.tmp/package-artifact-inputs.json'), {
+      ...packageProvenanceInputsRecord(),
+      packageArtifactGenerated: true,
+    })
+    writeJson(join(workspace, '.tmp/package-digest-inputs.json'), {
+      ...packageProvenanceInputsRecord(),
+      packageArtifactSha256: 'a'.repeat(64),
+    })
+    writeJson(join(workspace, '.tmp/signed-package-inputs.json'), {
+      ...packageProvenanceInputsRecord(),
+      packageSigned: true,
+    })
+    writeJson(join(workspace, '.tmp/sbom-package-inputs.json'), {
+      ...packageProvenanceInputsRecord(),
+      sbomGeneratedByDevView: true,
+    })
+    writeJson(join(workspace, '.tmp/provenance-package-inputs.json'), {
+      ...packageProvenanceInputsRecord(),
+      provenanceAttested: true,
+    })
+    writeJson(join(workspace, '.tmp/key-package-inputs.json'), {
+      ...packageProvenanceInputsRecord(),
+      keyGenerated: true,
+    })
+    writeJson(join(workspace, '.tmp/rbac-package-inputs.json'), {
+      ...packageProvenanceInputsRecord(),
+      rbacEnforced: true,
+    })
+    writeJson(join(workspace, '.tmp/network-package-inputs.json'), {
+      ...packageProvenanceInputsRecord(),
+      networkCallMade: true,
+    })
+
+    const wrong = await runEnterpriseWithPackageProvenanceInputs(
+      workspace,
+      '.tmp/wrong-package-provenance-inputs.json',
+      '.tmp/wrong-package-provenance-enterprise.json',
+    )
+    expect(wrong.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(wrong.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_PACKAGE_PROVENANCE_INPUTS_SOURCE_ROLE_STATUS_INVALID',
+    )
+    expect(existsSync(join(workspace, '.tmp/wrong-package-provenance-enterprise.json'))).toBe(false)
+
+    const digest = await runEnterpriseWithPackageProvenanceInputs(
+      workspace,
+      '.tmp/package-digest-inputs.json',
+      '.tmp/package-digest-enterprise.json',
+    )
+    expect(digest.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(digest.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_PACKAGE_PROVENANCE_PACKAGE_DIGEST_UNSUPPORTED',
+    )
+    expect(existsSync(join(workspace, '.tmp/package-digest-enterprise.json'))).toBe(false)
+
+    for (const [source, output] of [
+      ['.tmp/package-artifact-inputs.json', '.tmp/package-artifact-enterprise.json'],
+      ['.tmp/signed-package-inputs.json', '.tmp/signed-package-enterprise.json'],
+      ['.tmp/sbom-package-inputs.json', '.tmp/sbom-package-enterprise.json'],
+      ['.tmp/provenance-package-inputs.json', '.tmp/provenance-package-enterprise.json'],
+      ['.tmp/key-package-inputs.json', '.tmp/key-package-enterprise.json'],
+      ['.tmp/rbac-package-inputs.json', '.tmp/rbac-package-enterprise.json'],
+    ] as const) {
+      const result = await runEnterpriseWithPackageProvenanceInputs(workspace, source, output)
+      expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+      expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+        'ENTERPRISE_READINESS_PACKAGE_PROVENANCE_INPUTS_AUTHORITY_CLAIM_UNSUPPORTED',
+      )
+      expect(existsSync(join(workspace, output))).toBe(false)
+    }
+
+    const network = await runEnterpriseWithPackageProvenanceInputs(
+      workspace,
+      '.tmp/network-package-inputs.json',
+      '.tmp/network-package-enterprise.json',
+    )
+    expect(network.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(network.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_UNSAFE_SOURCE_AUTHORITY_FLAG',
+    )
+    expect(existsSync(join(workspace, '.tmp/network-package-enterprise.json'))).toBe(false)
   })
 
   it('blocks invalid or authority-claiming RBAC policy validation sources with zero writes', async () => {
@@ -1186,6 +1362,7 @@ describe('security report-enterprise-readiness CLI', () => {
     writeJson(join(workspace, '.tmp/rbac-policy-validation.json'), rbacPolicyValidationReport())
     writeJson(join(workspace, '.tmp/release-provenance-readiness.json'), releaseProvenanceReadinessReport())
     writeJson(join(workspace, '.tmp/sbom-validation.json'), sbomValidationReport())
+    writeJson(join(workspace, '.tmp/package-provenance-inputs.json'), packageProvenanceInputsRecord())
     const cases = [
       { output: '.tmp/benchmark-governance.json', expected: 'would overwrite a source input' },
       {
@@ -1216,6 +1393,11 @@ describe('security report-enterprise-readiness CLI', () => {
       {
         sourceArgs: ['--sbom-validation', '.tmp/sbom-validation.json'],
         output: '.tmp/sbom-validation.json',
+        expected: 'would overwrite a source input',
+      },
+      {
+        sourceArgs: ['--package-provenance-inputs', '.tmp/package-provenance-inputs.json'],
+        output: '.tmp/package-provenance-inputs.json',
         expected: 'would overwrite a source input',
       },
       { output: '.tmp/enterprise.json', markdown: '.tmp/enterprise.json', expected: 'must be different' },
@@ -1910,6 +2092,157 @@ function sbomValidationReport(overrides: Record<string, unknown> = {}): Record<s
   }
 }
 
+function packageProvenanceInputsRecord(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    schemaVersion: 1,
+    artifactRole: 'devview-package-provenance-inputs-record',
+    status: 'devview-package-provenance-inputs-recorded',
+    provenanceInputsScope: 'package-provenance-inputs-report-only',
+    sourceFactsOnly: true,
+    reportOnly: true,
+    packageProvenanceInputsStatus: 'recorded-source-inputs-only',
+    packageMetadataSummary: {
+      supplied: true,
+      path: 'package.json',
+      packageName: 'devview',
+      packageVersion: '0.2.0-alpha',
+      packagePrivate: true,
+      packageFilesAllowlistPresent: true,
+      packageFilesAllowlistCount: 14,
+      packageFilesAllowlistEntries: ['skills/**'],
+      packageJsonSha256: '1'.repeat(64),
+      packageJsonByteLength: 2227,
+    },
+    sourceRefSummary: {
+      sourceRefStatus: 'supplied-explicit-cli-input',
+      value: 'dd3a36e42a26efa247284c5b3b198d5fdf0bbb3e',
+      sourceRefVerified: false,
+      verificationMode: 'explicit-input-not-verified',
+    },
+    buildInputSummary: {
+      buildCommandLabelStatus: 'supplied-metadata-only',
+      buildCommandLabel: 'npm run build:cli',
+      buildCommandExecuted: false,
+    },
+    sourceArtifactDigests: [
+      {
+        sourceKind: 'package-json',
+        path: 'package.json',
+        artifactRole: null,
+        status: null,
+        sha256: '1'.repeat(64),
+        byteLength: 2227,
+      },
+      {
+        sourceKind: 'release-surface-validation',
+        path: '.tmp/release-surface-validation.json',
+        artifactRole: 'devview-release-surface-validation-report',
+        status: 'devview-release-surface-validation-passed',
+        sha256: '2'.repeat(64),
+        byteLength: 2048,
+      },
+      {
+        sourceKind: 'release-provenance-readiness',
+        path: '.tmp/release-provenance-readiness.json',
+        artifactRole: 'devview-release-provenance-readiness-report',
+        status: 'devview-release-provenance-readiness-reported',
+        sha256: '3'.repeat(64),
+        byteLength: 4096,
+      },
+      {
+        sourceKind: 'sbom-validation',
+        path: '.tmp/sbom-validation.json',
+        artifactRole: 'devview-sbom-validation-report',
+        status: 'devview-sbom-validation-passed',
+        sha256: '4'.repeat(64),
+        byteLength: 3072,
+      },
+    ],
+    releaseSurfaceSourceSummary: {
+      supplied: true,
+      path: '.tmp/release-surface-validation.json',
+      artifactRole: 'devview-release-surface-validation-report',
+      status: 'devview-release-surface-validation-passed',
+      packageName: 'devview',
+      packageVersion: '0.2.0-alpha',
+      packageFileCount: 14,
+      forbiddenFindingCount: 0,
+    },
+    releaseProvenanceReadinessSummary: {
+      supplied: true,
+      path: '.tmp/release-provenance-readiness.json',
+      artifactRole: 'devview-release-provenance-readiness-report',
+      status: 'devview-release-provenance-readiness-reported',
+      releaseProvenanceReadinessStatus: 'not-ready-sbom-and-signing-missing',
+      sbomGenerated: false,
+      packageSigningPresent: false,
+      provenanceAttested: false,
+      findingCount: 3,
+      downstreamActionCount: 2,
+    },
+    sbomValidationSummary: {
+      supplied: true,
+      path: '.tmp/sbom-validation.json',
+      artifactRole: 'devview-sbom-validation-report',
+      status: 'devview-sbom-validation-passed',
+      sbomValidationStatus: 'validated-structural-source-fact-only',
+      sbomFormat: 'devview-minimal-sbom-v1',
+      sbomSha256: '0'.repeat(64),
+      sbomByteLength: 1024,
+      packageName: 'devview',
+      packageVersion: '0.2.0-alpha',
+      packageIdentityAlignmentStatus: 'matched',
+      componentCount: 2,
+    },
+    packageDigestStatus: 'not-computed-no-package-artifact-supplied',
+    packageArtifactSupplied: false,
+    packageArtifactSha256: null,
+    provenanceAttestationStatus: 'not-generated',
+    packageProvenanceFindings: [
+      { severity: 'satisfied', code: 'PACKAGE_PROVENANCE_PACKAGE_JSON_DIGEST_RECORDED' },
+      { severity: 'satisfied', code: 'PACKAGE_PROVENANCE_SOURCE_REF_RECORDED' },
+      { severity: 'satisfied', code: 'PACKAGE_PROVENANCE_BUILD_COMMAND_LABEL_RECORDED' },
+      { severity: 'gap', code: 'PACKAGE_PROVENANCE_PACKAGE_DIGEST_NOT_COMPUTED' },
+      { severity: 'gap', code: 'PACKAGE_PROVENANCE_ATTESTATION_NOT_GENERATED' },
+    ],
+    downstreamActionPlan: [
+      'Integrate this package provenance inputs record into enterprise readiness as a source fact.',
+      'Capture a package artifact digest in a future report-only slice without creating package signatures.',
+      'Validate provenance attestation structure before any real provenance attestation generation.',
+    ],
+    packagePublished: false,
+    publishingPerformed: false,
+    packageArtifactGeneratedByDevView: false,
+    packageArtifactGenerated: false,
+    packageTarballGenerated: false,
+    packageSigningPresent: false,
+    packageSigned: false,
+    packageSignaturePresent: false,
+    packageSignatureVerified: false,
+    sbomGeneratedByDevView: false,
+    sbomGenerated: false,
+    sbomAttested: false,
+    provenanceAttestationPresent: false,
+    provenanceAttested: false,
+    releaseProvenanceAttested: false,
+    npmProvenanceEnabled: false,
+    slsaProvenanceGenerated: false,
+    cryptographicSigningImplemented: false,
+    cryptographicSignaturePresent: false,
+    cryptographicSignatureVerified: false,
+    keyGenerated: false,
+    privateKeyStored: false,
+    keyManagementImplemented: false,
+    keyRegistryCreated: false,
+    trustRootCreated: false,
+    rbacEnforced: false,
+    permissionVerified: false,
+    rbacPermissionVerified: false,
+    ...safetyFlags(),
+    ...overrides,
+  }
+}
+
 function safetyFlags(): Record<string, unknown> {
   return {
     benchmarkExecuted: false,
@@ -2060,6 +2393,21 @@ function runEnterpriseWithReleaseProvenance(workspace: string, releaseProvenance
 function runEnterpriseWithSbomValidation(workspace: string, sbomValidation: string, output: string) {
   return runDevViewCli(
     ['security', 'report-enterprise-readiness', '--sbom-validation', sbomValidation, '--output', output, '--json'],
+    { cwd: workspace, pluginRoot },
+  )
+}
+
+function runEnterpriseWithPackageProvenanceInputs(workspace: string, packageProvenanceInputs: string, output: string) {
+  return runDevViewCli(
+    [
+      'security',
+      'report-enterprise-readiness',
+      '--package-provenance-inputs',
+      packageProvenanceInputs,
+      '--output',
+      output,
+      '--json',
+    ],
     { cwd: workspace, pluginRoot },
   )
 }

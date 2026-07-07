@@ -448,6 +448,8 @@ Options:
                        Package metadata source for security validate-sbom-artifact or record-package-provenance-inputs; defaults to the plugin package.json.
   --sbom-validation <file>
                        SBOM validation report for security report-enterprise-readiness or record-package-provenance-inputs; repeat or comma-separate for multiples.
+  --package-provenance-inputs <file>
+                       Package provenance inputs record for security report-enterprise-readiness; repeat or comma-separate for multiples.
   --source-ref <value>
                        Explicit source ref label for security record-package-provenance-inputs; metadata only, not verified.
   --build-command <value>

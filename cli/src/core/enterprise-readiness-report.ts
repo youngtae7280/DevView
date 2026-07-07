@@ -38,6 +38,8 @@ const RELEASE_PROVENANCE_READINESS_ROLE = 'devview-release-provenance-readiness-
 const RELEASE_PROVENANCE_READINESS_STATUS = 'devview-release-provenance-readiness-reported'
 const SBOM_VALIDATION_ROLE = 'devview-sbom-validation-report'
 const SBOM_VALIDATION_STATUS = 'devview-sbom-validation-passed'
+const PACKAGE_PROVENANCE_INPUTS_ROLE = 'devview-package-provenance-inputs-record'
+const PACKAGE_PROVENANCE_INPUTS_STATUS = 'devview-package-provenance-inputs-recorded'
 
 const unsafeAuthorityFields = [
   'enterpriseGateActivated',
@@ -94,6 +96,10 @@ const signingReadinessAuthorityFields = [
 ]
 
 const releaseProvenanceAuthorityFields = [
+  'packageArtifactGeneratedByDevView',
+  'packageArtifactGenerated',
+  'packageArtifactSupplied',
+  'packageTarballGenerated',
   'sbomGeneratedByDevView',
   'sbomGenerated',
   'sbomPresent',
@@ -124,6 +130,7 @@ export interface EnterpriseReadinessReportOptions {
   rbacPolicyValidation?: string
   releaseProvenanceReadiness?: string
   sbomValidation?: string
+  packageProvenanceInputs?: string
   output?: string
   markdown?: string
 }
@@ -307,6 +314,35 @@ export interface EnterpriseReadinessReport {
     packageSigningPresent: boolean | null
     provenanceAttested: boolean | null
   }>
+  sourcePackageProvenanceInputsRecords: Array<{
+    supplied: true
+    path: string
+    artifactRole: string | null
+    status: string | null
+    packageProvenanceInputsStatus: string | null
+    packageName: string | null
+    packageVersion: string | null
+    sourceArtifactDigestCount: number | null
+    sourceRefStatus: string | null
+    sourceRefSupplied: boolean
+    buildCommandLabelStatus: string | null
+    buildCommandLabelSupplied: boolean
+    buildCommandExecuted: boolean | null
+    packageDigestStatus: string | null
+    packageArtifactSupplied: boolean | null
+    packageArtifactSha256Present: boolean
+    provenanceAttestationStatus: string | null
+    releaseSurfaceSourceSupplied: boolean | null
+    releaseProvenanceReadinessSupplied: boolean | null
+    sbomValidationSupplied: boolean | null
+    findingCount: number | null
+    downstreamActionCount: number | null
+    packageSigned: boolean | null
+    packageSigningPresent: boolean | null
+    sbomGenerated: boolean | null
+    sbomAttested: boolean | null
+    provenanceAttested: boolean | null
+  }>
   releaseSurfaceReadiness: {
     status: 'satisfied' | 'failed' | 'not-supplied'
     packageAllowlistPresent: boolean
@@ -353,6 +389,28 @@ export interface EnterpriseReadinessReport {
     packageSignedCount: number
     packageSigningPresentCount: number
     provenanceAttestedCount: number
+    gaps: string[]
+  }
+  packageProvenanceInputsReadiness: {
+    status: 'gap' | 'inputs-recorded'
+    sourceCount: number
+    sourceStatuses: string[]
+    packageProvenanceInputsStatuses: string[]
+    packageNames: string[]
+    packageVersions: string[]
+    sourceArtifactDigestCount: number
+    sourceRefSuppliedCount: number
+    sourceRefStatuses: string[]
+    buildCommandLabelSuppliedCount: number
+    buildCommandLabelStatuses: string[]
+    packageDigestComputedCount: number
+    packageDigestStatuses: string[]
+    provenanceAttestationGeneratedCount: number
+    provenanceAttestationStatuses: string[]
+    releaseSurfaceSourceLinkedCount: number
+    sbomValidationLinkedCount: number
+    findingCount: number
+    downstreamActionCount: number
     gaps: string[]
   }
   extensionExecutionReadiness: {
@@ -504,6 +562,7 @@ interface LoadedSource {
     | 'rbac-policy-validation-report'
     | 'release-provenance-readiness-report'
     | 'sbom-validation-report'
+    | 'package-provenance-inputs-record'
   record: JsonRecord | null
   readError: string | null
 }
@@ -528,6 +587,7 @@ export async function reportEnterpriseReadiness(
   const rbacPolicyValidationPaths = parseList(options.rbacPolicyValidation)
   const releaseProvenanceReadinessPaths = parseList(options.releaseProvenanceReadiness)
   const sbomValidationPaths = parseList(options.sbomValidation)
+  const packageProvenanceInputsPaths = parseList(options.packageProvenanceInputs)
   const sourcePaths = [
     options.benchmarkGovernanceVerification,
     options.releaseSurfaceValidation,
@@ -538,6 +598,7 @@ export async function reportEnterpriseReadiness(
     ...rbacPolicyValidationPaths,
     ...releaseProvenanceReadinessPaths,
     ...sbomValidationPaths,
+    ...packageProvenanceInputsPaths,
   ].filter((entry): entry is string => Boolean(entry))
   await assertOutputAuthority(
     root,
@@ -572,6 +633,9 @@ export async function reportEnterpriseReadiness(
   const sbomValidationReports = await Promise.all(
     sbomValidationPaths.map((entry) => loadSource(root, entry, 'sbom-validation-report')),
   )
+  const packageProvenanceInputsRecords = await Promise.all(
+    packageProvenanceInputsPaths.map((entry) => loadSource(root, entry, 'package-provenance-inputs-record')),
+  )
   const blockingFindings = validateSources(
     benchmarkGovernance,
     releaseSurface,
@@ -582,6 +646,7 @@ export async function reportEnterpriseReadiness(
     rbacPolicyValidationReports,
     releaseProvenanceReadinessReports,
     sbomValidationReports,
+    packageProvenanceInputsRecords,
   )
   if (blockingFindings.length > 0) {
     throw new EnterpriseReadinessReportValidationError(
@@ -595,6 +660,7 @@ export async function reportEnterpriseReadiness(
         rbacPolicyValidationReports,
         releaseProvenanceReadinessReports,
         sbomValidationReports,
+        packageProvenanceInputsRecords,
         blockingFindings,
         true,
       ),
@@ -611,6 +677,7 @@ export async function reportEnterpriseReadiness(
     rbacPolicyValidationReports,
     releaseProvenanceReadinessReports,
     sbomValidationReports,
+    packageProvenanceInputsRecords,
     buildFindings(
       benchmarkGovernance,
       releaseSurface,
@@ -621,6 +688,7 @@ export async function reportEnterpriseReadiness(
       rbacPolicyValidationReports,
       releaseProvenanceReadinessReports,
       sbomValidationReports,
+      packageProvenanceInputsRecords,
     ),
   )
   const outputPath = resolveRepoPath(root, options.output ?? '')
@@ -645,6 +713,7 @@ function buildReport(
   rbacPolicyValidationReports: LoadedSource[],
   releaseProvenanceReadinessReports: LoadedSource[],
   sbomValidationReports: LoadedSource[],
+  packageProvenanceInputsRecords: LoadedSource[],
   findings: EnterpriseReadinessFinding[],
   blocked = false,
 ): EnterpriseReadinessReport {
@@ -661,6 +730,9 @@ function buildReport(
     .map((entry) => entry.record)
     .filter(isJsonRecord)
   const sbomValidationRecords = sbomValidationReports.map((entry) => entry.record).filter(isJsonRecord)
+  const packageProvenanceInputsJsonRecords = packageProvenanceInputsRecords
+    .map((entry) => entry.record)
+    .filter(isJsonRecord)
   const releaseStatus = releaseReadinessStatus(releaseRecord)
   const benchmarkStatus = benchmarkReadinessStatus(benchmarkRecord)
   const benchmarkDigestSummary = asRecord(benchmarkRecord?.sourceDigestVerificationSummary)
@@ -715,6 +787,9 @@ function buildReport(
       releaseProvenanceReadinessSummary(source),
     ),
     sourceSbomValidationReports: sbomValidationReports.map((source) => sbomValidationSummary(source)),
+    sourcePackageProvenanceInputsRecords: packageProvenanceInputsRecords.map((source) =>
+      packageProvenanceInputsSummary(source),
+    ),
     releaseSurfaceReadiness: {
       status: releaseStatus,
       packageAllowlistPresent: true,
@@ -818,6 +893,72 @@ function buildReport(
         .length,
       provenanceAttestedCount: sbomValidationRecords.filter((record) => booleanValue(record.provenanceAttested)).length,
       gaps: sbomValidationGaps(sbomValidationRecords),
+    },
+    packageProvenanceInputsReadiness: {
+      status: packageProvenanceInputsJsonRecords.length > 0 ? 'inputs-recorded' : 'gap',
+      sourceCount: packageProvenanceInputsJsonRecords.length,
+      sourceStatuses: uniqueStrings(packageProvenanceInputsJsonRecords.map((record) => stringValue(record.status))),
+      packageProvenanceInputsStatuses: uniqueStrings(
+        packageProvenanceInputsJsonRecords.map((record) => stringValue(record.packageProvenanceInputsStatus)),
+      ),
+      packageNames: uniqueStrings(
+        packageProvenanceInputsJsonRecords.map((record) =>
+          stringValue(asRecord(record.packageMetadataSummary)?.packageName),
+        ),
+      ),
+      packageVersions: uniqueStrings(
+        packageProvenanceInputsJsonRecords.map((record) =>
+          stringValue(asRecord(record.packageMetadataSummary)?.packageVersion),
+        ),
+      ),
+      sourceArtifactDigestCount: packageProvenanceInputsJsonRecords.reduce(
+        (total, record) => total + (arrayLength(record.sourceArtifactDigests) ?? 0),
+        0,
+      ),
+      sourceRefSuppliedCount: packageProvenanceInputsJsonRecords.filter(
+        (record) => stringValue(asRecord(record.sourceRefSummary)?.sourceRefStatus) === 'supplied-explicit-cli-input',
+      ).length,
+      sourceRefStatuses: uniqueStrings(
+        packageProvenanceInputsJsonRecords.map((record) =>
+          stringValue(asRecord(record.sourceRefSummary)?.sourceRefStatus),
+        ),
+      ),
+      buildCommandLabelSuppliedCount: packageProvenanceInputsJsonRecords.filter(
+        (record) =>
+          stringValue(asRecord(record.buildInputSummary)?.buildCommandLabelStatus) === 'supplied-metadata-only',
+      ).length,
+      buildCommandLabelStatuses: uniqueStrings(
+        packageProvenanceInputsJsonRecords.map((record) =>
+          stringValue(asRecord(record.buildInputSummary)?.buildCommandLabelStatus),
+        ),
+      ),
+      packageDigestComputedCount: packageProvenanceInputsJsonRecords.filter((record) =>
+        Boolean(stringValue(record.packageArtifactSha256)),
+      ).length,
+      packageDigestStatuses: uniqueStrings(
+        packageProvenanceInputsJsonRecords.map((record) => stringValue(record.packageDigestStatus)),
+      ),
+      provenanceAttestationGeneratedCount: packageProvenanceInputsJsonRecords.filter(
+        (record) => stringValue(record.provenanceAttestationStatus) !== 'not-generated',
+      ).length,
+      provenanceAttestationStatuses: uniqueStrings(
+        packageProvenanceInputsJsonRecords.map((record) => stringValue(record.provenanceAttestationStatus)),
+      ),
+      releaseSurfaceSourceLinkedCount: packageProvenanceInputsJsonRecords.filter((record) =>
+        booleanValue(asRecord(record.releaseSurfaceSourceSummary)?.supplied),
+      ).length,
+      sbomValidationLinkedCount: packageProvenanceInputsJsonRecords.filter((record) =>
+        booleanValue(asRecord(record.sbomValidationSummary)?.supplied),
+      ).length,
+      findingCount: packageProvenanceInputsJsonRecords.reduce(
+        (total, record) => total + (arrayLength(record.packageProvenanceFindings) ?? 0),
+        0,
+      ),
+      downstreamActionCount: packageProvenanceInputsJsonRecords.reduce(
+        (total, record) => total + (arrayLength(record.downstreamActionPlan) ?? 0),
+        0,
+      ),
+      gaps: packageProvenanceInputsGaps(packageProvenanceInputsJsonRecords),
     },
     extensionExecutionReadiness: {
       status: 'partial',
@@ -1034,6 +1175,7 @@ function validateSources(
   rbacPolicyValidationReports: LoadedSource[],
   releaseProvenanceReadinessReports: LoadedSource[],
   sbomValidationReports: LoadedSource[],
+  packageProvenanceInputsRecords: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
   for (const source of [
@@ -1046,6 +1188,7 @@ function validateSources(
     ...rbacPolicyValidationReports,
     ...releaseProvenanceReadinessReports,
     ...sbomValidationReports,
+    ...packageProvenanceInputsRecords,
   ].filter((entry): entry is LoadedSource => Boolean(entry))) {
     if (source.readError) {
       findings.push(blockingFinding('ENTERPRISE_READINESS_SOURCE_READ_FAILED', source.readError, source.relativePath))
@@ -1090,8 +1233,10 @@ function validateSources(
       validateRbacPolicyValidationSource(source, record, findings)
     } else if (source.sourceKind === 'release-provenance-readiness-report') {
       validateReleaseProvenanceReadinessSource(source, record, findings)
-    } else {
+    } else if (source.sourceKind === 'sbom-validation-report') {
       validateSbomValidationSource(source, record, findings)
+    } else {
+      validatePackageProvenanceInputsSource(source, record, findings)
     }
     for (const hit of collectUnsafeAuthorityHits(record)) {
       findings.push({
@@ -1116,6 +1261,7 @@ function buildFindings(
   rbacPolicyValidationReports: LoadedSource[],
   releaseProvenanceReadinessReports: LoadedSource[],
   sbomValidationReports: LoadedSource[],
+  packageProvenanceInputsRecords: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
   const benchmarkRecord = benchmarkGovernance?.record ?? null
@@ -1131,6 +1277,9 @@ function buildFindings(
     .map((entry) => entry.record)
     .filter(isJsonRecord)
   const sbomValidationRecords = sbomValidationReports.map((entry) => entry.record).filter(isJsonRecord)
+  const packageProvenanceInputsJsonRecords = packageProvenanceInputsRecords
+    .map((entry) => entry.record)
+    .filter(isJsonRecord)
 
   if (!releaseSurface) {
     findings.push({
@@ -1301,6 +1450,23 @@ function buildFindings(
       message:
         'Static wrapped SBOM validation source is recorded as structural source-fact validation, not as SBOM generation or attestation.',
       path: sbomValidationReports[0]?.relativePath,
+    })
+  }
+
+  if (packageProvenanceInputsJsonRecords.length === 0) {
+    findings.push({
+      severity: 'gap',
+      code: 'ENTERPRISE_PACKAGE_PROVENANCE_INPUTS_NOT_SUPPLIED',
+      message:
+        'Package provenance inputs record was not supplied; package/source/build input digests are not source-governed.',
+    })
+  } else {
+    findings.push({
+      severity: 'satisfied',
+      code: 'ENTERPRISE_PACKAGE_PROVENANCE_INPUTS_RECORDED',
+      message:
+        'Package/source/build input facts are recorded as provenance inputs only, not as package artifact digest or provenance attestation.',
+      path: packageProvenanceInputsRecords[0]?.relativePath,
     })
   }
 
@@ -1592,6 +1758,62 @@ function validateSbomValidationSource(
   }
 }
 
+function validatePackageProvenanceInputsSource(
+  source: LoadedSource,
+  record: JsonRecord,
+  findings: EnterpriseReadinessFinding[],
+): void {
+  if (record.artifactRole !== PACKAGE_PROVENANCE_INPUTS_ROLE || record.status !== PACKAGE_PROVENANCE_INPUTS_STATUS) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_PACKAGE_PROVENANCE_INPUTS_SOURCE_ROLE_STATUS_INVALID',
+        `${source.relativePath} must be ${PACKAGE_PROVENANCE_INPUTS_ROLE} with recorded status.`,
+        source.relativePath,
+      ),
+    )
+  }
+  if (record.packageDigestStatus !== 'not-computed-no-package-artifact-supplied') {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_PACKAGE_PROVENANCE_PACKAGE_DIGEST_UNSUPPORTED',
+        `${source.relativePath} must keep package digest status as not-computed for v1 enterprise source consumption.`,
+        source.relativePath,
+        'packageDigestStatus',
+      ),
+    )
+  }
+  if (stringValue(record.packageArtifactSha256)) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_PACKAGE_PROVENANCE_PACKAGE_DIGEST_UNSUPPORTED',
+        `${source.relativePath} must not carry a package artifact sha256 in v1 enterprise source consumption.`,
+        source.relativePath,
+        'packageArtifactSha256',
+      ),
+    )
+  }
+  if (record.provenanceAttestationStatus !== 'not-generated') {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_PACKAGE_PROVENANCE_ATTESTATION_UNSUPPORTED',
+        `${source.relativePath} must keep provenance attestation status as not-generated for v1 enterprise source consumption.`,
+        source.relativePath,
+        'provenanceAttestationStatus',
+      ),
+    )
+  }
+  for (const hit of collectTrueFieldHits(record, releaseProvenanceAuthorityFields)) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_PACKAGE_PROVENANCE_INPUTS_AUTHORITY_CLAIM_UNSUPPORTED',
+        `${source.relativePath} claims package/SBOM/signing/provenance authority field ${hit.field}: true; enterprise v1 only accepts package provenance input source facts.`,
+        source.relativePath,
+        hit.field,
+      ),
+    )
+  }
+}
+
 async function loadSource(
   root: string,
   requestedPath: string,
@@ -1682,6 +1904,7 @@ function renderMarkdown(report: EnterpriseReadinessReport): string {
     `- rbacPolicyValidationReports: ${report.rbacAndSigningReadiness.rbacPolicyValidationReportCount}`,
     `- releaseProvenanceReadinessReports: ${report.releaseProvenanceReadiness.sourceCount}`,
     `- sbomValidationReports: ${report.sbomValidationReadiness.sourceCount}`,
+    `- packageProvenanceInputsRecords: ${report.packageProvenanceInputsReadiness.sourceCount}`,
     '',
     '## Findings',
     ...report.enterpriseReadinessFindings.map((entry) => `- [${entry.severity}] ${entry.code}: ${entry.message}`),
@@ -1787,6 +2010,34 @@ function sbomValidationGaps(records: JsonRecord[]): string[] {
     gaps.push('No SBOM validation source reports component coverage.')
   }
   gaps.push('SBOM attestation, package signing, and provenance attestation remain missing.')
+  return gaps
+}
+
+function packageProvenanceInputsGaps(records: JsonRecord[]): string[] {
+  if (records.length === 0) {
+    return ['Package provenance inputs record is not supplied.']
+  }
+  const gaps = [
+    'Package provenance inputs are source facts only and do not create package artifacts or provenance attestations.',
+  ]
+  if (
+    !records.some(
+      (record) => stringValue(asRecord(record.sourceRefSummary)?.sourceRefStatus) === 'supplied-explicit-cli-input',
+    )
+  ) {
+    gaps.push('No package provenance input source supplies an explicit source ref label.')
+  }
+  if (
+    !records.some(
+      (record) => stringValue(asRecord(record.buildInputSummary)?.buildCommandLabelStatus) === 'supplied-metadata-only',
+    )
+  ) {
+    gaps.push('No package provenance input source supplies a build command label.')
+  }
+  if (!records.some((record) => arrayLength(record.sourceArtifactDigests))) {
+    gaps.push('No package provenance input source records source artifact digests.')
+  }
+  gaps.push('Package artifact digest, provenance attestation, package signing, and CI governance remain missing.')
   return gaps
 }
 
@@ -2046,6 +2297,47 @@ function sbomValidationSummary(source: LoadedSource): EnterpriseReadinessReport[
   }
 }
 
+function packageProvenanceInputsSummary(
+  source: LoadedSource,
+): EnterpriseReadinessReport['sourcePackageProvenanceInputsRecords'][number] {
+  const record = source.record ?? {}
+  const packageMetadata = asRecord(record.packageMetadataSummary)
+  const sourceRef = asRecord(record.sourceRefSummary)
+  const buildInput = asRecord(record.buildInputSummary)
+  const releaseSurface = asRecord(record.releaseSurfaceSourceSummary)
+  const releaseProvenance = asRecord(record.releaseProvenanceReadinessSummary)
+  const sbomValidation = asRecord(record.sbomValidationSummary)
+  return {
+    supplied: true,
+    path: source.relativePath,
+    artifactRole: stringValue(record.artifactRole),
+    status: stringValue(record.status),
+    packageProvenanceInputsStatus: stringValue(record.packageProvenanceInputsStatus),
+    packageName: stringValue(packageMetadata?.packageName),
+    packageVersion: stringValue(packageMetadata?.packageVersion),
+    sourceArtifactDigestCount: arrayLength(record.sourceArtifactDigests),
+    sourceRefStatus: stringValue(sourceRef?.sourceRefStatus),
+    sourceRefSupplied: stringValue(sourceRef?.sourceRefStatus) === 'supplied-explicit-cli-input',
+    buildCommandLabelStatus: stringValue(buildInput?.buildCommandLabelStatus),
+    buildCommandLabelSupplied: stringValue(buildInput?.buildCommandLabelStatus) === 'supplied-metadata-only',
+    buildCommandExecuted: booleanOrNull(buildInput?.buildCommandExecuted),
+    packageDigestStatus: stringValue(record.packageDigestStatus),
+    packageArtifactSupplied: booleanOrNull(record.packageArtifactSupplied),
+    packageArtifactSha256Present: Boolean(stringValue(record.packageArtifactSha256)),
+    provenanceAttestationStatus: stringValue(record.provenanceAttestationStatus),
+    releaseSurfaceSourceSupplied: booleanOrNull(releaseSurface?.supplied),
+    releaseProvenanceReadinessSupplied: booleanOrNull(releaseProvenance?.supplied),
+    sbomValidationSupplied: booleanOrNull(sbomValidation?.supplied),
+    findingCount: arrayLength(record.packageProvenanceFindings),
+    downstreamActionCount: arrayLength(record.downstreamActionPlan),
+    packageSigned: booleanOrNull(record.packageSigned),
+    packageSigningPresent: booleanOrNull(record.packageSigningPresent),
+    sbomGenerated: booleanOrNull(record.sbomGenerated),
+    sbomAttested: booleanOrNull(record.sbomAttested),
+    provenanceAttested: booleanOrNull(record.provenanceAttested),
+  }
+}
+
 function payloadDigestVerifiedCount(records: JsonRecord[]): number {
   return records.filter((record) => booleanValue(asRecord(record.payloadVerification)?.digestMatches)).length
 }
@@ -2087,6 +2379,9 @@ function downstreamActionPlan(findings: EnterpriseReadinessFinding[]): string[] 
   }
   if (openFindings.some((entry) => entry.code.includes('SBOM_VALIDATION'))) {
     actions.add('Attach structural SBOM validation before release SBOM/provenance review.')
+  }
+  if (openFindings.some((entry) => entry.code.includes('PACKAGE_PROVENANCE_INPUTS'))) {
+    actions.add('Attach package provenance inputs before package artifact digest or attestation planning.')
   }
   if (openFindings.some((entry) => entry.code.includes('RBAC_POLICY_VALIDATION'))) {
     actions.add('Attach RBAC policy validation before planning RBAC enforcement or signed policy rollout.')

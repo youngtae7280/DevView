@@ -263,6 +263,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     sbom: undefined as string | undefined,
     packageJson: undefined as string | undefined,
     sbomValidation: undefined as string | undefined,
+    packageProvenanceInputs: undefined as string | undefined,
     sourceRef: undefined as string | undefined,
     buildCommand: undefined as string | undefined,
     rbacReadiness: undefined as string | undefined,
@@ -1429,6 +1430,15 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--sbom-validation requires one or more file paths.' }
       }
       options.sbomValidation = options.sbomValidation ? `${options.sbomValidation},${value}` : value
+      index += 1
+    } else if (arg === '--package-provenance-inputs') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--package-provenance-inputs requires one or more file paths.' }
+      }
+      options.packageProvenanceInputs = options.packageProvenanceInputs
+        ? `${options.packageProvenanceInputs},${value}`
+        : value
       index += 1
     } else if (arg === '--source-ref') {
       const value = argv[index + 1]
