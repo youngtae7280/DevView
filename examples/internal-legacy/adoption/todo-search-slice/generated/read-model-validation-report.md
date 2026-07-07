@@ -6,9 +6,9 @@ Evidence level: validator-backed
 
 ## Run Identity
 
-- Validated at: 2026-06-29T08:46:09.641Z
+- Validated at: 2026-07-07T03:33:55.139Z
 - Command identity: `devview graph read-model validate --slice examples/internal-legacy/adoption/todo-search-slice`
-- Source commit: a1c4f10
+- Source commit: d4f235a
 - Source slice: `examples/internal-legacy/adoption/todo-search-slice`
 - Profile id: `todo-search-selected-slice`
 - Source layout: flat-demo-support

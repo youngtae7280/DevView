@@ -183,7 +183,7 @@ export async function buildGraphExecutionContractReport(
         'node dist/cli/index.js graph read-model validate --all --json',
         'node dist/cli/index.js graph read-model report-health --json',
       ],
-      compatibilityExecutionCommands: ['pbe acep check', 'pbe acep ready', 'pbe execution start'],
+      compatibilityExecutionCommands: ['devview acep check', 'devview acep ready', 'devview execution start'],
       sequentialDefault: true,
     },
     escalationTriggers: [

@@ -4,9 +4,9 @@ Status: generated-present / evidence-only / source-authority-unchanged
 
 ## Run Identity
 
-- Generated at: 2026-06-29T08:46:09.238Z
+- Generated at: 2026-07-07T03:08:40.184Z
 - Command identity: `devview graph read-model generate --slice examples/internal-legacy/adoption/todo-search-slice`
-- Source commit: a1c4f10
+- Source commit: d4f235a
 - Source slice: `examples/internal-legacy/adoption/todo-search-slice`
 
 ## Boundary
@@ -32,9 +32,9 @@ Generated output is reviewable Evidence only and cannot change source authority 
 - examples/internal-legacy/adoption/todo-search-slice/approval-brief.md: present
 - examples/internal-legacy/adoption/todo-search-slice/evidence-exceptions.md: present
 - examples/internal-legacy/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json: present
-- docs/concept/scoped-source-authority-pilot-execution-record.md: present
-- docs/concept/scoped-source-authority-pilot-review.md: present
-- docs/concept/scoped-source-authority-pilot-active-observation.md: present
+- docs/internal-legacy/concept/scoped-source-authority-pilot-execution-record.md: present
+- docs/internal-legacy/concept/scoped-source-authority-pilot-review.md: present
+- docs/internal-legacy/concept/scoped-source-authority-pilot-active-observation.md: present
 - examples/internal-legacy/adoption/compatibility-mismatch-slice/compatibility-control-node.md: present
 - examples/internal-legacy/adoption/todo-search-slice/graph-source.json: present
 

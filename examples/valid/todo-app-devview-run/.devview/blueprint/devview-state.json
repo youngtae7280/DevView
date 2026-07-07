@@ -49,62 +49,62 @@
       {
         "from": "INIT",
         "to": "RPD_DONE",
-        "command": "pbe rpd close",
+        "command": "devview rpd close",
         "at": "2026-06-12T09:10:00.000Z"
       },
       {
         "from": "RPD_DONE",
         "to": "WPD_DONE",
-        "command": "pbe wpd close",
+        "command": "devview wpd close",
         "at": "2026-06-12T10:10:00.000Z"
       },
       {
         "from": "WPD_DONE",
         "to": "VD_DONE",
-        "command": "pbe vd close",
+        "command": "devview vd close",
         "at": "2026-06-12T11:10:00.000Z"
       },
       {
         "from": "VD_DONE",
         "to": "SCOPE_SELECTED",
-        "command": "pbe scope select",
+        "command": "devview scope select",
         "at": "2026-06-12T11:20:00.000Z"
       },
       {
         "from": "SCOPE_SELECTED",
         "to": "ACEP_READY",
-        "command": "pbe acep ready",
+        "command": "devview acep ready",
         "at": "2026-06-12T11:30:00.000Z"
       },
       {
         "from": "ACEP_READY",
         "to": "EXECUTION_IN_PROGRESS",
-        "command": "pbe execution start",
+        "command": "devview execution start",
         "at": "2026-06-12T11:40:00.000Z"
       },
       {
         "from": "EXECUTION_IN_PROGRESS",
         "to": "ACEP_RUN_DONE",
-        "command": "pbe execution complete",
+        "command": "devview execution complete",
         "at": "2026-06-12T12:10:00.000Z"
       },
       {
         "from": "ACEP_RUN_DONE",
         "to": "WAITING_REVIEW_RESULT",
-        "command": "pbe review submit",
+        "command": "devview review submit",
         "at": "2026-06-12T12:20:00.000Z"
       },
       {
         "from": "WAITING_REVIEW_RESULT",
         "to": "ACCEPTED",
-        "command": "pbe accept",
+        "command": "devview accept",
         "at": "2026-06-12T12:30:00.000Z",
         "actor": "user"
       },
       {
         "from": "ACCEPTED",
         "to": "DONE",
-        "command": "pbe accept",
+        "command": "devview accept",
         "at": "2026-06-12T12:30:00.000Z",
         "actor": "user"
       }
@@ -118,7 +118,7 @@
     "evidenceTree": ".devview/evidence/evidence-tree.json",
     "acceptanceTree": ".devview/control/acceptance-tree.json",
     "requirementTree": ".devview/blueprint/requirement-tree.json",
-    "pbeRoutingContract": ".devview/blueprint/pbe-routing-contract.md"
+    "devviewRoutingContract": ".devview/blueprint/devview-routing-contract.md"
   },
   "updatedAt": "2026-06-12T12:30:00.000Z"
 }

@@ -11,6 +11,8 @@ const requiredExampleFiles = [
   'examples/valid/todo-app-devview-run/.devview/tree/work-tree.json',
   'examples/valid/todo-app-devview-run/.devview/tree/test-tree.json',
   'examples/valid/todo-app-devview-run/.devview/evidence/evidence-tree.json',
+  'examples/valid/todo-app-devview-run/.devview/blueprint/devview-state.json',
+  'examples/valid/todo-app-devview-run/.devview/blueprint/devview-routing-contract.md',
   'examples/valid/todo-app-devview-run/.devview/control/acceptance-tree.json',
   'examples/valid/todo-app-devview-run/.devview/control/change-tree.json',
   'examples/valid/todo-app-devview-run/.devview/control/impact-tree.json',

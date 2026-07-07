@@ -1,43 +1,43 @@
-# Architecture Runway Gate Message Template
+﻿# Architecture Runway Gate Message Template
 
 ```text
-[PBE 상태 보고]
+[DevView status report]
 
-현재 단계:
+?占쎌옱 ?占쎄퀎:
 - state: SCOPE_SELECTED
 - currentGate: architecture_runway
 - nextStep: architecture_runway
 
-방금 완료한 작업:
+諛⑷툑 ?占쎈즺???占쎌뾽:
 - Implementation scope selected.
 - Required foundation or high-impact future dependency identified.
 
-생성/갱신된 산출물:
+?占쎌꽦/媛깆떊???占쎌텧占?
 - .pbe/blueprint/foundation-contract.md
 - .pbe/blueprint/source-of-truth-matrix.md
-- .pbe/blueprint/pbe-state.json
+- .devview/blueprint/devview-state.json
 
-검증:
+寃占?
 - {validation_summary}
 
-왜 멈췄는가:
-- 현재 구현 전에 필요한 foundation 작업을 사용자가 승인해야 합니다.
+??硫덉톬?占쏙옙?:
+- ?占쎌옱 援ы쁽 ?占쎌뿉 ?占쎌슂??foundation ?占쎌뾽???占쎌슜?占쏙옙? ?占쎌씤?占쎌빞 ?占쎈땲??
 
-다음 동작:
-- foundation 승인이 되면 Plan Execution부터 자동 진행합니다.
+?占쎌쓬 ?占쎌옉:
+- foundation ?占쎌씤???占쎈㈃ Plan Execution遺???占쎈룞 吏꾪뻾?占쎈땲??
 
-사용자가 답할 수 있는 말:
-- 승인/진행: "구조만 먼저 잡고 진행해주세요"
-- 범위 수정: "foundation 없이 선택 범위만 진행해주세요"
-- 질문: "foundation을 건너뛰면 어떤 위험이 있나요?"
-- 중단: "중단해주세요"
+?占쎌슜?占쏙옙? ?占쏀븷 ???占쎈뒗 占?
+- ?占쎌씤/吏꾪뻾: "援ъ“占?癒쇽옙? ?占쎄퀬 吏꾪뻾?占쎌＜?占쎌슂"
+- 踰붿쐞 ?占쎌젙: "foundation ?占쎌씠 ?占쏀깮 踰붿쐞占?吏꾪뻾?占쎌＜?占쎌슂"
+- 吏덈Ц: "foundation??嫄대꼫?占쎈㈃ ?占쎈뼡 ?占쏀뿕???占쎈굹??"
+- 以묐떒: "以묐떒?占쎌＜?占쎌슂"
 
-추천 답변:
-"구조만 먼저 잡고 진행해주세요"
+Recommended reply:
+"援ъ“占?癒쇽옙? ?占쎄퀬 吏꾪뻾?占쎌＜?占쎌슂"
 ```
 
 ```text
-[Codex 메모]
+[Codex memo]
 
 {foundation_reasoning}
 ```

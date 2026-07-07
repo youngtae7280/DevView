@@ -38,4 +38,4 @@
 
 ## Next CLI Command
 
-`pbe rpd check`
+`devview rpd check`

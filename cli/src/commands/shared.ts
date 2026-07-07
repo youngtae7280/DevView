@@ -1,7 +1,13 @@
-import { execFileSync } from 'node:child_process'
+﻿import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
-import { artifactPath, defaultArtifacts, type ArtifactKey } from '../core/project.js'
+import {
+  artifactPath,
+  canonicalStateArtifactRelativePath,
+  defaultArtifacts,
+  stateArtifactPath,
+  type ArtifactKey,
+} from '../core/project.js'
 import { readJsonSafe, relativePath } from '../core/fs.js'
 import { normalizePbeState, PBE_STATE, pbeStates, type PbeState } from '../core/state-machine.js'
 import type { CliEnvironment, CliOptions, CommandResult, ValidationIssue } from '../core/types.js'
@@ -34,7 +40,7 @@ export function invalidCommand(message: string): CommandResult {
         code: 'INVALID_COMMAND',
         severity: 'error',
         message,
-        suggestedFix: 'Run `pbe --help` to see supported commands.',
+        suggestedFix: 'Run `devview --help` to see supported commands.',
       }),
     ],
   }
@@ -80,7 +86,7 @@ export function runNodeScript(scriptPath: string, cwd: string): { ok: boolean; o
 }
 
 export async function loadState(root: string): Promise<Record<string, unknown> | null> {
-  const parsed = await readJsonSafe<Record<string, unknown>>(artifactPath(root, 'pbeState'))
+  const parsed = await readJsonSafe<Record<string, unknown>>(stateArtifactPath(root))
   return parsed.ok ? parsed.value : null
 }
 
@@ -97,7 +103,7 @@ export function implementationScopeIssues(state: Record<string, unknown> | null)
       validator: 'Gate',
       code: 'IMPLEMENTATION_SCOPE_UNCONFIRMED',
       severity: 'error',
-      file: defaultArtifacts.pbeState,
+      file: canonicalStateArtifactRelativePath(''),
       message: `Implementation scope is not confirmed. Current state: ${rawStateValue || 'unknown'}.`,
       suggestedFix: 'Stop at the implementation scope gate and ask the user to select the current slice scope.',
     }),
@@ -114,7 +120,7 @@ export function preAcepCheckpointIssues(state: Record<string, unknown> | null): 
     ...entry,
     message: `ACEP cannot be marked ready before the checkpoint is complete. ${entry.message}`,
     suggestedFix:
-      'Run `pbe dependency audit complete`, `pbe plan execution complete`, `pbe coverage audit complete`, and `pbe ux audit complete` in order before `pbe acep ready`.',
+      'Run `devview dependency audit complete`, `devview plan execution complete`, `devview coverage audit complete`, and `devview ux audit complete` in order before `devview acep ready`.',
   }))
 }
 
@@ -132,10 +138,10 @@ export function requiredCompletedStepIssues(
         validator: 'Checkpoint',
         code: 'CHECKPOINT_STEP_MISSING',
         severity: 'error',
-        file: defaultArtifacts.pbeState,
+        file: canonicalStateArtifactRelativePath(''),
         nodeId: step,
         message: `Required checkpoint step is missing from autoflow.completedSteps: ${step}.`,
-        suggestedFix: `Run the PBE CLI checkpoint command that records ${step}.`,
+        suggestedFix: `Run the DevView CLI checkpoint command that records ${step}.`,
       }),
     )
 }
@@ -172,7 +178,7 @@ export function uiUxApprovalIssues(root: string, state: Record<string, unknown> 
       validator: 'Gate',
       code: 'UI_UX_CONFIRM_REQUIRED',
       severity: 'error',
-      file: defaultArtifacts.pbeState,
+      file: canonicalStateArtifactRelativePath(''),
       message: `UI/UX work cannot enter WPD before UI_UX_APPROVED. Current state: ${rawState || 'unknown'}.`,
       suggestedFix: 'Stop at the UI/UX confirmation gate, get user approval, then continue to Visual Contract or WPD.',
     }),
@@ -193,7 +199,7 @@ export function uiUxConfirmationArtifactIssues(root: string): ValidationIssue[] 
         file: defaultArtifacts.uiUxConfirmation,
         message: 'UI/UX approval requires a confirmation artifact before the state can advance.',
         suggestedFix:
-          'Create .pbe/blueprint/ui-ux-confirmation.md from the user-approved preview, then rerun `pbe ui approve`.',
+          'Create .pbe/blueprint/ui-ux-confirmation.md from the user-approved preview, then rerun `devview ui approve`.',
       }),
     ]
   }
@@ -207,7 +213,7 @@ export function uiUxConfirmationArtifactIssues(root: string): ValidationIssue[] 
         file: defaultArtifacts.uiUxConfirmation,
         message: 'UI/UX confirmation artifact still contains a non-approved status.',
         suggestedFix:
-          'Resolve UI/UX revision or blocker items and record the user-approved direction before rerunning `pbe ui approve`.',
+          'Resolve UI/UX revision or blocker items and record the user-approved direction before rerunning `devview ui approve`.',
       }),
     ]
   }
@@ -219,7 +225,8 @@ export function uiUxConfirmationArtifactIssues(root: string): ValidationIssue[] 
         severity: 'error',
         file: defaultArtifacts.uiUxConfirmation,
         message: 'UI/UX confirmation artifact still says user confirmation is pending.',
-        suggestedFix: 'Record the explicit user approval and confirmed direction before rerunning `pbe ui approve`.',
+        suggestedFix:
+          'Record the explicit user approval and confirmed direction before rerunning `devview ui approve`.',
       }),
     ]
   }

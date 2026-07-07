@@ -1,5 +1,10 @@
 import { existsSync } from 'node:fs'
-import { artifactPath, defaultArtifacts } from '../core/project.js'
+import {
+  artifactPath,
+  canonicalStateArtifactRelativePath,
+  defaultArtifacts,
+  stateArtifactPath,
+} from '../core/project.js'
 import { readJsonSafe } from '../core/fs.js'
 import type { ValidationIssue } from '../core/types.js'
 import { issue } from '../core/types.js'
@@ -33,7 +38,7 @@ export async function validateRevisionComplete(root: string, changeId: string | 
   const contextResult = await buildRevisionContext(root, changeId)
   const issues = [...contextResult.issues]
 
-  const statePath = artifactPath(root, 'pbeState')
+  const statePath = stateArtifactPath(root)
   const state = await readJsonSafe<JsonObject>(statePath)
   if (!state.ok) {
     issues.push(
@@ -41,9 +46,9 @@ export async function validateRevisionComplete(root: string, changeId: string | 
         validator: 'Revision',
         code: 'PBE_STATE_INVALID_JSON',
         severity: 'error',
-        file: defaultArtifacts.pbeState,
-        message: `Could not parse pbe-state.json: ${state.error}`,
-        suggestedFix: 'Fix pbe-state.json before completing revision.',
+        file: canonicalStateArtifactRelativePath(root),
+        message: `Could not parse devview-state.json: ${state.error}`,
+        suggestedFix: 'Fix devview-state.json before completing revision.',
       }),
     )
     return issues
@@ -56,11 +61,11 @@ export async function validateRevisionComplete(root: string, changeId: string | 
         validator: 'Revision',
         code: 'REVISION_CONTEXT_MISSING',
         severity: 'error',
-        file: defaultArtifacts.pbeState,
+        file: canonicalStateArtifactRelativePath(root),
         nodeId: changeId,
-        message: 'Revision completion requires an activeRevision context created by `pbe revision start`.',
-        suggestedFix: 'Run `pbe revision start --change <id>` before completing revision.',
-        nextCommand: changeId ? `pbe revision start --change ${changeId}` : 'pbe revision start',
+        message: 'Revision completion requires an activeRevision context created by `devview revision start`.',
+        suggestedFix: 'Run `devview revision start --change <id>` before completing revision.',
+        nextCommand: changeId ? `devview revision start --change ${changeId}` : 'devview revision start',
       }),
     )
     return issues
@@ -72,11 +77,11 @@ export async function validateRevisionComplete(root: string, changeId: string | 
         validator: 'Revision',
         code: 'REVISION_CHANGE_MISMATCH',
         severity: 'error',
-        file: defaultArtifacts.pbeState,
+        file: canonicalStateArtifactRelativePath(root),
         nodeId: changeId,
         message: `Active revision is for ${activeRevision.changeNodeId}, but command requested ${changeId}.`,
         suggestedFix: 'Complete the active revision change or restart revision with the intended Change node.',
-        nextCommand: `pbe revision start --change ${changeId}`,
+        nextCommand: `devview revision start --change ${changeId}`,
       }),
     )
   }
@@ -87,11 +92,11 @@ export async function validateRevisionComplete(root: string, changeId: string | 
         validator: 'Revision',
         code: 'REVISION_CONTEXT_NOT_IN_PROGRESS',
         severity: 'error',
-        file: defaultArtifacts.pbeState,
+        file: canonicalStateArtifactRelativePath(root),
         nodeId: activeRevision.changeNodeId,
         message: `Active revision context is not in progress: ${activeRevision.status}.`,
         suggestedFix: 'Start a fresh revision context before completing revision work.',
-        nextCommand: `pbe revision start --change ${activeRevision.changeNodeId}`,
+        nextCommand: `devview revision start --change ${activeRevision.changeNodeId}`,
       }),
     )
   }
@@ -102,11 +107,11 @@ export async function validateRevisionComplete(root: string, changeId: string | 
         validator: 'Revision',
         code: 'REVISION_ACTIVE_CONTEXT_EMPTY',
         severity: 'error',
-        file: defaultArtifacts.pbeState,
+        file: canonicalStateArtifactRelativePath(root),
         nodeId: activeRevision.changeNodeId,
         message: `Active revision ${activeRevision.changeNodeId} has no affected Product/Work/Test/Evidence/Acceptance ids.`,
         suggestedFix: 'Re-run Impact analysis with explicit affected ids, then restart revision.',
-        nextCommand: `pbe impact analyze --change ${activeRevision.changeNodeId}`,
+        nextCommand: `devview impact analyze --change ${activeRevision.changeNodeId}`,
       }),
     )
   }
@@ -128,7 +133,7 @@ export async function buildRevisionContext(
           code: 'REVISION_CHANGE_REQUIRED',
           severity: 'error',
           message: 'Revision command requires --change <CH-*>.',
-          suggestedFix: 'Pass the Change node id created by `pbe change create`.',
+          suggestedFix: 'Pass the Change node id created by `devview change create`.',
         }),
       ],
     }
@@ -146,7 +151,7 @@ export async function buildRevisionContext(
           severity: 'error',
           file: defaultArtifacts.changeTree,
           message: 'Revision requires Change Tree.',
-          suggestedFix: 'Run `pbe init` or restore change-tree.json.',
+          suggestedFix: 'Run `devview init` or restore change-tree.json.',
         }),
       ],
     }
@@ -161,7 +166,7 @@ export async function buildRevisionContext(
           severity: 'error',
           file: defaultArtifacts.impactTree,
           message: 'Revision requires Impact Tree.',
-          suggestedFix: 'Run `pbe impact analyze --change <id> ...` before starting revision.',
+          suggestedFix: 'Run `devview impact analyze --change <id> ...` before starting revision.',
         }),
       ],
     }
@@ -230,7 +235,7 @@ export async function buildRevisionContext(
           file: defaultArtifacts.impactTree,
           nodeId: changeId,
           message: `Change node ${changeId} has no Impact analysis.`,
-          suggestedFix: 'Run `pbe impact analyze --change <id> --product/--work/--test/--evidence ...` first.',
+          suggestedFix: 'Run `devview impact analyze --change <id> --product/--work/--test/--evidence ...` first.',
         }),
       ],
     }

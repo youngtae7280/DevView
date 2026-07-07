@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs'
-import { artifactPath, defaultArtifacts } from '../core/project.js'
+import { artifactPath, artifactRelativePath, defaultArtifacts, stateArtifactPath } from '../core/project.js'
 import { readJsonSafe } from '../core/fs.js'
 import { normalizePbeState } from '../core/state-machine.js'
 import type { ValidationIssue } from '../core/types.js'
@@ -52,7 +52,7 @@ export async function readJsonIfExists(
   root: string,
   key: Parameters<typeof artifactPath>[1],
 ): Promise<JsonObject | null> {
-  const filePath = artifactPath(root, key)
+  const filePath = key === 'pbeState' || key === 'devviewState' ? stateArtifactPath(root) : artifactPath(root, key)
   if (!existsSync(filePath)) {
     return null
   }
@@ -67,7 +67,7 @@ export function missingIssue(validator: string, code: string, file: string, mess
     severity: 'error',
     file,
     message,
-    suggestedFix: 'Generate or restore the missing PBE artifact before entering this stage.',
+    suggestedFix: 'Generate or restore the missing DevView artifact before entering this stage.',
   })
 }
 
@@ -379,7 +379,11 @@ export function validateVisualAudit(
 }
 
 export function readVisualAudit(root: string): { relativePath: string; content: string } | null {
-  for (const relativePath of [defaultArtifacts.visualAudit, legacyVisualAuditPath]) {
+  for (const relativePath of [
+    artifactRelativePath(root, 'visualAudit'),
+    defaultArtifacts.visualAudit,
+    legacyVisualAuditPath,
+  ]) {
     const filePath = `${root}/${relativePath}`.replaceAll('\\', '/')
     if (existsSync(filePath)) {
       return {

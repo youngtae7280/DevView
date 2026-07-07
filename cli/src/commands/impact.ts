@@ -17,8 +17,8 @@ export async function impactAnalyzeCommand(context: CommandContext): Promise<Com
         validator: 'Impact',
         code: 'IMPACT_CHANGE_REQUIRED',
         severity: 'error',
-        message: 'pbe impact analyze requires --change.',
-        suggestedFix: 'Run `pbe impact analyze --change CH-001 --product P-001`.',
+        message: 'devview impact analyze requires --change.',
+        suggestedFix: 'Run `devview impact analyze --change CH-001 --product P-001`.',
       }),
     )
   }
@@ -114,7 +114,7 @@ export async function impactAnalyzeCommand(context: CommandContext): Promise<Com
       changeId,
       impactId: id,
       impact,
-      next: `Run pbe revision start --change ${String(changeId)} before modifying affected accepted work.`,
+      next: `Run devview revision start --change ${String(changeId)} before modifying affected accepted work.`,
     },
   }
 }

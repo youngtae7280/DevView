@@ -104,7 +104,7 @@ const fullDocs = [
 const notes = [
   'Read readFirst before broad docs scanning.',
   'Load full docs only when the context card says they are needed.',
-  'This command is read-only and does not modify PBE state.',
+  'This command is read-only and does not modify DevView state.',
 ]
 
 export const contextStages = [...Object.keys(stageContexts), 'docs'] as ContextStageOption[]
@@ -132,7 +132,11 @@ export function recommendContext(input: ContextRecommendationInput): ContextReco
       readOnlyIfNeeded: [],
       doNotReadByDefault: fullDocs,
       reasons: [stageResult.reason, 'bypass profile requested; keep context minimal'],
-      notes: [...notes, 'bypass means PBE tracking is not active.', 'Use PBE tracking if traceability is needed.'],
+      notes: [
+        ...notes,
+        'bypass means DevView tracking is not active.',
+        'Use DevView tracking if traceability is needed.',
+      ],
     }
   }
 
@@ -195,7 +199,7 @@ function detectStage(brief: string | undefined): { stage: CanonicalContextStageO
     return { stage: 'rpd', reason: 'brief appears to ask about requirements or ambiguity' }
   }
   if (hasAny(text, ['start', '시작', 'pbe로 관리', 'pbe 관리'])) {
-    return { stage: 'start', reason: 'brief appears to ask for PBE start or management' }
+    return { stage: 'start', reason: 'brief appears to ask for DevView start or management' }
   }
 
   return { stage: 'start', reason: 'no strong stage signal detected' }

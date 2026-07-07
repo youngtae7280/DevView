@@ -1,43 +1,43 @@
-# Next Slice Decision Gate Message Template
+﻿# Next Slice Decision Gate Message Template
 
 ```text
-[PBE 상태 보고]
+[DevView status report]
 
-현재 단계:
+?占쎌옱 ?占쎄퀎:
 - state: DONE
 - currentGate: next_slice_decision
 - nextStep: next_slice_decision
 
-방금 완료한 작업:
+諛⑷툑 ?占쎈즺???占쎌뾽:
 - Review Result approved for the current slice.
 
-생성/갱신된 산출물:
+?占쎌꽦/媛깆떊???占쎌텧占?
 - .pbe/review/result-summary.md
 - .pbe/review/user-review-checklist.md
-- .pbe/blueprint/pbe-state.json
+- .devview/blueprint/devview-state.json
 
-검증:
+寃占?
 - {validation_summary}
 
-왜 멈췄는가:
-- 현재 slice만 완료할지, 다음 slice를 시작할지, 전체 프로젝트를 완료할지 사용자가 결정해야 합니다.
+??硫덉톬?占쏙옙?:
+- ?占쎌옱 slice占??占쎈즺?占쏙옙?, ?占쎌쓬 slice占??占쎌옉?占쏙옙?, ?占쎌껜 ?占쎈줈?占쏀듃占??占쎈즺?占쏙옙? ?占쎌슜?占쏙옙? 寃곗젙?占쎌빞 ?占쎈땲??
 
-다음 동작:
-- 선택에 따라 DONE 상태를 유지하거나, 다음 slice를 위해 WAITING_IMPLEMENTATION_SCOPE로 이동합니다.
+?占쎌쓬 ?占쎌옉:
+- ?占쏀깮???占쎈씪 DONE ?占쏀깭占??占쏙옙??占쎄굅?? ?占쎌쓬 slice占??占쏀빐 WAITING_IMPLEMENTATION_SCOPE占??占쎈룞?占쎈땲??
 
-사용자가 답할 수 있는 말:
-- 현재 slice 완료: "현재 slice만 완료 처리해주세요"
-- 다음 slice 시작: "다음 slice를 시작해주세요"
-- 전체 완료: "프로젝트 전체 완료 처리해주세요"
-- 수정: "이 부분은 수정하고 다시 검토해주세요"
-- 중단: "중단해주세요"
+?占쎌슜?占쏙옙? ?占쏀븷 ???占쎈뒗 占?
+- ?占쎌옱 slice ?占쎈즺: "?占쎌옱 slice占??占쎈즺 泥섎━?占쎌＜?占쎌슂"
+- ?占쎌쓬 slice ?占쎌옉: "?占쎌쓬 slice占??占쎌옉?占쎌＜?占쎌슂"
+- ?占쎌껜 ?占쎈즺: "?占쎈줈?占쏀듃 ?占쎌껜 ?占쎈즺 泥섎━?占쎌＜?占쎌슂"
+- ?占쎌젙: "??遺遺꾬옙? ?占쎌젙?占쎄퀬 ?占쎌떆 寃?占쏀빐二쇱꽭??
+- 以묐떒: "以묐떒?占쎌＜?占쎌슂"
 
-추천 답변:
-"현재 slice만 완료 처리해주세요"
+Recommended reply:
+"?占쎌옱 slice占??占쎈즺 泥섎━?占쎌＜?占쎌슂"
 ```
 
 ```text
-[Codex 메모]
+[Codex memo]
 
 {next_slice_reasoning}
 ```

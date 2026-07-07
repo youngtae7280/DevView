@@ -62,7 +62,7 @@ export async function validateAcceptedActors(root: string): Promise<ValidationIs
         code: 'ASSISTANT_ACCEPTED_STATUS',
         severity: 'error',
         file: defaultArtifacts.pbeState,
-        message: 'pbe-state deliveryStatus is accepted without explicit user acceptance metadata.',
+        message: 'devview-state deliveryStatus is accepted without explicit user acceptance metadata.',
         suggestedFix: 'Use submitted_for_review until the user explicitly accepts the result.',
       }),
     )

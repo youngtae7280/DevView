@@ -620,7 +620,7 @@ function buildRecommendedQuestion(
   if (hardTriggers.includes('restricted-file-change') || hardTriggers.includes('expected-files-cap-exceeded')) {
     return signals.hasKorean
       ? '이 작업은 Lite 범위를 넘거나 제한 파일을 건드릴 수 있습니다. 이 slice를 Full로 전환할까요?'
-      : 'This appears to exceed the Lite scope or touches restricted files. Should PBE escalate this slice to Full?'
+      : 'This appears to exceed the Lite scope or touches restricted files. Should DevView escalate this slice to Full?'
   }
   if (hardTriggers.includes('subjective-quality')) {
     return signals.hasKorean
@@ -642,10 +642,10 @@ function buildRecommendedQuestion(
       : 'Selection UI is unspecified. Should it be a button list, Combobox, card list, or another control?'
   }
   if (!inputText.trim()) {
-    return 'What product decision, implementation choice, or verification result should PBE assess?'
+    return 'What product decision, implementation choice, or verification result should DevView assess?'
   }
   if (profile === 'bypass') {
-    return 'Should this remain bypass work, or should PBE escalate to Lite/Full for traceability?'
+    return 'Should this remain bypass work, or should DevView escalate to Lite/Full for traceability?'
   }
   return signals.hasKorean
     ? '이 가정을 확정해도 될까요, 아니면 범위나 검증 기준을 더 좁혀야 할까요?'

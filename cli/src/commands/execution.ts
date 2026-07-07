@@ -18,7 +18,7 @@ export async function executionStartCommand(context: CommandContext): Promise<Co
     currentGate: null,
     nextStep: 'run_acep',
     data: {
-      next: 'Execute the ACEP, attach evidence, then run `pbe execution complete`.',
+      next: 'Execute the ACEP, attach evidence, then run `devview execution complete`.',
     },
   })
 }
@@ -46,8 +46,8 @@ export async function executionCompleteCommand(context: CommandContext): Promise
     nextStep: visualWork ? 'visual_implementation_audit' : 'review_result',
     data: {
       next: visualWork
-        ? 'Run Visual Implementation Audit, then `pbe review submit`.'
-        : 'Submit for review with `pbe review submit`.',
+        ? 'Run Visual Implementation Audit, then `devview review submit`.'
+        : 'Submit for review with `devview review submit`.',
     },
   })
 }

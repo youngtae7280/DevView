@@ -1,4 +1,4 @@
-import { execFileSync } from 'node:child_process'
+﻿import { execFileSync } from 'node:child_process'
 import { cpSync, existsSync, mkdirSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -39,8 +39,8 @@ afterEach(() => {
   cleanupWorkspaces()
 })
 
-describe('PBE CLI', () => {
-  it('recognizes canonical PBE states and transition helpers', () => {
+describe('DevView CLI', () => {
+  it('recognizes canonical DevView states and transition helpers', () => {
     expect(isPbeState(PBE_STATE.RPD_DONE)).toBe(true)
     expect(isPbeState('NOT_A_PBE_STATE')).toBe(false)
     expect(canTransition(PBE_STATE.RPD_DONE, PBE_STATE.WPD_DONE)).toBe(true)
@@ -55,7 +55,7 @@ describe('PBE CLI', () => {
     const result = await runPbeCli(['--help'], { cwd: pluginRoot, pluginRoot })
 
     expect(result.exitCode).toBe(ExitCode.Success)
-    expect(result.stdout).toContain('Project Blueprint Engine CLI')
+    expect(result.stdout).toContain('DevView CLI')
     expect(result.stdout).toContain('gate assess')
     expect(result.stdout).toContain('profile recommend')
     expect(result.stdout).toContain('context recommend')
@@ -339,7 +339,7 @@ describe('PBE CLI', () => {
 
   it('recommends lite for docs-only briefs and files', async () => {
     const direct = recommendProfile({
-      brief: 'docs/troubleshooting.md에 npm.ps1 설명 추가',
+      brief: 'Update docs/troubleshooting.md with npm.ps1 explanation',
       files: ['docs/troubleshooting.md', 'docs/install.md'],
     })
     const workspace = createWorkspace()
@@ -349,7 +349,7 @@ describe('PBE CLI', () => {
         'profile',
         'recommend',
         '--brief',
-        'docs/troubleshooting.md에 npm.ps1 설명 추가',
+        'Update docs/troubleshooting.md with npm.ps1 explanation',
         '--files',
         'docs/troubleshooting.md,docs/install.md',
         '--json',
@@ -369,7 +369,7 @@ describe('PBE CLI', () => {
 
   it('recommends bypass for explanation-only briefs without changes', async () => {
     const result = await runPbeCli(
-      ['profile', 'recommend', '--brief', '이 문서 내용 설명해줘. 파일 수정은 하지 마.', '--json'],
+      ['profile', 'recommend', '--brief', 'Please explain the docs without changing files', '--json'],
       {
         cwd: createWorkspace(),
         pluginRoot,
@@ -383,8 +383,8 @@ describe('PBE CLI', () => {
   })
 
   it.each([
-    ['관리자 페이지를 깔끔하게 개선해줘', 'UI/UX or visual design signal detected'],
-    ['권한 정책과 DB schema를 바꿔줘', 'DB/schema change signal detected'],
+    ['Improve the admin page UI UX visual design polish', 'UI/UX or visual design signal detected'],
+    ['Change the permission policy and DB schema', 'DB/schema change signal detected'],
   ])('recommends full for high-risk brief: %s', async (brief, expectedReason) => {
     const result = await runPbeCli(['profile', 'recommend', '--brief', brief, '--json'], {
       cwd: createWorkspace(),
@@ -403,9 +403,9 @@ describe('PBE CLI', () => {
         'profile',
         'recommend',
         '--brief',
-        '작은 문서 정리',
+        '?占쏙옙? 臾몄꽌 ?占쎈━',
         '--files',
-        'cli/src/commands/status.ts,schemas/pbe-state.schema.json,examples/valid/todo-app-devview-run/README.md',
+        'cli/src/commands/status.ts,schemas/devview-state.schema.json,examples/valid/todo-app-devview-run/README.md',
         '--json',
       ],
       { cwd: createWorkspace(), pluginRoot },
@@ -415,7 +415,7 @@ describe('PBE CLI', () => {
     const payload = JSON.parse(result.stdout)
     expect(payload.recommendedProfile).toBe('full')
     expect(payload.reasons).toContain('high-risk file path: cli/src/commands/status.ts')
-    expect(payload.reasons).toContain('high-risk file path: schemas/pbe-state.schema.json')
+    expect(payload.reasons).toContain('high-risk file path: schemas/devview-state.schema.json')
   })
 
   it('fails profile recommendation when --brief is missing', async () => {
@@ -427,10 +427,10 @@ describe('PBE CLI', () => {
     expect(payload.issues[0].message).toBe('Missing required option: --brief')
   })
 
-  it('prints profile recommendation JSON and does not initialize PBE', async () => {
+  it('prints profile recommendation JSON and does not initialize DevView', async () => {
     const workspace = createWorkspace()
 
-    const result = await runPbeCli(['profile', 'recommend', '--brief', 'README 링크 문구 한 줄 정리', '--json'], {
+    const result = await runPbeCli(['profile', 'recommend', '--brief', 'README 留곹겕 臾멸뎄 ??占??占쎈━', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -440,11 +440,11 @@ describe('PBE CLI', () => {
     expect(payload).toMatchObject({
       recommendedProfile: 'lite',
       confidence: 'medium',
-      suggestedInitCommand: 'pbe init --profile lite --brief "README 링크 문구 한 줄 정리"',
+      suggestedInitCommand: 'devview init --profile lite --brief "README 留곹겕 臾멸뎄 ??占??占쎈━"',
     })
     expect(payload.workflowDepth).toBe('compact')
     expect(payload.escalationTriggers).toContain('product meaning change')
-    expect(payload.notes).toContain('This is a recommendation only. It does not initialize PBE.')
+    expect(payload.notes).toContain('This is a recommendation only. It does not initialize DevView.')
     expect(existsSync(join(workspace, '.pbe'))).toBe(false)
   })
 
@@ -474,7 +474,7 @@ describe('PBE CLI', () => {
     const legacyReport = payload.validators.find(
       (entry: { name: string }) => entry.name === 'DevView repository validator',
     )
-    expect(legacyReport.output).toContain('✓ PBE layout')
+    expect(legacyReport.output).toContain('✓ DevView public terminology and legacy layout')
     expect(legacyReport.output).toContain('✓ Project compatibility core')
     expect(legacyReport.output).not.toContain('README_LAYOUT_TERM_MISSING')
     expect(legacyReport.output).not.toContain('✓ Skills')
@@ -510,9 +510,9 @@ describe('PBE CLI', () => {
       (entry: { name: string }) => entry.name === 'DevView repository validator',
     )
     expect(legacyReport.output).not.toContain('README_LAYOUT_TERM_MISSING')
-    expect(legacyReport.output).not.toContain('??Skills')
-    expect(legacyReport.output).not.toContain('??Templates')
-    expect(legacyReport.output).not.toContain('??Examples')
+    expect(legacyReport.output).not.toContain('✓ Skills')
+    expect(legacyReport.output).not.toContain('✓ Templates')
+    expect(legacyReport.output).not.toContain('✓ Examples')
     expect(payload.validators.find((entry: { name: string }) => entry.name === 'DevView legacy tree system').ok).toBe(
       true,
     )
@@ -561,7 +561,7 @@ describe('PBE CLI', () => {
   it('allows missing full ACEP package in an external project when state does not require ACEP', async () => {
     const workspace = createWorkspace()
     writeExternalInitializedProject(workspace)
-    mkdirSync(join(workspace, '.pbe', 'codex-execution-pack'), { recursive: true })
+    mkdirSync(join(workspace, storageRoot(workspace), 'codex-execution-pack'), { recursive: true })
 
     const result = await runPbeCli(['validate', '--json'], { cwd: workspace, pluginRoot })
 
@@ -571,7 +571,7 @@ describe('PBE CLI', () => {
   it('rejects an invalid present optional ACEP artifact in an external project', async () => {
     const workspace = createWorkspace()
     writeExternalInitializedProject(workspace)
-    writeJson(join(workspace, '.pbe', 'codex-execution-pack', 'execution-manifest.json'), {
+    writeJson(join(workspace, storageRoot(workspace), 'codex-execution-pack', 'execution-manifest.json'), {
       phases: 'not-an-array',
       validationCommands: [],
       tasks: [],
@@ -585,12 +585,12 @@ describe('PBE CLI', () => {
 
   it('fails validation for an uninitialized non-plugin root', async () => {
     const workspace = createWorkspace()
-    writeText(join(workspace, 'README.md'), '# External app\n\nThis project has not initialized PBE.\n')
+    writeText(join(workspace, 'README.md'), '# External app\n\nThis project has not initialized DevView.\n')
 
     const result = await runPbeCli(['validate', '--json'], { cwd: workspace, pluginRoot })
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
-    expect(JSON.stringify(JSON.parse(result.stderr))).toContain('PBE_NOT_INITIALIZED')
+    expect(JSON.stringify(JSON.parse(result.stderr))).toContain('DEVVIEW_NOT_INITIALIZED')
   })
 
   it('recommends RPD context for explicit stage', async () => {
@@ -645,7 +645,15 @@ describe('PBE CLI', () => {
 
   it('detects documentation context from troubleshooting npm brief', async () => {
     const result = await runPbeCli(
-      ['context', 'recommend', '--brief', 'docs/troubleshooting.md에 npm.cmd 설명 추가', '--profile', 'lite', '--json'],
+      [
+        'context',
+        'recommend',
+        '--brief',
+        'docs/troubleshooting.md??npm.cmd ?占쎈챸 異뷂옙?',
+        '--profile',
+        'lite',
+        '--json',
+      ],
       {
         cwd: createWorkspace(),
         pluginRoot,
@@ -669,7 +677,7 @@ describe('PBE CLI', () => {
   })
 
   it('detects documentation context from README maintenance brief', async () => {
-    const result = await runPbeCli(['context', 'recommend', '--brief', 'README 링크 정리', '--json'], {
+    const result = await runPbeCli(['context', 'recommend', '--brief', 'README 留곹겕 ?占쎈━', '--json'], {
       cwd: createWorkspace(),
       pluginRoot,
     })
@@ -680,7 +688,7 @@ describe('PBE CLI', () => {
 
   it('detects documentation context from install PowerShell npm brief', async () => {
     const result = await runPbeCli(
-      ['context', 'recommend', '--brief', '설치 문서에 PowerShell npm.ps1 오류 설명 추가', '--json'],
+      ['context', 'recommend', '--brief', '?占쎌튂 臾몄꽌??PowerShell npm.ps1 ?占쎈쪟 ?占쎈챸 異뷂옙?', '--json'],
       {
         cwd: createWorkspace(),
         pluginRoot,
@@ -709,7 +717,7 @@ describe('PBE CLI', () => {
 
   it('detects VD context from verification design brief', async () => {
     const result = await runPbeCli(
-      ['context', 'recommend', '--brief', '검색 기능 검증 설계', '--profile', 'lite', '--json'],
+      ['context', 'recommend', '--brief', 'vd test tree verification design', '--profile', 'lite', '--json'],
       {
         cwd: createWorkspace(),
         pluginRoot,
@@ -728,14 +736,17 @@ describe('PBE CLI', () => {
     expect(payload.doNotReadByDefault).toContain('docs/parallel-safety.md')
     expect(payload.doNotReadByDefault).toContain('docs/migration-policy.md')
     expect(payload.reasons).toContain('brief appears to ask for verification design')
-    expect(payload.notes).toContain('This command is read-only and does not modify PBE state.')
+    expect(payload.notes).toContain('This command is read-only and does not modify DevView state.')
   })
 
   it('detects review context from rejection brief', async () => {
-    const result = await runPbeCli(['context', 'recommend', '--brief', '리뷰했는데 아직도 별로야', '--json'], {
-      cwd: createWorkspace(),
-      pluginRoot,
-    })
+    const result = await runPbeCli(
+      ['context', 'recommend', '--brief', 'Review was rejected by user feedback', '--json'],
+      {
+        cwd: createWorkspace(),
+        pluginRoot,
+      },
+    )
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
@@ -745,10 +756,13 @@ describe('PBE CLI', () => {
   })
 
   it('detects product patch context from product meaning brief', async () => {
-    const result = await runPbeCli(['context', 'recommend', '--brief', '제품 의미가 바뀌었어', '--json'], {
-      cwd: createWorkspace(),
-      pluginRoot,
-    })
+    const result = await runPbeCli(
+      ['context', 'recommend', '--brief', 'product patch acceptance criteria change', '--json'],
+      {
+        cwd: createWorkspace(),
+        pluginRoot,
+      },
+    )
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
@@ -758,7 +772,7 @@ describe('PBE CLI', () => {
   })
 
   it('detects parallel context from clean-dist conflict brief', async () => {
-    const result = await runPbeCli(['context', 'recommend', '--brief', '병렬 clean-dist conflict', '--json'], {
+    const result = await runPbeCli(['context', 'recommend', '--brief', '蹂묐젹 clean-dist conflict', '--json'], {
       cwd: createWorkspace(),
       pluginRoot,
     })
@@ -812,7 +826,7 @@ describe('PBE CLI', () => {
     const initializedWorkspace = createWorkspace()
     writeDevViewState(initializedWorkspace, 'RPD_DONE')
     const beforeState = readStateText(initializedWorkspace)
-    const initializedResult = await runPbeCli(['context', 'recommend', '--brief', '검색 기능 검증 설계'], {
+    const initializedResult = await runPbeCli(['context', 'recommend', '--brief', 'vd test tree verification design'], {
       cwd: initializedWorkspace,
       pluginRoot,
     })
@@ -831,10 +845,10 @@ describe('PBE CLI', () => {
     )
 
     expect(result.exitCode).toBe(ExitCode.Success)
-    expect(result.stdout).toContain('# PBE Context Pack')
+    expect(result.stdout).toContain('# DevView Context Pack')
     expect(result.stdout).toContain('## Recommendation Summary')
     expect(result.stdout).toContain('## Suggested Human Gate Assessment')
-    expect(result.stdout).toContain('pbe gate assess')
+    expect(result.stdout).toContain('devview gate assess')
     expect(result.stdout).toContain('## Included Context')
     expect(result.stdout).toContain('## Read Only If Needed')
     expect(result.stdout).toContain('## Do Not Read By Default')
@@ -861,7 +875,7 @@ describe('PBE CLI', () => {
     expect(payload.suggestedGateAssessment.enabled).toBe(true)
     expect(payload.suggestedGateAssessment.transition).toBe('work-scope')
     expect(payload.suggestedGateAssessment.profile).toBe('lite')
-    expect(payload.suggestedGateAssessment.command).toContain('pbe gate assess')
+    expect(payload.suggestedGateAssessment.command).toContain('devview gate assess')
     const includedPaths = payload.includedFiles.map((entry: { path: string }) => entry.path)
     expect(includedPaths).toEqual(payload.recommendation.readFirst)
     expect(includedPaths).toContain('agent-context/lite.md')
@@ -895,7 +909,7 @@ describe('PBE CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.suggestedGateAssessment.enabled).toBe(true)
-    expect(payload.suggestedGateAssessment.command).toContain('pbe gate assess')
+    expect(payload.suggestedGateAssessment.command).toContain('devview gate assess')
     expect(payload.suggestedGateAssessment.command).toContain(brief)
     expect(payload.suggestedGateAssessment.profile).toBe('lite')
     expect(payload.suggestedGateAssessment.transition).toBeTruthy()
@@ -979,7 +993,7 @@ describe('PBE CLI', () => {
     expect(packPayload.recommendation.readFirst).toEqual(recommendPayload.readFirst)
   })
 
-  it('reports status as not initialized when .pbe is missing', async () => {
+  it('reports status as not initialized when DevView state is missing', async () => {
     const workspace = createWorkspace()
 
     const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
@@ -987,10 +1001,10 @@ describe('PBE CLI', () => {
     expect(result.exitCode).toBe(ExitCode.NotInitialized)
     const payload = JSON.parse(result.stderr)
     expect(payload.ok).toBe(false)
-    expect(payload.issues[0].code).toBe('PBE_NOT_INITIALIZED')
+    expect(payload.issues[0].code).toBe('DEVVIEW_NOT_INITIALIZED')
   })
 
-  it('initializes .pbe artifacts without overwriting existing files', async () => {
+  it('initializes DevView artifacts without overwriting existing files', async () => {
     const workspace = createWorkspace()
 
     const init = await runPbeCli(['init', '--profile', 'full', '--brief', 'Build a printer setup flow', '--json'], {
@@ -1004,18 +1018,18 @@ describe('PBE CLI', () => {
     const status = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
 
     expect(init.exitCode).toBe(ExitCode.Success)
-    expect(JSON.parse(init.stdout).created).toContain('.pbe/tree/product-tree.json')
+    expect(JSON.parse(init.stdout).created).toContain('.devview/tree/product-tree.json')
     expect(secondInit.exitCode).toBe(ExitCode.Success)
-    expect(JSON.parse(secondInit.stdout).skipped).toContain('.pbe/tree/product-tree.json')
+    expect(JSON.parse(secondInit.stdout).skipped).toContain('.devview/tree/product-tree.json')
     expect(status.exitCode).toBe(ExitCode.Success)
     expect(JSON.parse(status.stdout).state).toBe('INIT')
   })
 
   it.each([
-    ['INIT', 'pbe rpd close or pbe rpd check'],
-    ['WPD_DONE', 'pbe vd close'],
-    ['ACEP_READY', 'pbe execution start'],
-    ['EXECUTION_IN_PROGRESS', 'pbe execution complete'],
+    ['INIT', 'devview rpd close or devview rpd check'],
+    ['WPD_DONE', 'devview vd close'],
+    ['ACEP_READY', 'devview execution start'],
+    ['EXECUTION_IN_PROGRESS', 'devview execution complete'],
   ])('recommends the next status command for %s', async (state, expectedCommand) => {
     const workspace = createWorkspace()
     writeDevViewState(workspace, state)
@@ -1036,8 +1050,8 @@ describe('PBE CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
-    expect(payload.recommendedNextCommand).toContain('pbe accept')
-    expect(payload.recommendedNextCommand).toContain('pbe change create')
+    expect(payload.recommendedNextCommand).toContain('devview accept')
+    expect(payload.recommendedNextCommand).toContain('devview change create')
   })
 
   it('includes active revision and last transition in status JSON', async () => {
@@ -1086,9 +1100,9 @@ describe('PBE CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.state).toBe('UNKNOWN_STATE')
-    expect(payload.recommendedNextCommand).toBe('pbe validate')
+    expect(payload.recommendedNextCommand).toBe('devview validate')
     expect(payload.blockingIssues.map((entry: { code: string }) => entry.code)).toContain('UNKNOWN_STATE')
-    expect(payload.suggestedFixes[0]).toContain('pbe validate')
+    expect(payload.suggestedFixes[0]).toContain('devview validate')
   })
 
   it('keeps existing status JSON fields while adding navigator fields', async () => {
@@ -1111,7 +1125,7 @@ describe('PBE CLI', () => {
       nextStep: 'vd',
       deliveryStatus: 'wpd_done',
       stateHistoryCount: 0,
-      recommendedNextCommand: 'pbe vd close',
+      recommendedNextCommand: 'devview vd close',
     })
     expect(payload).toHaveProperty('openBlockingDecisions')
     expect(payload).toHaveProperty('artifacts')
@@ -1130,7 +1144,7 @@ describe('PBE CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
-    expect(payload.recommendedNextCommand).toBe('pbe vd close')
+    expect(payload.recommendedNextCommand).toBe('devview vd close')
     expect(payload.recommendedContext).toMatchObject({
       detectedStage: 'vd',
       profile: 'lite',
@@ -1196,9 +1210,9 @@ describe('PBE CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     expect(result.stdout).toContain('Profile: lite')
-    expect(result.stdout).toContain('Recommended next command: pbe vd close')
+    expect(result.stdout).toContain('Recommended next command: devview vd close')
     expect(result.stdout).toContain('Compact workflow guidance:')
-    expect(result.stdout).toContain('compact PBE guidance for a bounded low-risk slice')
+    expect(result.stdout).toContain('compact DevView guidance for a bounded low-risk slice')
     expect(result.stdout).toContain('Increase to full planning depth if product meaning change')
   })
 
@@ -1211,18 +1225,18 @@ describe('PBE CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.profile).toBe('lite')
-    expect(payload.recommendedNextCommand).toBe('pbe vd close')
+    expect(payload.recommendedNextCommand).toBe('devview vd close')
     expect(payload.profileGuidance).toMatchObject({
       profile: 'lite',
       workflowDepth: 'compact',
       summary:
-        'This run uses compact PBE guidance for a bounded low-risk slice. It is not a separate mode or a safety bypass.',
+        'This run uses compact DevView guidance for a bounded low-risk slice. It is not a separate mode or a safety bypass.',
     })
     expect(payload.profileGuidance.mustKeepGuards).toContain('expectedFiles / File Change Guard')
     expect(payload.profileGuidance.mustKeepGuards).toContain('minimal Test/Evidence')
     expect(payload.profileGuidance.escalationTriggers).toContain('product meaning change')
     expect(payload.profileGuidance.escalationTriggers).toContain('Product Patch required')
-    expect(payload.profileGuidance.limitations).toContain('No dedicated pbe lite command')
+    expect(payload.profileGuidance.limitations).toContain('No dedicated devview lite command')
   })
 
   it.each([
@@ -1333,7 +1347,7 @@ describe('PBE CLI', () => {
       rootUserConfirmed: true,
     })
     mutateFirstAcceptanceCriterion(workspace, (criterion) => {
-      criterion.observableResult = 'The status is shown 깔끔하게.'
+      criterion.observableResult = 'The status is shown cleanly.'
     })
 
     const result = await runPbeCli(['rpd', 'close', '--json'], { cwd: workspace, pluginRoot })
@@ -1345,7 +1359,7 @@ describe('PBE CLI', () => {
 
   it('allows acceptanceNotRequiredReason for a non-executable foundation Product node', async () => {
     const workspace = createWorkspace()
-    writeJson(join(workspace, '.pbe', 'tree', 'product-tree.json'), {
+    writeJson(treePath(workspace, 'product-tree.json'), {
       version: '0.2.0-tree-control',
       rootNodeId: 'PT-ROOT',
       nodes: [
@@ -1408,7 +1422,7 @@ describe('PBE CLI', () => {
     writeDecisionQueue(workspace)
     writeDevViewState(workspace, 'RPD_DONE')
     writeText(
-      join(workspace, '.pbe', 'blueprint', 'ui-ux-confirmation.md'),
+      blueprintPath(workspace, 'ui-ux-confirmation.md'),
       [
         '# UI/UX Confirmation',
         '',
@@ -1451,7 +1465,7 @@ describe('PBE CLI', () => {
     writeDecisionQueue(workspace)
     writeDevViewState(workspace, 'ACEP_READY')
     writeText(
-      join(workspace, '.pbe', 'blueprint', 'ui-ux-confirmation.md'),
+      blueprintPath(workspace, 'ui-ux-confirmation.md'),
       '# UI/UX Confirmation\n\n- Status: confirmed\n- Confirmed by: user\n',
     )
 
@@ -1545,7 +1559,7 @@ describe('PBE CLI', () => {
       stage: 'wpd',
       reason: expect.any(String),
       suggestedFix: expect.any(String),
-      nextCommand: 'pbe wpd close',
+      nextCommand: 'devview wpd close',
     })
   })
 
@@ -1564,7 +1578,7 @@ describe('PBE CLI', () => {
     expect(result.stderr).toContain('Issues: 1 total, 1 error')
     expect(result.stderr).toContain('[error] PRODUCT_WORK_LINK_MISSING')
     expect(result.stderr).toContain('Suggested fix:')
-    expect(result.stderr).toContain('Next command: pbe wpd close')
+    expect(result.stderr).toContain('Next command: devview wpd close')
   })
 
   it('stage-aware WPD traceability rejects inactive Product scope leaks', async () => {
@@ -1752,7 +1766,7 @@ describe('PBE CLI', () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace, { visualImpact: true })
     writeVisualContractArtifacts(workspace, { requiredScreenshot: true })
-    writeJson(join(workspace, '.pbe', 'evidence', 'evidence-tree.json'), {
+    writeJson(evidencePath(workspace, 'evidence-tree.json'), {
       version: '0.2.0-tree-control',
       evidence: [],
     })
@@ -1768,14 +1782,14 @@ describe('PBE CLI', () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace, { visualImpact: true })
     writeVisualContractArtifacts(workspace, { requiredScreenshot: true })
-    writeJson(join(workspace, '.pbe', 'evidence', 'evidence-tree.json'), {
+    writeJson(evidencePath(workspace, 'evidence-tree.json'), {
       version: '0.2.0-tree-control',
       evidence: [
         {
           id: 'EV-VISUAL-1',
           type: 'screenshot',
           status: 'stale_evidence',
-          path: '.pbe/evidence/screenshots/surface-1-default.png',
+          path: '.devview/evidence/screenshots/surface-1-default.png',
           provesNodeIds: ['TT-1'],
           evidenceForTestNodeIds: ['TT-1'],
         },
@@ -1814,7 +1828,7 @@ describe('PBE CLI', () => {
     writeDevViewState(workspace, 'ACEP_RUN_DONE')
     writeVisualScreenshotEvidence(workspace)
     writeText(
-      join(workspace, '.pbe', 'evidence', 'visual-audit.md'),
+      evidencePath(workspace, 'visual-audit.md'),
       [
         '# Visual Implementation Audit',
         '',
@@ -1859,7 +1873,7 @@ describe('PBE CLI', () => {
     writeExecutableProduct(workspace)
     writeWorkTree(workspace)
     writeTestTree(workspace)
-    writeEvidenceTree(workspace, { path: '.pbe/evidence/test-results/missing.log' })
+    writeEvidenceTree(workspace, { path: '.devview/evidence/test-results/missing.log' })
 
     const result = await runPbeCli(['evidence', 'check', '--json'], { cwd: workspace, pluginRoot })
 
@@ -2010,7 +2024,7 @@ describe('PBE CLI', () => {
     writeDevViewState(workspace, 'WPD_DONE')
     writeWorkTree(workspace)
     initGitRepository(workspace)
-    writeText(join(workspace, '.pbe', 'blueprint', 'notes.md'), 'artifact update\n')
+    writeText(blueprintPath(workspace, 'notes.md'), 'artifact update\n')
 
     const result = await runPbeCli(['files', 'check', '--json'], { cwd: workspace, pluginRoot })
 
@@ -2639,7 +2653,7 @@ describe('PBE CLI', () => {
     writeExecutableProduct(missingFileWorkspace)
     writeWorkTree(missingFileWorkspace)
     writeTestTree(missingFileWorkspace)
-    writeEvidenceTree(missingFileWorkspace, { path: '.pbe/evidence/test-results/missing.log' })
+    writeEvidenceTree(missingFileWorkspace, { path: '.devview/evidence/test-results/missing.log' })
     const trace = await runPbeCli(['trace', 'check', '--stage', 'execution', '--json'], {
       cwd: missingFileWorkspace,
       pluginRoot,
@@ -2805,7 +2819,7 @@ describe('PBE CLI', () => {
 
   it('does not mutate state on transition helper invalid JSON or unknown state failures', async () => {
     const invalidJsonWorkspace = createWorkspace()
-    writeText(join(invalidJsonWorkspace, '.pbe', 'blueprint', 'pbe-state.json'), '{ invalid json')
+    writeText(join(invalidJsonWorkspace, '.devview', 'blueprint', 'devview-state.json'), '{ invalid json')
     const invalidJsonBefore = readStateText(invalidJsonWorkspace)
     const invalidJsonResult = await transitionPbeState(invalidJsonWorkspace, 'test transition', [PBE_STATE.RPD_DONE], {
       nextStep: 'wpd',
@@ -2905,7 +2919,7 @@ describe('PBE CLI', () => {
     writeWorkTree(workspace)
     writeTestTree(workspace)
     writeEvidenceTree(workspace)
-    writeJson(join(workspace, '.pbe', 'control', 'acceptance-tree.json'), {
+    writeJson(controlPath(workspace, 'acceptance-tree.json'), {
       version: '0.2.0-tree-control',
       branches: [
         {
@@ -3025,7 +3039,7 @@ describe('PBE CLI', () => {
     writeWorkTree(assistantAcceptanceWorkspace)
     writeTestTree(assistantAcceptanceWorkspace)
     writeEvidenceTree(assistantAcceptanceWorkspace)
-    writeJson(join(assistantAcceptanceWorkspace, '.pbe', 'control', 'acceptance-tree.json'), {
+    writeJson(controlPath(assistantAcceptanceWorkspace, 'acceptance-tree.json'), {
       version: '0.2.0-tree-control',
       branches: [
         {
@@ -3462,7 +3476,7 @@ describe('PBE CLI', () => {
     expect(issues).toEqual([])
   })
 
-  it('pbe validate accepts a valid initialized Product Patch Tree', async () => {
+  it('devview validate accepts a valid initialized Product Patch Tree', async () => {
     const workspace = createWorkspace()
     copyValidExample(workspace)
     writeProductPatchTree(workspace, [productPatchFixture(workspace)])
@@ -3472,7 +3486,7 @@ describe('PBE CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
   })
 
-  it('pbe validate rejects an invalid initialized Product Patch Tree', async () => {
+  it('devview validate rejects an invalid initialized Product Patch Tree', async () => {
     const workspace = createWorkspace()
     copyValidExample(workspace)
     writeProductPatchTree(workspace, [{ ...productPatchFixture(workspace), operation: 'legacy_direct_edit' }])
@@ -3556,7 +3570,7 @@ describe('PBE CLI', () => {
         affectedEvidenceNodeIds: ['EV-1'],
       },
     ])
-    writeText(join(workspace, '.pbe', 'evidence', 'evidence-tree.json'), '{ invalid json')
+    writeText(evidencePath(workspace, 'evidence-tree.json'), '{ invalid json')
     writeUserAcceptance(workspace)
 
     const beforeState = readStateText(workspace)
@@ -3593,7 +3607,7 @@ describe('PBE CLI', () => {
       },
     ])
     writeEvidenceTree(workspace)
-    writeText(join(workspace, '.pbe', 'control', 'acceptance-tree.json'), '{ invalid json')
+    writeText(controlPath(workspace, 'acceptance-tree.json'), '{ invalid json')
 
     const beforeState = readStateText(workspace)
     const beforeEvidence = readEvidenceText(workspace)
@@ -3817,8 +3831,8 @@ describe('PBE CLI', () => {
 
   it('keeps original artifacts when a JSON artifact transaction cannot prepare every write', async () => {
     const workspace = createWorkspace()
-    const firstPath = join(workspace, '.pbe', 'blueprint', 'transaction-first.json')
-    const blockingPath = join(workspace, '.pbe', 'blueprint', 'not-a-directory')
+    const firstPath = blueprintPath(workspace, 'transaction-first.json')
+    const blockingPath = blueprintPath(workspace, 'not-a-directory')
     writeText(firstPath, '{\n  "value": "original"\n}\n')
     writeText(blockingPath, 'blocks child file writes')
 
@@ -3882,15 +3896,47 @@ describe('PBE CLI', () => {
 })
 
 function readState(workspace: string): Record<string, any> {
-  return JSON.parse(readFileSync(join(workspace, '.pbe', 'blueprint', 'pbe-state.json'), 'utf8'))
+  return JSON.parse(readStateText(workspace))
 }
 
 function readStateText(workspace: string): string {
-  return readFileSync(join(workspace, '.pbe', 'blueprint', 'pbe-state.json'), 'utf8')
+  return readFileSync(existingStatePath(workspace), 'utf8')
+}
+
+function existingStatePath(workspace: string): string {
+  const candidates = [
+    join(workspace, '.devview', 'blueprint', 'devview-state.json'),
+    join(workspace, '.devview', 'blueprint', 'pbe-state.json'),
+    join(workspace, '.pbe', 'blueprint', 'pbe-state.json'),
+  ]
+  const existing = candidates.find((candidate) => existsSync(candidate))
+  return existing || candidates[0]
+}
+
+function storageRoot(workspace: string): '.devview' | '.pbe' {
+  if (existsSync(join(workspace, '.devview'))) return '.devview'
+  if (existsSync(join(workspace, '.pbe'))) return '.pbe'
+  return '.devview'
+}
+
+function treePath(workspace: string, fileName: string): string {
+  return join(workspace, storageRoot(workspace), 'tree', fileName)
+}
+
+function controlPath(workspace: string, fileName: string): string {
+  return join(workspace, storageRoot(workspace), 'control', fileName)
+}
+
+function evidencePath(workspace: string, fileName: string): string {
+  return join(workspace, storageRoot(workspace), 'evidence', fileName)
+}
+
+function blueprintPath(workspace: string, fileName: string): string {
+  return join(workspace, storageRoot(workspace), 'blueprint', fileName)
 }
 
 function writeChangeTree(workspace: string, changes: Array<Record<string, any>> = []): void {
-  writeJson(join(workspace, '.pbe', 'control', 'change-tree.json'), {
+  writeJson(controlPath(workspace, 'change-tree.json'), {
     version: '0.2.0-tree-control',
     schemaVersion: 1,
     changes,
@@ -3898,14 +3944,14 @@ function writeChangeTree(workspace: string, changes: Array<Record<string, any>> 
 }
 
 function writeImpactTree(workspace: string, impacts: Array<Record<string, any>> = []): void {
-  writeJson(join(workspace, '.pbe', 'control', 'impact-tree.json'), {
+  writeJson(controlPath(workspace, 'impact-tree.json'), {
     version: '0.2.0-tree-control',
     impacts,
   })
 }
 
 function writeProductPatchTree(workspace: string, patches: Array<Record<string, any>> = []): void {
-  writeJson(join(workspace, '.pbe', 'control', 'product-patch-tree.json'), {
+  writeJson(controlPath(workspace, 'product-patch-tree.json'), {
     version: '0.2.0-tree-control',
     patches,
   })
@@ -3928,7 +3974,7 @@ function readProductTree(workspace: string): Record<string, any> {
 }
 
 function readProductText(workspace: string): string {
-  return readFileSync(join(workspace, '.pbe', 'tree', 'product-tree.json'), 'utf8')
+  return readFileSync(treePath(workspace, 'product-tree.json'), 'utf8')
 }
 
 function readEvidenceTree(workspace: string): Record<string, any> {
@@ -3940,11 +3986,11 @@ function readAcceptanceTree(workspace: string): Record<string, any> {
 }
 
 function readEvidenceText(workspace: string): string {
-  return readFileSync(join(workspace, '.pbe', 'evidence', 'evidence-tree.json'), 'utf8')
+  return readFileSync(evidencePath(workspace, 'evidence-tree.json'), 'utf8')
 }
 
 function addWorkNodeFields(workspace: string, workId: string, fields: Record<string, unknown>): void {
-  const workTreePath = join(workspace, '.pbe', 'tree', 'work-tree.json')
+  const workTreePath = treePath(workspace, 'work-tree.json')
   const workTree = JSON.parse(readFileSync(workTreePath, 'utf8'))
   const node = workTree.nodes.find((entry: Record<string, unknown>) => entry.id === workId)
   Object.assign(node, fields)
@@ -3953,28 +3999,28 @@ function addWorkNodeFields(workspace: string, workId: string, fields: Record<str
 
 function initGitRepository(workspace: string): void {
   execFileSync('git', ['init'], { cwd: workspace, stdio: 'ignore' })
-  execFileSync('git', ['config', 'user.email', 'pbe@example.test'], { cwd: workspace, stdio: 'ignore' })
-  execFileSync('git', ['config', 'user.name', 'PBE Test'], { cwd: workspace, stdio: 'ignore' })
+  execFileSync('git', ['config', 'user.email', 'devview@example.test'], { cwd: workspace, stdio: 'ignore' })
+  execFileSync('git', ['config', 'user.name', 'DevView Test'], { cwd: workspace, stdio: 'ignore' })
   execFileSync('git', ['add', '.'], { cwd: workspace, stdio: 'ignore' })
   execFileSync('git', ['commit', '-m', 'baseline'], { cwd: workspace, stdio: 'ignore' })
 }
 
 function writeExternalInitializedProject(workspace: string): void {
   writeText(join(workspace, 'README.md'), '# External app\n\nOrdinary project README.\n')
-  for (const relativePath of ['.pbe/tree', '.pbe/execution', '.pbe/control', '.pbe/evidence']) {
+  for (const relativePath of ['.devview/tree', '.devview/execution', '.devview/control', '.devview/evidence']) {
     mkdirSync(join(workspace, relativePath), { recursive: true })
   }
-  const state = JSON.parse(readFileSync(join(pluginRoot, 'templates', 'pbe-state.template.json'), 'utf8'))
+  const state = JSON.parse(readFileSync(join(pluginRoot, 'templates', 'devview-state.template.json'), 'utf8'))
   state.projectId = 'external-app'
   state.autoflow.state = 'INIT'
   state.autoflow.completedSteps = ['start']
   state.autoflow.currentGate = null
   state.autoflow.nextStep = 'rpd'
-  writeJson(join(workspace, '.pbe', 'blueprint', 'pbe-state.json'), state)
+  writeJson(join(workspace, '.devview', 'blueprint', 'devview-state.json'), state)
 }
 
 function readControlText(workspace: string, fileName: string): string {
-  return readFileSync(join(workspace, '.pbe', 'control', fileName), 'utf8')
+  return readFileSync(controlPath(workspace, fileName), 'utf8')
 }
 
 async function proposeProductPatch(workspace: string): Promise<void> {
@@ -4006,7 +4052,7 @@ function confirmProductPatch(workspace: string, patchId: string): void {
     actor: 'user',
     confirmedAt: '2026-06-12T00:00:00.000Z',
   }
-  writeJson(join(workspace, '.pbe', 'control', 'product-patch-tree.json'), patchTree)
+  writeJson(controlPath(workspace, 'product-patch-tree.json'), patchTree)
 }
 
 function productPatchFixture(workspace: string): Record<string, any> {
@@ -4028,7 +4074,7 @@ function productPatchFixture(workspace: string): Record<string, any> {
 }
 
 function mutateProductNode(workspace: string, productId: string, fields: Record<string, unknown>): void {
-  const productTreePath = join(workspace, '.pbe', 'tree', 'product-tree.json')
+  const productTreePath = treePath(workspace, 'product-tree.json')
   const productTree = JSON.parse(readFileSync(productTreePath, 'utf8'))
   const node = productTree.nodes.find((entry: Record<string, unknown>) => entry.id === productId)
   Object.assign(node, fields)
@@ -4050,7 +4096,7 @@ function mutateFirstAcceptanceCriterion(
   workspace: string,
   mutate: (criterion: Record<string, any>, productTree: Record<string, any>) => void,
 ): void {
-  const productTreePath = join(workspace, '.pbe', 'tree', 'product-tree.json')
+  const productTreePath = treePath(workspace, 'product-tree.json')
   const productTree = JSON.parse(readFileSync(productTreePath, 'utf8'))
   const node = productTree.nodes.find((entry: Record<string, any>) => entry.acceptanceCriteria?.length > 0)
   mutate(node.acceptanceCriteria[0], productTree)

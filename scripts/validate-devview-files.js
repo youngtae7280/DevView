@@ -128,7 +128,11 @@ function classifyValidationTarget(repoRoot, cwd) {
 }
 
 function runCompatibilityCore(repoRoot, cwd, targetKind) {
-  if (targetKind === 'initialized-project' && !existsSync(path.join(cwd, '.pbe'))) {
+  if (
+    targetKind === 'initialized-project' &&
+    !existsSync(path.join(cwd, '.devview')) &&
+    !existsSync(path.join(cwd, '.pbe'))
+  ) {
     return []
   }
   try {

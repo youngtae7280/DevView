@@ -101,7 +101,7 @@ function formatContextPackMarkdown(
   warnings: string[],
 ): string {
   return [
-    '# PBE Context Pack',
+    '# DevView Context Pack',
     '',
     '## Recommendation Summary',
     '',
@@ -160,7 +160,7 @@ export function buildSuggestedGateAssessment(
     enabled: true,
     transition,
     profile,
-    command: `pbe gate assess --text "${escapeGateAssessText(brief)}" --transition ${transition} --profile ${profile}`,
+    command: `devview gate assess --text "${escapeGateAssessText(brief)}" --transition ${transition} --profile ${profile}`,
     reason: 'Run this before allowing AI assumptions to become implementation decisions.',
   }
 }

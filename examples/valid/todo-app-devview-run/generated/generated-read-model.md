@@ -32,7 +32,7 @@ require parity, introduce CI enforcement, retire .devview artifacts, or approve 
 - examples/valid/todo-app-devview-run/.devview/blueprint/work-graph.json: present
 - examples/valid/todo-app-devview-run/.devview/blueprint/source-of-truth-matrix.md: present
 - examples/valid/todo-app-devview-run/.devview/evidence/test-results/todo-add.txt: present
-- examples/valid/todo-app-devview-run/.devview/blueprint/pbe-state.json: present
+- examples/valid/todo-app-devview-run/.devview/blueprint/devview-state.json: present
 - examples/valid/todo-app-devview-run/graph-source.json: present
 
 ## Node / Edge / Tag Summary

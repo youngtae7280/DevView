@@ -699,6 +699,7 @@ export interface SliceReadModelConfig {
     workGraph?: string
     sourceOfTruthMatrix?: string
     evidenceOutput?: string
+    devviewState?: string
     pbeState?: string
   }
   sourceArtifactRelativePaths: string[]
@@ -800,11 +801,11 @@ export const todoSearchReadModelProfile: SliceReadModelConfig = {
     validationReport: 'generated/read-model-validation-report.json',
     evidenceManifest: 'generated/read-model-evidence-manifest.json',
     scopedPilotMarker: 'generated/scoped-source-authority-pilot-marker.json',
-    limitedPilotTransitionRecord: 'docs/concept/limited-pilot-transition-record.md',
-    limitedPilotPackage: 'docs/concept/limited-pilot-promotion-decision-package.md',
-    scopedPilotExecutionRecord: 'docs/concept/scoped-source-authority-pilot-execution-record.md',
-    scopedPilotReview: 'docs/concept/scoped-source-authority-pilot-review.md',
-    scopedPilotActiveObservation: 'docs/concept/scoped-source-authority-pilot-active-observation.md',
+    limitedPilotTransitionRecord: 'docs/internal-legacy/concept/limited-pilot-transition-record.md',
+    limitedPilotPackage: 'docs/internal-legacy/concept/limited-pilot-promotion-decision-package.md',
+    scopedPilotExecutionRecord: 'docs/internal-legacy/concept/scoped-source-authority-pilot-execution-record.md',
+    scopedPilotReview: 'docs/internal-legacy/concept/scoped-source-authority-pilot-review.md',
+    scopedPilotActiveObservation: 'docs/internal-legacy/concept/scoped-source-authority-pilot-active-observation.md',
     generatedEvidenceRequirement: 'docs/concept/generated-read-model-evidence-requirement.md',
     compatibilitySlice: 'examples/internal-legacy/adoption/compatibility-mismatch-slice',
     compatibilityControlNode:
@@ -829,9 +830,9 @@ export const todoSearchReadModelProfile: SliceReadModelConfig = {
     'approval-brief.md',
     'evidence-exceptions.md',
     'generated/scoped-source-authority-pilot-marker.json',
-    'docs/concept/scoped-source-authority-pilot-execution-record.md',
-    'docs/concept/scoped-source-authority-pilot-review.md',
-    'docs/concept/scoped-source-authority-pilot-active-observation.md',
+    'docs/internal-legacy/concept/scoped-source-authority-pilot-execution-record.md',
+    'docs/internal-legacy/concept/scoped-source-authority-pilot-review.md',
+    'docs/internal-legacy/concept/scoped-source-authority-pilot-active-observation.md',
     'examples/internal-legacy/adoption/compatibility-mismatch-slice/compatibility-control-node.md',
     'graph-source.json',
   ],
@@ -910,7 +911,7 @@ export const todoAppDevviewRunStructureOnlyProfile: SliceReadModelConfig = {
     workGraph: '.devview/blueprint/work-graph.json',
     sourceOfTruthMatrix: '.devview/blueprint/source-of-truth-matrix.md',
     evidenceOutput: '.devview/evidence/test-results/todo-add.txt',
-    pbeState: '.devview/blueprint/pbe-state.json',
+    devviewState: '.devview/blueprint/devview-state.json',
     graphSource: 'graph-source.json',
   },
   sourceArtifactRelativePaths: [
@@ -927,7 +928,7 @@ export const todoAppDevviewRunStructureOnlyProfile: SliceReadModelConfig = {
     '.devview/blueprint/work-graph.json',
     '.devview/blueprint/source-of-truth-matrix.md',
     '.devview/evidence/test-results/todo-add.txt',
-    '.devview/blueprint/pbe-state.json',
+    '.devview/blueprint/devview-state.json',
     'graph-source.json',
   ],
   retainedWarnings: [
@@ -5458,7 +5459,7 @@ function buildValidationChecks(
     check(
       'user-acceptance-authority-preserved',
       'User acceptance authority is not replaced by Codex/PBE',
-      !/codex\/pbe self-acceptance|replace user acceptance/i.test(
+      !/codex\/devview self-acceptance|replace user acceptance/i.test(
         `${generated.sourceAuthorityBoundary} ${generated.nonPromotionStatement} ${marker?.nonPromotionStatement || ''}`,
       ) &&
         generated.nodes.some(
@@ -5668,7 +5669,7 @@ function buildStructureOnlyValidationChecks(
     check(
       'user-acceptance-authority-preserved',
       'User acceptance authority is not replaced by Codex/PBE',
-      !/codex\/pbe self-acceptance|replace user acceptance/i.test(
+      !/codex\/devview self-acceptance|replace user acceptance/i.test(
         `${generated.sourceAuthorityBoundary} ${generated.nonPromotionStatement}`,
       ) &&
         generated.nodes.some(

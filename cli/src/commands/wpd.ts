@@ -38,8 +38,8 @@ export async function wpdCloseCommand(context: CommandContext): Promise<CommandR
       nextStep: visualWork ? 'ui_surface_inventory' : 'vd',
       data: {
         next: visualWork
-          ? 'Run UI Surface Inventory, then `pbe vd close`.'
-          : 'Run `pbe vd close` after VD artifacts are ready.',
+          ? 'Run UI Surface Inventory, then `devview vd close`.'
+          : 'Run `devview vd close` after VD artifacts are ready.',
       },
     },
   )

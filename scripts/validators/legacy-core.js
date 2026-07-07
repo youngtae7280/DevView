@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+﻿import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import path from 'node:path'
 import process from 'node:process'
@@ -13,43 +13,95 @@ const root = repoRoot
 const errors = []
 const targetContext = {}
 const schemaIdByTargetLabel = new Map([
-  ['.pbe/blueprint/pbe-state.json', 'https://local/project-blueprint-engine/pbe-state.schema.json'],
+  ['.devview/blueprint/devview-state.json', 'https://local/devview/devview-state.schema.json'],
+  ['.devview/blueprint/pbe-state.json', 'https://local/devview/devview-state.schema.json'],
+  ['.pbe/blueprint/pbe-state.json', 'https://local/devview/devview-state.schema.json'],
+  ['.devview/blueprint/requirement-tree.json', 'https://local/project-blueprint-engine/requirement-tree.schema.json'],
   ['.pbe/blueprint/requirement-tree.json', 'https://local/project-blueprint-engine/requirement-tree.schema.json'],
+  ['.devview/blueprint/ui-ux-preview.json', 'https://local/project-blueprint-engine/ui-ux-preview.schema.json'],
   ['.pbe/blueprint/ui-ux-preview.json', 'https://local/project-blueprint-engine/ui-ux-preview.schema.json'],
+  ['.devview/blueprint/work-design.json', 'https://local/project-blueprint-engine/work-design.schema.json'],
   ['.pbe/blueprint/work-design.json', 'https://local/project-blueprint-engine/work-design.schema.json'],
+  ['.devview/blueprint/work-graph.json', 'https://local/project-blueprint-engine/work-graph.schema.json'],
   ['.pbe/blueprint/work-graph.json', 'https://local/project-blueprint-engine/work-graph.schema.json'],
+  [
+    '.devview/blueprint/verification-design.json',
+    'https://local/project-blueprint-engine/verification-design.schema.json',
+  ],
   ['.pbe/blueprint/verification-design.json', 'https://local/project-blueprint-engine/verification-design.schema.json'],
+  [
+    '.devview/blueprint/dependency-impact-audit.json',
+    'https://local/project-blueprint-engine/dependency-impact-audit.schema.json',
+  ],
   [
     '.pbe/blueprint/dependency-impact-audit.json',
     'https://local/project-blueprint-engine/dependency-impact-audit.schema.json',
   ],
+  [
+    '.devview/blueprint/execution-strategy.json',
+    'https://local/project-blueprint-engine/execution-strategy.schema.json',
+  ],
   ['.pbe/blueprint/execution-strategy.json', 'https://local/project-blueprint-engine/execution-strategy.schema.json'],
+  [
+    '.devview/blueprint/traceability-matrix.json',
+    'https://local/project-blueprint-engine/traceability-matrix.schema.json',
+  ],
   ['.pbe/blueprint/traceability-matrix.json', 'https://local/project-blueprint-engine/traceability-matrix.schema.json'],
+  [
+    '.devview/codex-execution-pack/execution-manifest.json',
+    'https://local/project-blueprint-engine/execution-manifest.schema.json',
+  ],
   [
     '.pbe/codex-execution-pack/execution-manifest.json',
     'https://local/project-blueprint-engine/execution-manifest.schema.json',
   ],
   [
+    '.devview/codex-execution-pack/04-traceability-matrix.json',
+    'https://local/project-blueprint-engine/traceability-matrix.schema.json',
+  ],
+  [
     '.pbe/codex-execution-pack/04-traceability-matrix.json',
     'https://local/project-blueprint-engine/traceability-matrix.schema.json',
   ],
+  ['.devview/codex-execution-pack/05-ui-ux-spec.json', 'https://local/project-blueprint-engine/ui-ux-spec.schema.json'],
   ['.pbe/codex-execution-pack/05-ui-ux-spec.json', 'https://local/project-blueprint-engine/ui-ux-spec.schema.json'],
+  ['.devview/review/feedback-items.json', 'https://local/project-blueprint-engine/feedback-items.schema.json'],
   ['.pbe/review/feedback-items.json', 'https://local/project-blueprint-engine/feedback-items.schema.json'],
+  [
+    '.devview/control/legacy-control-inventory.json',
+    'https://local/project-blueprint-engine/legacy-control-inventory.schema.json',
+  ],
   [
     '.pbe/control/legacy-control-inventory.json',
     'https://local/project-blueprint-engine/legacy-control-inventory.schema.json',
+  ],
+  [
+    '.devview/control/surface-completion-ledger.json',
+    'https://local/project-blueprint-engine/surface-completion-ledger.schema.json',
   ],
   [
     '.pbe/control/surface-completion-ledger.json',
     'https://local/project-blueprint-engine/surface-completion-ledger.schema.json',
   ],
   [
+    '.devview/control/hardware-readiness-ledger.json',
+    'https://local/project-blueprint-engine/hardware-readiness-ledger.schema.json',
+  ],
+  [
     '.pbe/control/hardware-readiness-ledger.json',
     'https://local/project-blueprint-engine/hardware-readiness-ledger.schema.json',
   ],
   [
+    '.devview/control/visual-verification-profile.json',
+    'https://local/project-blueprint-engine/visual-verification-profile.schema.json',
+  ],
+  [
     '.pbe/control/visual-verification-profile.json',
     'https://local/project-blueprint-engine/visual-verification-profile.schema.json',
+  ],
+  [
+    '.devview/control/verification-miss-log.json',
+    'https://local/project-blueprint-engine/verification-miss-log.schema.json',
   ],
   [
     '.pbe/control/verification-miss-log.json',
@@ -77,9 +129,9 @@ const requiredPaths = [
   'skills/pbe-collect-feedback/SKILL.md',
   'skills/pbe-create-revision-pack/SKILL.md',
   'skills/pbe-run-revision/SKILL.md',
-  'templates/pbe-state.template.json',
+  'templates/devview-state.template.json',
   'templates/autoflow-state.template.json',
-  'templates/pbe-routing-contract-template.md',
+  'templates/devview-routing-contract-template.md',
   'templates/source-of-truth-matrix-template.md',
   'templates/pbe-invariants-template.md',
   'templates/foundation-contract-template.md',
@@ -125,7 +177,7 @@ const requiredPaths = [
   'templates/hardware-readiness-ledger.template.json',
   'templates/visual-verification-profile.template.json',
   'templates/verification-miss-log.template.json',
-  'schemas/pbe-state.schema.json',
+  'schemas/devview-state.schema.json',
   'schemas/autoflow-state.schema.json',
   'schemas/source-of-truth-matrix.schema.json',
   'schemas/pbe-invariants.schema.json',
@@ -214,13 +266,13 @@ if (!projectValidationMode) {
   validateSkillFrontmatter()
   validateStatusCardTemplates()
 }
-validateOptionalPbeTarget()
+validateOptionalDevViewTarget()
 validateOptionalAcepTarget()
 validateOptionalReviewTarget()
 validateOptionalRevisionTargets()
 
 if (errors.length > 0) {
-  console.error('PBE validation failed:')
+  console.error('DevView validation failed:')
   for (const error of errors) {
     console.error(`- ${error}`)
   }
@@ -330,26 +382,27 @@ function validateStatusCardTemplates() {
       continue
     }
     const contents = readFileSync(absolutePath, 'utf8')
-    if (!contents.includes('[PBE 상태 보고]')) {
-      errors.push(`${relativePath} must include [PBE 상태 보고]`)
+    if (!contents.includes('[DevView status report]')) {
+      errors.push(`${relativePath} must include [DevView status report]`)
     }
-    if (!contents.includes('[Codex 메모]')) {
-      errors.push(`${relativePath} must include [Codex 메모]`)
+    if (!contents.includes('[Codex memo]')) {
+      errors.push(`${relativePath} must include [Codex memo]`)
     }
-    if (!contents.includes('추천 답변')) {
-      errors.push(`${relativePath} must include 추천 답변`)
+    if (!contents.includes('Recommended reply')) {
+      errors.push(`${relativePath} must include Recommended reply`)
     }
   }
 }
 
-function validateOptionalPbeTarget() {
-  const pbeRoot = path.join(targetRoot, '.pbe')
-  if (!existsSync(pbeRoot)) {
+function validateOptionalDevViewTarget() {
+  const storage = resolveTargetStorage()
+  if (!storage) {
     return
   }
 
-  const blueprintRoot = path.join(pbeRoot, 'blueprint')
-  const statePath = path.join(blueprintRoot, 'pbe-state.json')
+  const { root: storageRoot, prefix, canonicalStatePath, legacyStatePath } = storage
+  const blueprintRoot = path.join(storageRoot, 'blueprint')
+  const statePath = existsSync(canonicalStatePath) ? canonicalStatePath : legacyStatePath
   const treePath = path.join(blueprintRoot, 'requirement-tree.json')
   const previewPath = path.join(blueprintRoot, 'ui-ux-preview.json')
   const workDesignPath = path.join(blueprintRoot, 'work-design.json')
@@ -358,8 +411,8 @@ function validateOptionalPbeTarget() {
   const dependencyImpactAuditPath = path.join(blueprintRoot, 'dependency-impact-audit.json')
   const executionStrategyPath = path.join(blueprintRoot, 'execution-strategy.json')
   const blueprintTraceabilityPath = path.join(blueprintRoot, 'traceability-matrix.json')
-  const feedbackPath = path.join(targetRoot, '.pbe', 'review', 'feedback-items.json')
-  const controlRoot = path.join(targetRoot, '.pbe', 'control')
+  const feedbackPath = path.join(storageRoot, 'review', 'feedback-items.json')
+  const controlRoot = path.join(storageRoot, 'control')
   const legacyInventoryPath = path.join(controlRoot, 'legacy-control-inventory.json')
   const surfaceCompletionPath = path.join(controlRoot, 'surface-completion-ledger.json')
   const hardwareReadinessPath = path.join(controlRoot, 'hardware-readiness-ledger.json')
@@ -367,16 +420,17 @@ function validateOptionalPbeTarget() {
   const verificationMissPath = path.join(controlRoot, 'verification-miss-log.json')
 
   if (!existsSync(blueprintRoot)) {
-    errors.push('.pbe exists but .pbe/blueprint is missing')
+    errors.push(`${prefix} exists but ${prefix}/blueprint is missing`)
     return
   }
 
   if (!existsSync(statePath)) {
-    errors.push('.pbe exists but .pbe/blueprint/pbe-state.json is missing')
+    errors.push(`${prefix} exists but DevView state artifact is missing`)
   }
 
   if (existsSync(statePath)) {
-    const state = parseTargetJson(statePath, '.pbe/blueprint/pbe-state.json')
+    const stateLabel = labelForTargetPath(statePath)
+    const state = parseTargetJson(statePath, stateLabel)
     if (state) {
       targetContext.state = state
       validatePbeState(state)
@@ -384,7 +438,7 @@ function validateOptionalPbeTarget() {
   }
 
   if (existsSync(treePath)) {
-    const tree = parseTargetJson(treePath, '.pbe/blueprint/requirement-tree.json')
+    const tree = parseTargetJson(treePath, `${prefix}/blueprint/requirement-tree.json`)
     if (tree) {
       targetContext.requirementTree = tree
       validateRequirementTree(tree)
@@ -392,7 +446,7 @@ function validateOptionalPbeTarget() {
   }
 
   if (existsSync(previewPath)) {
-    const preview = parseTargetJson(previewPath, '.pbe/blueprint/ui-ux-preview.json')
+    const preview = parseTargetJson(previewPath, `${prefix}/blueprint/ui-ux-preview.json`)
     if (preview) {
       targetContext.uiUxPreview = preview
       validateUiUxPreview(preview)
@@ -400,7 +454,7 @@ function validateOptionalPbeTarget() {
   }
 
   if (existsSync(workDesignPath)) {
-    const workDesign = parseTargetJson(workDesignPath, '.pbe/blueprint/work-design.json')
+    const workDesign = parseTargetJson(workDesignPath, `${prefix}/blueprint/work-design.json`)
     if (workDesign) {
       targetContext.workDesign = workDesign
       validateWorkDesign(workDesign)
@@ -408,15 +462,15 @@ function validateOptionalPbeTarget() {
   }
 
   if (existsSync(workGraphPath)) {
-    const workGraph = parseTargetJson(workGraphPath, '.pbe/blueprint/work-graph.json')
+    const workGraph = parseTargetJson(workGraphPath, `${prefix}/blueprint/work-graph.json`)
     if (workGraph) {
       targetContext.workGraph = workGraph
-      validateWorkGraph(workGraph, '.pbe/blueprint/work-graph.json')
+      validateWorkGraph(workGraph, `${prefix}/blueprint/work-graph.json`)
     }
   }
 
   if (existsSync(verificationDesignPath)) {
-    const verificationDesign = parseTargetJson(verificationDesignPath, '.pbe/blueprint/verification-design.json')
+    const verificationDesign = parseTargetJson(verificationDesignPath, `${prefix}/blueprint/verification-design.json`)
     if (verificationDesign) {
       targetContext.verificationDesign = verificationDesign
       validateVerificationDesign(verificationDesign)
@@ -426,7 +480,7 @@ function validateOptionalPbeTarget() {
   if (existsSync(dependencyImpactAuditPath)) {
     const dependencyImpactAudit = parseTargetJson(
       dependencyImpactAuditPath,
-      '.pbe/blueprint/dependency-impact-audit.json',
+      `${prefix}/blueprint/dependency-impact-audit.json`,
     )
     if (dependencyImpactAudit) {
       targetContext.dependencyImpactAudit = dependencyImpactAudit
@@ -435,36 +489,62 @@ function validateOptionalPbeTarget() {
   }
 
   if (existsSync(executionStrategyPath)) {
-    const executionStrategy = parseTargetJson(executionStrategyPath, '.pbe/blueprint/execution-strategy.json')
+    const executionStrategy = parseTargetJson(executionStrategyPath, `${prefix}/blueprint/execution-strategy.json`)
     if (executionStrategy) {
       targetContext.executionStrategy = executionStrategy
-      validateExecutionStrategy(executionStrategy, '.pbe/blueprint/execution-strategy.json')
+      validateExecutionStrategy(executionStrategy, `${prefix}/blueprint/execution-strategy.json`)
     }
   }
 
   if (existsSync(blueprintTraceabilityPath)) {
-    const traceability = parseTargetJson(blueprintTraceabilityPath, '.pbe/blueprint/traceability-matrix.json')
+    const traceability = parseTargetJson(blueprintTraceabilityPath, `${prefix}/blueprint/traceability-matrix.json`)
     if (traceability) {
       targetContext.blueprintTraceability = traceability
-      validateTraceabilityMatrix(traceability, '.pbe/blueprint/traceability-matrix.json')
+      validateTraceabilityMatrix(traceability, `${prefix}/blueprint/traceability-matrix.json`)
     }
   }
 
   if (existsSync(feedbackPath)) {
-    const feedback = parseTargetJson(feedbackPath, '.pbe/review/feedback-items.json')
+    const feedback = parseTargetJson(feedbackPath, `${prefix}/review/feedback-items.json`)
     if (feedback) {
       validateFeedbackItems(feedback)
     }
   }
 
-  parseOptionalControlJson(legacyInventoryPath, '.pbe/control/legacy-control-inventory.json')
-  parseOptionalControlJson(surfaceCompletionPath, '.pbe/control/surface-completion-ledger.json')
-  parseOptionalControlJson(hardwareReadinessPath, '.pbe/control/hardware-readiness-ledger.json')
-  parseOptionalControlJson(visualVerificationPath, '.pbe/control/visual-verification-profile.json')
-  parseOptionalControlJson(verificationMissPath, '.pbe/control/verification-miss-log.json')
+  parseOptionalControlJson(legacyInventoryPath, `${prefix}/control/legacy-control-inventory.json`)
+  parseOptionalControlJson(surfaceCompletionPath, `${prefix}/control/surface-completion-ledger.json`)
+  parseOptionalControlJson(hardwareReadinessPath, `${prefix}/control/hardware-readiness-ledger.json`)
+  parseOptionalControlJson(visualVerificationPath, `${prefix}/control/visual-verification-profile.json`)
+  parseOptionalControlJson(verificationMissPath, `${prefix}/control/verification-miss-log.json`)
 
   validatePbeRouting(targetContext)
   validatePbeCrossArtifacts(targetContext)
+}
+
+function resolveTargetStorage() {
+  const devviewRoot = path.join(targetRoot, '.devview')
+  const pbeRoot = path.join(targetRoot, '.pbe')
+  if (existsSync(devviewRoot)) {
+    return {
+      root: devviewRoot,
+      prefix: '.devview',
+      canonicalStatePath: path.join(devviewRoot, 'blueprint', 'devview-state.json'),
+      legacyStatePath: path.join(devviewRoot, 'blueprint', 'pbe-state.json'),
+    }
+  }
+  if (existsSync(pbeRoot)) {
+    return {
+      root: pbeRoot,
+      prefix: '.pbe',
+      canonicalStatePath: path.join(pbeRoot, 'blueprint', 'devview-state.json'),
+      legacyStatePath: path.join(pbeRoot, 'blueprint', 'pbe-state.json'),
+    }
+  }
+  return null
+}
+
+function labelForTargetPath(absolutePath) {
+  return path.relative(targetRoot, absolutePath).replaceAll(path.sep, '/')
 }
 
 function parseOptionalControlJson(absolutePath, label) {
@@ -475,10 +555,16 @@ function parseOptionalControlJson(absolutePath, label) {
 }
 
 function validateOptionalAcepTarget() {
-  const acepRoot = path.join(targetRoot, '.pbe', 'codex-execution-pack')
+  const storage = resolveTargetStorage()
+  if (!storage) {
+    return
+  }
+
+  const acepRoot = path.join(storage.root, 'codex-execution-pack')
   if (!existsSync(acepRoot)) {
     return
   }
+  const prefix = storage.prefix
 
   const requiredAcepFiles = [
     '00-readme.md',
@@ -512,7 +598,7 @@ function validateOptionalAcepTarget() {
   if (requireCompleteAcepPackage) {
     for (const relativePath of requiredAcepFiles) {
       if (!existsSync(path.join(acepRoot, relativePath))) {
-        errors.push(`ACEP is missing required file: .pbe/codex-execution-pack/${relativePath}`)
+        errors.push(`ACEP is missing required file: ${prefix}/codex-execution-pack/${relativePath}`)
       }
     }
   }
@@ -520,7 +606,7 @@ function validateOptionalAcepTarget() {
   if (existsSync(path.join(acepRoot, 'execution-manifest.json'))) {
     const manifest = parseTargetJson(
       path.join(acepRoot, 'execution-manifest.json'),
-      '.pbe/codex-execution-pack/execution-manifest.json',
+      `${prefix}/codex-execution-pack/execution-manifest.json`,
     )
     if (manifest) {
       targetContext.executionManifest = manifest
@@ -531,18 +617,18 @@ function validateOptionalAcepTarget() {
   if (existsSync(path.join(acepRoot, '04-traceability-matrix.json'))) {
     const traceability = parseTargetJson(
       path.join(acepRoot, '04-traceability-matrix.json'),
-      '.pbe/codex-execution-pack/04-traceability-matrix.json',
+      `${prefix}/codex-execution-pack/04-traceability-matrix.json`,
     )
     if (traceability) {
       targetContext.acepTraceability = traceability
-      validateTraceabilityMatrix(traceability, '.pbe/codex-execution-pack/04-traceability-matrix.json')
+      validateTraceabilityMatrix(traceability, `${prefix}/codex-execution-pack/04-traceability-matrix.json`)
     }
   }
 
   if (existsSync(path.join(acepRoot, '05-ui-ux-spec.json'))) {
     const uiUxSpec = parseTargetJson(
       path.join(acepRoot, '05-ui-ux-spec.json'),
-      '.pbe/codex-execution-pack/05-ui-ux-spec.json',
+      `${prefix}/codex-execution-pack/05-ui-ux-spec.json`,
     )
     if (uiUxSpec) {
       targetContext.uiUxSpec = uiUxSpec
@@ -682,22 +768,22 @@ function validateUiUxPreview(preview) {
 function validatePbeState(state) {
   if (state.deliveryStatus === 'accepted') {
     if (!state.acceptance) {
-      errors.push('pbe-state.json deliveryStatus accepted requires acceptance metadata')
+      errors.push('DevView state deliveryStatus accepted requires acceptance metadata')
     } else {
       if (state.acceptance.setBy !== 'user') {
-        errors.push('pbe-state.json accepted status must be setBy user')
+        errors.push('DevView state accepted status must be setBy user')
       }
       if (state.acceptance.acceptanceSource !== 'explicit_user_reply') {
-        errors.push('pbe-state.json accepted status requires explicit_user_reply source')
+        errors.push('DevView state accepted status requires explicit_user_reply source')
       }
       if (!state.acceptance.acceptedAt) {
-        errors.push('pbe-state.json accepted status requires acceptedAt')
+        errors.push('DevView state accepted status requires acceptedAt')
       }
     }
   }
 
   if (state.autoflow) {
-    validateAutoflowState(state.autoflow, '.pbe/blueprint/pbe-state.json autoflow')
+    validateAutoflowState(state.autoflow, 'DevView state autoflow')
   }
 }
 
@@ -950,7 +1036,7 @@ function validateExecutionStrategy(strategy, label) {
 
 function validateExecutionManifest(manifest, acepRoot) {
   if (!Array.isArray(manifest.tasks)) {
-    errors.push('execution-manifest.json tasks must be an array')
+    errors.push('ACEP_MANIFEST_FIELD_INVALID: execution-manifest.json tasks must be an array')
     return
   }
 
@@ -1025,7 +1111,9 @@ function validateExecutionManifest(manifest, acepRoot) {
     }
   }
 
-  if (Array.isArray(manifest.phases)) {
+  if (!Array.isArray(manifest.phases)) {
+    errors.push('ACEP_MANIFEST_FIELD_INVALID: execution-manifest.json phases must be an array')
+  } else {
     validatePhasesAndParallelGroups(manifest.phases, taskById, 'execution-manifest.json', {
       requireTaskDefinitions: true,
       parallelPolicy: manifest.parallelPolicy,
@@ -1203,13 +1291,18 @@ function validateParallelGroups(parallelGroups, taskById, taskIds, label, option
 }
 
 function validateOptionalReviewTarget() {
-  const reviewRoot = path.join(targetRoot, '.pbe', 'review')
+  const storage = resolveTargetStorage()
+  if (!storage) {
+    return
+  }
+
+  const reviewRoot = path.join(storage.root, 'review')
   if (!existsSync(reviewRoot)) {
     return
   }
   const feedbackPath = path.join(reviewRoot, 'feedback-items.json')
   if (existsSync(feedbackPath)) {
-    const feedback = parseTargetJson(feedbackPath, '.pbe/review/feedback-items.json')
+    const feedback = parseTargetJson(feedbackPath, `${storage.prefix}/review/feedback-items.json`)
     if (feedback) {
       validateFeedbackItems(feedback)
     }
@@ -1222,13 +1315,17 @@ function validatePbeRouting(context) {
     return
   }
 
-  if (context.state.artifacts && !context.state.artifacts.pbeRoutingContract) {
-    errors.push('pbe-state.json artifacts must include pbeRoutingContract when .pbe routing is active')
+  if (
+    context.state.artifacts &&
+    !context.state.artifacts.devviewRoutingContract &&
+    !context.state.artifacts.pbeRoutingContract
+  ) {
+    errors.push('DevView state artifacts must include devviewRoutingContract when routing is active')
   }
 
   if (autoflow.currentGate && autoflow.nextStep !== autoflow.currentGate) {
     errors.push(
-      `PBE routing mismatch: currentGate ${autoflow.currentGate} must be the nextStep while waiting at a gate`,
+      `DevView routing mismatch: currentGate ${autoflow.currentGate} must be the nextStep while waiting at a gate`,
     )
   }
 
@@ -1238,7 +1335,7 @@ function validatePbeRouting(context) {
     deterministicPastDependency.includes(autoflow.nextStep)
 
   if (needsDependencyAudit && !context.dependencyImpactAudit) {
-    errors.push('PBE routing requires dependency-impact-audit.json before downstream execution')
+    errors.push('DevView routing requires dependency-impact-audit.json before downstream execution')
   }
 
   if (

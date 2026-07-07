@@ -11,7 +11,7 @@
 - [ ] No two parallel work items modify the same source file.
 - [ ] Adjacent files do not change the same Product behavior without Impact analysis.
 
-## PBE Artifact Independence
+## DevView Artifact Independence
 
 - [ ] No two parallel tasks write the same `.pbe` artifact.
 - [ ] No state transition commands run in parallel.

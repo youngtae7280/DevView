@@ -151,9 +151,9 @@ export function validatePbeStateValue(value: unknown): ValidationIssue[] {
       validator: 'StateMachine',
       code: 'UNKNOWN_STATE',
       severity: 'error',
-      file: '.pbe/blueprint/pbe-state.json',
-      message: `Unknown PBE autoflow.state: ${String(value || '<missing>')}.`,
-      suggestedFix: 'Use one of the canonical PBE states from cli/src/core/state-machine.ts.',
+      file: '.devview/blueprint/devview-state.json',
+      message: `Unknown DevView autoflow.state: ${String(value || '<missing>')}.`,
+      suggestedFix: 'Use one of the canonical DevView states from cli/src/core/state-machine.ts.',
     }),
   ]
 }
@@ -172,7 +172,7 @@ export function assertTransition(from: PbeState, to: PbeState): ValidationIssue[
       code: 'INVALID_TRANSITION',
       severity: 'error',
       message: `State transition ${from} -> ${to} is not allowed.`,
-      suggestedFix: 'Return to the previous required PBE gate and complete its validator before advancing.',
+      suggestedFix: 'Return to the previous required DevView gate and complete its validator before advancing.',
     }),
   ]
 }
@@ -234,9 +234,9 @@ export function stateMachineIssues(state: Record<string, unknown> | null): Valid
         validator: 'StateMachine',
         code: 'STATE_HISTORY_CURRENT_MISMATCH',
         severity: 'error',
-        file: '.pbe/blueprint/pbe-state.json',
+        file: '.devview/blueprint/devview-state.json',
         message: `Last stateHistory target ${previousTo} does not match current state ${currentState}.`,
-        suggestedFix: 'Use PBE CLI transition commands so stateHistory and autoflow.state stay synchronized.',
+        suggestedFix: 'Use DevView CLI transition commands so stateHistory and autoflow.state stay synchronized.',
       }),
     )
   }
@@ -249,10 +249,10 @@ function historyIssue(code: string, index: number, message: string): ValidationI
     validator: 'StateMachine',
     code,
     severity: 'error',
-    file: '.pbe/blueprint/pbe-state.json',
+    file: '.devview/blueprint/devview-state.json',
     nodeId: `stateHistory[${index}]`,
     message,
-    suggestedFix: 'Repair the state history or rerun the appropriate PBE CLI transition command.',
+    suggestedFix: 'Repair the state history or rerun the appropriate DevView CLI transition command.',
   })
 }
 

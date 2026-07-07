@@ -26,9 +26,9 @@ export async function acceptCommand(context: CommandContext): Promise<CommandRes
         code: 'ACCEPT_STATE_BLOCKED',
         severity: 'error',
         file: defaultArtifacts.pbeState,
-        message: `pbe accept can run only from WAITING_REVIEW_RESULT. Current state is ${String(currentState || 'unknown')}.`,
+        message: `devview accept can run only from WAITING_REVIEW_RESULT. Current state is ${String(currentState || 'unknown')}.`,
         suggestedFix:
-          'Submit verified work with `pbe review submit`, then record user approval and rerun `pbe accept`.',
+          'Submit verified work with `devview review submit`, then record user approval and rerun `devview accept`.',
       }),
     ])
   }
@@ -49,8 +49,8 @@ export async function acceptCommand(context: CommandContext): Promise<CommandRes
         code: 'USER_APPROVAL_REQUIRED',
         severity: 'error',
         file: defaultArtifacts.acceptanceTree,
-        message: 'PBE cannot move to ACCEPTED or DONE until Acceptance Tree records decisionSource.actor = "user".',
-        suggestedFix: 'Record the explicit user approval in acceptance-tree.json, then rerun `pbe accept`.',
+        message: 'DevView cannot move to ACCEPTED or DONE until Acceptance Tree records decisionSource.actor = "user".',
+        suggestedFix: 'Record the explicit user approval in acceptance-tree.json, then rerun `devview accept`.',
       }),
     )
   }
@@ -72,7 +72,7 @@ export async function acceptCommand(context: CommandContext): Promise<CommandRes
       reviewGateId: 'review_result',
     },
     data: {
-      next: 'PBE branch/slice is DONE. Start a new slice only through scope selection.',
+      next: 'DevView branch/slice is DONE. Start a new slice only through scope selection.',
     },
   })
 }

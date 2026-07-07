@@ -75,8 +75,8 @@
       "status": "present"
     },
     {
-      "relativePath": "examples/valid/todo-app-devview-run/.devview/blueprint/pbe-state.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\DevView Plugin\\examples\\valid\\todo-app-devview-run\\.devview\\blueprint\\pbe-state.json",
+      "relativePath": "examples/valid/todo-app-devview-run/.devview/blueprint/devview-state.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\DevView Plugin\\examples\\valid\\todo-app-devview-run\\.devview\\blueprint\\devview-state.json",
       "status": "present"
     },
     {

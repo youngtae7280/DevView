@@ -35,7 +35,7 @@ export async function reviewSubmitCommand(context: CommandContext): Promise<Comm
       currentGate: 'review_result',
       nextStep: 'review_result',
       data: {
-        next: 'Wait for user review. Only the user can approve with accepted metadata before `pbe accept`.',
+        next: 'Wait for user review. Only the user can approve with accepted metadata before `devview accept`.',
       },
     },
   )

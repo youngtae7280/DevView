@@ -1,4 +1,4 @@
-import { artifactPath, defaultArtifacts } from './project.js'
+import { canonicalStateArtifactRelativePath, stateArtifactPath } from './project.js'
 import { readJsonSafe, writeJsonAtomic } from './fs.js'
 import {
   assertTransition,
@@ -55,7 +55,7 @@ export async function preparePbeStateTransition(
   | { ok: true; statePath: string; state: Record<string, unknown>; result: CommandResult }
   | { ok: false; result: CommandResult }
 > {
-  const statePath = artifactPath(root, 'pbeState')
+  const statePath = stateArtifactPath(root)
   const parsed = await readJsonSafe<Record<string, unknown>>(statePath)
   if (!parsed.ok) {
     return {
@@ -64,15 +64,15 @@ export async function preparePbeStateTransition(
         ok: false,
         command,
         exitCode: ExitCode.SchemaError,
-        message: `${command} failed. pbe-state.json was not changed.`,
+        message: `${command} failed. devview-state.json was not changed.`,
         issues: [
           issue({
             validator: 'StateTransition',
             code: 'PBE_STATE_INVALID_JSON',
             severity: 'error',
-            file: defaultArtifacts.pbeState,
+            file: canonicalStateArtifactRelativePath(root),
             message: parsed.error,
-            suggestedFix: 'Fix pbe-state.json before running state transition commands.',
+            suggestedFix: 'Fix devview-state.json before running state transition commands.',
           }),
         ],
       },
@@ -90,13 +90,13 @@ export async function preparePbeStateTransition(
         ok: false,
         command,
         exitCode: ExitCode.TransitionBlocked,
-        message: `${command} failed. pbe-state.json was not changed.`,
+        message: `${command} failed. devview-state.json was not changed.`,
         issues: [
           issue({
             validator: 'StateTransition',
             code: 'UNKNOWN_STATE',
             severity: 'error',
-            file: defaultArtifacts.pbeState,
+            file: canonicalStateArtifactRelativePath(root),
             message: `Cannot transition from unknown state: ${String(autoflow.state || '<missing>')}.`,
             suggestedFix: 'Repair autoflow.state to a canonical state or known migration alias.',
           }),
@@ -113,7 +113,7 @@ export async function preparePbeStateTransition(
         ok: false,
         command,
         exitCode: ExitCode.TransitionBlocked,
-        message: `${command} failed. pbe-state.json was not changed.`,
+        message: `${command} failed. devview-state.json was not changed.`,
         issues: existingStateIssues,
       },
     }
@@ -138,7 +138,7 @@ export async function preparePbeStateTransition(
       transitionIssues.push(
         ...issues.map((entry) => ({
           ...entry,
-          file: defaultArtifacts.pbeState,
+          file: canonicalStateArtifactRelativePath(root),
           message: `${entry.message} Current state is ${cursor}; ${command} requested ${target}.`,
         })),
       )
@@ -164,7 +164,7 @@ export async function preparePbeStateTransition(
         ok: false,
         command,
         exitCode: ExitCode.TransitionBlocked,
-        message: `${command} failed. pbe-state.json was not changed.`,
+        message: `${command} failed. devview-state.json was not changed.`,
         issues: transitionIssues,
       },
     }
@@ -221,7 +221,7 @@ export async function preparePbeStateTransition(
       message:
         appended.length === 0
           ? `${command} passed. State was already ${cursor}.`
-          : `${command} transitioned PBE state to ${cursor}.`,
+          : `${command} transitioned DevView state to ${cursor}.`,
       issues: [],
       data: {
         state: cursor,
@@ -241,22 +241,22 @@ export async function checkpointPbeState(
   allowedStates: PbeState[],
   update: StateTransitionUpdate,
 ): Promise<CommandResult> {
-  const statePath = artifactPath(root, 'pbeState')
+  const statePath = stateArtifactPath(root)
   const parsed = await readJsonSafe<Record<string, unknown>>(statePath)
   if (!parsed.ok) {
     return {
       ok: false,
       command,
       exitCode: ExitCode.SchemaError,
-      message: `${command} failed. pbe-state.json was not changed.`,
+      message: `${command} failed. devview-state.json was not changed.`,
       issues: [
         issue({
           validator: 'StateCheckpoint',
           code: 'PBE_STATE_INVALID_JSON',
           severity: 'error',
-          file: defaultArtifacts.pbeState,
+          file: canonicalStateArtifactRelativePath(root),
           message: parsed.error,
-          suggestedFix: 'Fix pbe-state.json before running checkpoint commands.',
+          suggestedFix: 'Fix devview-state.json before running checkpoint commands.',
         }),
       ],
     }
@@ -271,13 +271,13 @@ export async function checkpointPbeState(
       ok: false,
       command,
       exitCode: ExitCode.TransitionBlocked,
-      message: `${command} failed. pbe-state.json was not changed.`,
+      message: `${command} failed. devview-state.json was not changed.`,
       issues: [
         issue({
           validator: 'StateCheckpoint',
           code: 'UNKNOWN_STATE',
           severity: 'error',
-          file: defaultArtifacts.pbeState,
+          file: canonicalStateArtifactRelativePath(root),
           message: `Cannot update checkpoint from unknown state: ${String(autoflow.state || '<missing>')}.`,
           suggestedFix: 'Repair autoflow.state to a canonical state or known migration alias.',
         }),
@@ -291,7 +291,7 @@ export async function checkpointPbeState(
       ok: false,
       command,
       exitCode: ExitCode.TransitionBlocked,
-      message: `${command} failed. pbe-state.json was not changed.`,
+      message: `${command} failed. devview-state.json was not changed.`,
       issues: existingStateIssues,
     }
   }
@@ -301,15 +301,15 @@ export async function checkpointPbeState(
       ok: false,
       command,
       exitCode: ExitCode.TransitionBlocked,
-      message: `${command} failed. pbe-state.json was not changed.`,
+      message: `${command} failed. devview-state.json was not changed.`,
       issues: [
         issue({
           validator: 'StateCheckpoint',
           code: 'CHECKPOINT_STATE_BLOCKED',
           severity: 'error',
-          file: defaultArtifacts.pbeState,
+          file: canonicalStateArtifactRelativePath(root),
           message: `${command} can run only from ${allowedStates.join(', ')}. Current state is ${current}.`,
-          suggestedFix: 'Complete the previous PBE state transition before updating this checkpoint.',
+          suggestedFix: 'Complete the previous DevView state transition before updating this checkpoint.',
         }),
       ],
     }

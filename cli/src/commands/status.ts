@@ -13,17 +13,17 @@ export async function statusCommand(context: CommandContext): Promise<CommandRes
       ok: false,
       command: 'status',
       exitCode: issues.length > 0 ? ExitCode.SchemaError : ExitCode.NotInitialized,
-      message: 'PBE project is not initialized.',
+      message: 'DevView project is not initialized.',
       issues:
         issues.length > 0
           ? issues
           : [
               issue({
                 validator: 'Project',
-                code: 'PBE_NOT_INITIALIZED',
+                code: 'DEVVIEW_NOT_INITIALIZED',
                 severity: 'error',
-                message: '.pbe/blueprint/pbe-state.json was not found.',
-                suggestedFix: 'Run `pbe init --profile full --brief "..."` in the target project.',
+                message: '.devview/blueprint/devview-state.json was not found.',
+                suggestedFix: 'Run `devview init --profile full --brief "..."` in the target project.',
               }),
             ],
       data: {
@@ -57,7 +57,7 @@ export async function statusCommand(context: CommandContext): Promise<CommandRes
   const recommendedContext = recommendStatusContext(state, profile, blockingIssues)
   const suggestedFixes = uniqueStrings(blockingIssues.map((entry) => entry.suggestedFix).filter(isString))
   const messageLines = [
-    'PBE Status',
+    'DevView Status',
     '',
     `Initialized: yes`,
     `Profile: ${String(autoflow.profile || 'unknown')}`,
@@ -119,10 +119,10 @@ const profileGuidanceByProfile: Record<PbeProfile, ProfileGuidance> = {
     profile: 'lite',
     workflowDepth: 'compact',
     summary:
-      'This run uses compact PBE guidance for a bounded low-risk slice. It is not a separate mode or a safety bypass.',
+      'This run uses compact DevView guidance for a bounded low-risk slice. It is not a separate mode or a safety bypass.',
     mustKeepGuards: [
       'user-only acceptance',
-      'no direct pbe-state edit',
+      'no direct devview-state edit',
       'expectedFiles / File Change Guard',
       'minimal Acceptance Criteria',
       'minimal Test/Evidence',
@@ -144,7 +144,7 @@ const profileGuidanceByProfile: Record<PbeProfile, ProfileGuidance> = {
     ],
     limitations: [
       '`lite` is compatibility metadata, not a separate public workflow',
-      'No dedicated pbe lite command',
+      'No dedicated devview lite command',
       'No reduced artifact initialization',
     ],
   },
@@ -152,7 +152,7 @@ const profileGuidanceByProfile: Record<PbeProfile, ProfileGuidance> = {
     profile: 'full',
     workflowDepth: 'standard',
     summary:
-      'Follow the normal PBE workflow with full planning depth for unclear, high-risk, UI/UX, multi-module, or product-meaning work.',
+      'Follow the normal DevView workflow with full planning depth for unclear, high-risk, UI/UX, multi-module, or product-meaning work.',
     mustKeepGuards: [],
     escalationTriggers: [],
     limitations: [],
@@ -161,9 +161,9 @@ const profileGuidanceByProfile: Record<PbeProfile, ProfileGuidance> = {
     profile: 'bypass',
     workflowDepth: 'none',
     summary:
-      'Bypass means PBE tracking is not active for this work. Use the normal PBE flow if traceability, evidence, review, or acceptance control is needed.',
+      'Bypass means DevView tracking is not active for this work. Use the normal DevView flow if traceability, evidence, review, or acceptance control is needed.',
     mustKeepGuards: [],
-    escalationTriggers: ['any PBE traceability is needed', 'evidence, review, or acceptance control is needed'],
+    escalationTriggers: ['any DevView traceability is needed', 'evidence, review, or acceptance control is needed'],
     limitations: [],
   },
 }
@@ -192,29 +192,29 @@ function formatProfileGuidance(guidance: ProfileGuidance): string[] {
 }
 
 const recommendedNextCommandByState: Record<PbeState, string | null> = {
-  INIT: 'pbe rpd close or pbe rpd check',
-  WAITING_ROOT_CONFIRMATION: 'pbe rpd close',
-  RPD_IN_PROGRESS: 'pbe rpd check',
-  RPD_DONE: 'pbe ui approve or pbe wpd close',
-  WAITING_UI_UX_CONFIRM: 'pbe ui approve',
-  UI_UX_APPROVED: 'pbe wpd close',
-  VISUAL_CONTRACT_READY: 'pbe wpd close',
-  WPD_IN_PROGRESS: 'pbe wpd close',
-  WPD_DONE: 'pbe vd close',
-  UI_SURFACE_INVENTORY_DONE: 'pbe vd close',
-  VD_IN_PROGRESS: 'pbe vd close',
-  VD_DONE: 'pbe scope select',
-  WAITING_IMPLEMENTATION_SCOPE: 'pbe scope select',
-  SCOPE_SELECTED: 'pbe acep ready',
-  ACEP_READY: 'pbe execution start',
-  EXECUTION_IN_PROGRESS: 'pbe execution complete',
-  ACEP_RUN_DONE: 'pbe review submit',
-  VISUAL_AUDIT_DONE: 'pbe review submit',
-  WAITING_REVIEW_RESULT: 'pbe accept or pbe change create',
-  REVISION_REQUESTED: 'pbe revision complete',
-  ACCEPTED: 'pbe accept or DONE if closure is complete',
+  INIT: 'devview rpd close or devview rpd check',
+  WAITING_ROOT_CONFIRMATION: 'devview rpd close',
+  RPD_IN_PROGRESS: 'devview rpd check',
+  RPD_DONE: 'devview ui approve or devview wpd close',
+  WAITING_UI_UX_CONFIRM: 'devview ui approve',
+  UI_UX_APPROVED: 'devview wpd close',
+  VISUAL_CONTRACT_READY: 'devview wpd close',
+  WPD_IN_PROGRESS: 'devview wpd close',
+  WPD_DONE: 'devview vd close',
+  UI_SURFACE_INVENTORY_DONE: 'devview vd close',
+  VD_IN_PROGRESS: 'devview vd close',
+  VD_DONE: 'devview scope select',
+  WAITING_IMPLEMENTATION_SCOPE: 'devview scope select',
+  SCOPE_SELECTED: 'devview acep ready',
+  ACEP_READY: 'devview execution start',
+  EXECUTION_IN_PROGRESS: 'devview execution complete',
+  ACEP_RUN_DONE: 'devview review submit',
+  VISUAL_AUDIT_DONE: 'devview review submit',
+  WAITING_REVIEW_RESULT: 'devview accept or devview change create',
+  REVISION_REQUESTED: 'devview revision complete',
+  ACCEPTED: 'devview accept or DONE if closure is complete',
   DONE: null,
-  BLOCKED: 'pbe validate',
+  BLOCKED: 'devview validate',
 }
 
 function recommendNextCommand(state: PbeState | null, issues: ValidationIssue[]): string | null {
@@ -223,7 +223,7 @@ function recommendNextCommand(state: PbeState | null, issues: ValidationIssue[])
     return issueCommand
   }
   if (!state) {
-    return 'pbe validate'
+    return 'devview validate'
   }
   return recommendedNextCommandByState[state]
 }
@@ -324,10 +324,10 @@ function collectStatusBlockingIssues(input: {
         validator: 'Status',
         code: 'UNKNOWN_STATE',
         severity: 'error',
-        file: '.pbe/blueprint/pbe-state.json',
-        message: `Unknown PBE autoflow.state: ${String(input.rawState || '<missing>')}.`,
-        suggestedFix: `Run \`pbe validate\` and repair the state to one of: ${PBE_STATES.join(', ')}.`,
-        nextCommand: 'pbe validate',
+        file: '.devview/blueprint/devview-state.json',
+        message: `Unknown DevView autoflow.state: ${String(input.rawState || '<missing>')}.`,
+        suggestedFix: `Run \`devview validate\` and repair the state to one of: ${PBE_STATES.join(', ')}.`,
+        nextCommand: 'devview validate',
       }),
     )
   }
@@ -341,7 +341,7 @@ function collectStatusBlockingIssues(input: {
         file: '.pbe/control/decision-queue.json',
         nodeId: isString(decision.id) ? decision.id : undefined,
         message: `Blocking decision is open: ${String(decision.question || decision.reason || decision.id || 'unknown decision')}.`,
-        suggestedFix: 'Resolve the blocking decision before continuing downstream PBE stages.',
+        suggestedFix: 'Resolve the blocking decision before continuing downstream DevView stages.',
       }),
     )
   }
@@ -354,11 +354,11 @@ function collectStatusBlockingIssues(input: {
         validator: 'Autoflow',
         code: 'LAST_FAILURE_PRESENT',
         severity: 'error',
-        file: '.pbe/blueprint/pbe-state.json',
+        file: '.devview/blueprint/devview-state.json',
         message: `Last failure is still present: ${String(failure.failedStep || failure.step || 'unknown step')}.`,
         suggestedFix: isString(failure.suggestedFix)
           ? failure.suggestedFix
-          : 'Resolve the recorded failure before continuing downstream PBE stages.',
+          : 'Resolve the recorded failure before continuing downstream DevView stages.',
         nextCommand: isString(failure.nextCommand) ? failure.nextCommand : undefined,
       }),
     )
@@ -370,10 +370,10 @@ function collectStatusBlockingIssues(input: {
         validator: 'Revision',
         code: 'REVISION_CONTEXT_MISSING',
         severity: 'error',
-        file: '.pbe/blueprint/pbe-state.json',
+        file: '.devview/blueprint/devview-state.json',
         message: 'State is REVISION_REQUESTED but activeRevision is missing.',
-        suggestedFix: 'Run `pbe revision start` for the affected Change node before revision work continues.',
-        nextCommand: 'pbe revision start',
+        suggestedFix: 'Run `devview revision start` for the affected Change node before revision work continues.',
+        nextCommand: 'devview revision start',
       }),
     )
   }

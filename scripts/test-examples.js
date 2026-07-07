@@ -46,14 +46,14 @@ if (!existsSync(cliPath)) {
 }
 
 if (failures.length > 0) {
-  console.error('\nPBE example fixture test failed:')
+  console.error('\nDevView example fixture test failed:')
   for (const failure of failures) {
     console.error(`- ${failure}`)
   }
   process.exit(1)
 }
 
-console.log('\nPBE example fixture test passed.')
+console.log('\nDevView example fixture test passed.')
 
 function runValidExamples() {
   console.log('Valid examples:')
@@ -64,7 +64,7 @@ function runValidExamples() {
       tempRoots.push(runtimeRoot)
       for (const command of example.commands) {
         const result = runPbe(command, runtimeRoot)
-        const commandText = `pbe ${command.join(' ')}`
+        const commandText = `devview ${command.join(' ')}`
         if (result.status !== 0) {
           failures.push(
             `${example.name}: ${commandText} expected exit 0, got ${result.status}\n${trimOutput(result.output)}`,
@@ -90,7 +90,7 @@ function runInvalidExamples() {
       const runtimeRoot = materializeInvalidFixture(example)
       tempRoots.push(runtimeRoot)
       const result = runPbe(example.command, runtimeRoot)
-      const commandText = `pbe ${example.command.join(' ')}`
+      const commandText = `devview ${example.command.join(' ')}`
       if (result.status === 0) {
         failures.push(`${example.name}: ${commandText} expected non-zero exit code.`)
         console.log(`  FAIL ${example.name}: ${commandText}`)
@@ -116,14 +116,14 @@ function runInvalidExamples() {
 }
 
 function materializeInvalidFixture(example) {
-  const runtimeRoot = mkdtempSync(path.join(tmpdir(), `pbe-example-${example.name}-`))
+  const runtimeRoot = mkdtempSync(path.join(tmpdir(), `devview-example-${example.name}-`))
   cpSync(validExampleRoot, runtimeRoot, { recursive: true })
   applyMutation(runtimeRoot, example.mutation)
   return runtimeRoot
 }
 
 function materializeValidFixture(example) {
-  const runtimeRoot = mkdtempSync(path.join(tmpdir(), `pbe-example-${example.name}-`))
+  const runtimeRoot = mkdtempSync(path.join(tmpdir(), `devview-example-${example.name}-`))
   cpSync(example.source, runtimeRoot, { recursive: true })
   copyPluginValidationAssets(runtimeRoot)
   return runtimeRoot
@@ -201,7 +201,7 @@ function applyMutation(root, mutation) {
 }
 
 function writeStateFor(root, targetState, deliveryStatus) {
-  const state = readArtifact(root, '.devview/blueprint/pbe-state.json')
+  const state = readArtifact(root, '.devview/blueprint/devview-state.json')
   const history = state.autoflow.stateHistory
   const index = history.findIndex((entry) => entry.to === targetState)
   state.autoflow.state = targetState
@@ -212,7 +212,7 @@ function writeStateFor(root, targetState, deliveryStatus) {
   if (deliveryStatus !== 'accepted') {
     delete state.acceptance
   }
-  writeArtifact(root, '.devview/blueprint/pbe-state.json', state)
+  writeArtifact(root, '.devview/blueprint/devview-state.json', state)
 }
 
 function runPbe(args, cwd) {

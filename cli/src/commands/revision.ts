@@ -5,7 +5,7 @@ import { preparePbeStateTransition, transitionPbeState } from '../core/state-tra
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { hasErrors, issue } from '../core/types.js'
 import { readJsonSafe } from '../core/fs.js'
-import { artifactPath, defaultArtifacts } from '../core/project.js'
+import { artifactPath, defaultArtifacts, stateArtifactPath } from '../core/project.js'
 import {
   buildRevisionContext,
   revisionAffectedIds,
@@ -40,7 +40,7 @@ export async function revisionStartCommand(context: CommandContext): Promise<Com
       data: {
         changeId: context.options.change,
         activeRevision: { ...revisionContext.context },
-        next: 'Revise only affected nodes from Impact Tree, refresh tests/evidence, then run `pbe revision complete --change <id>`.',
+        next: 'Revise only affected nodes from Impact Tree, refresh tests/evidence, then run `devview revision complete --change <id>`.',
       },
     },
   )
@@ -63,10 +63,10 @@ export async function revisionStartCommand(context: CommandContext): Promise<Com
         file: defaultArtifacts.pbeState,
         message: error instanceof Error ? error.message : String(error),
         suggestedFix:
-          'Fix filesystem or artifact write errors, then rerun `pbe revision start --change <id>` so state and invalidations commit together.',
+          'Fix filesystem or artifact write errors, then rerun `devview revision start --change <id>` so state and invalidations commit together.',
         nextCommand: context.options.change
-          ? `pbe revision start --change ${context.options.change}`
-          : 'pbe revision start',
+          ? `devview revision start --change ${context.options.change}`
+          : 'devview revision start',
       }),
     ])
   }
@@ -84,7 +84,7 @@ export async function revisionCompleteCommand(context: CommandContext): Promise<
   if (hasErrors(issues)) {
     return transitionFailed('revision complete', 'Revision completion failed. State was not changed.', issues)
   }
-  const state = await readJsonSafe<JsonObject>(artifactPath(context.options.root, 'pbeState'))
+  const state = await readJsonSafe<JsonObject>(stateArtifactPath(context.options.root))
   const activeRevision =
     state.ok && typeof state.value.activeRevision === 'object' && state.value.activeRevision !== null
       ? (state.value.activeRevision as JsonObject)
@@ -107,7 +107,7 @@ export async function revisionCompleteCommand(context: CommandContext): Promise<
     data: {
       changeId: context.options.change,
       completedRevision,
-      next: 'Revision does not close as DONE. Continue through `pbe wpd close`, `pbe vd close`, ACEP execution, review, and user accept.',
+      next: 'Revision does not close as DONE. Continue through `devview wpd close`, `devview vd close`, ACEP execution, review, and user accept.',
     },
   })
 }
@@ -144,7 +144,7 @@ async function prepareRevisionInvalidations(
           file: defaultArtifacts.evidenceTree,
           message: `Could not parse Evidence Tree: ${evidenceTree.error}`,
           suggestedFix: 'Fix evidence-tree.json before starting revision.',
-          nextCommand: 'pbe revision start',
+          nextCommand: 'devview revision start',
         }),
       )
     } else {
@@ -166,7 +166,7 @@ async function prepareRevisionInvalidations(
           file: defaultArtifacts.acceptanceTree,
           message: `Could not parse Acceptance Tree: ${acceptanceTree.error}`,
           suggestedFix: 'Fix acceptance-tree.json before starting revision.',
-          nextCommand: 'pbe revision start',
+          nextCommand: 'devview revision start',
         }),
       )
     } else {

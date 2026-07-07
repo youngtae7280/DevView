@@ -23,7 +23,7 @@ export async function validateProductPatchTree(
             severity: 'error',
             file: defaultArtifacts.productPatchTree,
             message: 'Product Patch Tree is missing.',
-            suggestedFix: 'Run `pbe init` or restore .pbe/control/product-patch-tree.json.',
+            suggestedFix: 'Run `devview init` or restore .pbe/control/product-patch-tree.json.',
           }),
         ]
       : []
@@ -133,8 +133,8 @@ export function validateProductPatchTreeObject(
           file: defaultArtifacts.productPatchTree,
           nodeId: id,
           message: `Applied Product Patch ${id || '<missing>'} has no Impact node linked to ${changeNodeId}.`,
-          suggestedFix: 'Run `pbe impact analyze` and then re-enter the required Revision closure flow.',
-          nextCommand: 'pbe impact analyze',
+          suggestedFix: 'Run `devview impact analyze` and then re-enter the required Revision closure flow.',
+          nextCommand: 'devview impact analyze',
         }),
       )
     }

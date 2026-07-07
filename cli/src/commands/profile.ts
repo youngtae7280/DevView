@@ -17,7 +17,7 @@ export async function profileRecommendCommand(context: CommandContext): Promise<
           code: 'PROFILE_BRIEF_REQUIRED',
           severity: 'error',
           message: 'Missing required option: --brief',
-          suggestedFix: 'Run `pbe profile recommend --brief "..."` with a short task description.',
+          suggestedFix: 'Run `devview profile recommend --brief "..."` with a short task description.',
         }),
       ],
     }

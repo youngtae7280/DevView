@@ -34,8 +34,8 @@ export async function rpdCloseCommand(context: CommandContext): Promise<CommandR
       nextStep: uiWork ? 'ui_ux_confirm' : 'wpd',
       data: {
         next: uiWork
-          ? 'Confirm UI/UX with `pbe ui approve` before WPD.'
-          : 'Run `pbe wpd close` after WPD artifacts are ready.',
+          ? 'Confirm UI/UX with `devview ui approve` before WPD.'
+          : 'Run `devview wpd close` after WPD artifacts are ready.',
       },
     },
   )

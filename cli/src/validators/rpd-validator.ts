@@ -36,7 +36,7 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
         severity: 'error',
         file: defaultArtifacts.productTree,
         message: 'Product Tree is missing.',
-        suggestedFix: 'Run `pbe init` or create .pbe/tree/product-tree.json before running RPD checks.',
+        suggestedFix: 'Run `devview init` or create .pbe/tree/product-tree.json before running RPD checks.',
       }),
     ]
   }

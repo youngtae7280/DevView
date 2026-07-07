@@ -96,7 +96,7 @@ function validateContextInput(
           code: 'CONTEXT_INPUT_REQUIRED',
           severity: 'error',
           message: 'Missing required option: provide --brief or --stage.',
-          suggestedFix: `Run \`pbe ${command} --brief "..."\` or \`pbe ${command} --stage <stage>\`.`,
+          suggestedFix: `Run \`devview ${command} --brief "..."\` or \`devview ${command} --stage <stage>\`.`,
         }),
       ],
     }

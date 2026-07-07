@@ -1,5 +1,3 @@
-import { existsSync } from 'node:fs'
-import path from 'node:path'
 import {
   assessHumanGateClarity,
   humanGateTransitions,
@@ -45,7 +43,7 @@ export async function gateAssessCommand(context: CommandContext): Promise<Comman
           code: 'HUMAN_GATE_TEXT_REQUIRED',
           severity: 'error',
           message: 'Missing required option: --text.',
-          suggestedFix: 'Run `pbe gate assess --text "..."` with the decision or assumption to assess.',
+          suggestedFix: 'Run `devview gate assess --text "..."` with the decision or assumption to assess.',
         }),
       ],
     }
@@ -93,14 +91,14 @@ export async function gateCommand(stage: string | undefined, context: CommandCon
   const loadedProject = await loadProject(context.options.root)
   const projectIssues = loadedProject.issues
   const issues: ValidationIssue[] = [...projectIssues]
-  if (!existsSync(path.join(context.options.root, '.pbe'))) {
+  if (!loadedProject.project.initialized) {
     issues.push(
       issue({
         validator: 'Gate',
-        code: 'PBE_NOT_INITIALIZED',
+        code: 'DEVVIEW_NOT_INITIALIZED',
         severity: 'error',
-        message: 'PBE project is not initialized.',
-        suggestedFix: 'Run `pbe init` before entering PBE stages.',
+        message: 'DevView project is not initialized.',
+        suggestedFix: 'Run `devview init` before entering DevView stages.',
       }),
     )
   }
@@ -217,7 +215,7 @@ function stageStateIssues(stage: string, state: Record<string, unknown> | null):
       severity: 'error',
       file: defaultArtifacts.pbeState,
       message: `Gate ${stage} is blocked from current state ${rawState || 'unknown'}.`,
-      suggestedFix: 'Run the previous required PBE close/check command instead of skipping stages.',
+      suggestedFix: 'Run the previous required DevView close/check command instead of skipping stages.',
     }),
   ]
 }

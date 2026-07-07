@@ -87,7 +87,7 @@
       "bytes": 742
     },
     {
-      "path": "schemas/pbe-state.schema.json",
+      "path": "schemas/devview-state.schema.json",
       "bytes": 2370
     },
     {
@@ -631,11 +631,11 @@
       "bytes": 266
     },
     {
-      "path": "examples/valid/todo-app-devview-run/.devview/blueprint/pbe-routing-contract.md",
+      "path": "examples/valid/todo-app-devview-run/.devview/blueprint/devview-routing-contract.md",
       "bytes": 105
     },
     {
-      "path": "examples/valid/todo-app-devview-run/.devview/blueprint/pbe-state.json",
+      "path": "examples/valid/todo-app-devview-run/.devview/blueprint/devview-state.json",
       "bytes": 3244
     },
     {

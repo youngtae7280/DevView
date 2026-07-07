@@ -13,6 +13,7 @@ const requiredSchemas = [
   'schemas/component-style-inventory.schema.json',
   'schemas/visual-verification-profile.schema.json',
   'schemas/product-patch-tree.schema.json',
+  'schemas/devview-state.schema.json',
 ]
 
 export function runSchemasValidator({ root }) {

@@ -1,43 +1,43 @@
-# Implementation Scope Gate Message Template
+﻿# Implementation Scope Gate Message Template
 
 ```text
-[PBE 상태 보고]
+[DevView status report]
 
-현재 단계:
+?占쎌옱 ?占쎄퀎:
 - state: WAITING_IMPLEMENTATION_SCOPE
 - currentGate: implementation_scope
 - nextStep: implementation_scope
 
-방금 완료한 작업:
+諛⑷툑 ?占쎈즺???占쎌뾽:
 - Dependency Impact Audit completed.
 
-생성/갱신된 산출물:
+?占쎌꽦/媛깆떊???占쎌텧占?
 - .pbe/blueprint/dependency-impact-audit.md
 - .pbe/blueprint/dependency-impact-audit.json
-- .pbe/blueprint/pbe-state.json
+- .devview/blueprint/devview-state.json
 - .pbe/blueprint/source-of-truth-matrix.md
 
-검증:
+寃占?
 - {validation_summary}
 
-왜 멈췄는가:
-- 이번 slice에서 구현할 selected scope, 미룰 deferred scope, 필요한 foundation scope를 사용자가 선택해야 합니다.
+??硫덉톬?占쏙옙?:
+- ?占쎈쾲 slice?占쎌꽌 援ы쁽??selected scope, 誘몃０ deferred scope, ?占쎌슂??foundation scope占??占쎌슜?占쏙옙? ?占쏀깮?占쎌빞 ?占쎈땲??
 
-다음 동작:
-- 사용자가 범위를 승인하면 Architecture Runway 확인 또는 Plan Execution으로 이어집니다.
+?占쎌쓬 ?占쎌옉:
+- ?占쎌슜?占쏙옙? 踰붿쐞占??占쎌씤?占쎈㈃ Architecture Runway ?占쎌씤 ?占쎈뒗 Plan Execution?占쎈줈 ?占쎌뼱吏묐땲??
 
-사용자가 답할 수 있는 말:
-- 승인/진행: "추천 범위로 진행해주세요"
-- 범위 수정: "Ethernet도 이번 범위에 포함해주세요"
-- 질문: "이 범위에서 가장 위험한 부분이 뭔가요?"
-- 중단: "중단해주세요"
+?占쎌슜?占쏙옙? ?占쏀븷 ???占쎈뒗 占?
+- ?占쎌씤/吏꾪뻾: "異붿쿇 踰붿쐞占?吏꾪뻾?占쎌＜?占쎌슂"
+- 踰붿쐞 ?占쎌젙: "Ethernet???占쎈쾲 踰붿쐞???占쏀븿?占쎌＜?占쎌슂"
+- 吏덈Ц: "??踰붿쐞?占쎌꽌 媛???占쏀뿕??遺遺꾩씠 萸뷂옙???"
+- 以묐떒: "以묐떒?占쎌＜?占쎌슂"
 
-추천 답변:
-"추천 범위로 진행해주세요"
+Recommended reply:
+"異붿쿇 踰붿쐞占?吏꾪뻾?占쎌＜?占쎌슂"
 ```
 
 ```text
-[Codex 메모]
+[Codex memo]
 
 {recommended_scope_reasoning}
 ```

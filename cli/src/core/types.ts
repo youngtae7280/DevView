@@ -212,74 +212,74 @@ export function hasErrors(issues: ValidationIssue[]): boolean {
 
 export function nextCommandForIssue(code: string): string | undefined {
   if (code.startsWith('AC_') || code === 'ABSTRACT_QUALITY_TERM' || code === 'ROOT_NOT_CONFIRMED_BY_USER') {
-    return 'pbe rpd check'
+    return 'devview rpd check'
   }
 
   const exact: Record<string, string> = {
-    ACCEPTANCE_CRITERIA_MISSING: 'pbe rpd check',
-    AMBIGUITY_UNRESOLVED: 'pbe rpd check',
-    NODE_NEEDS_CLARIFICATION: 'pbe rpd check',
-    LEAF_NOT_TERMINAL: 'pbe rpd check',
-    NODE_BLOCKED: 'pbe rpd check',
-    BLOCKING_DECISION_OPEN: 'pbe rpd check',
-    PRODUCT_WORK_LINK_MISSING: 'pbe wpd close',
-    WORK_WITHOUT_PRODUCT: 'pbe wpd close',
-    DEFERRED_SCOPE_LEAK: 'pbe wpd close',
-    OUT_OF_SCOPE_LEAK: 'pbe wpd close',
-    WORK_TEST_LINK_MISSING: 'pbe vd close',
-    ACCEPTANCE_NOT_COVERED: 'pbe vd close',
-    TEST_WITHOUT_WORK_OR_AC: 'pbe vd close',
-    TEST_EVIDENCE_DECLARATION_MISSING: 'pbe vd close',
-    TEST_EVIDENCE_LINK_MISSING: 'pbe execution complete',
-    REQUIRED_TEST_NO_EVIDENCE: 'pbe execution complete',
-    REQUIRED_TEST_NO_CURRENT_EVIDENCE: 'pbe execution complete',
-    EVIDENCE_FILE_MISSING: 'pbe execution complete',
-    EVIDENCE_TIMESTAMP_MISSING: 'pbe execution complete',
-    EVIDENCE_STALE: 'pbe execution complete',
-    EVIDENCE_SUPERSEDED: 'pbe execution complete',
-    EVIDENCE_NOT_CURRENT: 'pbe execution complete',
-    ACCEPTANCE_CLOSURE_MISSING: 'pbe accept',
-    USER_APPROVAL_REQUIRED: 'pbe accept',
-    USER_ACCEPTANCE_REQUIRED: 'pbe accept',
-    ASSISTANT_ACCEPTED_STATUS: 'pbe accept',
-    ASSISTANT_SET_ACCEPTED_STATUS: 'pbe accept',
-    ACCEPT_STATE_BLOCKED: 'pbe review submit',
-    REVISION_IMPACT_MISSING: 'pbe impact analyze',
-    REVISION_IMPACT_AFFECTED_IDS_MISSING: 'pbe impact analyze',
-    REVISION_CONTEXT_MISSING: 'pbe revision start',
-    REVISION_CHANGE_MISMATCH: 'pbe revision start',
-    REVISION_ACTIVE_CONTEXT_EMPTY: 'pbe impact analyze',
-    REVISION_CONTEXT_NOT_IN_PROGRESS: 'pbe revision start',
-    REVISION_ARTIFACT_TRANSACTION_FAILED: 'pbe revision start',
-    REVISION_CHANGE_NOT_FOUND: 'pbe change create',
-    FILE_CHANGE_OUTSIDE_WORK_SCOPE: 'pbe wpd close',
-    FILE_CHANGE_FORBIDDEN: 'pbe wpd close',
-    FILE_CHANGE_REQUIRES_REVISION: 'pbe change create',
-    FILE_CHANGE_UNKNOWN_RISK: 'pbe wpd close',
-    GIT_DIFF_UNAVAILABLE: 'pbe files check',
-    IMPACT_AFFECTED_IDS_MISSING: 'pbe impact analyze',
-    IMPACT_CHANGE_NOT_FOUND: 'pbe impact analyze',
-    CHANGE_SUMMARY_MISSING: 'pbe change create',
-    PRODUCT_PATCH_CHANGE_REQUIRED: 'pbe product patch propose',
-    PRODUCT_PATCH_CHANGE_MISSING: 'pbe change create',
-    PRODUCT_PATCH_TARGET_REQUIRED: 'pbe product patch propose',
-    PRODUCT_PATCH_TARGET_MISSING: 'pbe rpd check',
-    PRODUCT_PATCH_OPERATION_REQUIRED: 'pbe product patch propose',
-    PRODUCT_PATCH_OPERATION_INVALID: 'pbe product patch propose',
-    PRODUCT_PATCH_SUMMARY_REQUIRED: 'pbe product patch propose',
-    PRODUCT_PATCH_CONFIRMATION_REQUIRED: 'pbe product patch apply',
-    PRODUCT_PATCH_SNAPSHOT_MISMATCH: 'pbe product patch propose',
-    PRODUCT_PATCH_ALREADY_APPLIED: 'pbe status',
+    ACCEPTANCE_CRITERIA_MISSING: 'devview rpd check',
+    AMBIGUITY_UNRESOLVED: 'devview rpd check',
+    NODE_NEEDS_CLARIFICATION: 'devview rpd check',
+    LEAF_NOT_TERMINAL: 'devview rpd check',
+    NODE_BLOCKED: 'devview rpd check',
+    BLOCKING_DECISION_OPEN: 'devview rpd check',
+    PRODUCT_WORK_LINK_MISSING: 'devview wpd close',
+    WORK_WITHOUT_PRODUCT: 'devview wpd close',
+    DEFERRED_SCOPE_LEAK: 'devview wpd close',
+    OUT_OF_SCOPE_LEAK: 'devview wpd close',
+    WORK_TEST_LINK_MISSING: 'devview vd close',
+    ACCEPTANCE_NOT_COVERED: 'devview vd close',
+    TEST_WITHOUT_WORK_OR_AC: 'devview vd close',
+    TEST_EVIDENCE_DECLARATION_MISSING: 'devview vd close',
+    TEST_EVIDENCE_LINK_MISSING: 'devview execution complete',
+    REQUIRED_TEST_NO_EVIDENCE: 'devview execution complete',
+    REQUIRED_TEST_NO_CURRENT_EVIDENCE: 'devview execution complete',
+    EVIDENCE_FILE_MISSING: 'devview execution complete',
+    EVIDENCE_TIMESTAMP_MISSING: 'devview execution complete',
+    EVIDENCE_STALE: 'devview execution complete',
+    EVIDENCE_SUPERSEDED: 'devview execution complete',
+    EVIDENCE_NOT_CURRENT: 'devview execution complete',
+    ACCEPTANCE_CLOSURE_MISSING: 'devview accept',
+    USER_APPROVAL_REQUIRED: 'devview accept',
+    USER_ACCEPTANCE_REQUIRED: 'devview accept',
+    ASSISTANT_ACCEPTED_STATUS: 'devview accept',
+    ASSISTANT_SET_ACCEPTED_STATUS: 'devview accept',
+    ACCEPT_STATE_BLOCKED: 'devview review submit',
+    REVISION_IMPACT_MISSING: 'devview impact analyze',
+    REVISION_IMPACT_AFFECTED_IDS_MISSING: 'devview impact analyze',
+    REVISION_CONTEXT_MISSING: 'devview revision start',
+    REVISION_CHANGE_MISMATCH: 'devview revision start',
+    REVISION_ACTIVE_CONTEXT_EMPTY: 'devview impact analyze',
+    REVISION_CONTEXT_NOT_IN_PROGRESS: 'devview revision start',
+    REVISION_ARTIFACT_TRANSACTION_FAILED: 'devview revision start',
+    REVISION_CHANGE_NOT_FOUND: 'devview change create',
+    FILE_CHANGE_OUTSIDE_WORK_SCOPE: 'devview wpd close',
+    FILE_CHANGE_FORBIDDEN: 'devview wpd close',
+    FILE_CHANGE_REQUIRES_REVISION: 'devview change create',
+    FILE_CHANGE_UNKNOWN_RISK: 'devview wpd close',
+    GIT_DIFF_UNAVAILABLE: 'devview files check',
+    IMPACT_AFFECTED_IDS_MISSING: 'devview impact analyze',
+    IMPACT_CHANGE_NOT_FOUND: 'devview impact analyze',
+    CHANGE_SUMMARY_MISSING: 'devview change create',
+    PRODUCT_PATCH_CHANGE_REQUIRED: 'devview product patch propose',
+    PRODUCT_PATCH_CHANGE_MISSING: 'devview change create',
+    PRODUCT_PATCH_TARGET_REQUIRED: 'devview product patch propose',
+    PRODUCT_PATCH_TARGET_MISSING: 'devview rpd check',
+    PRODUCT_PATCH_OPERATION_REQUIRED: 'devview product patch propose',
+    PRODUCT_PATCH_OPERATION_INVALID: 'devview product patch propose',
+    PRODUCT_PATCH_SUMMARY_REQUIRED: 'devview product patch propose',
+    PRODUCT_PATCH_CONFIRMATION_REQUIRED: 'devview product patch apply',
+    PRODUCT_PATCH_SNAPSHOT_MISMATCH: 'devview product patch propose',
+    PRODUCT_PATCH_ALREADY_APPLIED: 'devview status',
   }
 
   if (exact[code]) {
     return exact[code]
   }
   if (code.startsWith('VISUAL_') || code.startsWith('UI_')) {
-    return 'pbe visual check'
+    return 'devview visual check'
   }
   if (code.startsWith('STATE_') || code === 'UNKNOWN_STATE' || code === 'INVALID_TRANSITION') {
-    return 'pbe status'
+    return 'devview status'
   }
   return undefined
 }
@@ -326,7 +326,7 @@ function inferNodeType(input: ValidationIssue): string | undefined {
   if (file.includes('impact-tree')) {
     return 'Impact'
   }
-  if (file.includes('pbe-state')) {
+  if (file.includes('devview-state') || file.includes('pbe-state')) {
     return 'State'
   }
   return undefined

@@ -12,7 +12,7 @@
 - [ ] Minimal Test/Evidence plan exists.
 - [ ] File Change Guard can explain source changes.
 - [ ] Product meaning does not change.
-- [ ] No direct pbe-state edit.
+- [ ] No direct devview-state edit.
 
 ## Escalation Checks
 

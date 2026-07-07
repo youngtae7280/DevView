@@ -1,43 +1,43 @@
-# Autoflow Failure Message Template
+﻿# Autoflow Failure Message Template
 
 ```text
-[PBE 상태 보고]
+[DevView status report]
 
-현재 단계:
+?占쎌옱 ?占쎄퀎:
 - state: {{last_valid_canonical_state}}
 - currentGate: null
 - nextStep: {failed_step}
 
-방금 완료한 작업:
+諛⑷툑 ?占쎈즺???占쎌뾽:
 - Automatic execution stopped before completing {failed_step}.
 
-생성/갱신된 산출물:
+?占쎌꽦/媛깆떊???占쎌텧占?
 - {artifact_paths_or_none}
 
-검증:
+寃占?
 - {validation_summary}
 
-왜 멈췄는가:
+??硫덉톬?占쏙옙?:
 - {reason}
 
-다음 동작:
-- 문제를 수정한 뒤 아래 downstream 단계만 다시 실행합니다: {downstream_steps}
+?占쎌쓬 ?占쎌옉:
+- 臾몄젣占??占쎌젙?????占쎈옒 downstream ?占쎄퀎占??占쎌떆 ?占쏀뻾?占쎈땲?? {downstream_steps}
 
-사용자가 답할 수 있는 말:
-- 수정: "누락된 요구사항을 ACEP 테스트 케이스에 포함해주세요"
-- 재실행: "실패한 테스트만 다시 실행해주세요"
-- 질문: "이 실패가 환경 문제인지 확인해주세요"
-- 중단: "중단해주세요"
+?占쎌슜?占쏙옙? ?占쏀븷 ???占쎈뒗 占?
+- ?占쎌젙: "?占쎈씫???占쎄뎄?占쏀빆??ACEP ?占쎌뒪??耳?占쎌뒪???占쏀븿?占쎌＜?占쎌슂"
+- ?占쎌떎?? "?占쏀뙣???占쎌뒪?占쎈쭔 ?占쎌떆 ?占쏀뻾?占쎌＜?占쎌슂"
+- 吏덈Ц: "???占쏀뙣媛 ?占쎄꼍 臾몄젣?占쏙옙? ?占쎌씤?占쎌＜?占쎌슂"
+- 以묐떒: "以묐떒?占쎌＜?占쎌슂"
 
-추천 답변:
-"이 실패가 환경 문제인지 확인해주세요"
+Recommended reply:
+"???占쏀뙣媛 ?占쎄꼍 臾몄젣?占쏙옙? ?占쎌씤?占쎌＜?占쎌슂"
 ```
 
 ```text
-[Codex 메모]
+[Codex memo]
 
-사람이 확인할 것:
-- 무엇이 실패했는지
-- 사람이 수정해야 하는지
-- 자동 재시도 가능한지
+?占쎈엺???占쎌씤??占?
+- 臾댁뾿???占쏀뙣?占쎈뒗吏
+- ?占쎈엺???占쎌젙?占쎌빞 ?占쎈뒗吏
+- ?占쎈룞 ?占쎌떆??媛?占쏀븳吏
 ```

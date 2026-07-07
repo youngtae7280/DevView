@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "projectId": "pbe-example",
+  "projectId": "devview-example",
   "stage": "rpd",
   "mode": "rpd_tree_walk",
   "currentNodeId": "req-root",
@@ -62,7 +62,7 @@
     "verificationMissLog": ".pbe/control/verification-miss-log.json",
     "evidenceTree": ".pbe/evidence/evidence-tree.json",
     "projectBrief": ".pbe/blueprint/project-brief.md",
-    "pbeRoutingContract": ".pbe/blueprint/pbe-routing-contract.md",
+    "devviewRoutingContract": ".pbe/blueprint/devview-routing-contract.md",
     "sourceOfTruthMatrix": ".pbe/blueprint/source-of-truth-matrix.md",
     "pbeInvariants": ".pbe/blueprint/pbe-invariants.md",
     "foundationContract": ".pbe/blueprint/foundation-contract.md",

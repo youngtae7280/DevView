@@ -1,45 +1,44 @@
-# Autoflow Status Message Template
+﻿# Autoflow Status Message Template
 
 Use this template when the user asks for status, for example:
 
 ```text
 @project-blueprint-engine status
-현재 상태를 알려주세요
-다음에 뭘 해야 하나요?
+?占쎌옱 ?占쏀깭占??占쎈젮二쇱꽭???占쎌쓬??占??占쎌빞 ?占쎈굹??
 ```
 
 ```text
-[PBE 상태 보고]
+[DevView status report]
 
-현재 단계:
+?占쎌옱 ?占쎄퀎:
 - state: {autoflow.state}
 - currentGate: {autoflow.currentGate}
 - nextStep: {autoflow.nextStep}
 
-완료된 단계:
+?占쎈즺???占쎄퀎:
 - {autoflow.completedSteps}
 
-최근 완료 작업:
+理쒓렐 ?占쎈즺 ?占쎌뾽:
 - {last_completed_work}
 
-현재 대기 이유:
+?占쎌옱 ?占쏙옙??占쎌쑀:
 - {waiting_reason}
 
-다음 동작:
+?占쎌쓬 ?占쎌옉:
 - {next_action}
 
-사용자가 답할 수 있는 말:
-- 승인/진행: "{approval_example}"
-- 수정: "{revision_example}"
-- 질문: "{question_example}"
-- 중단: "중단해주세요"
+?占쎌슜?占쏙옙? ?占쏀븷 ???占쎈뒗 占?
+- ?占쎌씤/吏꾪뻾: "{approval_example}"
+- ?占쎌젙: "{revision_example}"
+- 吏덈Ц: "{question_example}"
+- 以묐떒: "以묐떒?占쎌＜?占쎌슂"
 
-추천 답변:
+Recommended reply:
 "{recommended_reply}"
 ```
 
 ```text
-[Codex 메모]
+[Codex memo]
 
 {short_status_explanation}
 ```

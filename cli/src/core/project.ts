@@ -17,7 +17,9 @@ export const defaultArtifacts = {
   productPatchTree: '.pbe/control/product-patch-tree.json',
   acceptanceTree: '.pbe/control/acceptance-tree.json',
   evidenceTree: '.pbe/evidence/evidence-tree.json',
+  devviewState: '.pbe/blueprint/devview-state.json',
   pbeState: '.pbe/blueprint/pbe-state.json',
+  devviewRoutingContract: '.pbe/blueprint/devview-routing-contract.md',
   dependencyImpactAudit: '.pbe/blueprint/dependency-impact-audit.json',
   dependencyImpactAuditMarkdown: '.pbe/blueprint/dependency-impact-audit.md',
   executionStrategy: '.pbe/blueprint/execution-strategy.json',
@@ -66,8 +68,39 @@ export function artifactPath(root: string, key: ArtifactKey): string {
   return path.join(root, artifactRelativePath(root, key))
 }
 
+export function stateArtifactCandidates(root: string): string[] {
+  return [
+    path.join(root, '.devview', 'blueprint', 'devview-state.json'),
+    path.join(root, '.devview', 'blueprint', 'pbe-state.json'),
+    path.join(root, '.pbe', 'blueprint', 'pbe-state.json'),
+  ]
+}
+
+export function stateArtifactPath(root: string): string {
+  return stateArtifactCandidates(root).find((candidate) => existsSync(candidate)) ?? stateArtifactCandidates(root)[0]
+}
+
+export function canonicalStateArtifactRelativePath(root: string): string {
+  void root
+  return '.devview/blueprint/devview-state.json'
+}
+
+export function routingContractCandidates(root: string): string[] {
+  return [
+    path.join(root, '.devview', 'blueprint', 'devview-routing-contract.md'),
+    path.join(root, '.devview', 'blueprint', 'pbe-routing-contract.md'),
+    path.join(root, '.pbe', 'blueprint', 'pbe-routing-contract.md'),
+  ]
+}
+
+export function routingContractPath(root: string): string {
+  return (
+    routingContractCandidates(root).find((candidate) => existsSync(candidate)) ?? routingContractCandidates(root)[0]
+  )
+}
+
 export async function loadProject(root: string): Promise<{ project: PbeProject; issues: ValidationIssue[] }> {
-  const statePath = artifactPath(root, 'pbeState')
+  const statePath = stateArtifactPath(root)
   const decisionQueuePath = artifactPath(root, 'decisionQueue')
   const storageRoot = projectStorageRoot(root)
   const initialized = existsSync(path.join(root, storageRoot))
@@ -85,9 +118,9 @@ export async function loadProject(root: string): Promise<{ project: PbeProject; 
           validator: 'Project',
           code: 'PBE_STATE_INVALID_JSON',
           severity: 'error',
-          file: defaultArtifacts.pbeState,
-          message: `Could not parse pbe-state.json: ${parsed.error}`,
-          suggestedFix: 'Fix the JSON syntax before running PBE gates.',
+          file: canonicalStateArtifactRelativePath(root),
+          message: `Could not parse devview-state.json: ${parsed.error}`,
+          suggestedFix: 'Fix the JSON syntax before running DevView gates.',
         }),
       )
     }

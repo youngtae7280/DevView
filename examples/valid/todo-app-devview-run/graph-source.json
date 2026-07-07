@@ -22,7 +22,7 @@
     "examples/valid/todo-app-devview-run/.devview/blueprint/work-graph.json",
     "examples/valid/todo-app-devview-run/.devview/blueprint/source-of-truth-matrix.md",
     "examples/valid/todo-app-devview-run/.devview/evidence/test-results/todo-add.txt",
-    "examples/valid/todo-app-devview-run/.devview/blueprint/pbe-state.json"
+    "examples/valid/todo-app-devview-run/.devview/blueprint/devview-state.json"
   ],
   "retainedCompatibilityArtifacts": [
     "examples/valid/todo-app-devview-run/generated/generated-read-model.json",

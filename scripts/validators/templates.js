@@ -20,6 +20,8 @@ const requiredTemplates = [
   'templates/cycle-contract-template.md',
   'templates/node-execution-contract-template.md',
   'templates/revision-manifest.template.json',
+  'templates/devview-state.template.json',
+  'templates/devview-routing-contract-template.md',
   'templates/pbe-status-card-template.md',
 ]
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local/project-blueprint-engine/pbe-state.schema.json",
-  "title": "PBE State",
+  "$id": "https://local/devview/devview-state.schema.json",
+  "title": "DevView State",
   "type": "object",
   "required": ["schemaVersion", "stage", "mode", "artifacts"],
   "properties": {
@@ -55,7 +55,7 @@
     "createdAt": { "type": "string" },
     "updatedAt": { "type": "string" },
     "artifacts": { "type": "object" },
-    "autoflow": { "$ref": "autoflow-state.schema.json" }
+    "autoflow": { "$ref": "https://local/project-blueprint-engine/autoflow-state.schema.json" }
   },
   "allOf": [
     {

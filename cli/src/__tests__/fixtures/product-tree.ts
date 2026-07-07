@@ -59,7 +59,7 @@ export function writeMinimalPbe(
         ambiguity: {
           status: options.ambiguityResolved ? 'clear' : 'partial',
           type: options.ambiguityResolved ? 'none' : 'abstract_quality',
-          terms: options.ambiguityResolved ? [] : ['源붾�??�쾶'],
+          terms: options.ambiguityResolved ? [] : ['源붾�??�쾶'],
           missing: options.ambiguityResolved ? [] : ['completion_criteria'],
         },
         ambiguityResolution: {
@@ -88,7 +88,7 @@ export function writeMinimalPbe(
         ]
       : [],
   })
-  writeJson(join(workspace, '.devview', 'blueprint', 'pbe-state.json'), {
+  writeJson(join(workspace, '.devview', 'blueprint', 'devview-state.json'), {
     version: '0.2.0-alpha',
     autoflow: {
       enabled: true,

@@ -15,7 +15,7 @@ export function writeDevViewState(
     revisionHistory?: Array<Record<string, unknown>>
   } = {},
 ): void {
-  writeJson(join(workspace, '.devview', 'blueprint', 'pbe-state.json'), {
+  writeJson(join(workspace, '.devview', 'blueprint', 'devview-state.json'), {
     version: '0.2.0-alpha',
     stage: 'rpd',
     mode: 'rpd_tree_walk',

@@ -49,7 +49,7 @@ export async function validateFileChanges(
           stage: 'file_change_guard',
           message: `Changed file ${file.path} matches forbiddenFiles for Work node ${forbiddenMatch.workId}.`,
           suggestedFix: 'Remove the forbidden file change or update Work scope through WPD before continuing.',
-          nextCommand: 'pbe wpd close',
+          nextCommand: 'devview wpd close',
         }),
       )
       continue
@@ -66,7 +66,7 @@ export async function validateFileChanges(
           message: `Protected ${context.currentState || 'review'} state has source file changes without active Revision context: ${file.path}.`,
           suggestedFix:
             'Create a Change node, run impact analysis, then start a revision before modifying accepted or review scope.',
-          nextCommand: 'pbe change create',
+          nextCommand: 'devview change create',
         }),
       )
       continue
@@ -87,7 +87,7 @@ export async function validateFileChanges(
           stage: 'file_change_guard',
           message: `Changed file ${file.path} is outside the active Revision affected Work expectedFiles/expectedSharedFiles.`,
           suggestedFix: 'Add the affected Work node through Impact analysis or revert the out-of-scope file change.',
-          nextCommand: 'pbe impact analyze',
+          nextCommand: 'devview impact analyze',
         }),
       )
       continue
@@ -103,7 +103,7 @@ export async function validateFileChanges(
           stage: 'file_change_guard',
           message: `Changed file ${file.path} is not declared in expectedFiles, but a Work node is marked unknownFileTouchRisk.`,
           suggestedFix: 'Narrow the WorkGraph expectedFiles/expectedSharedFiles before review when possible.',
-          nextCommand: 'pbe wpd close',
+          nextCommand: 'devview wpd close',
         }),
       )
       continue
@@ -118,7 +118,7 @@ export async function validateFileChanges(
         stage: 'file_change_guard',
         message: `Changed file ${file.path} is outside selected/foundation Work expectedFiles/expectedSharedFiles.`,
         suggestedFix: 'Declare the file in Work Tree scope, create a Change/Impact/Revision path, or revert it.',
-        nextCommand: 'pbe wpd close',
+        nextCommand: 'devview wpd close',
       }),
     )
   }

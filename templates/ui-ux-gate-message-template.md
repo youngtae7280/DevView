@@ -1,47 +1,47 @@
-# UI/UX Gate Message Template
+﻿# UI/UX Gate Message Template
 
 ```text
-[PBE 상태 보고]
+[DevView status report]
 
-현재 단계:
+?占쎌옱 ?占쎄퀎:
 - state: WAITING_UI_UX_CONFIRM
 - currentGate: ui_ux_confirm
 - nextStep: ui_ux_confirm
 
-방금 완료한 작업:
+諛⑷툑 ?占쎈즺???占쎌뾽:
 - RPD Tree Walk completed or UI/UX preview generated.
 
-생성/갱신된 산출물:
+?占쎌꽦/媛깆떊???占쎌텧占?
 - .pbe/blueprint/ui-ux-preview.md
 - .pbe/blueprint/ui-ux-confirmation.md
 - .pbe/blueprint/ui-ux-confirmation-log.md
 
-검증:
+寃占?
 - {validation_summary}
 
-왜 멈췄는가:
-- UI/UX 방향을 사용자가 확인하기 전에는 구현 계획과 UI 구현을 진행하지 않습니다.
+??硫덉톬?占쏙옙?:
+- UI/UX 諛⑺뼢???占쎌슜?占쏙옙? ?占쎌씤?占쎄린 ?占쎌뿉??援ы쁽 怨꾪쉷占?UI 援ы쁽??吏꾪뻾?占쏙옙? ?占쎌뒿?占쎈떎.
 
-다음 동작:
-- UI/UX가 승인되면 WPD -> VD -> Dependency Impact Audit -> Implementation Scope Gate로 이어집니다.
+?占쎌쓬 ?占쎌옉:
+- UI/UX媛 ?占쎌씤?占쎈㈃ WPD -> VD -> Dependency Impact Audit -> Implementation Scope Gate占??占쎌뼱吏묐땲??
 
-사용자가 답할 수 있는 말:
-- 승인/진행: "승인합니다. 계속 진행해주세요"
-- 수정: "프린터 연결 실패 시 재시도 버튼을 추가해주세요"
-- 질문: "이 UX에서 가장 위험한 부분이 뭔가요?"
-- 중단: "중단해주세요"
+?占쎌슜?占쏙옙? ?占쏀븷 ???占쎈뒗 占?
+- ?占쎌씤/吏꾪뻾: "?占쎌씤?占쎈땲?? 怨꾩냽 吏꾪뻾?占쎌＜?占쎌슂"
+- ?占쎌젙: "?占쎈┛???占쎄껐 ?占쏀뙣 ???占쎌떆??踰꾪듉??異뷂옙??占쎌＜?占쎌슂"
+- 吏덈Ц: "??UX?占쎌꽌 媛???占쏀뿕??遺遺꾩씠 萸뷂옙???"
+- 以묐떒: "以묐떒?占쎌＜?占쎌슂"
 
-추천 답변:
-"승인합니다. 계속 진행해주세요"
+Recommended reply:
+"?占쎌씤?占쎈땲?? 怨꾩냽 吏꾪뻾?占쎌＜?占쎌슂"
 ```
 
 ```text
-[Codex 메모]
+[Codex memo]
 
-검토할 항목:
-- 핵심 사용자 흐름
-- 화면 구성
-- 버튼, 문구, 용어
-- empty/loading/success/error/permission 상태
-- 예외 상황 처리
+寃?占쏀븷 ??占쏙옙:
+- ?占쎌떖 ?占쎌슜???占쎈쫫
+- ?占쎈㈃ 援ъ꽦
+- 踰꾪듉, 臾멸뎄, ?占쎌뼱
+- empty/loading/success/error/permission ?占쏀깭
+- ?占쎌쇅 ?占쏀솴 泥섎━
 ```

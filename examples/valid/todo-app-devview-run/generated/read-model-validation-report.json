@@ -208,7 +208,7 @@
     { "path": "examples/valid/todo-app-devview-run/.devview/blueprint/work-graph.json", "status": "present" },
     { "path": "examples/valid/todo-app-devview-run/.devview/blueprint/source-of-truth-matrix.md", "status": "present" },
     { "path": "examples/valid/todo-app-devview-run/.devview/evidence/test-results/todo-add.txt", "status": "present" },
-    { "path": "examples/valid/todo-app-devview-run/.devview/blueprint/pbe-state.json", "status": "present" },
+    { "path": "examples/valid/todo-app-devview-run/.devview/blueprint/devview-state.json", "status": "present" },
     { "path": "examples/valid/todo-app-devview-run/graph-source.json", "status": "present" }
   ],
   "sliceValidationContract": {

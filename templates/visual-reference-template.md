@@ -12,7 +12,7 @@
 2. Reference app or site.
 3. Existing project screen.
 4. Short visual interview.
-5. Default PBE Clean Theme.
+5. Default DevView Clean Theme.
 6. Visual quality waiver for this slice.
 
 ## Selected Source

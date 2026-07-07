@@ -47,14 +47,14 @@ const jsonTemplateTargets: Array<{
     target: defaultArtifacts.requirementTree,
     transform: transformRequirementTree,
   },
-  { template: 'pbe-state.template.json', target: defaultArtifacts.pbeState, transform: transformPbeState },
+  { template: 'devview-state.template.json', target: defaultArtifacts.devviewState, transform: transformPbeState },
 ]
 
 const textTemplateTargets: Array<{ template?: string; target: string; fallback: (context: CommandContext) => string }> =
   [
     {
       target: defaultArtifacts.projectBrief,
-      fallback: (context) => `# Project Brief\n\n${context.options.brief || 'Initial PBE project brief.'}\n`,
+      fallback: (context) => `# Project Brief\n\n${context.options.brief || 'Initial DevView project brief.'}\n`,
     },
     {
       target: defaultArtifacts.requirementTreeMarkdown,
@@ -69,9 +69,14 @@ const textTemplateTargets: Array<{ template?: string; target: string; fallback: 
       fallback: () => '# Source Of Truth Matrix\n\n',
     },
     {
+      template: 'devview-routing-contract-template.md',
+      target: defaultArtifacts.devviewRoutingContract,
+      fallback: () => '# DevView Routing Contract\n\n',
+    },
+    {
       template: 'pbe-invariants-template.md',
       target: defaultArtifacts.pbeInvariants,
-      fallback: () => '# PBE Invariants\n\n',
+      fallback: () => '# DevView Invariants\n\n',
     },
     {
       template: 'visual-reference-template.md',
@@ -97,8 +102,12 @@ export async function initCommand(context: CommandContext): Promise<CommandResul
   }
 
   const storageRoot = projectStorageRoot(context.options.root)
-  const resolveStorageTarget = (target: string): string =>
-    storageRoot === '.devview' ? target.replace(/^\.pbe\//, '.devview/') : target
+  const resolveStorageTarget = (target: string): string => {
+    if (target === defaultArtifacts.devviewState || target === defaultArtifacts.devviewRoutingContract) {
+      return target.replace(/^\.pbe\//, '.devview/')
+    }
+    return storageRoot === '.devview' ? target.replace(/^\.pbe\//, '.devview/') : target
+  }
   const created: string[] = []
   const skipped: string[] = []
   for (const dir of initDirs) {
@@ -141,7 +150,7 @@ export async function initCommand(context: CommandContext): Promise<CommandResul
     ok: true,
     command: 'init',
     exitCode: ExitCode.Success,
-    message: 'PBE initialized.',
+    message: 'DevView initialized.',
     issues: [],
     data: {
       profile,
@@ -154,7 +163,7 @@ export async function initCommand(context: CommandContext): Promise<CommandResul
           nextStep: 'rpd',
         },
       },
-      next: 'Run RPD/Product Tree growth. Use `pbe rpd check` to see what still blocks RPD close.',
+      next: 'Run product intent growth. Use `devview rpd check` to see what still blocks close.',
     },
   }
 }
@@ -168,7 +177,7 @@ function transformProductTree(value: Record<string, unknown>, context: CommandCo
     )
     if (root) {
       root.title = brief
-      root.why = 'Initial user brief captured by pbe init.'
+      root.why = 'Initial user brief captured by devview init.'
     }
   }
   return value
@@ -191,9 +200,18 @@ function transformRequirementTree(value: Record<string, unknown>, context: Comma
 
 function transformPbeState(value: Record<string, unknown>, context: CommandContext): Record<string, unknown> {
   const now = new Date().toISOString()
+  const storageRoot = projectStorageRoot(context.options.root)
   value.createdAt = now
   value.updatedAt = now
   value.deliveryStatus = 'waiting_root_confirmation'
+  if (typeof value.artifacts === 'object' && value.artifacts !== null) {
+    const artifacts = value.artifacts as Record<string, unknown>
+    for (const [key, artifactPath] of Object.entries(artifacts)) {
+      if (typeof artifactPath === 'string' && artifactPath.startsWith('.pbe/')) {
+        artifacts[key] = storageRoot === '.devview' ? artifactPath.replace(/^\.pbe\//, '.devview/') : artifactPath
+      }
+    }
+  }
   if (typeof value.autoflow === 'object' && value.autoflow !== null) {
     const autoflow = value.autoflow as Record<string, unknown>
     autoflow.enabled = true

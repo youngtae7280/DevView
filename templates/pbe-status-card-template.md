@@ -1,57 +1,57 @@
-# PBE Status Card Template
+﻿# DevView Status Card Template
 
-Use this card only for PBE stage completion, human gate arrival, failure, and status requests.
+Use this card only for DevView stage completion, human gate arrival, failure, and status requests.
 
-Do not use this card for ordinary AI answers that are not changing or reporting PBE workflow state.
+Do not use this card for ordinary AI answers that are not changing or reporting DevView workflow state.
 
 Place this card before any free-form explanation.
 
 ```text
-[PBE 상태 보고]
+[DevView status report]
 
-현재 단계:
+?占쎌옱 ?占쎄퀎:
 - state: {autoflow.state}
 - currentGate: {autoflow.currentGate}
 - nextStep: {autoflow.nextStep}
 
-방금 완료한 작업:
+諛⑷툑 ?占쎈즺???占쎌뾽:
 - {completed_work_summary}
 
-생성/갱신된 산출물:
+?占쎌꽦/媛깆떊???占쎌텧占?
 - {artifact_path}
 
-검증:
+寃占?
 - {validation_result}
 
-왜 멈췄는가:
+??硫덉톬?占쏙옙?:
 - {stop_reason_or_not_stopped}
 
-다음 동작:
+?占쎌쓬 ?占쎌옉:
 - {automatic_or_gate_next_action}
 
-사용자가 답할 수 있는 말:
-- 승인/진행: "{approval_example}"
-- 수정: "{revision_example}"
-- 질문: "{question_example}"
-- 중단: "중단해주세요"
+?占쎌슜?占쏙옙? ?占쏀븷 ???占쎈뒗 占?
+- ?占쎌씤/吏꾪뻾: "{approval_example}"
+- ?占쎌젙: "{revision_example}"
+- 吏덈Ц: "{question_example}"
+- 以묐떒: "以묐떒?占쎌＜?占쎌슂"
 
-추천 답변:
+Recommended reply:
 "{recommended_reply}"
 ```
 
 Use this optional section only when explanation or reasoning is helpful:
 
 ```text
-[Codex 메모]
+[Codex memo]
 
 {short_explanation_or_rationale}
 ```
 
 ## Rules
 
-- Keep `[PBE 상태 보고]` factual and structured.
-- Put recommendations, tradeoffs, and rationale in `[Codex 메모]`.
-- If a deterministic step will continue automatically, say that under `다음 동작`.
-- If a human gate is active, say why PBE stopped under `왜 멈췄는가`.
+- Keep `[DevView status report]` factual and structured.
+- Put recommendations, tradeoffs, and rationale in `[Codex memo]`.
+- If a deterministic step will continue automatically, say that under `?占쎌쓬 ?占쎌옉`.
+- If a human gate is active, say why DevView stopped under `??硫덉톬?占쏙옙?`.
 - Always include one recommended reply when a human gate is active.
 - Do not mix internal command names with user-facing choices unless the user explicitly asks for commands.

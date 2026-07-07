@@ -38,3 +38,13 @@ export function readOptionalJson(root, relativePath, validator) {
 
   return readJson(root, relativePath, validator)
 }
+
+export function readFirstOptionalJson(root, relativePaths, validator) {
+  for (const relativePath of relativePaths) {
+    if (fileExists(root, relativePath)) {
+      return { ...readJson(root, relativePath, validator), relativePath }
+    }
+  }
+
+  return { data: null, issue: null, relativePath: relativePaths[0] }
+}

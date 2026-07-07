@@ -37,7 +37,7 @@ export async function vdCloseCommand(context: CommandContext): Promise<CommandRe
       currentGate: 'implementation_scope',
       nextStep: 'implementation_scope',
       data: {
-        next: 'Select implementation scope with `pbe scope select` after the user approves the current slice scope.',
+        next: 'Select implementation scope with `devview scope select` after the user approves the current slice scope.',
       },
     },
   )

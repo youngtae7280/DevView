@@ -26,9 +26,9 @@ const escalationTriggers = [
 ]
 
 const notes = [
-  'This is a recommendation only. It does not initialize PBE.',
-  '`full`, `lite`, and `bypass` are compatibility profile values; the product direction is one PBE flow with adjustable depth.',
-  'If uncertain, use the normal full-depth PBE flow.',
+  'This is a recommendation only. It does not initialize DevView.',
+  '`full`, `lite`, and `bypass` are compatibility profile values; the product direction is one DevView flow with adjustable depth.',
+  'If uncertain, use the normal full-depth DevView flow.',
   'The heuristic is deterministic and conservative; it is not full semantic product analysis.',
 ]
 
@@ -197,7 +197,7 @@ function buildRecommendation(
     confidence,
     reasons: unique(reasons),
     escalationTriggers,
-    suggestedInitCommand: `pbe init --profile ${profile} --brief ${quoteBriefForCommand(brief)}`,
+    suggestedInitCommand: `devview init --profile ${profile} --brief ${quoteBriefForCommand(brief)}`,
     notes,
   }
 }

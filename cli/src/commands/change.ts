@@ -17,8 +17,8 @@ export async function changeCreateCommand(context: CommandContext): Promise<Comm
         validator: 'Change',
         code: 'CHANGE_SUMMARY_MISSING',
         severity: 'error',
-        message: 'pbe change create requires --summary.',
-        suggestedFix: 'Run `pbe change create --summary "Describe the user feedback"`.',
+        message: 'devview change create requires --summary.',
+        suggestedFix: 'Run `devview change create --summary "Describe the user feedback"`.',
       }),
     )
   }
@@ -62,7 +62,7 @@ export async function changeCreateCommand(context: CommandContext): Promise<Comm
     data: {
       changeId: id,
       change,
-      next: `Run pbe impact analyze --change ${id} with affected node ids before starting revision.`,
+      next: `Run devview impact analyze --change ${id} with affected node ids before starting revision.`,
     },
   }
 }
@@ -101,7 +101,7 @@ export async function readRequiredJsonArtifact(
             severity: 'error',
             file: defaultArtifacts[key],
             message: `${defaultArtifacts[key]} is missing.`,
-            suggestedFix: 'Run `pbe init` or restore the missing control artifact.',
+            suggestedFix: 'Run `devview init` or restore the missing control artifact.',
           }),
         ],
       },

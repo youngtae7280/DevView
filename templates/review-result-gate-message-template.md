@@ -1,19 +1,19 @@
-# Review Result Gate Message Template
+﻿# Review Result Gate Message Template
 
 ```text
-[PBE 상태 보고]
+[DevView status report]
 
-현재 단계:
+?占쎌옱 ?占쎄퀎:
 - state: WAITING_REVIEW_RESULT
 - currentGate: review_result
 - nextStep: review_result
 
-방금 완료된 작업:
-- ACEP 또는 Revision 실행 결과를 검토용으로 정리했습니다.
-- Codex는 결과를 submitted_for_review 상태로 제출했습니다.
-- accepted / accepted_done은 사용자만 줄 수 있습니다.
+諛⑷툑 ?占쎈즺???占쎌뾽:
+- ACEP ?占쎈뒗 Revision ?占쏀뻾 寃곌낵占?寃?占쎌슜?占쎈줈 ?占쎈━?占쎌뒿?占쎈떎.
+- Codex??寃곌낵占?submitted_for_review ?占쏀깭占??占쎌텧?占쎌뒿?占쎈떎.
+- accepted / accepted_done?占??占쎌슜?占쎈쭔 占????占쎌뒿?占쎈떎.
 
-생성/갱신된 산출물:
+?占쎌꽦/媛깆떊???占쎌텧占?
 - .pbe/review/codex-final-report.md
 - .pbe/review/result-summary.md
 - .pbe/review/validation-results.md
@@ -24,36 +24,35 @@
 - .pbe/control/impact-tree.json
 - .pbe/evidence/evidence-tree.json
 
-검증:
+寃占?
 - {validation_summary}
 
-확인할 내용:
-- 실행 결과
-- 실패한 테스트 케이스
-- coverage audit 결과
-- UX audit 결과
-- Evidence Tree 반영 상태
-- Impact/Reopen 상태
-- 남은 리스크
-- 재실행이 필요한 항목
+?占쎌씤???占쎌슜:
+- ?占쏀뻾 寃곌낵
+- ?占쏀뙣???占쎌뒪??耳?占쎌뒪
+- coverage audit 寃곌낵
+- UX audit 寃곌낵
+- Evidence Tree 諛섏쁺 ?占쏀깭
+- Impact/Reopen ?占쏀깭
+- ?占쏙옙? 由ъ뒪??- ?占쎌떎?占쎌씠 ?占쎌슂????占쏙옙
 
-다음 동작:
-- 승인하면 Acceptance Tree에 사용자 승인 기록을 남기고 Next Slice Decision gate로 이동합니다.
-- 수정 요청이 있으면 feedback mapping -> Change Tree -> Impact Tree -> revision pack -> revision run 순서로 진행합니다.
+?占쎌쓬 ?占쎌옉:
+- ?占쎌씤?占쎈㈃ Acceptance Tree???占쎌슜???占쎌씤 湲곕줉???占쎄린占?Next Slice Decision gate占??占쎈룞?占쎈땲??
+- ?占쎌젙 ?占쎌껌???占쎌쑝占?feedback mapping -> Change Tree -> Impact Tree -> revision pack -> revision run ?占쎌꽌占?吏꾪뻾?占쎈땲??
 
-사용자가 답할 수 있는 말:
-- 승인: "결과 괜찮습니다", "승인합니다", "이 slice는 완료해도 됩니다"
-- 수정: "실패한 케이스만 수정해서 다시 실행해주세요"
-- 질문: "완료해도 되는 상태인지 판단해주세요"
-- 중단: "중단해주세요"
+?占쎌슜?占쏙옙? ?占쏀븷 ???占쎈뒗 占?
+- ?占쎌씤: "寃곌낵 愿쒖갖?占쎈땲??, "?占쎌씤?占쎈땲??, "??slice???占쎈즺?占쎈룄 ?占쎈땲??
+- ?占쎌젙: "?占쏀뙣??耳?占쎌뒪占??占쎌젙?占쎌꽌 ?占쎌떆 ?占쏀뻾?占쎌＜?占쎌슂"
+- 吏덈Ц: "?占쎈즺?占쎈룄 ?占쎈뒗 ?占쏀깭?占쏙옙? ?占쎈떒?占쎌＜?占쎌슂"
+- 以묐떒: "以묐떒?占쎌＜?占쎌슂"
 
-추천 답변:
-"결과 괜찮습니다. 다음 단계로 진행해주세요"
+Recommended reply:
+"寃곌낵 愿쒖갖?占쎈땲?? ?占쎌쓬 ?占쎄퀎占?吏꾪뻾?占쎌＜?占쎌슂"
 ```
 
 ```text
-[Codex 메모]
+[Codex memo]
 
-검토할 때는 passing 여부만 보지 말고, included Product/Work/Test node가 evidence와 연결되어 있는지 확인하세요.
-Impact Tree에 reopened, invalidated, stale 항목이 남아 있으면 승인 대신 revision을 요청하는 것이 안전합니다.
+寃?占쏀븷 ?占쎈뒗 passing ?占쏙옙?占?蹂댐옙? 留먭퀬, included Product/Work/Test node媛 evidence?占??占쎄껐?占쎌뼱 ?占쎈뒗吏 ?占쎌씤?占쎌꽭??
+Impact Tree??reopened, invalidated, stale ??占쏙옙???占쎌븘 ?占쎌쑝占??占쎌씤 ?占??revision???占쎌껌?占쎈뒗 寃껋씠 ?占쎌쟾?占쎈땲??
 ```

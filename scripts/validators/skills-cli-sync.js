@@ -8,19 +8,19 @@ const forbiddenPatterns = [
     code: 'SKILL_FORBIDDEN_LEGACY_GATE',
     label: 'pbe gate code-start',
     pattern: /\bpbe\s+gate\s+code-start\b/i,
-    suggestedFix: 'Use `pbe execution start` instead of the legacy gate command.',
+    suggestedFix: 'Use `devview execution start` instead of the legacy gate command.',
   },
   {
     code: 'SKILL_FORBIDDEN_LEGACY_GATE',
     label: 'pbe gate review-result',
     pattern: /\bpbe\s+gate\s+review-result\b/i,
-    suggestedFix: 'Use `pbe files check`, `pbe execution complete`, then `pbe review submit`.',
+    suggestedFix: 'Use `devview files check`, `devview execution complete`, then `devview review submit`.',
   },
   {
     code: 'SKILL_FORBIDDEN_LEGACY_GATE',
     label: 'pbe gate accept',
     pattern: /\bpbe\s+gate\s+accept\b/i,
-    suggestedFix: 'Use explicit user approval recorded in Acceptance Tree, then `pbe accept`.',
+    suggestedFix: 'Use explicit user approval recorded in Acceptance Tree, then `devview accept`.',
   },
   {
     code: 'SKILL_FORBIDDEN_STATE_EDIT',
@@ -57,7 +57,7 @@ const forbiddenPatterns = [
     label: 'Continue automatically to `pbe-run-revision`',
     pattern: /Continue automatically to `?pbe-run-revision`?/i,
     suggestedFix:
-      'Use the CLI revision route: `pbe change create`, `pbe impact analyze`, `pbe revision start`, bounded revision work, `pbe revision complete`.',
+      'Use the CLI revision route: `devview change create`, `devview impact analyze`, `devview revision start`, bounded revision work, `devview revision complete`.',
   },
   {
     code: 'SKILL_FORBIDDEN_STATE_EDIT',
@@ -69,19 +69,19 @@ const forbiddenPatterns = [
     code: 'SKILL_FORBIDDEN_ACCEPTANCE_WRITE',
     label: 'write accepted',
     pattern: /\bwrite\s+accepted\b/i,
-    suggestedFix: 'Codex must not write acceptance state directly; use explicit user approval and `pbe accept`.',
+    suggestedFix: 'Codex must not write acceptance state directly; use explicit user approval and `devview accept`.',
   },
   {
     code: 'SKILL_FORBIDDEN_ACCEPTANCE_WRITE',
     label: 'write accepted_done',
     pattern: /\bwrite\s+accepted_done\b/i,
-    suggestedFix: 'Codex must not write acceptance state directly; use explicit user approval and `pbe accept`.',
+    suggestedFix: 'Codex must not write acceptance state directly; use explicit user approval and `devview accept`.',
   },
   {
     code: 'SKILL_FORBIDDEN_ACCEPTANCE_WRITE',
     label: 'Codex may mark accepted',
     pattern: /\bCodex may mark accepted\b/i,
-    suggestedFix: 'Codex must not replace user acceptance; use explicit user approval and `pbe accept`.',
+    suggestedFix: 'Codex must not replace user acceptance; use explicit user approval and `devview accept`.',
   },
 ]
 

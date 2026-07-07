@@ -157,9 +157,11 @@ if (errors.length > 0) {
 
 const targetCount = Object.values(targetData).filter(Boolean).length
 if (targetCount === 0) {
-  console.log('DevView legacy tree validation passed. No .pbe tree artifacts found; templates and schemas are valid.')
+  console.log(
+    'DevView legacy tree validation passed. No DevView tree artifacts found; templates and schemas are valid.',
+  )
 } else {
-  console.log(`DevView legacy tree validation passed. Validated ${targetCount} .pbe tree artifact(s).`)
+  console.log(`DevView legacy tree validation passed. Validated ${targetCount} DevView tree artifact(s).`)
 }
 
 function validateTemplates() {
@@ -192,18 +194,27 @@ function validateTemplates() {
 function validateOptionalTreeTargets() {
   const data = {}
   for (const [key, target] of schemaEntries) {
-    const absolutePath = path.join(targetRoot, target.target)
+    const relativeTarget = resolveTargetPath(target.target)
+    const absolutePath = path.join(targetRoot, relativeTarget)
     if (!existsSync(absolutePath)) {
       data[key] = null
       continue
     }
-    const value = readJson(target.target, target.target, targetRoot)
+    const value = readJson(relativeTarget, relativeTarget, targetRoot)
     if (value) {
-      validateWithSchema(value, key, target.target)
+      validateWithSchema(value, key, relativeTarget)
     }
     data[key] = value
   }
   return data
+}
+
+function resolveTargetPath(relativePath) {
+  const devviewPath = relativePath.replace(/^\.pbe\//, '.devview/')
+  if (existsSync(path.join(targetRoot, devviewPath))) {
+    return devviewPath
+  }
+  return relativePath
 }
 
 function validateTreeLinks(data) {

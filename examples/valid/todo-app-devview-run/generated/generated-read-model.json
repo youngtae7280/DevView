@@ -24,7 +24,7 @@
       "examples/valid/todo-app-devview-run/.devview/blueprint/work-graph.json",
       "examples/valid/todo-app-devview-run/.devview/blueprint/source-of-truth-matrix.md",
       "examples/valid/todo-app-devview-run/.devview/evidence/test-results/todo-add.txt",
-      "examples/valid/todo-app-devview-run/.devview/blueprint/pbe-state.json",
+      "examples/valid/todo-app-devview-run/.devview/blueprint/devview-state.json",
       "examples/valid/todo-app-devview-run/graph-source.json"
     ],
     "generatedStatus": "generated-present",
@@ -57,7 +57,7 @@
       "examples/valid/todo-app-devview-run/.devview/blueprint/work-graph.json",
       "examples/valid/todo-app-devview-run/.devview/blueprint/source-of-truth-matrix.md",
       "examples/valid/todo-app-devview-run/.devview/evidence/test-results/todo-add.txt",
-      "examples/valid/todo-app-devview-run/.devview/blueprint/pbe-state.json"
+      "examples/valid/todo-app-devview-run/.devview/blueprint/devview-state.json"
     ]
   },
   "sourceInputs": [
@@ -127,8 +127,8 @@
       "status": "present"
     },
     {
-      "relativePath": "examples/valid/todo-app-devview-run/.devview/blueprint/pbe-state.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\DevView Plugin\\examples\\valid\\todo-app-devview-run\\.devview\\blueprint\\pbe-state.json",
+      "relativePath": "examples/valid/todo-app-devview-run/.devview/blueprint/devview-state.json",
+      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\DevView Plugin\\examples\\valid\\todo-app-devview-run\\.devview\\blueprint\\devview-state.json",
       "status": "present"
     },
     {

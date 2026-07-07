@@ -1,8 +1,8 @@
 {
   "version": "0.1.0-read-model-evidence-manifest",
-  "generatedAt": "2026-06-29T08:46:09.238Z",
+  "generatedAt": "2026-07-07T03:08:40.184Z",
   "commandIdentity": "devview graph read-model generate --slice examples/internal-legacy/adoption/todo-search-slice",
-  "sourceCommit": "a1c4f10",
+  "sourceCommit": "d4f235a",
   "sourceSlice": "examples/internal-legacy/adoption/todo-search-slice",
   "generatedArtifacts": [
     "examples/internal-legacy/adoption/todo-search-slice/generated/generated-read-model.json",
@@ -11,102 +11,102 @@
   "sourceInputs": [
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/product-tree.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\product-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\product-tree.json",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/project-tree.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\project-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\project-tree.json",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/work-tree.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\work-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\work-tree.json",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/test-tree.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\test-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\test-tree.json",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/evidence-tree.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\evidence-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\evidence-tree.json",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/acceptance-tree.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\acceptance-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\acceptance-tree.json",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/change-tree.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\change-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\change-tree.json",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/impact-tree.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\impact-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\impact-tree.json",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/product-patch-tree.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\product-patch-tree.json",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\product-patch-tree.json",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/cycle-contract.md",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\cycle-contract.md",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\cycle-contract.md",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/node-execution-contracts/wt-search-001.md",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\node-execution-contracts\\wt-search-001.md",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\node-execution-contracts\\wt-search-001.md",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/runtime-evidence.md",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\runtime-evidence.md",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\runtime-evidence.md",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/approval-brief.md",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\approval-brief.md",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\approval-brief.md",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/evidence-exceptions.md",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\evidence-exceptions.md",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\evidence-exceptions.md",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\generated\\scoped-source-authority-pilot-marker.json",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\generated\\scoped-source-authority-pilot-marker.json",
       "status": "present"
     },
     {
-      "relativePath": "docs/concept/scoped-source-authority-pilot-execution-record.md",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\docs\\concept\\scoped-source-authority-pilot-execution-record.md",
+      "relativePath": "docs/internal-legacy/concept/scoped-source-authority-pilot-execution-record.md",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\docs\\internal-legacy\\concept\\scoped-source-authority-pilot-execution-record.md",
       "status": "present"
     },
     {
-      "relativePath": "docs/concept/scoped-source-authority-pilot-review.md",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\docs\\concept\\scoped-source-authority-pilot-review.md",
+      "relativePath": "docs/internal-legacy/concept/scoped-source-authority-pilot-review.md",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\docs\\internal-legacy\\concept\\scoped-source-authority-pilot-review.md",
       "status": "present"
     },
     {
-      "relativePath": "docs/concept/scoped-source-authority-pilot-active-observation.md",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\docs\\concept\\scoped-source-authority-pilot-active-observation.md",
+      "relativePath": "docs/internal-legacy/concept/scoped-source-authority-pilot-active-observation.md",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\docs\\internal-legacy\\concept\\scoped-source-authority-pilot-active-observation.md",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/compatibility-mismatch-slice/compatibility-control-node.md",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\compatibility-mismatch-slice\\compatibility-control-node.md",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\compatibility-mismatch-slice\\compatibility-control-node.md",
       "status": "present"
     },
     {
       "relativePath": "examples/internal-legacy/adoption/todo-search-slice/graph-source.json",
-      "absolutePath": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin\\examples\\adoption\\todo-search-slice\\graph-source.json",
+      "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\examples\\internal-legacy\\adoption\\todo-search-slice\\graph-source.json",
       "status": "present"
     }
   ],

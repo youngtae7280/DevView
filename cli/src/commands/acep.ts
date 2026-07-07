@@ -32,7 +32,7 @@ export async function acepReadyCommand(context: CommandContext): Promise<Command
     currentGate: null,
     nextStep: 'run_acep',
     data: {
-      next: 'Start ACEP execution with `pbe execution start`, attach evidence, then run `pbe execution complete`.',
+      next: 'Start ACEP execution with `devview execution start`, attach evidence, then run `devview execution complete`.',
     },
   })
 }

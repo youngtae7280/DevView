@@ -56,7 +56,7 @@ export async function scopeSelectCommand(context: CommandContext): Promise<Comma
       lastUserAction: 'select_scope',
       actor: 'user',
       data: {
-        next: 'Generate ACEP artifacts, then run `pbe acep ready`.',
+        next: 'Generate ACEP artifacts, then run `devview acep ready`.',
       },
     },
   )
@@ -91,7 +91,7 @@ export async function dependencyAuditCompleteCommand(context: CommandContext): P
     nextStep: 'plan_execution',
     data: {
       checkpoint: 'dependency_impact_audit',
-      next: 'Run Plan Execution and then `pbe plan execution complete`.',
+      next: 'Run Plan Execution and then `devview plan execution complete`.',
     },
   })
 }
@@ -125,7 +125,7 @@ export async function planExecutionCompleteCommand(context: CommandContext): Pro
     nextStep: 'coverage_audit',
     data: {
       checkpoint: 'plan_execution',
-      next: 'Run Coverage Audit and then `pbe coverage audit complete`.',
+      next: 'Run Coverage Audit and then `devview coverage audit complete`.',
     },
   })
 }
@@ -155,7 +155,7 @@ export async function coverageAuditCompleteCommand(context: CommandContext): Pro
     nextStep: 'ux_audit',
     data: {
       checkpoint: 'coverage_audit',
-      next: 'Run UX Audit and then `pbe ux audit complete`.',
+      next: 'Run UX Audit and then `devview ux audit complete`.',
     },
   })
 }
@@ -182,7 +182,7 @@ export async function uxAuditCompleteCommand(context: CommandContext): Promise<C
     nextStep: 'generate_acep',
     data: {
       checkpoint: 'ux_audit',
-      next: 'Generate ACEP artifacts and run `pbe acep ready`.',
+      next: 'Generate ACEP artifacts and run `devview acep ready`.',
     },
   })
 }

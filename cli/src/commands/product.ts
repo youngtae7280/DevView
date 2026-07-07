@@ -24,17 +24,20 @@ export async function productPatchProposeCommand(context: CommandContext): Promi
 
   if (!changeId) {
     issues.push(
-      productPatchOptionIssue('PRODUCT_PATCH_CHANGE_REQUIRED', 'pbe product patch propose requires --change.'),
+      productPatchOptionIssue('PRODUCT_PATCH_CHANGE_REQUIRED', 'devview product patch propose requires --change.'),
     )
   }
   if (!productId) {
     issues.push(
-      productPatchOptionIssue('PRODUCT_PATCH_TARGET_REQUIRED', 'pbe product patch propose requires --product.'),
+      productPatchOptionIssue('PRODUCT_PATCH_TARGET_REQUIRED', 'devview product patch propose requires --product.'),
     )
   }
   if (!operation) {
     issues.push(
-      productPatchOptionIssue('PRODUCT_PATCH_OPERATION_REQUIRED', 'pbe product patch propose requires --operation.'),
+      productPatchOptionIssue(
+        'PRODUCT_PATCH_OPERATION_REQUIRED',
+        'devview product patch propose requires --operation.',
+      ),
     )
   } else if (!isProductPatchOperation(operation)) {
     issues.push(
@@ -46,7 +49,7 @@ export async function productPatchProposeCommand(context: CommandContext): Promi
   }
   if (!summary) {
     issues.push(
-      productPatchOptionIssue('PRODUCT_PATCH_SUMMARY_REQUIRED', 'pbe product patch propose requires --summary.'),
+      productPatchOptionIssue('PRODUCT_PATCH_SUMMARY_REQUIRED', 'devview product patch propose requires --summary.'),
     )
   }
   if (hasErrors(issues)) {
@@ -131,7 +134,7 @@ export async function productPatchProposeCommand(context: CommandContext): Promi
     data: {
       patchId: id,
       patch,
-      next: `Record explicit user confirmation on ${id}, then run pbe product patch apply --patch ${id}.`,
+      next: `Record explicit user confirmation on ${id}, then run devview product patch apply --patch ${id}.`,
     },
   }
 }
@@ -141,7 +144,7 @@ export async function productPatchApplyCommand(context: CommandContext): Promise
   const patchId = context.options.patch
   if (!patchId) {
     return transitionFailed('product patch apply', 'Product Patch apply failed. No artifacts were changed.', [
-      productPatchOptionIssue('PRODUCT_PATCH_ID_REQUIRED', 'pbe product patch apply requires --patch.'),
+      productPatchOptionIssue('PRODUCT_PATCH_ID_REQUIRED', 'devview product patch apply requires --patch.'),
     ])
   }
 
@@ -260,7 +263,7 @@ export async function productPatchApplyCommand(context: CommandContext): Promise
     nodeId: patchId,
     message: `Product Patch ${String(patchId)} changed Product Tree semantics; downstream closure must be rerun.`,
     suggestedFix: 'Run Impact/Revision and then WPD/VD/ACEP/Execution/Review/Accept closure as required.',
-    nextCommand: 'pbe impact analyze',
+    nextCommand: 'devview impact analyze',
   })
 
   return {
@@ -271,7 +274,7 @@ export async function productPatchApplyCommand(context: CommandContext): Promise
     issues: [downstreamIssue],
     data: {
       patchId,
-      next: 'Run pbe impact analyze and re-enter the required Revision closure flow.',
+      next: 'Run devview impact analyze and re-enter the required Revision closure flow.',
     },
   }
 }
@@ -450,7 +453,7 @@ async function readRequiredJson(
             severity: 'error',
             file: defaultArtifacts[key],
             message: `${defaultArtifacts[key]} is missing.`,
-            suggestedFix: 'Run `pbe init` or restore the missing PBE artifact.',
+            suggestedFix: 'Run `devview init` or restore the missing DevView artifact.',
           }),
         ],
       },
@@ -488,6 +491,6 @@ function productPatchOptionIssue(code: string, message: string): ValidationIssue
     severity: 'error',
     message,
     suggestedFix:
-      'Use `pbe product patch propose --change CH-001 --product PT-001 --operation update_acceptance_criteria --summary "..."`.',
+      'Use `devview product patch propose --change CH-001 --product PT-001 --operation update_acceptance_criteria --summary "..."`.',
   })
 }

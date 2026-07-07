@@ -1,5 +1,5 @@
 import { createIssue } from '../validator-utils/report-utils.js'
-import { readOptionalJson } from '../validator-utils/json-utils.js'
+import { readFirstOptionalJson, readOptionalJson } from '../validator-utils/json-utils.js'
 
 const validator = 'RPD transition guard'
 
@@ -87,7 +87,11 @@ const reviewDeliveryStatuses = new Set([
 
 export function runRpdTransitionValidator({ root }) {
   const issues = []
-  const { data: state, issue: stateIssue } = readOptionalJson(root, '.pbe/blueprint/pbe-state.json', validator)
+  const { data: state, issue: stateIssue } = readFirstOptionalJson(
+    root,
+    ['.devview/blueprint/devview-state.json', '.devview/blueprint/pbe-state.json', '.pbe/blueprint/pbe-state.json'],
+    validator,
+  )
   const { data: requirementTree, issue: requirementIssue } = readOptionalJson(
     root,
     '.pbe/blueprint/requirement-tree.json',
