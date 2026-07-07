@@ -27,6 +27,7 @@ export async function securityReportEnterpriseReadinessCommand(context: CommandC
       recordEnvelopePreview: context.options.recordEnvelopePreview,
       recordEnvelopeVerification: context.options.recordEnvelopeVerification,
       signingReadiness: context.options.signingReadiness,
+      rbacPolicyValidation: context.options.rbacPolicyValidation,
       output: context.options.output,
       markdown: context.options.markdown,
     })

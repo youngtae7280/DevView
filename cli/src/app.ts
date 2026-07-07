@@ -261,6 +261,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     releaseSurfaceValidation: undefined as string | undefined,
     providerNetworkPolicyReport: undefined as string | undefined,
     rbacReadiness: undefined as string | undefined,
+    rbacPolicyValidation: undefined as string | undefined,
     recordEnvelopePreview: undefined as string | undefined,
     recordEnvelopeVerification: undefined as string | undefined,
     signingReadiness: undefined as string | undefined,
@@ -1408,6 +1409,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--rbac-readiness requires a file path.' }
       }
       options.rbacReadiness = value
+      index += 1
+    } else if (arg === '--rbac-policy-validation') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--rbac-policy-validation requires one or more file paths.' }
+      }
+      options.rbacPolicyValidation = options.rbacPolicyValidation ? `${options.rbacPolicyValidation},${value}` : value
       index += 1
     } else if (arg === '--record-envelope-preview') {
       const value = argv[index + 1]

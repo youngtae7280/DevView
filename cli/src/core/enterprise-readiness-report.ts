@@ -32,6 +32,8 @@ const RECORD_ENVELOPE_VERIFICATION_STATUS = 'devview-record-envelope-verified'
 const RECORD_ENVELOPE_VERIFICATION_SIGNATURE_MODE = 'not-performed-unsigned-preview-only'
 const SIGNING_READINESS_ROLE = 'devview-signing-readiness-report'
 const SIGNING_READINESS_STATUS = 'devview-signing-readiness-reported'
+const RBAC_POLICY_VALIDATION_ROLE = 'devview-rbac-policy-validation-report'
+const RBAC_POLICY_VALIDATION_STATUS = 'devview-rbac-policy-validation-passed'
 
 const unsafeAuthorityFields = [
   'enterpriseGateActivated',
@@ -94,6 +96,7 @@ export interface EnterpriseReadinessReportOptions {
   recordEnvelopePreview?: string
   recordEnvelopeVerification?: string
   signingReadiness?: string
+  rbacPolicyValidation?: string
   output?: string
   markdown?: string
 }
@@ -212,6 +215,27 @@ export interface EnterpriseReadinessReport {
     permissionVerificationEnforced: boolean | null
     futureSignedEnvelopeRequirementCount: number | null
   }>
+  sourceRbacPolicyValidationReports: Array<{
+    supplied: true
+    path: string
+    artifactRole: string | null
+    status: string | null
+    rbacPolicyValidationStatus: string | null
+    defaultDenyConfigured: boolean | null
+    actorCount: number | null
+    roleAssignmentCount: number | null
+    permissionGrantCount: number | null
+    automationRestrictionDeclared: boolean | null
+    automationOvergrantCount: number | null
+    extensionAuthorRestrictionDeclared: boolean | null
+    extensionAuthorOvergrantCount: number | null
+    policyFindingCount: number | null
+    downstreamActionCount: number | null
+    rbacEnforced: boolean | null
+    permissionVerified: boolean | null
+    cryptographicSignaturePresent: boolean | null
+    cryptographicSignatureVerified: boolean | null
+  }>
   releaseSurfaceReadiness: {
     status: 'satisfied' | 'failed' | 'not-supplied'
     packageAllowlistPresent: boolean
@@ -290,6 +314,17 @@ export interface EnterpriseReadinessReport {
     rbacPrerequisiteActorModelPresentCount: number
     rbacPrerequisitePermissionMatrixPresentCount: number
     rbacRoleAssignmentRegistryPresentCount: number
+    rbacPolicyValidationReportPresent: boolean
+    rbacPolicyValidationReportCount: number
+    rbacPolicyValidationStatuses: string[]
+    defaultDenyPolicyValidatedCount: number
+    validatedRbacActorCount: number
+    validatedRbacRoleAssignmentCount: number
+    validatedRbacPermissionGrantCount: number
+    automationRestrictionDeclaredCount: number
+    extensionAuthorRestrictionDeclaredCount: number
+    rbacPolicyValidationFindingCount: number
+    rbacPolicyValidationDownstreamActionCount: number
     futureSignedEnvelopeRequirementCount: number
     gaps: string[]
   }
@@ -354,6 +389,7 @@ interface LoadedSource {
     | 'record-envelope-preview'
     | 'record-envelope-verification'
     | 'signing-readiness-report'
+    | 'rbac-policy-validation-report'
   record: JsonRecord | null
   readError: string | null
 }
@@ -375,6 +411,7 @@ export async function reportEnterpriseReadiness(
   const recordEnvelopePreviewPaths = parseList(options.recordEnvelopePreview)
   const recordEnvelopeVerificationPaths = parseList(options.recordEnvelopeVerification)
   const signingReadinessPaths = parseList(options.signingReadiness)
+  const rbacPolicyValidationPaths = parseList(options.rbacPolicyValidation)
   const sourcePaths = [
     options.benchmarkGovernanceVerification,
     options.releaseSurfaceValidation,
@@ -382,6 +419,7 @@ export async function reportEnterpriseReadiness(
     ...recordEnvelopePreviewPaths,
     ...recordEnvelopeVerificationPaths,
     ...signingReadinessPaths,
+    ...rbacPolicyValidationPaths,
   ].filter((entry): entry is string => Boolean(entry))
   await assertOutputAuthority(
     root,
@@ -407,6 +445,9 @@ export async function reportEnterpriseReadiness(
   const signingReadinessReports = await Promise.all(
     signingReadinessPaths.map((entry) => loadSource(root, entry, 'signing-readiness-report')),
   )
+  const rbacPolicyValidationReports = await Promise.all(
+    rbacPolicyValidationPaths.map((entry) => loadSource(root, entry, 'rbac-policy-validation-report')),
+  )
   const blockingFindings = validateSources(
     benchmarkGovernance,
     releaseSurface,
@@ -414,6 +455,7 @@ export async function reportEnterpriseReadiness(
     recordEnvelopePreviews,
     recordEnvelopeVerifications,
     signingReadinessReports,
+    rbacPolicyValidationReports,
   )
   if (blockingFindings.length > 0) {
     throw new EnterpriseReadinessReportValidationError(
@@ -424,6 +466,7 @@ export async function reportEnterpriseReadiness(
         recordEnvelopePreviews,
         recordEnvelopeVerifications,
         signingReadinessReports,
+        rbacPolicyValidationReports,
         blockingFindings,
         true,
       ),
@@ -437,6 +480,7 @@ export async function reportEnterpriseReadiness(
     recordEnvelopePreviews,
     recordEnvelopeVerifications,
     signingReadinessReports,
+    rbacPolicyValidationReports,
     buildFindings(
       benchmarkGovernance,
       releaseSurface,
@@ -444,6 +488,7 @@ export async function reportEnterpriseReadiness(
       recordEnvelopePreviews,
       recordEnvelopeVerifications,
       signingReadinessReports,
+      rbacPolicyValidationReports,
     ),
   )
   const outputPath = resolveRepoPath(root, options.output ?? '')
@@ -465,6 +510,7 @@ function buildReport(
   recordEnvelopePreviews: LoadedSource[],
   recordEnvelopeVerifications: LoadedSource[],
   signingReadinessReports: LoadedSource[],
+  rbacPolicyValidationReports: LoadedSource[],
   findings: EnterpriseReadinessFinding[],
   blocked = false,
 ): EnterpriseReadinessReport {
@@ -476,6 +522,7 @@ function buildReport(
     .map((entry) => entry.record)
     .filter(isJsonRecord)
   const signingReadinessRecords = signingReadinessReports.map((entry) => entry.record).filter(isJsonRecord)
+  const rbacPolicyValidationRecords = rbacPolicyValidationReports.map((entry) => entry.record).filter(isJsonRecord)
   const releaseStatus = releaseReadinessStatus(releaseRecord)
   const benchmarkStatus = benchmarkReadinessStatus(benchmarkRecord)
   const benchmarkDigestSummary = asRecord(benchmarkRecord?.sourceDigestVerificationSummary)
@@ -525,6 +572,7 @@ function buildReport(
       recordEnvelopeVerificationSummary(source),
     ),
     sourceSigningReadinessReports: signingReadinessReports.map((source) => signingReadinessSummary(source)),
+    sourceRbacPolicyValidationReports: rbacPolicyValidationReports.map((source) => rbacPolicyValidationSummary(source)),
     releaseSurfaceReadiness: {
       status: releaseStatus,
       packageAllowlistPresent: true,
@@ -636,11 +684,50 @@ function buildReport(
       rbacRoleAssignmentRegistryPresentCount: signingReadinessRecords.filter((record) =>
         booleanValue(asRecord(record.rbacPrerequisiteSummary)?.roleAssignmentRegistryPresent),
       ).length,
+      rbacPolicyValidationReportPresent: rbacPolicyValidationRecords.length > 0,
+      rbacPolicyValidationReportCount: rbacPolicyValidationRecords.length,
+      rbacPolicyValidationStatuses: uniqueStrings(
+        rbacPolicyValidationRecords.map((record) => stringValue(record.rbacPolicyValidationStatus)),
+      ),
+      defaultDenyPolicyValidatedCount: rbacPolicyValidationRecords.filter((record) =>
+        booleanValue(asRecord(record.defaultDenyStatus)?.defaultDenyConfigured),
+      ).length,
+      validatedRbacActorCount: rbacPolicyValidationRecords.reduce(
+        (total, record) => total + (numberValue(asRecord(record.actorSummary)?.actorCount) ?? 0),
+        0,
+      ),
+      validatedRbacRoleAssignmentCount: rbacPolicyValidationRecords.reduce(
+        (total, record) => total + (numberValue(asRecord(record.roleAssignmentSummary)?.assignmentCount) ?? 0),
+        0,
+      ),
+      validatedRbacPermissionGrantCount: rbacPolicyValidationRecords.reduce(
+        (total, record) => total + (numberValue(asRecord(record.permissionGrantSummary)?.grantCount) ?? 0),
+        0,
+      ),
+      automationRestrictionDeclaredCount: rbacPolicyValidationRecords.filter((record) =>
+        booleanValue(asRecord(record.automationRestrictionStatus)?.automationRestrictionDeclared),
+      ).length,
+      extensionAuthorRestrictionDeclaredCount: rbacPolicyValidationRecords.filter((record) =>
+        booleanValue(asRecord(record.extensionAuthorRestrictionStatus)?.extensionAuthorRestrictionDeclared),
+      ).length,
+      rbacPolicyValidationFindingCount: rbacPolicyValidationRecords.reduce(
+        (total, record) => total + (arrayLength(record.policyFindings) ?? 0),
+        0,
+      ),
+      rbacPolicyValidationDownstreamActionCount: rbacPolicyValidationRecords.reduce(
+        (total, record) => total + (arrayLength(record.downstreamActionPlan) ?? 0),
+        0,
+      ),
       futureSignedEnvelopeRequirementCount: signingReadinessRecords.reduce(
         (total, record) => total + (arrayLength(record.futureSignedEnvelopeRequirements) ?? 0),
         0,
       ),
-      gaps: rbacAndSigningGaps(recordEnvelopeRecords, recordEnvelopeVerificationRecords, signingReadinessRecords),
+      gaps: rbacAndSigningGaps(
+        recordEnvelopeRecords,
+        recordEnvelopeVerificationRecords,
+        signingReadinessRecords,
+        rbacPolicyValidationRecords,
+      ),
     },
     auditAndTamperEvidenceReadiness: {
       status: 'partial',
@@ -705,6 +792,7 @@ function validateSources(
   recordEnvelopePreviews: LoadedSource[],
   recordEnvelopeVerifications: LoadedSource[],
   signingReadinessReports: LoadedSource[],
+  rbacPolicyValidationReports: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
   for (const source of [
@@ -714,6 +802,7 @@ function validateSources(
     ...recordEnvelopePreviews,
     ...recordEnvelopeVerifications,
     ...signingReadinessReports,
+    ...rbacPolicyValidationReports,
   ].filter((entry): entry is LoadedSource => Boolean(entry))) {
     if (source.readError) {
       findings.push(blockingFinding('ENTERPRISE_READINESS_SOURCE_READ_FAILED', source.readError, source.relativePath))
@@ -752,8 +841,10 @@ function validateSources(
       validateRecordEnvelopePreviewSource(source, record, findings)
     } else if (source.sourceKind === 'record-envelope-verification') {
       validateRecordEnvelopeVerificationSource(source, record, findings)
-    } else {
+    } else if (source.sourceKind === 'signing-readiness-report') {
       validateSigningReadinessSource(source, record, findings)
+    } else {
+      validateRbacPolicyValidationSource(source, record, findings)
     }
     for (const hit of collectUnsafeAuthorityHits(record)) {
       findings.push({
@@ -775,6 +866,7 @@ function buildFindings(
   recordEnvelopePreviews: LoadedSource[],
   recordEnvelopeVerifications: LoadedSource[],
   signingReadinessReports: LoadedSource[],
+  rbacPolicyValidationReports: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
   const benchmarkRecord = benchmarkGovernance?.record ?? null
@@ -785,6 +877,7 @@ function buildFindings(
     .map((entry) => entry.record)
     .filter(isJsonRecord)
   const signingReadinessRecords = signingReadinessReports.map((entry) => entry.record).filter(isJsonRecord)
+  const rbacPolicyValidationRecords = rbacPolicyValidationReports.map((entry) => entry.record).filter(isJsonRecord)
 
   if (!releaseSurface) {
     findings.push({
@@ -904,6 +997,23 @@ function buildFindings(
       message:
         'Signing/key governance readiness source is recorded as a report-only prerequisite summary, not as real signing.',
       path: signingReadinessReports[0]?.relativePath,
+    })
+  }
+
+  if (rbacPolicyValidationRecords.length === 0) {
+    findings.push({
+      severity: 'gap',
+      code: 'ENTERPRISE_RBAC_POLICY_VALIDATION_NOT_SUPPLIED',
+      message:
+        'RBAC role-assignment policy validation report was not supplied; declarative actor/role/permission policy has not been validated.',
+    })
+  } else {
+    findings.push({
+      severity: 'satisfied',
+      code: 'ENTERPRISE_RBAC_POLICY_VALIDATION_RECORDED',
+      message:
+        'Declarative RBAC policy validation source is recorded as report-only validation, not as permission enforcement.',
+      path: rbacPolicyValidationReports[0]?.relativePath,
     })
   }
 
@@ -1108,6 +1218,32 @@ function validateSigningReadinessSource(
   }
 }
 
+function validateRbacPolicyValidationSource(
+  source: LoadedSource,
+  record: JsonRecord,
+  findings: EnterpriseReadinessFinding[],
+): void {
+  if (record.artifactRole !== RBAC_POLICY_VALIDATION_ROLE || record.status !== RBAC_POLICY_VALIDATION_STATUS) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_RBAC_POLICY_VALIDATION_SOURCE_ROLE_STATUS_INVALID',
+        `${source.relativePath} must be ${RBAC_POLICY_VALIDATION_ROLE} with passed status.`,
+        source.relativePath,
+      ),
+    )
+  }
+  for (const hit of collectTrueFieldHits(record, signingReadinessAuthorityFields)) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_RBAC_POLICY_VALIDATION_AUTHORITY_CLAIM_UNSUPPORTED',
+        `${source.relativePath} claims RBAC/signing/key field ${hit.field}: true; enterprise v1 only accepts declarative RBAC policy validation source facts.`,
+        source.relativePath,
+        hit.field,
+      ),
+    )
+  }
+}
+
 async function loadSource(
   root: string,
   requestedPath: string,
@@ -1195,6 +1331,7 @@ function renderMarkdown(report: EnterpriseReadinessReport): string {
     `- recordEnvelopePreviews: ${report.auditAndTamperEvidenceReadiness.envelopePreviewCount}`,
     `- recordEnvelopeVerifications: ${report.auditAndTamperEvidenceReadiness.envelopeVerificationCount}`,
     `- signingReadinessReports: ${report.rbacAndSigningReadiness.signingReadinessReportCount}`,
+    `- rbacPolicyValidationReports: ${report.rbacAndSigningReadiness.rbacPolicyValidationReportCount}`,
     '',
     '## Findings',
     ...report.enterpriseReadinessFindings.map((entry) => `- [${entry.severity}] ${entry.code}: ${entry.message}`),
@@ -1256,6 +1393,7 @@ function rbacAndSigningGaps(
   recordEnvelopeRecords: JsonRecord[],
   recordEnvelopeVerificationRecords: JsonRecord[],
   signingReadinessRecords: JsonRecord[],
+  rbacPolicyValidationRecords: JsonRecord[],
 ): string[] {
   const gaps = [
     'Enterprise RBAC/actor identity model is not enforced.',
@@ -1277,6 +1415,11 @@ function rbacAndSigningGaps(
     gaps.push('Signing/key governance readiness report is not supplied.')
   } else {
     gaps.push('Signing/key governance readiness is recorded, but real signing/key management/RBAC remain absent.')
+  }
+  if (rbacPolicyValidationRecords.length === 0) {
+    gaps.push('RBAC role-assignment policy validation report is not supplied.')
+  } else {
+    gaps.push('RBAC policy validation is recorded, but no RBAC enforcement or permission verification is active.')
   }
   return gaps
 }
@@ -1405,6 +1548,41 @@ function signingReadinessSummary(
   }
 }
 
+function rbacPolicyValidationSummary(
+  source: LoadedSource,
+): EnterpriseReadinessReport['sourceRbacPolicyValidationReports'][number] {
+  const record = source.record ?? {}
+  const defaultDenyStatus = asRecord(record.defaultDenyStatus)
+  const actorSummary = asRecord(record.actorSummary)
+  const roleAssignmentSummary = asRecord(record.roleAssignmentSummary)
+  const permissionGrantSummary = asRecord(record.permissionGrantSummary)
+  const automationRestrictionStatus = asRecord(record.automationRestrictionStatus)
+  const extensionAuthorRestrictionStatus = asRecord(record.extensionAuthorRestrictionStatus)
+  return {
+    supplied: true,
+    path: source.relativePath,
+    artifactRole: stringValue(record.artifactRole),
+    status: stringValue(record.status),
+    rbacPolicyValidationStatus: stringValue(record.rbacPolicyValidationStatus),
+    defaultDenyConfigured: booleanOrNull(defaultDenyStatus?.defaultDenyConfigured),
+    actorCount: numberValue(actorSummary?.actorCount),
+    roleAssignmentCount: numberValue(roleAssignmentSummary?.assignmentCount),
+    permissionGrantCount: numberValue(permissionGrantSummary?.grantCount),
+    automationRestrictionDeclared: booleanOrNull(automationRestrictionStatus?.automationRestrictionDeclared),
+    automationOvergrantCount: numberValue(automationRestrictionStatus?.automationOvergrantCount),
+    extensionAuthorRestrictionDeclared: booleanOrNull(
+      extensionAuthorRestrictionStatus?.extensionAuthorRestrictionDeclared,
+    ),
+    extensionAuthorOvergrantCount: numberValue(extensionAuthorRestrictionStatus?.extensionAuthorOvergrantCount),
+    policyFindingCount: arrayLength(record.policyFindings),
+    downstreamActionCount: arrayLength(record.downstreamActionPlan),
+    rbacEnforced: booleanOrNull(record.rbacEnforced),
+    permissionVerified: booleanOrNull(record.permissionVerified),
+    cryptographicSignaturePresent: booleanOrNull(record.cryptographicSignaturePresent),
+    cryptographicSignatureVerified: booleanOrNull(record.cryptographicSignatureVerified),
+  }
+}
+
 function payloadDigestVerifiedCount(records: JsonRecord[]): number {
   return records.filter((record) => booleanValue(asRecord(record.payloadVerification)?.digestMatches)).length
 }
@@ -1440,6 +1618,9 @@ function downstreamActionPlan(findings: EnterpriseReadinessFinding[]): string[] 
   }
   if (openFindings.some((entry) => entry.code.includes('PROVIDER_NETWORK'))) {
     actions.add('Attach a provider/network default-deny policy report before enterprise release review.')
+  }
+  if (openFindings.some((entry) => entry.code.includes('RBAC_POLICY_VALIDATION'))) {
+    actions.add('Attach RBAC policy validation before planning RBAC enforcement or signed policy rollout.')
   }
   if (openFindings.some((entry) => entry.code.includes('RECORD_ENVELOPE_VERIFICATION'))) {
     actions.add('Attach record envelope verification reports before planning real signed-envelope governance.')

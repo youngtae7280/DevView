@@ -367,6 +367,144 @@ describe('security report-enterprise-readiness CLI', () => {
     expectSafetyFalse(payload)
   })
 
+  it('summarizes RBAC policy validation as declarative source fact without enforcement claims', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/rbac-policy-validation.json'), rbacPolicyValidationReport())
+
+    const result = await runDevViewCli(
+      [
+        'security',
+        'report-enterprise-readiness',
+        '--rbac-policy-validation',
+        '.tmp/rbac-policy-validation.json',
+        '--output',
+        '.tmp/enterprise-readiness.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.readinessLevel).toBe('not-ready')
+    expect(payload.sourceRbacPolicyValidationReports).toHaveLength(1)
+    expect(payload.sourceRbacPolicyValidationReports[0]).toEqual(
+      expect.objectContaining({
+        path: '.tmp/rbac-policy-validation.json',
+        artifactRole: 'devview-rbac-policy-validation-report',
+        status: 'devview-rbac-policy-validation-passed',
+        rbacPolicyValidationStatus: 'passed',
+        defaultDenyConfigured: true,
+        actorCount: 2,
+        roleAssignmentCount: 2,
+        permissionGrantCount: 2,
+        automationRestrictionDeclared: true,
+        automationOvergrantCount: 0,
+        extensionAuthorRestrictionDeclared: true,
+        extensionAuthorOvergrantCount: 0,
+        policyFindingCount: 1,
+        downstreamActionCount: 2,
+        rbacEnforced: false,
+        permissionVerified: false,
+        cryptographicSignaturePresent: false,
+        cryptographicSignatureVerified: false,
+      }),
+    )
+    expect(payload.rbacAndSigningReadiness.rbacPolicyValidationReportPresent).toBe(true)
+    expect(payload.rbacAndSigningReadiness.rbacPolicyValidationReportCount).toBe(1)
+    expect(payload.rbacAndSigningReadiness.rbacPolicyValidationStatuses).toEqual(['passed'])
+    expect(payload.rbacAndSigningReadiness.defaultDenyPolicyValidatedCount).toBe(1)
+    expect(payload.rbacAndSigningReadiness.validatedRbacActorCount).toBe(2)
+    expect(payload.rbacAndSigningReadiness.validatedRbacRoleAssignmentCount).toBe(2)
+    expect(payload.rbacAndSigningReadiness.validatedRbacPermissionGrantCount).toBe(2)
+    expect(payload.rbacAndSigningReadiness.automationRestrictionDeclaredCount).toBe(1)
+    expect(payload.rbacAndSigningReadiness.extensionAuthorRestrictionDeclaredCount).toBe(1)
+    expect(payload.rbacAndSigningReadiness.rbacPolicyValidationFindingCount).toBe(1)
+    expect(payload.rbacAndSigningReadiness.rbacPolicyValidationDownstreamActionCount).toBe(2)
+    expect(payload.rbacAndSigningReadiness.signedRecordEnvelopePresent).toBe(false)
+    expect(payload.enterpriseReadinessFindings.map((entry: { code: string }) => entry.code)).toEqual(
+      expect.arrayContaining(['ENTERPRISE_RBAC_POLICY_VALIDATION_RECORDED', 'ENTERPRISE_RBAC_SIGNING_MISSING']),
+    )
+    expect(payload.enterpriseReadinessFindings.map((entry: { code: string }) => entry.code)).not.toContain(
+      'ENTERPRISE_RBAC_POLICY_VALIDATION_NOT_SUPPLIED',
+    )
+    expectSafetyFalse(payload)
+  })
+
+  it('blocks invalid or authority-claiming RBAC policy validation sources with zero writes', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/wrong-rbac-policy-validation.json'), {
+      ...rbacPolicyValidationReport(),
+      status: 'devview-rbac-policy-validation-blocked',
+    })
+    writeJson(join(workspace, '.tmp/enforced-rbac-policy-validation.json'), {
+      ...rbacPolicyValidationReport(),
+      rbacEnforced: true,
+    })
+    writeJson(join(workspace, '.tmp/signed-rbac-policy-validation.json'), {
+      ...rbacPolicyValidationReport(),
+      cryptographicSignaturePresent: true,
+    })
+    writeJson(join(workspace, '.tmp/key-rbac-policy-validation.json'), {
+      ...rbacPolicyValidationReport(),
+      keyGenerated: true,
+    })
+    writeJson(join(workspace, '.tmp/unsafe-rbac-policy-validation.json'), {
+      ...rbacPolicyValidationReport(),
+      networkCallMade: true,
+    })
+
+    const wrong = await runEnterpriseWithRbacPolicyValidation(
+      workspace,
+      '.tmp/wrong-rbac-policy-validation.json',
+      '.tmp/wrong-rbac-policy-enterprise.json',
+    )
+    const enforced = await runEnterpriseWithRbacPolicyValidation(
+      workspace,
+      '.tmp/enforced-rbac-policy-validation.json',
+      '.tmp/enforced-rbac-policy-enterprise.json',
+    )
+    const signed = await runEnterpriseWithRbacPolicyValidation(
+      workspace,
+      '.tmp/signed-rbac-policy-validation.json',
+      '.tmp/signed-rbac-policy-enterprise.json',
+    )
+    const key = await runEnterpriseWithRbacPolicyValidation(
+      workspace,
+      '.tmp/key-rbac-policy-validation.json',
+      '.tmp/key-rbac-policy-enterprise.json',
+    )
+    const unsafe = await runEnterpriseWithRbacPolicyValidation(
+      workspace,
+      '.tmp/unsafe-rbac-policy-validation.json',
+      '.tmp/unsafe-rbac-policy-enterprise.json',
+    )
+
+    expect(wrong.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(wrong.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_RBAC_POLICY_VALIDATION_SOURCE_ROLE_STATUS_INVALID',
+    )
+    expect(existsSync(join(workspace, '.tmp/wrong-rbac-policy-enterprise.json'))).toBe(false)
+
+    for (const [result, output] of [
+      [enforced, '.tmp/enforced-rbac-policy-enterprise.json'],
+      [signed, '.tmp/signed-rbac-policy-enterprise.json'],
+      [key, '.tmp/key-rbac-policy-enterprise.json'],
+    ] as const) {
+      expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+      expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+        'ENTERPRISE_READINESS_RBAC_POLICY_VALIDATION_AUTHORITY_CLAIM_UNSUPPORTED',
+      )
+      expect(existsSync(join(workspace, output))).toBe(false)
+    }
+
+    expect(unsafe.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(unsafe.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_UNSAFE_SOURCE_AUTHORITY_FLAG',
+    )
+    expect(existsSync(join(workspace, '.tmp/unsafe-rbac-policy-enterprise.json'))).toBe(false)
+  })
+
   it('blocks invalid or authority-claiming signing readiness sources with zero writes', async () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, '.tmp/wrong-signing-readiness.json'), {
@@ -724,6 +862,7 @@ describe('security report-enterprise-readiness CLI', () => {
     writeJson(join(workspace, '.tmp/record-envelope-preview.json'), recordEnvelopePreview())
     writeJson(join(workspace, '.tmp/record-envelope-verification.json'), recordEnvelopeVerification())
     writeJson(join(workspace, '.tmp/signing-readiness.json'), signingReadinessReport())
+    writeJson(join(workspace, '.tmp/rbac-policy-validation.json'), rbacPolicyValidationReport())
     const cases = [
       { output: '.tmp/benchmark-governance.json', expected: 'would overwrite a source input' },
       {
@@ -739,6 +878,11 @@ describe('security report-enterprise-readiness CLI', () => {
       {
         sourceArgs: ['--signing-readiness', '.tmp/signing-readiness.json'],
         output: '.tmp/signing-readiness.json',
+        expected: 'would overwrite a source input',
+      },
+      {
+        sourceArgs: ['--rbac-policy-validation', '.tmp/rbac-policy-validation.json'],
+        output: '.tmp/rbac-policy-validation.json',
         expected: 'would overwrite a source input',
       },
       { output: '.tmp/enterprise.json', markdown: '.tmp/enterprise.json', expected: 'must be different' },
@@ -1135,6 +1279,93 @@ function signingReadinessReport(overrides: Record<string, unknown> = {}): Record
   }
 }
 
+function rbacPolicyValidationReport(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    schemaVersion: 1,
+    artifactRole: 'devview-rbac-policy-validation-report',
+    status: 'devview-rbac-policy-validation-passed',
+    validationScope: 'rbac-policy-validation-report-only',
+    sourceFactsOnly: true,
+    reportOnly: true,
+    rbacPolicyValidationStatus: 'passed',
+    sourcePolicy: {
+      supplied: true,
+      path: '.tmp/rbac-policy.json',
+      artifactRole: 'devview-rbac-policy',
+      status: 'devview-rbac-policy-configured',
+      defaultAuthorityPolicy: 'deny',
+    },
+    actorSummary: {
+      actorCount: 2,
+      actorCountByType: { human: 1, automation: 1 },
+      duplicateActorIds: [],
+      unknownActorTypeCount: 0,
+      unknownActorTypes: [],
+    },
+    roleAssignmentSummary: {
+      assignmentCount: 2,
+      unknownActorReferences: [],
+      unknownRoles: [],
+      duplicateAssignmentCount: 0,
+      duplicateAssignments: [],
+    },
+    permissionGrantSummary: {
+      grantCount: 2,
+      unknownRoles: [],
+      unknownPermissions: [],
+      unsafeUnknownPermissions: [],
+      providerNetworkPermissionCount: 0,
+      approvalPermissionCount: 0,
+      graphApplyPermissionCount: 0,
+    },
+    artifactPermissionCoverageSummary: {
+      configuredArtifactRoleCount: 1,
+      knownArtifactRoleCoverageCount: 1,
+      unknownArtifactRoles: [],
+    },
+    defaultDenyStatus: {
+      defaultAuthorityPolicy: 'deny',
+      defaultDenyConfigured: true,
+    },
+    automationRestrictionStatus: {
+      automationActorCount: 1,
+      automationRestrictionDeclared: true,
+      forbiddenAutomationPermissionCount: 2,
+      automationOvergrantCount: 0,
+      automationOvergrants: [],
+    },
+    extensionAuthorRestrictionStatus: {
+      extensionAuthorActorCount: 0,
+      extensionAuthorRestrictionDeclared: true,
+      forbiddenExtensionAuthorPermissionCount: 2,
+      extensionAuthorOvergrantCount: 0,
+      extensionAuthorOvergrants: [],
+    },
+    noEnforcementPerformed: true,
+    policyFindings: [
+      {
+        severity: 'satisfied',
+        code: 'RBAC_POLICY_VALIDATION_DEFAULT_DENY_RECORDED',
+        message: 'RBAC policy default authority is deny.',
+      },
+    ],
+    downstreamActionPlan: ['Keep RBAC enforcement disabled.', 'Add signed policy/key registry validation later.'],
+    rbacEnforced: false,
+    permissionVerified: false,
+    rbacPermissionVerified: false,
+    cryptographicSignaturePresent: false,
+    cryptographicSignatureVerified: false,
+    cryptographicSigningImplemented: false,
+    keyGenerated: false,
+    privateKeyStored: false,
+    keyManagementImplemented: false,
+    keyRegistryCreated: false,
+    trustRootCreated: false,
+    ...safetyFlags(),
+    ...overrides,
+  }
+}
+
 function safetyFlags(): Record<string, unknown> {
   return {
     benchmarkExecuted: false,
@@ -1248,6 +1479,21 @@ function runEnterpriseWithEnvelopeVerification(workspace: string, envelopeVerifi
 function runEnterpriseWithSigningReadiness(workspace: string, signingReadiness: string, output: string) {
   return runDevViewCli(
     ['security', 'report-enterprise-readiness', '--signing-readiness', signingReadiness, '--output', output, '--json'],
+    { cwd: workspace, pluginRoot },
+  )
+}
+
+function runEnterpriseWithRbacPolicyValidation(workspace: string, rbacPolicyValidation: string, output: string) {
+  return runDevViewCli(
+    [
+      'security',
+      'report-enterprise-readiness',
+      '--rbac-policy-validation',
+      rbacPolicyValidation,
+      '--output',
+      output,
+      '--json',
+    ],
     { cwd: workspace, pluginRoot },
   )
 }

@@ -210,6 +210,7 @@ devview security report-enterprise-readiness \
   --record-envelope-preview <record-envelope-preview.json> \
   --record-envelope-verification <record-envelope-verification.json> \
   --signing-readiness <signing-readiness.json> \
+  --rbac-policy-validation <rbac-policy-validation.json> \
   --output <enterprise-readiness.json> \
   --markdown <enterprise-readiness.md> \
   --json
@@ -217,14 +218,16 @@ devview security report-enterprise-readiness \
 
 Aggregates enterprise hardening posture into a report-only readiness assessment. The report carries benchmark governance
 release-surface validation, provider/network default-deny policy reports, unsigned record envelope previews, record
-envelope verification reports, and signing/key governance readiness reports as source facts, then lists remaining
-enterprise gaps for extension execution policy, guarded graph update governance, Scope/CI activation governance, RBAC,
-signing, audit, and tamper-evidence. `--record-envelope-preview`, `--record-envelope-verification`, and
-`--signing-readiness` may be repeated or comma-separated. Envelope previews record unsigned payload/source digest
-intent; envelope verification reports show those digests were independently recomputed; signing readiness reports
-summarize key registry, trust root, signature policy, and RBAC prerequisites. The report still does not claim
-cryptographic signing, key management, or RBAC enforcement. It does not activate enterprise gates, execute extensions,
-call providers, make network calls, mutate graph-source, configure CI, activate hooks, or automate approval.
+envelope verification reports, signing/key governance readiness reports, and RBAC policy validation reports as source
+facts, then lists remaining enterprise gaps for extension execution policy, guarded graph update governance, Scope/CI
+activation governance, RBAC, signing, audit, and tamper-evidence. `--record-envelope-preview`,
+`--record-envelope-verification`, `--signing-readiness`, and `--rbac-policy-validation` may be repeated or
+comma-separated. Envelope previews record unsigned payload/source digest intent; envelope verification reports show
+those digests were independently recomputed; signing readiness reports summarize key registry, trust root, signature
+policy, and RBAC prerequisites; RBAC policy validation reports summarize declarative role-assignment policy validation.
+The report still does not claim cryptographic signing, key management, RBAC enforcement, or permission verification. It
+does not activate enterprise gates, execute extensions, call providers, make network calls, mutate graph-source,
+configure CI, activate hooks, or automate approval.
 
 ### Provider/Network Default-Deny Policy
 
