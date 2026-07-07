@@ -4,7 +4,7 @@
   "schemaVersion": 1,
   "artifactRole": "devview-graph-source-schema-v0",
   "status": "draft-active",
-  "purpose": "Common graph-source contract for native and retrofit PBE.",
+  "purpose": "Common graph-source contract for native and retrofit DevView.",
   "requiredTopLevelFields": [
     "schemaVersion",
     "artifactRole",

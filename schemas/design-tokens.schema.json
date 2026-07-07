@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/design-tokens.schema.json",
-  "title": "PBE Design Tokens",
+  "title": "DevView Design Tokens",
   "type": "object",
   "required": ["schemaVersion", "artifactType", "status", "tokens"],
   "properties": {

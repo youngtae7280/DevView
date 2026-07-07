@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/cycle-tree.schema.json",
-  "title": "PBE Cycle Tree",
+  "title": "DevView Cycle Tree",
   "type": "object",
   "required": ["version", "cycles"],
   "properties": {

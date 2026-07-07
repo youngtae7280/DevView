@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/decision-queue.schema.json",
-  "title": "PBE Decision Queue",
+  "title": "DevView Decision Queue",
   "type": "object",
   "required": ["version", "decisions"],
   "properties": {

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/parallel-safety-contract.schema.json",
-  "title": "PBE Parallel Safety Contract",
+  "title": "DevView Parallel Safety Contract",
   "type": "object",
   "required": ["schemaVersion", "defaultPolicy", "required"],
   "properties": {

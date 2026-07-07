@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/evidence-tree.schema.json",
-  "title": "PBE Evidence Tree",
+  "title": "DevView Evidence Tree",
   "type": "object",
   "required": ["version", "evidence"],
   "properties": {

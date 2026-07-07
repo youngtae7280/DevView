@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/component-style-inventory.schema.json",
-  "title": "PBE Component Style Inventory",
+  "title": "DevView Component Style Inventory",
   "type": "object",
   "required": ["schemaVersion", "artifactType", "status", "components"],
   "properties": {

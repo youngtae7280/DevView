@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/hardware-readiness-ledger.schema.json",
-  "title": "PBE Hardware Readiness Ledger",
+  "title": "DevView Hardware Readiness Ledger",
   "type": "object",
   "required": ["version", "features"],
   "properties": {

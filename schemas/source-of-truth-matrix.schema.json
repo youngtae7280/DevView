@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/source-of-truth-matrix.schema.json",
-  "title": "PBE Source of Truth Matrix",
+  "title": "DevView Source of Truth Matrix",
   "type": "object",
   "required": ["schemaVersion", "artifacts"],
   "properties": {

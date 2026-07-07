@@ -1,6 +1,6 @@
 # Retrofit Schemas
 
-This directory holds draft PBE retrofit contracts that were extracted from
+This directory holds draft DevView retrofit contracts that were extracted from
 real maintenance dogfood work.
 
 Current contracts:
@@ -12,7 +12,7 @@ Current contracts:
     evidence
 
 These files are not enforcement rules yet. They are fixture-backed contracts
-for validating the shape of future PBE retrofit records.
+for validating the shape of future DevView retrofit records.
 
 Validate the current formal fixtures with:
 

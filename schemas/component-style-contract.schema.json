@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/component-style-contract.schema.json",
-  "title": "PBE Component Style Contract",
+  "title": "DevView Component Style Contract",
   "type": "object",
   "required": ["schemaVersion", "artifactType", "status", "components"],
   "properties": {

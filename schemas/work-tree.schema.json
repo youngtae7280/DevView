@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/work-tree.schema.json",
-  "title": "PBE Work Tree",
+  "title": "DevView Work Tree",
   "type": "object",
   "required": ["version", "rootNodeId", "nodes"],
   "properties": {

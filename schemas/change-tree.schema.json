@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/change-tree.schema.json",
-  "title": "PBE Change Tree",
+  "title": "DevView Change Tree",
   "type": "object",
   "required": ["changes"],
   "properties": {

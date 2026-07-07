@@ -4,7 +4,7 @@
   "schemaVersion": 1,
   "artifactRole": "retrofit-hardware-evidence-close-protocol-v0",
   "status": "draft-active",
-  "purpose": "Standardize how user-observed hardware validation closes a retrofit PBE change record.",
+  "purpose": "Standardize how user-observed hardware validation closes a retrofit DevView change record.",
   "whenRequired": [
     "The change reads from or writes to real hardware.",
     "Build or automated tests cannot prove device-level behavior.",

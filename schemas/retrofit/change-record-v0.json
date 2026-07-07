@@ -4,7 +4,7 @@
   "schemaVersion": 1,
   "artifactRole": "retrofit-change-record-schema-v0",
   "status": "draft-active",
-  "purpose": "Standardize how retrofit PBE records a change from user intent through code anchors, implementation, evidence, and optional rollback.",
+  "purpose": "Standardize how retrofit DevView records a change from user intent through code anchors, implementation, evidence, and optional rollback.",
   "hardwareEvidenceCloseProtocol": "schemas/retrofit/hardware-evidence-close-protocol-v0.json",
   "requiredTopLevelFields": [
     "schemaVersion",

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/ui-surface-inventory.schema.json",
-  "title": "PBE UI Surface Inventory",
+  "title": "DevView UI Surface Inventory",
   "type": "object",
   "required": ["schemaVersion", "artifactType", "status", "surfaces"],
   "properties": {

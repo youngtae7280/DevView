@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/visual-verification-profile.schema.json",
-  "title": "PBE Visual Verification Profile",
+  "title": "DevView Visual Verification Profile",
   "type": "object",
   "required": ["version", "profiles"],
   "properties": {

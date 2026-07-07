@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/acceptance-tree.schema.json",
-  "title": "PBE Acceptance Tree",
+  "title": "DevView Acceptance Tree",
   "type": "object",
   "required": ["version", "branches"],
   "properties": {

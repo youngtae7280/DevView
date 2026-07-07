@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/execution-strategy.schema.json",
-  "title": "PBE Execution Strategy",
+  "title": "DevView Execution Strategy",
   "type": "object",
   "required": ["schemaVersion", "executionStrategy", "phases", "parallelGroups"],
   "properties": {

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/product-patch-tree.schema.json",
-  "title": "PBE Product Patch Tree",
+  "title": "DevView Product Patch Tree",
   "type": "object",
   "required": ["version", "patches"],
   "properties": {

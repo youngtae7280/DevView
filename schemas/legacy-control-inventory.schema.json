@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/legacy-control-inventory.schema.json",
-  "title": "PBE Legacy Control Inventory",
+  "title": "DevView Legacy Control Inventory",
   "type": "object",
   "required": ["version", "inventories"],
   "properties": {

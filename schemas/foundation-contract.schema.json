@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/foundation-contract.schema.json",
-  "title": "PBE Foundation Contract",
+  "title": "DevView Foundation Contract",
   "type": "object",
   "required": ["schemaVersion", "mayCreate", "mustNot"],
   "properties": {
