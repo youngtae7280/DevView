@@ -50,6 +50,8 @@ const CI_BRANCH_GOVERNANCE_READINESS_ROLE = 'devview-ci-branch-governance-readin
 const CI_BRANCH_GOVERNANCE_READINESS_STATUS = 'devview-ci-branch-governance-readiness-reported'
 const CI_BRANCH_POLICY_VALIDATION_ROLE = 'devview-ci-branch-policy-validation-report'
 const CI_BRANCH_POLICY_VALIDATION_STATUS = 'devview-ci-branch-policy-validation-passed'
+const CI_BRANCH_ACTIVATION_PLAN_ROLE = 'devview-ci-branch-activation-plan-report'
+const CI_BRANCH_ACTIVATION_PLAN_STATUS = 'devview-ci-branch-activation-plan-recorded'
 
 const unsafeAuthorityFields = [
   'enterpriseGateActivated',
@@ -158,6 +160,7 @@ export interface EnterpriseReadinessReportOptions {
   provenanceVerificationReadiness?: string
   ciBranchGovernanceReadiness?: string
   ciBranchPolicyValidation?: string
+  ciBranchActivationPlan?: string
   output?: string
   markdown?: string
 }
@@ -499,6 +502,39 @@ export interface EnterpriseReadinessReport {
     findingCount: number | null
     downstreamActionCount: number | null
   }>
+  sourceCiBranchActivationPlanReports: Array<{
+    supplied: true
+    path: string
+    artifactRole: string | null
+    status: string | null
+    activationPlanStatus: string | null
+    futureOnlyStepCount: number | null
+    requiredChecksConfigured: boolean | null
+    requiredChecksMutated: boolean | null
+    branchProtectionChanged: boolean | null
+    branchProtectionMutated: boolean | null
+    declaredRequiredCheckCount: number | null
+    matchedWorkflowCandidateCheckCount: number | null
+    unmappedDeclaredCheckCount: number | null
+    extraWorkflowCandidateCheckCount: number | null
+    targetBranchCount: number | null
+    desiredFutureRuleCount: number | null
+    providerDefaultDenyRecorded: boolean | null
+    rbacPolicyValidated: boolean | null
+    signingReadinessRecorded: boolean | null
+    envelopeDigestVerified: boolean | null
+    provenanceVerificationReadinessRecorded: boolean | null
+    releaseSurfaceValidated: boolean | null
+    signedPolicyPresent: boolean | null
+    rbacEnforced: boolean | null
+    providerGrantPresent: boolean | null
+    providerInvoked: boolean | null
+    networkCallMade: boolean | null
+    apiCallMade: boolean | null
+    hooksActivated: boolean | null
+    findingCount: number | null
+    downstreamActionCount: number | null
+  }>
   releaseSurfaceReadiness: {
     status: 'satisfied' | 'failed' | 'not-supplied'
     packageAllowlistPresent: boolean
@@ -674,15 +710,21 @@ export interface EnterpriseReadinessReport {
     externalCiMutationDisabled: true
     ciBranchGovernanceReadinessSourceCount: number
     ciBranchPolicyValidationSourceCount: number
+    ciBranchActivationPlanSourceCount: number
     sourceStatuses: string[]
     ciBranchPolicyValidationSourceStatuses: string[]
+    ciBranchActivationPlanSourceStatuses: string[]
     readinessStatuses: string[]
     policyValidationStatuses: string[]
+    activationPlanStatuses: string[]
     workflowInventoryFileCount: number
     candidateRequiredCheckCount: number
     declaredRequiredCheckCount: number
     matchedWorkflowCandidateCheckCount: number
     unmappedDeclaredCheckCount: number
+    extraWorkflowCandidateCheckCount: number
+    activationPlanFutureOnlyStepCount: number
+    activationPlanExecutedStepCount: number
     requiredChecksPolicyPresentCount: number
     requiredChecksConfiguredCount: number
     requiredChecksMutatedCount: number
@@ -690,6 +732,7 @@ export interface EnterpriseReadinessReport {
     branchProtectionChangedCount: number
     branchProtectionMutatedCount: number
     policyTargetBranchCount: number
+    branchProtectionDesiredFutureRuleCount: number
     externalCiMutationCount: number
     providerInvokedCount: number
     networkCallMadeCount: number
@@ -699,10 +742,21 @@ export interface EnterpriseReadinessReport {
     rbacPolicyValidationLinkedCount: number
     signingReadinessLinkedCount: number
     provenanceVerificationReadinessLinkedCount: number
+    activationPlanProviderDefaultDenyRecordedCount: number
+    activationPlanRbacPolicyValidatedCount: number
+    activationPlanSigningReadinessRecordedCount: number
+    activationPlanEnvelopeDigestVerifiedCount: number
+    activationPlanProvenanceVerificationReadinessRecordedCount: number
+    activationPlanReleaseSurfaceValidatedCount: number
+    activationPlanSignedPolicyPresentCount: number
+    activationPlanRbacEnforcedCount: number
+    activationPlanProviderGrantPresentCount: number
     findingCount: number
     downstreamActionCount: number
     policyFindingCount: number
     policyDownstreamActionCount: number
+    activationPlanFindingCount: number
+    activationPlanDownstreamActionCount: number
     gaps: string[]
   }
   rbacAndSigningReadiness: {
@@ -816,6 +870,7 @@ interface LoadedSource {
     | 'provenance-verification-readiness-report'
     | 'ci-branch-governance-readiness-report'
     | 'ci-branch-policy-validation-report'
+    | 'ci-branch-activation-plan-report'
   record: JsonRecord | null
   readError: string | null
 }
@@ -846,6 +901,7 @@ export async function reportEnterpriseReadiness(
   const provenanceVerificationReadinessPaths = parseList(options.provenanceVerificationReadiness)
   const ciBranchGovernanceReadinessPaths = parseList(options.ciBranchGovernanceReadiness)
   const ciBranchPolicyValidationPaths = parseList(options.ciBranchPolicyValidation)
+  const ciBranchActivationPlanPaths = parseList(options.ciBranchActivationPlan)
   const sourcePaths = [
     options.benchmarkGovernanceVerification,
     options.releaseSurfaceValidation,
@@ -862,6 +918,7 @@ export async function reportEnterpriseReadiness(
     ...provenanceVerificationReadinessPaths,
     ...ciBranchGovernanceReadinessPaths,
     ...ciBranchPolicyValidationPaths,
+    ...ciBranchActivationPlanPaths,
   ].filter((entry): entry is string => Boolean(entry))
   await assertOutputAuthority(
     root,
@@ -918,6 +975,9 @@ export async function reportEnterpriseReadiness(
   const ciBranchPolicyValidationReports = await Promise.all(
     ciBranchPolicyValidationPaths.map((entry) => loadSource(root, entry, 'ci-branch-policy-validation-report')),
   )
+  const ciBranchActivationPlanReports = await Promise.all(
+    ciBranchActivationPlanPaths.map((entry) => loadSource(root, entry, 'ci-branch-activation-plan-report')),
+  )
   const blockingFindings = validateSources(
     benchmarkGovernance,
     releaseSurface,
@@ -934,6 +994,7 @@ export async function reportEnterpriseReadiness(
     provenanceVerificationReadinessReports,
     ciBranchGovernanceReadinessReports,
     ciBranchPolicyValidationReports,
+    ciBranchActivationPlanReports,
   )
   if (blockingFindings.length > 0) {
     throw new EnterpriseReadinessReportValidationError(
@@ -953,6 +1014,7 @@ export async function reportEnterpriseReadiness(
         provenanceVerificationReadinessReports,
         ciBranchGovernanceReadinessReports,
         ciBranchPolicyValidationReports,
+        ciBranchActivationPlanReports,
         blockingFindings,
         true,
       ),
@@ -975,6 +1037,7 @@ export async function reportEnterpriseReadiness(
     provenanceVerificationReadinessReports,
     ciBranchGovernanceReadinessReports,
     ciBranchPolicyValidationReports,
+    ciBranchActivationPlanReports,
     buildFindings(
       benchmarkGovernance,
       releaseSurface,
@@ -991,6 +1054,7 @@ export async function reportEnterpriseReadiness(
       provenanceVerificationReadinessReports,
       ciBranchGovernanceReadinessReports,
       ciBranchPolicyValidationReports,
+      ciBranchActivationPlanReports,
     ),
   )
   const outputPath = resolveRepoPath(root, options.output ?? '')
@@ -1021,6 +1085,7 @@ function buildReport(
   provenanceVerificationReadinessReports: LoadedSource[],
   ciBranchGovernanceReadinessReports: LoadedSource[],
   ciBranchPolicyValidationReports: LoadedSource[],
+  ciBranchActivationPlanReports: LoadedSource[],
   findings: EnterpriseReadinessFinding[],
   blocked = false,
 ): EnterpriseReadinessReport {
@@ -1055,6 +1120,7 @@ function buildReport(
   const ciBranchPolicyValidationRecords = ciBranchPolicyValidationReports
     .map((entry) => entry.record)
     .filter(isJsonRecord)
+  const ciBranchActivationPlanRecords = ciBranchActivationPlanReports.map((entry) => entry.record).filter(isJsonRecord)
   const releaseStatus = releaseReadinessStatus(releaseRecord)
   const benchmarkStatus = benchmarkReadinessStatus(benchmarkRecord)
   const benchmarkDigestSummary = asRecord(benchmarkRecord?.sourceDigestVerificationSummary)
@@ -1126,6 +1192,9 @@ function buildReport(
     ),
     sourceCiBranchPolicyValidationReports: ciBranchPolicyValidationReports.map((source) =>
       ciBranchPolicyValidationSummary(source),
+    ),
+    sourceCiBranchActivationPlanReports: ciBranchActivationPlanReports.map((source) =>
+      ciBranchActivationPlanSummary(source),
     ),
     releaseSurfaceReadiness: {
       status: releaseStatus,
@@ -1502,22 +1571,31 @@ function buildReport(
     },
     scopeCiGovernanceReadiness: {
       status:
-        ciBranchGovernanceReadinessRecords.length > 0 || ciBranchPolicyValidationRecords.length > 0
+        ciBranchGovernanceReadinessRecords.length > 0 ||
+        ciBranchPolicyValidationRecords.length > 0 ||
+        ciBranchActivationPlanRecords.length > 0
           ? 'readiness-recorded'
           : 'gap',
       scopeCiRecordLifecyclePresent: true,
       externalCiMutationDisabled: true,
       ciBranchGovernanceReadinessSourceCount: ciBranchGovernanceReadinessRecords.length,
       ciBranchPolicyValidationSourceCount: ciBranchPolicyValidationRecords.length,
+      ciBranchActivationPlanSourceCount: ciBranchActivationPlanRecords.length,
       sourceStatuses: uniqueStrings(ciBranchGovernanceReadinessRecords.map((record) => stringValue(record.status))),
       ciBranchPolicyValidationSourceStatuses: uniqueStrings(
         ciBranchPolicyValidationRecords.map((record) => stringValue(record.status)),
+      ),
+      ciBranchActivationPlanSourceStatuses: uniqueStrings(
+        ciBranchActivationPlanRecords.map((record) => stringValue(record.status)),
       ),
       readinessStatuses: uniqueStrings(
         ciBranchGovernanceReadinessRecords.map((record) => stringValue(record.ciBranchGovernanceReadinessStatus)),
       ),
       policyValidationStatuses: uniqueStrings(
         ciBranchPolicyValidationRecords.map((record) => stringValue(record.ciBranchPolicyValidationStatus)),
+      ),
+      activationPlanStatuses: uniqueStrings(
+        ciBranchActivationPlanRecords.map((record) => stringValue(record.activationPlanStatus)),
       ),
       workflowInventoryFileCount: ciBranchGovernanceReadinessRecords.reduce(
         (total, record) => total + (numberValue(asRecord(record.workflowInventory)?.sourceCount) ?? 0),
@@ -1527,19 +1605,52 @@ function buildReport(
         (total, record) => total + (arrayLength(asRecord(record.workflowInventory)?.candidateRequiredChecks) ?? 0),
         0,
       ),
-      declaredRequiredCheckCount: ciBranchPolicyValidationRecords.reduce(
+      declaredRequiredCheckCount:
+        ciBranchPolicyValidationRecords.reduce(
+          (total, record) =>
+            total + (numberValue(asRecord(record.requiredChecksPolicyValidation)?.declaredCheckCount) ?? 0),
+          0,
+        ) +
+        ciBranchActivationPlanRecords.reduce(
+          (total, record) =>
+            total + (numberValue(asRecord(record.policyDerivedRequiredChecksPlan)?.declaredCheckCount) ?? 0),
+          0,
+        ),
+      matchedWorkflowCandidateCheckCount:
+        ciBranchPolicyValidationRecords.reduce(
+          (total, record) =>
+            total + (numberValue(asRecord(record.requiredChecksPolicyValidation)?.workflowCandidateMatchCount) ?? 0),
+          0,
+        ) +
+        ciBranchActivationPlanRecords.reduce(
+          (total, record) =>
+            total +
+            (numberValue(asRecord(record.policyDerivedRequiredChecksPlan)?.matchedWorkflowCandidateCheckCount) ?? 0),
+          0,
+        ),
+      unmappedDeclaredCheckCount:
+        ciBranchPolicyValidationRecords.reduce(
+          (total, record) =>
+            total + (arrayLength(asRecord(record.requiredChecksPolicyValidation)?.unmappedDeclaredChecks) ?? 0),
+          0,
+        ) +
+        ciBranchActivationPlanRecords.reduce(
+          (total, record) =>
+            total + (numberValue(asRecord(record.policyDerivedRequiredChecksPlan)?.unmappedDeclaredCheckCount) ?? 0),
+          0,
+        ),
+      extraWorkflowCandidateCheckCount: ciBranchActivationPlanRecords.reduce(
         (total, record) =>
-          total + (numberValue(asRecord(record.requiredChecksPolicyValidation)?.declaredCheckCount) ?? 0),
+          total +
+          (numberValue(asRecord(record.policyDerivedRequiredChecksPlan)?.extraWorkflowCandidateCheckCount) ?? 0),
         0,
       ),
-      matchedWorkflowCandidateCheckCount: ciBranchPolicyValidationRecords.reduce(
-        (total, record) =>
-          total + (numberValue(asRecord(record.requiredChecksPolicyValidation)?.workflowCandidateMatchCount) ?? 0),
+      activationPlanFutureOnlyStepCount: ciBranchActivationPlanRecords.reduce(
+        (total, record) => total + futureOnlyActivationStepCount(record),
         0,
       ),
-      unmappedDeclaredCheckCount: ciBranchPolicyValidationRecords.reduce(
-        (total, record) =>
-          total + (arrayLength(asRecord(record.requiredChecksPolicyValidation)?.unmappedDeclaredChecks) ?? 0),
+      activationPlanExecutedStepCount: ciBranchActivationPlanRecords.reduce(
+        (total, record) => total + executedActivationStepCount(record),
         0,
       ),
       requiredChecksPolicyPresentCount:
@@ -1548,6 +1659,9 @@ function buildReport(
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.requiredChecksPolicyValidation)?.requiredChecksPolicyPresent),
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) =>
+          booleanValue(asRecord(record.policyDerivedRequiredChecksPlan)?.requiredChecksPolicyPresent),
         ).length,
       requiredChecksConfiguredCount:
         ciBranchGovernanceReadinessRecords.filter((record) =>
@@ -1555,6 +1669,9 @@ function buildReport(
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.requiredChecksPolicyValidation)?.requiredChecksConfigured),
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) =>
+          booleanValue(asRecord(record.policyDerivedRequiredChecksPlan)?.requiredChecksConfigured),
         ).length,
       requiredChecksMutatedCount:
         ciBranchGovernanceReadinessRecords.filter((record) =>
@@ -1562,6 +1679,9 @@ function buildReport(
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.requiredChecksPolicyValidation)?.requiredChecksMutated),
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) =>
+          booleanValue(asRecord(record.policyDerivedRequiredChecksPlan)?.requiredChecksMutated),
         ).length,
       branchProtectionPolicyPresentCount:
         ciBranchGovernanceReadinessRecords.filter((record) =>
@@ -1569,6 +1689,9 @@ function buildReport(
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.branchProtectionPolicyValidation)?.branchProtectionPolicyPresent),
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) =>
+          booleanValue(asRecord(record.policyDerivedBranchProtectionPlan)?.branchProtectionPolicyPresent),
         ).length,
       branchProtectionChangedCount:
         ciBranchGovernanceReadinessRecords.filter((record) =>
@@ -1576,6 +1699,9 @@ function buildReport(
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.branchProtectionPolicyValidation)?.branchProtectionChanged),
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) =>
+          booleanValue(asRecord(record.policyDerivedBranchProtectionPlan)?.branchProtectionChanged),
         ).length,
       branchProtectionMutatedCount:
         ciBranchGovernanceReadinessRecords.filter((record) =>
@@ -1583,10 +1709,24 @@ function buildReport(
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.branchProtectionPolicyValidation)?.branchProtectionMutated),
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) =>
+          booleanValue(asRecord(record.policyDerivedBranchProtectionPlan)?.branchProtectionMutated),
         ).length,
-      policyTargetBranchCount: ciBranchPolicyValidationRecords.reduce(
+      policyTargetBranchCount:
+        ciBranchPolicyValidationRecords.reduce(
+          (total, record) =>
+            total + (numberValue(asRecord(record.branchProtectionPolicyValidation)?.targetBranchCount) ?? 0),
+          0,
+        ) +
+        ciBranchActivationPlanRecords.reduce(
+          (total, record) =>
+            total + (numberValue(asRecord(record.policyDerivedBranchProtectionPlan)?.targetBranchCount) ?? 0),
+          0,
+        ),
+      branchProtectionDesiredFutureRuleCount: ciBranchActivationPlanRecords.reduce(
         (total, record) =>
-          total + (numberValue(asRecord(record.branchProtectionPolicyValidation)?.targetBranchCount) ?? 0),
+          total + (numberValue(asRecord(record.policyDerivedBranchProtectionPlan)?.desiredFutureRuleCount) ?? 0),
         0,
       ),
       externalCiMutationCount:
@@ -1595,37 +1735,45 @@ function buildReport(
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.activationBoundary)?.externalCiMutation),
-        ).length,
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) => booleanValue(record.externalCiMutated)).length,
       providerInvokedCount:
         ciBranchGovernanceReadinessRecords.filter((record) =>
           booleanValue(asRecord(record.ciProviderGovernanceReadiness)?.providerInvoked),
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.providerNetworkPrerequisiteValidation)?.providerInvoked),
-        ).length,
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) => booleanValue(record.providerInvoked)).length,
       networkCallMadeCount:
         ciBranchGovernanceReadinessRecords.filter((record) =>
           booleanValue(asRecord(record.ciProviderGovernanceReadiness)?.networkCallMade),
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.providerNetworkPrerequisiteValidation)?.networkCallMade),
-        ).length,
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) => booleanValue(record.networkCallMade)).length,
       apiCallMadeCount:
         ciBranchGovernanceReadinessRecords.filter((record) =>
           booleanValue(asRecord(record.ciProviderGovernanceReadiness)?.apiCallMade),
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.providerNetworkPrerequisiteValidation)?.apiCallMade),
-        ).length,
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) => booleanValue(record.apiCallMade)).length,
       hooksActivatedCount:
         ciBranchGovernanceReadinessRecords.filter((record) => booleanValue(record.hooksActivated)).length +
-        ciBranchPolicyValidationRecords.filter((record) => booleanValue(record.hooksActivated)).length,
+        ciBranchPolicyValidationRecords.filter((record) => booleanValue(record.hooksActivated)).length +
+        ciBranchActivationPlanRecords.filter((record) => booleanValue(record.hooksActivated)).length,
       providerNetworkPolicyLinkedCount:
         ciBranchGovernanceReadinessRecords.filter((record) =>
           booleanValue(asRecord(record.ciProviderGovernanceReadiness)?.providerNetworkDefaultDenyLinked),
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.providerNetworkPrerequisiteValidation)?.providerNetworkPolicyLinked),
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) =>
+          booleanValue(asRecord(record.prerequisiteGateSummary)?.providerDefaultDenyRecorded),
         ).length,
       rbacPolicyValidationLinkedCount:
         ciBranchGovernanceReadinessRecords.filter((record) =>
@@ -1633,12 +1781,52 @@ function buildReport(
         ).length +
         ciBranchPolicyValidationRecords.filter((record) =>
           booleanValue(asRecord(record.actorRbacPrerequisiteValidation)?.rbacPolicyValidationLinked),
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) =>
+          booleanValue(asRecord(record.prerequisiteGateSummary)?.rbacPolicyValidated),
         ).length,
-      signingReadinessLinkedCount: ciBranchGovernanceReadinessRecords.filter((record) =>
-        booleanValue(asRecord(record.signingAndProvenancePrerequisiteReadiness)?.signingReadinessLinked),
+      signingReadinessLinkedCount:
+        ciBranchGovernanceReadinessRecords.filter((record) =>
+          booleanValue(asRecord(record.signingAndProvenancePrerequisiteReadiness)?.signingReadinessLinked),
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) =>
+          booleanValue(asRecord(record.prerequisiteGateSummary)?.signingReadinessRecorded),
+        ).length,
+      provenanceVerificationReadinessLinkedCount:
+        ciBranchGovernanceReadinessRecords.filter((record) =>
+          booleanValue(
+            asRecord(record.signingAndProvenancePrerequisiteReadiness)?.provenanceVerificationReadinessLinked,
+          ),
+        ).length +
+        ciBranchActivationPlanRecords.filter((record) =>
+          booleanValue(asRecord(record.prerequisiteGateSummary)?.provenanceVerificationReadinessRecorded),
+        ).length,
+      activationPlanProviderDefaultDenyRecordedCount: ciBranchActivationPlanRecords.filter((record) =>
+        booleanValue(asRecord(record.prerequisiteGateSummary)?.providerDefaultDenyRecorded),
       ).length,
-      provenanceVerificationReadinessLinkedCount: ciBranchGovernanceReadinessRecords.filter((record) =>
-        booleanValue(asRecord(record.signingAndProvenancePrerequisiteReadiness)?.provenanceVerificationReadinessLinked),
+      activationPlanRbacPolicyValidatedCount: ciBranchActivationPlanRecords.filter((record) =>
+        booleanValue(asRecord(record.prerequisiteGateSummary)?.rbacPolicyValidated),
+      ).length,
+      activationPlanSigningReadinessRecordedCount: ciBranchActivationPlanRecords.filter((record) =>
+        booleanValue(asRecord(record.prerequisiteGateSummary)?.signingReadinessRecorded),
+      ).length,
+      activationPlanEnvelopeDigestVerifiedCount: ciBranchActivationPlanRecords.filter((record) =>
+        booleanValue(asRecord(record.prerequisiteGateSummary)?.envelopeDigestVerified),
+      ).length,
+      activationPlanProvenanceVerificationReadinessRecordedCount: ciBranchActivationPlanRecords.filter((record) =>
+        booleanValue(asRecord(record.prerequisiteGateSummary)?.provenanceVerificationReadinessRecorded),
+      ).length,
+      activationPlanReleaseSurfaceValidatedCount: ciBranchActivationPlanRecords.filter((record) =>
+        booleanValue(asRecord(record.prerequisiteGateSummary)?.releaseSurfaceValidated),
+      ).length,
+      activationPlanSignedPolicyPresentCount: ciBranchActivationPlanRecords.filter((record) =>
+        booleanValue(asRecord(record.prerequisiteGateSummary)?.signedPolicyPresent),
+      ).length,
+      activationPlanRbacEnforcedCount: ciBranchActivationPlanRecords.filter((record) =>
+        booleanValue(asRecord(record.prerequisiteGateSummary)?.rbacEnforced),
+      ).length,
+      activationPlanProviderGrantPresentCount: ciBranchActivationPlanRecords.filter((record) =>
+        booleanValue(asRecord(record.prerequisiteGateSummary)?.providerGrantPresent),
       ).length,
       findingCount: ciBranchGovernanceReadinessRecords.reduce(
         (total, record) => total + (arrayLength(record.governanceFindings) ?? 0),
@@ -1656,7 +1844,19 @@ function buildReport(
         (total, record) => total + (arrayLength(record.downstreamActionPlan) ?? 0),
         0,
       ),
-      gaps: scopeCiGovernanceGaps(ciBranchGovernanceReadinessRecords, ciBranchPolicyValidationRecords),
+      activationPlanFindingCount: ciBranchActivationPlanRecords.reduce(
+        (total, record) => total + (arrayLength(record.planFindings) ?? 0),
+        0,
+      ),
+      activationPlanDownstreamActionCount: ciBranchActivationPlanRecords.reduce(
+        (total, record) => total + (arrayLength(record.downstreamActionPlan) ?? 0),
+        0,
+      ),
+      gaps: scopeCiGovernanceGaps(
+        ciBranchGovernanceReadinessRecords,
+        ciBranchPolicyValidationRecords,
+        ciBranchActivationPlanRecords,
+      ),
     },
     rbacAndSigningReadiness: {
       status: 'gap',
@@ -1826,6 +2026,7 @@ function validateSources(
   provenanceVerificationReadinessReports: LoadedSource[],
   ciBranchGovernanceReadinessReports: LoadedSource[],
   ciBranchPolicyValidationReports: LoadedSource[],
+  ciBranchActivationPlanReports: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
   for (const source of [
@@ -1844,6 +2045,7 @@ function validateSources(
     ...provenanceVerificationReadinessReports,
     ...ciBranchGovernanceReadinessReports,
     ...ciBranchPolicyValidationReports,
+    ...ciBranchActivationPlanReports,
   ].filter((entry): entry is LoadedSource => Boolean(entry))) {
     if (source.readError) {
       findings.push(blockingFinding('ENTERPRISE_READINESS_SOURCE_READ_FAILED', source.readError, source.relativePath))
@@ -1900,8 +2102,10 @@ function validateSources(
       validateProvenanceVerificationReadinessSource(source, record, findings)
     } else if (source.sourceKind === 'ci-branch-governance-readiness-report') {
       validateCiBranchGovernanceReadinessSource(source, record, findings)
-    } else {
+    } else if (source.sourceKind === 'ci-branch-policy-validation-report') {
       validateCiBranchPolicyValidationSource(source, record, findings)
+    } else {
+      validateCiBranchActivationPlanSource(source, record, findings)
     }
     for (const hit of collectUnsafeAuthorityHits(record)) {
       findings.push({
@@ -1932,6 +2136,7 @@ function buildFindings(
   provenanceVerificationReadinessReports: LoadedSource[],
   ciBranchGovernanceReadinessReports: LoadedSource[],
   ciBranchPolicyValidationReports: LoadedSource[],
+  ciBranchActivationPlanReports: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
   const benchmarkRecord = benchmarkGovernance?.record ?? null
@@ -1965,6 +2170,7 @@ function buildFindings(
   const ciBranchPolicyValidationRecords = ciBranchPolicyValidationReports
     .map((entry) => entry.record)
     .filter(isJsonRecord)
+  const ciBranchActivationPlanRecords = ciBranchActivationPlanReports.map((entry) => entry.record).filter(isJsonRecord)
 
   if (!releaseSurface) {
     findings.push({
@@ -2237,6 +2443,23 @@ function buildFindings(
       message:
         'Declarative CI/branch policy validation source is recorded as report-only desired policy, not as required-check configuration or branch protection mutation.',
       path: ciBranchPolicyValidationReports[0]?.relativePath,
+    })
+  }
+
+  if (ciBranchActivationPlanRecords.length === 0) {
+    findings.push({
+      severity: 'gap',
+      code: 'ENTERPRISE_CI_BRANCH_ACTIVATION_PLAN_NOT_SUPPLIED',
+      message:
+        'CI/branch activation plan report was not supplied; future activation sequencing is not source-governed.',
+    })
+  } else {
+    findings.push({
+      severity: 'satisfied',
+      code: 'ENTERPRISE_CI_BRANCH_ACTIVATION_PLAN_RECORDED',
+      message:
+        'Non-authoritative CI/branch activation plan source is recorded as future-only sequencing, not as external CI activation.',
+      path: ciBranchActivationPlanReports[0]?.relativePath,
     })
   }
 
@@ -2789,6 +3012,48 @@ function validateCiBranchPolicyValidationSource(
   }
 }
 
+function validateCiBranchActivationPlanSource(
+  source: LoadedSource,
+  record: JsonRecord,
+  findings: EnterpriseReadinessFinding[],
+): void {
+  if (record.artifactRole !== CI_BRANCH_ACTIVATION_PLAN_ROLE || record.status !== CI_BRANCH_ACTIVATION_PLAN_STATUS) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_CI_BRANCH_ACTIVATION_PLAN_SOURCE_ROLE_STATUS_INVALID',
+        `${source.relativePath} must be ${CI_BRANCH_ACTIVATION_PLAN_ROLE} with recorded status.`,
+        source.relativePath,
+      ),
+    )
+  }
+  for (const hit of collectTrueFieldHits(record, releaseProvenanceAuthorityFields)) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_CI_BRANCH_ACTIVATION_PLAN_AUTHORITY_CLAIM_UNSUPPORTED',
+        `${source.relativePath} claims CI/release/signing/RBAC authority field ${hit.field}: true; enterprise v1 only accepts non-authoritative activation plan source facts.`,
+        source.relativePath,
+        hit.field,
+      ),
+    )
+  }
+  const steps = record.activationSequenceProposal
+  if (Array.isArray(steps)) {
+    for (const [index, entry] of steps.entries()) {
+      const step = asRecord(entry)
+      if (step && stringValue(step.executionMode) !== 'future-only-not-executed') {
+        findings.push(
+          blockingFinding(
+            'ENTERPRISE_READINESS_CI_BRANCH_ACTIVATION_PLAN_STEP_EXECUTED_UNSUPPORTED',
+            `${source.relativePath} activation step ${index} must remain future-only-not-executed.`,
+            source.relativePath,
+            `activationSequenceProposal.${index}.executionMode`,
+          ),
+        )
+      }
+    }
+  }
+}
+
 async function loadSource(
   root: string,
   requestedPath: string,
@@ -2885,6 +3150,7 @@ function renderMarkdown(report: EnterpriseReadinessReport): string {
     `- provenanceVerificationReadinessReports: ${report.provenanceVerificationReadiness.sourceCount}`,
     `- ciBranchGovernanceReadinessReports: ${report.scopeCiGovernanceReadiness.ciBranchGovernanceReadinessSourceCount}`,
     `- ciBranchPolicyValidationReports: ${report.scopeCiGovernanceReadiness.ciBranchPolicyValidationSourceCount}`,
+    `- ciBranchActivationPlanReports: ${report.scopeCiGovernanceReadiness.ciBranchActivationPlanSourceCount}`,
     '',
     '## Findings',
     ...report.enterpriseReadinessFindings.map((entry) => `- [${entry.severity}] ${entry.code}: ${entry.message}`),
@@ -3086,11 +3352,16 @@ function provenanceVerificationReadinessGaps(records: JsonRecord[]): string[] {
   return gaps
 }
 
-function scopeCiGovernanceGaps(governanceRecords: JsonRecord[], policyValidationRecords: JsonRecord[]): string[] {
-  if (governanceRecords.length === 0 && policyValidationRecords.length === 0) {
+function scopeCiGovernanceGaps(
+  governanceRecords: JsonRecord[],
+  policyValidationRecords: JsonRecord[],
+  activationPlanRecords: JsonRecord[],
+): string[] {
+  if (governanceRecords.length === 0 && policyValidationRecords.length === 0 && activationPlanRecords.length === 0) {
     return [
       'CI/branch governance readiness report is not supplied.',
       'Declarative CI/branch policy validation report is not supplied.',
+      'CI/branch activation plan report is not supplied.',
       'External branch protection and required check activation remain disabled.',
       'Scope/CI activation lacks enterprise actor identity and policy-gated rollout records.',
     ]
@@ -3098,12 +3369,16 @@ function scopeCiGovernanceGaps(governanceRecords: JsonRecord[], policyValidation
   const gaps = [
     'CI/branch governance readiness is source-fact-only and does not configure required checks, branch protection, providers, hooks, or enterprise gates.',
     'CI/branch policy validation is desired-policy validation only and does not configure required checks or branch protection.',
+    'CI/branch activation plan is non-authoritative future sequencing only and does not activate external CI.',
   ]
   if (governanceRecords.length === 0) {
     gaps.push('CI/branch governance readiness report is not supplied.')
   }
   if (policyValidationRecords.length === 0) {
     gaps.push('Declarative CI/branch policy validation report is not supplied.')
+  }
+  if (activationPlanRecords.length === 0) {
+    gaps.push('CI/branch activation plan report is not supplied.')
   }
   if (!governanceRecords.some((record) => (numberValue(asRecord(record.workflowInventory)?.sourceCount) ?? 0) > 0)) {
     gaps.push('No CI/branch governance readiness source records workflow inventory.')
@@ -3152,8 +3427,44 @@ function scopeCiGovernanceGaps(governanceRecords: JsonRecord[], policyValidation
   ) {
     gaps.push('No CI/branch policy validation source records declared future required checks.')
   }
+  if (
+    activationPlanRecords.length > 0 &&
+    !activationPlanRecords.some((record) => (arrayLength(record.activationSequenceProposal) ?? 0) > 0)
+  ) {
+    gaps.push('No CI/branch activation plan source records future activation steps.')
+  }
+  if (
+    activationPlanRecords.length > 0 &&
+    !activationPlanRecords.some((record) =>
+      booleanValue(asRecord(record.prerequisiteGateSummary)?.providerDefaultDenyRecorded),
+    )
+  ) {
+    gaps.push('No CI/branch activation plan source links provider/network default-deny governance.')
+  }
+  if (
+    activationPlanRecords.length > 0 &&
+    !activationPlanRecords.some((record) => booleanValue(asRecord(record.prerequisiteGateSummary)?.rbacPolicyValidated))
+  ) {
+    gaps.push('No CI/branch activation plan source links RBAC policy validation.')
+  }
+  if (
+    activationPlanRecords.length > 0 &&
+    !activationPlanRecords.some((record) =>
+      booleanValue(asRecord(record.prerequisiteGateSummary)?.signingReadinessRecorded),
+    )
+  ) {
+    gaps.push('No CI/branch activation plan source links signing/key readiness.')
+  }
+  if (
+    activationPlanRecords.length > 0 &&
+    !activationPlanRecords.some((record) =>
+      booleanValue(asRecord(record.prerequisiteGateSummary)?.envelopeDigestVerified),
+    )
+  ) {
+    gaps.push('No CI/branch activation plan source links record-envelope digest verification.')
+  }
   gaps.push(
-    'Required checks policy, branch protection policy, CI provider mutation, hooks, and RBAC enforcement remain missing.',
+    'Actual required checks configuration, branch protection mutation, CI provider/API calls, hooks, RBAC enforcement, signed policy, and enterprise gates remain missing.',
   )
   return gaps
 }
@@ -3635,6 +3946,48 @@ function ciBranchPolicyValidationSummary(
   }
 }
 
+function ciBranchActivationPlanSummary(
+  source: LoadedSource,
+): EnterpriseReadinessReport['sourceCiBranchActivationPlanReports'][number] {
+  const record = source.record ?? {}
+  const requiredChecks = asRecord(record.policyDerivedRequiredChecksPlan)
+  const branchProtection = asRecord(record.policyDerivedBranchProtectionPlan)
+  const prerequisites = asRecord(record.prerequisiteGateSummary)
+  return {
+    supplied: true,
+    path: source.relativePath,
+    artifactRole: stringValue(record.artifactRole),
+    status: stringValue(record.status),
+    activationPlanStatus: stringValue(record.activationPlanStatus),
+    futureOnlyStepCount: futureOnlyActivationStepCount(record),
+    requiredChecksConfigured: booleanOrNull(requiredChecks?.requiredChecksConfigured),
+    requiredChecksMutated: booleanOrNull(requiredChecks?.requiredChecksMutated),
+    branchProtectionChanged: booleanOrNull(branchProtection?.branchProtectionChanged),
+    branchProtectionMutated: booleanOrNull(branchProtection?.branchProtectionMutated),
+    declaredRequiredCheckCount: numberValue(requiredChecks?.declaredCheckCount),
+    matchedWorkflowCandidateCheckCount: numberValue(requiredChecks?.matchedWorkflowCandidateCheckCount),
+    unmappedDeclaredCheckCount: numberValue(requiredChecks?.unmappedDeclaredCheckCount),
+    extraWorkflowCandidateCheckCount: numberValue(requiredChecks?.extraWorkflowCandidateCheckCount),
+    targetBranchCount: numberValue(branchProtection?.targetBranchCount),
+    desiredFutureRuleCount: numberValue(branchProtection?.desiredFutureRuleCount),
+    providerDefaultDenyRecorded: booleanOrNull(prerequisites?.providerDefaultDenyRecorded),
+    rbacPolicyValidated: booleanOrNull(prerequisites?.rbacPolicyValidated),
+    signingReadinessRecorded: booleanOrNull(prerequisites?.signingReadinessRecorded),
+    envelopeDigestVerified: booleanOrNull(prerequisites?.envelopeDigestVerified),
+    provenanceVerificationReadinessRecorded: booleanOrNull(prerequisites?.provenanceVerificationReadinessRecorded),
+    releaseSurfaceValidated: booleanOrNull(prerequisites?.releaseSurfaceValidated),
+    signedPolicyPresent: booleanOrNull(prerequisites?.signedPolicyPresent),
+    rbacEnforced: booleanOrNull(prerequisites?.rbacEnforced),
+    providerGrantPresent: booleanOrNull(prerequisites?.providerGrantPresent),
+    providerInvoked: booleanOrNull(record.providerInvoked),
+    networkCallMade: booleanOrNull(record.networkCallMade),
+    apiCallMade: booleanOrNull(record.apiCallMade),
+    hooksActivated: booleanOrNull(record.hooksActivated),
+    findingCount: arrayLength(record.planFindings),
+    downstreamActionCount: arrayLength(record.downstreamActionPlan),
+  }
+}
+
 function payloadDigestVerifiedCount(records: JsonRecord[]): number {
   return records.filter((record) => booleanValue(asRecord(record.payloadVerification)?.digestMatches)).length
 }
@@ -3647,6 +4000,22 @@ function sourceDigestsVerifiedCount(records: JsonRecord[]): number {
 function previousEnvelopeChainLinkVerifiedCount(records: JsonRecord[]): number {
   return records.filter((record) => booleanValue(asRecord(record.previousEnvelopeVerification)?.chainLinkVerified))
     .length
+}
+
+function futureOnlyActivationStepCount(record: JsonRecord): number {
+  const steps = record.activationSequenceProposal
+  if (!Array.isArray(steps)) return 0
+  return steps.filter((entry) => stringValue(asRecord(entry)?.executionMode) === 'future-only-not-executed').length
+}
+
+function executedActivationStepCount(record: JsonRecord): number {
+  const steps = record.activationSequenceProposal
+  if (!Array.isArray(steps)) return 0
+  return steps.filter(
+    (entry) =>
+      stringValue(asRecord(entry)?.executionMode) &&
+      stringValue(asRecord(entry)?.executionMode) !== 'future-only-not-executed',
+  ).length
 }
 
 function uniqueStrings(values: Array<string | null>): string[] {

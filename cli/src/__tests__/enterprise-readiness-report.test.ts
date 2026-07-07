@@ -1081,6 +1081,214 @@ describe('security report-enterprise-readiness CLI', () => {
     expectSafetyFalse(payload)
   })
 
+  it('summarizes CI/branch activation plan without treating it as external CI activation', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/ci-branch-activation-plan.json'), ciBranchActivationPlanReport())
+
+    const result = await runDevViewCli(
+      [
+        'security',
+        'report-enterprise-readiness',
+        '--ci-branch-activation-plan',
+        '.tmp/ci-branch-activation-plan.json',
+        '--output',
+        '.tmp/enterprise-readiness.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.readinessLevel).toBe('not-ready')
+    expect(payload.sourceCiBranchActivationPlanReports).toHaveLength(1)
+    expect(payload.sourceCiBranchActivationPlanReports[0]).toEqual(
+      expect.objectContaining({
+        path: '.tmp/ci-branch-activation-plan.json',
+        artifactRole: 'devview-ci-branch-activation-plan-report',
+        status: 'devview-ci-branch-activation-plan-recorded',
+        activationPlanStatus: 'draft-non-authoritative-prerequisites-missing',
+        futureOnlyStepCount: 3,
+        declaredRequiredCheckCount: 2,
+        matchedWorkflowCandidateCheckCount: 1,
+        unmappedDeclaredCheckCount: 1,
+        extraWorkflowCandidateCheckCount: 1,
+        targetBranchCount: 1,
+        desiredFutureRuleCount: 2,
+        providerDefaultDenyRecorded: true,
+        rbacPolicyValidated: true,
+        signingReadinessRecorded: true,
+        envelopeDigestVerified: true,
+        provenanceVerificationReadinessRecorded: true,
+        releaseSurfaceValidated: true,
+        signedPolicyPresent: false,
+        rbacEnforced: false,
+        providerGrantPresent: false,
+        requiredChecksConfigured: false,
+        requiredChecksMutated: false,
+        branchProtectionChanged: false,
+        branchProtectionMutated: false,
+        providerInvoked: false,
+        networkCallMade: false,
+        apiCallMade: false,
+        hooksActivated: false,
+        findingCount: 2,
+        downstreamActionCount: 2,
+      }),
+    )
+    expect(payload.scopeCiGovernanceReadiness.status).toBe('readiness-recorded')
+    expect(payload.scopeCiGovernanceReadiness.ciBranchActivationPlanSourceCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.ciBranchActivationPlanSourceStatuses).toEqual([
+      'devview-ci-branch-activation-plan-recorded',
+    ])
+    expect(payload.scopeCiGovernanceReadiness.activationPlanStatuses).toEqual([
+      'draft-non-authoritative-prerequisites-missing',
+    ])
+    expect(payload.scopeCiGovernanceReadiness.activationPlanFutureOnlyStepCount).toBe(3)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanExecutedStepCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.declaredRequiredCheckCount).toBe(2)
+    expect(payload.scopeCiGovernanceReadiness.matchedWorkflowCandidateCheckCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.unmappedDeclaredCheckCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.extraWorkflowCandidateCheckCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.requiredChecksConfiguredCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.requiredChecksMutatedCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.branchProtectionPolicyPresentCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.branchProtectionChangedCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.branchProtectionMutatedCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.policyTargetBranchCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.branchProtectionDesiredFutureRuleCount).toBe(2)
+    expect(payload.scopeCiGovernanceReadiness.externalCiMutationCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.providerInvokedCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.networkCallMadeCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.apiCallMadeCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.hooksActivatedCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanProviderDefaultDenyRecordedCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanRbacPolicyValidatedCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanSigningReadinessRecordedCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanEnvelopeDigestVerifiedCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanProvenanceVerificationReadinessRecordedCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanReleaseSurfaceValidatedCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanSignedPolicyPresentCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanRbacEnforcedCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanProviderGrantPresentCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanFindingCount).toBe(2)
+    expect(payload.scopeCiGovernanceReadiness.activationPlanDownstreamActionCount).toBe(2)
+    expect(payload.enterpriseReadinessFindings.map((entry: { code: string }) => entry.code)).toEqual(
+      expect.arrayContaining([
+        'ENTERPRISE_CI_BRANCH_ACTIVATION_PLAN_RECORDED',
+        'ENTERPRISE_CI_ACTIVATION_GOVERNANCE_MISSING',
+        'ENTERPRISE_RBAC_SIGNING_MISSING',
+      ]),
+    )
+    expect(payload.enterpriseReadinessFindings.map((entry: { code: string }) => entry.code)).not.toContain(
+      'ENTERPRISE_CI_BRANCH_ACTIVATION_PLAN_NOT_SUPPLIED',
+    )
+    expectSafetyFalse(payload)
+  })
+
+  it('blocks invalid or authority-claiming CI/branch activation plan sources with zero writes', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/wrong-ci-branch-activation-plan.json'), {
+      ...ciBranchActivationPlanReport(),
+      status: 'wrong',
+    })
+    writeJson(join(workspace, '.tmp/executed-ci-branch-activation-plan.json'), {
+      ...ciBranchActivationPlanReport(),
+      activationSequenceProposal: [
+        {
+          stepId: 'run-future-external-activation',
+          executionMode: 'executed',
+        },
+      ],
+    })
+    writeJson(join(workspace, '.tmp/required-checks-ci-branch-activation-plan.json'), {
+      ...ciBranchActivationPlanReport(),
+      policyDerivedRequiredChecksPlan: {
+        ...(ciBranchActivationPlanReport().policyDerivedRequiredChecksPlan as Record<string, unknown>),
+        requiredChecksConfigured: true,
+      },
+    })
+    writeJson(join(workspace, '.tmp/branch-ci-branch-activation-plan.json'), {
+      ...ciBranchActivationPlanReport(),
+      policyDerivedBranchProtectionPlan: {
+        ...(ciBranchActivationPlanReport().policyDerivedBranchProtectionPlan as Record<string, unknown>),
+        branchProtectionMutated: true,
+      },
+    })
+    writeJson(join(workspace, '.tmp/provider-ci-branch-activation-plan.json'), {
+      ...ciBranchActivationPlanReport(),
+      providerInvoked: true,
+    })
+    writeJson(join(workspace, '.tmp/rbac-ci-branch-activation-plan.json'), {
+      ...ciBranchActivationPlanReport(),
+      prerequisiteGateSummary: {
+        ...(ciBranchActivationPlanReport().prerequisiteGateSummary as Record<string, unknown>),
+        rbacEnforced: true,
+      },
+    })
+
+    const wrong = await runEnterpriseWithCiBranchActivationPlan(
+      workspace,
+      '.tmp/wrong-ci-branch-activation-plan.json',
+      '.tmp/wrong-ci-branch-activation-enterprise.json',
+    )
+    const executed = await runEnterpriseWithCiBranchActivationPlan(
+      workspace,
+      '.tmp/executed-ci-branch-activation-plan.json',
+      '.tmp/executed-ci-branch-activation-enterprise.json',
+    )
+    const requiredChecks = await runEnterpriseWithCiBranchActivationPlan(
+      workspace,
+      '.tmp/required-checks-ci-branch-activation-plan.json',
+      '.tmp/required-checks-ci-branch-activation-enterprise.json',
+    )
+    const branch = await runEnterpriseWithCiBranchActivationPlan(
+      workspace,
+      '.tmp/branch-ci-branch-activation-plan.json',
+      '.tmp/branch-ci-branch-activation-enterprise.json',
+    )
+    const provider = await runEnterpriseWithCiBranchActivationPlan(
+      workspace,
+      '.tmp/provider-ci-branch-activation-plan.json',
+      '.tmp/provider-ci-branch-activation-enterprise.json',
+    )
+    const rbac = await runEnterpriseWithCiBranchActivationPlan(
+      workspace,
+      '.tmp/rbac-ci-branch-activation-plan.json',
+      '.tmp/rbac-ci-branch-activation-enterprise.json',
+    )
+
+    expect(wrong.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(wrong.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_CI_BRANCH_ACTIVATION_PLAN_SOURCE_ROLE_STATUS_INVALID',
+    )
+    expect(existsSync(join(workspace, '.tmp/wrong-ci-branch-activation-enterprise.json'))).toBe(false)
+
+    expect(executed.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(executed.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_CI_BRANCH_ACTIVATION_PLAN_STEP_EXECUTED_UNSUPPORTED',
+    )
+    expect(existsSync(join(workspace, '.tmp/executed-ci-branch-activation-enterprise.json'))).toBe(false)
+
+    for (const [result, output] of [
+      [requiredChecks, '.tmp/required-checks-ci-branch-activation-enterprise.json'],
+      [branch, '.tmp/branch-ci-branch-activation-enterprise.json'],
+      [provider, '.tmp/provider-ci-branch-activation-enterprise.json'],
+    ] as const) {
+      expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+      expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+        'ENTERPRISE_READINESS_UNSAFE_SOURCE_AUTHORITY_FLAG',
+      )
+      expect(existsSync(join(workspace, output))).toBe(false)
+    }
+
+    expect(rbac.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(rbac.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_CI_BRANCH_ACTIVATION_PLAN_AUTHORITY_CLAIM_UNSUPPORTED',
+    )
+    expect(existsSync(join(workspace, '.tmp/rbac-ci-branch-activation-enterprise.json'))).toBe(false)
+  })
+
   it('blocks invalid or authority-claiming CI/branch policy validation sources with zero writes', async () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, '.tmp/wrong-ci-branch-policy.json'), {
@@ -3793,6 +4001,149 @@ function ciBranchPolicyValidationReport(overrides: Record<string, unknown> = {})
   }
 }
 
+function ciBranchActivationPlanReport(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    schemaVersion: 1,
+    artifactRole: 'devview-ci-branch-activation-plan-report',
+    status: 'devview-ci-branch-activation-plan-recorded',
+    activationPlanScope: 'ci-branch-activation-plan-report-only',
+    sourceFactsOnly: true,
+    reportOnly: true,
+    activationPlanStatus: 'draft-non-authoritative-prerequisites-missing',
+    sourceCiBranchPolicyValidation: {
+      supplied: true,
+      path: '.tmp/ci-branch-policy-validation.json',
+      artifactRole: 'devview-ci-branch-policy-validation-report',
+      status: 'devview-ci-branch-policy-validation-passed',
+    },
+    sourceCiBranchGovernanceReadiness: {
+      supplied: true,
+      path: '.tmp/ci-branch-governance-readiness.json',
+      artifactRole: 'devview-ci-branch-governance-readiness-report',
+      status: 'devview-ci-branch-governance-readiness-reported',
+    },
+    policyDerivedRequiredChecksPlan: {
+      requiredChecksPolicyPresent: true,
+      declaredCheckCount: 2,
+      matchedWorkflowCandidateCheckCount: 1,
+      unmappedDeclaredCheckCount: 1,
+      extraWorkflowCandidateCheckCount: 1,
+      requiredChecksConfigured: false,
+      requiredChecksMutated: false,
+    },
+    policyDerivedBranchProtectionPlan: {
+      branchProtectionPolicyPresent: true,
+      targetBranchCount: 1,
+      desiredFutureRuleCount: 2,
+      branchProtectionChanged: false,
+      branchProtectionMutated: false,
+    },
+    activationSequenceProposal: [
+      {
+        stepId: 'revalidate-source-digests',
+        executionMode: 'future-only-not-executed',
+      },
+      {
+        stepId: 'verify-signed-policy-prerequisites',
+        executionMode: 'future-only-not-executed',
+      },
+      {
+        stepId: 'run-future-external-activation',
+        executionMode: 'future-only-not-executed',
+      },
+    ],
+    prerequisiteGateSummary: {
+      providerDefaultDenyRecorded: true,
+      rbacPolicyValidated: true,
+      signingReadinessRecorded: true,
+      envelopeDigestVerified: true,
+      provenanceVerificationReadinessRecorded: true,
+      releaseSurfaceValidated: true,
+      signedPolicyPresent: false,
+      rbacEnforced: false,
+      providerGrantPresent: false,
+    },
+    nonAuthorityBoundary: {
+      githubWriteAllowed: false,
+      githubMutated: false,
+      ciProviderApiCallAllowed: false,
+      providerInvoked: false,
+      networkCallMade: false,
+      apiCallMade: false,
+      branchProtectionMutationAllowed: false,
+      branchProtectionChanged: false,
+      branchProtectionMutated: false,
+      requiredChecksMutationAllowed: false,
+      requiredChecksConfigured: false,
+      requiredChecksMutated: false,
+      hooksAllowed: false,
+      hooksActivated: false,
+      enterpriseGateAllowed: false,
+      enterpriseGateActivated: false,
+    },
+    planFindings: [
+      {
+        severity: 'satisfied',
+        code: 'CI_BRANCH_ACTIVATION_POLICY_VALIDATION_LINKED',
+        message: 'Policy validation linked.',
+      },
+      {
+        severity: 'gap',
+        code: 'CI_BRANCH_ACTIVATION_SIGNED_POLICY_MISSING',
+        message: 'Signed policy is missing.',
+      },
+    ],
+    downstreamActionPlan: [
+      'Keep this plan non-authoritative until signed policy and RBAC enforcement exist.',
+      'Integrate activation plan into enterprise readiness as a source fact.',
+    ],
+    githubMutated: false,
+    githubWorkflowMutated: false,
+    workflowExecuted: false,
+    workflowsExecuted: false,
+    branchProtectionChanged: false,
+    branchProtectionMutated: false,
+    requiredChecksConfigured: false,
+    requiredChecksMutated: false,
+    externalCiMutated: false,
+    hooksActivated: false,
+    ciProviderCalled: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    apiCallMade: false,
+    cryptographicSignatureVerified: false,
+    cryptographicSigningImplemented: false,
+    keyGenerated: false,
+    privateKeyStored: false,
+    keyRegistryCreated: false,
+    trustRootCreated: false,
+    rbacEnforced: false,
+    permissionVerified: false,
+    rbacPermissionVerified: false,
+    packageArtifactGeneratedByDevView: false,
+    packageArtifactGenerated: false,
+    packageTarballGenerated: false,
+    packageSigned: false,
+    sbomGeneratedByDevView: false,
+    sbomGenerated: false,
+    sbomAttested: false,
+    provenanceAttestationGenerated: false,
+    provenanceAttestationVerified: false,
+    provenanceAttested: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
+    approvalAutomationEnabled: false,
+    userAcceptanceAutomated: false,
+    enterpriseGateActivated: false,
+    ...overrides,
+  }
+}
+
 function safetyFlags(): Record<string, unknown> {
   return {
     benchmarkExecuted: false,
@@ -4045,6 +4396,21 @@ function runEnterpriseWithCiBranchPolicyValidation(
       'report-enterprise-readiness',
       '--ci-branch-policy-validation',
       ciBranchPolicyValidation,
+      '--output',
+      output,
+      '--json',
+    ],
+    { cwd: workspace, pluginRoot },
+  )
+}
+
+function runEnterpriseWithCiBranchActivationPlan(workspace: string, ciBranchActivationPlan: string, output: string) {
+  return runDevViewCli(
+    [
+      'security',
+      'report-enterprise-readiness',
+      '--ci-branch-activation-plan',
+      ciBranchActivationPlan,
       '--output',
       output,
       '--json',

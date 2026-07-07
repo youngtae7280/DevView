@@ -272,6 +272,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     provenanceVerificationReadiness: undefined as string | undefined,
     ciBranchGovernanceReadiness: undefined as string | undefined,
     ciBranchPolicyValidation: undefined as string | undefined,
+    ciBranchActivationPlan: undefined as string | undefined,
     workflow: undefined as string | undefined,
     sourceRef: undefined as string | undefined,
     buildCommand: undefined as string | undefined,
@@ -1513,6 +1514,15 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.ciBranchPolicyValidation = options.ciBranchPolicyValidation
         ? `${options.ciBranchPolicyValidation},${value}`
+        : value
+      index += 1
+    } else if (arg === '--ci-branch-activation-plan') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--ci-branch-activation-plan requires one or more file paths.' }
+      }
+      options.ciBranchActivationPlan = options.ciBranchActivationPlan
+        ? `${options.ciBranchActivationPlan},${value}`
         : value
       index += 1
     } else if (arg === '--workflow') {

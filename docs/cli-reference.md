@@ -219,6 +219,7 @@ devview security report-enterprise-readiness \
   --provenance-verification-readiness <provenance-verification-readiness.json> \
   --ci-branch-governance-readiness <ci-branch-governance-readiness.json> \
   --ci-branch-policy-validation <ci-branch-policy-validation.json> \
+  --ci-branch-activation-plan <ci-branch-activation-plan.json> \
   --output <enterprise-readiness.json> \
   --markdown <enterprise-readiness.md> \
   --json
@@ -229,29 +230,30 @@ release-surface validation, provider/network default-deny policy reports, unsign
 envelope verification reports, signing/key governance readiness reports, RBAC policy validation reports, and release
 provenance/SBOM readiness reports, structural SBOM validation reports, package provenance inputs records, package
 artifact digest records, provenance attestation validation reports, provenance verification readiness reports, and
-CI/branch governance readiness and CI/branch policy validation reports as source facts, then lists remaining enterprise
-gaps for extension execution policy, guarded graph update governance, Scope/CI activation governance, RBAC, signing,
-audit, release provenance, and tamper-evidence. `--record-envelope-preview`, `--record-envelope-verification`,
-`--signing-readiness`, `--rbac-policy-validation`, `--release-provenance-readiness`, `--sbom-validation`,
-`--package-provenance-inputs`, `--package-artifact-digest`, `--provenance-attestation-validation`, and
-`--provenance-verification-readiness`, and `--ci-branch-governance-readiness` and `--ci-branch-policy-validation` may be
-repeated or comma-separated. Envelope previews record unsigned payload/source digest intent; envelope verification
-reports show those digests were independently recomputed; signing readiness reports summarize key registry, trust root,
-signature policy, and RBAC prerequisites; RBAC policy validation reports summarize declarative role-assignment policy
-validation; release provenance readiness reports summarize package allowlist/checker, SBOM, package signing, and
-provenance attestation readiness; SBOM validation reports summarize wrapped static SBOM structural validation and
-digests; package provenance inputs records summarize package/source/build input digests; package artifact digest records
-summarize preexisting artifact byte hashes; provenance attestation validation reports summarize wrapped static
-attestation structure, byte digest, and package digest/source-input alignment; provenance verification readiness reports
-summarize prerequisites for future signed provenance verification without real SLSA/in-toto or cryptographic
-verification; CI/branch governance readiness reports summarize workflow inventory, candidate checks, and missing
-required-checks/branch-protection/provider activation governance; CI/branch policy validation reports summarize
-report-only desired required-checks and branch-protection policy validation without configuration or mutation. The
-report still does not claim package generation, SBOM generation, SBOM attestation, vulnerability/license approval,
-package signing, provenance attestation generation, provenance attestation verification, cryptographic signing, key
-management, RBAC enforcement, permission verification, external CI activation, required check configuration, branch
-protection mutation, or hook activation. It does not activate enterprise gates, execute extensions, call providers, make
-network calls, mutate graph-source, configure CI, activate hooks, or automate approval.
+CI/branch governance readiness, CI/branch policy validation, and CI/branch activation plan reports as source facts, then
+lists remaining enterprise gaps for extension execution policy, guarded graph update governance, Scope/CI activation
+governance, RBAC, signing, audit, release provenance, and tamper-evidence. `--record-envelope-preview`,
+`--record-envelope-verification`, `--signing-readiness`, `--rbac-policy-validation`, `--release-provenance-readiness`,
+`--sbom-validation`, `--package-provenance-inputs`, `--package-artifact-digest`, `--provenance-attestation-validation`,
+and `--provenance-verification-readiness`, and `--ci-branch-governance-readiness`, `--ci-branch-policy-validation`, and
+`--ci-branch-activation-plan` may be repeated or comma-separated. Envelope previews record unsigned payload/source
+digest intent; envelope verification reports show those digests were independently recomputed; signing readiness reports
+summarize key registry, trust root, signature policy, and RBAC prerequisites; RBAC policy validation reports summarize
+declarative role-assignment policy validation; release provenance readiness reports summarize package allowlist/checker,
+SBOM, package signing, and provenance attestation readiness; SBOM validation reports summarize wrapped static SBOM
+structural validation and digests; package provenance inputs records summarize package/source/build input digests;
+package artifact digest records summarize preexisting artifact byte hashes; provenance attestation validation reports
+summarize wrapped static attestation structure, byte digest, and package digest/source-input alignment; provenance
+verification readiness reports summarize prerequisites for future signed provenance verification without real
+SLSA/in-toto or cryptographic verification; CI/branch governance readiness reports summarize workflow inventory,
+candidate checks, and missing required-checks/branch-protection/provider activation governance; CI/branch policy
+validation reports summarize report-only desired required-checks and branch-protection policy validation without
+configuration or mutation; CI/branch activation plan reports summarize future-only activation sequencing without
+external activation. The report still does not claim package generation, SBOM generation, SBOM attestation,
+vulnerability/license approval, package signing, provenance attestation generation, provenance attestation verification,
+cryptographic signing, key management, RBAC enforcement, permission verification, external CI activation, required check
+configuration, branch protection mutation, or hook activation. It does not activate enterprise gates, execute
+extensions, call providers, make network calls, mutate graph-source, configure CI, activate hooks, or automate approval.
 
 ### Release Provenance / SBOM Readiness
 

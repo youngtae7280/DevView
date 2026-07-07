@@ -63,6 +63,7 @@ export async function securityReportEnterpriseReadinessCommand(context: CommandC
       provenanceVerificationReadiness: context.options.provenanceVerificationReadiness,
       ciBranchGovernanceReadiness: context.options.ciBranchGovernanceReadiness,
       ciBranchPolicyValidation: context.options.ciBranchPolicyValidation,
+      ciBranchActivationPlan: context.options.ciBranchActivationPlan,
       output: context.options.output,
       markdown: context.options.markdown,
     })
