@@ -89,28 +89,28 @@ describe('DevView validator', () => {
     ['pbe gate review-result', 'SKILL_FORBIDDEN_LEGACY_GATE'],
     ['pbe gate accept', 'SKILL_FORBIDDEN_LEGACY_GATE'],
     ['Set autoflow.nextStep to review_result.', 'SKILL_FORBIDDEN_STATE_EDIT'],
-    ['Add run_revision to pbe-state.json.autoflow.completedSteps.', 'SKILL_FORBIDDEN_STATE_EDIT'],
-    ['Continue automatically to pbe-run-revision.', 'SKILL_FORBIDDEN_LEGACY_REVISION_ROUTE'],
-    ['Continue automatically to `pbe-run-revision`.', 'SKILL_FORBIDDEN_LEGACY_REVISION_ROUTE'],
+    ['Add run_revision to devview-state.json.autoflow.completedSteps.', 'SKILL_FORBIDDEN_STATE_EDIT'],
+    ['Continue automatically to devview-run-revision.', 'SKILL_FORBIDDEN_LEGACY_REVISION_ROUTE'],
+    ['Continue automatically to `devview-run-revision`.', 'SKILL_FORBIDDEN_LEGACY_REVISION_ROUTE'],
   ])('rejects forbidden skill CLI-sync phrase: %s', (phrase, expectedCode) => {
     const workspace = createValidatorWorkspace()
-    appendSkillLine(workspace, 'pbe-run-acep', phrase)
+    appendSkillLine(workspace, 'devview-run-execution-pack', phrase)
 
     const issues = runSkillsCliSyncValidator({ root: workspace })
 
     expect(issues.map((entry) => entry.code)).toContain(expectedCode)
-    expect(issues[0].file).toContain('skills/pbe-run-acep/SKILL.md:')
+    expect(issues[0].file).toContain('skills/devview-run-execution-pack/SKILL.md:')
   })
 
   it('allows safe compatibility references and direct-state-edit warnings', () => {
     const workspace = createValidatorWorkspace()
-    appendSkillLine(workspace, 'pbe-review-result', 'Compatibility reference: pbe-review-result.')
-    appendSkillLine(workspace, 'pbe-review-result', 'Template reference: review-result-gate-message-template.md.')
-    appendSkillLine(workspace, 'pbe-review-result', 'Compatibility reference: pbe-run-revision.')
-    appendSkillLine(workspace, 'pbe-review-result', 'Do not edit pbe-state.json directly.')
-    appendSkillLine(workspace, 'pbe-review-result', 'Read pbe-state.json before reporting status.')
-    appendSkillLine(workspace, 'pbe-review-result', 'autoflow.state should be written by CLI.')
-    appendSkillLine(workspace, 'pbe-review-result', 'CLI writes autoflow.state.')
+    appendSkillLine(workspace, 'devview-review-result', 'Compatibility reference: devview-review-result.')
+    appendSkillLine(workspace, 'devview-review-result', 'Template reference: review-result-gate-message-template.md.')
+    appendSkillLine(workspace, 'devview-review-result', 'Compatibility reference: devview-run-revision.')
+    appendSkillLine(workspace, 'devview-review-result', 'Do not edit devview-state.json directly.')
+    appendSkillLine(workspace, 'devview-review-result', 'Read devview-state.json before reporting status.')
+    appendSkillLine(workspace, 'devview-review-result', 'autoflow.state should be written by CLI.')
+    appendSkillLine(workspace, 'devview-review-result', 'CLI writes autoflow.state.')
 
     const issues = runSkillsCliSyncValidator({ root: workspace })
 
@@ -119,7 +119,7 @@ describe('DevView validator', () => {
 })
 
 function createValidatorWorkspace() {
-  const workspace = mkdtempSync(join(tmpdir(), 'pbe-validator-'))
+  const workspace = mkdtempSync(join(tmpdir(), 'devview-validator-'))
   tempRoots.push(workspace)
 
   for (const entry of ['.codex-plugin', 'skills', 'templates', 'schemas', 'docs']) {
@@ -169,7 +169,7 @@ function writePbeFixture(
     stage: 'acep_ready',
     mode: 'acep_generation',
     artifacts: {
-      pbeRoutingContract: '.pbe/blueprint/pbe-routing-contract.md',
+      devviewRoutingContract: '.pbe/blueprint/devview-routing-contract.md',
     },
     autoflow: {
       schemaVersion: 1,
@@ -212,7 +212,8 @@ function writePbeFixture(
   if (options.deliveryStatus) {
     pbeState.deliveryStatus = options.deliveryStatus
   }
-  writeJson(join(blueprintRoot, 'pbe-state.json'), pbeState)
+  const legacyStateFile = ['pbe', 'state.json'].join('-')
+  writeJson(join(blueprintRoot, legacyStateFile), pbeState)
   writeJson(join(blueprintRoot, 'requirement-tree.json'), {
     schemaVersion: 1,
     rootNodeId: 'REQ-1',

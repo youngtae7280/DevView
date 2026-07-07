@@ -19,7 +19,7 @@ describe('DevView legacy tree validator', () => {
     const result = runTreeValidator(workspace)
 
     expect(result.status).toBe(0)
-    expect(result.output).toContain('No .pbe tree artifacts found')
+    expect(result.output).toContain('No DevView tree artifacts found')
   })
 
   it('accepts a minimal linked Product and Work tree', () => {
@@ -30,7 +30,7 @@ describe('DevView legacy tree validator', () => {
     const result = runTreeValidator(workspace)
 
     expect(result.status).toBe(0)
-    expect(result.output).toContain('Validated 2 .pbe tree artifact')
+    expect(result.output).toContain('Validated 2 DevView tree artifact')
   })
 
   it('rejects Work nodes that do not derive from known Product nodes', () => {

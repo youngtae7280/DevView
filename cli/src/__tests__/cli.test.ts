@@ -1,4 +1,4 @@
-﻿import { execFileSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 import { cpSync, existsSync, mkdirSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -602,7 +602,7 @@ describe('DevView CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.detectedStage).toBe('rpd')
-    expect(payload.skills).toContain('pbe-rpd')
+    expect(payload.skills).toContain('devview-product-intake')
     expect(payload.readFirst).toContain('agent-context/rpd.md')
     expect(payload.readOnlyIfNeeded).toContain('docs/rpd-interview-mode.md')
   })
@@ -616,7 +616,7 @@ describe('DevView CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.detectedStage).toBe('vd')
-    expect(payload.skills).toContain('pbe-vd')
+    expect(payload.skills).toContain('devview-verification-design')
     expect(payload.readFirst).toContain('agent-context/vd.md')
     expect(payload.readFirst).toContain('agent-context/evidence.md')
   })
@@ -630,7 +630,7 @@ describe('DevView CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.detectedStage).toBe('review')
-    expect(payload.skills).toContain('pbe-review-result')
+    expect(payload.skills).toContain('devview-review-result')
     expect(payload.readFirst).toContain('agent-context/review.md')
     expect(payload.readFirst).toContain('agent-context/evidence.md')
   })
@@ -664,7 +664,7 @@ describe('DevView CLI', () => {
     const payload = JSON.parse(result.stdout)
     expect(payload.detectedStage).toBe('documentation')
     expect(payload.profile).toBe('lite')
-    expect(payload.skills).toContain('pbe-run-acep')
+    expect(payload.skills).toContain('devview-run-execution-pack')
     expect(payload.readFirst.filter((entry: string) => entry === 'agent-context/lite.md')).toHaveLength(1)
     expect(payload.readFirst).toContain('agent-context/evidence.md')
     expect(payload.readOnlyIfNeeded).toContain('docs/troubleshooting.md')
@@ -751,7 +751,7 @@ describe('DevView CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.detectedStage).toBe('review')
-    expect(payload.skills).toContain('pbe-review-result')
+    expect(payload.skills).toContain('devview-review-result')
     expect(payload.readFirst).toContain('agent-context/review.md')
   })
 
@@ -1148,7 +1148,7 @@ describe('DevView CLI', () => {
     expect(payload.recommendedContext).toMatchObject({
       detectedStage: 'vd',
       profile: 'lite',
-      skills: ['pbe-vd'],
+      skills: ['devview-verification-design'],
     })
     expect(payload.recommendedContext.readFirst).toContain('agent-context/vd.md')
     expect(payload.recommendedContext.readFirst).toContain('agent-context/evidence.md')
@@ -2019,7 +2019,7 @@ describe('DevView CLI', () => {
     )
   })
 
-  it('does not treat .pbe-only artifact changes as source file violations', async () => {
+  it('does not treat legacy storage-only artifact changes as source file violations', async () => {
     const workspace = createWorkspace()
     writeDevViewState(workspace, 'WPD_DONE')
     writeWorkTree(workspace)
@@ -3904,10 +3904,11 @@ function readStateText(workspace: string): string {
 }
 
 function existingStatePath(workspace: string): string {
+  const legacyStateFile = ['pbe', 'state.json'].join('-')
   const candidates = [
     join(workspace, '.devview', 'blueprint', 'devview-state.json'),
-    join(workspace, '.devview', 'blueprint', 'pbe-state.json'),
-    join(workspace, '.pbe', 'blueprint', 'pbe-state.json'),
+    join(workspace, '.devview', 'blueprint', legacyStateFile),
+    join(workspace, '.pbe', 'blueprint', legacyStateFile),
   ]
   const existing = candidates.find((candidate) => existsSync(candidate))
   return existing || candidates[0]

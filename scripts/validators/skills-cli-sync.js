@@ -24,8 +24,8 @@ const forbiddenPatterns = [
   },
   {
     code: 'SKILL_FORBIDDEN_STATE_EDIT',
-    label: 'pbe-state.json.autoflow.completedSteps',
-    pattern: /pbe-state\.json\.autoflow\.completedSteps/i,
+    label: 'devview-state.json.autoflow.completedSteps',
+    pattern: /devview-state\.json\.autoflow\.completedSteps/i,
     suggestedFix: 'Use the matching CLI transition command and let the CLI write state history/checkpoints.',
   },
   {
@@ -54,16 +54,16 @@ const forbiddenPatterns = [
   },
   {
     code: 'SKILL_FORBIDDEN_LEGACY_REVISION_ROUTE',
-    label: 'Continue automatically to `pbe-run-revision`',
-    pattern: /Continue automatically to `?pbe-run-revision`?/i,
+    label: 'Continue automatically to `devview-run-revision`',
+    pattern: /Continue automatically to `?devview-run-revision`?/i,
     suggestedFix:
       'Use the CLI revision route: `devview change create`, `devview impact analyze`, `devview revision start`, bounded revision work, `devview revision complete`.',
   },
   {
     code: 'SKILL_FORBIDDEN_STATE_EDIT',
-    label: 'Add ... to pbe-state.json.autoflow.completedSteps',
-    pattern: /\bAdd\b.+\bto\s+pbe-state\.json\.autoflow\.completedSteps\b/i,
-    suggestedFix: 'Use `pbe revision complete` or the matching CLI transition command to record state progress.',
+    label: 'Add ... to devview-state.json.autoflow.completedSteps',
+    pattern: /\bAdd\b.+\bto\s+devview-state\.json\.autoflow\.completedSteps\b/i,
+    suggestedFix: 'Use `devview revision complete` or the matching CLI transition command to record state progress.',
   },
   {
     code: 'SKILL_FORBIDDEN_ACCEPTANCE_WRITE',
@@ -86,8 +86,8 @@ const forbiddenPatterns = [
 ]
 
 const allowedLinePatterns = [
-  /\bdo not edit\b.*\bpbe-state\.json\b.*\bdirectly\b/i,
-  /\bread\b.*\bpbe-state\.json\b/i,
+  /\bdo not edit\b.*\bdevview-state\.json\b.*\bdirectly\b/i,
+  /\bread\b.*\bdevview-state\.json\b/i,
   /\bautoflow\.state should be written by CLI\b/i,
   /\bCLI writes autoflow\.state\b/i,
 ]

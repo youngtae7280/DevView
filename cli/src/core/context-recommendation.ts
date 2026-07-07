@@ -28,52 +28,52 @@ interface StageContextDefinition {
 
 const stageContexts: Record<CanonicalContextStageOption, StageContextDefinition> = {
   start: {
-    skills: ['pbe-start'],
+    skills: ['devview-start'],
     readFirst: ['agent-context/start.md'],
     readOnlyIfNeeded: ['README.md', 'docs/cli-reference.md', 'docs/lite-mode-policy.md'],
   },
   rpd: {
-    skills: ['pbe-rpd'],
+    skills: ['devview-product-intake'],
     readFirst: ['agent-context/rpd.md'],
     readOnlyIfNeeded: ['docs/rpd-interview-mode.md', 'docs/ambiguity-taxonomy.md'],
   },
   wpd: {
-    skills: ['pbe-wpd'],
+    skills: ['devview-work-planning'],
     readFirst: ['agent-context/wpd.md'],
     readOnlyIfNeeded: ['docs/parallel-safety.md'],
   },
   vd: {
-    skills: ['pbe-vd'],
+    skills: ['devview-verification-design'],
     readFirst: ['agent-context/vd.md', 'agent-context/evidence.md'],
     readOnlyIfNeeded: ['docs/vd-quality-rubric.md', 'docs/evidence-quality-rubric.md'],
   },
   execution: {
-    skills: ['pbe-run-acep'],
+    skills: ['devview-run-execution-pack'],
     readFirst: ['agent-context/evidence.md'],
     readOnlyIfNeeded: ['docs/evidence-quality-rubric.md', 'docs/lite-mode-policy.md'],
   },
   review: {
-    skills: ['pbe-review-result'],
+    skills: ['devview-review-result'],
     readFirst: ['agent-context/review.md', 'agent-context/evidence.md'],
     readOnlyIfNeeded: ['docs/review-failure-recovery.md', 'docs/evidence-quality-rubric.md'],
   },
   revision: {
-    skills: ['pbe-run-revision'],
+    skills: ['devview-run-revision'],
     readFirst: ['agent-context/revision.md', 'agent-context/review.md'],
     readOnlyIfNeeded: ['docs/review-failure-recovery.md', 'docs/product-patch-proposals.md'],
   },
   'product-patch': {
-    skills: ['pbe-review-result', 'pbe-run-revision'],
+    skills: ['devview-review-result', 'devview-run-revision'],
     readFirst: ['agent-context/product-patch.md'],
     readOnlyIfNeeded: ['docs/product-patch-proposals.md', 'docs/migration-policy.md'],
   },
   parallel: {
-    skills: ['pbe-wpd', 'pbe-run-acep'],
+    skills: ['devview-work-planning', 'devview-run-execution-pack'],
     readFirst: ['agent-context/parallel.md'],
     readOnlyIfNeeded: ['docs/parallel-safety.md', 'docs/troubleshooting.md'],
   },
   documentation: {
-    skills: ['pbe-run-acep'],
+    skills: ['devview-run-execution-pack'],
     readFirst: ['agent-context/lite.md', 'agent-context/evidence.md'],
     readOnlyIfNeeded: [
       'docs/lite-mode-policy.md',
@@ -174,31 +174,31 @@ function detectStage(brief: string | undefined): { stage: CanonicalContextStageO
   if (hasDocumentationSignal(text)) {
     return { stage: 'documentation', reason: 'brief appears to ask for documentation maintenance' }
   }
-  if (hasAny(text, ['병렬', '동시에', 'parallel', 'conflict', 'clean-dist', 'clean dist'])) {
+  if (hasAny(text, ['parallel', 'conflict', 'clean-dist', 'clean dist', 'dependency risk', 'shared file'])) {
     return { stage: 'parallel', reason: 'brief appears to ask about parallel or dependency risk' }
   }
-  if (hasAny(text, ['제품 의미', '정책 변경', 'ac 변경', 'acceptance criteria 변경', 'product patch', '검색 대상'])) {
+  if (hasAny(text, ['product patch', 'acceptance criteria', 'acceptance basis', 'product meaning'])) {
     return { stage: 'product-patch', reason: 'brief appears to change product meaning or acceptance basis' }
   }
-  if (hasAny(text, ['리뷰', '마음에 안', '별로', '방향이 틀림', 'reject', 'rejection'])) {
+  if (hasAny(text, ['review', 'reject', 'rejection', 'feedback', 'request changes'])) {
     return { stage: 'review', reason: 'brief appears to ask about review or rejection handling' }
   }
-  if (hasAny(text, ['수정', 'revision', '다시 고쳐', '반영해', '고쳐'])) {
+  if (hasAny(text, ['revision', 'revise', 'rework', 'change request', 'fix feedback'])) {
     return { stage: 'revision', reason: 'brief appears to ask for bounded revision work' }
   }
-  if (hasAny(text, ['검증', '테스트 설계', 'vd', 'test tree', 'pass criteria', '테스트'])) {
+  if (hasAny(text, ['verification design', 'vd', 'test tree', 'pass criteria', 'test design'])) {
     return { stage: 'vd', reason: 'brief appears to ask for verification design' }
   }
-  if (hasAny(text, ['evidence', '증거', '실행 결과', 'command output', 'screenshot', '스크린샷'])) {
+  if (hasAny(text, ['evidence', 'command output', 'screenshot', 'runtime result', 'validation output'])) {
     return { stage: 'execution', reason: 'brief appears to ask about execution evidence' }
   }
-  if (hasAny(text, ['작업 쪼개기', '파일 범위', 'expectedfiles', '구현 계획', 'scope', '작업 계획'])) {
+  if (hasAny(text, ['expectedfiles', 'expected files', 'file scope', 'work plan', 'implementation plan', 'scope'])) {
     return { stage: 'wpd', reason: 'brief appears to ask for work planning' }
   }
-  if (hasAny(text, ['요구사항', '모호', 'product tree', '정리', '뭘 만들지', '무엇을 만들지'])) {
+  if (hasAny(text, ['requirement', 'requirements', 'ambiguity', 'product tree', 'product intent', 'user intent'])) {
     return { stage: 'rpd', reason: 'brief appears to ask about requirements or ambiguity' }
   }
-  if (hasAny(text, ['start', '시작', 'pbe로 관리', 'pbe 관리'])) {
+  if (hasAny(text, ['start', 'initialize', 'init', 'devview manage', 'devview start'])) {
     return { stage: 'start', reason: 'brief appears to ask for DevView start or management' }
   }
 
@@ -233,26 +233,23 @@ function hasDocumentationSignal(value: string): boolean {
   return hasAny(value, [
     'docs/',
     'readme',
-    '문서',
     'documentation',
     'troubleshooting',
     'install',
-    '설치',
-    '사용법',
+    'usage',
+    'how to use',
     'guide',
     'reference',
     'npm.cmd',
     'npm.ps1',
     'powershell',
     'execution policy',
-    'windows에서 npm',
+    'windows npm',
     'cli reference',
     'known limits',
-    'readme 링크',
     'docs index',
   ])
 }
-
 function unique<T>(values: T[]): T[] {
   return [...new Set(values)]
 }

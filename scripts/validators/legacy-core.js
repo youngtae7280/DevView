@@ -1,4 +1,4 @@
-﻿import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import path from 'node:path'
 import process from 'node:process'
@@ -113,22 +113,22 @@ let ajv = null
 
 const requiredPaths = [
   '.codex-plugin/plugin.json',
-  'skills/pbe-autoflow/SKILL.md',
-  'skills/pbe-start/SKILL.md',
-  'skills/pbe-rpd/SKILL.md',
-  'skills/pbe-ui-ux-confirm/SKILL.md',
-  'skills/pbe-wpd/SKILL.md',
-  'skills/pbe-vd/SKILL.md',
-  'skills/pbe-dependency-impact-audit/SKILL.md',
-  'skills/pbe-plan-execution/SKILL.md',
-  'skills/pbe-coverage-audit/SKILL.md',
-  'skills/pbe-ux-audit/SKILL.md',
-  'skills/pbe-generate-acep/SKILL.md',
-  'skills/pbe-run-acep/SKILL.md',
-  'skills/pbe-review-result/SKILL.md',
-  'skills/pbe-collect-feedback/SKILL.md',
-  'skills/pbe-create-revision-pack/SKILL.md',
-  'skills/pbe-run-revision/SKILL.md',
+  'skills/devview-autoflow/SKILL.md',
+  'skills/devview-start/SKILL.md',
+  'skills/devview-product-intake/SKILL.md',
+  'skills/devview-ui-ux-confirm/SKILL.md',
+  'skills/devview-work-planning/SKILL.md',
+  'skills/devview-verification-design/SKILL.md',
+  'skills/devview-dependency-impact-audit/SKILL.md',
+  'skills/devview-plan-execution/SKILL.md',
+  'skills/devview-coverage-audit/SKILL.md',
+  'skills/devview-ux-audit/SKILL.md',
+  'skills/devview-generate-execution-pack/SKILL.md',
+  'skills/devview-run-execution-pack/SKILL.md',
+  'skills/devview-review-result/SKILL.md',
+  'skills/devview-collect-feedback/SKILL.md',
+  'skills/devview-create-revision-pack/SKILL.md',
+  'skills/devview-run-revision/SKILL.md',
   'templates/devview-state.template.json',
   'templates/autoflow-state.template.json',
   'templates/devview-routing-contract-template.md',
