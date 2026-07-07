@@ -126,6 +126,24 @@ candidates, native boundary hints, and retrofit parity hints. This command is re
 run external tools, execute extensions, mutate graph-source, satisfy Evidence, prove equivalence, enforce scope/CI,
 activate hooks, or automate approval.
 
+### Benchmark Golden-Answer Evaluation
+
+```bash
+devview benchmark evaluate-result \
+  --benchmark-suite <benchmark-suite.json> \
+  --task <benchmark-task.json> \
+  --golden-answer <golden-answer.json> \
+  --candidate-result <candidate-result.json> \
+  --output <benchmark-evaluation-report.json> \
+  --markdown <benchmark-evaluation-report.md> \
+  --json
+```
+
+Scores a stored candidate result against a golden answer for `codex-only`, `codex-graphify`, `codex-devview`, or
+`codex-graphify-devview` comparison arms. The evaluator is report-only: it does not execute Codex, install or run
+Graphify, run native/retrofit builds or tests, execute extensions, call providers, make network calls, mutate
+graph-source, satisfy Evidence, prove equivalence, enforce scope/CI, activate hooks, or automate approval.
+
 ### Work Journal
 
 ```bash

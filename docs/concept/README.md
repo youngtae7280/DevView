@@ -17,10 +17,11 @@ Maintainability Graph
 1. [DevView terminology](devview-terminology.md)
 2. [Maintainability Graph](maintainability-graph.md)
 3. [Project-specific extensions](devview-extensions.md)
-4. [Natural-language request intake boundary](natural-language-request-intake-boundary.md)
-5. [DevView Hook Gateway boundary](devview-codex-hook-gateway-boundary.md)
-6. [DevView Runtime Performance Budget](devview-runtime-performance-budget.md)
-7. [DevView Project Memory](devview-project-memory.md)
+4. [Benchmarks and golden-answer scoring](devview-benchmarks.md)
+5. [Natural-language request intake boundary](natural-language-request-intake-boundary.md)
+6. [DevView Hook Gateway boundary](devview-codex-hook-gateway-boundary.md)
+7. [DevView Runtime Performance Budget](devview-runtime-performance-budget.md)
+8. [DevView Project Memory](devview-project-memory.md)
 
 ## Current Safe MVP
 

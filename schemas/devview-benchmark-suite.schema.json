@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://devview.local/schemas/devview-benchmark-suite.schema.json",
+  "title": "DevView Benchmark Suite Spec",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schemaVersion", "artifactRole", "status", "suiteId"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "artifactRole": { "const": "devview-benchmark-suite-spec" },
+    "status": { "const": "devview-benchmark-suite-configured" },
+    "suiteId": { "type": "string", "minLength": 1 },
+    "taskIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "comparisonArms": {
+      "type": "array",
+      "items": {
+        "enum": ["codex-only", "codex-graphify", "codex-devview", "codex-graphify-devview"]
+      },
+      "uniqueItems": true
+    },
+    "passThreshold": { "type": "number", "minimum": 0 }
+  }
+}

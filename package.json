@@ -18,6 +18,7 @@
     "docs/cli-reference.md",
     "docs/troubleshooting.md",
     "docs/concept/README.md",
+    "docs/concept/devview-benchmarks.md",
     "docs/concept/devview-terminology.md",
     "docs/concept/devview-extensions.md",
     "skills/**"

@@ -1,6 +1,7 @@
 import type { CommandResult } from '../core/types.js'
 import { validateEvidence, validateTraceability, validateVisualDesign } from '../validators/devview-validators.js'
 import { acceptCommand } from './accept.js'
+import { benchmarkEvaluateResultCommand } from './benchmark.js'
 import { executionPackCheckCommand, executionPackReadyCommand } from './execution-pack.js'
 import { changeCreateCommand } from './change.js'
 import { contextPackCommand, contextRecommendCommand } from './context.js'
@@ -144,6 +145,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'work-journal' && subcommand === 'render') {
     return workJournalRenderCommand(context)
+  }
+  if (command === 'benchmark' && subcommand === 'evaluate-result') {
+    return benchmarkEvaluateResultCommand(context)
   }
   if (command === 'gate') {
     if (subcommand === 'assess') {

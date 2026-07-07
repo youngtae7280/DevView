@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://devview.local/schemas/devview-benchmark-candidate-result.schema.json",
+  "title": "DevView Benchmark Candidate Result",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schemaVersion", "artifactRole", "status", "taskId", "comparisonArm", "reportedOutcome"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "artifactRole": { "const": "devview-benchmark-candidate-result" },
+    "status": { "const": "devview-benchmark-candidate-result-submitted" },
+    "taskId": { "type": "string", "minLength": 1 },
+    "projectMode": { "enum": ["native", "retrofit", "hybrid"] },
+    "comparisonArm": { "enum": ["codex-only", "codex-graphify", "codex-devview", "codex-graphify-devview"] },
+    "reportedOutcome": {
+      "enum": ["implemented", "blocked", "clarification-required", "no-change"]
+    },
+    "changedFiles": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "type": "string" },
+          {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "path": { "type": "string" },
+              "status": { "type": "string" }
+            }
+          }
+        ]
+      }
+    },
+    "providerInvoked": { "const": false },
+    "networkCallMade": { "const": false },
+    "shellCommandsExecuted": { "const": false },
+    "graphifyExecuted": { "const": false },
+    "nativeBenchmarkExecuted": { "const": false }
+  }
+}

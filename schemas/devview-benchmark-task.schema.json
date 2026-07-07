@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://devview.local/schemas/devview-benchmark-task.schema.json",
+  "title": "DevView Benchmark Task Spec",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schemaVersion", "artifactRole", "status", "taskId", "projectMode"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "artifactRole": { "const": "devview-benchmark-task-spec" },
+    "status": { "const": "devview-benchmark-task-configured" },
+    "taskId": { "type": "string", "minLength": 1 },
+    "taskKind": {
+      "enum": [
+        "bug-fix",
+        "feature-addition",
+        "cross-module-change",
+        "ambiguous-request",
+        "forbidden-scope-trap",
+        "evidence-required",
+        "graph-update"
+      ]
+    },
+    "projectMode": { "enum": ["native", "retrofit", "hybrid"] },
+    "comparisonArms": {
+      "type": "array",
+      "items": {
+        "enum": ["codex-only", "codex-graphify", "codex-devview", "codex-graphify-devview"]
+      },
+      "uniqueItems": true
+    }
+  }
+}

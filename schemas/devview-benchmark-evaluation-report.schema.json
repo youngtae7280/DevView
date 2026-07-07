@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://devview.local/schemas/devview-benchmark-evaluation-report.schema.json",
+  "title": "DevView Benchmark Evaluation Report",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "artifactRole",
+    "status",
+    "overallScore",
+    "maxScore",
+    "dimensionScores",
+    "benchmarkExecuted",
+    "candidateExecuted",
+    "graphifyExecuted",
+    "nativeBenchmarkExecuted",
+    "sourceFactsOnly"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "artifactRole": { "const": "devview-benchmark-evaluation-report" },
+    "status": {
+      "enum": ["devview-benchmark-evaluation-scored", "devview-benchmark-evaluation-blocked"]
+    },
+    "overallScore": { "type": "number", "minimum": 0 },
+    "maxScore": { "type": "number", "minimum": 0 },
+    "passThreshold": { "type": "number", "minimum": 0 },
+    "passed": { "type": "boolean" },
+    "dimensionScores": { "type": "array" },
+    "hardFailures": { "type": "array" },
+    "findings": { "type": "array" },
+    "benchmarkExecuted": { "const": false },
+    "candidateExecuted": { "const": false },
+    "graphifyExecuted": { "const": false },
+    "nativeBenchmarkExecuted": { "const": false },
+    "sourceFactsOnly": { "const": true }
+  }
+}

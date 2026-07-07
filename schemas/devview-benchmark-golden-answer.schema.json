@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://devview.local/schemas/devview-benchmark-golden-answer.schema.json",
+  "title": "DevView Benchmark Golden Answer",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schemaVersion", "artifactRole", "status", "taskId", "expectedOutcome"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "artifactRole": { "const": "devview-benchmark-golden-answer" },
+    "status": { "const": "devview-benchmark-golden-answer-ready" },
+    "taskId": { "type": "string", "minLength": 1 },
+    "projectMode": { "enum": ["native", "retrofit", "hybrid"] },
+    "comparisonArm": { "enum": ["codex-only", "codex-graphify", "codex-devview", "codex-graphify-devview"] },
+    "expectedOutcome": {
+      "enum": ["implemented", "blocked", "clarification-required", "no-change"]
+    },
+    "allowedFiles": { "type": "array", "items": { "type": "string" } },
+    "forbiddenFiles": { "type": "array", "items": { "type": "string" } },
+    "requiredTouchedFiles": { "type": "array", "items": { "type": "string" } },
+    "optionalTouchedFiles": { "type": "array", "items": { "type": "string" } },
+    "passThreshold": { "type": "number", "minimum": 0 }
+  }
+}

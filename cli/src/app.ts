@@ -237,6 +237,10 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     schema: undefined as string | undefined,
     projectProfile: undefined as string | undefined,
     extensionsDir: undefined as string | undefined,
+    benchmarkSuite: undefined as string | undefined,
+    task: undefined as string | undefined,
+    goldenAnswer: undefined as string | undefined,
+    candidateResult: undefined as string | undefined,
     base: undefined as string | undefined,
     head: undefined as string | undefined,
     scope: undefined as string | undefined,
@@ -1208,6 +1212,34 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--extensions-dir requires a directory path.' }
       }
       options.extensionsDir = value
+      index += 1
+    } else if (arg === '--benchmark-suite') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--benchmark-suite requires a file path.' }
+      }
+      options.benchmarkSuite = value
+      index += 1
+    } else if (arg === '--task') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--task requires a file path.' }
+      }
+      options.task = value
+      index += 1
+    } else if (arg === '--golden-answer') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--golden-answer requires a file path.' }
+      }
+      options.goldenAnswer = value
+      index += 1
+    } else if (arg === '--candidate-result') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--candidate-result requires a file path.' }
+      }
+      options.candidateResult = value
       index += 1
     } else if (arg === '--base') {
       const value = argv[index + 1]
