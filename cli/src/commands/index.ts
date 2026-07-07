@@ -3,6 +3,7 @@ import { validateEvidence, validateTraceability, validateVisualDesign } from '..
 import { acceptCommand } from './accept.js'
 import {
   benchmarkEvaluateResultCommand,
+  benchmarkLockSuiteCommand,
   benchmarkSummarizeComparisonCommand,
   benchmarkValidateGraphifyImportCommand,
 } from './benchmark.js'
@@ -155,6 +156,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'benchmark' && subcommand === 'summarize-comparison') {
     return benchmarkSummarizeComparisonCommand(context)
+  }
+  if (command === 'benchmark' && subcommand === 'lock-suite') {
+    return benchmarkLockSuiteCommand(context)
   }
   if (command === 'benchmark' && subcommand === 'validate-graphify-import') {
     return benchmarkValidateGraphifyImportCommand(context)

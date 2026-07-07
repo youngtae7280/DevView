@@ -1,5 +1,6 @@
 import { BenchmarkComparisonValidationError, summarizeBenchmarkComparison } from '../core/benchmark-comparison.js'
 import { BenchmarkEvaluationValidationError, evaluateBenchmarkResult } from '../core/benchmark-evaluation.js'
+import { BenchmarkSuiteLockValidationError, lockBenchmarkSuite } from '../core/benchmark-suite-lock.js'
 import { GraphifyImportValidationError, validateGraphifyImport } from '../core/graphify-import-validation.js'
 import type { CommandResult } from '../core/types.js'
 import { ExitCode, issue } from '../core/types.js'
@@ -188,6 +189,73 @@ export async function benchmarkSummarizeComparisonCommand(context: CommandContex
           message,
           suggestedFix:
             'Provide comma-separated or repeated --evaluations inputs and write outputs outside source/control artifacts.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function benchmarkLockSuiteCommand(context: CommandContext): Promise<CommandResult> {
+  try {
+    const manifest = await lockBenchmarkSuite(context.options.root, {
+      benchmarkSuite: context.options.benchmarkSuite,
+      tasks: context.options.tasks,
+      goldenAnswers: context.options.goldenAnswers,
+      candidateResults: context.options.candidateResults,
+      evaluations: context.options.evaluations,
+      comparisonSummary: context.options.comparisonSummary,
+      graphifyImportValidations: context.options.graphifyImportValidations,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'benchmark lock-suite',
+      exitCode: ExitCode.Success,
+      message: 'Benchmark suite source artifacts locked into a report-only attestation manifest.',
+      issues: [],
+      data: { ...manifest },
+    }
+  } catch (error) {
+    if (error instanceof BenchmarkSuiteLockValidationError) {
+      const manifest = error.manifest
+      const errorFindings = manifest.findings.filter((finding) => finding.severity === 'error')
+      return {
+        ok: false,
+        command: 'benchmark lock-suite',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'Benchmark suite lock is blocked before any benchmark execution.',
+        issues: errorFindings.map((finding) =>
+          issue({
+            validator: 'BenchmarkSuiteLock',
+            code: finding.code,
+            severity: finding.severity,
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide matching benchmark suite, task, golden answer, candidate, evaluation, comparison, and Graphify validation artifacts with report-only safety flags false.',
+          }),
+        ),
+        data: { ...manifest },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'benchmark lock-suite',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Benchmark suite lock could not run.',
+      issues: [
+        issue({
+          validator: 'BenchmarkSuiteLock',
+          code: 'BENCHMARK_SUITE_LOCK_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide the benchmark source artifact set and write the lock manifest outside source/control artifacts.',
         }),
       ],
     }

@@ -160,6 +160,28 @@ dimension summaries, and deltas such as DevView versus Codex-only or Graphify ve
 report-only: it consumes stored evaluation reports and does not perform live benchmark-task, Graphify, native/retrofit
 build/test, extension-code, provider, network, graph-source, lifecycle-authority, hook, or approval activity.
 
+### Benchmark Suite Lock
+
+```bash
+devview benchmark lock-suite \
+  --benchmark-suite <benchmark-suite.json> \
+  --tasks <task-a.json,task-b.json> \
+  --golden-answers <golden-a.json,golden-b.json> \
+  --candidate-results <candidate-a.json,candidate-b.json> \
+  --evaluations <evaluation-a.json,evaluation-b.json> \
+  --comparison-summary <benchmark-comparison-summary.json> \
+  --graphify-import-validations <graphify-import-validation.json> \
+  --output <benchmark-suite-lock-manifest.json> \
+  --markdown <benchmark-suite-lock-manifest.md> \
+  --json
+```
+
+Hashes the exact benchmark source artifact set into a report-only lock manifest. The manifest records suite, task,
+golden-answer, candidate-result, evaluation, optional comparison-summary, and optional static Graphify import validation
+digests, plus DevView package version, evaluator/rubric versions, and governance gaps such as missing golden-answer
+review metadata or held-out policy. It does not run benchmark tasks, run Graphify, run native/retrofit builds, call
+providers, mutate graph-source, approve goldens, or activate enterprise release gates.
+
 ### Graphify Import Validation
 
 ```bash

@@ -239,10 +239,15 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     extensionsDir: undefined as string | undefined,
     benchmarkSuite: undefined as string | undefined,
     benchmarkTask: undefined as string | undefined,
+    tasks: undefined as string | undefined,
     task: undefined as string | undefined,
     goldenAnswer: undefined as string | undefined,
+    goldenAnswers: undefined as string | undefined,
     candidateResult: undefined as string | undefined,
+    candidateResults: undefined as string | undefined,
     evaluations: undefined as string | undefined,
+    comparisonSummary: undefined as string | undefined,
+    graphifyImportValidations: undefined as string | undefined,
     graphifyExport: undefined as string | undefined,
     mapping: undefined as string | undefined,
     base: undefined as string | undefined,
@@ -1231,6 +1236,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.benchmarkTask = value
       index += 1
+    } else if (arg === '--tasks') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--tasks requires one or more file paths.' }
+      }
+      options.tasks = options.tasks ? `${options.tasks},${value}` : value
+      index += 1
     } else if (arg === '--task') {
       const value = argv[index + 1]
       if (!value) {
@@ -1245,6 +1257,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.goldenAnswer = value
       index += 1
+    } else if (arg === '--golden-answers') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--golden-answers requires one or more file paths.' }
+      }
+      options.goldenAnswers = options.goldenAnswers ? `${options.goldenAnswers},${value}` : value
+      index += 1
     } else if (arg === '--candidate-result') {
       const value = argv[index + 1]
       if (!value) {
@@ -1252,12 +1271,35 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.candidateResult = value
       index += 1
+    } else if (arg === '--candidate-results') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--candidate-results requires one or more file paths.' }
+      }
+      options.candidateResults = options.candidateResults ? `${options.candidateResults},${value}` : value
+      index += 1
     } else if (arg === '--evaluations') {
       const value = argv[index + 1]
       if (!value) {
         return { error: '--evaluations requires one or more file paths.' }
       }
       options.evaluations = options.evaluations ? `${options.evaluations},${value}` : value
+      index += 1
+    } else if (arg === '--comparison-summary') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--comparison-summary requires a file path.' }
+      }
+      options.comparisonSummary = value
+      index += 1
+    } else if (arg === '--graphify-import-validations') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--graphify-import-validations requires one or more file paths.' }
+      }
+      options.graphifyImportValidations = options.graphifyImportValidations
+        ? `${options.graphifyImportValidations},${value}`
+        : value
       index += 1
     } else if (arg === '--graphify-export') {
       const value = argv[index + 1]

@@ -26,6 +26,27 @@ devview benchmark summarize-comparison \
   --json
 ```
 
+The exact benchmark source set can be locked into a tamper-evident report-only manifest before any benchmark claim is
+treated as governed:
+
+```bash
+devview benchmark lock-suite \
+  --benchmark-suite .tmp/benchmark-fixtures/suite.json \
+  --tasks .tmp/benchmark-fixtures/task.json \
+  --golden-answers .tmp/benchmark-fixtures/golden.json \
+  --candidate-results .tmp/benchmark-fixtures/candidate-a.json,.tmp/benchmark-fixtures/candidate-b.json \
+  --evaluations .tmp/benchmark-fixtures/evaluation-a.json,.tmp/benchmark-fixtures/evaluation-b.json \
+  --comparison-summary .tmp/benchmark-fixtures/comparison-summary.json \
+  --graphify-import-validations .tmp/benchmark-fixtures/graphify-import-validation.json \
+  --output .tmp/benchmark-fixtures/suite-lock.json \
+  --markdown .tmp/benchmark-fixtures/suite-lock.md \
+  --json
+```
+
+The lock manifest records exact file-byte SHA-256 digests, evaluator and rubric versions, source identities, and
+governance gaps such as missing golden-answer review metadata or held-out policy. It does not invent approval or run
+any benchmark arm.
+
 Static Graphify exports can be validated as import/mapping fixtures before any future live integration:
 
 ```bash
@@ -100,3 +121,10 @@ outputs, native test activity, external service activity, command activity, grap
 These fixtures are intentionally small CI-safe examples for proving that stored `codex-devview`, `codex-only`, and
 `codex-graphify` candidate arms can be scored against golden answers. Public benchmark examples and executable harnesses
 remain future work.
+
+## Governance Boundary
+
+Benchmark evaluation and comparison reports are useful evidence only after their source fixtures are locked. The suite
+lock manifest is the first governance layer: it records the exact suite, task, golden-answer, candidate, evaluation,
+comparison, and static Graphify import validation artifacts used for a claim. Enterprise readiness, signed record
+envelopes, reviewer RBAC, held-out task governance, and live-run planning remain future work.
