@@ -1,4 +1,4 @@
-name: PBE CI
+name: DevView CI
 
 on:
   push:
@@ -35,11 +35,11 @@ jobs:
       - name: Unit tests
         run: npm run test
 
-      - name: Validate PBE plugin files
-        run: npm run validate:pbe
+      - name: Validate DevView plugin files
+        run: npm run validate:devview
 
-      - name: Validate PBE tree schemas
-        run: npm run validate:pbe:v2
+      - name: Validate legacy tree schemas
+        run: npm run validate:devview:legacy-tree
 
       - name: Example regression suite
         run: npm run test:examples

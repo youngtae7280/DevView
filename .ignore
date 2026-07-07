@@ -1,0 +1,15 @@
+# Public DevView docs search allowlist.
+#
+# Historical docs remain on disk as legacy migration inputs. Default ripgrep
+# public-doc checks should scan only the canonical public DevView docs below;
+# use `devview report-legacy-artifacts --json` for the full legacy inventory.
+docs/**
+!docs/
+!docs/index.md
+!docs/install.md
+!docs/cli-reference.md
+!docs/troubleshooting.md
+!docs/concept/
+docs/concept/**
+!docs/concept/README.md
+!docs/concept/devview-terminology.md

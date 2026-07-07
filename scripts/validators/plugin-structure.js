@@ -43,14 +43,14 @@ export function runPluginStructureValidator({ root }) {
     return issues
   }
 
-  if (plugin.name !== 'project-blueprint-engine') {
+  if (plugin.name !== 'devview') {
     issues.push(
       createIssue({
         validator,
         file: '.codex-plugin/plugin.json',
         code: 'PLUGIN_NAME_CHANGED',
         message: `Plugin name is ${plugin.name}.`,
-        suggestedFix: 'Keep the public plugin name as project-blueprint-engine.',
+        suggestedFix: 'Keep the public plugin name as devview.',
       }),
     )
   }

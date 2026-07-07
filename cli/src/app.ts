@@ -31,14 +31,14 @@ export async function runPbeCli(argv: string[], env: CliEnvironment = { cwd: pro
                   code: 'INVALID_ARGUMENTS',
                   severity: 'error',
                   message: parsed.error,
-                  suggestedFix: 'Run `pbe --help` to see supported commands.',
+                  suggestedFix: 'Run `devview --help` to see supported commands.',
                 },
               ],
             },
             null,
             2,
           )}\n`
-        : `${parsed.error}\nRun \`pbe --help\` to see supported commands.\n`,
+        : `${parsed.error}\nRun \`devview --help\` to see supported commands.\n`,
     }
   }
 
@@ -79,7 +79,7 @@ export async function runPbeCli(argv: string[], env: CliEnvironment = { cwd: pro
       stdout: '',
       stderr: parsed.options.json
         ? `${JSON.stringify({ ok: false, command: parsed.positionals.join(' '), exitCode: ExitCode.InternalError, issues: [{ validator: 'CLI', code: 'INTERNAL_ERROR', severity: 'error', message }] }, null, 2)}\n`
-        : `PBE CLI internal error.\n\n${message}\n`,
+        : `DevView CLI internal error.\n\n${message}\n`,
     }
   }
 }

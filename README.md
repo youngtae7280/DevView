@@ -1,206 +1,143 @@
 # DevView
 
-DevView is a graph-source development control plugin for Codex.
+DevView compiles Maintainability Graph context into View Trees, Context Packs, AI instructions, evidence, and guarded
+graph updates.
 
-It gives AI agents a developer's selective view of the codebase before they change it. DevView connects code,
-requirements, tasks, tests, evidence, decisions, and changes into one meaning graph, then extracts task-ready views and
-compiles them into bounded Instruction Packs for safer code changes.
+DevView is a local Codex workflow and deterministic CLI surface for making AI-assisted maintenance reviewable. It keeps
+product intent, code, tests, evidence, decisions, and graph updates connected before an agent changes the project.
 
-Formerly: Project Blueprint Engine.
+## Core Flow
 
-Existing `pbe` commands, `.pbe` artifact paths, `validate:pbe` scripts, generated artifact paths, and sourceMode /
-provenance values remain compatibility surfaces in this first public identity pass.
+```text
+Maintainability Graph
+-> View Tree
+-> Context Pack
+-> AI Work Plan
+-> Runtime Evidence
+-> Graph Delta
+-> Guarded Graph Update
+```
 
-## Why DevView Exists
+## Current Safe MVP Status
 
-AI coding can move quickly, but maintenance often fails for a quieter reason: the "why" gets separated from the code.
+- DevView can generate deterministic request-intake, View Tree, Context Pack, and Instruction Pack previews.
+- Advisory preflight, UserPromptSubmit, Stop/Post Run, changed-file, scope, Graph Delta, human review, human decision,
+  evidence, baseline, and handoff reports are available.
+- Guarded Graph Delta apply exists only for explicit concrete operations with backup and validation. The tracked Todo
+  calibration remains blocked because it has no concrete mutation operations.
+- Accepted Evidence can be recorded only through a hardened human evidence decision, but runtime Evidence satisfaction
+  remains a separate future lifecycle.
+- Equivalence proof and Scope/CI enforcement readiness are connected but blocked and non-enforcing.
+- Hook Gateway artifacts are preview-only. DevView does not install hooks, activate blocking, execute Codex, mutate
+  production source, enforce scope, configure CI, or automate approval.
 
-A useful change may still lose the original user intent, skip a boundary, forget which tests prove the behavior, or
-treat a reviewer decision as implied approval. DevView is a control layer for that problem. It is designed to make
-AI-assisted development slower when it needs to be safer, clearer, and reviewable.
+## Quick Start
 
-DevView is not a GUI, SaaS product, API provider, daemon, or general execution engine. It is a Codex plugin workflow
-plus deterministic CLI checks that read and write local project artifacts.
-
-## The Core Idea
-
-DevView treats the project as a meaning graph. User intent, product flow, work, code, tests, evidence, risks, and
-decisions stay linked instead of becoming disconnected notes.
-
-The graph is the source of meaning. Views derived from it can be small and task-specific, but they still preserve
-traceability back to the user's goal.
-
-## How It Works
-
-### 1. Meaning Graph
-
-DevView starts by keeping intent, flow, code, tests, evidence, risk, and decisions connected as one graph.
-
-![Meaning graph](docs/assets/graph-pbe/01-meaning-graph.png)
-
-### 2. View Selection
-
-For a current slice, DevView narrows the graph to the nodes and edges needed for that work. Hidden context remains
-context, not permission to drift.
-
-![View selection](docs/assets/graph-pbe/02-view-selection.png)
-
-### 3. Instruction Pack
-
-The selected view becomes a bounded instruction pack for Codex: goal, expected files, forbidden files, intent claims,
-non-goals, tests to run, and evidence to attach.
-
-![Instruction pack](docs/assets/graph-pbe/03-instruction-pack.png)
-
-### 4. Agent Execution
-
-Codex works from the pack, makes bounded changes, runs the required checks, and records proof instead of relying on a
-vague "looks done" claim.
-
-![Agent execution](docs/assets/graph-pbe/04-agent-execution.png)
-
-### 5. Graph Delta
-
-The result comes back as code changes plus a graph delta: evidence, risk updates, decision notes, and any scope changes
-that need review.
-
-![Graph delta](docs/assets/graph-pbe/05-graph-delta.png)
-
-Human decisions remain explicit throughout the flow. DevView can recommend and validate, but it should not silently
-approve product meaning, UI/UX, implementation scope, architecture runway, review results, acceptance, enforcement, or
-retirement of old structures.
-
-## Current Implementation Status
-
-The repo currently contains graph-source-backed examples, read-model projection checks, local E2E smoke coverage, and
-non-enforcing CI observation records.
-
-Current boundaries:
-
-- Graph-source read-model examples are observable and testable.
-- `validate-all` evidence exists for configured slices, but it is non-enforcing.
-- Todo Search tree-native selected-slice artifacts are deprecated fallback/reference records, not source, and remain
-  available for rollback.
-- CI artifacts are informational unless a future approved change makes them required.
-- Todo App and repo-wide tree-native retirement are not ready; no tree-native files have been deleted.
-- No required check, enforcement behavior, source-authority expansion, or tree retirement should be introduced without
-  explicit approval.
-
-## Artifact Map
-
-When DevView is initialized in a project, it stores local control artifacts under `.pbe/`:
-
-- `.pbe/tree/`: product, project, work, and test trees.
-- `.pbe/execution/`: cycle contracts and node execution contracts.
-- `.pbe/control/`: decisions, changes, impact, acceptance, and UI/control ledgers.
-- `.pbe/evidence/`: proof records linked back to work, tests, and acceptance criteria.
-- `.pbe/blueprint/`: compatibility views for older workflows.
-
-Compatibility names still appear in docs and commands: PBE remains the compatibility namespace, RPD grows product
-intent, WPD derives project/work shape, VD derives verification, and ACEP packages an instruction-oriented cycle for
-Codex. These names are compatibility/control-layer terms; graph-source and read-model artifacts remain the forward
-source-authority direction where explicitly configured.
-
-## Quick Commands
-
-Install dependencies first:
+Install dependencies and build the CLI:
 
 ```bash
 npm install
-```
-
-Build the CLI and run the main PBE compatibility validator:
-
-```bash
-npm run validate:pbe
-```
-
-Validate the v2 tree system schemas and examples:
-
-```bash
-npm run validate:pbe:v2
-```
-
-Run the graph-source read-model E2E smoke:
-
-```bash
-npm run test:read-model:e2e
-```
-
-Run the graph operation flow smoke:
-
-```bash
-npm run test:graph-operation:flow
-```
-
-Build the CLI, then generate the graph-source health report:
-
-```bash
 npm run build:cli
-node dist/cli/index.js graph read-model report-health --json --markdown examples/read-model-aggregate/generated/read-model-health-report-output.md
 ```
 
-Project or report intent from a graph source:
+Run the DevView validator:
 
 ```bash
-node dist/cli/index.js graph read-model project-intent --graph-source examples/valid/todo-app-pbe-run/graph-source.json --output .tmp/todo-app-intent.json --json
-node dist/cli/index.js graph read-model report-intent --graph-source examples/valid/todo-app-pbe-run/graph-source.json --json
+npm run validate:devview
 ```
 
-Preview a graph update proposal before applying it to graph-source:
+Run the deterministic runtime smoke:
 
 ```bash
-node dist/cli/index.js graph operation apply-proposal --proposal outputs/retrofit/open-source/escape-html/graph-update-proposals/symbol-stringification.graph-update-proposal.json --json
+npm run devview:runtime:smoke
 ```
 
-Preview the local operation-chain wrapper without needing to know the script path:
+Inspect DevView commands:
 
 ```bash
-node dist/cli/index.js graph operation run-chain --dry-run --json
+devview --help
 ```
 
-Inspect a retrofit graph before implementation, without touching the target project:
+Generate the current safe MVP baseline:
 
 ```bash
-node dist/cli/index.js graph retrofit plan --graph-source examples/retrofit/cardprinterconfig/graph-source.json --json
+devview graph read-model report-devview-baseline \
+  --roadmap-audit <roadmap-completion-audit.json> \
+  --final-handoff <roadmap-final-handoff.json> \
+  --frontend-chain <frontend-chain.json> \
+  --hook-activation-chain <hook-activation-chain.json> \
+  --approved-apply-dry-run <approved-apply-dry-run.json> \
+  --apply-report <graph-delta-apply-report.json> \
+  --evidence-decision <evidence-decision-record.json> \
+  --accepted-evidence <accepted-evidence-record.json> \
+  --runtime-evidence-satisfaction-readiness <runtime-satisfaction-readiness.json> \
+  --equivalence-proof-readiness <equivalence-readiness.json> \
+  --scope-ci-enforcement-readiness <scope-ci-readiness.json> \
+  --output .tmp/devview-baseline.json \
+  --markdown .tmp/devview-baseline.md \
+  --json
 ```
 
-Run the graph operation chain as CLI steps:
+Audit remaining legacy terminology without changing files:
 
 ```bash
-node dist/cli/index.js graph operation generate-pack --graph-source examples/retrofit/cardprinterconfig/graph-source.json --record change.laminator-tag-layout --json
-node dist/cli/index.js graph operation capture-delta --graph-source examples/retrofit/cardprinterconfig/graph-source.json --instruction-pack outputs/retrofit/instruction-packs/laminator-tag-layout.instruction-pack.json --target-repo C:/path/to/target --json
-node dist/cli/index.js graph operation propose-update --graph-delta outputs/retrofit/graph-deltas/example.graph-delta.json --json
+devview report-legacy-artifacts --json
 ```
 
-## Where To Go Next
+## Concepts
+
+### Maintainability Graph
+
+The Maintainability Graph is the canonical source model for DevView. It links product intent, implementation scope,
+tests, evidence, decisions, risk, and graph updates.
+
+### View Tree
+
+A View Tree is a task-specific tree-shaped projection derived from the Maintainability Graph. It is not legacy
+tree-native storage and it does not become source authority by itself.
+
+### Context Pack
+
+A Context Pack is a bounded subgraph package around the View Tree. It gives Codex the relevant goal, scope, constraints,
+risks, evidence requirements, and non-goals without granting hidden permission to edit outside the selected context.
+
+### AI Work Plan
+
+An AI Work Plan turns the Context Pack into execution-ready instructions. DevView keeps this as an instruction surface,
+not as approval, user acceptance, or graph mutation authority.
+
+### Evidence
+
+Runtime Evidence, Evidence decisions, accepted Evidence, runtime satisfaction, and equivalence proof are separate
+lifecycle states. DevView never treats a test pass, apply report, or accepted Evidence record as runtime satisfaction
+unless a future explicit satisfaction lifecycle says so.
+
+### Graph Delta
+
+A Graph Delta is a proposal to update the Maintainability Graph. It must remain proposal-only until the guarded update
+lifecycle revalidates approval, policy, source identity, backup, concrete operation shape, and post-update validation.
+
+### Guarded Update
+
+A Guarded Graph Update is the only path that may mutate the Maintainability Graph. Current tracked calibration artifacts
+keep this blocked for the Todo sample because there are no concrete mutation operations.
+
+## Enterprise Roadmap
+
+Before production hardening, DevView is cleaning up legacy terminology and migration surfaces. Enterprise-grade work
+remains future-only until explicitly implemented:
+
+- security review and hardening;
+- RBAC and reviewer identity policy;
+- tamper-evident audit logs;
+- backup, rollback, and disaster recovery flows;
+- compatibility and migration tooling for legacy tree-native artifacts;
+- hook install/trust governance;
+- enforcement policy for Scope/CI and required checks.
+
+## Documentation
 
 - [Documentation index](docs/index.md)
-- [DevView glossary](docs/devview-glossary.md)
-- [PBE to DevView migration notes](docs/migration-pbe-to-devview.md)
-- [Install locally with the PBE compatibility CLI](docs/install.md)
 - [CLI reference](docs/cli-reference.md)
-- [Graph operation runbook](docs/graph-operation-runbook.md)
-- [Core concepts](docs/core-concepts.md)
-- [Tree control system](docs/tree-control-system.md)
-- [Current graph-source transition mechanics](docs/concept/repo-wide-graph-source-transition-mechanics.md)
-- [Tree-native retirement approval package](docs/concept/tree-native-retirement-approval-package.md)
-- [Known limits](docs/known-limits.md)
-- [Examples index](examples/README.md)
-
-## Boundaries
-
-DevView is intentionally conservative:
-
-- Do not derive executable work from ambiguous product intent.
-- Do not close work without test and evidence links.
-- Do not treat generated compiler output, Instruction Packs, or promotion review packets as execution authority,
-  approval, or user acceptance.
-- Do not treat CI or local validation as user acceptance.
-- Do not make graph-source observation into enforcement without approval.
-- Do not apply graph deltas automatically or treat proposal previews as accepted graph changes.
-- Do not retire tree or compatibility structures without an explicit retirement decision.
-- Do not remove the PBE compatibility namespace, `pbe` commands, `.pbe` paths, validation scripts, generated artifact
-  paths, or sourceMode values without a separate migration approval.
-
-The short version: DevView is for keeping Codex work connected to meaning, proof, and human decisions.
+- [Install locally](docs/install.md)
+- [DevView terminology](docs/concept/devview-terminology.md)

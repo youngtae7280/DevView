@@ -16,7 +16,7 @@ export async function validateCommand(context: CommandContext): Promise<CommandR
   const issues: ValidationIssue[] = []
   const validators = [
     {
-      name: 'legacy validate:pbe',
+      name: 'legacy migration validator',
       code: 'LEGACY_PBE_VALIDATOR_FAILED',
       script: path.join(context.env.pluginRoot, 'scripts', 'validate-pbe-files.js'),
     },
@@ -38,7 +38,7 @@ export async function validateCommand(context: CommandContext): Promise<CommandR
           code: validator.code,
           severity: 'error',
           message: result.output || `${validator.name} failed.`,
-          suggestedFix: 'Fix the validator output before advancing PBE gates.',
+          suggestedFix: 'Fix the validator output before advancing DevView gates.',
         }),
       )
     }
@@ -57,7 +57,7 @@ export async function validateCommand(context: CommandContext): Promise<CommandR
     ok: !hasErrors(issues),
     command: 'validate',
     exitCode: hasErrors(issues) ? ExitCode.ValidationFailed : ExitCode.Success,
-    message: hasErrors(issues) ? 'PBE validation failed.' : 'PBE validation passed.',
+    message: hasErrors(issues) ? 'DevView validation failed.' : 'DevView validation passed.',
     issues,
     data: {
       validators: reports,

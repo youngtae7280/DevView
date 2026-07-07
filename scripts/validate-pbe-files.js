@@ -32,7 +32,7 @@ const repoValidators = [
 
 const projectValidators = [
   [
-    'PBE layout',
+    'DevView public terminology and legacy layout',
     runPbeLayoutValidator,
     targetRoot,
     { requireReadmeTerms: validationTarget.kind === 'plugin-repository' },
@@ -84,14 +84,15 @@ if (validationTarget.kind === 'plugin-repository') {
   })
 } else {
   results.push({
-    name: 'PBE target',
+    name: 'DevView target',
     issues: [
       createIssue({
-        validator: 'PBE target',
+        validator: 'DevView target',
         file: '.pbe',
         code: 'PBE_NOT_INITIALIZED',
-        message: 'Target root is not the PBE plugin repository and does not contain .pbe/.',
-        suggestedFix: 'Run `pbe init` for this project or run validation from an initialized PBE root.',
+        message:
+          'Target root is not the DevView plugin repository and does not contain legacy migration input storage.',
+        suggestedFix: 'Run validation from the DevView repository or an initialized legacy migration root.',
       }),
     ],
   })
@@ -104,7 +105,7 @@ if (results.some((result) => result.issues.length > 0)) {
   process.exit(1)
 }
 
-console.log('PBE validation passed.')
+console.log('DevView validation passed.')
 
 function classifyValidationTarget(repoRoot, cwd) {
   const pluginMarkers = ['.codex-plugin/plugin.json', 'skills', 'templates', 'schemas', 'scripts/validate-pbe-files.js']

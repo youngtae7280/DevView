@@ -1,7 +1,7 @@
 {
-  "name": "project-blueprint-engine",
+  "name": "devview",
   "version": "0.2.0-alpha+codex.20260612082712",
-  "description": "DevView is a graph-source development control plugin for Codex, formerly Project Blueprint Engine, with compatible PBE contracts and artifact paths.",
+  "description": "DevView compiles Maintainability Graph context into View Trees, Context Packs, AI instructions, evidence, and guarded graph updates for Codex.",
   "author": {
     "name": "Local developer"
   },
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "DevView",
     "shortDescription": "Graph-source development control, bounded views, evidence, and review workflow for Codex.",
-    "longDescription": "DevView runs inside Codex as a graph-source development control workflow while preserving Project Blueprint Engine (PBE), RPD, WPD, VD, and ACEP compatibility terms. It gives AI agents a developer's selective view of the codebase before they change it by linking intent, code, tasks, tests, evidence, decisions, and changes into meaning-graph-backed views. It routes active PBE-compatible work through state-aware CLI gates before ordinary coding, confirms UI/UX before implementation, converts visual UI changes into Visual Design Contract artifacts, derives concrete theme tokens and component style contracts from screenshots, references, interviews, existing screens, default theme, or waiver decisions, audits dependency impact before implementation scope, selects staged execution slices, validates schema and cross-artifact traceability, tracks evidence, requires visual audit before UI visual review closure, maps feedback to affected nodes, and creates bounded revision work through change and impact analysis. DevView is not an executor, approval system, enforcement switch, branch protection manager, or automated graph-delta applier.",
+    "longDescription": "DevView gives AI agents a bounded developer view before they change code. It links intent, code, tasks, tests, evidence, decisions, and graph updates in a Maintainability Graph, projects task-specific View Trees, packages Context Packs, generates AI-facing Instruction Packs, records Runtime Evidence, proposes Graph Deltas, and keeps guarded graph updates behind explicit human review and validation. DevView is not an executor, approval system, enforcement switch, branch protection manager, runtime Evidence satisfaction engine, equivalence proof engine, or automatic graph update applier.",
     "developerName": "Local developer",
     "category": "Developer Tools",
     "capabilities": [
@@ -17,11 +17,10 @@
       "Write",
       "Interactive",
       "Planning",
-      "Tree-based product design",
-      "Tree derivation",
-      "Cycle slice execution",
+      "Maintainability Graph context",
+      "View Tree projection",
+      "Context Pack generation",
       "Code generation guidance",
-      "Autoflow orchestration",
       "Traceability",
       "Evidence tracking",
       "Visual Design Contract",
@@ -32,7 +31,7 @@
       "UI surface inventory",
       "UI surface inventory and visual evidence audit",
       "Visual implementation audit",
-      "CLI-assisted PBE artifact validation and gate checks",
+      "CLI-assisted DevView validation and advisory checks",
       "Dependency impact auditing",
       "Schema validation",
       "Staged parallel execution planning",
@@ -42,7 +41,7 @@
       "User review workflow",
       "Revision planning"
     ],
-    "defaultPrompt": ["@project-blueprint-engine start"],
+    "defaultPrompt": ["@devview start"],
     "brandColor": "#2563EB"
   }
 }

@@ -1,16 +1,20 @@
 {
-  "name": "project-blueprint-engine",
+  "name": "devview",
   "private": true,
   "version": "0.2.0-alpha",
-  "description": "DevView Codex plugin workflow, formerly Project Blueprint Engine, with PBE CLI compatibility.",
+  "description": "DevView Codex plugin workflow for Maintainability Graph context, View Trees, Context Packs, evidence, and guarded graph updates.",
   "type": "module",
   "bin": {
+    "devview": "./dist/cli/index.js",
     "pbe": "./dist/cli/index.js"
   },
   "scripts": {
     "clean:dist": "node scripts/clean-dist.js",
     "build:cli": "npm run clean:dist && tsc -p tsconfig.cli.json",
+    "devview": "node dist/cli/index.js",
     "pbe": "node dist/cli/index.js",
+    "validate:devview": "npm run build:cli && node dist/cli/index.js validate",
+    "validate:devview:legacy-tree": "node scripts/validate-pbe-tree-system.js",
     "validate:pbe": "npm run build:cli && node dist/cli/index.js validate",
     "validate:pbe:v2": "node scripts/validate-pbe-tree-system.js",
     "validate:pbe:operation-chain": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/invoke-pbe-v0.ps1 -Command operation-chain",
@@ -25,8 +29,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "build": "npm run validate:pbe",
-    "validate": "npm run validate:pbe"
+    "build": "npm run validate:devview",
+    "validate": "npm run validate:devview"
   },
   "devDependencies": {
     "@eslint/js": "9.27.0",

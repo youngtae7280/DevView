@@ -89,15 +89,17 @@ function formatIssueSummary(issues: ValidationIssue[]): string {
 }
 
 export function helpText(): string {
-  return `Project Blueprint Engine CLI
+  return `DevView CLI
 
 Usage:
-  pbe <command> [options]
+  devview <command> [options]
 
 Commands:
-  init                 Initialize .pbe artifacts
-  status               Show current PBE status
-  validate             Run all PBE validators
+  validate             Run DevView validators
+  report-legacy-artifacts
+                       Report remaining legacy names and migration inputs without mutating files
+  init                 Internal compatibility initializer for legacy migration inputs
+  status               Internal compatibility status for legacy migration inputs
   gate <stage>         Check whether a stage can be entered, including review-result
   gate assess          Assess Human Gate clarity and hard triggers without changing state
   profile recommend    Recommend workflow depth from a task brief
@@ -146,7 +148,7 @@ Commands:
   graph operation propose-update
                        Generate a graph update proposal from a graph delta
   graph operation run-chain
-                       Run or plan the local PBE operation-chain wrapper without knowing the underlying script path
+                       Run or plan the local internal operation-chain wrapper without knowing the underlying script path
   graph retrofit plan  Summarize a retrofit graph-source before implementation without touching the target project
   graph read-model generate
                        Generate bounded read-model Evidence from a selected slice
@@ -248,6 +250,8 @@ Commands:
                        Report Hook Gateway activation preview chain without installing or activating hooks
   graph read-model report-devview-baseline
                        Report the DevView core baseline freeze without adding execution or authority
+  graph read-model report-legacy-artifacts
+                       Report remaining legacy names and migration inputs without mutating files
   graph read-model report-health
                        Summarize local non-enforcing Graph-source transition health
   graph read-model observe-candidates
@@ -264,7 +268,7 @@ Options:
   --json               Print stable JSON output.
   --verbose            Include validator details where available.
   --no-color           Disable colored output. Reserved for compatibility.
-  --force              Allow init to overwrite existing PBE files.
+  --force              Allow init to overwrite existing internal compatibility files.
   --apply              Apply graph operation changes. Without this, graph operation commands run in preview mode.
   --dry-run            Preview graph operation command plans without executing wrapped scripts.
   --all                Run all configured read-model registry profiles for graph read-model validate.

@@ -9,7 +9,7 @@ export function createIssue({ validator, file, code, message, suggestedFix }) {
 }
 
 export function formatValidationReport(results) {
-  const lines = ['[PBE Validate]', '']
+  const lines = ['[DevView Validate]', '']
 
   for (const result of results) {
     const prefix = result.issues.length === 0 ? '✓' : '✗'

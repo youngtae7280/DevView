@@ -69,6 +69,7 @@ import {
   graphReadModelValidateRequestIrGraphCommand,
   graphReadModelValidateRequestIrCommand,
   graphReadModelValidateCommand,
+  reportLegacyArtifactsCommand,
 } from './graph.js'
 import { impactAnalyzeCommand } from './impact.js'
 import { initCommand } from './init.js'
@@ -104,6 +105,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'validate') {
     return validateCommand(context)
+  }
+  if (command === 'report-legacy-artifacts') {
+    return reportLegacyArtifactsCommand(context)
   }
   if (command === 'gate') {
     if (subcommand === 'assess') {
@@ -394,6 +398,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-devview-baseline') {
     return graphReadModelReportDevViewBaselineCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-legacy-artifacts') {
+    return reportLegacyArtifactsCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-health') {
     return graphReadModelReportHealthCommand(context)

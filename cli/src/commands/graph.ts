@@ -29,6 +29,7 @@ import { materializeHookScriptBundleFile } from '../core/hook-script-bundle.js'
 import { generateHookScriptScaffoldFile } from '../core/hook-script-scaffold.js'
 import { generateHookScriptTemplatePreviewFile } from '../core/hook-script-template-preview.js'
 import { generateInstructionPackFile } from '../core/instruction-pack-generator.js'
+import { reportLegacyArtifacts } from '../core/legacy-artifact-audit.js'
 import { renderDevViewGraphHtmlFile } from '../core/devview-graph-html.js'
 import { reportProjectMemoryExtensionGapsFile } from '../core/project-memory-extension-gap-report.js'
 import { reportProjectMemoryImpactFile } from '../core/project-memory-impact-report.js'
@@ -112,6 +113,39 @@ export async function graphOperationApplyProposalCommand(context: CommandContext
           message,
           suggestedFix:
             'Regenerate the graph delta/proposal from the current graph-source, or inspect stale proposal boundaries before applying.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function reportLegacyArtifactsCommand(context: CommandContext): Promise<CommandResult> {
+  try {
+    const result = reportLegacyArtifacts(context.options.root, {
+      output: context.options.output,
+    })
+    return {
+      ok: true,
+      command: 'report-legacy-artifacts',
+      exitCode: ExitCode.Success,
+      message: 'DevView legacy artifact audit report generated.',
+      issues: [],
+      data: result as unknown as Record<string, unknown>,
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'report-legacy-artifacts',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'DevView legacy artifact audit blocked.',
+      issues: [
+        issue({
+          validator: 'DevViewLegacyArtifactAudit',
+          code: 'DEVVIEW_LEGACY_ARTIFACT_AUDIT_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix: 'Check the repository path and rerun the legacy audit. The command does not mutate files.',
         }),
       ],
     }

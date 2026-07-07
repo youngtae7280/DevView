@@ -4076,3 +4076,33 @@ blocking, no graph-source mutation, no graph delta apply from the baseline comma
 runtime Evidence satisfaction, no equivalence proof, no scope enforcement, no CI required checks, no branch protection,
 no diff rejection, no strict/guided blocking activation, no automatic approval, no user acceptance automation, no
 provider invocation, no LLM/API or network call, and no Project Memory extension authority.
+
+## DEC-314 Make DevView The Canonical Product Identity
+
+DEC-314 does not supersede DEC-097 through DEC-313. It fixes DevView as the public product name and treats the older
+tree-native naming system as migration input rather than public product identity.
+
+Public README, install, CLI reference, docs index, troubleshooting, and concept entry points now use DevView
+terminology. The public terminology document defines the canonical flow as Maintainability Graph to View Tree to
+Context Pack to AI Work Plan to Runtime Evidence to Graph Delta to Guarded Graph Update. It also records that View Tree
+is graph-derived rather than legacy tree-native storage, and that legacy tree-native artifacts remain migration inputs
+until explicitly retired.
+
+The package now exposes `devview` as the primary binary and `validate:devview` as the primary validation script. Older
+command/script aliases remain as internal hidden compatibility because existing fixtures, validators, and migration
+inputs still depend on them.
+
+This decision adds a non-mutating legacy audit report command:
+
+```text
+devview report-legacy-artifacts --json
+```
+
+The audit classifies remaining legacy references as canonical DevView, needing rename, migration fixture only, delete
+candidate, or internal hidden compatibility. It does not delete files or mutate source artifacts.
+
+This decision adds no hook install or activation, no Codex execution or blocking, no graph-source mutation, no graph
+delta apply, no Evidence acceptance creation, no runtime Evidence satisfaction, no equivalence proof, no scope
+enforcement, no CI required checks, no branch protection, no diff rejection, no strict/guided blocking activation, no
+automatic approval, no user acceptance automation, no provider invocation, no LLM/API or network call, and no Project
+Memory extension authority.

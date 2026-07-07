@@ -1,13 +1,13 @@
-# Install PBE Locally
+# Install DevView Locally
 
-This guide gets a cloned Project Blueprint Engine repo to a local build, test, validation, and CLI smoke check.
+This guide gets a cloned DevView repository to a local build, validation, and CLI smoke check.
 
 Command examples prefer Windows `npm.cmd` because PowerShell can block `npm.ps1` on some machines. On macOS/Linux or
 non-PowerShell shells, use `npm` instead.
 
 ## Prerequisites
 
-- Node.js 20 LTS is recommended. CI runs on Node.js 20.
+- Node.js 20 LTS is recommended.
 - npm, included with Node.js.
 - Git.
 - Windows users can use PowerShell or CMD. If PowerShell blocks `npm`, use `npm.cmd`.
@@ -15,8 +15,8 @@ non-PowerShell shells, use `npm` instead.
 ## Clone
 
 ```bash
-git clone https://github.com/youngtae7280/Project-Blueprint-Engine-Plugin.git
-cd Project-Blueprint-Engine-Plugin
+git clone <devview-repository-url>
+cd <devview-repository>
 ```
 
 ## Install Dependencies
@@ -33,7 +33,7 @@ Non-Windows:
 npm install
 ```
 
-For CI-like clean installs, use `npm.cmd ci` or `npm ci`.
+For clean installs, use `npm.cmd ci` or `npm ci`.
 
 ## Build CLI
 
@@ -47,36 +47,35 @@ npm.cmd run build:cli
 npm.cmd run format:check
 npm.cmd run typecheck
 npm.cmd test
-npm.cmd run validate:pbe
-npm.cmd run validate:pbe:v2
-npm.cmd run test:examples
+npm.cmd run validate:devview
+npm.cmd run devview:runtime:smoke
 ```
 
 ## Run CLI
+
+```bash
+devview --help
+devview validate --json
+```
+
+If the binary is not linked locally, use Node directly after building:
 
 ```bash
 node dist/cli/index.js --help
 node dist/cli/index.js validate --json
 ```
 
-If `dist/cli/index.js` is missing, build the CLI first:
-
-```bash
-npm.cmd run build:cli
-```
-
 ## Recommended Local Verification
 
-Run this before committing or pushing. Run the commands sequentially. On Windows, do not start `validate:pbe` and
-`test:examples` in parallel because both commands build the CLI and may touch `clean-dist` / `dist` at the same time.
+Run this before committing or pushing. Run commands sequentially because validation commands that rebuild the CLI may
+touch `clean-dist` and `dist`.
 
 ```bash
 npm.cmd run format:check
 npm.cmd run typecheck
 npm.cmd test
-npm.cmd run validate:pbe
-npm.cmd run validate:pbe:v2
-npm.cmd run test:examples
+npm.cmd run validate:devview
+npm.cmd run devview:runtime:smoke
 node dist/cli/index.js --help
 node dist/cli/index.js validate --json
 ```
