@@ -380,6 +380,32 @@ report role is `devview-provenance-verification-readiness-report` with status
 `devview-provenance-verification-readiness-reported`; real verification remains future-only until key trust, signature
 policy, RBAC, and CI governance are modeled.
 
+### CI / Branch Governance Readiness
+
+```bash
+devview security report-ci-branch-governance-readiness \
+  --scope-ci-enforcement-readiness <scope-ci-readiness.json> \
+  --scope-ci-enforcement-record <scope-ci-enforcement-record.json> \
+  --provider-network-policy-report <provider-network-policy-report.json> \
+  --rbac-policy-validation <rbac-policy-validation.json> \
+  --signing-readiness <signing-readiness.json> \
+  --provenance-verification-readiness <provenance-verification-readiness.json> \
+  --release-surface-validation <release-surface-validation.json> \
+  --workflow <.github/workflows/ci.yml> \
+  --output <ci-branch-governance-readiness.json> \
+  --markdown <ci-branch-governance-readiness.md> \
+  --json
+```
+
+Reports CI and branch protection governance prerequisites before any external CI/branch mutation. All source inputs are
+optional. Explicit `--workflow` files may be repeated or comma-separated and are read only as local source facts: the
+command records byte digests and conservative workflow/job/check candidates but does not execute workflows, infer live
+required checks, call CI providers, query branch protection, mutate `.github/**`, install hooks, enforce RBAC, perform
+signing or verification, or activate enterprise gates. Exact report-only source roles/statuses are required for
+Scope/CI, provider/network, RBAC, signing, provenance verification, and release-surface inputs. The output role is
+`devview-ci-branch-governance-readiness-report` with status `devview-ci-branch-governance-readiness-reported`; required
+checks and branch protection remain future-only policy and activation work.
+
 ### Provider/Network Default-Deny Policy
 
 ```bash

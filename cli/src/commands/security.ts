@@ -22,6 +22,10 @@ import {
   ProvenanceVerificationReadinessReportValidationError,
   reportProvenanceVerificationReadiness,
 } from '../core/provenance-verification-readiness-report.js'
+import {
+  CiBranchGovernanceReadinessReportValidationError,
+  reportCiBranchGovernanceReadiness,
+} from '../core/ci-branch-governance-readiness-report.js'
 import { RbacPolicyValidationError, validateRbacPolicy } from '../core/rbac-policy-validation.js'
 import { RbacReadinessReportValidationError, reportRbacReadiness } from '../core/rbac-readiness-report.js'
 import { RecordEnvelopePreviewValidationError, previewRecordEnvelope } from '../core/record-envelope-preview.js'
@@ -557,6 +561,77 @@ export async function securityReportProvenanceVerificationReadinessCommand(
           message,
           suggestedFix:
             'Provide --provenance-attestation-validation and --output and write provenance verification readiness outputs outside source/control artifacts and source inputs.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function securityReportCiBranchGovernanceReadinessCommand(
+  context: CommandContext,
+): Promise<CommandResult> {
+  try {
+    const report = await reportCiBranchGovernanceReadiness(context.options.root, {
+      scopeCiEnforcementReadiness: context.options.scopeCiEnforcementReadiness,
+      scopeCiEnforcementRecord: context.options.scopeCiEnforcementRecord,
+      providerNetworkPolicyReport: context.options.providerNetworkPolicyReport,
+      rbacPolicyValidation: context.options.rbacPolicyValidation,
+      signingReadiness: context.options.signingReadiness,
+      provenanceVerificationReadiness: context.options.provenanceVerificationReadiness,
+      releaseSurfaceValidation: context.options.releaseSurfaceValidation,
+      workflow: context.options.workflow,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'security report-ci-branch-governance-readiness',
+      exitCode: ExitCode.Success,
+      message:
+        'CI/branch governance readiness reported without workflow execution, provider calls, branch mutation, hooks, or enterprise gate activation.',
+      issues: [],
+      data: { ...report },
+    }
+  } catch (error) {
+    if (error instanceof CiBranchGovernanceReadinessReportValidationError) {
+      const report = error.report
+      const blockers = report.governanceFindings.filter((finding) => finding.severity === 'blocker')
+      return {
+        ok: false,
+        command: 'security report-ci-branch-governance-readiness',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'CI/branch governance readiness reporting is blocked before any output write.',
+        issues: blockers.map((finding) =>
+          issue({
+            validator: 'CiBranchGovernanceReadiness',
+            code: finding.code,
+            severity: 'error',
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide exact report-only CI, RBAC, signing, provenance, release-surface, workflow, and provider/network source facts with external CI, branch, hook, provider, signing, and RBAC authority flags false.',
+          }),
+        ),
+        data: { ...report },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'security report-ci-branch-governance-readiness',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'CI/branch governance readiness reporting could not run.',
+      issues: [
+        issue({
+          validator: 'CiBranchGovernanceReadiness',
+          code: 'CI_BRANCH_GOVERNANCE_READINESS_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide --output and write CI/branch governance readiness outputs outside workflow/control artifacts and source inputs.',
         }),
       ],
     }

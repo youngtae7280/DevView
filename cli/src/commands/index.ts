@@ -103,6 +103,7 @@ import {
   securityPreviewRecordEnvelopeCommand,
   securityRecordPackageArtifactDigestCommand,
   securityRecordPackageProvenanceInputsCommand,
+  securityReportCiBranchGovernanceReadinessCommand,
   securityReportEnterpriseReadinessCommand,
   securityReportProviderNetworkPolicyCommand,
   securityReportProvenanceVerificationReadinessCommand,
@@ -205,6 +206,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'security' && subcommand === 'report-provenance-verification-readiness') {
     return securityReportProvenanceVerificationReadinessCommand(context)
+  }
+  if (command === 'security' && subcommand === 'report-ci-branch-governance-readiness') {
+    return securityReportCiBranchGovernanceReadinessCommand(context)
   }
   if (command === 'security' && subcommand === 'validate-rbac-policy') {
     return securityValidateRbacPolicyCommand(context)

@@ -131,6 +131,8 @@ Commands:
                        Validate a wrapped static provenance attestation source fact without generating, signing, or verifying it
   security report-provenance-verification-readiness
                        Report prerequisites for future signed provenance verification without performing verification
+  security report-ci-branch-governance-readiness
+                       Report CI/branch protection governance readiness without CI provider calls or branch mutation
   security validate-rbac-policy
                        Validate declarative RBAC role assignment policy without enforcing RBAC
   security report-rbac-readiness
@@ -466,7 +468,8 @@ Options:
   --provenance-attestation-validation <file>
                        Provenance attestation validation report for security report-enterprise-readiness or report-provenance-verification-readiness; repeat or comma-separate for multiples where supported.
   --provenance-verification-readiness <file>
-                       Provenance verification readiness report for security report-enterprise-readiness; repeat or comma-separate for multiples where supported.
+                       Provenance verification readiness report for security report-enterprise-readiness or report-ci-branch-governance-readiness; repeat or comma-separate for multiples where supported.
+  --workflow <file>    Explicit local workflow file for security report-ci-branch-governance-readiness; repeat or comma-separate for multiples.
   --source-ref <value>
                        Explicit source ref label for security record-package-provenance-inputs; metadata only, not verified.
   --build-command <value>
