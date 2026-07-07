@@ -81,7 +81,7 @@ if ($MarkdownOutputPath) {
     }
 
     $lines = @(
-        "# PBE Graph Update Proposal",
+        "# DevView Graph Update Proposal",
         "",
         "Status: $($proposal.status)",
         "",

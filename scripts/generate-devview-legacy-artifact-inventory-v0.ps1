@@ -47,7 +47,7 @@ $summary = [PSCustomObject]@{
         "Commit from this workspace after review."
     }
     else {
-        "This workspace is not a git repo; copy or promote artifacts into the target PBE repo before commit."
+        "This workspace is not a git repo; copy or promote artifacts into the target DevView repo before commit."
     }
     artifacts = $artifacts
 }

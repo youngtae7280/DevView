@@ -21,7 +21,7 @@ $schemas = @()
 foreach ($file in $required) {
     $path = Join-Path $schemaRoot $file
     if (-not (Test-Path $path)) {
-        Fail "Missing PBE schema: $file"
+        Fail "Missing DevView schema: $file"
     }
 
     $schema = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json

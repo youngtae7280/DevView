@@ -125,7 +125,7 @@ if ($MarkdownOutputPath) {
     }
 
     $lines = @(
-        "# PBE Retrofit Smoke Report",
+        "# DevView Retrofit Smoke Report",
         "",
         "Status: $($summary.status)",
         "",

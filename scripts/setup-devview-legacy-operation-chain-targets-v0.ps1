@@ -22,9 +22,9 @@ Reset-Directory $notesPath
 @'
 # Graph Notes Demo
 
-This tiny native PBE demo stores maintenance notes as graph-shaped records.
+This tiny native DevView demo stores maintenance notes as graph-shaped records.
 
-The project is intentionally small so PBE can demonstrate the same operation
+The project is intentionally small so DevView can demonstrate the same operation
 chain used for larger projects:
 
 ```text
@@ -38,7 +38,7 @@ graph-source -> instruction pack -> local change -> graph delta
     {
       "id": "note.demo-purpose",
       "status": "active",
-      "intent": "Keep a tiny native example that can prove PBE graph operations without legacy retrofit uncertainty."
+      "intent": "Keep a tiny native example that can prove DevView graph operations without legacy retrofit uncertainty."
     }
   ]
 }
@@ -58,7 +58,7 @@ Reset-Directory $counterPath
 @'
 # Graph Counter Demo
 
-This tiny native PBE demo exposes one counter function and one local test.
+This tiny native DevView demo exposes one counter function and one local test.
 
 The first behavior dogfood changes the counter step from `+1` to `+2` through
 the graph operation chain.
