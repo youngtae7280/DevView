@@ -123,6 +123,13 @@ export interface CliOptions {
   operator?: string
   authorizationRationale?: string
   authorizeGraphSourceMutation: boolean
+  payload?: string
+  sourceArtifacts?: string
+  previousEnvelope?: string
+  requiredPermission?: string
+  actorId?: string
+  actorType?: string
+  actorRole?: string
   runtimeReport?: string
   candidate?: string
   schemaValidation?: string

@@ -7,6 +7,7 @@ import {
   reportProviderNetworkPolicy,
 } from '../core/provider-network-policy-report.js'
 import { RbacReadinessReportValidationError, reportRbacReadiness } from '../core/rbac-readiness-report.js'
+import { RecordEnvelopePreviewValidationError, previewRecordEnvelope } from '../core/record-envelope-preview.js'
 import type { CommandResult } from '../core/types.js'
 import { ExitCode, issue } from '../core/types.js'
 import type { CommandContext } from './shared.js'
@@ -193,6 +194,74 @@ export async function securityReportRbacReadinessCommand(context: CommandContext
           message,
           suggestedFix:
             'Provide --output and write RBAC readiness outputs outside source/control artifacts and inputs.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function securityPreviewRecordEnvelopeCommand(context: CommandContext): Promise<CommandResult> {
+  try {
+    const report = await previewRecordEnvelope(context.options.root, {
+      payload: context.options.payload,
+      sourceArtifacts: context.options.sourceArtifacts,
+      previousEnvelope: context.options.previousEnvelope,
+      requiredPermission: context.options.requiredPermission,
+      actorId: context.options.actorId,
+      actorType: context.options.actorType,
+      actorRole: context.options.actorRole,
+      authorizationRationale: context.options.authorizationRationale,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'security preview-record-envelope',
+      exitCode: ExitCode.Success,
+      message: 'Unsigned record envelope preview recorded as a deterministic report-only artifact.',
+      issues: [],
+      data: { ...report },
+    }
+  } catch (error) {
+    if (error instanceof RecordEnvelopePreviewValidationError) {
+      const report = error.report
+      const blockers = report.envelopeFindings.filter((finding) => finding.severity === 'blocker')
+      return {
+        ok: false,
+        command: 'security preview-record-envelope',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'Record envelope preview is blocked before any signing, RBAC enforcement, or source mutation.',
+        issues: blockers.map((finding) =>
+          issue({
+            validator: 'RecordEnvelopePreview',
+            code: finding.code,
+            severity: 'error',
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide JSON payload/source artifacts with exact role/status, recognized actor and permission claims, and unsafe authority flags limited to exact source-fact roles.',
+          }),
+        ),
+        data: { ...report },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'security preview-record-envelope',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Record envelope preview could not run.',
+      issues: [
+        issue({
+          validator: 'RecordEnvelopePreview',
+          code: 'RECORD_ENVELOPE_PREVIEW_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide --payload, --required-permission, --actor-id, --actor-type, --actor-role, and --output outside source/control artifacts.',
         }),
       ],
     }

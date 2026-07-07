@@ -100,6 +100,7 @@ import { reviewSubmitCommand } from './review.js'
 import { revisionCompleteCommand, revisionStartCommand } from './revision.js'
 import { productIntakeCheckCommand, productIntakeCloseCommand } from './product-intake.js'
 import {
+  securityPreviewRecordEnvelopeCommand,
   securityReportEnterpriseReadinessCommand,
   securityReportProviderNetworkPolicyCommand,
   securityReportRbacReadinessCommand,
@@ -180,6 +181,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'security' && subcommand === 'report-rbac-readiness') {
     return securityReportRbacReadinessCommand(context)
+  }
+  if (command === 'security' && subcommand === 'preview-record-envelope') {
+    return securityPreviewRecordEnvelopeCommand(context)
   }
   if (command === 'gate') {
     if (subcommand === 'assess') {

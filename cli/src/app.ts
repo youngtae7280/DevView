@@ -165,6 +165,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     operator: undefined as string | undefined,
     authorizationRationale: undefined as string | undefined,
     authorizeGraphSourceMutation: false,
+    payload: undefined as string | undefined,
+    sourceArtifacts: undefined as string | undefined,
+    previousEnvelope: undefined as string | undefined,
+    requiredPermission: undefined as string | undefined,
+    actorId: undefined as string | undefined,
+    actorType: undefined as string | undefined,
+    actorRole: undefined as string | undefined,
     runtimeReport: undefined as string | undefined,
     candidate: undefined as string | undefined,
     schemaValidation: undefined as string | undefined,
@@ -717,6 +724,55 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       index += 1
     } else if (arg === '--authorize-graph-source-mutation') {
       options.authorizeGraphSourceMutation = true
+    } else if (arg === '--payload') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--payload requires a file path.' }
+      }
+      options.payload = value
+      index += 1
+    } else if (arg === '--source-artifacts') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--source-artifacts requires one or more file paths.' }
+      }
+      options.sourceArtifacts = options.sourceArtifacts ? `${options.sourceArtifacts},${value}` : value
+      index += 1
+    } else if (arg === '--previous-envelope') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--previous-envelope requires a file path.' }
+      }
+      options.previousEnvelope = value
+      index += 1
+    } else if (arg === '--required-permission') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--required-permission requires a value.' }
+      }
+      options.requiredPermission = value
+      index += 1
+    } else if (arg === '--actor-id') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--actor-id requires a value.' }
+      }
+      options.actorId = value
+      index += 1
+    } else if (arg === '--actor-type') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--actor-type requires a value.' }
+      }
+      options.actorType = value
+      index += 1
+    } else if (arg === '--actor-role') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--actor-role requires a value.' }
+      }
+      options.actorRole = options.actorRole ? `${options.actorRole},${value}` : value
+      index += 1
     } else if (arg === '--runtime-report') {
       const value = argv[index + 1]
       if (!value) {

@@ -257,6 +257,30 @@ only. The command does not perform cryptographic signing, generate or store keys
 network/API calls, execute extensions, mutate graph-source, create lifecycle authority records, configure CI, activate
 hooks, or automate approval.
 
+### Unsigned Record Envelope Preview
+
+```bash
+devview security preview-record-envelope \
+  --payload <artifact.json> \
+  --source-artifacts <source-a.json,source-b.json> \
+  --previous-envelope <record-envelope-preview.json> \
+  --required-permission <permission> \
+  --actor-id <actor-id> \
+  --actor-type <human|automation|service|extension-author> \
+  --actor-role <role> \
+  --authorization-rationale "Human rationale" \
+  --output <record-envelope-preview.json> \
+  --markdown <record-envelope-preview.md> \
+  --json
+```
+
+Creates a deterministic, unsigned envelope preview for an existing JSON artifact. The preview records raw payload bytes
+hashes, optional source artifact digests, explicit CLI actor identity claims, required permission claims, and an
+optional previous envelope link. It uses `signatureMode: unsigned-deterministic-preview` and records that RBAC
+permission verification and cryptographic signature verification are not performed. The command mutates no
+payload/source artifact, does not generate keys, does not sign records, does not enforce RBAC, and keeps
+provider/network/execution/graph/lifecycle authority flags false.
+
 ### Graphify Import Validation
 
 ```bash
