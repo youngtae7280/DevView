@@ -56,6 +56,7 @@ export interface WorkJournalRenderOptions {
   extensionProfileCatalog?: string
   extensionContextPlan?: string
   extensionAdapterCompatibilityReport?: string
+  nativeRetrofitProfileValidationReport?: string
   runtimeEvidenceSatisfactionReadiness?: string
   runtimeEvidenceSatisfactionRecord?: string
   equivalenceProofReadiness?: string
@@ -121,7 +122,11 @@ export interface WorkJournalAuthoritySummary {
     contextPlanStatus: string | null
     adapterCompatibilityStatus: string | null
     adapterCompatibilityArtifactStatus: string | null
+    nativeRetrofitValidationStatus: string | null
+    nativeRetrofitValidationArtifactStatus: string | null
     displayState:
+      | 'native-retrofit-validation-passed'
+      | 'native-retrofit-validation-blocked'
       | 'adapter-compatibility-validated'
       | 'adapter-compatibility-blocked'
       | 'context-plan-generated'
@@ -136,6 +141,9 @@ export interface WorkJournalAuthoritySummary {
     graphIngestionCandidateCount: number | null
     nativeRetrofitHintStatus: string | null
     nativeRetrofitMode: string | null
+    nativeRetrofitModeInferenceStatus: string | null
+    nativeRetrofitCoverageStatusCounts: JsonRecord | null
+    nativeRetrofitValidationFindingCount: number | null
     downstreamCompatibility: JsonRecord | null
     viewTreeHintCount: number | null
     contextPackHintCount: number | null
@@ -285,6 +293,11 @@ const SOURCE_DEFS = [
     sourceId: 'extension-adapter-compatibility-report',
     label: 'Extension adapter compatibility report',
     optionKey: 'extensionAdapterCompatibilityReport',
+  },
+  {
+    sourceId: 'native-retrofit-profile-validation-report',
+    label: 'Native/Retrofit profile validation report',
+    optionKey: 'nativeRetrofitProfileValidationReport',
   },
   {
     sourceId: 'runtime-evidence-satisfaction-readiness',
@@ -530,6 +543,50 @@ function validateSourceRecordShape(source: LoadedArtifact): void {
       !knownStatuses.includes(stringValue(record.status))
     ) {
       throw new Error('Work Journal extension adapter compatibility report source has an unsupported role/status.')
+    }
+    requireFalseFields(source.label, record, [
+      'extensionExecutionAllowed',
+      'extensionsExecuted',
+      'extensionCodeExecuted',
+      'providerInvoked',
+      'networkCallMade',
+      'shellCommandExecuted',
+      'shellCommandsExecuted',
+      'filesMutated',
+      'graphSourceMutated',
+      'graphDeltaApplied',
+      'runtimeEvidenceSatisfied',
+      'evidenceAccepted',
+      'equivalenceProven',
+      'scopeEnforced',
+      'ciEnforcementEnabled',
+      'hooksActivated',
+      'branchProtectionChanged',
+      'branchProtectionMutated',
+      'requiredChecksConfigured',
+      'requiredChecksMutated',
+      'externalCiMutated',
+      'diffRejectionEnabled',
+      'diffRejectionActivated',
+      'approvalAutomationEnabled',
+      'userAcceptanceAutomated',
+      'traversalAuthorityGranted',
+      'contextPackMutated',
+      'viewTreeMutated',
+      'adapterExecuted',
+      'policyEnforced',
+    ])
+  }
+  if (source.sourceId === 'native-retrofit-profile-validation-report') {
+    const knownStatuses = [
+      'devview-native-retrofit-profile-validation-passed',
+      'devview-native-retrofit-profile-validation-blocked',
+    ]
+    if (
+      record.artifactRole !== 'devview-native-retrofit-profile-validation-report' ||
+      !knownStatuses.includes(stringValue(record.status))
+    ) {
+      throw new Error('Work Journal Native/Retrofit profile validation report source has an unsupported role/status.')
     }
     requireFalseFields(source.label, record, [
       'extensionExecutionAllowed',
@@ -939,6 +996,9 @@ function classifyArtifact(sourceId: string, status: string): WorkJournalArtifact
   if (sourceId === 'extension-adapter-compatibility-report') {
     return normalized.includes('blocked') ? 'blocked' : normalized.includes('validated') ? 'advisory' : 'advisory'
   }
+  if (sourceId === 'native-retrofit-profile-validation-report') {
+    return normalized.includes('blocked') ? 'blocked' : normalized.includes('passed') ? 'advisory' : 'advisory'
+  }
   if (sourceId === 'runtime-evidence-satisfaction-readiness')
     return normalized.includes('ready') ? 'advisory' : 'blocked'
   if (sourceId === 'equivalence-proof-readiness' || sourceId === 'scope-ci')
@@ -993,6 +1053,13 @@ function buildFlow(artifacts: WorkJournalArtifactSummary[]): WorkJournalFlowStep
       planSourceId: 'extension-adapter-compatibility-report',
       alternatePlanSourceId: 'extension-context-plan',
       secondaryAlternatePlanSourceId: 'extension-profile-catalog',
+    },
+    {
+      stepId: 'native-retrofit-profile',
+      label: 'Native/Retrofit',
+      summary: 'Report-only project mode and Native/Retrofit coverage validation.',
+      sourceId: 'native-retrofit-profile-validation-report',
+      planSourceId: 'native-retrofit-profile-validation-report',
     },
     {
       stepId: 'runtime-evidence',
@@ -1157,6 +1224,9 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
   const extensionAdapterCompatibility = artifacts.find(
     (artifact) => artifact.sourceId === 'extension-adapter-compatibility-report',
   )
+  const nativeRetrofitProfileValidation = artifacts.find(
+    (artifact) => artifact.sourceId === 'native-retrofit-profile-validation-report',
+  )
   const runtimeReadiness = artifacts.find((artifact) => artifact.sourceId === 'runtime-evidence-satisfaction-readiness')
   const runtimeRecord = artifacts.find((artifact) => artifact.sourceId === 'runtime-evidence-satisfaction-record')
   const equivalenceReadiness = artifacts.find((artifact) => artifact.sourceId === 'equivalence-proof-readiness')
@@ -1170,6 +1240,7 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
   const extensionCatalogSourceFacts = asRecord(extensionCatalog?.sourceFactSummary)
   const extensionContextPlanSourceFacts = asRecord(extensionContextPlan?.sourceFactSummary)
   const extensionAdapterSourceFacts = asRecord(extensionAdapterCompatibility?.sourceFactSummary)
+  const nativeRetrofitSourceFacts = asRecord(nativeRetrofitProfileValidation?.sourceFactSummary)
   const guardedApplySourceFacts = asRecord(guardedApplyReport?.sourceFactSummary)
   return {
     extensions: {
@@ -1178,24 +1249,30 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
       contextPlanStatus: extensionContextPlan?.status ?? null,
       adapterCompatibilityStatus: stringValue(extensionAdapterSourceFacts?.adapterCompatibilityStatus) || null,
       adapterCompatibilityArtifactStatus: extensionAdapterCompatibility?.status ?? null,
+      nativeRetrofitValidationStatus: stringValue(nativeRetrofitSourceFacts?.nativeRetrofitValidationStatus) || null,
+      nativeRetrofitValidationArtifactStatus: nativeRetrofitProfileValidation?.status ?? null,
       displayState:
-        extensionAdapterCompatibility?.classification === 'advisory'
-          ? 'adapter-compatibility-validated'
-          : extensionAdapterCompatibility?.classification === 'blocked'
-            ? 'adapter-compatibility-blocked'
-            : extensionContextPlan?.classification === 'advisory'
-              ? 'context-plan-generated'
-              : extensionContextPlan?.classification === 'blocked'
-                ? 'context-plan-blocked'
-                : extensionCatalog?.classification === 'advisory'
-                  ? 'catalog-compiled'
-                  : extensionCatalog?.classification === 'blocked'
-                    ? 'catalog-blocked'
-                    : extensionReadiness?.classification === 'advisory'
-                      ? 'readiness-ready'
-                      : extensionReadiness?.classification === 'blocked'
-                        ? 'readiness-blocked'
-                        : 'not-provided',
+        nativeRetrofitProfileValidation?.classification === 'advisory'
+          ? 'native-retrofit-validation-passed'
+          : nativeRetrofitProfileValidation?.classification === 'blocked'
+            ? 'native-retrofit-validation-blocked'
+            : extensionAdapterCompatibility?.classification === 'advisory'
+              ? 'adapter-compatibility-validated'
+              : extensionAdapterCompatibility?.classification === 'blocked'
+                ? 'adapter-compatibility-blocked'
+                : extensionContextPlan?.classification === 'advisory'
+                  ? 'context-plan-generated'
+                  : extensionContextPlan?.classification === 'blocked'
+                    ? 'context-plan-blocked'
+                    : extensionCatalog?.classification === 'advisory'
+                      ? 'catalog-compiled'
+                      : extensionCatalog?.classification === 'blocked'
+                        ? 'catalog-blocked'
+                        : extensionReadiness?.classification === 'advisory'
+                          ? 'readiness-ready'
+                          : extensionReadiness?.classification === 'blocked'
+                            ? 'readiness-blocked'
+                            : 'not-provided',
       catalogEntryCount: numberValue(extensionCatalogSourceFacts?.catalogEntryCount),
       capabilityGroupCounts: asRecord(extensionCatalogSourceFacts?.capabilityGroupCounts),
       graphIngestionCandidateCount:
@@ -1203,15 +1280,20 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
         numberValue(extensionContextPlanSourceFacts?.graphIngestionCandidateCount) ??
         numberValue(extensionCatalogSourceFacts?.graphIngestionCandidateCount),
       nativeRetrofitHintStatus:
+        stringValue(nativeRetrofitSourceFacts?.nativeRetrofitValidationStatus) ||
         stringValue(extensionAdapterSourceFacts?.nativeRetrofitHintStatus) ||
         stringValue(extensionContextPlanSourceFacts?.nativeRetrofitHintStatus) ||
         stringValue(extensionCatalogSourceFacts?.nativeRetrofitHintStatus) ||
         null,
       nativeRetrofitMode:
+        stringValue(nativeRetrofitSourceFacts?.nativeRetrofitMode) ||
         stringValue(extensionAdapterSourceFacts?.nativeRetrofitMode) ||
         stringValue(extensionContextPlanSourceFacts?.nativeRetrofitMode) ||
         stringValue(extensionCatalogSourceFacts?.nativeRetrofitMode) ||
         null,
+      nativeRetrofitModeInferenceStatus: stringValue(nativeRetrofitSourceFacts?.modeInferenceStatus) || null,
+      nativeRetrofitCoverageStatusCounts: asRecord(nativeRetrofitSourceFacts?.coverageStatusCounts),
+      nativeRetrofitValidationFindingCount: numberValue(nativeRetrofitSourceFacts?.validationFindingCount),
       downstreamCompatibility: asRecord(extensionCatalogSourceFacts?.downstreamCompatibility),
       viewTreeHintCount: numberValue(extensionContextPlanSourceFacts?.viewTreeHintCount),
       contextPackHintCount: numberValue(extensionContextPlanSourceFacts?.contextPackHintCount),
@@ -1235,6 +1317,7 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
         stringValue(extensionAdapterSourceFacts?.proofLifecycleCompatibilityStatus) || null,
       readinessSourceComparisonCount: numberValue(extensionAdapterSourceFacts?.readinessSourceComparisonCount),
       downstreamActionCount:
+        numberValue(nativeRetrofitSourceFacts?.downstreamActionCount) ??
         numberValue(extensionAdapterSourceFacts?.downstreamActionCount) ??
         numberValue(extensionContextPlanSourceFacts?.downstreamActionCount),
       executionAllowed: false,
@@ -1242,23 +1325,27 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
       networkCallMade: false,
       shellCommandsExecuted: false,
       nextAction:
-        extensionAdapterCompatibility?.classification === 'advisory'
-          ? 'Use adapter compatibility as report-only source facts for future Evidence adapter, proof, and policy lifecycle planning; do not execute adapters or grant authority.'
-          : extensionAdapterCompatibility?.classification === 'blocked'
-            ? 'Resolve extension adapter compatibility blockers before using adapter or policy compatibility hints.'
-            : extensionContextPlan?.classification === 'advisory'
-              ? 'Use extension context plan hints as report-only input for future View Tree and Context Pack planning; do not execute extensions or grant traversal authority.'
-              : extensionContextPlan?.classification === 'blocked'
-                ? 'Resolve extension context plan blockers before using planning hints.'
-                : extensionCatalog?.classification === 'advisory'
-                  ? 'Use the compiled catalog as report-only source facts for future View Tree, Context Pack, Evidence, policy, and graph-ingestion planning; do not execute extensions.'
-                  : extensionCatalog?.classification === 'blocked'
-                    ? 'Resolve extension catalog blockers before using extension capability hints.'
-                    : extensionReadiness?.classification === 'advisory'
-                      ? 'Compile the ready extension profile into a report-only catalog before downstream planning.'
-                      : extensionReadiness?.classification === 'blocked'
-                        ? 'Resolve extension readiness blockers before compiling a catalog.'
-                        : 'Provide extension readiness and catalog artifacts if project-specific extension hints are needed.',
+        nativeRetrofitProfileValidation?.classification === 'advisory'
+          ? 'Use Native/Retrofit validation as report-only profile coverage input for future fixture and benchmark planning; do not run native builds or benchmarks.'
+          : nativeRetrofitProfileValidation?.classification === 'blocked'
+            ? 'Resolve Native/Retrofit validation blockers before using project mode and coverage hints.'
+            : extensionAdapterCompatibility?.classification === 'advisory'
+              ? 'Use adapter compatibility as report-only source facts for future Evidence adapter, proof, and policy lifecycle planning; do not execute adapters or grant authority.'
+              : extensionAdapterCompatibility?.classification === 'blocked'
+                ? 'Resolve extension adapter compatibility blockers before using adapter or policy compatibility hints.'
+                : extensionContextPlan?.classification === 'advisory'
+                  ? 'Use extension context plan hints as report-only input for future View Tree and Context Pack planning; do not execute extensions or grant traversal authority.'
+                  : extensionContextPlan?.classification === 'blocked'
+                    ? 'Resolve extension context plan blockers before using planning hints.'
+                    : extensionCatalog?.classification === 'advisory'
+                      ? 'Use the compiled catalog as report-only source facts for future View Tree, Context Pack, Evidence, policy, and graph-ingestion planning; do not execute extensions.'
+                      : extensionCatalog?.classification === 'blocked'
+                        ? 'Resolve extension catalog blockers before using extension capability hints.'
+                        : extensionReadiness?.classification === 'advisory'
+                          ? 'Compile the ready extension profile into a report-only catalog before downstream planning.'
+                          : extensionReadiness?.classification === 'blocked'
+                            ? 'Resolve extension readiness blockers before compiling a catalog.'
+                            : 'Provide extension readiness and catalog artifacts if project-specific extension hints are needed.',
     },
     runtimeEvidence: {
       readinessStatus: runtimeReadiness?.status ?? null,
@@ -1464,6 +1551,62 @@ function buildSourceFactSummary(source: LoadedArtifact): JsonRecord | null {
       equivalenceProven: record.equivalenceProven === true,
       scopeEnforced: record.scopeEnforced === true,
       ciEnforcementEnabled: record.ciEnforcementEnabled === true,
+    }
+  }
+  if (source.sourceId === 'native-retrofit-profile-validation-report') {
+    const modeSummary = asRecord(record.nativeRetrofitModeSummary)
+    const profileCoverage = asRecord(record.profileCoverage)
+    const sourceChainComparison = asRecord(record.sourceChainComparison)
+    const coverageSections = profileCoverage
+      ? Object.values(profileCoverage)
+          .map((entry) => asRecord(entry))
+          .filter((entry): entry is JsonRecord => Boolean(entry))
+      : []
+    const coverageStatusCounts = countStringValues(
+      coverageSections.map((section) => stringValue(section.coverageStatus)),
+    )
+    const findings = arrayRecords(record.validationFindings)
+    return {
+      nativeRetrofitValidationStatus: stringValue(record.nativeRetrofitValidationStatus) || null,
+      nativeRetrofitMode: stringValue(modeSummary?.mode) || null,
+      modeInferenceStatus: stringValue(modeSummary?.modeInferenceStatus) || null,
+      coverageStatusCounts,
+      modeCoverageStatus: stringValue(asRecord(profileCoverage?.mode)?.coverageStatus) || null,
+      evidenceAdapterCoverageStatus:
+        stringValue(asRecord(profileCoverage?.evidenceAdapterCoverage)?.coverageStatus) || null,
+      policyScopeCoverageStatus: stringValue(asRecord(profileCoverage?.policyScopeCoverage)?.coverageStatus) || null,
+      graphIngestionCoverageStatus:
+        stringValue(asRecord(profileCoverage?.graphIngestionCoverage)?.coverageStatus) || null,
+      nativeBoundaryCoverageStatus:
+        stringValue(asRecord(profileCoverage?.nativeBoundaryCoverage)?.coverageStatus) || null,
+      retrofitParityCoverageStatus:
+        stringValue(asRecord(profileCoverage?.retrofitParityCoverage)?.coverageStatus) || null,
+      sourceChainComparisonStatus: sourceChainComparison
+        ? [
+            stringValue(sourceChainComparison.projectProfileComparisonStatus),
+            stringValue(sourceChainComparison.catalogAdapterComparisonStatus),
+            stringValue(sourceChainComparison.contextPlanComparisonStatus),
+          ]
+            .filter(Boolean)
+            .join('|')
+        : null,
+      sourceChainLimitationCount: arrayStrings(sourceChainComparison?.limitations).length,
+      validationFindingCountsBySeverity: countStringValues(findings.map((finding) => stringValue(finding.severity))),
+      validationFindingCount: findings.length,
+      downstreamActionCount: arrayRecords(record.downstreamActionPlan).length,
+      extensionExecutionAllowed: record.extensionExecutionAllowed === true,
+      providerInvoked: record.providerInvoked === true,
+      networkCallMade: record.networkCallMade === true,
+      shellCommandsExecuted: record.shellCommandsExecuted === true,
+      adapterExecuted: record.adapterExecuted === true,
+      policyEnforced: record.policyEnforced === true,
+      runtimeEvidenceSatisfied: record.runtimeEvidenceSatisfied === true,
+      evidenceAccepted: record.evidenceAccepted === true,
+      equivalenceProven: record.equivalenceProven === true,
+      scopeEnforced: record.scopeEnforced === true,
+      ciEnforcementEnabled: record.ciEnforcementEnabled === true,
+      graphSourceMutated: record.graphSourceMutated === true,
+      graphDeltaApplied: record.graphDeltaApplied === true,
     }
   }
   if (source.sourceId === 'guarded-graph-update-apply-report') {
@@ -1995,6 +2138,8 @@ function renderWorkJournalHtml(journal: WorkJournalDataPreview): string {
         '<div class="summary-cell"><span>Evidence required</span><strong>' + esc(fmt(evidence.required)) + '</strong></div>' +
         '<div class="summary-cell"><span>Evidence provided</span><strong>' + esc(fmt(evidence.provided)) + '</strong></div>' +
         '<div class="summary-cell"><span>Evidence missing</span><strong>' + esc(fmt(evidence.missing)) + '</strong></div>' +
+        '<div class="summary-cell"><span>Native/Retrofit</span><strong>' + esc(extensions.nativeRetrofitMode || extensions.nativeRetrofitValidationStatus || 'not-provided') + '</strong></div>' +
+        '<div class="summary-cell"><span>Native findings</span><strong>' + esc(fmt(extensions.nativeRetrofitValidationFindingCount)) + '</strong></div>' +
         '<div class="summary-cell"><span>Authority</span><strong>journal flags false</strong></div>';
     }
     function renderWorkflow(run) {
@@ -2055,6 +2200,7 @@ function renderWorkJournalHtml(journal: WorkJournalDataPreview): string {
     }
     function relatedSourceIds(stepId) {
       if (stepId === 'extension-readiness') return ['extension-readiness', 'extension-profile-catalog', 'extension-context-plan', 'extension-adapter-compatibility-report'];
+      if (stepId === 'native-retrofit-profile') return ['native-retrofit-profile-validation-report', 'extension-profile-catalog', 'extension-context-plan', 'extension-adapter-compatibility-report'];
       if (stepId === 'runtime-evidence') return ['runtime-evidence-satisfaction-readiness', 'runtime-evidence-satisfaction-record'];
       if (stepId === 'equivalence-proof') return ['equivalence-proof-readiness', 'equivalence-proof-record'];
       if (stepId === 'scope-ci') return ['scope-ci', 'scope-ci-enforcement-record'];
@@ -2136,6 +2282,15 @@ function arrayRecords(value: unknown): JsonRecord[] {
 
 function arrayStrings(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : []
+}
+
+function countStringValues(values: Array<string | null | undefined>): Record<string, number> {
+  const counts: Record<string, number> = {}
+  for (const value of values) {
+    if (!value) continue
+    counts[value] = (counts[value] ?? 0) + 1
+  }
+  return counts
 }
 
 function escapeHtml(value: string): string {

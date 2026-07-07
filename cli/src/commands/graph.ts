@@ -3955,6 +3955,7 @@ export async function graphReadModelReportDevViewBaselineCommand(context: Comman
       extensionProfileCatalog: context.options.extensionProfileCatalog,
       extensionContextPlan: context.options.extensionContextPlan,
       extensionAdapterCompatibilityReport: context.options.extensionAdapterCompatibilityReport,
+      nativeRetrofitProfileValidationReport: context.options.nativeRetrofitProfileValidationReport,
       applyReadiness: context.options.applyReadiness,
       approvedApplyDryRun: context.options.approvedApplyDryRun,
       applyReport: context.options.applyReport,

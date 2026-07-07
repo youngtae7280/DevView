@@ -65,6 +65,7 @@ describe('DevView Work Journal renderer', () => {
       'Context Pack',
       'Instruction Pack',
       'Project Extensions',
+      'Native/Retrofit',
       'Runtime Evidence',
       'Equivalence Proof',
       'Graph Delta',
@@ -419,6 +420,96 @@ describe('DevView Work Journal renderer', () => {
     expect(data.safetyFlags.graphSourceMutated).toBe(false)
     expect(data.safetyFlags.graphDeltaApplied).toBe(false)
     expect(html).toContain('adapter-compatibility-validated')
+    expect(html).toContain('Source artifacts and provenance')
+  })
+
+  it('summarizes Native/Retrofit profile validation reports without native build or benchmark authority', async () => {
+    const workspace = createWorkspace()
+    writeWorkJournalSources(workspace)
+    writeJson(join(workspace, 'generated/extension-profile-catalog.json'), extensionProfileCatalog())
+    writeJson(join(workspace, 'generated/extension-context-plan.json'), extensionContextPlan())
+    writeJson(join(workspace, 'generated/extension-adapter-compatibility.json'), extensionAdapterCompatibilityReport())
+    writeJson(
+      join(workspace, 'generated/native-retrofit-profile-validation.json'),
+      nativeRetrofitProfileValidationReport(),
+    )
+
+    const result = await runDevViewCli(
+      workJournalArgs(undefined, undefined, undefined, [
+        '--extension-profile-catalog',
+        'generated/extension-profile-catalog.json',
+        '--extension-context-plan',
+        'generated/extension-context-plan.json',
+        '--extension-adapter-compatibility-report',
+        'generated/extension-adapter-compatibility.json',
+        '--native-retrofit-profile-validation-report',
+        'generated/native-retrofit-profile-validation.json',
+      ]),
+      { cwd: workspace, pluginRoot },
+    )
+    const data = JSON.parse(readFileSync(join(workspace, '.devview/generated/work-journal/index.data.json'), 'utf8'))
+    const run = JSON.parse(
+      readFileSync(join(workspace, '.devview/generated/work-journal/runs/todo-add/run.json'), 'utf8'),
+    )
+    const html = readFileSync(join(workspace, '.devview/generated/work-journal/index.html'), 'utf8')
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(run.authoritySummary.extensions).toEqual(
+      expect.objectContaining({
+        adapterCompatibilityArtifactStatus: 'devview-extension-adapter-compatibility-validated',
+        nativeRetrofitValidationArtifactStatus: 'devview-native-retrofit-profile-validation-passed',
+        nativeRetrofitValidationStatus: 'passed-report-only-profile-validation',
+        displayState: 'native-retrofit-validation-passed',
+        nativeRetrofitMode: 'native',
+        nativeRetrofitModeInferenceStatus: 'mode-declared-in-project-profile',
+        nativeRetrofitValidationFindingCount: 0,
+        downstreamActionCount: 1,
+        executionAllowed: false,
+        providerInvoked: false,
+        networkCallMade: false,
+        shellCommandsExecuted: false,
+      }),
+    )
+    expect(run.authoritySummary.extensions.nativeRetrofitCoverageStatusCounts).toEqual(
+      expect.objectContaining({
+        covered: 7,
+        'future-only': 1,
+      }),
+    )
+    expect(run.flow.find((step: { stepId: string }) => step.stepId === 'native-retrofit-profile')).toEqual(
+      expect.objectContaining({
+        sourceId: 'native-retrofit-profile-validation-report',
+        authority: 'preview-only',
+        status: 'devview-native-retrofit-profile-validation-passed',
+      }),
+    )
+    const nativeRetrofitArtifact = run.artifacts.find(
+      (artifact: { sourceId: string }) => artifact.sourceId === 'native-retrofit-profile-validation-report',
+    )
+    expect(nativeRetrofitArtifact.sourceFactSummary).toEqual(
+      expect.objectContaining({
+        nativeRetrofitValidationStatus: 'passed-report-only-profile-validation',
+        nativeRetrofitMode: 'native',
+        modeInferenceStatus: 'mode-declared-in-project-profile',
+        validationFindingCount: 0,
+        downstreamActionCount: 1,
+        extensionExecutionAllowed: false,
+        providerInvoked: false,
+        networkCallMade: false,
+        shellCommandsExecuted: false,
+        graphSourceMutated: false,
+        graphDeltaApplied: false,
+      }),
+    )
+    expect(data.safetyFlags.extensionExecutionAllowed).toBe(false)
+    expect(data.safetyFlags.extensionsExecuted).toBe(false)
+    expect(data.safetyFlags.providerInvoked).toBe(false)
+    expect(data.safetyFlags.networkCallMade).toBe(false)
+    expect(data.safetyFlags.shellCommandsExecuted).toBe(false)
+    expect(data.safetyFlags.graphSourceMutated).toBe(false)
+    expect(data.safetyFlags.graphDeltaApplied).toBe(false)
+    expect(html).toContain('Native/Retrofit')
+    expect(html).toContain('native-retrofit-validation-passed')
     expect(html).toContain('Source artifacts and provenance')
   })
 
@@ -978,6 +1069,39 @@ describe('DevView Work Journal renderer', () => {
       workJournalArgs('.tmp/journal.html', '.tmp/journal.data.json', '.tmp/run.json', [
         '--extension-adapter-compatibility-report',
         'generated/not-extension-adapter-compatibility.json',
+      ]),
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.issues[0].message).toContain('unsupported role/status')
+    expect(existsSync(join(workspace, '.tmp/journal.html'))).toBe(false)
+    expect(existsSync(join(workspace, '.tmp/journal.data.json'))).toBe(false)
+    expect(existsSync(join(workspace, '.tmp/run.json'))).toBe(false)
+  })
+
+  it('blocks wrong Native/Retrofit validation role/status with unsafe flags before writing outputs', async () => {
+    const workspace = createWorkspace()
+    writeWorkJournalSources(workspace)
+    writeJson(join(workspace, 'generated/not-native-retrofit-profile-validation.json'), {
+      artifactRole: 'devview-extension-adapter-compatibility-report',
+      status: 'devview-extension-adapter-compatibility-validated',
+      extensionExecutionAllowed: true,
+      providerInvoked: true,
+      networkCallMade: true,
+      shellCommandsExecuted: true,
+      graphSourceMutated: true,
+      graphDeltaApplied: true,
+      runtimeEvidenceSatisfied: true,
+      equivalenceProven: true,
+      scopeEnforced: true,
+    })
+
+    const result = await runDevViewCli(
+      workJournalArgs('.tmp/journal.html', '.tmp/journal.data.json', '.tmp/run.json', [
+        '--native-retrofit-profile-validation-report',
+        'generated/not-native-retrofit-profile-validation.json',
       ]),
       { cwd: workspace, pluginRoot },
     )
@@ -1561,6 +1685,117 @@ function extensionAdapterCompatibilityReport(
     traversalAuthorityGranted: false,
     viewTreeMutated: false,
     contextPackMutated: false,
+  }
+}
+
+function nativeRetrofitProfileValidationReport(
+  status:
+    | 'devview-native-retrofit-profile-validation-passed'
+    | 'devview-native-retrofit-profile-validation-blocked' = 'devview-native-retrofit-profile-validation-passed',
+): Record<string, unknown> {
+  return {
+    artifactRole: 'devview-native-retrofit-profile-validation-report',
+    status,
+    validationScope: 'native-retrofit-profile-validation-report-only',
+    nativeRetrofitValidationStatus:
+      status === 'devview-native-retrofit-profile-validation-passed'
+        ? 'passed-report-only-profile-validation'
+        : 'blocked-source-chain-mismatch',
+    sourceProjectProfile: 'generated/project-profile.json',
+    sourceExtensionProfileCatalog: 'generated/extension-profile-catalog.json',
+    sourceExtensionAdapterCompatibilityReport: 'generated/extension-adapter-compatibility.json',
+    sourceExtensionContextPlan: 'generated/extension-context-plan.json',
+    sourceChainComparison: {
+      projectProfileComparisonStatus: 'matched-profile-source',
+      catalogAdapterComparisonStatus: 'matched-adapter-catalog-source',
+      contextPlanComparisonStatus: 'matched-context-plan-source',
+      limitations: [],
+    },
+    nativeRetrofitModeSummary: {
+      mode: 'native',
+      modeInferenceStatus: 'mode-declared-in-project-profile',
+      declaredMode: 'native',
+      inferredMode: null,
+      nativeSignals: ['native'],
+      retrofitSignals: [],
+      sourceFields: ['devviewMode'],
+      modeInferenceLimitations: [],
+    },
+    profileCoverage: {
+      mode: { coverageStatus: 'covered', summary: 'Mode resolved as native.', signals: ['native'], gaps: [] },
+      stackDomainPlatform: {
+        coverageStatus: 'covered',
+        summary: 'Project stack/domain/platform hints are present.',
+        signals: ['typescript', 'windows'],
+        gaps: [],
+      },
+      sourceBoundaryProtectedPaths: {
+        coverageStatus: 'covered',
+        summary: 'Source boundary hints are present.',
+        signals: ['src/native'],
+        gaps: [],
+      },
+      evidenceAdapterCoverage: {
+        coverageStatus: 'covered',
+        summary: 'compatible',
+        signals: ['1 evidence adapter(s)'],
+        gaps: [],
+      },
+      policyScopeCoverage: {
+        coverageStatus: 'covered',
+        summary: 'compatible',
+        signals: ['1 policy extension(s)'],
+        gaps: [],
+      },
+      graphIngestionCoverage: {
+        coverageStatus: 'covered',
+        summary: 'Protocol-only graph ingestion hints are present.',
+        signals: ['1 catalog graph ingestion candidate(s)'],
+        gaps: [],
+      },
+      nativeBoundaryCoverage: {
+        coverageStatus: 'covered',
+        summary: 'Native boundary hints are present.',
+        signals: ['native-interop'],
+        gaps: [],
+      },
+      retrofitParityCoverage: {
+        coverageStatus: 'future-only',
+        summary: 'Retrofit parity hints are not declared yet.',
+        signals: [],
+        gaps: ['Add retrofit parity hints if this becomes a retrofit fixture.'],
+      },
+    },
+    validationFindings: [],
+    downstreamActionPlan: [{ actionId: 'plan-native-retrofit-fixture' }],
+    extensionExecutionAllowed: false,
+    extensionsExecuted: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    shellCommandsExecuted: false,
+    filesMutated: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
+    hooksActivated: false,
+    branchProtectionChanged: false,
+    branchProtectionMutated: false,
+    requiredChecksConfigured: false,
+    requiredChecksMutated: false,
+    externalCiMutated: false,
+    diffRejectionEnabled: false,
+    diffRejectionActivated: false,
+    approvalAutomationEnabled: false,
+    userAcceptanceAutomated: false,
+    traversalAuthorityGranted: false,
+    viewTreeMutated: false,
+    contextPackMutated: false,
+    adapterExecuted: false,
+    policyEnforced: false,
   }
 }
 

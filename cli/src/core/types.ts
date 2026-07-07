@@ -177,6 +177,7 @@ export interface CliOptions {
   extensionProfileCatalog?: string
   extensionContextPlan?: string
   extensionAdapterCompatibilityReport?: string
+  nativeRetrofitProfileValidationReport?: string
   scopeCiEnforcementReadiness?: string
   scopeCiEnforcementRecord?: string
   guardedGraphUpdateBoundaryRecord?: string

@@ -18,6 +18,7 @@ export interface DevViewBaselineReportOptions {
   extensionProfileCatalog?: string
   extensionContextPlan?: string
   extensionAdapterCompatibilityReport?: string
+  nativeRetrofitProfileValidationReport?: string
   applyReadiness?: string
   approvedApplyDryRun?: string
   applyReport?: string
@@ -83,6 +84,7 @@ export interface DevViewCoreBaselineFreezeReport {
   sourceExtensionProfileCatalog: string | null
   sourceExtensionContextPlan: string | null
   sourceExtensionAdapterCompatibilityReport: string | null
+  sourceNativeRetrofitProfileValidationReport: string | null
   sourceApplyReadiness: string | null
   sourceApprovedApplyDryRun: string | null
   sourceGraphDeltaApplyReport: string | null
@@ -205,6 +207,12 @@ const OPTIONAL_SOURCE_DEFS = [
     label: 'Project-specific extension adapter compatibility report',
     optionKey: 'extensionAdapterCompatibilityReport',
     expectedRole: 'devview-extension-adapter-compatibility-report',
+  },
+  {
+    sourceId: 'native-retrofit-profile-validation-report',
+    label: 'Native/Retrofit profile validation report',
+    optionKey: 'nativeRetrofitProfileValidationReport',
+    expectedRole: 'devview-native-retrofit-profile-validation-report',
   },
   {
     sourceId: 'graph-delta-apply-readiness',
@@ -471,6 +479,10 @@ function validateExactOptionalSourceShape(source: LoadedSource, findings: DevVie
     validateExtensionAdapterCompatibilityReportSourceShape(source, record, findings)
     return
   }
+  if (source.sourceId === 'native-retrofit-profile-validation-report') {
+    validateNativeRetrofitProfileValidationReportSourceShape(source, record, findings)
+    return
+  }
   if (source.sourceId === 'guarded-graph-update-apply-report') {
     validateGuardedGraphUpdateApplyReportSourceShape(source, record, findings)
     return
@@ -695,6 +707,70 @@ function validateExtensionAdapterCompatibilityReportSourceShape(
     if (field in record && record[field] !== false) {
       findings.push({
         code: 'DEVVIEW_BASELINE_EXTENSION_ADAPTER_COMPATIBILITY_UNSAFE_FLAG',
+        severity: 'error',
+        field: `${source.sourceId}.${field}`,
+        message: `${source.label} must keep ${field}:false.`,
+        expected: false,
+        actual: record[field],
+      })
+    }
+  }
+}
+
+function validateNativeRetrofitProfileValidationReportSourceShape(
+  source: LoadedSource,
+  record: JsonRecord,
+  findings: DevViewBaselineFinding[],
+): void {
+  const role = stringValue(record.artifactRole)
+  const status = stringValue(record.status)
+  const knownStatuses = [
+    'devview-native-retrofit-profile-validation-passed',
+    'devview-native-retrofit-profile-validation-blocked',
+  ]
+  if (role !== 'devview-native-retrofit-profile-validation-report' || !knownStatuses.includes(status)) {
+    findings.push({
+      code: 'DEVVIEW_BASELINE_NATIVE_RETROFIT_PROFILE_VALIDATION_ROLE_STATUS_INVALID',
+      severity: 'error',
+      field: `${source.sourceId}.status`,
+      message: `${source.label} must use the DevView Native/Retrofit profile validation report role and a known report status.`,
+      expected: 'devview-native-retrofit-profile-validation-report with passed or blocked status',
+      actual: { artifactRole: role, status },
+    })
+  }
+  for (const field of [
+    'extensionExecutionAllowed',
+    'extensionsExecuted',
+    'adapterExecuted',
+    'policyEnforced',
+    'providerInvoked',
+    'networkCallMade',
+    'shellCommandsExecuted',
+    'filesMutated',
+    'graphSourceMutated',
+    'graphDeltaApplied',
+    'runtimeEvidenceSatisfied',
+    'evidenceAccepted',
+    'equivalenceProven',
+    'scopeEnforced',
+    'ciEnforcementEnabled',
+    'hooksActivated',
+    'branchProtectionChanged',
+    'branchProtectionMutated',
+    'requiredChecksConfigured',
+    'requiredChecksMutated',
+    'externalCiMutated',
+    'diffRejectionEnabled',
+    'diffRejectionActivated',
+    'approvalAutomationEnabled',
+    'userAcceptanceAutomated',
+    'traversalAuthorityGranted',
+    'contextPackMutated',
+    'viewTreeMutated',
+  ]) {
+    if (field in record && record[field] !== false) {
+      findings.push({
+        code: 'DEVVIEW_BASELINE_NATIVE_RETROFIT_PROFILE_VALIDATION_UNSAFE_FLAG',
         severity: 'error',
         field: `${source.sourceId}.${field}`,
         message: `${source.label} must keep ${field}:false.`,
@@ -990,6 +1066,7 @@ function buildReport(
     sourceExtensionProfileCatalog: sourcePath('extension-profile-catalog'),
     sourceExtensionContextPlan: sourcePath('extension-context-plan'),
     sourceExtensionAdapterCompatibilityReport: sourcePath('extension-adapter-compatibility-report'),
+    sourceNativeRetrofitProfileValidationReport: sourcePath('native-retrofit-profile-validation-report'),
     sourceApplyReadiness: sourcePath('graph-delta-apply-readiness'),
     sourceApprovedApplyDryRun: sourcePath('approved-apply-dry-run'),
     sourceGraphDeltaApplyReport: sourcePath('graph-delta-apply-report'),
@@ -1122,6 +1199,9 @@ function classifyStatus(sourceId: string, status: string): BaselineClassificatio
   if (sourceId === 'extension-adapter-compatibility-report') {
     return normalized.includes('blocked') ? 'blocked' : normalized.includes('validated') ? 'advisory' : 'advisory'
   }
+  if (sourceId === 'native-retrofit-profile-validation-report') {
+    return normalized.includes('blocked') ? 'blocked' : normalized.includes('passed') ? 'advisory' : 'advisory'
+  }
   if (sourceId === 'graph-delta-apply-report') {
     return normalized.includes('applied') ? 'advisory' : 'blocked'
   }
@@ -1237,6 +1317,62 @@ function buildSourceFactSummary(source: LoadedSource): JsonRecord | null {
       equivalenceProven: record.equivalenceProven === true,
       scopeEnforced: record.scopeEnforced === true,
       ciEnforcementEnabled: record.ciEnforcementEnabled === true,
+    }
+  }
+  if (source.sourceId === 'native-retrofit-profile-validation-report') {
+    const modeSummary = asRecord(record.nativeRetrofitModeSummary)
+    const profileCoverage = asRecord(record.profileCoverage)
+    const sourceChainComparison = asRecord(record.sourceChainComparison)
+    const coverageSections = profileCoverage
+      ? Object.values(profileCoverage)
+          .map((entry) => asRecord(entry))
+          .filter((entry): entry is JsonRecord => Boolean(entry))
+      : []
+    const coverageStatusCounts = countStringValues(
+      coverageSections.map((section) => stringValue(section.coverageStatus)),
+    )
+    const findings = arrayRecords(record.validationFindings)
+    return {
+      nativeRetrofitValidationStatus: stringValue(record.nativeRetrofitValidationStatus) || null,
+      nativeRetrofitMode: stringValue(modeSummary?.mode) || null,
+      modeInferenceStatus: stringValue(modeSummary?.modeInferenceStatus) || null,
+      coverageStatusCounts,
+      modeCoverageStatus: stringValue(asRecord(profileCoverage?.mode)?.coverageStatus) || null,
+      evidenceAdapterCoverageStatus:
+        stringValue(asRecord(profileCoverage?.evidenceAdapterCoverage)?.coverageStatus) || null,
+      policyScopeCoverageStatus: stringValue(asRecord(profileCoverage?.policyScopeCoverage)?.coverageStatus) || null,
+      graphIngestionCoverageStatus:
+        stringValue(asRecord(profileCoverage?.graphIngestionCoverage)?.coverageStatus) || null,
+      nativeBoundaryCoverageStatus:
+        stringValue(asRecord(profileCoverage?.nativeBoundaryCoverage)?.coverageStatus) || null,
+      retrofitParityCoverageStatus:
+        stringValue(asRecord(profileCoverage?.retrofitParityCoverage)?.coverageStatus) || null,
+      sourceChainComparisonStatus: sourceChainComparison
+        ? [
+            stringValue(sourceChainComparison.projectProfileComparisonStatus),
+            stringValue(sourceChainComparison.catalogAdapterComparisonStatus),
+            stringValue(sourceChainComparison.contextPlanComparisonStatus),
+          ]
+            .filter(Boolean)
+            .join('|')
+        : null,
+      sourceChainLimitationCount: arrayStrings(sourceChainComparison?.limitations).length,
+      validationFindingCountsBySeverity: countStringValues(findings.map((finding) => stringValue(finding.severity))),
+      validationFindingCount: findings.length,
+      downstreamActionCount: arrayRecords(record.downstreamActionPlan).length,
+      extensionExecutionAllowed: record.extensionExecutionAllowed === true,
+      providerInvoked: record.providerInvoked === true,
+      networkCallMade: record.networkCallMade === true,
+      shellCommandsExecuted: record.shellCommandsExecuted === true,
+      adapterExecuted: record.adapterExecuted === true,
+      policyEnforced: record.policyEnforced === true,
+      runtimeEvidenceSatisfied: record.runtimeEvidenceSatisfied === true,
+      evidenceAccepted: record.evidenceAccepted === true,
+      equivalenceProven: record.equivalenceProven === true,
+      scopeEnforced: record.scopeEnforced === true,
+      ciEnforcementEnabled: record.ciEnforcementEnabled === true,
+      graphSourceMutated: record.graphSourceMutated === true,
+      graphDeltaApplied: record.graphDeltaApplied === true,
     }
   }
   if (source.sourceId === 'guarded-graph-update-apply-report') {
@@ -1709,6 +1845,15 @@ function arrayRecords(value: unknown): JsonRecord[] {
 
 function arrayStrings(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : []
+}
+
+function countStringValues(values: Array<string | null | undefined>): Record<string, number> {
+  const counts: Record<string, number> = {}
+  for (const value of values) {
+    if (!value) continue
+    counts[value] = (counts[value] ?? 0) + 1
+  }
+  return counts
 }
 
 function numberValue(value: unknown): number | null {

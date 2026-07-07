@@ -141,6 +141,7 @@ devview work-journal render \
   --extension-profile-catalog <extension-profile-catalog.json> \
   --extension-context-plan <extension-context-plan.json> \
   --extension-adapter-compatibility-report <extension-adapter-compatibility.json> \
+  --native-retrofit-profile-validation-report <native-retrofit-profile-validation.json> \
   --runtime-evidence-satisfaction-readiness <runtime-readiness.json> \
   --runtime-evidence-satisfaction-record <runtime-satisfaction-record.json> \
   --equivalence-proof-readiness <equivalence-readiness.json> \
@@ -163,8 +164,9 @@ DevView Work Journal data artifact, the command preserves prior runs and replace
 deterministically. The default HTML view is compact: run status, blocked/ready reason, next action, a pipeline strip,
 Evidence and scope counts, and preview-only versus actual-authority source state. Full provenance, raw run JSON, paths,
 hashes, and artifact lists stay behind inspector drill-down sections. The journal is report-only: it summarizes DevView
-flow and source facts, including compiled extension catalogs, extension context plans, deferred guarded-update
-boundaries, and apply-plan previews when provided, without executing extensions, granting traversal authority, calling
+flow and source facts, including compiled extension catalogs, extension context plans, adapter compatibility reports,
+Native/Retrofit profile validation reports, deferred guarded-update boundaries, and apply-plan previews when provided,
+without executing extensions, granting traversal authority, running native/retrofit builds or benchmarks, calling
 providers, mutating the Maintainability Graph, applying a Graph Delta, creating runtime Evidence satisfaction, creating
 an equivalence proof, mutating external CI, or changing branch protection. A ready apply plan means the next action is
 explicit policy-gated apply authorization; it does not mean the graph was updated.
@@ -399,6 +401,7 @@ devview graph read-model report-devview-baseline \
   --extension-profile-catalog <extension-profile-catalog.json> \
   --extension-context-plan <extension-context-plan.json> \
   --extension-adapter-compatibility-report <extension-adapter-compatibility.json> \
+  --native-retrofit-profile-validation-report <native-retrofit-profile-validation.json> \
   --approved-apply-dry-run <approved-apply-dry-run.json> \
   --apply-report <graph-delta-apply-report.json> \
   --evidence-decision <evidence-decision-record.json> \
@@ -415,8 +418,9 @@ devview graph read-model report-devview-baseline \
   --json
 ```
 
-Summarizes existing artifacts only. It does not create authority, accept Evidence, satisfy runtime Evidence, prove
-equivalence, enforce scope, configure CI, activate hooks, or execute Codex.
+Summarizes existing artifacts only, including optional Native/Retrofit profile validation source facts when provided. It
+does not create authority, accept Evidence, satisfy runtime Evidence, prove equivalence, enforce scope, configure CI,
+activate hooks, run native/retrofit builds or benchmarks, or execute Codex.
 
 ### Legacy Audit
 

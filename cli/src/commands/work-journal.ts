@@ -34,6 +34,7 @@ export async function workJournalRenderCommand(context: CommandContext): Promise
       extensionProfileCatalog: context.options.extensionProfileCatalog,
       extensionContextPlan: context.options.extensionContextPlan,
       extensionAdapterCompatibilityReport: context.options.extensionAdapterCompatibilityReport,
+      nativeRetrofitProfileValidationReport: context.options.nativeRetrofitProfileValidationReport,
       runtimeEvidenceSatisfactionReadiness: context.options.runtimeEvidenceSatisfactionReadiness,
       runtimeEvidenceSatisfactionRecord: context.options.runtimeEvidenceSatisfactionRecord,
       equivalenceProofReadiness: context.options.equivalenceProofReadiness,

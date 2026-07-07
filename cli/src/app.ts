@@ -219,6 +219,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     extensionProfileCatalog: undefined as string | undefined,
     extensionContextPlan: undefined as string | undefined,
     extensionAdapterCompatibilityReport: undefined as string | undefined,
+    nativeRetrofitProfileValidationReport: undefined as string | undefined,
     scopeCiEnforcementReadiness: undefined as string | undefined,
     scopeCiEnforcementRecord: undefined as string | undefined,
     guardedGraphUpdateBoundaryRecord: undefined as string | undefined,
@@ -1081,6 +1082,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--extension-adapter-compatibility-report requires a file path.' }
       }
       options.extensionAdapterCompatibilityReport = value
+      index += 1
+    } else if (arg === '--native-retrofit-profile-validation-report') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--native-retrofit-profile-validation-report requires a file path.' }
+      }
+      options.nativeRetrofitProfileValidationReport = value
       index += 1
     } else if (arg === '--scope-ci-enforcement-readiness') {
       const value = argv[index + 1]
