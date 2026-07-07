@@ -28,9 +28,10 @@ The View Tree is not legacy tree-native storage. It is a graph-derived view for 
 View Tree can narrow context, but it does not replace the Maintainability Graph and does not grant authority to mutate
 it.
 
-The current CLI transition surface is `graph read-model select-slice`. Its stored compatibility artifact role remains
-`selected-graph-slice`, but generated artifacts now carry `viewTreeArtifactRole: devview-view-tree-preview` and should
-be treated as View Tree previews.
+The canonical CLI transition surface is `graph read-model generate-view-tree`. The transitional compatibility command
+`graph read-model select-slice` writes the same preview. Its stored compatibility artifact role remains
+`selected-graph-slice`, while generated artifacts carry `viewTreeArtifactRole: devview-view-tree-preview` and should be
+treated as View Tree previews.
 
 ## Context Pack
 

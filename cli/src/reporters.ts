@@ -219,8 +219,10 @@ Commands:
                        Validate Request IR candidate graph/read-model authority without traversal
   graph read-model plan-traversal
                        Generate a deterministic Graph Traversal Plan without selected slice output
-  graph read-model select-slice
+  graph read-model generate-view-tree
                        Generate a deterministic View Tree preview without contract input output
+  graph read-model select-slice
+                       Compatibility alias for graph read-model generate-view-tree
   graph read-model generate-contract-input
                        Generate deterministic Contract Compiler Input from a View Tree preview
   graph read-model generate-instruction-pack
@@ -308,7 +310,7 @@ Options:
   --graph-delta <file> Graph delta file for graph operation propose-update.
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-approved-apply-dry-run, apply-graph-delta, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-runtime-evidence-satisfaction-readiness, report-equivalence-proof-readiness, report-scope-ci-enforcement-readiness, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, run-clarification-chain, validate-request-ir, validate-request-ir-graph, plan-traversal, select-slice, generate-contract-input, generate-instruction-pack, report-project-memory-extension-gaps, report-project-memory-impact, render-devview-graph, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, report-user-prompt-submit-advisory, report-stop-post-run-advisory, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, report-hook-activation-chain, or report-devview-baseline.
+  --output <file>      Output file for graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-approved-apply-dry-run, apply-graph-delta, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-runtime-evidence-satisfaction-readiness, report-equivalence-proof-readiness, report-scope-ci-enforcement-readiness, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, run-clarification-chain, validate-request-ir, validate-request-ir-graph, plan-traversal, generate-view-tree, select-slice, generate-contract-input, generate-instruction-pack, report-project-memory-extension-gaps, report-project-memory-impact, render-devview-graph, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, report-user-prompt-submit-advisory, report-stop-post-run-advisory, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, report-hook-activation-chain, or report-devview-baseline.
   --data-output <file> Data JSON output for graph read-model render-devview-graph.
   --markdown <file>    Optional Markdown summary output for graph read-model report-health, check-scope, review-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-approved-apply-dry-run, apply-graph-delta, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-runtime-evidence-satisfaction-readiness, report-equivalence-proof-readiness, report-scope-ci-enforcement-readiness, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, run-clarification-chain, run-preflight-session, generate-instruction-pack, report-project-memory-extension-gaps, report-project-memory-impact, report-frontend-chain, prepare-user-prompt-context, report-user-prompt-submit-advisory, report-stop-post-run-advisory, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, report-hook-activation-chain, or report-devview-baseline.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal, graph read-model review-graph-delta, record-human-decision, report-approved-apply-dry-run, apply-graph-delta, record-evidence-decision, or create-accepted-evidence-record.
@@ -369,7 +371,7 @@ Options:
   --graph-validation <file>
                        Graph-aware Request IR validation file for graph read-model plan-traversal.
   --traversal-plan <file>
-                       Graph Traversal Plan file for graph read-model select-slice.
+                       Graph Traversal Plan file for graph read-model generate-view-tree or select-slice.
   --selected-slice <file>
                        View Tree preview file for graph read-model generate-contract-input.
   --contract-input <file>

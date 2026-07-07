@@ -2411,9 +2411,20 @@ export async function graphReadModelPlanTraversalCommand(context: CommandContext
   }
 }
 
+export async function graphReadModelGenerateViewTreeCommand(context: CommandContext): Promise<CommandResult> {
+  return graphReadModelViewTreeCommand(context, 'graph read-model generate-view-tree')
+}
+
 export async function graphReadModelSelectSliceCommand(context: CommandContext): Promise<CommandResult> {
+  return graphReadModelViewTreeCommand(context, 'graph read-model select-slice')
+}
+
+async function graphReadModelViewTreeCommand(
+  context: CommandContext,
+  commandName: 'graph read-model generate-view-tree' | 'graph read-model select-slice',
+): Promise<CommandResult> {
   if (!context.options.traversalPlan) {
-    return invalidCommand('graph read-model select-slice requires --traversal-plan <traversalPlanPath>.')
+    return invalidCommand(`${commandName} requires --traversal-plan <traversalPlanPath>.`)
   }
 
   try {
@@ -2425,7 +2436,7 @@ export async function graphReadModelSelectSliceCommand(context: CommandContext):
 
     return {
       ok: !blocked,
-      command: 'graph read-model select-slice',
+      command: commandName,
       exitCode: blocked ? ExitCode.ValidationFailed : ExitCode.Success,
       message: blocked
         ? 'View Tree preview generation did not produce a generated graph-derived view.'
@@ -2456,7 +2467,7 @@ export async function graphReadModelSelectSliceCommand(context: CommandContext):
     const message = error instanceof Error ? error.message : String(error)
     return {
       ok: false,
-      command: 'graph read-model select-slice',
+      command: commandName,
       exitCode: ExitCode.ValidationFailed,
       message: 'View Tree preview generation could not run.',
       issues: [

@@ -30,6 +30,7 @@ import {
   graphReadModelGenerateHookSessionManifestCommand,
   graphReadModelGenerateHookScriptScaffoldCommand,
   graphReadModelGenerateHookScriptTemplatesCommand,
+  graphReadModelGenerateViewTreeCommand,
   graphReadModelMaterializeHookScriptBundleCommand,
   graphReadModelReportHookActivationChainCommand,
   graphReadModelGenerateInstructionPackCommand,
@@ -353,6 +354,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'plan-traversal') {
     return graphReadModelPlanTraversalCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-view-tree') {
+    return graphReadModelGenerateViewTreeCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'select-slice') {
     return graphReadModelSelectSliceCommand(context)

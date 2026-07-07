@@ -84,6 +84,7 @@ describe('DevView CLI', () => {
     expect(result.stdout).toContain('context recommend')
     expect(result.stdout).toContain('context pack')
     expect(result.stdout).toContain('graph execution-contract report')
+    expect(result.stdout).toContain('graph read-model generate-view-tree')
     expect(result.stdout).toContain('product-intake close')
     expect(result.stdout).toContain('work-planning close')
     expect(result.stdout).toContain('execution start')

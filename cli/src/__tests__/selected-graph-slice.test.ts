@@ -114,6 +114,39 @@ describe('Selected graph slice generator core', () => {
 })
 
 describe('Selected graph slice CLI', () => {
+  it('writes a canonical View Tree preview through graph read-model generate-view-tree', async () => {
+    const workspace = createWorkspace()
+    writeFixtureFiles(workspace)
+    const outputPath = join('.tmp', 'view-tree.json')
+
+    const result = await runDevViewCli(
+      [
+        'graph',
+        'read-model',
+        'generate-view-tree',
+        '--traversal-plan',
+        'graph-traversal-plan.json',
+        '--output',
+        outputPath,
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+    const written = JSON.parse(readFileSync(join(workspace, outputPath), 'utf8'))
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.command).toBe('graph read-model generate-view-tree')
+    expect(payload.viewTreeArtifactRole).toBe('devview-view-tree-preview')
+    expect(payload.viewTreeStatus).toBe('devview-view-tree-preview-generated')
+    expect(payload.contextPackBoundary.contextPackRole).toBe('bounded-subgraph-package-around-view-tree')
+    expect(payload.runtimeEvidenceSatisfied).toBe(false)
+    expect(payload.equivalenceProven).toBe(false)
+    expect(payload.scopeEnforced).toBe(false)
+    expect(payload.ciEnforcementEnabled).toBe(false)
+    expect(written.viewTreeArtifactRole).toBe('devview-view-tree-preview')
+  })
+
   it('writes only the explicit output path and does not mutate graph source', async () => {
     const workspace = createWorkspace()
     writeFixtureFiles(workspace)
