@@ -12,6 +12,7 @@ import { reportEvidenceAcceptanceReadinessFile } from '../core/evidence-acceptan
 import { recordEquivalenceProofFile } from '../core/equivalence-proof-record.js'
 import { reportEquivalenceProofReadinessFile } from '../core/equivalence-proof-readiness.js'
 import { reportGraphSourceMutationReadinessFile } from '../core/graph-source-mutation-readiness.js'
+import { recordScopeCiEnforcementFile } from '../core/scope-ci-enforcement-record.js'
 import { reportScopeCiEnforcementReadinessFile } from '../core/scope-ci-enforcement-readiness.js'
 import { analyzeRequestFile } from '../core/ai-request-analyzer-run.js'
 import { generateClarificationInterviewPackFile } from '../core/clarification-interview-pack.js'
@@ -1809,6 +1810,61 @@ export async function graphReadModelReportScopeCiEnforcementReadinessCommand(
           message,
           suggestedFix:
             'Provide a readable Scope/CI Enforcement Policy boundary, Equivalence Proof readiness preview, and dedicated scope-ci-enforcement-readiness output paths. This command is read-only and never enables enforcement.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelRecordScopeCiEnforcementCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.scopeCiEnforcementReadiness) {
+    return invalidCommand(
+      'graph read-model record-scope-ci-enforcement requires --scope-ci-enforcement-readiness <file>.',
+    )
+  }
+  if (!context.options.equivalenceProofRecord) {
+    return invalidCommand('graph read-model record-scope-ci-enforcement requires --equivalence-proof-record <file>.')
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph read-model record-scope-ci-enforcement requires --output <file>.')
+  }
+
+  try {
+    const result = await recordScopeCiEnforcementFile(context.options.root, {
+      scopeCiEnforcementReadiness: context.options.scopeCiEnforcementReadiness,
+      equivalenceProofRecord: context.options.equivalenceProofRecord,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph read-model record-scope-ci-enforcement',
+      exitCode: ExitCode.Success,
+      message:
+        'Scope/CI Enforcement record created without external CI, branch protection, hook, diff rejection, graph, provider, or approval mutation.',
+      issues: [],
+      data: {
+        ...result.record,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: 'Use this record as a deterministic Scope/CI lifecycle source for future external CI or branch-protection proposal commands. This command did not mutate .github, configure required checks, change branch protection, reject diffs, activate hooks, apply graph deltas, mutate graph-source, execute extensions, call providers, or automate approval.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model record-scope-ci-enforcement',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Scope/CI Enforcement record blocked.',
+      issues: [
+        issue({
+          validator: 'ScopeCiEnforcementRecord',
+          code: 'SCOPE_CI_ENFORCEMENT_RECORD_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a ready Scope/CI Enforcement readiness preview, an actual Equivalence Proof record, and dedicated output paths. This command records lifecycle authority only and never mutates external CI, branch protection, hooks, graph-source, or providers.',
         }),
       ],
     }

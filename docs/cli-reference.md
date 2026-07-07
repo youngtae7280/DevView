@@ -249,11 +249,19 @@ devview graph read-model report-scope-ci-enforcement-readiness \
   --equivalence-proof-readiness <equivalence-readiness.json> \
   --output <scope-ci-readiness.json> \
   --json
+
+devview graph read-model record-scope-ci-enforcement \
+  --scope-ci-enforcement-readiness <scope-ci-readiness-ready.json> \
+  --equivalence-proof-record <equivalence-proof-record.json> \
+  --output <scope-ci-enforcement-record.json> \
+  --json
 ```
 
-Readiness and Scope/CI commands are report-only. The Equivalence Proof record command can prove only one explicit
-runtime Evidence obligation from an actual runtime satisfaction record; it still does not enforce scope, configure CI,
-create required checks, change branch protection, or reject diffs.
+Readiness commands are report-only. The Equivalence Proof record command can prove only one explicit runtime Evidence
+obligation from an actual runtime satisfaction record. The Scope/CI Enforcement record command can record deterministic
+DevView Scope/CI lifecycle authority only from ready Scope/CI readiness plus an actual Equivalence Proof record. It
+still does not mutate external CI, configure required checks, change branch protection, activate hooks, reject diffs,
+apply a Graph Delta, or mutate graph-source.
 
 ### Baseline And Final Handoff
 

@@ -66,6 +66,7 @@ import {
   graphReadModelReportIntentCommand,
   graphReadModelReportGraphSourceMutationReadinessCommand,
   graphReadModelReportDevViewBaselineCommand,
+  graphReadModelRecordScopeCiEnforcementCommand,
   graphReadModelReportScopeCiEnforcementReadinessCommand,
   graphReadModelSelectSliceCommand,
   graphReadModelSummarizeCommand,
@@ -335,6 +336,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
     positionals[2] === 'report-scope-ci-enforcement-readiness'
   ) {
     return graphReadModelReportScopeCiEnforcementReadinessCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'record-scope-ci-enforcement') {
+    return graphReadModelRecordScopeCiEnforcementCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-ai-request-analyzer-pack') {
     return graphReadModelGenerateAiRequestAnalyzerPackCommand(context)
