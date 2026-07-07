@@ -108,6 +108,7 @@ import {
   securityReportRbacReadinessCommand,
   securityReportReleaseProvenanceCommand,
   securityReportSigningReadinessCommand,
+  securityValidateProvenanceAttestationCommand,
   securityValidateSbomArtifactCommand,
   securityValidateRbacPolicyCommand,
   securityVerifyRecordEnvelopeCommand,
@@ -197,6 +198,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'security' && subcommand === 'record-package-artifact-digest') {
     return securityRecordPackageArtifactDigestCommand(context)
+  }
+  if (command === 'security' && subcommand === 'validate-provenance-attestation') {
+    return securityValidateProvenanceAttestationCommand(context)
   }
   if (command === 'security' && subcommand === 'validate-rbac-policy') {
     return securityValidateRbacPolicyCommand(context)

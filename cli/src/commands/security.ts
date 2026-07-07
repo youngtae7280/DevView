@@ -14,6 +14,10 @@ import {
   PackageArtifactDigestRecordValidationError,
   recordPackageArtifactDigest,
 } from '../core/package-artifact-digest-record.js'
+import {
+  ProvenanceAttestationValidationError,
+  validateProvenanceAttestation,
+} from '../core/provenance-attestation-validation.js'
 import { RbacPolicyValidationError, validateRbacPolicy } from '../core/rbac-policy-validation.js'
 import { RbacReadinessReportValidationError, reportRbacReadiness } from '../core/rbac-readiness-report.js'
 import { RecordEnvelopePreviewValidationError, previewRecordEnvelope } from '../core/record-envelope-preview.js'
@@ -415,6 +419,70 @@ export async function securityRecordPackageArtifactDigestCommand(context: Comman
           message,
           suggestedFix:
             'Provide --package-artifact and --output and write package artifact digest outputs outside source/control artifacts and source inputs.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function securityValidateProvenanceAttestationCommand(context: CommandContext): Promise<CommandResult> {
+  try {
+    const report = await validateProvenanceAttestation(context.options.root, {
+      attestation: context.options.attestation,
+      packageProvenanceInputs: context.options.packageProvenanceInputs,
+      packageArtifactDigest: context.options.packageArtifactDigest,
+      releaseProvenanceReadiness: context.options.releaseProvenanceReadiness,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'security validate-provenance-attestation',
+      exitCode: ExitCode.Success,
+      message: 'Preexisting provenance attestation artifact validated as a report-only source fact.',
+      issues: [],
+      data: { ...report },
+    }
+  } catch (error) {
+    if (error instanceof ProvenanceAttestationValidationError) {
+      const report = error.report
+      const blockers = report.validationFindings.filter((finding) => finding.severity === 'blocker')
+      return {
+        ok: false,
+        command: 'security validate-provenance-attestation',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'Provenance attestation validation is blocked before any output write.',
+        issues: blockers.map((finding) =>
+          issue({
+            validator: 'ProvenanceAttestationValidation',
+            code: finding.code,
+            severity: 'error',
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide a wrapped static provenance attestation source fact with matching package digest/source inputs and no signing, provider/network, RBAC, CI, or lifecycle authority claims.',
+          }),
+        ),
+        data: { ...report },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'security validate-provenance-attestation',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Provenance attestation validation could not run.',
+      issues: [
+        issue({
+          validator: 'ProvenanceAttestationValidation',
+          code: 'PROVENANCE_ATTESTATION_VALIDATION_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide --attestation and --output and write provenance attestation validation outputs outside source/control artifacts and source inputs.',
         }),
       ],
     }

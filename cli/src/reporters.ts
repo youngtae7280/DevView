@@ -127,6 +127,8 @@ Commands:
                        Record package/source/build input facts without creating package artifacts or attestations
   security record-package-artifact-digest
                        Record a preexisting package artifact digest without running npm pack, signing, or attesting
+  security validate-provenance-attestation
+                       Validate a wrapped static provenance attestation source fact without generating, signing, or verifying it
   security validate-rbac-policy
                        Validate declarative RBAC role assignment policy without enforcing RBAC
   security report-rbac-readiness
@@ -446,6 +448,7 @@ Options:
   --release-provenance-readiness <file>
                        Release provenance/SBOM readiness report for security report-enterprise-readiness; repeat or comma-separate for multiples.
   --sbom <file>        Wrapped static SBOM source fact for security validate-sbom-artifact.
+  --attestation <file> Wrapped static provenance attestation source fact for security validate-provenance-attestation.
   --package-artifact <file>
                        Preexisting package artifact for security record-package-artifact-digest; bytes are hashed only.
   --expected-sha256 <sha256>
@@ -457,7 +460,7 @@ Options:
   --package-provenance-inputs <file>
                        Package provenance inputs record for security report-enterprise-readiness or record-package-artifact-digest; repeat or comma-separate for multiples where supported.
   --package-artifact-digest <file>
-                       Package artifact digest record for security report-enterprise-readiness; repeat or comma-separate for multiples.
+                       Package artifact digest record for security report-enterprise-readiness or validate-provenance-attestation; repeat or comma-separate for multiples where supported.
   --source-ref <value>
                        Explicit source ref label for security record-package-provenance-inputs; metadata only, not verified.
   --build-command <value>

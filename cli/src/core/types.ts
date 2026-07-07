@@ -219,6 +219,7 @@ export interface CliOptions {
   releaseSurfaceValidation?: string
   providerNetworkPolicyReport?: string
   sbom?: string
+  attestation?: string
   packageArtifact?: string
   expectedSha256?: string
   packageJson?: string

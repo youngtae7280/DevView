@@ -326,6 +326,30 @@ enterprise gates. Optional package provenance inputs and release-surface validat
 artifact roles/statuses and keep package generation, publishing, signing, SBOM generation/attestation, provenance
 attestation, key/RBAC, provider/network, graph/lifecycle, CI, hook, and approval authority flags false.
 
+### Provenance Attestation Artifact Validation
+
+```bash
+devview security validate-provenance-attestation \
+  --attestation <provenance-attestation.json> \
+  --package-provenance-inputs <package-provenance-inputs.json> \
+  --package-artifact-digest <package-artifact-digest-record.json> \
+  --release-provenance-readiness <release-provenance-readiness.json> \
+  --output <provenance-attestation-validation.json> \
+  --markdown <provenance-attestation-validation.md> \
+  --json
+```
+
+Validates a wrapped static provenance attestation-like source fact against optional package provenance inputs, package
+artifact digest, and release provenance readiness reports. The input must use `devview-provenance-attestation-artifact`
+with `devview-provenance-attestation-supplied`, `attestationScope: package-provenance-attestation-source-fact-only`, and
+a recognized format such as `devview-minimal-provenance-v1`. The command hashes the supplied attestation bytes and
+compares declared package digests to supplied package artifact digest records when present. It does not generate
+attestations, perform real SLSA/in-toto or cryptographic signature verification, publish packages, run `npm pack`, sign
+packages, create keys, enforce RBAC, call providers, make network calls, or activate enterprise gates. The report role
+is `devview-provenance-attestation-validation-report` with status `devview-provenance-attestation-validation-passed`;
+provenance attestation, package signing, SBOM attestation, cryptographic verification, key/RBAC, provider/network, CI,
+hook, graph, lifecycle, approval, and user-automation authority flags remain false.
+
 ### Provider/Network Default-Deny Policy
 
 ```bash
