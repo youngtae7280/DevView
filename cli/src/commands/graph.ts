@@ -9,6 +9,7 @@ import { recordRuntimeEvidenceSatisfactionFile } from '../core/runtime-evidence-
 import { reportRuntimeEvidenceSatisfactionReadinessFile } from '../core/runtime-evidence-satisfaction-readiness.js'
 import { recordEvidenceDecisionFile } from '../core/evidence-decision-record.js'
 import { reportEvidenceAcceptanceReadinessFile } from '../core/evidence-acceptance-readiness.js'
+import { recordEquivalenceProofFile } from '../core/equivalence-proof-record.js'
 import { reportEquivalenceProofReadinessFile } from '../core/equivalence-proof-readiness.js'
 import { reportGraphSourceMutationReadinessFile } from '../core/graph-source-mutation-readiness.js'
 import { reportScopeCiEnforcementReadinessFile } from '../core/scope-ci-enforcement-readiness.js'
@@ -1742,6 +1743,60 @@ export async function graphReadModelReportEquivalenceProofReadinessCommand(
           message,
           suggestedFix:
             'Provide a readable Equivalence Proof Policy boundary, Runtime Evidence Satisfaction readiness preview, and dedicated equivalence-proof-readiness output paths. This command is read-only and never proves equivalence.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelRecordEquivalenceProofCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.policy) {
+    return invalidCommand('graph read-model record-equivalence-proof requires --policy <file>.')
+  }
+  if (!context.options.runtimeEvidenceSatisfactionRecord) {
+    return invalidCommand(
+      'graph read-model record-equivalence-proof requires --runtime-evidence-satisfaction-record <file>.',
+    )
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph read-model record-equivalence-proof requires --output <file>.')
+  }
+
+  try {
+    const result = await recordEquivalenceProofFile(context.options.root, {
+      policy: context.options.policy,
+      runtimeEvidenceSatisfactionRecord: context.options.runtimeEvidenceSatisfactionRecord,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph read-model record-equivalence-proof',
+      exitCode: ExitCode.Success,
+      message: 'Equivalence Proof record created from a revalidated Runtime Evidence satisfaction record.',
+      issues: [],
+      data: {
+        ...result.record,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: 'Use this actual Equivalence Proof record as input to future Scope/CI enforcement readiness or activation. This command did not create runtime satisfaction, accept Evidence, enforce scope, configure CI, apply graph deltas, mutate graph-source, execute extensions, call providers, or automate approval.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model record-equivalence-proof',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Equivalence Proof record blocked.',
+      issues: [
+        issue({
+          validator: 'EquivalenceProofRecord',
+          code: 'EQUIVALENCE_PROOF_RECORD_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a safe Equivalence Proof Policy boundary, an actual Runtime Evidence satisfaction record, and dedicated proof record output paths.',
         }),
       ],
     }

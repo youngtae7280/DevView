@@ -234,6 +234,12 @@ devview graph read-model report-equivalence-proof-readiness \
   --output <equivalence-readiness.json> \
   --json
 
+devview graph read-model record-equivalence-proof \
+  --policy <equivalence-policy-boundary.json> \
+  --runtime-evidence-satisfaction-record <runtime-satisfaction-record.json> \
+  --output <equivalence-proof-record.json> \
+  --json
+
 devview graph read-model report-scope-ci-enforcement-readiness \
   --policy <scope-ci-policy-boundary.json> \
   --equivalence-proof-readiness <equivalence-readiness.json> \
@@ -241,8 +247,9 @@ devview graph read-model report-scope-ci-enforcement-readiness \
   --json
 ```
 
-Both commands are report-only. They do not prove equivalence, enforce scope, configure CI, create required checks,
-change branch protection, or reject diffs.
+Readiness and Scope/CI commands are report-only. The Equivalence Proof record command can prove only one explicit
+runtime Evidence obligation from an actual runtime satisfaction record; it still does not enforce scope, configure CI,
+create required checks, change branch protection, or reject diffs.
 
 ### Baseline And Final Handoff
 

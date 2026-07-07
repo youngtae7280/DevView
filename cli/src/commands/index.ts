@@ -57,6 +57,7 @@ import {
   graphReadModelReportEvidenceAcceptanceReadinessCommand,
   graphReadModelRecordRuntimeEvidenceSatisfactionCommand,
   graphReadModelReportRuntimeEvidenceSatisfactionReadinessCommand,
+  graphReadModelRecordEquivalenceProofCommand,
   graphReadModelReportEquivalenceProofReadinessCommand,
   graphReadModelReportFrontendChainCommand,
   graphReadModelReportProjectMemoryExtensionGapsCommand,
@@ -328,6 +329,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'report-equivalence-proof-readiness') {
     return graphReadModelReportEquivalenceProofReadinessCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'record-equivalence-proof') {
+    return graphReadModelRecordEquivalenceProofCommand(context)
   }
   if (
     command === 'graph' &&
