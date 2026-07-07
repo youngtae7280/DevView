@@ -1,6 +1,6 @@
-# Retrofit PBE Intent-Critical Maintenance Example
+# Retrofit DevView Intent-Critical Maintenance Example
 
-This fixture shows a retrofit PBE scenario where existing artifacts describe behavior, but the original maintenance
+This fixture shows a retrofit DevView scenario where existing artifacts describe behavior, but the original maintenance
 intent must be recovered and recorded before AI-assisted changes.
 
 The example is intentionally small. It is a graph-source intent fixture, not an app implementation.
@@ -23,4 +23,4 @@ The record captures:
 - evidence reason
 - explicit retirement guardrail
 
-This is a retrofit PBE example: the intent is reconstructed from existing artifacts before maintenance changes proceed.
+This is a retrofit DevView example: the intent is reconstructed from existing artifacts before maintenance changes proceed.

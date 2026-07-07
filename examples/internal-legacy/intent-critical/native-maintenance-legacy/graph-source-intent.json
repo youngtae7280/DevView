@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "artifactRole": "intent-critical-graph-source-example",
-  "exampleKind": "native-pbe",
+  "exampleKind": "native-devview",
   "status": "intent-preservation-fixture",
   "sourceMode": "graph-source-intent-first",
   "sourceSlice": "examples/internal-legacy/intent-critical/native-maintenance-legacy",

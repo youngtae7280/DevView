@@ -3,7 +3,7 @@
   "artifactRole": "edge-intent-read-model-projection",
   "projectionStatus": "intent-projection-pass",
   "sourceArtifact": "examples/internal-legacy/intent-critical/native-maintenance-legacy/graph-source-intent.json",
-  "sourceExampleKind": "native-pbe",
+  "sourceExampleKind": "native-devview",
   "projectionBoundary": "This projection exposes edge-level maintenance intent for human review. It does not create a separate intent ledger, replace graph source, add enforcement, or replace user acceptance.",
   "edgeIntentProjections": [
     {

@@ -7,7 +7,7 @@ import { runDevViewCli } from '../app.js'
 interface IntentCriticalExample {
   schemaVersion: number
   artifactRole: string
-  exampleKind: 'native-pbe' | 'retrofit-pbe'
+  exampleKind: 'native-devview' | 'retrofit-devview'
   status: string
   sourceMode: string
   sourceSlice: string
@@ -53,7 +53,7 @@ interface EdgeIntentProjection {
   artifactRole: string
   projectionStatus: string
   sourceArtifact: string
-  sourceExampleKind: 'native-pbe' | 'retrofit-pbe'
+  sourceExampleKind: 'native-devview' | 'retrofit-devview'
   projectionBoundary: string
   edgeIntentProjections: Array<{
     sourceIntentRecordId: string
@@ -88,7 +88,7 @@ interface EdgeIntentProjectionReport {
   missingAnchorCount: number
   fixtures: Array<{
     graphSource: string
-    sourceExampleKind: 'native-pbe' | 'retrofit-pbe' | 'unknown'
+    sourceExampleKind: 'native-devview' | 'retrofit-devview' | 'unknown'
     status: 'intent-projection-pass' | 'intent-projection-blocked'
     edgeIntentCount: number
     claimCount: number
@@ -227,7 +227,7 @@ function expectProjectionPreservesEdgeIntent(
 }
 
 describe('intent-critical Graph-source examples', () => {
-  it('records native PBE intent before maintenance can erase UX acceptance meaning', async () => {
+  it('records native DevView intent before maintenance can erase UX acceptance meaning', async () => {
     const example = await readIntentExample(
       'examples/internal-legacy/intent-critical/native-maintenance-legacy/graph-source-intent.json',
     )
@@ -241,7 +241,7 @@ describe('intent-critical Graph-source examples', () => {
       projection,
       'examples/internal-legacy/intent-critical/native-maintenance-legacy/graph-source-intent.json',
     )
-    expect(example.exampleKind).toBe('native-pbe')
+    expect(example.exampleKind).toBe('native-devview')
     expect(example.sourceMode).toBe('graph-source-intent-first')
     expect(example.intentRecords[0].intentType).toBe('ux-acceptance-intent')
     expect(example.intentRecords[0].edgeIntent.intentKind).toBe('ux-acceptance')
@@ -253,7 +253,7 @@ describe('intent-critical Graph-source examples', () => {
     expect(example.intentRecords[0].nonGoal).toContain('hides all todos')
   })
 
-  it('records retrofit PBE recovered intent before cleanup can delete fallback compatibility evidence', async () => {
+  it('records retrofit DevView recovered intent before cleanup can delete fallback compatibility evidence', async () => {
     const example = await readIntentExample(
       'examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json',
     )
@@ -267,7 +267,7 @@ describe('intent-critical Graph-source examples', () => {
       projection,
       'examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json',
     )
-    expect(example.exampleKind).toBe('retrofit-pbe')
+    expect(example.exampleKind).toBe('retrofit-devview')
     expect(example.sourceMode).toBe('retrofit-intent-recovered')
     expect(example.intentRecords[0].intentType).toBe('compatibility-rollback-intent')
     expect(example.intentRecords[0].edgeIntent.intentKind).toBe('compatibility-retention')
@@ -280,7 +280,7 @@ describe('intent-critical Graph-source examples', () => {
   })
 
   it('projects native and retrofit edgeIntent fixtures through the CLI without changing claim text', async () => {
-    const tempRoot = await mkdtemp(join(tmpdir(), 'pbe-intent-projection-'))
+    const tempRoot = await mkdtemp(join(tmpdir(), 'devview-intent-projection-'))
     try {
       const nativeGraphSource =
         'examples/internal-legacy/intent-critical/native-maintenance-legacy/graph-source-intent.json'
@@ -330,8 +330,8 @@ describe('intent-critical Graph-source examples', () => {
     expect(report.requiredCheckBoundary).toContain('not a required check')
     expect(report.validateAllBoundary).toContain('separate from broad validate-all')
 
-    const native = report.fixtures.find((fixture) => fixture.sourceExampleKind === 'native-pbe')
-    const retrofit = report.fixtures.find((fixture) => fixture.sourceExampleKind === 'retrofit-pbe')
+    const native = report.fixtures.find((fixture) => fixture.sourceExampleKind === 'native-devview')
+    const retrofit = report.fixtures.find((fixture) => fixture.sourceExampleKind === 'retrofit-devview')
     expect(native?.status).toBe('intent-projection-pass')
     expect(retrofit?.status).toBe('intent-projection-pass')
     expect(native?.claims).toContain('empty search restores the full list after the query is cleared')
@@ -343,7 +343,7 @@ describe('intent-critical Graph-source examples', () => {
   })
 
   it('blocks project-intent when vocabulary classification or anchors are missing', async () => {
-    const tempRoot = await mkdtemp(join(tmpdir(), 'pbe-intent-projection-invalid-'))
+    const tempRoot = await mkdtemp(join(tmpdir(), 'devview-intent-projection-invalid-'))
     try {
       const source = await readIntentExample(
         'examples/internal-legacy/intent-critical/native-maintenance-legacy/graph-source-intent.json',
@@ -378,7 +378,7 @@ describe('intent-critical Graph-source examples', () => {
   })
 
   it('reports blocked intent projection summary when classification or anchors are missing', async () => {
-    const tempRoot = await mkdtemp(join(tmpdir(), 'pbe-intent-report-invalid-'))
+    const tempRoot = await mkdtemp(join(tmpdir(), 'devview-intent-report-invalid-'))
     try {
       const source = await readIntentExample(
         'examples/internal-legacy/intent-critical/native-maintenance-legacy/graph-source-intent.json',

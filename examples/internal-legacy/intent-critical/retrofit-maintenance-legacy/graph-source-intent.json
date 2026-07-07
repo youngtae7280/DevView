@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "artifactRole": "intent-critical-graph-source-example",
-  "exampleKind": "retrofit-pbe",
+  "exampleKind": "retrofit-devview",
   "status": "intent-preservation-fixture",
   "sourceMode": "retrofit-intent-recovered",
   "sourceSlice": "examples/internal-legacy/intent-critical/retrofit-maintenance-legacy",
@@ -17,7 +17,7 @@
       "nonGoal": "Do not interpret graph-source-backed generation as permission to delete tree-native or compatibility artifacts.",
       "fallbackReason": "The compatibility export remains the fallback/reference artifact when generated graph-source projections are stale, blocked, or disputed.",
       "evidenceReason": "Maintenance review should show both the graph-source projection and the retained compatibility export when evaluating retirement readiness.",
-      "compatibilityReason": "Retrofit PBE must preserve legacy/audit vocabulary long enough for users to compare old and new maintenance surfaces.",
+      "compatibilityReason": "Retrofit DevView must preserve legacy/audit vocabulary long enough for users to compare old and new maintenance surfaces.",
       "edgeIntent": {
         "edgeType": "preserves-intent",
         "intentKind": "compatibility-retention",

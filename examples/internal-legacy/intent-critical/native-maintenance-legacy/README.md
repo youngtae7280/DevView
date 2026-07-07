@@ -1,6 +1,6 @@
-# Native PBE Intent-Critical Maintenance Example
+# Native DevView Intent-Critical Maintenance Example
 
-This fixture shows a native PBE slice where the maintenance-critical intent is captured from the start in a graph-source
+This fixture shows a native DevView slice where the maintenance-critical intent is captured from the start in a graph-source
 intent artifact.
 
 The example is intentionally small. It does not implement an app. It records the kind of intent that prevents
@@ -24,4 +24,4 @@ The record captures:
 - evidence reason
 - compatibility note
 
-This is a native PBE example: the intent is recorded before maintenance work begins.
+This is a native DevView example: the intent is recorded before maintenance work begins.

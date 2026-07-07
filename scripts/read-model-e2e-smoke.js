@@ -323,8 +323,8 @@ try {
   assertEqual(intentReport.missingClassificationCount, 0, 'edgeIntent missing classification count')
   assertEqual(intentReport.missingAnchorCount, 0, 'edgeIntent missing anchor count')
   const intentKinds = intentReport.fixtures.map((entry) => entry.sourceExampleKind)
-  assertIncludes(intentKinds, legacyFixtureKind('native'), 'edgeIntent report fixture kinds')
-  assertIncludes(intentKinds, legacyFixtureKind('retrofit'), 'edgeIntent report fixture kinds')
+  assertIncludes(intentKinds, devviewFixtureKind('native'), 'edgeIntent report fixture kinds')
+  assertIncludes(intentKinds, devviewFixtureKind('retrofit'), 'edgeIntent report fixture kinds')
 
   const compilerBoundary = runCli(['graph', 'read-model', 'report-compiler-boundary', '--json'])
   assertEqual(compilerBoundary.status, 'compiler-boundary-mvp-pass', 'compiler boundary status')
@@ -692,6 +692,6 @@ try {
   rmSync(tempRoot, { recursive: true, force: true })
 }
 
-function legacyFixtureKind(kind) {
-  return `${kind}-${String.fromCharCode(112, 98, 101)}`
+function devviewFixtureKind(kind) {
+  return `${kind}-devview`
 }

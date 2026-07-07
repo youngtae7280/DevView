@@ -366,7 +366,7 @@ interface CandidateObservationResult {
 interface IntentCriticalGraphSourceExample {
   schemaVersion: 1
   artifactRole: 'intent-critical-graph-source-example'
-  exampleKind: 'native-pbe' | 'retrofit-pbe'
+  exampleKind: 'native-devview' | 'retrofit-devview'
   status: 'intent-preservation-fixture'
   sourceSlice: string
   intentRecords: IntentCriticalRecord[]
@@ -398,7 +398,7 @@ interface EdgeIntentReadModelProjection {
   artifactRole: 'edge-intent-read-model-projection'
   projectionStatus: 'intent-projection-pass'
   sourceArtifact: string
-  sourceExampleKind: 'native-pbe' | 'retrofit-pbe'
+  sourceExampleKind: 'native-devview' | 'retrofit-devview'
   projectionBoundary: string
   edgeIntentProjections: Array<
     EdgeIntentAnnotation & {
@@ -607,7 +607,7 @@ interface GraphSourceHealthReport {
 
 interface EdgeIntentProjectionFixtureSummary {
   graphSource: string
-  sourceExampleKind: 'native-pbe' | 'retrofit-pbe' | 'unknown'
+  sourceExampleKind: 'native-devview' | 'retrofit-devview' | 'unknown'
   status: 'intent-projection-pass' | 'intent-projection-blocked'
   edgeIntentCount: number
   claimCount: number
@@ -1822,7 +1822,7 @@ export function projectIntentCriticalGraphSource(
     sourceArtifact: normalizePath(graphSourcePath),
     sourceExampleKind: graphSource.exampleKind,
     projectionBoundary:
-      graphSource.exampleKind === 'retrofit-pbe'
+      graphSource.exampleKind === 'retrofit-devview'
         ? 'This projection exposes edge-level maintenance intent for human review. It does not create a separate intent ledger, replace graph source, add enforcement, or approve compatibility retirement.'
         : 'This projection exposes edge-level maintenance intent for human review. It does not create a separate intent ledger, replace graph source, add enforcement, or replace user acceptance.',
     edgeIntentProjections: graphSource.intentRecords.map((record) => ({
@@ -1919,7 +1919,7 @@ export function normalizeIntentCriticalGraphSourceExample(
   const exampleKind = requiredEnum(
     source,
     'exampleKind',
-    ['native-pbe', 'retrofit-pbe'] as const,
+    ['native-devview', 'retrofit-devview'] as const,
     errors,
     'intentGraphSource',
   )
@@ -5457,7 +5457,7 @@ function buildValidationChecks(
     ),
     check(
       'user-acceptance-authority-preserved',
-      'User acceptance authority is not replaced by Codex/PBE',
+      'User acceptance authority is not replaced by Codex/DevView',
       !/codex\/devview self-acceptance|replace user acceptance/i.test(
         `${generated.sourceAuthorityBoundary} ${generated.nonPromotionStatement} ${marker?.nonPromotionStatement || ''}`,
       ) &&
@@ -5667,7 +5667,7 @@ function buildStructureOnlyValidationChecks(
     ),
     check(
       'user-acceptance-authority-preserved',
-      'User acceptance authority is not replaced by Codex/PBE',
+      'User acceptance authority is not replaced by Codex/DevView',
       !/codex\/devview self-acceptance|replace user acceptance/i.test(
         `${generated.sourceAuthorityBoundary} ${generated.nonPromotionStatement}`,
       ) &&
