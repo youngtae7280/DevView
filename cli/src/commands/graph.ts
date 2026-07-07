@@ -40,6 +40,7 @@ import { reportProjectMemoryExtensionGapsFile } from '../core/project-memory-ext
 import { reportProjectMemoryImpactFile } from '../core/project-memory-impact-report.js'
 import { reportFrontendChainFile } from '../core/frontend-chain-report.js'
 import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
+import { planGuardedGraphUpdateFile } from '../core/guarded-graph-update-apply-plan.js'
 import { reviseRequestIrCandidateFile } from '../core/request-ir-candidate-reviser.js'
 import { generateSelectedGraphSliceFile } from '../core/selected-graph-slice.js'
 import { reportStopPostRunAdvisoryFile } from '../core/stop-post-run-advisory.js'
@@ -1934,6 +1935,82 @@ export async function graphReadModelRecordGuardedGraphUpdateBoundaryCommand(
           message,
           suggestedFix:
             'Provide a safe Graph Delta proposal, actual runtime satisfaction, actual Equivalence Proof, actual Scope/CI Enforcement records, and dedicated output paths. This command never applies graph deltas or mutates graph-source.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelPlanGuardedGraphUpdateCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.graphSource) {
+    return invalidCommand('graph read-model plan-guarded-graph-update requires --graph-source <file>.')
+  }
+  if (!context.options.proposal) {
+    return invalidCommand('graph read-model plan-guarded-graph-update requires --proposal <file>.')
+  }
+  if (!context.options.guardedGraphUpdateBoundaryRecord) {
+    return invalidCommand(
+      'graph read-model plan-guarded-graph-update requires --guarded-graph-update-boundary-record <file>.',
+    )
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph read-model plan-guarded-graph-update requires --output <file>.')
+  }
+
+  try {
+    const result = await planGuardedGraphUpdateFile(context.options.root, {
+      graphSource: context.options.graphSource,
+      proposal: context.options.proposal,
+      guardedGraphUpdateBoundaryRecord: context.options.guardedGraphUpdateBoundaryRecord,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    const errorFindings = result.plan.validationFindings.filter((finding) => finding.severity === 'error')
+    const ready = result.plan.status === 'devview-guarded-graph-update-apply-plan-ready'
+    return {
+      ok: ready,
+      command: 'graph read-model plan-guarded-graph-update',
+      exitCode: ready ? ExitCode.Success : ExitCode.ValidationFailed,
+      message: ready
+        ? 'Guarded Graph Update apply plan preview created without applying Graph Delta or mutating graph-source.'
+        : 'Guarded Graph Update apply plan preview was blocked without applying Graph Delta or mutating graph-source.',
+      issues: errorFindings.map((findingEntry) =>
+        issue({
+          validator: 'GuardedGraphUpdateApplyPlan',
+          code: findingEntry.code,
+          severity: findingEntry.severity,
+          message: findingEntry.message,
+          reason: findingEntry.field ? `Field: ${findingEntry.field}` : undefined,
+          suggestedFix:
+            result.plan.applyPlanStatus === 'blocked-no-concrete-operations'
+              ? 'Provide a proposal with explicit supported graphDeltaOperations before planning guarded apply.'
+              : 'Repair the proposal operation shape, boundary record, graph-source, or dedicated output paths.',
+        }),
+      ),
+      data: {
+        ...result.plan,
+        outputPath: result.outputPath,
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: ready
+          ? 'Review this diff preview. A separate future policy-gated guarded apply command is required before graph-source can change.'
+          : 'Resolve the plan blockers. This command did not apply graph deltas, mutate graph-source, call providers, activate hooks, or automate approval.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model plan-guarded-graph-update',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Guarded Graph Update apply plan blocked before output write.',
+      issues: [
+        issue({
+          validator: 'GuardedGraphUpdateApplyPlan',
+          code: 'GUARDED_GRAPH_UPDATE_APPLY_PLAN_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a safe graph-source, matching Graph Delta proposal, ready Guarded Graph Update boundary record, and dedicated output paths. This command never mutates graph-source.',
         }),
       ],
     }

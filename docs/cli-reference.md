@@ -266,6 +266,14 @@ devview graph read-model record-guarded-graph-update-boundary \
   --scope-ci-enforcement-record <scope-ci-enforcement-record.json> \
   --output <guarded-graph-update-boundary-record.json> \
   --json
+
+devview graph read-model plan-guarded-graph-update \
+  --graph-source <maintainability-graph.json> \
+  --proposal <graph-delta-proposal.json> \
+  --guarded-graph-update-boundary-record <guarded-graph-update-boundary-record.json> \
+  --output <guarded-graph-update-apply-plan.json> \
+  --markdown <guarded-graph-update-apply-plan.md> \
+  --json
 ```
 
 Readiness commands are report-only. The Equivalence Proof record command can prove only one explicit runtime Evidence
@@ -274,7 +282,9 @@ DevView Scope/CI lifecycle authority only from ready Scope/CI readiness plus an 
 still does not mutate external CI, configure required checks, change branch protection, activate hooks, reject diffs,
 apply a Graph Delta, or mutate graph-source. The Guarded Graph Update boundary record validates the actual runtime,
 proof, Scope/CI, and Graph Delta proposal inputs as future-apply preconditions while explicitly deferring the apply
-command and leaving graph-source unchanged.
+command and leaving graph-source unchanged. The Guarded Graph Update apply plan command consumes that boundary record,
+the current graph-source, and the Graph Delta proposal to preview concrete before/after field changes. It is
+non-mutating and produces `graphDeltaApplied:false`, `graphSourceMutated:false`, and `applyPlanOnly:true`.
 
 ### Baseline And Final Handoff
 

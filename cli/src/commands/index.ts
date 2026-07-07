@@ -36,6 +36,7 @@ import {
   graphReadModelGenerateInstructionPackCommand,
   graphReadModelObserveCandidatesCommand,
   graphReadModelPlanTraversalCommand,
+  graphReadModelPlanGuardedGraphUpdateCommand,
   graphReadModelPrepareUserPromptContextCommand,
   graphReadModelReportUserPromptSubmitAdvisoryCommand,
   graphReadModelReportStopPostRunAdvisoryCommand,
@@ -343,6 +344,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'record-guarded-graph-update-boundary') {
     return graphReadModelRecordGuardedGraphUpdateBoundaryCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'plan-guarded-graph-update') {
+    return graphReadModelPlanGuardedGraphUpdateCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-ai-request-analyzer-pack') {
     return graphReadModelGenerateAiRequestAnalyzerPackCommand(context)
