@@ -4,10 +4,9 @@ import path from 'node:path'
 import process from 'node:process'
 import Ajv2020 from 'ajv/dist/2020.js'
 
-const repoRoot = path.resolve(process.env.DEVVIEW_LEGACY_REPO_ROOT || process.env.PBE_REPO_ROOT || process.cwd())
-const targetRoot = path.resolve(process.env.DEVVIEW_LEGACY_TARGET_ROOT || process.env.PBE_TARGET_ROOT || process.cwd())
-const validationTargetKind =
-  process.env.DEVVIEW_LEGACY_VALIDATION_TARGET_KIND || process.env.PBE_VALIDATION_TARGET_KIND || 'plugin-repository'
+const repoRoot = path.resolve(process.env.DEVVIEW_LEGACY_REPO_ROOT || process.cwd())
+const targetRoot = path.resolve(process.env.DEVVIEW_LEGACY_TARGET_ROOT || process.cwd())
+const validationTargetKind = process.env.DEVVIEW_LEGACY_VALIDATION_TARGET_KIND || 'plugin-repository'
 const projectValidationMode = validationTargetKind === 'initialized-project'
 const root = repoRoot
 const errors = []
@@ -563,7 +562,7 @@ function validateOptionalAcepTarget() {
   if (requireCompleteAcepPackage) {
     for (const relativePath of requiredAcepFiles) {
       if (!existsSync(path.join(acepRoot, relativePath))) {
-        errors.push(`ACEP is missing required file: ${prefix}/codex-execution-pack/${relativePath}`)
+        errors.push(`Execution pack is missing required file: ${prefix}/codex-execution-pack/${relativePath}`)
       }
     }
   }
@@ -807,7 +806,7 @@ function validateAutoflowState(autoflow, label) {
     errors.push(`${label} lastFailure must be an object when present`)
   }
   if (autoflow.nextStep !== null && autoflow.nextStep !== undefined && !allowedSteps.has(autoflow.nextStep)) {
-    errors.push(`${label} nextStep is not a known PBE step or gate: ${autoflow.nextStep}`)
+    errors.push(`${label} nextStep is not a known DevView step or gate: ${autoflow.nextStep}`)
   }
 }
 
