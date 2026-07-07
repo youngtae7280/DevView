@@ -260,6 +260,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     benchmarkGovernanceVerification: undefined as string | undefined,
     releaseSurfaceValidation: undefined as string | undefined,
     providerNetworkPolicyReport: undefined as string | undefined,
+    recordEnvelopePreview: undefined as string | undefined,
     enterpriseReadiness: undefined as string | undefined,
     graphifyExport: undefined as string | undefined,
     mapping: undefined as string | undefined,
@@ -1397,6 +1398,15 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--provider-network-policy-report requires a file path.' }
       }
       options.providerNetworkPolicyReport = value
+      index += 1
+    } else if (arg === '--record-envelope-preview') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--record-envelope-preview requires one or more file paths.' }
+      }
+      options.recordEnvelopePreview = options.recordEnvelopePreview
+        ? `${options.recordEnvelopePreview},${value}`
+        : value
       index += 1
     } else if (arg === '--enterprise-readiness') {
       const value = argv[index + 1]

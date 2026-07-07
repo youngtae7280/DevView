@@ -24,6 +24,9 @@ const RELEASE_SURFACE_STATUSES = [
 ] as const
 const PROVIDER_NETWORK_POLICY_ROLE = 'devview-provider-network-default-deny-policy-report'
 const PROVIDER_NETWORK_POLICY_STATUS = 'devview-provider-network-default-deny-policy-recorded'
+const RECORD_ENVELOPE_PREVIEW_ROLE = 'devview-record-envelope-preview'
+const RECORD_ENVELOPE_PREVIEW_STATUS = 'devview-record-envelope-previewed'
+const RECORD_ENVELOPE_PREVIEW_SIGNATURE_MODE = 'unsigned-deterministic-preview'
 
 const unsafeAuthorityFields = [
   'enterpriseGateActivated',
@@ -64,6 +67,7 @@ export interface EnterpriseReadinessReportOptions {
   benchmarkGovernanceVerification?: string
   releaseSurfaceValidation?: string
   providerNetworkPolicyReport?: string
+  recordEnvelopePreview?: string
   output?: string
   markdown?: string
 }
@@ -112,6 +116,25 @@ export interface EnterpriseReadinessReport {
     futureAllowRequirementCount: number | null
     blockedCapabilityCount: number | null
   }
+  sourceRecordEnvelopePreviews: Array<{
+    supplied: true
+    path: string
+    artifactRole: string | null
+    status: string | null
+    payloadArtifactRole: string | null
+    payloadStatus: string | null
+    payloadSha256Present: boolean
+    envelopeSha256Present: boolean
+    sourceArtifactDigestCount: number
+    actorIdentityRecorded: boolean
+    requiredPermission: string | null
+    signatureMode: string | null
+    cryptographicSignaturePresent: boolean | null
+    cryptographicSignatureVerified: boolean | null
+    rbacEnforced: boolean | null
+    permissionVerified: boolean | null
+    previousEnvelopeLinked: boolean | null
+  }>
   releaseSurfaceReadiness: {
     status: 'satisfied' | 'failed' | 'not-supplied'
     packageAllowlistPresent: boolean
@@ -167,12 +190,20 @@ export interface EnterpriseReadinessReport {
     status: 'gap'
     actorIdentityModelPresent: false
     signedRecordEnvelopePresent: false
+    unsignedRecordEnvelopePreviewPresent: boolean
+    recordedActorIdentityCount: number
+    recordedPermissionClaimCount: number
     gaps: string[]
   }
   auditAndTamperEvidenceReadiness: {
     status: 'partial'
     benchmarkLockDigestsPresent: boolean
     sourceFactSeparationPresent: true
+    unsignedRecordEnvelopePreviewPresent: boolean
+    envelopePreviewCount: number
+    envelopePayloadHashRecordedCount: number
+    envelopeSourceArtifactDigestCount: number
+    previousEnvelopeLinkedCount: number
     gaps: string[]
   }
   enterpriseReadinessFindings: EnterpriseReadinessFinding[]
@@ -213,7 +244,11 @@ interface LoadedSource {
   requestedPath: string
   resolvedPath: string
   relativePath: string
-  sourceKind: 'benchmark-governance-verification' | 'release-surface-validation' | 'provider-network-policy-report'
+  sourceKind:
+    | 'benchmark-governance-verification'
+    | 'release-surface-validation'
+    | 'provider-network-policy-report'
+    | 'record-envelope-preview'
   record: JsonRecord | null
   readError: string | null
 }
@@ -232,10 +267,12 @@ export async function reportEnterpriseReadiness(
   options: EnterpriseReadinessReportOptions,
 ): Promise<EnterpriseReadinessReport> {
   validateRequiredOptions(options)
+  const recordEnvelopePreviewPaths = parseList(options.recordEnvelopePreview)
   const sourcePaths = [
     options.benchmarkGovernanceVerification,
     options.releaseSurfaceValidation,
     options.providerNetworkPolicyReport,
+    ...recordEnvelopePreviewPaths,
   ].filter((entry): entry is string => Boolean(entry))
   await assertOutputAuthority(
     root,
@@ -252,10 +289,25 @@ export async function reportEnterpriseReadiness(
   const providerNetworkPolicy = options.providerNetworkPolicyReport
     ? await loadSource(root, options.providerNetworkPolicyReport, 'provider-network-policy-report')
     : null
-  const blockingFindings = validateSources(benchmarkGovernance, releaseSurface, providerNetworkPolicy)
+  const recordEnvelopePreviews = await Promise.all(
+    recordEnvelopePreviewPaths.map((entry) => loadSource(root, entry, 'record-envelope-preview')),
+  )
+  const blockingFindings = validateSources(
+    benchmarkGovernance,
+    releaseSurface,
+    providerNetworkPolicy,
+    recordEnvelopePreviews,
+  )
   if (blockingFindings.length > 0) {
     throw new EnterpriseReadinessReportValidationError(
-      buildReport(benchmarkGovernance, releaseSurface, providerNetworkPolicy, blockingFindings, true),
+      buildReport(
+        benchmarkGovernance,
+        releaseSurface,
+        providerNetworkPolicy,
+        recordEnvelopePreviews,
+        blockingFindings,
+        true,
+      ),
     )
   }
 
@@ -263,7 +315,8 @@ export async function reportEnterpriseReadiness(
     benchmarkGovernance,
     releaseSurface,
     providerNetworkPolicy,
-    buildFindings(benchmarkGovernance, releaseSurface, providerNetworkPolicy),
+    recordEnvelopePreviews,
+    buildFindings(benchmarkGovernance, releaseSurface, providerNetworkPolicy, recordEnvelopePreviews),
   )
   const outputPath = resolveRepoPath(root, options.output ?? '')
   await writeJsonAtomic(outputPath, report)
@@ -281,12 +334,14 @@ function buildReport(
   benchmarkGovernance: LoadedSource | null,
   releaseSurface: LoadedSource | null,
   providerNetworkPolicy: LoadedSource | null,
+  recordEnvelopePreviews: LoadedSource[],
   findings: EnterpriseReadinessFinding[],
   blocked = false,
 ): EnterpriseReadinessReport {
   const benchmarkRecord = benchmarkGovernance?.record ?? null
   const releaseRecord = releaseSurface?.record ?? null
   const providerNetworkRecord = providerNetworkPolicy?.record ?? null
+  const recordEnvelopeRecords = recordEnvelopePreviews.map((entry) => entry.record).filter(isJsonRecord)
   const releaseStatus = releaseReadinessStatus(releaseRecord)
   const benchmarkStatus = benchmarkReadinessStatus(benchmarkRecord)
   const benchmarkDigestSummary = asRecord(benchmarkRecord?.sourceDigestVerificationSummary)
@@ -331,6 +386,7 @@ function buildReport(
       futureAllowRequirementCount: arrayLength(providerNetworkRecord?.futureAllowPolicyRequirements),
       blockedCapabilityCount: arrayLength(providerNetworkRecord?.blockedCapabilities),
     },
+    sourceRecordEnvelopePreviews: recordEnvelopePreviews.map((source) => recordEnvelopeSummary(source)),
     releaseSurfaceReadiness: {
       status: releaseStatus,
       packageAllowlistPresent: true,
@@ -395,19 +451,32 @@ function buildReport(
       status: 'gap',
       actorIdentityModelPresent: false,
       signedRecordEnvelopePresent: false,
-      gaps: [
-        'Enterprise RBAC/actor identity model is not implemented.',
-        'Signed record envelope and key management are not implemented.',
-      ],
+      unsignedRecordEnvelopePreviewPresent: recordEnvelopeRecords.length > 0,
+      recordedActorIdentityCount: recordEnvelopeRecords.filter((record) =>
+        booleanValue(asRecord(record.verificationSummary)?.actorIdentityRecorded),
+      ).length,
+      recordedPermissionClaimCount: recordEnvelopeRecords.filter((record) =>
+        Boolean(stringValue(asRecord(record.authorizationClaim)?.requiredPermission)),
+      ).length,
+      gaps: rbacAndSigningGaps(recordEnvelopeRecords),
     },
     auditAndTamperEvidenceReadiness: {
       status: 'partial',
       benchmarkLockDigestsPresent: numberValue(benchmarkDigestSummary?.sourceArtifactDigestCount) !== null,
       sourceFactSeparationPresent: true,
-      gaps: [
-        'Tamper-evident benchmark digests exist, but a cross-record hash chain is not implemented.',
-        'Authority records are not signed across evidence/proof/scope/apply lifecycle reports.',
-      ],
+      unsignedRecordEnvelopePreviewPresent: recordEnvelopeRecords.length > 0,
+      envelopePreviewCount: recordEnvelopeRecords.length,
+      envelopePayloadHashRecordedCount: recordEnvelopeRecords.filter((record) =>
+        Boolean(stringValue(asRecord(record.payloadSummary)?.sha256)),
+      ).length,
+      envelopeSourceArtifactDigestCount: recordEnvelopeRecords.reduce(
+        (total, record) => total + (arrayLength(record.sourceArtifactDigests) ?? 0),
+        0,
+      ),
+      previousEnvelopeLinkedCount: recordEnvelopeRecords.filter((record) =>
+        booleanValue(asRecord(record.verificationSummary)?.previousEnvelopeLinked),
+      ).length,
+      gaps: auditAndTamperEvidenceGaps(recordEnvelopeRecords),
     },
     enterpriseReadinessFindings: findings,
     downstreamActionPlan: downstreamActionPlan(findings),
@@ -446,9 +515,10 @@ function validateSources(
   benchmarkGovernance: LoadedSource | null,
   releaseSurface: LoadedSource | null,
   providerNetworkPolicy: LoadedSource | null,
+  recordEnvelopePreviews: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
-  for (const source of [benchmarkGovernance, releaseSurface, providerNetworkPolicy].filter(
+  for (const source of [benchmarkGovernance, releaseSurface, providerNetworkPolicy, ...recordEnvelopePreviews].filter(
     (entry): entry is LoadedSource => Boolean(entry),
   )) {
     if (source.readError) {
@@ -482,8 +552,10 @@ function validateSources(
           ),
         )
       }
-    } else {
+    } else if (source.sourceKind === 'provider-network-policy-report') {
       validateProviderNetworkPolicySource(source, record, findings)
+    } else {
+      validateRecordEnvelopePreviewSource(source, record, findings)
     }
     for (const hit of collectUnsafeAuthorityHits(record)) {
       findings.push({
@@ -502,11 +574,13 @@ function buildFindings(
   benchmarkGovernance: LoadedSource | null,
   releaseSurface: LoadedSource | null,
   providerNetworkPolicy: LoadedSource | null,
+  recordEnvelopePreviews: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
   const benchmarkRecord = benchmarkGovernance?.record ?? null
   const releaseRecord = releaseSurface?.record ?? null
   const providerNetworkRecord = providerNetworkPolicy?.record ?? null
+  const recordEnvelopeRecords = recordEnvelopePreviews.map((entry) => entry.record).filter(isJsonRecord)
 
   if (!releaseSurface) {
     findings.push({
@@ -576,6 +650,23 @@ function buildFindings(
         field: 'futureAllowPolicyRequirements',
       })
     }
+  }
+
+  if (recordEnvelopeRecords.length === 0) {
+    findings.push({
+      severity: 'gap',
+      code: 'ENTERPRISE_RECORD_ENVELOPE_PREVIEW_NOT_SUPPLIED',
+      message:
+        'Unsigned record envelope preview was not supplied; audit/tamper evidence cannot link payload hashes yet.',
+    })
+  } else {
+    findings.push({
+      severity: 'satisfied',
+      code: 'ENTERPRISE_RECORD_ENVELOPE_PREVIEW_RECORDED',
+      message:
+        'Unsigned deterministic record envelope preview source is recorded with payload hash and actor/permission claims.',
+      path: recordEnvelopePreviews[0]?.relativePath,
+    })
   }
 
   findings.push(
@@ -649,6 +740,55 @@ function validateProviderNetworkPolicySource(
         blockingFinding(
           'ENTERPRISE_READINESS_PROVIDER_NETWORK_ALLOWLIST_NOT_EMPTY',
           `${field} must stay empty for enterprise report v1 source consumption.`,
+          source.relativePath,
+          field,
+        ),
+      )
+    }
+  }
+}
+
+function validateRecordEnvelopePreviewSource(
+  source: LoadedSource,
+  record: JsonRecord,
+  findings: EnterpriseReadinessFinding[],
+): void {
+  if (record.artifactRole !== RECORD_ENVELOPE_PREVIEW_ROLE || record.status !== RECORD_ENVELOPE_PREVIEW_STATUS) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_RECORD_ENVELOPE_SOURCE_ROLE_STATUS_INVALID',
+        `${source.relativePath} must be ${RECORD_ENVELOPE_PREVIEW_ROLE} with previewed status.`,
+        source.relativePath,
+      ),
+    )
+  }
+  if (record.signatureMode !== RECORD_ENVELOPE_PREVIEW_SIGNATURE_MODE) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_RECORD_ENVELOPE_SIGNATURE_MODE_INVALID',
+        `${source.relativePath} must use unsigned deterministic preview signature mode.`,
+        source.relativePath,
+        'signatureMode',
+      ),
+    )
+  }
+  const verificationSummary = asRecord(record.verificationSummary)
+  const authorizationClaim = asRecord(record.authorizationClaim)
+  const forbiddenTrueFields: Array<[string, unknown]> = [
+    ['cryptographicSignaturePresent', record.cryptographicSignaturePresent],
+    ['verificationSummary.cryptographicSignatureVerified', verificationSummary?.cryptographicSignatureVerified],
+    ['rbacEnforced', record.rbacEnforced],
+    ['permissionVerified', record.permissionVerified],
+    ['authorizationClaim.rbacEnforced', authorizationClaim?.rbacEnforced],
+    ['authorizationClaim.permissionVerified', authorizationClaim?.permissionVerified],
+    ['verificationSummary.rbacPermissionVerified', verificationSummary?.rbacPermissionVerified],
+  ]
+  for (const [field, value] of forbiddenTrueFields) {
+    if (value === true) {
+      findings.push(
+        blockingFinding(
+          'ENTERPRISE_READINESS_RECORD_ENVELOPE_AUTHORITY_CLAIM_UNSUPPORTED',
+          `${source.relativePath} claims ${field}: true; enterprise v1 only accepts unsigned preview source facts.`,
           source.relativePath,
           field,
         ),
@@ -741,6 +881,7 @@ function renderMarkdown(report: EnterpriseReadinessReport): string {
     `- releaseSurface: ${report.releaseSurfaceReadiness.status}`,
     `- providerNetworkPolicy: ${report.providerNetworkPolicyReadiness.status}`,
     `- rbacAndSigning: ${report.rbacAndSigningReadiness.status}`,
+    `- recordEnvelopePreviews: ${report.auditAndTamperEvidenceReadiness.envelopePreviewCount}`,
     '',
     '## Findings',
     ...report.enterpriseReadinessFindings.map((entry) => `- [${entry.severity}] ${entry.code}: ${entry.message}`),
@@ -798,6 +939,62 @@ function providerNetworkPolicyGaps(record: JsonRecord | null): string[] {
   ]
 }
 
+function rbacAndSigningGaps(recordEnvelopeRecords: JsonRecord[]): string[] {
+  const gaps = [
+    'Enterprise RBAC/actor identity model is not enforced.',
+    'Cryptographic signing and key management are not implemented.',
+  ]
+  if (recordEnvelopeRecords.length === 0) {
+    gaps.push('Unsigned deterministic record envelope preview source is not supplied.')
+  } else {
+    gaps.push('Unsigned record envelope previews are source facts only and do not verify permissions.')
+  }
+  return gaps
+}
+
+function auditAndTamperEvidenceGaps(recordEnvelopeRecords: JsonRecord[]): string[] {
+  if (recordEnvelopeRecords.length === 0) {
+    return [
+      'Unsigned record envelope preview source is not supplied.',
+      'Tamper-evident benchmark digests exist, but a cross-record hash chain is not implemented.',
+      'Authority records are not signed across evidence/proof/scope/apply lifecycle reports.',
+    ]
+  }
+  return [
+    'Unsigned deterministic envelope previews are recorded, but cryptographic signature verification is not implemented.',
+    'A cross-record hash chain is not implemented across DevView authority records.',
+    'Authority records are not signed across evidence/proof/scope/apply lifecycle reports.',
+  ]
+}
+
+function recordEnvelopeSummary(
+  source: LoadedSource,
+): EnterpriseReadinessReport['sourceRecordEnvelopePreviews'][number] {
+  const record = source.record ?? {}
+  const payloadSummary = asRecord(record.payloadSummary)
+  const verificationSummary = asRecord(record.verificationSummary)
+  const authorizationClaim = asRecord(record.authorizationClaim)
+  return {
+    supplied: true,
+    path: source.relativePath,
+    artifactRole: stringValue(record.artifactRole),
+    status: stringValue(record.status),
+    payloadArtifactRole: stringValue(payloadSummary?.artifactRole),
+    payloadStatus: stringValue(payloadSummary?.status),
+    payloadSha256Present: Boolean(stringValue(payloadSummary?.sha256)),
+    envelopeSha256Present: Boolean(stringValue(record.envelopeSha256)),
+    sourceArtifactDigestCount: arrayLength(record.sourceArtifactDigests) ?? 0,
+    actorIdentityRecorded: Boolean(booleanValue(verificationSummary?.actorIdentityRecorded)),
+    requiredPermission: stringValue(authorizationClaim?.requiredPermission),
+    signatureMode: stringValue(record.signatureMode),
+    cryptographicSignaturePresent: booleanOrNull(record.cryptographicSignaturePresent),
+    cryptographicSignatureVerified: booleanOrNull(verificationSummary?.cryptographicSignatureVerified),
+    rbacEnforced: booleanOrNull(record.rbacEnforced),
+    permissionVerified: booleanOrNull(record.permissionVerified),
+    previousEnvelopeLinked: booleanOrNull(verificationSummary?.previousEnvelopeLinked),
+  }
+}
+
 function readinessLevel(findings: EnterpriseReadinessFinding[]): EnterpriseReadinessReport['readinessLevel'] {
   if (findings.some((entry) => entry.severity === 'blocker')) return 'not-ready'
   if (findings.some((entry) => entry.severity === 'gap')) return 'partial'
@@ -815,6 +1012,9 @@ function downstreamActionPlan(findings: EnterpriseReadinessFinding[]): string[] 
   }
   if (openFindings.some((entry) => entry.code.includes('PROVIDER_NETWORK'))) {
     actions.add('Attach a provider/network default-deny policy report before enterprise release review.')
+  }
+  if (openFindings.some((entry) => entry.code.includes('RECORD_ENVELOPE'))) {
+    actions.add('Attach unsigned record envelope previews before planning real signed-envelope governance.')
   }
   actions.add('Plan RBAC actor identity and signed record envelope before enterprise authority claims.')
   actions.add('Add rollback drill and audit-chain reporting for guarded graph update operations.')
@@ -890,6 +1090,22 @@ function booleanOrNull(value: unknown): boolean | null {
   return typeof value === 'boolean' ? value : null
 }
 
+function booleanValue(value: unknown): boolean {
+  return value === true
+}
+
 function arrayLength(value: unknown): number | null {
   return Array.isArray(value) ? value.length : null
+}
+
+function parseList(value: string | undefined): string[] {
+  if (!value) return []
+  return value
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0)
+}
+
+function isJsonRecord(value: unknown): value is JsonRecord {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
