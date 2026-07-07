@@ -106,15 +106,17 @@ Commands:
   profile recommend    Recommend workflow depth from a task brief
   context recommend    Recommend skills, agent-context cards, and optional full docs
   context pack         Create a prompt-ready bundle from recommended readFirst context
-  rpd check            Check RPD/Product Tree status
-  rpd close            Attempt to close RPD
+  product-intake check Check Product Intake/Product Tree status
+  product-intake close Attempt to close Product Intake
   ui approve           Record user UI/UX approval and transition to UI_UX_APPROVED
   trace check          Check Product/Work/Test/Evidence traceability
   files check          Check changed files against Work/Revision scope
-  wpd check            Check Work Tree and WorkGraph readiness
-  wpd close            Validate WPD and transition to WPD_DONE
-  vd check             Check Test Tree and verification coverage
-  vd close             Validate VD/Test Tree and transition to VD_DONE
+  work-planning check  Check Work Tree and WorkGraph readiness
+  work-planning close  Validate Work Planning and transition to WORK_PLANNING_DONE
+  verification-design check
+                       Check Test Tree and verification coverage
+  verification-design close
+                       Validate Verification Design/Test Tree and transition to VERIFICATION_DESIGN_DONE
   scope select         Record implementation scope selection
   dependency audit complete
                        Record Dependency Impact Audit checkpoint
@@ -123,10 +125,10 @@ Commands:
   coverage audit complete
                        Record Coverage Audit checkpoint
   ux audit complete    Record UX Audit checkpoint
-  acep check           Check ACEP execution pack
-  acep ready           Validate ACEP manifest and transition to ACEP_READY
-  execution start      Transition from ACEP_READY to EXECUTION_IN_PROGRESS
-  execution complete   Validate execution evidence and transition to ACEP_RUN_DONE
+  execution-pack check Check Execution Pack readiness
+  execution-pack ready Validate Execution Pack manifest and transition to EXECUTION_PACK_READY
+  execution start      Transition from EXECUTION_PACK_READY to EXECUTION_IN_PROGRESS
+  execution complete   Validate execution evidence and transition to EXECUTION_PACK_RUN_DONE
   review submit        Submit verified work to Review Result gate
   accept               Close as ACCEPTED then DONE only with user acceptance metadata
   change create        Record user feedback/change request as a Change node
@@ -135,7 +137,7 @@ Commands:
                        Propose a user-confirmed Product Tree patch from a Change node
   product patch apply  Apply a confirmed Product Patch Proposal
   revision start       Enter REVISION_REQUESTED after Impact analysis
-  revision complete    Return revision work to WPD/VD/ACEP closure flow
+  revision complete    Return revision work to Work Planning/Verification Design/Execution Pack closure flow
   evidence check       Check evidence coverage
   visual check         Check Visual Design Contract and UI evidence
   graph execution-contract report
@@ -279,7 +281,7 @@ Options:
   --text <text>        Text to assess for Human Gate clarity.
   --transition <value> Human Gate transition being assessed.
   --files <list>       Candidate changed/expected files for profile recommend, comma-separated.
-  --stage <value>      trace/context stage. Trace uses wpd, vd, execution, review, or accept.
+  --stage <value>      trace/context stage. Trace uses work-planning, verification-design, execution, review, or accept.
   --summary <text>     change create summary.
   --source <value>     change source or graph read-model proposal source artifact.
   --change <id>        Change node id for impact/revision commands.

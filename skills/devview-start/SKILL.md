@@ -1,6 +1,6 @@
 ---
 name: devview-start
-description: Start DevView in a target repo, enable autoflow, create tree-native .devview artifacts with backward-compatible blueprint views, and begin RPD/Product Tree growth automatically.
+description: Start DevView in a target repo, enable autoflow, create tree-native .devview artifacts with backward-compatible blueprint views, and begin product-intake/Product Tree growth automatically.
 ---
 
 # DevView Start
@@ -46,12 +46,12 @@ Add order cancellation to this existing project.
 
 Initialize `.devview/` in the target repository. DevView is not a GUI and does not call external model services from a separate app. It is a Codex skill workflow that writes durable planning, execution, control, evidence, and compatibility artifacts into the repository.
 
-DevView v2 is tree-native. The Product Tree is the source of truth. Existing RPD, WPD, VD, and ACEP names remain valid compatibility terms:
+DevView v2 is tree-native. The Product Tree is the source of truth. Existing product-intake, work-planning, verification-design, and execution-pack names remain valid compatibility terms:
 
-- `RPD`: Product Tree growth plus `.devview/blueprint/requirement-tree.json` compatibility view.
-- `WPD`: Project Tree and Work Tree derivation plus WorkDesign/WorkGraph compatibility views.
-- `VD`: Test Tree derivation plus VerificationDesign compatibility view.
-- `ACEP`: Cycle Contract and Node Execution Contract packaging plus the existing execution pack views.
+- `product-intake`: Product Tree growth plus `.devview/blueprint/requirement-tree.json` compatibility view.
+- `work-planning`: Project Tree and Work Tree derivation plus WorkDesign/WorkGraph compatibility views.
+- `verification-design`: Test Tree derivation plus VerificationDesign compatibility view.
+- `execution-pack`: Cycle Contract and Node Execution Contract packaging plus the existing execution pack views.
 
 `start` enables Autoflow. The user should not need to type each internal step
 manually after start.
@@ -77,9 +77,9 @@ reason before initialization. The user may override the recommendation.
 
 Do not silently initialize with an arbitrary brief when the task is unclear.
 
-## Start / RPD Clarity Scoring
+## Start / product-intake Clarity Scoring
 
-During start and RPD, assess ambiguity before creating or confirming Product Tree nodes.
+During start and product-intake, assess ambiguity before creating or confirming Product Tree nodes.
 
 - Compute a compact `clarityScore`.
 - Identify `hardTriggers`.
@@ -101,7 +101,7 @@ devview status
 devview validate
 ```
 
-If either command fails, do not proceed to RPD until the blocking issue is fixed.
+If either command fails, do not proceed to product-intake until the blocking issue is fixed.
 
 1. Inspect the target repository enough to understand whether this is a new project or a change to an existing project.
 2. Check whether `.devview` already exists and whether there is an active run to resume.
@@ -125,15 +125,15 @@ If either command fails, do not proceed to RPD until the blocking issue is fixed
 19. Create `.devview/blueprint/devview-invariants.md` from the DevView Invariants template.
 20. Create `.devview/blueprint/foundation-contract.md` and `.devview/blueprint/parallel-safety-contract.md` placeholders.
 21. Create dependency impact placeholders for `.devview/blueprint/dependency-impact-audit.json` and `.devview/blueprint/dependency-impact-audit.md`.
-22. Create `.devview/blueprint/requirement-tree.md`, `.devview/blueprint/rpd-interview-log.md`, and `.devview/blueprint/rpd-summary.md`.
+22. Create `.devview/blueprint/requirement-tree.md`, `.devview/blueprint/product-intake-interview-log.md`, and `.devview/blueprint/product-intake-summary.md`.
 23. Initialize UI/UX confirmation placeholders when UI work may be involved.
     23a. Initialize Visual Design Contract placeholders when visual UI work may be involved: visual reference, theme spec, design tokens, component style contract, UI surface inventory, component style inventory, visual verification profile, and visual audit report path.
 24. Confirm `devview init` initialized Autoflow with the chosen compatibility profile metadata and a CLI-reported first next action.
 
 25. Confirm tree-native artifact paths are discoverable through the initialized DevView state so later stages can find Product, Project, Work, Test, Cycle, Decision, Change, Impact, Evidence, and Acceptance trees without guessing paths.
-26. Immediately begin RPD/Product Tree growth unless the user explicitly opts out of DevView tracking.
+26. Immediately begin product-intake/Product Tree growth unless the user explicitly opts out of DevView tracking.
 27. If the provided project brief is clear, propose the Root requirement summary and child structure, then stop at the `root_confirmation` gate.
-28. If RPD needs more information before a safe proposal, ask exactly one RPD question. The user should answer naturally; do not require `@project-blueprint-engine rpd`.
+28. If product-intake needs more information before a safe proposal, ask exactly one product-intake question. The user should answer naturally; do not require `@devview product-intake`.
 29. Do not create code, documents, slide decks, spreadsheets, images, generated assets, or review reports until the Root requirement and decomposition decision are user-confirmed.
 
 ## File Contract
@@ -180,8 +180,8 @@ Also keep these backward-compatible blueprint paths:
 .devview/blueprint/dependency-impact-audit.md
 .devview/blueprint/requirement-tree.json
 .devview/blueprint/requirement-tree.md
-.devview/blueprint/rpd-interview-log.md
-.devview/blueprint/rpd-summary.md
+.devview/blueprint/product-intake-interview-log.md
+.devview/blueprint/product-intake-summary.md
 .devview/blueprint/ui-ux-preview.json
 .devview/blueprint/ui-ux-preview.md
 .devview/blueprint/ui-ux-confirmation.md
@@ -209,7 +209,7 @@ If the user already provided enough detail, clear enough means "ready to propose
 
 Prefer `devview init --profile <profile> --brief "<user request>"` for initial `.devview` bootstrap. If bootstrapping manually for compatibility, create the same artifacts and then run `devview status` and `devview validate`.
 
-`devview init` should create the initial DevView state for the RPD tree-walk workflow.
+`devview init` should create the initial DevView state for the product-intake tree-walk workflow.
 
 Use `devview init` so the CLI creates the initial Autoflow state.
 
@@ -249,7 +249,7 @@ verificationDesign: .devview/blueprint/verification-design.json
 
 Do not force parity/completeness artifacts for small non-UI or non-parity tasks. When they are initialized, treat them as derived controls that may expand audit and verification coverage, not implementation scope.
 
-Do not generate WPD, VD, ACEP, review, feedback, or revision files during start unless RPD is already complete and the next deterministic step can safely continue. Stop at UI/UX confirmation when UI/UX judgment is required.
+Do not generate work-planning, verification-design, execution-pack, review, feedback, or revision files during start unless product-intake is already complete and the next deterministic step can safely continue. Stop at UI/UX confirmation when UI/UX judgment is required.
 
 ## Workflow Depth Decision
 
@@ -282,13 +282,13 @@ request -> AC -> Work -> Test/Evidence -> user review traceability, use full pla
 After initialization:
 
 ```text
-start -> rpd
+start -> product-intake
 ```
 
-When RPD completes:
+When product-intake completes:
 
 ```text
-rpd -> ui ux confirm gate
+product-intake -> ui ux confirm gate
 ```
 
 At the UI/UX gate, stop and show the friendly UI/UX confirmation guidance. Do
@@ -306,8 +306,8 @@ The state card must include:
 - current node id and title
 - workflow state
 - next action
-- the single next RPD question, if RPD needs more input
-- UI/UX confirmation guidance, if RPD completed and UI/UX confirmation is required
+- the single next product-intake question, if product-intake needs more input
+- UI/UX confirmation guidance, if product-intake completed and UI/UX confirmation is required
 - whether DevView will continue automatically or is stopped at a human gate
 - user reply examples and one recommended reply when a human response is needed
 

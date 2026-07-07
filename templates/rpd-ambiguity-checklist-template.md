@@ -1,4 +1,4 @@
-# RPD Ambiguity Checklist
+# product-intake Ambiguity Checklist
 
 ## Raw User Request
 

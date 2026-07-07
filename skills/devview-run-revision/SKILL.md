@@ -63,7 +63,7 @@ Revision execution stays inside affected selected/foundation scope. It must not 
 15. Write `revision-result.md`.
 16. Run `devview files check` before closing revision if source files changed.
 17. Run `devview revision complete`.
-18. Follow the CLI `nextCommand`; rerun WPD, VD, ACEP, execution, or review closure as requested.
+18. Follow the CLI `nextCommand`; rerun work-planning, verification-design, execution-pack, execution, or review closure as requested.
 19. Continue to the Review Result gate only after the required CLI closure path succeeds.
 
 ## Reopen Execution Rules
@@ -83,7 +83,7 @@ When Impact Tree says:
 ## Hard Rules
 
 - If revision work discovers new scope, create a new Change Node. Do not expand the revision silently.
-- If revision work discovers ambiguous product meaning, pause implementation and route only that Change Node through Revision RPD.
+- If revision work discovers ambiguous product meaning, pause implementation and route only that Change Node through Revision product-intake.
 - If revision work discovers unexplained source file changes, do not close the revision; run `devview change create`, `devview impact analyze`, and `devview revision start` for the new scope.
 - If acceptance criteria changed, rerun or update affected Test Tree and Evidence Tree links before resubmitting.
 - Do not report the revision as verified until modified or invalidated criteria have fresh Test/Evidence coverage or an explicit blocked reason.

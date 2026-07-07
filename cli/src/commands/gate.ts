@@ -104,16 +104,16 @@ export async function gateCommand(stage: string | undefined, context: CommandCon
   }
   issues.push(...stageStateIssues(canonicalStage, loadedProject.project.state))
 
-  if (canonicalStage === 'wpd') {
+  if (canonicalStage === 'work-planning') {
     issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
     issues.push(...uiUxApprovalIssues(context.options.root, loadedProject.project.state))
     issues.push(...(await validateVisualDesign(context.options.root, { requireInventory: false })))
-  } else if (canonicalStage === 'vd') {
+  } else if (canonicalStage === 'verification-design') {
     issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
     issues.push(...(await validateWpd(context.options.root)))
     issues.push(...(await validateVisualDesign(context.options.root)))
-    issues.push(...(await validateTraceability(context.options.root, { stage: 'vd' })))
-  } else if (canonicalStage === 'acep') {
+    issues.push(...(await validateTraceability(context.options.root, { stage: 'verification-design' })))
+  } else if (canonicalStage === 'execution-pack') {
     issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
     issues.push(...(await validateVd(context.options.root)))
     issues.push(...(await validateVisualDesign(context.options.root)))
@@ -190,7 +190,7 @@ function formatHumanGateList(values: string[]): string[] {
 }
 
 function stageStateIssues(stage: string, state: Record<string, unknown> | null): ValidationIssue[] {
-  if (stage === 'rpd') {
+  if (stage === 'product-intake') {
     return []
   }
   const autoflow =
@@ -198,11 +198,11 @@ function stageStateIssues(stage: string, state: Record<string, unknown> | null):
   const rawState = String(autoflow.state || '')
   const currentState = normalizePbeState(rawState)
   const allowedByStage: Record<string, PbeState[]> = {
-    wpd: [PBE_STATE.RPD_DONE, ...statesFrom(PBE_STATE.UI_UX_APPROVED)],
-    vd: statesFrom(PBE_STATE.WPD_DONE),
-    acep: statesFrom(PBE_STATE.VD_DONE),
+    'work-planning': [PBE_STATE.PRODUCT_INTAKE_DONE, ...statesFrom(PBE_STATE.UI_UX_APPROVED)],
+    'verification-design': statesFrom(PBE_STATE.WORK_PLANNING_DONE),
+    'execution-pack': statesFrom(PBE_STATE.VERIFICATION_DESIGN_DONE),
     'code-start': statesFrom(PBE_STATE.SCOPE_SELECTED),
-    'review-result': statesFrom(PBE_STATE.ACEP_RUN_DONE),
+    'review-result': statesFrom(PBE_STATE.EXECUTION_PACK_RUN_DONE),
     accept: statesFrom(PBE_STATE.WAITING_REVIEW_RESULT),
   }
   if (currentState && allowedByStage[stage]?.includes(currentState)) {
@@ -222,6 +222,10 @@ function stageStateIssues(stage: string, state: Record<string, unknown> | null):
 
 function normalizeGateStage(stage: string | undefined): string | null {
   const aliases: Record<string, string> = {
+    rpd: 'product-intake',
+    wpd: 'work-planning',
+    vd: 'verification-design',
+    acep: 'execution-pack',
     'review-submit': 'review-result',
     review: 'review-result',
     'implementation-start': 'code-start',
@@ -231,5 +235,15 @@ function normalizeGateStage(stage: string | undefined): string | null {
     return null
   }
   const normalized = aliases[stage] || stage
-  return ['rpd', 'wpd', 'vd', 'acep', 'code-start', 'review-result', 'accept'].includes(normalized) ? normalized : null
+  return [
+    'product-intake',
+    'work-planning',
+    'verification-design',
+    'execution-pack',
+    'code-start',
+    'review-result',
+    'accept',
+  ].includes(normalized)
+    ? normalized
+    : null
 }

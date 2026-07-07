@@ -86,7 +86,7 @@ export function scopeLeakIssue(
     nodeId,
     message: `Deferred/out_of_scope Product node ${productId} appears in active scope ${nodeId}.`,
     suggestedFix:
-      'Remove inactive Product scope from active Work/Test/ACEP scope or explicitly reopen it through a Change Node and human gate.',
+      'Remove inactive Product scope from active Work/Test/execution scope or explicitly reopen it through a Change Node and human gate.',
   })
 }
 
@@ -397,7 +397,7 @@ export function readVisualAudit(root: string): { relativePath: string; content: 
 
 export function visualAuditRequiredByState(pbeState: JsonObject | null): boolean {
   const state = normalizePbeState(getNestedString(pbeState, ['autoflow', 'state']))
-  if (state && ['ACEP_RUN_DONE', 'VISUAL_AUDIT_DONE', 'WAITING_REVIEW_RESULT', 'DONE'].includes(state)) {
+  if (state && ['EXECUTION_PACK_RUN_DONE', 'VISUAL_AUDIT_DONE', 'WAITING_REVIEW_RESULT', 'DONE'].includes(state)) {
     return true
   }
   return ['submitted_for_review', 'revision_verified', 'accepted'].includes(stringValue(pbeState?.deliveryStatus))

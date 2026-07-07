@@ -1062,6 +1062,9 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         !value ||
         ![
           'start',
+          'product-intake',
+          'work-planning',
+          'verification-design',
           'rpd',
           'wpd',
           'vd',
@@ -1077,7 +1080,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       ) {
         return {
           error:
-            '--stage requires one of: start, rpd, wpd, vd, execution, review, revision, product-patch, parallel, documentation, docs, accept.',
+            '--stage requires one of: start, product-intake, work-planning, verification-design, execution, review, revision, product-patch, parallel, documentation, docs, accept.',
         }
       }
       options.stage = value as CliStageOption

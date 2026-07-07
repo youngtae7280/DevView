@@ -13,7 +13,7 @@ import {
 } from './shared.js'
 
 export async function wpdCheckCommand(context: CommandContext): Promise<CommandResult> {
-  return checkResult('wpd check', await validateWpd(context.options.root))
+  return checkResult('work-planning check', await validateWpd(context.options.root))
 }
 
 export async function wpdCloseCommand(context: CommandContext): Promise<CommandResult> {
@@ -24,22 +24,24 @@ export async function wpdCloseCommand(context: CommandContext): Promise<CommandR
   issues.push(...(await validateVisualDesign(context.options.root, { requireInventory: false })))
   issues.push(...(await validateWpd(context.options.root)))
   if (hasErrors(issues)) {
-    return transitionFailed('wpd close', 'WPD close failed. State was not changed.', issues)
+    return transitionFailed('work-planning close', 'Work Planning close failed. State was not changed.', issues)
   }
   return transitionPbeState(
     context.options.root,
-    'wpd close',
-    visualWork ? [PBE_STATE.VISUAL_CONTRACT_READY, PBE_STATE.WPD_DONE] : [PBE_STATE.WPD_DONE],
+    'work-planning close',
+    visualWork ? [PBE_STATE.VISUAL_CONTRACT_READY, PBE_STATE.WORK_PLANNING_DONE] : [PBE_STATE.WORK_PLANNING_DONE],
     {
-      completedSteps: visualWork ? ['visual_reference_intake', 'design_system_derive', 'wpd'] : ['wpd'],
-      stage: 'wpd',
-      mode: 'wpd_generation',
+      completedSteps: visualWork
+        ? ['visual_reference_intake', 'design_system_derive', 'work_planning']
+        : ['work_planning'],
+      stage: 'work_planning',
+      mode: 'work_planning',
       currentGate: null,
-      nextStep: visualWork ? 'ui_surface_inventory' : 'vd',
+      nextStep: visualWork ? 'ui_surface_inventory' : 'verification_design',
       data: {
         next: visualWork
-          ? 'Run UI Surface Inventory, then `devview vd close`.'
-          : 'Run `devview vd close` after VD artifacts are ready.',
+          ? 'Run UI Surface Inventory, then `devview verification-design close`.'
+          : 'Run `devview verification-design close` after Verification Design artifacts are ready.',
       },
     },
   )

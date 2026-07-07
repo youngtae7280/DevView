@@ -1,31 +1,31 @@
 ---
 name: devview-product-intake
-description: Run RPD/Product Tree growth by interviewing one product requirement node at a time, updating tree-native Product Tree files and backward-compatible .devview blueprint views.
+description: Run product-intake/Product Tree growth by interviewing one product requirement node at a time, updating tree-native Product Tree files and backward-compatible .devview blueprint views.
 ---
 
-# DevView RPD
+# devview product-intake
 
 ## CLI Transition Rule
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Run Recursive Program Designer as RPD Tree Walk Mode.
+Run Recursive Program Designer as product-intake Tree Walk Mode.
 
-Graph-first boundary: RPD/Product Tree artifacts remain valid tree-control compatibility inputs during graph-source migration. For Graph-source/read-model source-authority work, treat Product Tree files as compatibility/fallback/reference unless a configured graph-source registry entry or explicit user-approved transition gives them source-authority role.
+Graph-first boundary: product-intake/Product Tree artifacts remain valid tree-control compatibility inputs during graph-source migration. For Graph-source/read-model source-authority work, treat Product Tree files as compatibility/fallback/reference unless a configured graph-source registry entry or explicit user-approved transition gives them source-authority role.
 
-In DevView v2, RPD means Product Tree growth. RPD owns product meaning, user intent, scope, non-scope, UX intent, risk, and acceptance language. It writes `.devview/tree/product-tree.json` as the source of truth and keeps `.devview/blueprint/requirement-tree.json` as the backward-compatible view.
+In DevView v2, product-intake means Product Tree growth. product-intake owns product meaning, user intent, scope, non-scope, UX intent, risk, and acceptance language. It writes `.devview/tree/product-tree.json` as the source of truth and keeps `.devview/blueprint/requirement-tree.json` as the backward-compatible view.
 
-RPD participates in Autoflow. The user may invoke it directly for backward
-compatibility, but after `start` Codex should continue RPD automatically without
-requiring the user to type `@project-blueprint-engine rpd`.
+product-intake participates in Autoflow. The user may invoke it directly for backward
+compatibility, but after `start` Codex should continue product-intake automatically without
+requiring the user to type `@devview product-intake`.
 
-RPD owns user intent. It does not own coding task boundaries, parallel execution, implementation architecture, or verification strategy. Those belong to WPD, Plan Execution, and VD.
+product-intake owns user intent. It does not own coding task boundaries, parallel execution, implementation architecture, or verification strategy. Those belong to work-planning, Plan Execution, and verification-design.
 
-Update Source of Truth Matrix references whenever RPD creates, confirms, defers, or removes a requirement.
+Update Source of Truth Matrix references whenever product-intake creates, confirms, defers, or removes a requirement.
 
-RPD must not treat abstract quality expressions as executable requirements. DevView is a requirements-based execution control layer, so RPD converts user intent into verifiable Product Tree nodes before any Work Tree derivation.
+product-intake must not treat abstract quality expressions as executable requirements. DevView is a requirements-based execution control layer, so product-intake converts user intent into verifiable Product Tree nodes before any Work Tree derivation.
 
-## RPD Interview / Draft UX
+## product-intake Interview / Draft UX
 
 When the user gives a rough request, do not ask the user to write a Product Tree. Codex must draft a Product Tree candidate first, then ask for confirmation or the single most important missing decision.
 
@@ -51,11 +51,11 @@ Question priority:
 5. UI/UX direction decision.
 6. Implementation convenience or technical choice decision.
 
-Use `docs/ambiguity-taxonomy.md` to classify scope, behavior, quality, data, permission/state, verification, UI/UX, and technical/environment ambiguity. Use `templates/rpd-ambiguity-checklist-template.md` when the request has multiple ambiguity types. Use `templates/rpd-interview-summary-template.md` for durable summaries when helpful. Optional draft notes may follow `templates/rpd-interview-draft.template.json`. Codex must not mark Product nodes as `confirmed` without user confirmation.
+Use `docs/ambiguity-taxonomy.md` to classify scope, behavior, quality, data, permission/state, verification, UI/UX, and technical/environment ambiguity. Use `templates/product-intake-ambiguity-checklist-template.md` when the request has multiple ambiguity types. Use `templates/product-intake-interview-summary-template.md` for durable summaries when helpful. Optional draft notes may follow `templates/product-intake-interview-draft.template.json`. Codex must not mark Product nodes as `confirmed` without user confirmation.
 
-Do not close RPD until ambiguity that blocks Product Tree confirmation is resolved. If the user request is already specific enough, do not over-interview; summarize and ask for confirmation.
+Do not close product-intake until ambiguity that blocks Product Tree confirmation is resolved. If the user request is already specific enough, do not over-interview; summarize and ask for confirmation.
 
-If user feedback changes Product Tree meaning after RPD, do not quietly edit `.devview/tree/product-tree.json`. Route it through Change/Impact/Revision and, when a Product Tree patch is required, Product Patch Proposal.
+If user feedback changes Product Tree meaning after product-intake, do not quietly edit `.devview/tree/product-tree.json`. Route it through Change/Impact/Revision and, when a Product Tree patch is required, Product Patch Proposal.
 
 ## Inputs And Outputs
 
@@ -72,8 +72,8 @@ Keep these v1 compatibility views current:
 ```text
 .devview/blueprint/requirement-tree.json
 .devview/blueprint/requirement-tree.md
-.devview/blueprint/rpd-interview-log.md
-.devview/blueprint/rpd-summary.md
+.devview/blueprint/product-intake-interview-log.md
+.devview/blueprint/product-intake-summary.md
 .devview/blueprint/source-of-truth-matrix.md
 ```
 
@@ -82,18 +82,18 @@ Every confirmed, deferred, blocked, or out-of-scope requirement node must have a
 After updating Product Tree or the compatibility requirement-tree, run:
 
 ```bash
-devview rpd check
+devview product-intake check
 ```
 
-Before reporting RPD completion or moving to WPD, run:
+Before reporting product-intake completion or moving to work-planning, run:
 
 ```bash
-devview rpd close
+devview product-intake close
 ```
 
-If `devview rpd close` fails, do not proceed to WPD. Report the blocking issue and ask exactly one user-facing clarification question when a human decision is required.
+If `devview product-intake close` fails, do not proceed to work-planning. Report the blocking issue and ask exactly one user-facing clarification question when a human decision is required.
 
-## RPD Tree Walk Rules
+## product-intake Tree Walk Rules
 
 1. Process one current node at a time.
 2. Traverse the tree from top to bottom.
@@ -116,7 +116,7 @@ If `devview rpd close` fails, do not proceed to WPD. Report the blocking issue a
 11. Before confirming an executable selected/foundation node, write at least one structured `acceptanceCriteria` item or an explicit `acceptanceNotRequiredReason`.
 12. Update `.devview/tree/product-tree.json` and `.devview/blueprint/requirement-tree.json` after every confirmed decision.
 13. Update `.devview/control/decision-queue.json` when a human decision is needed or resolved.
-14. Update `.devview/blueprint/rpd-interview-log.md` after every interview turn.
+14. Update `.devview/blueprint/product-intake-interview-log.md` after every interview turn.
 15. Continue until every leaf node is `confirmed`, `deferred`, or `out_of_scope`.
 16. For UI-facing nodes, collect UI/UX intent without breaking the one-question rule.
 17. Record stable source IDs on every requirement node and Product Tree node.
@@ -166,11 +166,11 @@ THE SYSTEM SHALL <safe/error/retry behavior>.
 Store criteria on Product nodes as `acceptanceCriteria[]` with stable IDs. Keep legacy `acceptance[]` strings as compatibility summaries only.
 
 An executable confirmed Product node must have at least one structured criterion unless it is documentation-only or metadata-only and has `acceptanceNotRequiredReason`.
-Criteria IDs are the contract units used by WPD, VD, Evidence, Change, Impact, and Revision flows.
+Criteria IDs are the contract units used by work-planning, verification-design, Evidence, Change, Impact, and Revision flows.
 
 ## Product Tree Mapping
 
-Map RPD compatibility nodes to Product Tree nodes as follows:
+Map product-intake compatibility nodes to Product Tree nodes as follows:
 
 - `pending_interview` or `interviewing` -> Product status `draft` or `needs_human_decision`.
 - `ready_to_decompose` or `ready_to_confirm` -> Product status `proposed`.
@@ -206,7 +206,7 @@ I propose this child structure:
 1. DevView problem and purpose
 2. Product/Project/Work/Test Tree model
 3. Human gates and approval rules
-4. ACEP execution contracts
+4. execution-pack execution contracts
 5. Evidence, impact, and revision flow
 6. Usage example and risks
 
@@ -224,7 +224,7 @@ Use `.devview/control/decision-queue.json` for questions that matter to product 
 - expected tree effect
 - blocking level: `advisory`, `gate`, or `blocking`
 
-Ask exactly one open-ended question when the next decision is blocking. Do not ask the user to type internal commands to continue RPD.
+Ask exactly one open-ended question when the next decision is blocking. Do not ask the user to type internal commands to continue product-intake.
 
 ## Node Statuses
 
@@ -265,13 +265,13 @@ Select the current node in this order:
 3. The first `pending_interview` node in breadth-first order.
 4. The first `ready_to_decompose` or `ready_to_confirm` node requiring user confirmation.
 
-If every leaf node is terminal, complete RPD.
+If every leaf node is terminal, complete product-intake.
 
 ## Interview Turn
 
 For each user answer:
 
-1. Append the question and answer to `rpd-interview-log.md`.
+1. Append the question and answer to `product-intake-interview-log.md`.
 2. Extract facts as short, auditable statements.
 3. Add facts to the current node.
 4. Update the node summary.
@@ -281,9 +281,9 @@ Never bury multiple questions in a paragraph. End the response with exactly one 
 
 ## UI/UX Fact Collection
 
-When the current node appears to involve a screen, form, flow, user action, notification, visual state, or accessibility concern, collect UI/UX facts as part of RPD Tree Walk.
+When the current node appears to involve a screen, form, flow, user action, notification, visual state, or accessibility concern, collect UI/UX facts as part of product-intake Tree Walk.
 
-Keep the existing RPD rule: ask exactly one question at a time.
+Keep the existing product-intake rule: ask exactly one question at a time.
 
 Useful one-question prompts include:
 
@@ -329,7 +329,7 @@ When a node is specific enough:
 
 ## Completion Conditions
 
-RPD is complete only when:
+product-intake is complete only when:
 
 1. `requirement-tree.json` exists.
 1. `.devview/tree/product-tree.json` exists and has a root node.
@@ -339,23 +339,23 @@ RPD is complete only when:
 1. No node is `ready_to_decompose`.
 1. No node is `blocked`.
 1. `requirement-tree.md` is current.
-1. `rpd-summary.md` exists.
+1. `product-intake-summary.md` exists.
 1. Source of Truth Matrix records each terminal requirement.
-1. DevView Invariants have no RPD-level violation.
+1. DevView Invariants have no product-intake-level violation.
 1. No blocking item remains in `.devview/control/decision-queue.json`.
 1. Root confirmation has explicit user approval in the interview log or decision queue resolution.
 1. Every executable confirmed Product node has `acceptanceCriteria` or `acceptanceNotRequiredReason`.
-1. No `needs_clarification`, `partial`, or `ambiguous` Product node is selected for downstream WPD.
+1. No `needs_clarification`, `partial`, or `ambiguous` Product node is selected for downstream work-planning.
 
-## RPD Invariants
+## product-intake Invariants
 
 - Requirement IDs must be stable after confirmation.
-- RPD may mark a future item as deferred, but it must not decide whether foundation work is required; that is handled by Dependency Impact Audit and WPD.
+- product-intake may mark a future item as deferred, but it must not decide whether foundation work is required; that is handled by Dependency Impact Audit and work-planning.
 - A deferred item is not a failure.
 - A confirmed requirement must not be silently dropped by later stages.
 - User intent is the source of truth; inferred implementation tasks must trace back to a requirement or be recorded as foundation work.
 - A clear request may be summarized and structured by Codex, but the user must approve the Root summary and whether decomposition should stop.
-- RPD completion is a hard gate for every downstream stage and every deliverable-producing action, including documents, slide decks, spreadsheets, images, generated files, code, tests, and review reports.
+- product-intake completion is a hard gate for every downstream stage and every deliverable-producing action, including documents, slide decks, spreadsheets, images, generated files, code, tests, and review reports.
 - Ambiguous quality language is not executable scope until Ambiguity Gate resolves it into acceptance criteria.
 - Work Tree, Test Tree, Evidence Tree, and Acceptance Tree closure must trace to Product nodes and, where available, structured acceptance criteria.
 
@@ -368,7 +368,7 @@ The state card must make clear whether DevView is continuing automatically or st
 When complete, include:
 
 ```text
-RPD Tree Walk complete
+product-intake Tree Walk complete
 
 - total nodes:
 - confirmed:
@@ -384,19 +384,19 @@ Created/updated files:
 - .devview/control/decision-queue.json
 - .devview/blueprint/requirement-tree.json
 - .devview/blueprint/requirement-tree.md
-- .devview/blueprint/rpd-interview-log.md
-- .devview/blueprint/rpd-summary.md
+- .devview/blueprint/product-intake-interview-log.md
+- .devview/blueprint/product-intake-summary.md
 
 Autoflow:
-- Run `devview rpd close` after Product Tree and compatibility views are updated.
-- Let the CLI record `RPD_DONE`, `WAITING_UI_UX_CONFIRM` when UI/UX confirmation is required, completed steps, gates, next step, and state history.
-- If `devview rpd close` fails, do not continue downstream; report the blocking issue and required user/artifact action.
+- Run `devview product-intake close` after Product Tree and compatibility views are updated.
+- Let the CLI record `PRODUCT_INTAKE_DONE`, `WAITING_UI_UX_CONFIRM` when UI/UX confirmation is required, completed steps, gates, next step, and state history.
+- If `devview product-intake close` fails, do not continue downstream; report the blocking issue and required user/artifact action.
 
 Next action:
 Show the UI/UX confirmation gate guidance. Do not ask the user to memorize or type the internal command.
 ```
 
 If no UI/UX confirmation is required, record UI/UX status as `not_required` and
-continue automatically to WPD.
+continue automatically to work-planning.
 
 Use `[Codex 硫붾え]` only for brief explanation of requirement risks or why UI/UX confirmation is or is not required.

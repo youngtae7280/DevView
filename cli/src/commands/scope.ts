@@ -52,11 +52,11 @@ export async function scopeSelectCommand(context: CommandContext): Promise<Comma
       stage: 'execution_planning',
       mode: 'execution_planning',
       currentGate: null,
-      nextStep: 'generate_acep',
+      nextStep: 'generate_execution_pack',
       lastUserAction: 'select_scope',
       actor: 'user',
       data: {
-        next: 'Generate ACEP artifacts, then run `devview acep ready`.',
+        next: 'Generate Execution Pack artifacts, then run `devview execution-pack ready`.',
       },
     },
   )
@@ -179,10 +179,10 @@ export async function uxAuditCompleteCommand(context: CommandContext): Promise<C
     stage: 'execution_planning',
     mode: 'ux_audit',
     currentGate: null,
-    nextStep: 'generate_acep',
+    nextStep: 'generate_execution_pack',
     data: {
       checkpoint: 'ux_audit',
-      next: 'Generate ACEP artifacts and run `devview acep ready`.',
+      next: 'Generate Execution Pack artifacts and run `devview execution-pack ready`.',
     },
   })
 }

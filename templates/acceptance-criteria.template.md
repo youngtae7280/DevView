@@ -1,6 +1,6 @@
 # Acceptance Criteria
 
-Use this template when RPD converts user intent into executable Product Tree acceptance criteria.
+Use this template when product-intake converts user intent into executable Product Tree acceptance criteria.
 
 ## Requirement
 
@@ -56,6 +56,6 @@ THE SYSTEM SHALL <safe/error/retry behavior>.
 - A confirmed executable Product node must have at least one structured criterion unless `acceptanceNotRequiredReason` explains why not.
 - A confirmed criterion must include a condition/trigger, expected behavior, observable result, verification method, and required evidence.
 - UI criteria must require screenshot or manual UI evidence.
-- Abstract quality terms such as `clean`, `nice`, `fast`, `stable`, `intuitive`, `깔끔하게`, `보기 좋게`, `빠르게`, `안정적으로`, or `직관적으로` must be resolved before RPD closes.
+- Abstract quality terms such as `clean`, `nice`, `fast`, `stable`, `intuitive`, `깔끔하게`, `보기 좋게`, `빠르게`, `안정적으로`, or `직관적으로` must be resolved before product-intake closes.
 - Keep legacy `acceptance` strings only as compatibility summaries.
 - Work, Test, and Evidence trees should link to the criterion ID whenever possible.

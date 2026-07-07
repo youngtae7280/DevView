@@ -22,7 +22,8 @@ export async function uiApproveCommand(context: CommandContext): Promise<Command
         severity: 'error',
         file: defaultArtifacts.productTree,
         message: 'No UI/UX work was detected, so UI/UX approval should not create a state transition.',
-        suggestedFix: 'Continue to WPD and use `devview wpd close` after WPD artifacts are ready.',
+        suggestedFix:
+          'Continue to Work Planning and use `devview work-planning close` after Work Planning artifacts are ready.',
       }),
     )
   }
@@ -41,13 +42,13 @@ export async function uiApproveCommand(context: CommandContext): Promise<Command
       stage: 'ui_ux_confirm',
       mode: 'ui_ux_confirmation',
       currentGate: null,
-      nextStep: visualWork ? 'visual_reference_intake' : 'wpd',
+      nextStep: visualWork ? 'visual_reference_intake' : 'work_planning',
       lastUserAction: 'approve',
       actor: 'user',
       data: {
         next: visualWork
-          ? 'Create Visual Design Contract, then run `devview wpd close`.'
-          : 'Derive WPD artifacts, then run `devview wpd close`.',
+          ? 'Create Visual Design Contract, then run `devview work-planning close`.'
+          : 'Derive Work Planning artifacts, then run `devview work-planning close`.',
       },
     },
   )

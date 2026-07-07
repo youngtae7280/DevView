@@ -96,7 +96,8 @@ export async function productPatchProposeCommand(context: CommandContext): Promi
         file: defaultArtifacts.productTree,
         nodeId: requiredProductId,
         message: `Product node ${requiredProductId} does not exist.`,
-        suggestedFix: 'Pass a valid --product id or update Product Tree through RPD before proposing a patch.',
+        suggestedFix:
+          'Pass a valid --product id or update Product Tree through Product Intake before proposing a patch.',
       }),
     ])
   }
@@ -262,7 +263,8 @@ export async function productPatchApplyCommand(context: CommandContext): Promise
     file: defaultArtifacts.productPatchTree,
     nodeId: patchId,
     message: `Product Patch ${String(patchId)} changed Product Tree semantics; downstream closure must be rerun.`,
-    suggestedFix: 'Run Impact/Revision and then WPD/VD/ACEP/Execution/Review/Accept closure as required.',
+    suggestedFix:
+      'Run Impact/Revision and then Work Planning/Verification Design/Execution Pack/Execution/Review/Accept closure as required.',
     nextCommand: 'devview impact analyze',
   })
 

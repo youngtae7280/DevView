@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "version": "0.2.0-alpha",
   "stage": "complete",
-  "mode": "acep_execution",
+  "mode": "execution_pack_execution",
   "deliveryStatus": "accepted",
   "acceptance": {
     "setBy": "user",
@@ -17,28 +17,28 @@
     "state": "DONE",
     "completedSteps": [
       "start",
-      "rpd",
-      "wpd",
-      "vd",
+      "product_intake",
+      "work_planning",
+      "verification_design",
       "dependency_impact_audit",
       "plan_execution",
       "coverage_audit",
       "ux_audit",
-      "generate_acep",
-      "run_acep",
+      "generate_execution_pack",
+      "run_execution_pack",
       "review_result",
       "complete"
     ],
     "deterministicSteps": [
-      "rpd",
-      "wpd",
-      "vd",
+      "product_intake",
+      "work_planning",
+      "verification_design",
       "dependency_impact_audit",
       "plan_execution",
       "coverage_audit",
       "ux_audit",
-      "generate_acep",
-      "run_acep"
+      "generate_execution_pack",
+      "run_execution_pack"
     ],
     "humanGates": ["root_confirmation", "implementation_scope", "review_result", "next_slice_decision"],
     "currentGate": null,
@@ -48,48 +48,48 @@
     "stateHistory": [
       {
         "from": "INIT",
-        "to": "RPD_DONE",
-        "command": "devview rpd close",
+        "to": "PRODUCT_INTAKE_DONE",
+        "command": "devview product-intake close",
         "at": "2026-06-12T09:10:00.000Z"
       },
       {
-        "from": "RPD_DONE",
-        "to": "WPD_DONE",
-        "command": "devview wpd close",
+        "from": "PRODUCT_INTAKE_DONE",
+        "to": "WORK_PLANNING_DONE",
+        "command": "devview work-planning close",
         "at": "2026-06-12T10:10:00.000Z"
       },
       {
-        "from": "WPD_DONE",
-        "to": "VD_DONE",
-        "command": "devview vd close",
+        "from": "WORK_PLANNING_DONE",
+        "to": "VERIFICATION_DESIGN_DONE",
+        "command": "devview verification-design close",
         "at": "2026-06-12T11:10:00.000Z"
       },
       {
-        "from": "VD_DONE",
+        "from": "VERIFICATION_DESIGN_DONE",
         "to": "SCOPE_SELECTED",
         "command": "devview scope select",
         "at": "2026-06-12T11:20:00.000Z"
       },
       {
         "from": "SCOPE_SELECTED",
-        "to": "ACEP_READY",
-        "command": "devview acep ready",
+        "to": "EXECUTION_PACK_READY",
+        "command": "devview execution-pack ready",
         "at": "2026-06-12T11:30:00.000Z"
       },
       {
-        "from": "ACEP_READY",
+        "from": "EXECUTION_PACK_READY",
         "to": "EXECUTION_IN_PROGRESS",
         "command": "devview execution start",
         "at": "2026-06-12T11:40:00.000Z"
       },
       {
         "from": "EXECUTION_IN_PROGRESS",
-        "to": "ACEP_RUN_DONE",
+        "to": "EXECUTION_PACK_RUN_DONE",
         "command": "devview execution complete",
         "at": "2026-06-12T12:10:00.000Z"
       },
       {
-        "from": "ACEP_RUN_DONE",
+        "from": "EXECUTION_PACK_RUN_DONE",
         "to": "WAITING_REVIEW_RESULT",
         "command": "devview review submit",
         "at": "2026-06-12T12:20:00.000Z"

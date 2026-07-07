@@ -6,7 +6,7 @@ import { runPbeCli } from '../app'
 import { writeJsonArtifactTransaction } from '../core/artifact-transaction'
 import { recommendContext } from '../core/context-recommendation'
 import { recommendProfile } from '../core/profile-recommendation'
-import { canTransition, isPbeState, PBE_STATE } from '../core/state-machine'
+import { canTransition, isPbeState, normalizeDevViewState, PBE_STATE } from '../core/state-machine'
 import { checkpointPbeState, transitionPbeState } from '../core/state-transition'
 import { ExitCode } from '../core/types'
 import { validateEvidence } from '../validators/evidence-validator'
@@ -41,14 +41,22 @@ afterEach(() => {
 
 describe('DevView CLI', () => {
   it('recognizes canonical DevView states and transition helpers', () => {
-    expect(isPbeState(PBE_STATE.RPD_DONE)).toBe(true)
+    expect(isPbeState(PBE_STATE.PRODUCT_INTAKE_DONE)).toBe(true)
     expect(isPbeState('NOT_A_PBE_STATE')).toBe(false)
-    expect(canTransition(PBE_STATE.RPD_DONE, PBE_STATE.WPD_DONE)).toBe(true)
-    expect(canTransition(PBE_STATE.SCOPE_SELECTED, PBE_STATE.WPD_DONE)).toBe(false)
-    expect(canTransition(PBE_STATE.ACEP_READY, PBE_STATE.ACEP_RUN_DONE)).toBe(false)
+    expect(canTransition(PBE_STATE.PRODUCT_INTAKE_DONE, PBE_STATE.WORK_PLANNING_DONE)).toBe(true)
+    expect(canTransition(PBE_STATE.SCOPE_SELECTED, PBE_STATE.WORK_PLANNING_DONE)).toBe(false)
+    expect(canTransition(PBE_STATE.EXECUTION_PACK_READY, PBE_STATE.EXECUTION_PACK_RUN_DONE)).toBe(false)
     expect(canTransition(PBE_STATE.WAITING_REVIEW_RESULT, PBE_STATE.DONE)).toBe(false)
     expect(canTransition(PBE_STATE.WAITING_REVIEW_RESULT, PBE_STATE.ACCEPTED)).toBe(true)
     expect(canTransition(PBE_STATE.ACCEPTED, PBE_STATE.DONE)).toBe(true)
+  })
+
+  it('normalizes legacy workflow states to canonical DevView states', () => {
+    expect(normalizeDevViewState('RPD_DONE')).toBe('PRODUCT_INTAKE_DONE')
+    expect(normalizeDevViewState('WPD_DONE')).toBe('WORK_PLANNING_DONE')
+    expect(normalizeDevViewState('VD_DONE')).toBe('VERIFICATION_DESIGN_DONE')
+    expect(normalizeDevViewState('ACEP_READY')).toBe('EXECUTION_PACK_READY')
+    expect(normalizeDevViewState('ACEP_RUN_DONE')).toBe('EXECUTION_PACK_RUN_DONE')
   })
 
   it('prints help', async () => {
@@ -61,10 +69,27 @@ describe('DevView CLI', () => {
     expect(result.stdout).toContain('context recommend')
     expect(result.stdout).toContain('context pack')
     expect(result.stdout).toContain('graph execution-contract report')
-    expect(result.stdout).toContain('rpd close')
-    expect(result.stdout).toContain('wpd close')
+    expect(result.stdout).toContain('product-intake close')
+    expect(result.stdout).toContain('work-planning close')
     expect(result.stdout).toContain('execution start')
     expect(result.stdout).toContain('review submit')
+  })
+
+  it('routes canonical workflow command groups while keeping validators authoritative', async () => {
+    const workspace = createWorkspace()
+    writeDevViewState(workspace, 'INIT')
+
+    for (const args of [
+      ['product-intake', 'check', '--json'],
+      ['work-planning', 'check', '--json'],
+      ['verification-design', 'check', '--json'],
+      ['execution-pack', 'check', '--json'],
+    ]) {
+      const result = await runPbeCli(args, { cwd: workspace, pluginRoot })
+      const payload = JSON.parse(result.stdout || result.stderr)
+      expect(payload.command).toBe(args.slice(0, 2).join(' '))
+      expect(payload.message || '').not.toContain('Unknown command')
+    }
   })
 
   it('assesses Product to Work UI ambiguity and recommends a Human Gate', async () => {
@@ -601,7 +626,7 @@ describe('DevView CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
-    expect(payload.detectedStage).toBe('rpd')
+    expect(payload.detectedStage).toBe('product-intake')
     expect(payload.skills).toContain('devview-product-intake')
     expect(payload.readFirst).toContain('agent-context/rpd.md')
     expect(payload.readOnlyIfNeeded).toContain('docs/rpd-interview-mode.md')
@@ -615,7 +640,7 @@ describe('DevView CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
-    expect(payload.detectedStage).toBe('vd')
+    expect(payload.detectedStage).toBe('verification-design')
     expect(payload.skills).toContain('devview-verification-design')
     expect(payload.readFirst).toContain('agent-context/vd.md')
     expect(payload.readFirst).toContain('agent-context/evidence.md')
@@ -726,7 +751,7 @@ describe('DevView CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
-    expect(payload.detectedStage).toBe('vd')
+    expect(payload.detectedStage).toBe('verification-design')
     expect(payload.profile).toBe('lite')
     expect(payload.readFirst).toEqual(['agent-context/vd.md', 'agent-context/evidence.md', 'agent-context/lite.md'])
     expect(payload.readOnlyIfNeeded).toContain('docs/vd-quality-rubric.md')
@@ -824,7 +849,7 @@ describe('DevView CLI', () => {
     expect(existsSync(join(emptyWorkspace, '.pbe'))).toBe(false)
 
     const initializedWorkspace = createWorkspace()
-    writeDevViewState(initializedWorkspace, 'RPD_DONE')
+    writeDevViewState(initializedWorkspace, 'PRODUCT_INTAKE_DONE')
     const beforeState = readStateText(initializedWorkspace)
     const initializedResult = await runPbeCli(['context', 'recommend', '--brief', 'vd test tree verification design'], {
       cwd: initializedWorkspace,
@@ -939,7 +964,7 @@ describe('DevView CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
-    expect(payload.recommendation.detectedStage).toBe('vd')
+    expect(payload.recommendation.detectedStage).toBe('verification-design')
     expect(payload.suggestedGateAssessment.enabled).toBe(false)
     expect(payload.suggestedGateAssessment.transition).toBe('work-to-test')
     expect(payload.suggestedGateAssessment.reason).toContain('No brief/text was provided')
@@ -955,7 +980,7 @@ describe('DevView CLI', () => {
     expect(existsSync(join(emptyWorkspace, '.pbe'))).toBe(false)
 
     const initializedWorkspace = createWorkspace()
-    writeDevViewState(initializedWorkspace, 'RPD_DONE')
+    writeDevViewState(initializedWorkspace, 'PRODUCT_INTAKE_DONE')
     const beforeState = readStateText(initializedWorkspace)
     const initializedResult = await runPbeCli(['context', 'pack', '--brief', 'docs update'], {
       cwd: initializedWorkspace,
@@ -1026,9 +1051,9 @@ describe('DevView CLI', () => {
   })
 
   it.each([
-    ['INIT', 'devview rpd close or devview rpd check'],
-    ['WPD_DONE', 'devview vd close'],
-    ['ACEP_READY', 'devview execution start'],
+    ['INIT', 'devview product-intake close or devview product-intake check'],
+    ['WORK_PLANNING_DONE', 'devview verification-design close'],
+    ['EXECUTION_PACK_READY', 'devview execution start'],
     ['EXECUTION_IN_PROGRESS', 'devview execution complete'],
   ])('recommends the next status command for %s', async (state, expectedCommand) => {
     const workspace = createWorkspace()
@@ -1107,7 +1132,7 @@ describe('DevView CLI', () => {
 
   it('keeps existing status JSON fields while adding navigator fields', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'WPD_DONE', {
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE', {
       currentGate: 'wpd',
       nextStep: 'vd',
       deliveryStatus: 'wpd_done',
@@ -1120,12 +1145,12 @@ describe('DevView CLI', () => {
     expect(payload).toMatchObject({
       initialized: true,
       profile: 'full',
-      state: 'WPD_DONE',
+      state: 'WORK_PLANNING_DONE',
       currentGate: 'wpd',
       nextStep: 'vd',
       deliveryStatus: 'wpd_done',
       stateHistoryCount: 0,
-      recommendedNextCommand: 'devview vd close',
+      recommendedNextCommand: 'devview verification-design close',
     })
     expect(payload).toHaveProperty('openBlockingDecisions')
     expect(payload).toHaveProperty('artifacts')
@@ -1137,16 +1162,16 @@ describe('DevView CLI', () => {
 
   it('adds recommended context to lite VD status JSON without changing the next command', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'VD_IN_PROGRESS', { profile: 'lite' })
+    writeDevViewState(workspace, 'VERIFICATION_DESIGN_IN_PROGRESS', { profile: 'lite' })
     const beforeState = readStateText(workspace)
 
     const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
-    expect(payload.recommendedNextCommand).toBe('devview vd close')
+    expect(payload.recommendedNextCommand).toBe('devview verification-design close')
     expect(payload.recommendedContext).toMatchObject({
-      detectedStage: 'vd',
+      detectedStage: 'verification-design',
       profile: 'lite',
       skills: ['devview-verification-design'],
     })
@@ -1161,7 +1186,7 @@ describe('DevView CLI', () => {
 
   it('shows a short recommended context section in status text output', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'VD_IN_PROGRESS', { profile: 'lite' })
+    writeDevViewState(workspace, 'VERIFICATION_DESIGN_IN_PROGRESS', { profile: 'lite' })
 
     const result = await runPbeCli(['status'], { cwd: workspace, pluginRoot })
 
@@ -1174,14 +1199,14 @@ describe('DevView CLI', () => {
 
   it('includes recommended context for full profile without adding the Lite card', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'VD_IN_PROGRESS', { profile: 'full' })
+    writeDevViewState(workspace, 'VERIFICATION_DESIGN_IN_PROGRESS', { profile: 'full' })
 
     const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.profileGuidance.profile).toBe('full')
-    expect(payload.recommendedContext.detectedStage).toBe('vd')
+    expect(payload.recommendedContext.detectedStage).toBe('verification-design')
     expect(payload.recommendedContext.profile).toBe('full')
     expect(payload.recommendedContext.readFirst).toContain('agent-context/vd.md')
     expect(payload.recommendedContext.readFirst).not.toContain('agent-context/lite.md')
@@ -1189,14 +1214,14 @@ describe('DevView CLI', () => {
 
   it('keeps bypass status context minimal', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'VD_IN_PROGRESS', { profile: 'bypass' })
+    writeDevViewState(workspace, 'VERIFICATION_DESIGN_IN_PROGRESS', { profile: 'bypass' })
 
     const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.profileGuidance.profile).toBe('bypass')
-    expect(payload.recommendedContext.detectedStage).toBe('vd')
+    expect(payload.recommendedContext.detectedStage).toBe('verification-design')
     expect(payload.recommendedContext.profile).toBe('bypass')
     expect(payload.recommendedContext.skills).toEqual([])
     expect(payload.recommendedContext.readFirst).toEqual(['agent-context/start.md'])
@@ -1204,13 +1229,13 @@ describe('DevView CLI', () => {
 
   it('shows compact guidance in status text output', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'WPD_DONE', { profile: 'lite' })
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE', { profile: 'lite' })
 
     const result = await runPbeCli(['status'], { cwd: workspace, pluginRoot })
 
     expect(result.exitCode).toBe(ExitCode.Success)
     expect(result.stdout).toContain('Profile: lite')
-    expect(result.stdout).toContain('Recommended next command: devview vd close')
+    expect(result.stdout).toContain('Recommended next command: devview verification-design close')
     expect(result.stdout).toContain('Compact workflow guidance:')
     expect(result.stdout).toContain('compact DevView guidance for a bounded low-risk slice')
     expect(result.stdout).toContain('Increase to full planning depth if product meaning change')
@@ -1218,14 +1243,14 @@ describe('DevView CLI', () => {
 
   it('includes compact profile guidance in status JSON without changing next command', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'WPD_DONE', { profile: 'lite' })
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE', { profile: 'lite' })
 
     const result = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.profile).toBe('lite')
-    expect(payload.recommendedNextCommand).toBe('devview vd close')
+    expect(payload.recommendedNextCommand).toBe('devview verification-design close')
     expect(payload.profileGuidance).toMatchObject({
       profile: 'lite',
       workflowDepth: 'compact',
@@ -1387,7 +1412,7 @@ describe('DevView CLI', () => {
     const result = await runPbeCli(['rpd', 'close', '--json'], { cwd: workspace, pluginRoot })
 
     expect(result.exitCode).toBe(ExitCode.Success)
-    expect(JSON.parse(result.stdout).state).toBe('RPD_DONE')
+    expect(JSON.parse(result.stdout).state).toBe('PRODUCT_INTAKE_DONE')
   })
 
   it('closes RPD and updates state when root and leaf are user-confirmed', async () => {
@@ -1403,14 +1428,14 @@ describe('DevView CLI', () => {
     const status = await runPbeCli(['status', '--json'], { cwd: workspace, pluginRoot })
 
     expect(result.exitCode).toBe(ExitCode.Success)
-    expect(JSON.parse(result.stdout).state).toBe('RPD_DONE')
+    expect(JSON.parse(result.stdout).state).toBe('PRODUCT_INTAKE_DONE')
     const statusPayload = JSON.parse(status.stdout)
-    expect(statusPayload.state).toBe('RPD_DONE')
+    expect(statusPayload.state).toBe('PRODUCT_INTAKE_DONE')
     expect(statusPayload.stateHistoryCount).toBe(1)
     expect(statusPayload.lastTransition).toMatchObject({
       from: 'INIT',
-      to: 'RPD_DONE',
-      command: 'rpd close',
+      to: 'PRODUCT_INTAKE_DONE',
+      command: 'product-intake close',
     })
     expect(readState(workspace).autoflow.stateHistory).toHaveLength(1)
   })
@@ -1420,7 +1445,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace, { visualImpact: true })
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'RPD_DONE')
+    writeDevViewState(workspace, 'PRODUCT_INTAKE_DONE')
     writeText(
       blueprintPath(workspace, 'ui-ux-confirmation.md'),
       [
@@ -1463,7 +1488,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace, { visualImpact: true })
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'ACEP_READY')
+    writeDevViewState(workspace, 'EXECUTION_PACK_READY')
     writeText(
       blueprintPath(workspace, 'ui-ux-confirmation.md'),
       '# UI/UX Confirmation\n\n- Status: confirmed\n- Confirmed by: user\n',
@@ -1556,10 +1581,10 @@ describe('DevView CLI', () => {
       message: expect.any(String),
       file: '.pbe/tree/work-tree.json',
       nodeType: 'Product',
-      stage: 'wpd',
+      stage: 'work-planning',
       reason: expect.any(String),
       suggestedFix: expect.any(String),
-      nextCommand: 'devview wpd close',
+      nextCommand: 'devview work-planning close',
     })
   })
 
@@ -1578,7 +1603,7 @@ describe('DevView CLI', () => {
     expect(result.stderr).toContain('Issues: 1 total, 1 error')
     expect(result.stderr).toContain('[error] PRODUCT_WORK_LINK_MISSING')
     expect(result.stderr).toContain('Suggested fix:')
-    expect(result.stderr).toContain('Next command: devview wpd close')
+    expect(result.stderr).toContain('Next command: devview work-planning close')
   })
 
   it('stage-aware WPD traceability rejects inactive Product scope leaks', async () => {
@@ -1664,7 +1689,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'WPD_DONE')
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE')
     writeWorkTree(workspace)
     writeTestTree(workspace, { verifiesAcceptanceCriteria: false })
 
@@ -1751,7 +1776,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace, { visualImpact: true })
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'WPD_DONE')
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE')
     writeWorkTree(workspace)
     writeVisualContractArtifacts(workspace, { contractOnly: true })
 
@@ -1809,7 +1834,7 @@ describe('DevView CLI', () => {
     writeWorkTree(workspace)
     writeTestTree(workspace)
     writeVisualContractArtifacts(workspace, { requiredScreenshot: true })
-    writeDevViewState(workspace, 'ACEP_RUN_DONE')
+    writeDevViewState(workspace, 'EXECUTION_PACK_RUN_DONE')
     writeVisualScreenshotEvidence(workspace)
 
     const result = await runPbeCli(['gate', 'review-result', '--json'], { cwd: workspace, pluginRoot })
@@ -1825,7 +1850,7 @@ describe('DevView CLI', () => {
     writeWorkTree(workspace)
     writeTestTree(workspace)
     writeVisualContractArtifacts(workspace, { requiredScreenshot: true })
-    writeDevViewState(workspace, 'ACEP_RUN_DONE')
+    writeDevViewState(workspace, 'EXECUTION_PACK_RUN_DONE')
     writeVisualScreenshotEvidence(workspace)
     writeText(
       evidencePath(workspace, 'visual-audit.md'),
@@ -1865,7 +1890,7 @@ describe('DevView CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
     const payload = JSON.parse(result.stderr)
-    expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain('ACEP_SCOPE_LEAK')
+    expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain('EXECUTION_PACK_SCOPE_LEAK')
   })
 
   it('rejects Evidence nodes whose attached file path is missing', async () => {
@@ -1955,7 +1980,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'ACEP_RUN_DONE')
+    writeDevViewState(workspace, 'EXECUTION_PACK_RUN_DONE')
     writeWorkTree(workspace, { workUpdatedAt: '2026-06-12T10:00:00.000Z' })
     writeTestTree(workspace)
     writeEvidenceTree(workspace, {
@@ -1974,7 +1999,7 @@ describe('DevView CLI', () => {
 
   it('passes file guard when changed source file is within Work expectedFiles', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'WPD_DONE')
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE')
     writeWorkTree(workspace)
     writeText(join(workspace, 'src', 'status.ts'), 'export const status = "baseline"\n')
     initGitRepository(workspace)
@@ -1988,7 +2013,7 @@ describe('DevView CLI', () => {
 
   it('fails file guard when changed source file matches forbiddenFiles', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'WPD_DONE')
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE')
     writeWorkTree(workspace)
     addWorkNodeFields(workspace, 'WT-1', { forbiddenFiles: ['src/secret.ts'] })
     writeText(join(workspace, 'src', 'secret.ts'), 'export const secret = "baseline"\n')
@@ -2005,7 +2030,7 @@ describe('DevView CLI', () => {
 
   it('fails file guard for unknown source files when Work scope has no unknownFileTouchRisk', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'WPD_DONE')
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE')
     writeWorkTree(workspace)
     writeText(join(workspace, 'src', 'outside.ts'), 'export const outside = "baseline"\n')
     initGitRepository(workspace)
@@ -2021,7 +2046,7 @@ describe('DevView CLI', () => {
 
   it('does not treat legacy storage-only artifact changes as source file violations', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'WPD_DONE')
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE')
     writeWorkTree(workspace)
     initGitRepository(workspace)
     writeText(blueprintPath(workspace, 'notes.md'), 'artifact update\n')
@@ -2097,7 +2122,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'ACEP_RUN_DONE')
+    writeDevViewState(workspace, 'EXECUTION_PACK_RUN_DONE')
     writeWorkTree(workspace)
     writeTestTree(workspace)
     writeEvidenceTree(workspace)
@@ -2222,7 +2247,7 @@ describe('DevView CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const state = readState(workspace)
-    expect(state.autoflow.state).toBe('ACEP_RUN_DONE')
+    expect(state.autoflow.state).toBe('EXECUTION_PACK_RUN_DONE')
     expect(state.deliveryStatus).toBe('verified')
   })
 
@@ -2231,7 +2256,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'ACEP_RUN_DONE')
+    writeDevViewState(workspace, 'EXECUTION_PACK_RUN_DONE')
     writeWorkTree(workspace)
     writeTestTree(workspace)
     writeEvidenceTree(workspace, { omitTimestamp: true })
@@ -2274,7 +2299,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'ACEP_RUN_DONE')
+    writeDevViewState(workspace, 'EXECUTION_PACK_RUN_DONE')
     writeWorkTree(workspace)
     writeTestTree(workspace)
     writeEvidenceTree(workspace, { status: 'superseded' })
@@ -2324,14 +2349,14 @@ describe('DevView CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const state = readState(workspace)
-    expect(state.autoflow.state).toBe('WPD_DONE')
-    expect(state.autoflow.completedSteps).toContain('wpd')
+    expect(state.autoflow.state).toBe('WORK_PLANNING_DONE')
+    expect(state.autoflow.completedSteps).toContain('work_planning')
     expect(state.autoflow.currentGate).toBeNull()
-    expect(state.autoflow.nextStep).toBe('vd')
+    expect(state.autoflow.nextStep).toBe('verification_design')
     expectLastTransition(state, {
       from: 'UI_UX_APPROVED',
-      to: 'WPD_DONE',
-      command: 'wpd close',
+      to: 'WORK_PLANNING_DONE',
+      command: 'work-planning close',
     })
   })
 
@@ -2340,7 +2365,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'WPD_DONE')
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE')
     writeWorkTree(workspace)
     writeTestTree(workspace)
 
@@ -2348,14 +2373,14 @@ describe('DevView CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const state = readState(workspace)
-    expect(state.autoflow.state).toBe('VD_DONE')
-    expect(state.autoflow.completedSteps).toContain('vd')
+    expect(state.autoflow.state).toBe('VERIFICATION_DESIGN_DONE')
+    expect(state.autoflow.completedSteps).toContain('verification_design')
     expect(state.autoflow.currentGate).toBe('implementation_scope')
     expect(state.autoflow.nextStep).toBe('implementation_scope')
     expectLastTransition(state, {
-      from: 'WPD_DONE',
-      to: 'VD_DONE',
-      command: 'vd close',
+      from: 'WORK_PLANNING_DONE',
+      to: 'VERIFICATION_DESIGN_DONE',
+      command: 'verification-design close',
     })
   })
 
@@ -2384,7 +2409,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'VD_DONE')
+    writeDevViewState(workspace, 'VERIFICATION_DESIGN_DONE')
     writeWorkTree(workspace)
     writeTestTree(workspace)
 
@@ -2395,7 +2420,7 @@ describe('DevView CLI', () => {
     expect(state.autoflow.state).toBe('SCOPE_SELECTED')
     expect(state.autoflow.completedSteps).toContain('implementation_scope')
     expect(state.autoflow.currentGate).toBeNull()
-    expect(state.autoflow.nextStep).toBe('generate_acep')
+    expect(state.autoflow.nextStep).toBe('generate_execution_pack')
     expect(state.autoflow.stateHistory.map((entry: { to: string }) => entry.to)).toEqual([
       'WAITING_IMPLEMENTATION_SCOPE',
       'SCOPE_SELECTED',
@@ -2413,7 +2438,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'RPD_DONE')
+    writeDevViewState(workspace, 'PRODUCT_INTAKE_DONE')
     writeWorkTree(workspace)
     writeTestTree(workspace)
 
@@ -2433,7 +2458,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'VD_DONE')
+    writeDevViewState(workspace, 'VERIFICATION_DESIGN_DONE')
     writeWorkTree(workspace)
     writeTestTree(workspace)
     writeDependencyImpactAudit(workspace)
@@ -2469,9 +2494,9 @@ describe('DevView CLI', () => {
     expect(state.autoflow.stateHistory.map((entry: { to: string }) => entry.to)).toEqual([
       'WAITING_IMPLEMENTATION_SCOPE',
       'SCOPE_SELECTED',
-      'ACEP_READY',
+      'EXECUTION_PACK_READY',
       'EXECUTION_IN_PROGRESS',
-      'ACEP_RUN_DONE',
+      'EXECUTION_PACK_RUN_DONE',
       'WAITING_REVIEW_RESULT',
     ])
   })
@@ -2493,7 +2518,7 @@ describe('DevView CLI', () => {
         'coverage_audit',
         'ux_audit',
       ],
-      nextStep: 'generate_acep',
+      nextStep: 'generate_execution_pack',
     })
     writeWorkTree(workspace)
     writeTestTree(workspace)
@@ -2504,14 +2529,14 @@ describe('DevView CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const state = readState(workspace)
-    expect(state.autoflow.state).toBe('ACEP_READY')
-    expect(state.autoflow.completedSteps).toContain('generate_acep')
+    expect(state.autoflow.state).toBe('EXECUTION_PACK_READY')
+    expect(state.autoflow.completedSteps).toContain('generate_execution_pack')
     expect(state.autoflow.currentGate).toBeNull()
-    expect(state.autoflow.nextStep).toBe('run_acep')
+    expect(state.autoflow.nextStep).toBe('run_execution_pack')
     expectLastTransition(state, {
       from: 'SCOPE_SELECTED',
-      to: 'ACEP_READY',
-      command: 'acep ready',
+      to: 'EXECUTION_PACK_READY',
+      command: 'execution-pack ready',
     })
   })
 
@@ -2520,7 +2545,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'ACEP_READY')
+    writeDevViewState(workspace, 'EXECUTION_PACK_READY')
     writeWorkTree(workspace)
     writeTestTree(workspace)
     writeExecutionManifest(workspace)
@@ -2533,9 +2558,9 @@ describe('DevView CLI', () => {
     expect(state.autoflow.state).toBe('EXECUTION_IN_PROGRESS')
     expect(state.autoflow.completedSteps).toContain('execution_start')
     expect(state.autoflow.currentGate).toBeNull()
-    expect(state.autoflow.nextStep).toBe('run_acep')
+    expect(state.autoflow.nextStep).toBe('run_execution_pack')
     expectLastTransition(state, {
-      from: 'ACEP_READY',
+      from: 'EXECUTION_PACK_READY',
       to: 'EXECUTION_IN_PROGRESS',
       command: 'execution start',
     })
@@ -2579,22 +2604,22 @@ describe('DevView CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const state = readState(workspace)
-    expect(state.autoflow.state).toBe('ACEP_RUN_DONE')
+    expect(state.autoflow.state).toBe('EXECUTION_PACK_RUN_DONE')
     expect(state.deliveryStatus).toBe('verified')
-    expect(state.autoflow.completedSteps).toContain('run_acep')
+    expect(state.autoflow.completedSteps).toContain('run_execution_pack')
     expectLastTransition(state, {
       from: 'EXECUTION_IN_PROGRESS',
-      to: 'ACEP_RUN_DONE',
+      to: 'EXECUTION_PACK_RUN_DONE',
       command: 'execution complete',
     })
   })
 
-  it('rejects the direct ACEP_READY to ACEP_RUN_DONE execution shortcut', async () => {
+  it('rejects the direct EXECUTION_PACK_READY to EXECUTION_PACK_RUN_DONE execution shortcut', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'ACEP_READY')
+    writeDevViewState(workspace, 'EXECUTION_PACK_READY')
     writeWorkTree(workspace)
     writeTestTree(workspace)
     writeExecutionManifest(workspace)
@@ -2672,7 +2697,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'ACEP_RUN_DONE', {
+    writeDevViewState(workspace, 'EXECUTION_PACK_RUN_DONE', {
       completedSteps: [
         'start',
         'rpd',
@@ -2707,7 +2732,7 @@ describe('DevView CLI', () => {
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
     writeDevViewState(workspace, 'SCOPE_SELECTED', {
-      completedSteps: ['start', 'rpd', 'wpd', 'vd', 'implementation_scope'],
+      completedSteps: ['start', 'product_intake', 'work_planning', 'verification_design', 'implementation_scope'],
       nextStep: 'dependency_impact_audit',
     })
     writeWorkTree(workspace)
@@ -2729,7 +2754,7 @@ describe('DevView CLI', () => {
 
     const state = readState(workspace)
     expect(state.autoflow.state).toBe('SCOPE_SELECTED')
-    expect(state.autoflow.nextStep).toBe('generate_acep')
+    expect(state.autoflow.nextStep).toBe('generate_execution_pack')
     expect(state.autoflow.completedSteps).toEqual(
       expect.arrayContaining(['dependency_impact_audit', 'plan_execution', 'coverage_audit', 'ux_audit']),
     )
@@ -2742,8 +2767,8 @@ describe('DevView CLI', () => {
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
     writeDevViewState(workspace, 'SCOPE_SELECTED', {
-      completedSteps: ['start', 'rpd', 'wpd', 'vd', 'implementation_scope'],
-      nextStep: 'generate_acep',
+      completedSteps: ['start', 'product_intake', 'work_planning', 'verification_design', 'implementation_scope'],
+      nextStep: 'generate_execution_pack',
     })
     writeWorkTree(workspace)
     writeTestTree(workspace)
@@ -2766,7 +2791,7 @@ describe('DevView CLI', () => {
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
     writeDevViewState(workspace, 'SCOPE_SELECTED', {
-      completedSteps: ['start', 'rpd', 'wpd', 'vd', 'implementation_scope'],
+      completedSteps: ['start', 'product_intake', 'work_planning', 'verification_design', 'implementation_scope'],
       nextStep: 'dependency_impact_audit',
     })
     writeWorkTree(workspace)
@@ -2788,7 +2813,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'WPD_DONE')
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE')
 
     const before = JSON.stringify(readState(workspace))
     const result = await runPbeCli(['vd', 'close', '--json'], { cwd: workspace, pluginRoot })
@@ -2803,7 +2828,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'ACEP_READY')
+    writeDevViewState(workspace, 'EXECUTION_PACK_READY')
     writeWorkTree(workspace)
 
     const before = JSON.stringify(readState(workspace))
@@ -2821,9 +2846,14 @@ describe('DevView CLI', () => {
     const invalidJsonWorkspace = createWorkspace()
     writeText(join(invalidJsonWorkspace, '.devview', 'blueprint', 'devview-state.json'), '{ invalid json')
     const invalidJsonBefore = readStateText(invalidJsonWorkspace)
-    const invalidJsonResult = await transitionPbeState(invalidJsonWorkspace, 'test transition', [PBE_STATE.RPD_DONE], {
-      nextStep: 'wpd',
-    })
+    const invalidJsonResult = await transitionPbeState(
+      invalidJsonWorkspace,
+      'test transition',
+      [PBE_STATE.PRODUCT_INTAKE_DONE],
+      {
+        nextStep: 'wpd',
+      },
+    )
     expect(invalidJsonResult.exitCode).toBe(ExitCode.SchemaError)
     expect(readStateText(invalidJsonWorkspace)).toBe(invalidJsonBefore)
 
@@ -2833,7 +2863,7 @@ describe('DevView CLI', () => {
     const unknownStateResult = await transitionPbeState(
       unknownStateWorkspace,
       'test transition',
-      [PBE_STATE.RPD_DONE],
+      [PBE_STATE.PRODUCT_INTAKE_DONE],
       { nextStep: 'wpd' },
     )
     expect(unknownStateResult.exitCode).toBe(ExitCode.TransitionBlocked)
@@ -2842,7 +2872,7 @@ describe('DevView CLI', () => {
 
   it('does not mutate state on checkpoint helper blocked state failures', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'VD_DONE')
+    writeDevViewState(workspace, 'VERIFICATION_DESIGN_DONE')
 
     const before = readStateText(workspace)
     const result = await checkpointPbeState(workspace, 'test checkpoint', [PBE_STATE.SCOPE_SELECTED], {
@@ -2861,8 +2891,10 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'WPD_DONE', {
-      stateHistory: [{ from: 'INIT', to: 'RPD_DONE', command: 'rpd close', at: '2026-01-01T00:00:00.000Z' }],
+    writeDevViewState(workspace, 'WORK_PLANNING_DONE', {
+      stateHistory: [
+        { from: 'INIT', to: 'PRODUCT_INTAKE_DONE', command: 'product-intake close', at: '2026-01-01T00:00:00.000Z' },
+      ],
     })
     writeWorkTree(workspace)
     writeTestTree(workspace)
@@ -2950,7 +2982,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'ACEP_RUN_DONE')
+    writeDevViewState(workspace, 'EXECUTION_PACK_RUN_DONE')
     writeWorkTree(workspace)
     writeTestTree(workspace)
     writeEvidenceTree(workspace)
@@ -3811,8 +3843,8 @@ describe('DevView CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const state = readState(workspace)
-    expect(state.autoflow.state).toBe('WPD_IN_PROGRESS')
-    expect(state.autoflow.nextStep).toBe('wpd')
+    expect(state.autoflow.state).toBe('WORK_PLANNING_IN_PROGRESS')
+    expect(state.autoflow.nextStep).toBe('work_planning')
     expect(state.deliveryStatus).not.toBe('accepted')
     expect(state.activeRevision).toBeUndefined()
     expect(state.revisionHistory.at(-1)).toMatchObject({
@@ -3824,7 +3856,7 @@ describe('DevView CLI', () => {
     expect(state.revisionHistory.at(-1).completedAt).toEqual(expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/))
     expectLastTransition(state, {
       from: 'REVISION_REQUESTED',
-      to: 'WPD_IN_PROGRESS',
+      to: 'WORK_PLANNING_IN_PROGRESS',
       command: 'revision complete',
     })
   })
@@ -3852,7 +3884,7 @@ describe('DevView CLI', () => {
     writeExecutableProduct(workspace, { visualImpact: true })
     writeRequirementCompat(workspace)
     writeDecisionQueue(workspace)
-    writeDevViewState(workspace, 'ACEP_RUN_DONE')
+    writeDevViewState(workspace, 'EXECUTION_PACK_RUN_DONE')
     writeWorkTree(workspace)
     writeTestTree(workspace)
     writeVisualContractArtifacts(workspace, { requiredScreenshot: true })
@@ -3874,7 +3906,7 @@ describe('DevView CLI', () => {
   it('validate reports unknown state and broken state history', async () => {
     const workspace = createWorkspace()
     writeDevViewState(workspace, 'UNKNOWN_STATE', {
-      stateHistory: [{ from: 'INIT', to: 'WPD_DONE', command: 'bad', at: '2026-01-01T00:00:00.000Z' }],
+      stateHistory: [{ from: 'INIT', to: 'WORK_PLANNING_DONE', command: 'bad', at: '2026-01-01T00:00:00.000Z' }],
     })
 
     const result = await runPbeCli(['validate', '--json'], { cwd: workspace, pluginRoot })
@@ -3887,7 +3919,7 @@ describe('DevView CLI', () => {
 
   it('state validator accepts a known canonical state', async () => {
     const workspace = createWorkspace()
-    writeDevViewState(workspace, 'RPD_DONE')
+    writeDevViewState(workspace, 'PRODUCT_INTAKE_DONE')
 
     const issues = await validateState(workspace)
 

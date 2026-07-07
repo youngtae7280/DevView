@@ -48,7 +48,7 @@
 - Deferred requirements:
 - Deferral reasons recorded:
 - Future verification notes recorded:
-- Protected from current ACEP implementation:
+- Protected from current execution-pack implementation:
 - Missing deferral documentation:
 
 ## Out-Of-Scope Protection

@@ -9,7 +9,7 @@ description: Determine and record the source of visual design direction for UI w
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill after UI/UX confirmation and before WPD or ACEP when selected work changes visual appearance.
+Use this skill after UI/UX confirmation and before work-planning or execution-pack when selected work changes visual appearance.
 
 DevView remains a Codex Plugin workflow. Do not create a GUI app, hosted integration, SaaS backend, MCP server, daemon, or standalone runtime.
 
@@ -26,7 +26,7 @@ DevView must first record the source of the Visual Design Contract.
 ```text
 .devview/tree/product-tree.json
 .devview/blueprint/requirement-tree.json
-.devview/blueprint/rpd-summary.md
+.devview/blueprint/product-intake-summary.md
 .devview/blueprint/ui-ux-preview.json
 .devview/blueprint/ui-ux-confirmation.md
 ```

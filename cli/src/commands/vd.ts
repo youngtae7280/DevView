@@ -12,7 +12,7 @@ import {
 import { checkResult, type CommandContext, hasVisualWork, transitionFailed } from './shared.js'
 
 export async function vdCheckCommand(context: CommandContext): Promise<CommandResult> {
-  return checkResult('vd check', await validateVd(context.options.root))
+  return checkResult('verification-design check', await validateVd(context.options.root))
 }
 
 export async function vdCloseCommand(context: CommandContext): Promise<CommandResult> {
@@ -22,18 +22,24 @@ export async function vdCloseCommand(context: CommandContext): Promise<CommandRe
   issues.push(...(await validateWpd(context.options.root)))
   issues.push(...(await validateVisualDesign(context.options.root)))
   issues.push(...(await validateVd(context.options.root)))
-  issues.push(...(await validateTraceability(context.options.root, { stage: 'vd' })))
+  issues.push(...(await validateTraceability(context.options.root, { stage: 'verification-design' })))
   if (hasErrors(issues)) {
-    return transitionFailed('vd close', 'VD close failed. State was not changed.', issues)
+    return transitionFailed(
+      'verification-design close',
+      'Verification Design close failed. State was not changed.',
+      issues,
+    )
   }
   return transitionPbeState(
     context.options.root,
-    'vd close',
-    visualWork ? [PBE_STATE.UI_SURFACE_INVENTORY_DONE, PBE_STATE.VD_DONE] : [PBE_STATE.VD_DONE],
+    'verification-design close',
+    visualWork
+      ? [PBE_STATE.UI_SURFACE_INVENTORY_DONE, PBE_STATE.VERIFICATION_DESIGN_DONE]
+      : [PBE_STATE.VERIFICATION_DESIGN_DONE],
     {
-      completedSteps: visualWork ? ['ui_surface_inventory', 'vd'] : ['vd'],
-      stage: 'vd',
-      mode: 'vd_generation',
+      completedSteps: visualWork ? ['ui_surface_inventory', 'verification_design'] : ['verification_design'],
+      stage: 'verification_design',
+      mode: 'verification_design',
       currentGate: 'implementation_scope',
       nextStep: 'implementation_scope',
       data: {

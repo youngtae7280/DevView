@@ -1,4 +1,4 @@
-# VD Quality Checklist
+# verification-design Quality Checklist
 
 ## Target Product / Work
 

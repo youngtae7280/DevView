@@ -16,11 +16,12 @@ import {
   type JsonObject,
 } from './shared.js'
 
-export const traceabilityStages = ['wpd', 'vd', 'execution', 'review', 'accept'] as const
+export const traceabilityStages = ['work-planning', 'verification-design', 'execution', 'review', 'accept'] as const
 export type TraceabilityStage = (typeof traceabilityStages)[number]
+export type TraceabilityStageInput = TraceabilityStage | 'wpd' | 'vd'
 
 export interface TraceabilityOptions {
-  stage?: TraceabilityStage
+  stage?: TraceabilityStageInput
 }
 
 interface TraceabilityContext {
@@ -53,15 +54,15 @@ export async function validateTraceability(
   options: TraceabilityOptions = {},
 ): Promise<ValidationIssue[]> {
   const context = await loadTraceabilityContext(root)
-  const stage = options.stage
+  const stage = normalizeTraceabilityStage(options.stage)
   const issues: ValidationIssue[] = []
 
   issues.push(...validateProductWorkClosure(context, { strict: Boolean(stage) }))
 
-  if (!stage || stageAtLeast(stage, 'vd')) {
+  if (!stage || stageAtLeast(stage, 'verification-design')) {
     issues.push(...validateTestReferences(context))
   }
-  if (stageAtLeast(stage, 'vd')) {
+  if (stageAtLeast(stage, 'verification-design')) {
     issues.push(...validateWorkTestClosure(context))
     issues.push(...validateAcceptanceTestClosure(context))
     issues.push(...validateTestEvidenceDeclarations(context))
@@ -494,4 +495,14 @@ function stageAtLeast(stage: TraceabilityStage | undefined, minimum: Traceabilit
     return false
   }
   return traceabilityStages.indexOf(stage) >= traceabilityStages.indexOf(minimum)
+}
+
+function normalizeTraceabilityStage(stage: TraceabilityStageInput | undefined): TraceabilityStage | undefined {
+  if (stage === 'wpd') {
+    return 'work-planning'
+  }
+  if (stage === 'vd') {
+    return 'verification-design'
+  }
+  return stage
 }

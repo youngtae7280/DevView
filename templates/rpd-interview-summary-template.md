@@ -1,4 +1,4 @@
-# RPD Interview Summary
+# product-intake Interview Summary
 
 ## Raw User Request
 
@@ -38,4 +38,4 @@
 
 ## Next CLI Command
 
-`devview rpd check`
+`devview product-intake check`

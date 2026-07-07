@@ -3,30 +3,30 @@ name: devview-verification-design
 description: Derive Test Tree from Product, Project, and Work Trees while preserving Verification Design compatibility artifacts.
 ---
 
-# DevView VD
+# devview verification-design
 
 ## CLI Transition Rule
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill to create Verification Design from WPD output.
+Use this skill to create Verification Design from work-planning output.
 
-Graph-first boundary: VD, Test Tree, VerificationDesign, and verification-plan artifacts remain tree-control compatibility layers. They do not promote Graph-source authority, retire tree-native artifacts, or replace read-model projection evidence.
+Graph-first boundary: verification-design, Test Tree, VerificationDesign, and verification-plan artifacts remain tree-control compatibility layers. They do not promote Graph-source authority, retire tree-native artifacts, or replace read-model projection evidence.
 
-In DevView v2, VD derives `.devview/tree/test-tree.json` from Product, Project, and Work Trees. Existing `.devview/blueprint/verification-design.json` and `.devview/blueprint/verification-plan.md` remain compatibility views and must be generated from the Test Tree.
+In DevView v2, verification-design derives `.devview/tree/test-tree.json` from Product, Project, and Work Trees. Existing `.devview/blueprint/verification-design.json` and `.devview/blueprint/verification-plan.md` remain compatibility views and must be generated from the Test Tree.
 
-VD is deterministic in Autoflow. Run it automatically after WPD succeeds.
+verification-design is deterministic in Autoflow. Run it automatically after work-planning succeeds.
 
-VD owns verification design. It must preserve selected, deferred, foundation, blocked, and out-of-scope classifications from WPD and must not turn deferred implementation into current-slice verification failure.
+verification-design owns verification design. It must preserve selected, deferred, foundation, blocked, and out-of-scope classifications from work-planning and must not turn deferred implementation into current-slice verification failure.
 
 After generating or updating Test Tree or VerificationDesign compatibility artifacts, run:
 
 ```bash
-devview vd check
+devview verification-design check
 devview trace check
 ```
 
-If either command fails, do not generate ACEP.
+If either command fails, do not generate execution-pack.
 
 ## Inputs
 
@@ -67,7 +67,7 @@ Prefer v2 tree files when present. If Work Tree scope classifications conflict w
 
 ## Required Actions
 
-1. Verify WPD completion.
+1. Verify work-planning completion.
 2. Verify Product Tree, Project Tree, and Work Tree links when v2 files exist.
 3. Create one Test Tree node for each selected and foundation Work Tree node that needs runnable, manual, UI, integration, regression, or acceptance verification.
 4. Create one VerificationDesign compatibility entry for each selected and foundation work unit.
@@ -86,13 +86,13 @@ Prefer v2 tree files when present. If Work Tree scope classifications conflict w
 11. Save `verification-design.json`.
 12. Save `verification-plan.md`.
 13. Update Source of Truth Matrix verification links from Product/Project/Work nodes to Test Tree and VerificationDesign nodes.
-14. Run `devview vd close`.
-15. Let the CLI validate VD/Test Tree, WPD, visual inventory, and state transition rules before it writes `VD_DONE`, the implementation scope gate, completed steps, next step, and state history.
-16. Continue automatically to `devview-dependency-impact-audit` only if `devview vd close` succeeds.
+14. Run `devview verification-design close`.
+15. Let the CLI validate verification-design/Test Tree, work-planning, visual inventory, and state transition rules before it writes `VERIFICATION_DESIGN_DONE`, the implementation scope gate, completed steps, next step, and state history.
+16. Continue automatically to `devview-dependency-impact-audit` only if `devview verification-design close` succeeds.
 
-## VD Rules
+## verification-design Rules
 
-- Do not conduct a long user interview in VD.
+- Do not conduct a long user interview in verification-design.
 - Ask only for conditions that make verification impossible.
 - Connect every validation item back to a requirement or work unit.
 - Do not create generic tests such as "Search test" or manual checks like "verify it works".
@@ -105,13 +105,13 @@ Prefer v2 tree files when present. If Work Tree scope classifications conflict w
 - For documentation work, require doc excerpt evidence.
 - Consider positive, negative, empty, error, permission, and regression cases when relevant.
 - If a case is intentionally not covered, record it as deferred or out of scope.
-- Use `docs/vd-quality-rubric.md` and `templates/vd-quality-checklist-template.md` when planning high-risk verification.
+- Use `docs/verification-design-quality-rubric.md` and `templates/verification-design-quality-checklist-template.md` when planning high-risk verification.
 - Include focused validation, broader regression validation, and manual checks where needed.
 - Mark uncertain validation commands as candidates rather than pretending they are guaranteed.
 - Every verification item must link to a requirement ID and task/work ID.
 - Every non-root Test Tree node must link to at least one Product or Work node through `verifiesProductNodeIds` or `verifiesWorkNodeIds`.
 - When source Product nodes have structured `acceptanceCriteria`, Test Tree nodes must link the relevant `verifiesAcceptanceCriteriaIds`.
-- When a confirmed criterion has `verification.required: true`, VD must create or map Test Tree coverage for it.
+- When a confirmed criterion has `verification.required: true`, verification-design must create or map Test Tree coverage for it.
 - UI-related work must require UI/UX evidence.
 - Visual UI work must require Visual Design Contract evidence, not only UI/UX flow confirmation.
 - Required selected UI states from `ui-surface-inventory.json` must appear as Test Tree checks or explicit deferral/blockers.
@@ -123,10 +123,10 @@ Prefer v2 tree files when present. If Work Tree scope classifications conflict w
 - Required legacy event handlers are verification targets. They cannot be inferred from the existence of visible controls.
 - Hardware-dependent work must separate `implemented_user_testable`, `hardware_verification_pending`, and `hardware_certified`; certification requires explicit evidence.
 - Hardware-gated work may be software-stable only when substitute evidence exists; `manual_not_verified` must prevent final closure.
-- Do not allow a task to reach ACEP without verification links or an explicit explanation.
+- Do not allow a task to reach execution-pack without verification links or an explicit explanation.
 - Convert confirmed UI/UX direction into verification checks.
 - Use WorkGraph nodes and edges to identify integration verification and regression checks.
-- Verification must not assume RPD nodes are Codex task boundaries.
+- Verification must not assume product-intake nodes are Codex task boundaries.
 - Selected and foundation items require runnable verification or an explicit not-runnable reason.
 - Deferred items require a deferral note, future verification hint, and dependency impact note.
 - Out-of-scope items require no implementation verification, but must be recorded so they are not accidentally changed.
@@ -215,7 +215,7 @@ When the parity/completeness profile is active, include:
 
 Report with `[DevView ?곹깭 蹂닿퀬]` first, following `templates/stage-completion-status-card-template.md`.
 
-The state card must say that VD completed and that Dependency Impact Audit is the next automatic step. If the engine stops before Dependency Impact Audit, report that as a blocker or explicit manual pause.
+The state card must say that verification-design completed and that Dependency Impact Audit is the next automatic step. If the engine stops before Dependency Impact Audit, report that as a blocker or explicit manual pause.
 
 Include:
 

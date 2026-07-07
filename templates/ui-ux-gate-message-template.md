@@ -1,4 +1,4 @@
-﻿# UI/UX Gate Message Template
+# UI/UX Gate Message Template
 
 ```text
 [DevView status report]
@@ -9,7 +9,7 @@
 - nextStep: ui_ux_confirm
 
 諛⑷툑 ?占쎈즺???占쎌뾽:
-- RPD Tree Walk completed or UI/UX preview generated.
+- product-intake Tree Walk completed or UI/UX preview generated.
 
 ?占쎌꽦/媛깆떊???占쎌텧占?
 - .pbe/blueprint/ui-ux-preview.md
@@ -23,7 +23,7 @@
 - UI/UX 諛⑺뼢???占쎌슜?占쏙옙? ?占쎌씤?占쎄린 ?占쎌뿉??援ы쁽 怨꾪쉷占?UI 援ы쁽??吏꾪뻾?占쏙옙? ?占쎌뒿?占쎈떎.
 
 ?占쎌쓬 ?占쎌옉:
-- UI/UX媛 ?占쎌씤?占쎈㈃ WPD -> VD -> Dependency Impact Audit -> Implementation Scope Gate占??占쎌뼱吏묐땲??
+- UI/UX媛 ?占쎌씤?占쎈㈃ work-planning -> verification-design -> Dependency Impact Audit -> Implementation Scope Gate占??占쎌뼱吏묐땲??
 
 ?占쎌슜?占쏙옙? ?占쏀븷 ???占쎈뒗 占?
 - ?占쎌씤/吏꾪뻾: "?占쎌씤?占쎈땲?? 怨꾩냽 吏꾪뻾?占쎌＜?占쎌슂"

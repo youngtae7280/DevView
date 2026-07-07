@@ -3,7 +3,7 @@ name: devview-generate-execution-pack
 description: Generate Cycle Contract and Node Execution Contracts from selected tree nodes, preserving traceability, UI/UX, verification, evidence, parallel safety, and change rules.
 ---
 
-# DevView Generate ACEP
+# DevView Generate execution-pack
 
 ## CLI Transition Rule
 
@@ -11,23 +11,23 @@ Use DevView CLI transition commands for workflow state changes. Do not edit `.de
 
 Use this skill to generate `.devview/codex-execution-pack/` from completed tree-control compatibility artifacts.
 
-ACEP is not only a task-card bundle. It is a Codex execution contract that links Product, Project, Work, Test, Cycle, traceability, UI/UX expectations, evidence, and final coverage checks.
+execution-pack is not only a task-card bundle. It is a Codex execution contract that links Product, Project, Work, Test, Cycle, traceability, UI/UX expectations, evidence, and final coverage checks.
 
-Graph-first boundary: ACEP and `.devview/codex-execution-pack/*` are compatibility/execution views over selected cycle
+Graph-first boundary: execution-pack and `.devview/codex-execution-pack/*` are compatibility/execution views over selected cycle
 obligations. They are not Graph-source authority, do not retire tree-native artifacts, and do not replace user
 acceptance or read-model projection evidence.
 
-In DevView v2, ACEP generation packages the selected Cycle Slice. It does not package the whole product unless the user selected the whole product as the active cycle.
+In DevView v2, execution-pack generation packages the selected Cycle Slice. It does not package the whole product unless the user selected the whole product as the active cycle.
 
-ACEP generation is deterministic in Autoflow. Run it automatically after Coverage Audit and UX Audit pass.
+execution-pack generation is deterministic in Autoflow. Run it automatically after Coverage Audit and UX Audit pass.
 
-After generating ACEP files and the execution manifest, run:
+After generating execution-pack files and the execution manifest, run:
 
 ```bash
-devview acep check
+devview execution-pack check
 ```
 
-If the command fails, do not report ACEP as ready.
+If the command fails, do not report execution-pack as ready.
 
 ## Inputs
 
@@ -83,7 +83,7 @@ Also read compatibility, audit, and strategy files:
 
 ## Required Files
 
-Create or update the existing ACEP files:
+Create or update the existing execution-pack files:
 
 ```text
 00-readme.md
@@ -125,7 +125,7 @@ Create as many task cards and Node Execution Contracts as the active Cycle Slice
 
 ## Execution Contract Rules
 
-Enforce these rules when generating ACEP:
+Enforce these rules when generating execution-pack:
 
 - No lower-tree node without an upper-tree source.
 - No requirement without task.
@@ -141,11 +141,11 @@ Enforce these rules when generating ACEP:
 - No required visual UI state without screenshot/manual evidence requirement.
 - No stale screenshot evidence used for closure.
 - No accepted or accepted_done status from Codex.
-- No parallel execution plan without WPD WorkGraph.
+- No parallel execution plan without work-planning WorkGraph.
 - No parallel group without an integration task.
-- No RPD/Product Tree requirement node copied directly into a Codex coding task.
+- No product-intake/Product Tree requirement node copied directly into a Codex coding task.
 - No forbidden shared-risk task inside a parallel group.
-- No deferred or out-of-scope node implemented by the current ACEP.
+- No deferred or out-of-scope node implemented by the current execution-pack.
 - No foundation task that implements deferred feature behavior.
 - No slice completion recorded as whole-project completion.
 - No technical stability reported as parity review or product acceptance.
@@ -162,7 +162,7 @@ If an item is deferred or out of scope, record the reason explicitly in the trac
 
 ## Scope Contract
 
-ACEP must separate:
+execution-pack must separate:
 
 - Selected Scope: implemented now.
 - Foundation Scope: structural work required now for selected or future-safe implementation.
@@ -170,7 +170,7 @@ ACEP must separate:
 - Blocked Scope: stop condition.
 - Out-of-Scope: forbidden unless the user changes scope.
 
-Only selected and foundation scope inside the active Cycle Slice can become current ACEP implementation tasks.
+Only selected and foundation scope inside the active Cycle Slice can become current execution-pack implementation tasks.
 
 ## Cycle Contract
 
@@ -426,18 +426,18 @@ Every task must include:
 - forbidden changes
 - integration task, when applicable
 
-Before generating ACEP, run or satisfy:
+Before generating execution-pack, run or satisfy:
 
 - `devview-coverage-audit`
 - `devview-ux-audit`
 - `devview visual check` or equivalent Visual Design Contract preflight when visual UI work is selected
 - `devview-plan-execution`
 
-Do not generate ACEP if either audit has blocking issues.
+Do not generate execution-pack if either audit has blocking issues.
 
 ## Execution Strategy
 
-ACEP generation must include:
+execution-pack generation must include:
 
 ```text
 18-execution-strategy.md
@@ -449,12 +449,12 @@ groupCannotCompleteWithoutIntegrationPass
 Task Card Execution Strategy sections
 ```
 
-Before generating ACEP, verify:
+Before generating execution-pack, verify:
 
 1. Product, Work, Test Trees exist when v2 mode is active.
 2. `.devview/execution/cycle-tree.json` and `.devview/execution/cycle-contract.md` exist.
-3. WPD WorkGraph exists in `work-graph.json` or `work-design.json`.
-4. WPD Module Boundary Check was performed.
+3. work-planning WorkGraph exists in `work-graph.json` or `work-design.json`.
+4. work-planning Module Boundary Check was performed.
 5. `devview-plan-execution` produced `execution-strategy.json` and `execution-strategy.md`.
 6. Every parallel group has an integration task.
 7. Every parallel group requires integration evidence and integration pass before completion.
@@ -462,7 +462,7 @@ Before generating ACEP, verify:
 9. Parallel group size follows policy or has human approval.
 10. Final validation and review phases exist.
 
-If any condition fails, report blocking issues instead of generating ACEP.
+If any condition fails, report blocking issues instead of generating execution-pack.
 
 ## Autonomy
 
@@ -498,24 +498,24 @@ Stop and ask the user when work requires:
 
 ## Autoflow
 
-When ACEP generation succeeds:
+When execution-pack generation succeeds:
 
-- Run `devview acep ready`.
-- Let the CLI validate ACEP artifacts, implementation-scope confirmation, and required pre-ACEP checkpoints: `dependency_impact_audit`, `plan_execution`, `coverage_audit`, and `ux_audit`.
-- Continue automatically to ACEP Runner.
+- Run `devview execution-pack ready`.
+- Let the CLI validate execution-pack artifacts, implementation-scope confirmation, and required pre-execution-pack checkpoints: `dependency_impact_audit`, `plan_execution`, `coverage_audit`, and `ux_audit`.
+- Continue automatically to execution-pack Runner.
 
-When ACEP generation fails:
+When execution-pack generation fails:
 
 - Keep the workflow on the last valid canonical state reported by the CLI.
 - Do not write `autoflow.lastFailure` by hand; follow the CLI issue output, `suggestedFix`, and `nextCommand`.
-- Do not continue to ACEP Runner.
+- Do not continue to execution-pack Runner.
 - Show the Autoflow failure guidance.
 
 ## Completion Report
 
 Report with `[DevView ?곹깭 蹂닿퀬]` first, following `templates/stage-completion-status-card-template.md`.
 
-The state card must say whether ACEP generation succeeded and DevView is continuing automatically to ACEP Runner, or whether generation stopped with blockers.
+The state card must say whether execution-pack generation succeeded and DevView is continuing automatically to execution-pack Runner, or whether generation stopped with blockers.
 
 Include:
 
@@ -532,8 +532,8 @@ Include:
 - selected/foundation/deferred/out-of-scope scope summary
 - validation command summary
 - stop condition summary
-- next automatic step: run ACEP
+- next automatic step: run execution-pack
 - review/revision workflow reminder
 - user reply examples when blocked
 
-Use `[Codex 硫붾え]` only for short explanation of ACEP contract risk.
+Use `[Codex 硫붾え]` only for short explanation of execution-pack contract risk.

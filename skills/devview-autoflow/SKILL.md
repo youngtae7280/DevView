@@ -98,7 +98,7 @@ This means DevView may deliberately stop at human gates, may require foundation 
 
 ## Routing Rules
 
-When `.devview/` exists or the user mentions DevView, ACEP, RPD, WPD, VD, traceability,
+When `.devview/` exists or the user mentions DevView, execution-pack, product-intake, work-planning, verification-design, traceability,
 dependency impact, implementation scope, or DevView review, route implementation
 work and deliverable-producing work through DevView before ordinary coding or file generation.
 
@@ -108,7 +108,7 @@ images, generated assets, review reports, and any repository file changes.
 1. Read `.devview/blueprint/devview-state.json` before implementation or modification work.
 2. If `autoflow.currentGate` is set, do not implement; report the active gate and ask for the user's decision.
 3. If `autoflow.lastFailure` is set, do not continue downstream; report the failed step, repair options, and the last valid canonical state.
-4. Before any downstream step or deliverable-producing action, verify RPD completion. If any Root or leaf requirement is still `pending_interview`, `interviewing`, `ready_to_confirm`, `ready_to_decompose`, or `blocked`, stop at `root_confirmation` or continue RPD.
+4. Before any downstream step or deliverable-producing action, verify product-intake completion. If any Root or leaf requirement is still `pending_interview`, `interviewing`, `ready_to_confirm`, `ready_to_decompose`, or `blocked`, stop at `root_confirmation` or continue product-intake.
 5. If the CLI-reported next step is deterministic, run that DevView step before ordinary coding.
 6. Use ordinary AI answers only for usage help, explanations, or reviews that do not change DevView workflow state.
 7. Do not bypass DevView when the request touches selected, foundation, deferred, blocked, or out-of-scope work unless the profile is explicitly set to `bypass` and the risk is recorded.
@@ -124,29 +124,29 @@ full
 ```
 
 - `bypass`: typo, single-file edit, clearly bounded small bug fix. DevView should recommend not using the full workflow.
-- `lite`: existing blueprint, small slice, limited scope and dependency review, no full ACEP unless needed.
+- `lite`: existing blueprint, small slice, limited scope and dependency review, no full execution-pack unless needed.
 - `full`: new project, large feature, UI/UX, multi-module, parallel work, future-module impact, architecture decisions, or project construction. This is the default for DevView.
 
 If risk grows while in `lite`, propose `full`. If the user explicitly keeps `lite`, continue and record the risk.
 
 ## State Model
 
-Track state in `.devview/blueprint/devview-state.json` under `autoflow`, but do not write transition state by hand. Supported stage transitions and checkpoints must go through the deterministic `devview` CLI (`devview rpd close`, `devview ui approve`, `devview wpd close`, `devview vd close`, `devview scope select`, `devview dependency audit complete`, `devview plan execution complete`, `devview coverage audit complete`, `devview ux audit complete`, `devview acep ready`, `devview execution start`, `devview execution complete`, `devview review submit`, `devview accept`, `devview change create`, `devview impact analyze`, `devview revision start`, `devview revision complete`, `devview files check`).
+Track state in `.devview/blueprint/devview-state.json` under `autoflow`, but do not write transition state by hand. Supported stage transitions and checkpoints must go through the deterministic `devview` CLI (`devview product-intake close`, `devview ui approve`, `devview work-planning close`, `devview verification-design close`, `devview scope select`, `devview dependency audit complete`, `devview plan execution complete`, `devview coverage audit complete`, `devview ux audit complete`, `devview execution-pack ready`, `devview execution start`, `devview execution complete`, `devview review submit`, `devview accept`, `devview change create`, `devview impact analyze`, `devview revision start`, `devview revision complete`, `devview files check`).
 
 ```text
 INIT
-RPD_DONE
+PRODUCT_INTAKE_DONE
 WAITING_UI_UX_CONFIRM
 UI_UX_APPROVED
 VISUAL_CONTRACT_READY
-WPD_DONE
+WORK_PLANNING_DONE
 UI_SURFACE_INVENTORY_DONE
-VD_DONE
+VERIFICATION_DESIGN_DONE
 WAITING_IMPLEMENTATION_SCOPE
 SCOPE_SELECTED
-ACEP_READY
+EXECUTION_PACK_READY
 EXECUTION_IN_PROGRESS
-ACEP_RUN_DONE
+EXECUTION_PACK_RUN_DONE
 VISUAL_AUDIT_DONE
 WAITING_REVIEW_RESULT
 ACCEPTED
@@ -159,20 +159,20 @@ DONE
 
 ```text
 start
--> rpd
+-> product-intake
 -> ui ux confirm gate
 -> visual reference intake and design system derive, when visual UI work is selected
--> wpd
+-> work-planning
 -> ui surface inventory, when visual UI work is selected
--> vd
+-> verification-design
 -> dependency impact audit
 -> implementation scope gate
 -> architecture runway gate, when needed
 -> plan execution
 -> coverage audit
 -> ux audit
--> generate acep
--> run acep
+-> generate execution-pack
+-> run execution-pack
 -> visual implementation audit, when visual UI work is selected
 -> review result gate
 -> done or next selected scope
@@ -340,7 +340,7 @@ Downstream steps to rerun after repair:
 
 ## Invariants
 
-- RPD nodes are not Codex tasks.
+- product-intake nodes are not Codex tasks.
 - Deferred items are not current-slice failures.
 - Selected and foundation items must be covered.
 - Foundation must not implement deferred behavior.

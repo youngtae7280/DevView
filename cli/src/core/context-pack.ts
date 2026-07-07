@@ -168,10 +168,10 @@ export function buildSuggestedGateAssessment(
 export function mapDetectedStageToGateTransition(stage: ContextRecommendation['detectedStage']): HumanGateTransition {
   const transitionByStage: Record<ContextRecommendation['detectedStage'], HumanGateTransition> = {
     start: 'product-tree',
-    rpd: 'product-tree',
+    'product-intake': 'product-tree',
     documentation: 'work-scope',
-    wpd: 'product-to-work',
-    vd: 'work-to-test',
+    'work-planning': 'product-to-work',
+    'verification-design': 'work-to-test',
     execution: 'acep-preflight',
     review: 'review-revision',
     revision: 'review-revision',

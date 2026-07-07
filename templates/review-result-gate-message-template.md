@@ -1,4 +1,4 @@
-﻿# Review Result Gate Message Template
+# Review Result Gate Message Template
 
 ```text
 [DevView status report]
@@ -9,7 +9,7 @@
 - nextStep: review_result
 
 諛⑷툑 ?占쎈즺???占쎌뾽:
-- ACEP ?占쎈뒗 Revision ?占쏀뻾 寃곌낵占?寃?占쎌슜?占쎈줈 ?占쎈━?占쎌뒿?占쎈떎.
+- execution-pack ?占쎈뒗 Revision ?占쏀뻾 寃곌낵占?寃?占쎌슜?占쎈줈 ?占쎈━?占쎌뒿?占쎈떎.
 - Codex??寃곌낵占?submitted_for_review ?占쏀깭占??占쎌텧?占쎌뒿?占쎈떎.
 - accepted / accepted_done?占??占쎌슜?占쎈쭔 占????占쎌뒿?占쎈떎.
 

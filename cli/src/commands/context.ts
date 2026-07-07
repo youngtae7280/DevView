@@ -78,7 +78,7 @@ function validateContextInput(
           severity: 'error',
           message: `Unsupported context stage: ${stage}.`,
           suggestedFix:
-            'Use one of: start, rpd, wpd, vd, execution, review, revision, product-patch, parallel, documentation, docs.',
+            'Use one of: start, product-intake, work-planning, verification-design, execution, review, revision, product-patch, parallel, documentation, docs.',
         }),
       ],
     }

@@ -119,10 +119,10 @@ export async function runCommand(positionals: string[], context: CommandContext)
     }
     return gateCommand(positionals[1], context)
   }
-  if (command === 'rpd' && subcommand === 'check') {
+  if ((command === 'product-intake' || command === 'rpd') && subcommand === 'check') {
     return rpdCheckCommand(context)
   }
-  if (command === 'rpd' && subcommand === 'close') {
+  if ((command === 'product-intake' || command === 'rpd') && subcommand === 'close') {
     return rpdCloseCommand(context)
   }
   if (command === 'ui' && subcommand === 'approve') {
@@ -131,23 +131,25 @@ export async function runCommand(positionals: string[], context: CommandContext)
   if (command === 'trace' && subcommand === 'check') {
     const traceStage = context.options.stage
     if (traceStage && !isTraceabilityStage(traceStage)) {
-      return invalidCommand('--stage for trace check requires one of: wpd, vd, execution, review, accept.')
+      return invalidCommand(
+        '--stage for trace check requires one of: work-planning, verification-design, execution, review, accept.',
+      )
     }
     return checkResult('trace check', await validateTraceability(context.options.root, { stage: traceStage }))
   }
   if (command === 'files' && subcommand === 'check') {
     return filesCheckCommand(context)
   }
-  if (command === 'wpd' && subcommand === 'check') {
+  if ((command === 'work-planning' || command === 'wpd') && subcommand === 'check') {
     return wpdCheckCommand(context)
   }
-  if (command === 'wpd' && subcommand === 'close') {
+  if ((command === 'work-planning' || command === 'wpd') && subcommand === 'close') {
     return wpdCloseCommand(context)
   }
-  if (command === 'vd' && subcommand === 'check') {
+  if ((command === 'verification-design' || command === 'vd') && subcommand === 'check') {
     return vdCheckCommand(context)
   }
-  if (command === 'vd' && subcommand === 'close') {
+  if ((command === 'verification-design' || command === 'vd') && subcommand === 'close') {
     return vdCloseCommand(context)
   }
   if (command === 'scope' && subcommand === 'select') {
@@ -165,10 +167,10 @@ export async function runCommand(positionals: string[], context: CommandContext)
   if (command === 'ux' && subcommand === 'audit' && positionals[2] === 'complete') {
     return uxAuditCompleteCommand(context)
   }
-  if (command === 'acep' && subcommand === 'check') {
+  if ((command === 'execution-pack' || command === 'acep') && subcommand === 'check') {
     return acepCheckCommand(context)
   }
-  if (command === 'acep' && subcommand === 'ready') {
+  if ((command === 'execution-pack' || command === 'acep') && subcommand === 'ready') {
     return acepReadyCommand(context)
   }
   if (command === 'execution' && subcommand === 'start') {
@@ -423,6 +425,8 @@ export async function runCommand(positionals: string[], context: CommandContext)
 
 export type { CommandContext }
 
-function isTraceabilityStage(value: string): value is 'wpd' | 'vd' | 'execution' | 'review' | 'accept' {
-  return ['wpd', 'vd', 'execution', 'review', 'accept'].includes(value)
+function isTraceabilityStage(
+  value: string,
+): value is 'work-planning' | 'verification-design' | 'execution' | 'review' | 'accept' | 'wpd' | 'vd' {
+  return ['work-planning', 'verification-design', 'execution', 'review', 'accept', 'wpd', 'vd'].includes(value)
 }

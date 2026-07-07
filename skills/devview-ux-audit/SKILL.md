@@ -9,15 +9,15 @@ description: Audit Product-linked UI/UX preview, confirmation, Work/Test linkage
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill after UI/UX confirmation, before ACEP generation, and before final completion when UI is involved.
+Use this skill after UI/UX confirmation, before execution-pack generation, and before final completion when UI is involved.
 
 UX Audit is deterministic in Autoflow. Run it automatically after Coverage Audit succeeds.
 
 ## Purpose
 
-Ensure UI/UX work is confirmed before implementation and remains traceable through Product, Work, Test, ACEP, evidence, impact, review, and revision.
+Ensure UI/UX work is confirmed before implementation and remains traceable through Product, Work, Test, execution-pack, evidence, impact, review, and revision.
 
-UX Audit applies to selected UI work and required foundation UI contracts. Deferred UI flows must be documented but must not be implemented by the current ACEP unless the implementation scope is changed and approved.
+UX Audit applies to selected UI work and required foundation UI contracts. Deferred UI flows must be documented but must not be implemented by the current execution-pack unless the implementation scope is changed and approved.
 
 In DevView v2, UI/UX audit starts from Product Tree UI nodes and closes only through Test/Evidence coverage.
 
@@ -44,7 +44,7 @@ Prefer v2 files when present:
 .devview/blueprint/component-style-contract.json
 ```
 
-Also read compatibility and ACEP files:
+Also read compatibility and execution-pack files:
 
 ```text
 .devview/blueprint/ui-ux-preview.json
@@ -78,8 +78,8 @@ Check UI/UX confirmation:
 3. Deferred UI previews are recorded as deferred and not implemented.
 4. Out-of-scope UI items are recorded as forbidden changes.
 5. No UI item is treated as confirmed without user confirmation.
-6. Confirmed UX rules are reflected in WPD/Work Tree.
-7. Confirmed UX rules are converted into VD/Test Tree verification checks.
+6. Confirmed UX rules are reflected in work-planning/Work Tree.
+7. Confirmed UX rules are converted into verification-design/Test Tree verification checks.
 8. Foundation UI contracts are named without implementing deferred UI behavior.
 
 Check task and contract coverage:
@@ -127,7 +127,7 @@ Check parity/completeness UI controls when present:
 8. Blocking `notChecked` UI items prevent final UX audit pass.
 9. A visual mismatch feedback item can trigger surface re-audit and verification expansion, but implementation scope must remain bounded by Change/Impact and selected/foundation Work nodes.
 
-If gaps exist, report them as blocking issues before ACEP generation or final completion.
+If gaps exist, report them as blocking issues before execution-pack generation or final completion.
 
 ## Autoflow
 
@@ -135,20 +135,20 @@ When the audit passes or UI/UX is not required:
 
 - Run `devview ux audit complete`.
 - Let the CLI keep state on the current valid workflow point, record the UX-audit checkpoint, and report the next command.
-- Continue automatically to ACEP generation.
+- Continue automatically to execution-pack generation.
 
 When the audit has blocking issues:
 
 - Keep the workflow on the last valid canonical state reported by the CLI.
 - Do not write `autoflow.lastFailure` by hand; follow the CLI issue output, `suggestedFix`, and `nextCommand`.
-- Do not continue to ACEP generation.
+- Do not continue to execution-pack generation.
 - Show the Autoflow failure guidance.
 
 ## Completion Report
 
 Report with `[DevView ?곹깭 蹂닿퀬]` first, following `templates/stage-completion-status-card-template.md`.
 
-The state card must say whether the audit passed and DevView is continuing automatically to ACEP generation, or whether blocking UX issues stopped Autoflow.
+The state card must say whether the audit passed and DevView is continuing automatically to execution-pack generation, or whether blocking UX issues stopped Autoflow.
 
 Include:
 
@@ -167,7 +167,7 @@ Include:
 - Visual Design Contract source, token, component, surface, and screenshot evidence result when visual UI work is active
 - blocking issues
 - pass/fail result
-- next automatic step when passed: Generate ACEP
+- next automatic step when passed: Generate execution-pack
 - user reply examples when blocked
 
 Use `[Codex 硫붾え]` only for short explanation of UX risk.

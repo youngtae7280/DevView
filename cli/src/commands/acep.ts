@@ -13,7 +13,7 @@ import {
 } from './shared.js'
 
 export async function acepCheckCommand(context: CommandContext): Promise<CommandResult> {
-  return checkResult('acep check', await validateAcep(context.options.root))
+  return checkResult('execution-pack check', await validateAcep(context.options.root))
 }
 
 export async function acepReadyCommand(context: CommandContext): Promise<CommandResult> {
@@ -23,16 +23,16 @@ export async function acepReadyCommand(context: CommandContext): Promise<Command
   issues.push(...preAcepCheckpointIssues(state))
   issues.push(...(await validateAcep(context.options.root)))
   if (hasErrors(issues)) {
-    return transitionFailed('acep ready', 'ACEP ready failed. State was not changed.', issues)
+    return transitionFailed('execution-pack ready', 'Execution Pack ready failed. State was not changed.', issues)
   }
-  return transitionPbeState(context.options.root, 'acep ready', [PBE_STATE.ACEP_READY], {
-    completedSteps: ['generate_acep'],
-    stage: 'acep_ready',
-    mode: 'acep_generation',
+  return transitionPbeState(context.options.root, 'execution-pack ready', [PBE_STATE.EXECUTION_PACK_READY], {
+    completedSteps: ['generate_execution_pack'],
+    stage: 'execution_pack_ready',
+    mode: 'execution_pack_generation',
     currentGate: null,
-    nextStep: 'run_acep',
+    nextStep: 'run_execution_pack',
     data: {
-      next: 'Start ACEP execution with `devview execution start`, attach evidence, then run `devview execution complete`.',
+      next: 'Start Execution Pack runtime work with `devview execution start`, attach evidence, then run `devview execution complete`.',
     },
   })
 }

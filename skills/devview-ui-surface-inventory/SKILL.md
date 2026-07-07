@@ -9,7 +9,7 @@ description: Inventory UI surfaces, components, states, files, and screenshot ev
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill during WPD or immediately after WPD when visual UI work is selected.
+Use this skill during work-planning or immediately after work-planning when visual UI work is selected.
 
 DevView remains a Codex Plugin workflow. Do not create a GUI app, hosted integration, SaaS backend, MCP server, daemon, or standalone runtime.
 
@@ -107,7 +107,7 @@ Only require states that matter for the selected Product/Work scope, but do not 
 2. If a command opens a dialog, popup, subdialog, secondary route, or child workflow, inventory the child surface.
 3. Expanded/collapsed controls must not be removed unless explicitly out of scope and approved.
 4. Hardcoded colors, spacing, radius, shadows, and typography should be flagged when tokens should be used.
-5. The inventory must feed VD screenshot evidence requirements and ACEP task cards.
+5. The inventory must feed verification-design screenshot evidence requirements and execution-pack task cards.
 
 ## Completion Report
 
@@ -118,4 +118,4 @@ Report with `[DevView ?곹깭 蹂닿퀬]` first:
 - high-risk visual surfaces
 - missing state coverage
 - hardcoded style risks
-- whether VD may proceed
+- whether verification-design may proceed

@@ -8,7 +8,7 @@
   ],
   "moduleBoundaryCheck": {
     "status": "complete",
-    "summary": "WPD converted RPD requirement boundaries into module-aware work boundaries.",
+    "summary": "work-planning converted product-intake requirement boundaries into module-aware work boundaries.",
     "boundaryFindings": [
       {
         "id": "MBF-001",

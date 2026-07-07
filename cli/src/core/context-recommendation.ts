@@ -1,7 +1,7 @@
 import type { ContextStageOption } from './types.js'
 
 export type ContextProfileOption = 'full' | 'lite' | 'bypass'
-type CanonicalContextStageOption = Exclude<ContextStageOption, 'docs'>
+type CanonicalContextStageOption = Exclude<ContextStageOption, 'docs' | 'rpd' | 'wpd' | 'vd'>
 
 export interface ContextRecommendationInput {
   brief?: string
@@ -32,17 +32,17 @@ const stageContexts: Record<CanonicalContextStageOption, StageContextDefinition>
     readFirst: ['agent-context/start.md'],
     readOnlyIfNeeded: ['README.md', 'docs/cli-reference.md', 'docs/lite-mode-policy.md'],
   },
-  rpd: {
+  'product-intake': {
     skills: ['devview-product-intake'],
     readFirst: ['agent-context/rpd.md'],
     readOnlyIfNeeded: ['docs/rpd-interview-mode.md', 'docs/ambiguity-taxonomy.md'],
   },
-  wpd: {
+  'work-planning': {
     skills: ['devview-work-planning'],
     readFirst: ['agent-context/wpd.md'],
     readOnlyIfNeeded: ['docs/parallel-safety.md'],
   },
-  vd: {
+  'verification-design': {
     skills: ['devview-verification-design'],
     readFirst: ['agent-context/vd.md', 'agent-context/evidence.md'],
     readOnlyIfNeeded: ['docs/vd-quality-rubric.md', 'docs/evidence-quality-rubric.md'],
@@ -107,7 +107,7 @@ const notes = [
   'This command is read-only and does not modify DevView state.',
 ]
 
-export const contextStages = [...Object.keys(stageContexts), 'docs'] as ContextStageOption[]
+export const contextStages = [...Object.keys(stageContexts), 'docs', 'rpd', 'wpd', 'vd'] as ContextStageOption[]
 
 export function isContextStage(value: string): value is ContextStageOption {
   return contextStages.includes(value as ContextStageOption)
@@ -165,7 +165,19 @@ export function recommendContext(input: ContextRecommendationInput): ContextReco
 }
 
 function normalizeContextStage(stage: ContextStageOption): CanonicalContextStageOption {
-  return stage === 'docs' ? 'documentation' : stage
+  if (stage === 'docs') {
+    return 'documentation'
+  }
+  if (stage === 'rpd') {
+    return 'product-intake'
+  }
+  if (stage === 'wpd') {
+    return 'work-planning'
+  }
+  if (stage === 'vd') {
+    return 'verification-design'
+  }
+  return stage
 }
 
 function detectStage(brief: string | undefined): { stage: CanonicalContextStageOption; reason: string } {
@@ -186,17 +198,17 @@ function detectStage(brief: string | undefined): { stage: CanonicalContextStageO
   if (hasAny(text, ['revision', 'revise', 'rework', 'change request', 'fix feedback'])) {
     return { stage: 'revision', reason: 'brief appears to ask for bounded revision work' }
   }
-  if (hasAny(text, ['verification design', 'vd', 'test tree', 'pass criteria', 'test design'])) {
-    return { stage: 'vd', reason: 'brief appears to ask for verification design' }
+  if (hasAny(text, ['verification design', 'test tree', 'pass criteria', 'test design'])) {
+    return { stage: 'verification-design', reason: 'brief appears to ask for verification design' }
   }
   if (hasAny(text, ['evidence', 'command output', 'screenshot', 'runtime result', 'validation output'])) {
     return { stage: 'execution', reason: 'brief appears to ask about execution evidence' }
   }
   if (hasAny(text, ['expectedfiles', 'expected files', 'file scope', 'work plan', 'implementation plan', 'scope'])) {
-    return { stage: 'wpd', reason: 'brief appears to ask for work planning' }
+    return { stage: 'work-planning', reason: 'brief appears to ask for work planning' }
   }
   if (hasAny(text, ['requirement', 'requirements', 'ambiguity', 'product tree', 'product intent', 'user intent'])) {
-    return { stage: 'rpd', reason: 'brief appears to ask about requirements or ambiguity' }
+    return { stage: 'product-intake', reason: 'brief appears to ask about requirements or ambiguity' }
   }
   if (hasAny(text, ['start', 'initialize', 'init', 'devview manage', 'devview start'])) {
     return { stage: 'start', reason: 'brief appears to ask for DevView start or management' }
@@ -208,9 +220,9 @@ function detectStage(brief: string | undefined): { stage: CanonicalContextStageO
 function stageReason(stage: CanonicalContextStageOption): string {
   const reasons: Record<CanonicalContextStageOption, string> = {
     start: 'Start work should use initialization and profile guidance first',
-    rpd: 'RPD work requires Product Tree and ambiguity guidance',
-    wpd: 'WPD work requires Work planning and file scope guidance',
-    vd: 'VD work requires Test/Evidence guidance',
+    'product-intake': 'Product Intake work requires Product Tree and ambiguity guidance',
+    'work-planning': 'Work Planning requires Work planning and file scope guidance',
+    'verification-design': 'Verification Design requires Test/Evidence guidance',
     execution: 'Execution work requires Evidence guidance',
     review: 'Review work requires rejection and evidence guidance',
     revision: 'Revision work requires Change/Impact bounded-scope guidance',

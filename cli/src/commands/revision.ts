@@ -95,19 +95,19 @@ export async function revisionCompleteCommand(context: CommandContext): Promise<
     status: 'completed',
     completedAt,
   }
-  return transitionPbeState(context.options.root, 'revision complete', [PBE_STATE.WPD_IN_PROGRESS], {
+  return transitionPbeState(context.options.root, 'revision complete', [PBE_STATE.WORK_PLANNING_IN_PROGRESS], {
     completedSteps: ['revision_complete'],
-    stage: 'wpd',
+    stage: 'work_planning',
     mode: 'revision_reverification',
     deliveryStatus: 'revision_in_progress',
     currentGate: null,
-    nextStep: 'wpd',
+    nextStep: 'work_planning',
     activeRevision: null,
     revisionHistoryEntry: completedRevision,
     data: {
       changeId: context.options.change,
       completedRevision,
-      next: 'Revision does not close as DONE. Continue through `devview wpd close`, `devview vd close`, ACEP execution, review, and user accept.',
+      next: 'Revision does not close as DONE. Continue through `devview work-planning close`, `devview verification-design close`, Execution Pack execution, review, and user accept.',
     },
   })
 }

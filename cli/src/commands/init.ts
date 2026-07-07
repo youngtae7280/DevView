@@ -61,8 +61,11 @@ const textTemplateTargets: Array<{ template?: string; target: string; fallback: 
       fallback: (context) =>
         `# Requirement Tree\n\nRoot request: ${context.options.brief || 'Initial project request'}\n`,
     },
-    { target: defaultArtifacts.rpdInterviewLog, fallback: () => '# RPD Interview Log\n\n' },
-    { target: defaultArtifacts.rpdSummary, fallback: () => '# RPD Summary\n\nRPD is not closed yet.\n' },
+    { target: defaultArtifacts.rpdInterviewLog, fallback: () => '# Product Intake Interview Log\n\n' },
+    {
+      target: defaultArtifacts.rpdSummary,
+      fallback: () => '# Product Intake Summary\n\nProduct Intake is not closed yet.\n',
+    },
     {
       template: 'source-of-truth-matrix-template.md',
       target: defaultArtifacts.sourceOfTruthMatrix,
@@ -164,10 +167,10 @@ export async function initCommand(context: CommandContext): Promise<CommandResul
         autoflow: {
           enabled: true,
           state: 'INIT',
-          nextStep: 'rpd',
+          nextStep: 'product_intake',
         },
       },
-      next: 'Run product intent growth. Use `devview rpd check` to see what still blocks close.',
+      next: 'Run Product Intake. Use `devview product-intake check` to see what still blocks close.',
     },
   }
 }
@@ -223,7 +226,7 @@ function transformPbeState(value: Record<string, unknown>, context: CommandConte
     autoflow.state = PBE_STATE.INIT
     autoflow.completedSteps = ['start']
     autoflow.currentGate = null
-    autoflow.nextStep = 'rpd'
+    autoflow.nextStep = 'product_intake'
   }
   return value
 }

@@ -29,7 +29,7 @@ Create a bounded revision instruction pack from user feedback, Change Tree entri
 
 The revision pack must preserve implementation scope classifications. Feedback may affect selected or foundation work from the current slice. Deferred or out-of-scope work can only enter the revision if the user explicitly changes the scope at a human gate.
 
-If a Change Node has `requiresRevisionRpd: true`, run Revision RPD for that Change Node before generating implementation tasks. Product Tree or acceptance criteria changes must be tied to `devview change create`, `devview impact analyze`, and user-confirmed revision scope; do not quietly edit Product Tree meaning from feedback.
+If a Change Node has `requiresRevisionRpd: true`, run Revision product-intake for that Change Node before generating implementation tasks. Product Tree or acceptance criteria changes must be tied to `devview change create`, `devview impact analyze`, and user-confirmed revision scope; do not quietly edit Product Tree meaning from feedback.
 If a Change Node has criteria deltas, the revision pack must include a criteria-specific retest/reopen/replace-evidence plan before implementation tasks are issued.
 
 ## Inputs
@@ -106,7 +106,7 @@ Also update:
    - `accepted_done` -> `reopened`
    - evidence attached -> stale or requires replacement
 4. Decide whether each change is local fix, blueprint mutation, scope expansion, or breaking impact.
-5. Run Ambiguity Gate for ambiguous Change Nodes and ask exactly one focused Revision RPD question when needed.
+5. Run Ambiguity Gate for ambiguous Change Nodes and ask exactly one focused Revision product-intake question when needed.
 6. Update or create structured acceptance criteria before creating implementation tasks when criteria changed.
 7. Ask the user when product/scope/risk/UX/acceptance/verification changes are not already approved.
 8. Generate bounded revision tasks only for affected selected/foundation nodes.

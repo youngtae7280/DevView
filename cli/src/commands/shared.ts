@@ -118,9 +118,9 @@ export function preAcepCheckpointIssues(state: Record<string, unknown> | null): 
     'ux_audit',
   ]).map((entry) => ({
     ...entry,
-    message: `ACEP cannot be marked ready before the checkpoint is complete. ${entry.message}`,
+    message: `Execution Pack cannot be marked ready before the checkpoint is complete. ${entry.message}`,
     suggestedFix:
-      'Run `devview dependency audit complete`, `devview plan execution complete`, `devview coverage audit complete`, and `devview ux audit complete` in order before `devview acep ready`.',
+      'Run `devview dependency audit complete`, `devview plan execution complete`, `devview coverage audit complete`, and `devview ux audit complete` in order before `devview execution-pack ready`.',
   }))
 }
 
@@ -179,8 +179,9 @@ export function uiUxApprovalIssues(root: string, state: Record<string, unknown> 
       code: 'UI_UX_CONFIRM_REQUIRED',
       severity: 'error',
       file: canonicalStateArtifactRelativePath(''),
-      message: `UI/UX work cannot enter WPD before UI_UX_APPROVED. Current state: ${rawState || 'unknown'}.`,
-      suggestedFix: 'Stop at the UI/UX confirmation gate, get user approval, then continue to Visual Contract or WPD.',
+      message: `UI/UX work cannot enter Work Planning before UI_UX_APPROVED. Current state: ${rawState || 'unknown'}.`,
+      suggestedFix:
+        'Stop at the UI/UX confirmation gate, get user approval, then continue to Visual Contract or Work Planning.',
     }),
   ]
 }

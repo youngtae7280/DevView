@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "generatedFrom": [
     ".pbe/blueprint/requirement-tree.json",
-    ".pbe/blueprint/rpd-summary.md",
+    ".pbe/blueprint/product-intake-summary.md",
     ".pbe/blueprint/ui-ux-confirmation.md"
   ],
   "moduleBoundaryCheck": {

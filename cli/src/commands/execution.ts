@@ -13,12 +13,12 @@ export async function executionStartCommand(context: CommandContext): Promise<Co
   }
   return transitionPbeState(context.options.root, 'execution start', [PBE_STATE.EXECUTION_IN_PROGRESS], {
     completedSteps: ['execution_start'],
-    stage: 'acep_running',
-    mode: 'acep_execution',
+    stage: 'execution_pack_running',
+    mode: 'execution_pack_execution',
     currentGate: null,
-    nextStep: 'run_acep',
+    nextStep: 'run_execution_pack',
     data: {
-      next: 'Execute the ACEP, attach evidence, then run `devview execution complete`.',
+      next: 'Execute the Execution Pack, attach evidence, then run `devview execution complete`.',
     },
   })
 }
@@ -37,10 +37,10 @@ export async function executionCompleteCommand(context: CommandContext): Promise
     return transitionFailed('execution complete', 'Execution completion failed. State was not changed.', issues)
   }
   const visualWork = hasVisualWork(context.options.root)
-  return transitionPbeState(context.options.root, 'execution complete', [PBE_STATE.ACEP_RUN_DONE], {
-    completedSteps: ['run_acep'],
-    stage: 'acep_running',
-    mode: 'acep_execution',
+  return transitionPbeState(context.options.root, 'execution complete', [PBE_STATE.EXECUTION_PACK_RUN_DONE], {
+    completedSteps: ['run_execution_pack'],
+    stage: 'execution_pack_running',
+    mode: 'execution_pack_execution',
     deliveryStatus: 'verified',
     currentGate: null,
     nextStep: visualWork ? 'visual_implementation_audit' : 'review_result',

@@ -3,7 +3,7 @@ name: devview-run-execution-pack
 description: Execute the selected DevView Cycle Contract and Node Execution Contracts, enforce tree scope, run selected tests, attach evidence, and create Change Nodes for discoveries outside the contract.
 ---
 
-# DevView Run ACEP
+# DevView Run execution-pack
 
 ## CLI Transition Rule
 
@@ -11,15 +11,15 @@ Use DevView CLI transition commands for workflow state changes. Do not edit `.de
 
 Use this skill to execute an existing Autonomous Codex Execution Pack.
 
-ACEP execution is contract execution, not only task execution. Codex must keep Product, Project, Work, Test, requirement, task, verification, UI/UX, evidence, and coverage links intact.
+execution-pack execution is contract execution, not only task execution. Codex must keep Product, Project, Work, Test, requirement, task, verification, UI/UX, evidence, and coverage links intact.
 
-Graph-first boundary: `.devview/codex-execution-pack/*`, ACEP manifests, task cards, Cycle Contracts, and Node Execution Contracts are compatibility/execution views for bounded work. They are not Graph-source authority, do not retire tree-native artifacts, and do not replace read-model projection evidence or explicit user acceptance.
+Graph-first boundary: `.devview/codex-execution-pack/*`, execution-pack manifests, task cards, Cycle Contracts, and Node Execution Contracts are compatibility/execution views for bounded work. They are not Graph-source authority, do not retire tree-native artifacts, and do not replace read-model projection evidence or explicit user acceptance.
 
-In DevView v2, ACEP Runner executes only the selected Cycle Contract and its Node Execution Contracts. It must not execute excluded, deferred, blocked, or out-of-scope nodes unless the user changes scope through an approved gate.
+In DevView v2, execution-pack Runner executes only the selected Cycle Contract and its Node Execution Contracts. It must not execute excluded, deferred, blocked, or out-of-scope nodes unless the user changes scope through an approved gate.
 
-ACEP Runner is deterministic in Autoflow. Run it automatically after ACEP generation succeeds, then stop at the Review Result gate.
+execution-pack Runner is deterministic in Autoflow. Run it automatically after execution-pack generation succeeds, then stop at the Review Result gate.
 
-Run ACEP only for selected scope and required foundation scope. Deferred and out-of-scope items are protected scope and must not be implemented unless the user changes the implementation scope through a gate.
+Run execution-pack only for selected scope and required foundation scope. Deferred and out-of-scope items are protected scope and must not be implemented unless the user changes the implementation scope through a gate.
 
 Before starting implementation, run:
 
@@ -38,7 +38,7 @@ devview review submit
 
 Do not mark any scope as accepted. Acceptance requires explicit user approval and must pass `devview accept`.
 
-## ACEP Human Gate Preflight
+## execution-pack Human Gate Preflight
 
 Before execution, check whether the selected cycle contains unconfirmed assumptions:
 
@@ -79,7 +79,7 @@ Prefer v2 cycle-native inputs:
 .devview/codex-execution-pack/11-node-execution-contracts/
 ```
 
-Also read ACEP compatibility inputs:
+Also read execution-pack compatibility inputs:
 
 ```text
 .devview/codex-execution-pack/00-readme.md
@@ -133,7 +133,7 @@ Also read ACEP compatibility inputs:
 30. Write the final report using `17-final-report-template.md` only when technical completion criteria are satisfied.
 31. Do not mark the result `accepted` or `accepted_done`.
 32. End as `submitted_for_review` and stop at the Review Result gate.
-33. Run `devview execution start` before ACEP implementation begins.
+33. Run `devview execution start` before execution-pack implementation begins.
 34. Run `devview files check` after source file changes and before review submission.
 35. Run `devview execution complete` after required evidence is attached.
 36. If visual UI work changed, complete Visual Implementation Audit before review submission.
@@ -190,7 +190,7 @@ For each task:
 
 ## Compact Execution
 
-Compact workflow depth does not disable ACEP safety. For small bounded work, still keep:
+Compact workflow depth does not disable execution-pack safety. For small bounded work, still keep:
 
 - `devview files check`
 - minimal evidence linked to the Test or AC
@@ -212,7 +212,7 @@ Compact Fast Path:
 - Do not skip DevView gates.
 - Prefer target/stage validation over full validation by default.
 - Produce compact final reports.
-- Avoid long RPD/WPD/VD explanations unless needed.
+- Avoid long product-intake/work-planning/verification-design explanations unless needed.
 - Do not create separate long reports unless requested or required by release/checkpoint/audit/high-risk/repeated-failure context.
 
 Compact completion report shape:
@@ -282,7 +282,7 @@ Do not mark Product branches `accepted_done`. Only the user may close Product br
 
 ## No-Question Rule
 
-Do not ask the user during ACEP execution unless a stop condition is reached.
+Do not ask the user during execution-pack execution unless a stop condition is reached.
 
 ## Stop Conditions
 
@@ -343,9 +343,9 @@ If coverage issues remain, continue working or record a stop condition. Do not w
 
 ## Autoflow Failure
 
-If ACEP execution cannot continue:
+If execution-pack execution cannot continue:
 
-- Keep the workflow on the last valid canonical state reported by the CLI, usually `ACEP_READY` before start or `EXECUTION_IN_PROGRESS` during execution.
+- Keep the workflow on the last valid canonical state reported by the CLI, usually `EXECUTION_PACK_READY` before start or `EXECUTION_IN_PROGRESS` during execution.
 - Do not write `autoflow.lastFailure` by hand; follow the CLI issue output, `suggestedFix`, and `nextCommand`.
 - Record downstream steps that would be retried after repair.
 - Do not continue to Result Review.
@@ -374,7 +374,7 @@ Only the user can accept the result. If the user is dissatisfied, structure the 
 
 When complete, report with `[DevView ?곹깭 蹂닿퀬]` first, following `templates/stage-completion-status-card-template.md`.
 
-The state card must say that ACEP execution ended as `submitted_for_review` and DevView is stopping at the Review Result gate. Include user reply examples for approval, revision, question, and stop.
+The state card must say that execution-pack execution ended as `submitted_for_review` and DevView is stopping at the Review Result gate. Include user reply examples for approval, revision, question, and stop.
 
 State transitions:
 

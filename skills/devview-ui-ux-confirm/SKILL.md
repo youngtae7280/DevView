@@ -1,6 +1,6 @@
 ---
 name: devview-ui-ux-confirm
-description: Create UI/UX previews from RPD output and require user confirmation before WPD, ACEP, or UI implementation proceeds.
+description: Create UI/UX previews from product-intake output and require user confirmation before work-planning, execution-pack, or UI implementation proceeds.
 ---
 
 # DevView UI/UX Confirm
@@ -9,7 +9,7 @@ description: Create UI/UX previews from RPD output and require user confirmation
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill after RPD and before WPD when the project includes UI-facing screens, forms, flows, navigation, status messages, or visual states.
+Use this skill after product-intake and before work-planning when the project includes UI-facing screens, forms, flows, navigation, status messages, or visual states.
 
 DevView remains a Codex Plugin workflow. Do not create a GUI app, hosted integration, or SaaS backend for confirmation.
 
@@ -23,7 +23,7 @@ Generate a UI/UX preview and get explicit user confirmation before implementatio
 
 ```text
 .devview/blueprint/requirement-tree.json
-.devview/blueprint/rpd-summary.md
+.devview/blueprint/product-intake-summary.md
 .devview/blueprint/source-of-truth-matrix.md
 ```
 
@@ -73,7 +73,7 @@ blocked
 1. Show only one screen or flow preview at a time.
 2. Do not mark a UI/UX item `confirmed` until the user explicitly confirms it.
 3. If the user requests changes, mark it `revision_requested`, update the preview, and append to the confirmation log.
-4. Do not proceed to WPD or ACEP while any required UI/UX item is not `confirmed`, `deferred`, `out_of_scope`, or `not_required`.
+4. Do not proceed to work-planning or execution-pack while any required UI/UX item is not `confirmed`, `deferred`, `out_of_scope`, or `not_required`.
 5. If the user defers or excludes a UI/UX item, record the reason.
 6. Do not implement UI during confirmation.
 7. If the user approves in natural language, update the confirmation artifact and run `devview ui approve` so the CLI records `UI_UX_APPROVED`, clears the gate, and writes state history.
@@ -91,7 +91,7 @@ devview-visual-reference-intake
 devview-design-system-derive
 ```
 
-Before WPD, ACEP, or UI implementation proceeds, selected visual UI work must have one of:
+Before work-planning, execution-pack, or UI implementation proceeds, selected visual UI work must have one of:
 
 - `visual-reference.json` with `primarySource` set to `reference_screenshot`, `reference_app_or_site`, `existing_project_screen`, `interview_derived`, or `default_devview_clean_theme`
 - `visual-reference.json` with `primarySource: visual_quality_waived` and user-accepted waiver metadata
@@ -144,7 +144,7 @@ Examples:
 "find anything awkward from a user perspective"
 
 After approval, DevView continues automatically:
-WPD -> VD -> Dependency Impact Audit -> Implementation Scope Gate
+work-planning -> verification-design -> Dependency Impact Audit -> Implementation Scope Gate
 ```
 
 Also list the preview and confirmation file paths.
@@ -165,7 +165,7 @@ this is okay
 After approval, automatically run:
 
 ```text
-WPD -> VD -> Dependency Impact Audit -> Implementation Scope Gate
+work-planning -> verification-design -> Dependency Impact Audit -> Implementation Scope Gate
 ```
 
 If any downstream step fails, stop and show the failure response from `templates/autoflow-failure-message-template.md`.
@@ -179,7 +179,7 @@ Report with `[DevView ?곹깭 蹂닿퀬]` first:
 - visual source status and whether a Visual Design Contract is required
 - deferred or out_of_scope screens/flows
 - blocked items
-- whether WPD may proceed
+- whether work-planning may proceed
 - workflow state
 - next automatic downstream steps
 - user reply examples

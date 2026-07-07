@@ -9,7 +9,7 @@ description: Review executed DevView cycle results, present Product branch cover
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill after ACEP execution or revision execution has been closed by the CLI.
+Use this skill after execution-pack execution or revision execution has been closed by the CLI.
 
 ## Purpose
 
@@ -41,7 +41,7 @@ Prefer v2 tree/control/evidence files when present:
 .devview/evidence/evidence-tree.json
 ```
 
-Also read ACEP review artifacts:
+Also read execution-pack review artifacts:
 
 ```text
 .devview/codex-execution-pack/17-final-report-template.md
@@ -219,7 +219,7 @@ If the user is dissatisfied:
 3. If product meaning changed, use Product Patch Proposal.
 4. If UI/UX taste is the issue, ask for reference, screenshot, disliked current result, or design constraints.
 5. If scope is too large, propose a smaller recovery slice.
-6. If acceptance criteria are vague, return to RPD/AC clarification before revision.
+6. If acceptance criteria are vague, return to product-intake/AC clarification before revision.
 7. Record diagnostic context in Change/Impact notes rather than creating a new artifact.
 8. Use `docs/review-failure-recovery.md` and `templates/review-diagnostic-template.md` for repeated rejection or alignment risk.
 9. Run `devview-collect-feedback`.
@@ -230,7 +230,7 @@ If the user is dissatisfied:
 13. Run `devview revision start` before coding revision work.
 14. Perform the bounded revision work inside the active Revision scope.
 15. Run `devview revision complete`.
-16. Return through the normal WPD/VD/ACEP/Execution/Review/Accept closure path as required by CLI output.
+16. Return through the normal work-planning/verification-design/execution-pack/Execution/Review/Accept closure path as required by CLI output.
 
 If bounded revision work is needed after Change / Impact analysis, hand off to `devview-run-revision` as a helper skill. Do not treat `devview-run-revision` as a bypass around Product Patch, evidence, review, or user acceptance.
 

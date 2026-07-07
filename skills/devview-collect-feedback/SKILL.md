@@ -29,7 +29,7 @@ Turn user feedback into structured feedback items and Change Tree input that can
 
 Feedback is not a license to reinterpret the whole project. It must be mapped to affected tree nodes or clarified before revision work starts.
 
-Feedback that is ambiguous, especially quality language such as "cleaner", "nicer", "faster", "more stable", or "源붾걫?섍쾶", must enter Ambiguity Gate and Revision RPD. Do not rerun full RPD unless the user explicitly changes the whole product direction.
+Feedback that is ambiguous, especially quality language such as "cleaner", "nicer", "faster", "more stable", or "源붾걫?섍쾶", must enter Ambiguity Gate and Revision product-intake. Do not rerun full product-intake unless the user explicitly changes the whole product direction.
 
 ## Inputs
 

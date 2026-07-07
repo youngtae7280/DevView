@@ -1,6 +1,6 @@
 # DevView Invariants
 
-- RPD nodes are not Codex tasks.
+- product-intake nodes are not Codex tasks.
 - Deferred items are not current slice failures.
 - Selected and foundation items must be covered.
 - Foundation must not implement deferred behavior.

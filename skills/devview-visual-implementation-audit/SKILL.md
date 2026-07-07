@@ -9,9 +9,9 @@ description: Audit implemented UI visual work against Visual Design Contract, de
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill after Run ACEP for UI visual work and before Review Result or branch closure.
+Use this skill after Run execution-pack for UI visual work and before Review Result or branch closure.
 
-It may also run before ACEP generation as a preflight audit if artifacts are missing.
+It may also run before execution-pack generation as a preflight audit if artifacts are missing.
 
 DevView remains a Codex Plugin workflow. Do not create a GUI app, hosted integration, SaaS backend, MCP server, daemon, or standalone runtime.
 
@@ -40,7 +40,7 @@ Ensure visual implementation is not accepted without proof that it follows the v
 .devview/control/impact-tree.json
 ```
 
-Read compatibility ACEP files when present:
+Read compatibility execution-pack files when present:
 
 ```text
 .devview/codex-execution-pack/05-ui-ux-spec.json
@@ -81,8 +81,8 @@ acceptance attempted without user-controlled visual decision
 2. Theme Spec and Design Tokens exist when visual quality is not waived.
 3. Component Style Contract exists for shared UI work.
 4. UI Surface Inventory covers all selected UI surfaces.
-5. VD/Test Tree includes visual/state checks.
-6. ACEP task cards include visual contract references.
+5. verification-design/Test Tree includes visual/state checks.
+6. execution-pack task cards include visual contract references.
 7. Evidence Tree links screenshots/manual notes/test outputs to relevant UI Test/Product nodes.
 8. Screenshot evidence covers required states.
 9. Visual deviations are recorded with disposition: accepted, revise_required, deferred, out_of_scope, or waived.

@@ -1,6 +1,6 @@
 # Ambiguity Report
 
-Use this template when RPD or Revision RPD cannot safely turn user language into executable scope.
+Use this template when product-intake or Revision product-intake cannot safely turn user language into executable scope.
 
 ## User Input
 
@@ -36,5 +36,5 @@ Ask exactly one question:
 
 - Product node candidate:
 - Decision Queue item:
-- Blocks WPD: `yes | no`
-- Requires Revision RPD: `yes | no`
+- Blocks work-planning: `yes | no`
+- Requires Revision product-intake: `yes | no`

@@ -89,7 +89,7 @@ The group cannot be marked complete without integration evidence and integration
 Stop when:
 
 - WorkGraph is missing
-- WPD Module Boundary Check is missing
+- work-planning Module Boundary Check is missing
 - boundary blockers are unresolved
 - a parallel group lacks an integration task
 - a parallel group lacks integration evidence requirement

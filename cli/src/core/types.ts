@@ -9,9 +9,19 @@ export enum ExitCode {
 }
 
 export type IssueSeverity = 'info' | 'warning' | 'error'
-export type TraceabilityStageOption = 'wpd' | 'vd' | 'execution' | 'review' | 'accept'
+export type TraceabilityStageOption =
+  | 'work-planning'
+  | 'verification-design'
+  | 'execution'
+  | 'review'
+  | 'accept'
+  | 'wpd'
+  | 'vd'
 export type ContextStageOption =
   | 'start'
+  | 'product-intake'
+  | 'work-planning'
+  | 'verification-design'
   | 'rpd'
   | 'wpd'
   | 'vd'
@@ -212,24 +222,24 @@ export function hasErrors(issues: ValidationIssue[]): boolean {
 
 export function nextCommandForIssue(code: string): string | undefined {
   if (code.startsWith('AC_') || code === 'ABSTRACT_QUALITY_TERM' || code === 'ROOT_NOT_CONFIRMED_BY_USER') {
-    return 'devview rpd check'
+    return 'devview product-intake check'
   }
 
   const exact: Record<string, string> = {
-    ACCEPTANCE_CRITERIA_MISSING: 'devview rpd check',
-    AMBIGUITY_UNRESOLVED: 'devview rpd check',
-    NODE_NEEDS_CLARIFICATION: 'devview rpd check',
-    LEAF_NOT_TERMINAL: 'devview rpd check',
-    NODE_BLOCKED: 'devview rpd check',
-    BLOCKING_DECISION_OPEN: 'devview rpd check',
-    PRODUCT_WORK_LINK_MISSING: 'devview wpd close',
-    WORK_WITHOUT_PRODUCT: 'devview wpd close',
-    DEFERRED_SCOPE_LEAK: 'devview wpd close',
-    OUT_OF_SCOPE_LEAK: 'devview wpd close',
-    WORK_TEST_LINK_MISSING: 'devview vd close',
-    ACCEPTANCE_NOT_COVERED: 'devview vd close',
-    TEST_WITHOUT_WORK_OR_AC: 'devview vd close',
-    TEST_EVIDENCE_DECLARATION_MISSING: 'devview vd close',
+    ACCEPTANCE_CRITERIA_MISSING: 'devview product-intake check',
+    AMBIGUITY_UNRESOLVED: 'devview product-intake check',
+    NODE_NEEDS_CLARIFICATION: 'devview product-intake check',
+    LEAF_NOT_TERMINAL: 'devview product-intake check',
+    NODE_BLOCKED: 'devview product-intake check',
+    BLOCKING_DECISION_OPEN: 'devview product-intake check',
+    PRODUCT_WORK_LINK_MISSING: 'devview work-planning close',
+    WORK_WITHOUT_PRODUCT: 'devview work-planning close',
+    DEFERRED_SCOPE_LEAK: 'devview work-planning close',
+    OUT_OF_SCOPE_LEAK: 'devview work-planning close',
+    WORK_TEST_LINK_MISSING: 'devview verification-design close',
+    ACCEPTANCE_NOT_COVERED: 'devview verification-design close',
+    TEST_WITHOUT_WORK_OR_AC: 'devview verification-design close',
+    TEST_EVIDENCE_DECLARATION_MISSING: 'devview verification-design close',
     TEST_EVIDENCE_LINK_MISSING: 'devview execution complete',
     REQUIRED_TEST_NO_EVIDENCE: 'devview execution complete',
     REQUIRED_TEST_NO_CURRENT_EVIDENCE: 'devview execution complete',
@@ -252,10 +262,10 @@ export function nextCommandForIssue(code: string): string | undefined {
     REVISION_CONTEXT_NOT_IN_PROGRESS: 'devview revision start',
     REVISION_ARTIFACT_TRANSACTION_FAILED: 'devview revision start',
     REVISION_CHANGE_NOT_FOUND: 'devview change create',
-    FILE_CHANGE_OUTSIDE_WORK_SCOPE: 'devview wpd close',
-    FILE_CHANGE_FORBIDDEN: 'devview wpd close',
+    FILE_CHANGE_OUTSIDE_WORK_SCOPE: 'devview work-planning close',
+    FILE_CHANGE_FORBIDDEN: 'devview work-planning close',
     FILE_CHANGE_REQUIRES_REVISION: 'devview change create',
-    FILE_CHANGE_UNKNOWN_RISK: 'devview wpd close',
+    FILE_CHANGE_UNKNOWN_RISK: 'devview work-planning close',
     GIT_DIFF_UNAVAILABLE: 'devview files check',
     IMPACT_AFFECTED_IDS_MISSING: 'devview impact analyze',
     IMPACT_CHANGE_NOT_FOUND: 'devview impact analyze',
@@ -263,7 +273,7 @@ export function nextCommandForIssue(code: string): string | undefined {
     PRODUCT_PATCH_CHANGE_REQUIRED: 'devview product patch propose',
     PRODUCT_PATCH_CHANGE_MISSING: 'devview change create',
     PRODUCT_PATCH_TARGET_REQUIRED: 'devview product patch propose',
-    PRODUCT_PATCH_TARGET_MISSING: 'devview rpd check',
+    PRODUCT_PATCH_TARGET_MISSING: 'devview product-intake check',
     PRODUCT_PATCH_OPERATION_REQUIRED: 'devview product patch propose',
     PRODUCT_PATCH_OPERATION_INVALID: 'devview product patch propose',
     PRODUCT_PATCH_SUMMARY_REQUIRED: 'devview product patch propose',

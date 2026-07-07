@@ -1,6 +1,6 @@
 ---
 name: devview-coverage-audit
-description: Audit Product, Project, Work, Test, Cycle, traceability, evidence, impact, acceptance, and compatibility coverage before ACEP generation or completion.
+description: Audit Product, Project, Work, Test, Cycle, traceability, evidence, impact, acceptance, and compatibility coverage before execution-pack generation or completion.
 ---
 
 # DevView Coverage Audit
@@ -9,7 +9,7 @@ description: Audit Product, Project, Work, Test, Cycle, traceability, evidence, 
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill before ACEP generation and before final completion.
+Use this skill before execution-pack generation and before final completion.
 
 Coverage Audit is deterministic in Autoflow. Run it automatically after Execution Planner succeeds.
 
@@ -65,7 +65,7 @@ Also read compatibility artifacts:
 .devview/codex-execution-pack/22-cycle-contract.md
 ```
 
-Read ACEP paths only when they exist.
+Read execution-pack paths only when they exist.
 
 ## Output
 
@@ -133,17 +133,17 @@ When possible, run or mirror:
 npm run validate:devview:legacy-tree
 ```
 
-Do not allow ACEP generation, result submission, or branch closure while blocking coverage gaps remain.
+Do not allow execution-pack generation, result submission, or branch closure while blocking coverage gaps remain.
 
 ## Repair Loop
 
 If gaps exist:
 
 ```text
-Audit -> Missing item -> Repair suggestion -> Update tree/WPD/VD/Task/Traceability/Evidence -> Re-audit
+Audit -> Missing item -> Repair suggestion -> Update tree/work-planning/verification-design/Task/Traceability/Evidence -> Re-audit
 ```
 
-Do not allow ACEP generation or final completion while blocking coverage gaps remain.
+Do not allow execution-pack generation or final completion while blocking coverage gaps remain.
 
 ## Autoflow
 

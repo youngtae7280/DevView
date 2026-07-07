@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs'
-import { artifactPath, defaultArtifacts } from '../core/project.js'
+import { artifactPath, artifactRelativePath } from '../core/project.js'
 import { readJsonSafe } from '../core/fs.js'
 import type { ValidationIssue } from '../core/types.js'
 import { issue } from '../core/types.js'
@@ -19,13 +19,15 @@ import {
 
 export async function validateAcep(root: string): Promise<ValidationIssue[]> {
   const manifestPath = artifactPath(root, 'executionManifest')
+  const manifestRelativePath = artifactRelativePath(root, 'executionManifest')
+  const finalCoverageRelativePath = artifactRelativePath(root, 'finalCoverageCheck')
   if (!existsSync(manifestPath)) {
     return [
       missingIssue(
-        'ACEP',
-        'ACEP_MANIFEST_MISSING',
-        defaultArtifacts.executionManifest,
-        'ACEP execution manifest is missing.',
+        'ExecutionPack',
+        'EXECUTION_PACK_MANIFEST_MISSING',
+        manifestRelativePath,
+        'Execution Pack manifest is missing.',
       ),
     ]
   }
@@ -34,12 +36,12 @@ export async function validateAcep(root: string): Promise<ValidationIssue[]> {
   if (!manifest.ok) {
     issues.push(
       issue({
-        validator: 'ACEP',
+        validator: 'ExecutionPack',
         code: 'JSON_INVALID',
         severity: 'error',
-        file: defaultArtifacts.executionManifest,
+        file: manifestRelativePath,
         message: `Could not parse execution manifest: ${manifest.error}`,
-        suggestedFix: 'Fix execution-manifest.json before running ACEP.',
+        suggestedFix: 'Fix execution-manifest.json before running the Execution Pack.',
       }),
     )
     return issues
@@ -54,13 +56,13 @@ export async function validateAcep(root: string): Promise<ValidationIssue[]> {
     if (['deferred', 'blocked', 'out_of_scope'].includes(scopeClass)) {
       issues.push(
         issue({
-          validator: 'ACEP',
-          code: 'ACEP_SCOPE_LEAK',
+          validator: 'ExecutionPack',
+          code: 'EXECUTION_PACK_SCOPE_LEAK',
           severity: 'error',
-          file: defaultArtifacts.executionManifest,
+          file: manifestRelativePath,
           nodeId: taskId,
-          message: `ACEP task ${taskId} has inactive scopeClass ${scopeClass}.`,
-          suggestedFix: 'Remove deferred/blocked/out_of_scope tasks from the active ACEP manifest.',
+          message: `Execution Pack task ${taskId} has inactive scopeClass ${scopeClass}.`,
+          suggestedFix: 'Remove deferred/blocked/out_of_scope tasks from the active Execution Pack manifest.',
         }),
       )
     }
@@ -71,32 +73,35 @@ export async function validateAcep(root: string): Promise<ValidationIssue[]> {
     ) {
       issues.push(
         issue({
-          validator: 'ACEP',
-          code: 'ACEP_TASK_WITHOUT_REQUIREMENT',
+          validator: 'ExecutionPack',
+          code: 'EXECUTION_PACK_TASK_WITHOUT_REQUIREMENT',
           severity: 'error',
-          file: defaultArtifacts.executionManifest,
+          file: manifestRelativePath,
           nodeId: taskId,
-          message: `ACEP task ${taskId} has no requirementIds, workGraphNodeIds, or verificationExplanation.`,
+          message: `Execution Pack task ${taskId} has no requirementIds, workGraphNodeIds, or verificationExplanation.`,
           suggestedFix: 'Link the task to Product/Work scope or record why it is foundation/support work.',
         }),
       )
     }
     for (const productId of arrayStrings(task.requirementIds)) {
       if (inactiveProductIds.has(productId)) {
-        issues.push(scopeLeakIssue('ACEP', 'ACEP_SCOPE_LEAK', defaultArtifacts.executionManifest, taskId, productId))
+        issues.push(
+          scopeLeakIssue('ExecutionPack', 'EXECUTION_PACK_SCOPE_LEAK', manifestRelativePath, taskId, productId),
+        )
       }
     }
     for (const workId of arrayStrings(task.workGraphNodeIds)) {
       if (inactiveWorkIds.has(workId)) {
         issues.push(
           issue({
-            validator: 'ACEP',
-            code: 'ACEP_SCOPE_LEAK',
+            validator: 'ExecutionPack',
+            code: 'EXECUTION_PACK_SCOPE_LEAK',
             severity: 'error',
-            file: defaultArtifacts.executionManifest,
+            file: manifestRelativePath,
             nodeId: taskId,
-            message: `ACEP task ${taskId} includes inactive Work node ${workId}.`,
-            suggestedFix: 'Remove inactive Work nodes from active ACEP scope or reopen them through Change/Impact.',
+            message: `Execution Pack task ${taskId} includes inactive Work node ${workId}.`,
+            suggestedFix:
+              'Remove inactive Work nodes from active Execution Pack scope or reopen them through Change/Impact.',
           }),
         )
       }
@@ -111,10 +116,10 @@ export async function validateAcep(root: string): Promise<ValidationIssue[]> {
       ) {
         issues.push(
           issue({
-            validator: 'ACEP',
+            validator: 'ExecutionPack',
             code: 'PARALLEL_GROUP_INCOMPLETE',
             severity: 'error',
-            file: defaultArtifacts.executionManifest,
+            file: manifestRelativePath,
             nodeId: stringValue(group.id),
             message: `Parallel group ${String(group.id)} lacks required integration task/evidence/pass guard.`,
             suggestedFix:
@@ -127,10 +132,10 @@ export async function validateAcep(root: string): Promise<ValidationIssue[]> {
   if (!existsSync(artifactPath(root, 'finalCoverageCheck'))) {
     issues.push(
       missingIssue(
-        'ACEP',
+        'ExecutionPack',
         'FINAL_COVERAGE_MISSING',
-        defaultArtifacts.finalCoverageCheck,
-        'ACEP final coverage check is missing.',
+        finalCoverageRelativePath,
+        'Execution Pack final coverage check is missing.',
       ),
     )
   }

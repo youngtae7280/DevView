@@ -9,11 +9,11 @@ description: Audit deferred and future module impact before implementation scope
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill after VD completes and before the Implementation Scope gate.
+Use this skill after verification-design completes and before the Implementation Scope gate.
 
 Dependency Impact Audit is deterministic in Autoflow. Run it automatically after
-VD succeeds. It owns the explicit decision record for future or deferred module
-impact. WPD may discover foundation candidates, but this step records whether
+verification-design succeeds. It owns the explicit decision record for future or deferred module
+impact. work-planning may discover foundation candidates, but this step records whether
 those candidates affect the current slice and whether the user must approve a
 scope or architecture runway decision.
 
@@ -37,7 +37,7 @@ scope or architecture runway decision.
 
 ## Required Actions
 
-1. Read deferred, foundation, blocked, and out-of-scope requirements from RPD/WPD.
+1. Read deferred, foundation, blocked, and out-of-scope requirements from product-intake/work-planning.
 2. Read WorkGraph shared foundations, boundary findings, integration points, and parallelization risks.
 3. Identify future or deferred modules that can change current architecture.
 4. Classify each future item as:

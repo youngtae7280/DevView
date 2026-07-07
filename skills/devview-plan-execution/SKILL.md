@@ -1,6 +1,6 @@
 ---
 name: devview-plan-execution
-description: Select a safe Cycle Slice from Product, Project, Work, and Test Trees, then plan staged parallel Codex execution from WPD WorkGraph, VD, traceability, and UI/UX confirmation artifacts.
+description: Select a safe Cycle Slice from Product, Project, Work, and Test Trees, then plan staged parallel Codex execution from work-planning WorkGraph, verification-design, traceability, and UI/UX confirmation artifacts.
 ---
 
 # DevView Plan Execution
@@ -9,17 +9,17 @@ description: Select a safe Cycle Slice from Product, Project, Work, and Test Tre
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill after WPD and VD, and before ACEP generation.
+Use this skill after work-planning and verification-design, and before execution-pack generation.
 
-Execution planning is deterministic in Autoflow. Run it automatically after VD succeeds, dependency impact is audited, implementation scope is selected, and architecture runway is approved when required.
+Execution planning is deterministic in Autoflow. Run it automatically after verification-design succeeds, dependency impact is audited, implementation scope is selected, and architecture runway is approved when required.
 
-Graph-first boundary: Plan Execution, Cycle Tree, Cycle Contract, execution strategy, and ACEP packaging remain
+Graph-first boundary: Plan Execution, Cycle Tree, Cycle Contract, execution strategy, and execution-pack packaging remain
 tree-control compatibility/execution layers. They do not promote Graph-source authority, retire tree-native artifacts,
 or replace read-model projection evidence.
 
-In DevView v2, Plan Execution selects the active Cycle Slice. It must write `.devview/execution/cycle-tree.json` and `.devview/execution/cycle-contract.md` before ACEP generation. Existing `.devview/blueprint/execution-strategy.json` and `.devview/blueprint/execution-strategy.md` remain compatibility strategy views for ACEP and older workflows.
+In DevView v2, Plan Execution selects the active Cycle Slice. It must write `.devview/execution/cycle-tree.json` and `.devview/execution/cycle-contract.md` before execution-pack generation. Existing `.devview/blueprint/execution-strategy.json` and `.devview/blueprint/execution-strategy.md` remain compatibility strategy views for execution-pack and older workflows.
 
-The execution planner does not reinterpret RPD/Product Tree nodes as coding tasks. It reads Product, Project, Work, and Test Trees plus the WPD WorkGraph, then creates a staged execution strategy with sequential foundation work, safe parallel groups, required integration tasks, and final validation.
+The execution planner does not reinterpret product-intake/Product Tree nodes as coding tasks. It reads Product, Project, Work, and Test Trees plus the work-planning WorkGraph, then creates a staged execution strategy with sequential foundation work, safe parallel groups, required integration tasks, and final validation.
 
 ## Inputs
 
@@ -81,7 +81,7 @@ These outputs are later copied or rendered into:
 3. Read `verification-design.json`.
 4. Read `traceability-matrix.json` when present.
 5. Read UI/UX confirmation status.
-6. Verify WPD Module Boundary Check has been performed.
+6. Verify work-planning Module Boundary Check has been performed.
 7. Verify all boundary blockers are resolved or explicitly block execution planning.
 8. Verify implementation scope classification is explicit: selected, deferred, foundation, blocked, and out_of_scope.
 9. Verify `dependency-impact-audit.json` exists and dependency impact decisions are recorded.
@@ -182,10 +182,10 @@ Groups larger than the initial maximum require an explicit `humanApprovalReferen
 
 - Selected nodes can become implementation tasks.
 - Foundation nodes can become sequential foundation tasks.
-- Deferred nodes must not become implementation tasks in this ACEP.
+- Deferred nodes must not become implementation tasks in this execution-pack.
 - Blocked nodes stop execution planning.
 - Out-of-scope nodes must appear only as forbidden or watch-list items.
-- Only Work and Test nodes included in the active Cycle Slice can become current ACEP tasks.
+- Only Work and Test nodes included in the active Cycle Slice can become current execution-pack tasks.
 - Excluded nodes are protected scope; touching them requires a Change Node or a new scope decision.
 
 ## Parallel Eligibility
@@ -268,7 +268,7 @@ Stop before producing an executable strategy when:
 
 - Product, Work, or Test Tree is missing when v2 mode is active.
 - WorkGraph is missing.
-- WPD Module Boundary Check is missing.
+- work-planning Module Boundary Check is missing.
 - Dependency Impact Audit artifact is missing.
 - selected Cycle Slice has no included Work node or no included Test node without an explicit not-runnable reason.
 - selected Work/Test node lacks Product or Project derivation.
@@ -301,6 +301,6 @@ Include:
 - created or updated files
 - cycle contract path
 - next automatic step: coverage audit
-- expected downstream path: Coverage Audit -> UX Audit -> Generate ACEP -> Run ACEP
+- expected downstream path: Coverage Audit -> UX Audit -> Generate execution-pack -> Run execution-pack
 
 Use `[Codex 硫붾え]` only for short explanation of staged parallel choices.

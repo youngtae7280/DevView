@@ -48,8 +48,9 @@ export async function validateFileChanges(
           nodeId: forbiddenMatch.workId,
           stage: 'file_change_guard',
           message: `Changed file ${file.path} matches forbiddenFiles for Work node ${forbiddenMatch.workId}.`,
-          suggestedFix: 'Remove the forbidden file change or update Work scope through WPD before continuing.',
-          nextCommand: 'devview wpd close',
+          suggestedFix:
+            'Remove the forbidden file change or update Work scope through Work Planning before continuing.',
+          nextCommand: 'devview work-planning close',
         }),
       )
       continue
@@ -103,7 +104,7 @@ export async function validateFileChanges(
           stage: 'file_change_guard',
           message: `Changed file ${file.path} is not declared in expectedFiles, but a Work node is marked unknownFileTouchRisk.`,
           suggestedFix: 'Narrow the WorkGraph expectedFiles/expectedSharedFiles before review when possible.',
-          nextCommand: 'devview wpd close',
+          nextCommand: 'devview work-planning close',
         }),
       )
       continue
@@ -118,7 +119,7 @@ export async function validateFileChanges(
         stage: 'file_change_guard',
         message: `Changed file ${file.path} is outside selected/foundation Work expectedFiles/expectedSharedFiles.`,
         suggestedFix: 'Declare the file in Work Tree scope, create a Change/Impact/Revision path, or revert it.',
-        nextCommand: 'devview wpd close',
+        nextCommand: 'devview work-planning close',
       }),
     )
   }

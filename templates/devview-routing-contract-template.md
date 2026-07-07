@@ -13,7 +13,7 @@ impact, implementation scope, or DevView review.
 4. If `autoflow.nextStep` is deterministic, run that DevView step before ordinary coding.
 5. If the user asks for ordinary explanation, usage help, status, or review without changing workflow state, answer normally and do not use a DevView status card unless reporting DevView state.
 6. If the user asks for a bypass/lite/full decision, record the profile choice in `devview-state.json.autoflow.profile`.
-7. Do not run ACEP implementation unless the selected and foundation scope, execution strategy, coverage audit, and UX audit are ready.
+7. Do not run execution-pack implementation unless the selected and foundation scope, execution strategy, coverage audit, and UX audit are ready.
 8. Do not mark work `accepted`; only the user may do that through an explicit review reply.
 9. For supported state transitions, run the `devview` CLI transition command instead of hand-editing `devview-state.json`.
 10. For pre-instruction deterministic checkpoints inside `SCOPE_SELECTED`, run `devview dependency audit complete`, `devview plan execution complete`, `devview coverage audit complete`, and `devview ux audit complete` instead of hand-editing `completedSteps`.
@@ -21,15 +21,15 @@ impact, implementation scope, or DevView review.
 ## Deterministic Steps
 
 ```text
-rpd
-wpd
-vd
+product-intake
+work-planning
+verification-design
 dependency_impact_audit
 plan_execution
 coverage_audit
 ux_audit
-generate_acep
-run_acep
+generate_execution_pack
+run_execution_pack
 ```
 
 ## Human Gates

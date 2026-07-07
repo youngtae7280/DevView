@@ -9,7 +9,7 @@ description: Derive Theme Spec, Design Tokens, and Component Style Contract from
 
 Use DevView CLI transition commands for workflow state changes. Do not edit `.devview/blueprint/devview-state.json` directly. If a CLI command fails, follow the reported `suggestedFix` and `nextCommand`, and do not advance to the next stage while the failure remains. Codex must not replace explicit user acceptance.
 
-Use this skill after Visual Reference Intake and before WPD, ACEP, or UI implementation for visual UI work.
+Use this skill after Visual Reference Intake and before work-planning, execution-pack, or UI implementation for visual UI work.
 
 DevView remains a Codex Plugin workflow. Do not create a GUI app, hosted integration, SaaS backend, MCP server, daemon, or standalone runtime.
 
@@ -118,7 +118,7 @@ no decorative color noise
 5. If a screenshot does not reveal a required state, mark that state as `unknown`, not guessed.
 6. If the source is interview-derived, preserve the user's choices and make reasonable defaults explicit.
 7. If the source is waived, produce a minimal waiver artifact instead of tokens and mark visual evidence as reduced.
-8. The output must be concrete enough for WPD, VD, ACEP, and audits.
+8. The output must be concrete enough for work-planning, verification-design, execution-pack, and audits.
 
 ## Completion Report
 
@@ -129,6 +129,6 @@ Report with `[DevView ?곹깭 蹂닿퀬]` first:
 - design token path
 - component style contract path
 - unresolved visual decisions
-- whether WPD may proceed
+- whether work-planning may proceed
 
 Use `[Codex 硫붾え]` only for short risk notes.
