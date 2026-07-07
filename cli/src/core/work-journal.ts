@@ -22,6 +22,7 @@ const unsafeAuthorityFields = [
   'graphSourceMutated',
   'graphDeltaApplied',
   'guardedUpdateReady',
+  'applyPlanOnly',
   'approvalAutomationEnabled',
   'userAcceptanceAutomated',
   'providerInvoked',
@@ -48,6 +49,7 @@ export interface WorkJournalRenderOptions {
   scopeCiEnforcementReadiness?: string
   scopeCiEnforcementRecord?: string
   guardedGraphUpdateBoundaryRecord?: string
+  guardedGraphUpdateApplyPlan?: string
   proposal?: string
   applyReport?: string
   output?: string
@@ -70,6 +72,7 @@ export interface WorkJournalArtifactSummary {
   status: string | null
   authorityStatus: 'source-summary-only-no-new-authority'
   classification: 'completed' | 'advisory' | 'blocked' | 'not-provided'
+  sourceFactSummary?: JsonRecord
 }
 
 export interface WorkJournalFlowStep {
@@ -115,9 +118,19 @@ export interface WorkJournalAuthoritySummary {
   }
   guardedUpdate: {
     boundaryRecordStatus: string | null
+    applyPlanStatus: string | null
+    applyPlanArtifactStatus: string | null
+    operationSummary: JsonRecord | null
+    planComparisonStatus: string | null
     applyReportStatus: string | null
     nextAction: string
-    displayState: 'actual-boundary-ready-apply-deferred' | 'blocked' | 'preview-only-deferred' | 'not-provided'
+    displayState:
+      | 'apply-plan-ready'
+      | 'apply-plan-blocked'
+      | 'actual-boundary-ready-apply-deferred'
+      | 'blocked'
+      | 'preview-only-deferred'
+      | 'not-provided'
   }
   journalAuthorityFlags: {
     runtimeEvidenceSatisfied: false
@@ -220,6 +233,11 @@ const SOURCE_DEFS = [
     sourceId: 'guarded-graph-update-boundary-record',
     label: 'Guarded Graph Update boundary record',
     optionKey: 'guardedGraphUpdateBoundaryRecord',
+  },
+  {
+    sourceId: 'guarded-graph-update-apply-plan',
+    label: 'Guarded Graph Update apply plan',
+    optionKey: 'guardedGraphUpdateApplyPlan',
   },
   { sourceId: 'guarded-update', label: 'Graph Delta apply status', optionKey: 'applyReport' },
 ] as const
@@ -451,6 +469,45 @@ function validateSourceRecordShape(source: LoadedArtifact): void {
       'filesMutated',
     ])
   }
+  if (source.sourceId === 'guarded-graph-update-apply-plan') {
+    if (
+      record.artifactRole !== 'devview-guarded-graph-update-apply-plan' ||
+      (record.status !== 'devview-guarded-graph-update-apply-plan-ready' &&
+        record.status !== 'devview-guarded-graph-update-apply-plan-blocked')
+    ) {
+      throw new Error('Work Journal Guarded Graph Update apply plan source has an unsupported role/status.')
+    }
+    if (record.applyPlanOnly !== true) {
+      throw new Error('Work Journal Guarded Graph Update apply plan source must have applyPlanOnly true.')
+    }
+    requireFalseFields(source.label, record, [
+      'guardedUpdateReady',
+      'graphSourceMutated',
+      'graphDeltaApplied',
+      'applyCommandExecuted',
+      'runtimeEvidenceSatisfied',
+      'evidenceAccepted',
+      'equivalenceProven',
+      'scopeEnforced',
+      'ciEnforcementEnabled',
+      'requiredChecksConfigured',
+      'branchProtectionChanged',
+      'branchProtectionMutated',
+      'requiredChecksMutated',
+      'externalCiMutated',
+      'diffRejectionEnabled',
+      'diffRejectionActivated',
+      'hooksActivated',
+      'approvalAutomationEnabled',
+      'userAcceptanceAutomated',
+      'providerInvoked',
+      'networkCallMade',
+      'extensionExecutionAllowed',
+      'extensionsExecuted',
+      'shellCommandsExecuted',
+      'filesMutated',
+    ])
+  }
 }
 
 function allowedAuthorityPathsForSource(source: LoadedArtifact): Set<string> {
@@ -458,6 +515,7 @@ function allowedAuthorityPathsForSource(source: LoadedArtifact): Set<string> {
   if (source.sourceId === 'equivalence-proof-record') return new Set(['equivalenceProven'])
   if (source.sourceId === 'scope-ci-enforcement-record') return new Set(['scopeEnforced', 'ciEnforcementEnabled'])
   if (source.sourceId === 'guarded-graph-update-boundary-record') return new Set(['guardedUpdateReady'])
+  if (source.sourceId === 'guarded-graph-update-apply-plan') return new Set(['applyPlanOnly'])
   return new Set()
 }
 
@@ -587,6 +645,7 @@ function summarizeArtifact(source: LoadedArtifact): WorkJournalArtifactSummary {
     }
   }
   const status = stringValue(source.record.status)
+  const sourceFactSummary = buildSourceFactSummary(source)
   return {
     sourceId: source.sourceId,
     label: source.label,
@@ -595,6 +654,7 @@ function summarizeArtifact(source: LoadedArtifact): WorkJournalArtifactSummary {
     status: status || null,
     authorityStatus: 'source-summary-only-no-new-authority',
     classification: classifyArtifact(source.sourceId, status),
+    ...(sourceFactSummary ? { sourceFactSummary } : {}),
   }
 }
 
@@ -610,6 +670,9 @@ function classifyArtifact(sourceId: string, status: string): WorkJournalArtifact
     return normalized.includes('recorded') ? 'completed' : 'blocked'
   if (sourceId === 'guarded-graph-update-boundary-record') {
     return normalized.includes('ready') ? 'completed' : 'blocked'
+  }
+  if (sourceId === 'guarded-graph-update-apply-plan') {
+    return normalized.includes('blocked') ? 'blocked' : normalized.includes('ready') ? 'advisory' : 'advisory'
   }
   if (sourceId === 'runtime-evidence-satisfaction-readiness')
     return normalized.includes('ready') ? 'advisory' : 'blocked'
@@ -628,6 +691,7 @@ function buildFlow(artifacts: WorkJournalArtifactSummary[]): WorkJournalFlowStep
     sourceId: string
     actualSourceId?: string
     readinessSourceId?: string
+    planSourceId?: string
   }> = [
     {
       stepId: 'maintainability-graph',
@@ -684,9 +748,10 @@ function buildFlow(artifacts: WorkJournalArtifactSummary[]): WorkJournalFlowStep
     {
       stepId: 'guarded-update',
       label: 'Guarded Update',
-      summary: 'Boundary record when present; otherwise apply/blocked graph update status.',
+      summary: 'Apply plan preview when present; otherwise boundary or blocked graph update status.',
       sourceId: 'guarded-update',
       actualSourceId: 'guarded-graph-update-boundary-record',
+      planSourceId: 'guarded-graph-update-apply-plan',
     },
     {
       stepId: 'scope-ci',
@@ -704,7 +769,11 @@ function buildFlow(artifacts: WorkJournalArtifactSummary[]): WorkJournalFlowStep
     const readiness = stage.readinessSourceId
       ? artifacts.find((entry) => entry.sourceId === stage.readinessSourceId)
       : undefined
-    const artifact = actual ?? readiness ?? artifacts.find((entry) => entry.sourceId === stage.sourceId)
+    const planCandidate = stage.planSourceId
+      ? artifacts.find((entry) => entry.sourceId === stage.planSourceId)
+      : undefined
+    const plan = planCandidate?.classification === 'not-provided' ? undefined : planCandidate
+    const artifact = plan ?? actual ?? readiness ?? artifacts.find((entry) => entry.sourceId === stage.sourceId)
     const classification = artifact?.classification ?? 'not-provided'
     return {
       stepId: stage.stepId,
@@ -712,15 +781,19 @@ function buildFlow(artifacts: WorkJournalArtifactSummary[]): WorkJournalFlowStep
       summary: stage.summary,
       sourceId: artifact?.sourceId ?? stage.sourceId,
       status: artifact?.status ?? classification,
-      authority: actual
-        ? 'actual-record'
-        : classification === 'blocked'
+      authority: plan
+        ? classification === 'blocked'
           ? 'blocked'
-          : classification === 'not-provided'
-            ? 'not-provided'
-            : stage.sourceId === 'baseline'
-              ? 'source-summary-only'
-              : 'preview-only',
+          : 'preview-only'
+        : actual
+          ? 'actual-record'
+          : classification === 'blocked'
+            ? 'blocked'
+            : classification === 'not-provided'
+              ? 'not-provided'
+              : stage.sourceId === 'baseline'
+                ? 'source-summary-only'
+                : 'preview-only',
     }
   })
 }
@@ -793,6 +866,7 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
   const scopeCi = artifacts.find((artifact) => artifact.sourceId === 'scope-ci')
   const scopeCiRecord = artifacts.find((artifact) => artifact.sourceId === 'scope-ci-enforcement-record')
   const guardedBoundary = artifacts.find((artifact) => artifact.sourceId === 'guarded-graph-update-boundary-record')
+  const guardedApplyPlan = artifacts.find((artifact) => artifact.sourceId === 'guarded-graph-update-apply-plan')
   const applyReport = artifacts.find((artifact) => artifact.sourceId === 'guarded-update')
   return {
     runtimeEvidence: {
@@ -834,21 +908,33 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
     },
     guardedUpdate: {
       boundaryRecordStatus: guardedBoundary?.status ?? null,
+      applyPlanStatus: stringValue(guardedApplyPlan?.sourceFactSummary?.applyPlanStatus) || null,
+      applyPlanArtifactStatus: guardedApplyPlan?.status ?? null,
+      operationSummary: asRecord(guardedApplyPlan?.sourceFactSummary?.operationSummary) ?? null,
+      planComparisonStatus: stringValue(guardedApplyPlan?.sourceFactSummary?.planComparisonStatus) || null,
       applyReportStatus: applyReport?.status ?? null,
       nextAction:
-        guardedBoundary?.classification === 'completed'
-          ? 'Plan explicit guarded apply; graph-source has not been updated.'
-          : applyReport?.classification === 'blocked'
-            ? 'Resolve blocked graph update/apply status before planning guarded apply.'
-            : 'Create a guarded graph update boundary record before any apply command.',
+        guardedApplyPlan?.classification === 'advisory'
+          ? 'Review apply plan and authorize a future explicit policy-gated apply; graph-source has not been updated.'
+          : guardedApplyPlan?.classification === 'blocked'
+            ? 'Resolve apply plan blockers before any guarded graph update apply.'
+            : guardedBoundary?.classification === 'completed'
+              ? 'Plan explicit guarded apply; graph-source has not been updated.'
+              : applyReport?.classification === 'blocked'
+                ? 'Resolve blocked graph update/apply status before planning guarded apply.'
+                : 'Create a guarded graph update boundary record before any apply command.',
       displayState:
-        guardedBoundary?.classification === 'completed'
-          ? 'actual-boundary-ready-apply-deferred'
-          : applyReport?.classification === 'blocked'
-            ? 'blocked'
-            : applyReport?.classification === 'advisory'
-              ? 'preview-only-deferred'
-              : 'not-provided',
+        guardedApplyPlan?.classification === 'advisory'
+          ? 'apply-plan-ready'
+          : guardedApplyPlan?.classification === 'blocked'
+            ? 'apply-plan-blocked'
+            : guardedBoundary?.classification === 'completed'
+              ? 'actual-boundary-ready-apply-deferred'
+              : applyReport?.classification === 'blocked'
+                ? 'blocked'
+                : applyReport?.classification === 'advisory'
+                  ? 'preview-only-deferred'
+                  : 'not-provided',
     },
     journalAuthorityFlags: {
       runtimeEvidenceSatisfied: false,
@@ -857,6 +943,26 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
       scopeEnforced: false,
       ciEnforcementEnabled: false,
     },
+  }
+}
+
+function buildSourceFactSummary(source: LoadedArtifact): JsonRecord | null {
+  const record = source.record
+  if (!record) return null
+  if (source.sourceId !== 'guarded-graph-update-apply-plan') return null
+  const operationSummary = asRecord(record.operationSummary)
+  return {
+    applyPlanStatus: stringValue(record.applyPlanStatus) || null,
+    operationSummary: operationSummary
+      ? {
+          operationCount: numberValue(operationSummary.operationCount),
+          operationKinds: arrayStrings(operationSummary.operationKinds),
+          unresolvedOperationCount:
+            numberValue(operationSummary.unsupportedOperationCount) ?? arrayRecords(record.unresolvedOperations).length,
+          graphSourceOriginalHash: stringValue(record.graphSourceOriginalHash) || null,
+        }
+      : null,
+    planComparisonStatus: stringValue(record.planComparisonStatus) || null,
   }
 }
 
@@ -1376,7 +1482,7 @@ function renderWorkJournalHtml(journal: WorkJournalDataPreview): string {
         authorityRow('Runtime Evidence', runtime.displayState, runtime.actualRecordStatus || runtime.readinessStatus) +
         authorityRow('Equivalence Proof', equivalence.displayState, equivalence.actualRecordStatus || equivalence.readinessStatus) +
         authorityRow('Scope/CI', scopeCi.displayState, scopeCi.actualRecordStatus || scopeCi.readinessStatus || scopeCi.activationStatus) +
-        authorityRow('Guarded Update', guardedUpdate.displayState, guardedUpdate.boundaryRecordStatus || guardedUpdate.applyReportStatus || guardedUpdate.nextAction) +
+        authorityRow('Guarded Update', guardedUpdate.displayState, guardedUpdate.applyPlanArtifactStatus || guardedUpdate.boundaryRecordStatus || guardedUpdate.applyReportStatus || guardedUpdate.nextAction) +
         '</div>';
     }
     function authorityRow(label, stateValue, status) {
@@ -1405,7 +1511,7 @@ function renderWorkJournalHtml(journal: WorkJournalDataPreview): string {
       if (stepId === 'runtime-evidence') return ['runtime-evidence-satisfaction-readiness', 'runtime-evidence-satisfaction-record'];
       if (stepId === 'equivalence-proof') return ['equivalence-proof-readiness', 'equivalence-proof-record'];
       if (stepId === 'scope-ci') return ['scope-ci', 'scope-ci-enforcement-record'];
-      if (stepId === 'guarded-update') return ['guarded-graph-update-boundary-record', 'guarded-update', 'graph-delta'];
+      if (stepId === 'guarded-update') return ['guarded-graph-update-apply-plan', 'guarded-graph-update-boundary-record', 'guarded-update', 'graph-delta'];
       return [];
     }
     render();
@@ -1473,6 +1579,16 @@ function stringValue(value: unknown): string {
 
 function numberValue(value: unknown): number | null {
   return typeof value === 'number' && Number.isFinite(value) ? value : null
+}
+
+function arrayRecords(value: unknown): JsonRecord[] {
+  return Array.isArray(value)
+    ? value.map((entry) => asRecord(entry)).filter((entry): entry is JsonRecord => Boolean(entry))
+    : []
+}
+
+function arrayStrings(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : []
 }
 
 function escapeHtml(value: string): string {

@@ -367,6 +367,8 @@ Options:
                        Scope/CI Enforcement record file for graph read-model record-guarded-graph-update-boundary, report-devview-baseline, or work-journal render.
   --guarded-graph-update-boundary-record <file>
                        Guarded Graph Update boundary record file for graph read-model plan-guarded-graph-update, report-devview-baseline, or work-journal render.
+  --guarded-graph-update-apply-plan <file>
+                       Guarded Graph Update apply plan file for graph read-model report-devview-baseline or work-journal render.
   --policy <file>      Policy boundary file for graph read-model report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-equivalence-proof-readiness, record-equivalence-proof, or report-scope-ci-enforcement-readiness.
   --readiness <file>   Optional Evidence Acceptance readiness provenance for graph read-model record-evidence-decision or create-accepted-evidence-record.
   --source-evidence <file>

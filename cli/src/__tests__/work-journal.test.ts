@@ -274,6 +274,95 @@ describe('DevView Work Journal renderer', () => {
     expect(html).toContain('Run JSON')
   })
 
+  it('summarizes Guarded Graph Update apply plans as compact non-mutating source facts', async () => {
+    const workspace = createWorkspace()
+    writeWorkJournalSources(workspace)
+    writeJson(join(workspace, 'generated/guarded-boundary-record.json'), guardedGraphUpdateBoundaryRecord())
+    writeJson(join(workspace, 'generated/guarded-apply-plan.json'), guardedGraphUpdateApplyPlan())
+
+    const result = await runDevViewCli(
+      workJournalArgs(undefined, undefined, undefined, [
+        '--guarded-graph-update-boundary-record',
+        'generated/guarded-boundary-record.json',
+        '--guarded-graph-update-apply-plan',
+        'generated/guarded-apply-plan.json',
+      ]),
+      { cwd: workspace, pluginRoot },
+    )
+    const data = JSON.parse(readFileSync(join(workspace, '.devview/generated/work-journal/index.data.json'), 'utf8'))
+    const run = JSON.parse(
+      readFileSync(join(workspace, '.devview/generated/work-journal/runs/todo-add/run.json'), 'utf8'),
+    )
+    const html = readFileSync(join(workspace, '.devview/generated/work-journal/index.html'), 'utf8')
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(run.authoritySummary.guardedUpdate).toEqual(
+      expect.objectContaining({
+        boundaryRecordStatus: 'devview-guarded-graph-update-boundary-ready',
+        applyPlanStatus: 'ready-deterministic-diff-preview-created',
+        applyPlanArtifactStatus: 'devview-guarded-graph-update-apply-plan-ready',
+        displayState: 'apply-plan-ready',
+        planComparisonStatus: 'matched-boundary-proposal-and-current-graph-source',
+      }),
+    )
+    expect(run.authoritySummary.guardedUpdate.operationSummary).toEqual(
+      expect.objectContaining({
+        operationCount: 1,
+        operationKinds: ['update-node'],
+        unresolvedOperationCount: 0,
+        graphSourceOriginalHash: 'sha256:graph-source',
+      }),
+    )
+    expect(run.authoritySummary.guardedUpdate.nextAction).toContain('policy-gated apply')
+    expect(run.flow.find((step: { stepId: string }) => step.stepId === 'guarded-update')).toEqual(
+      expect.objectContaining({
+        sourceId: 'guarded-graph-update-apply-plan',
+        authority: 'preview-only',
+        status: 'devview-guarded-graph-update-apply-plan-ready',
+      }),
+    )
+    expect(run.artifacts.map((artifact: { sourceId: string }) => artifact.sourceId)).toContain(
+      'guarded-graph-update-apply-plan',
+    )
+    expect(data.safetyFlags.graphSourceMutated).toBe(false)
+    expect(data.safetyFlags.graphDeltaApplied).toBe(false)
+    expect(html).toContain('apply-plan-ready')
+    expect(html).toContain('Source artifacts and provenance')
+    expect(html).toContain('Run JSON')
+  })
+
+  it('shows blocked Guarded Graph Update apply plans without claiming graph update', async () => {
+    const workspace = createWorkspace()
+    writeWorkJournalSources(workspace)
+    writeJson(
+      join(workspace, 'generated/guarded-apply-plan.json'),
+      guardedGraphUpdateApplyPlan('devview-guarded-graph-update-apply-plan-blocked'),
+    )
+
+    const result = await runDevViewCli(
+      workJournalArgs(undefined, undefined, undefined, [
+        '--guarded-graph-update-apply-plan',
+        'generated/guarded-apply-plan.json',
+      ]),
+      { cwd: workspace, pluginRoot },
+    )
+    const run = JSON.parse(
+      readFileSync(join(workspace, '.devview/generated/work-journal/runs/todo-add/run.json'), 'utf8'),
+    )
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(run.authoritySummary.guardedUpdate.displayState).toBe('apply-plan-blocked')
+    expect(run.authoritySummary.guardedUpdate.applyPlanStatus).toBe('blocked-no-concrete-operations')
+    expect(run.authoritySummary.guardedUpdate.nextAction).toContain('Resolve apply plan blockers')
+    expect(run.flow.find((step: { stepId: string }) => step.stepId === 'guarded-update')).toEqual(
+      expect.objectContaining({
+        sourceId: 'guarded-graph-update-apply-plan',
+        authority: 'blocked',
+        status: 'devview-guarded-graph-update-apply-plan-blocked',
+      }),
+    )
+  })
+
   it('preserves previous Work Journal runs and replaces the current run deterministically', async () => {
     const workspace = createWorkspace()
     writeWorkJournalSources(workspace)
@@ -495,6 +584,38 @@ describe('DevView Work Journal renderer', () => {
       workJournalArgs('.tmp/journal.html', '.tmp/journal.data.json', '.tmp/run.json', [
         '--guarded-graph-update-boundary-record',
         'generated/not-guarded-boundary.json',
+      ]),
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.issues[0].message).toContain('unsupported role/status')
+    expect(existsSync(join(workspace, '.tmp/journal.html'))).toBe(false)
+    expect(existsSync(join(workspace, '.tmp/journal.data.json'))).toBe(false)
+    expect(existsSync(join(workspace, '.tmp/run.json'))).toBe(false)
+  })
+
+  it('blocks wrong Guarded Graph Update apply plan role/status or graph mutation flags before writing outputs', async () => {
+    const workspace = createWorkspace()
+    writeWorkJournalSources(workspace)
+    writeJson(join(workspace, 'generated/not-guarded-apply-plan.json'), {
+      artifactRole: 'devview-graph-delta-apply-report',
+      status: 'devview-graph-delta-apply-blocked',
+      applyPlanOnly: true,
+      graphDeltaApplied: true,
+      graphSourceMutated: false,
+      providerInvoked: false,
+      networkCallMade: false,
+      hooksActivated: false,
+      approvalAutomationEnabled: false,
+      userAcceptanceAutomated: false,
+    })
+
+    const result = await runDevViewCli(
+      workJournalArgs('.tmp/journal.html', '.tmp/journal.data.json', '.tmp/run.json', [
+        '--guarded-graph-update-apply-plan',
+        'generated/not-guarded-apply-plan.json',
       ]),
       { cwd: workspace, pluginRoot },
     )
@@ -750,6 +871,51 @@ function guardedGraphUpdateBoundaryRecord(): Record<string, unknown> {
     extensionExecutionAllowed: false,
     extensionsExecuted: false,
     shellCommandsExecuted: false,
+    filesMutated: false,
+  }
+}
+
+function guardedGraphUpdateApplyPlan(
+  status:
+    | 'devview-guarded-graph-update-apply-plan-ready'
+    | 'devview-guarded-graph-update-apply-plan-blocked' = 'devview-guarded-graph-update-apply-plan-ready',
+): Record<string, unknown> {
+  return {
+    artifactRole: 'devview-guarded-graph-update-apply-plan',
+    status,
+    applyPlanStatus:
+      status === 'devview-guarded-graph-update-apply-plan-ready'
+        ? 'ready-deterministic-diff-preview-created'
+        : 'blocked-no-concrete-operations',
+    graphSourceOriginalHash: 'sha256:graph-source',
+    planComparisonStatus: 'matched-boundary-proposal-and-current-graph-source',
+    operationSummary: {
+      operationCount: 1,
+      supportedOperationCount: status === 'devview-guarded-graph-update-apply-plan-ready' ? 1 : 0,
+      unsupportedOperationCount: status === 'devview-guarded-graph-update-apply-plan-ready' ? 0 : 1,
+      operationKinds: ['update-node'],
+    },
+    unresolvedOperations: status === 'devview-guarded-graph-update-apply-plan-ready' ? [] : [{ code: 'NO_CONCRETE' }],
+    guardedUpdateReady: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    applyPlanOnly: true,
+    applyCommandExecuted: false,
+    applyCommandEnabled: false,
+    applyDeferred: true,
+    providerInvoked: false,
+    networkCallMade: false,
+    hooksActivated: false,
+    branchProtectionMutated: false,
+    requiredChecksMutated: false,
+    externalCiMutated: false,
+    approvalAutomationEnabled: false,
+    userAcceptanceAutomated: false,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
     filesMutated: false,
   }
 }

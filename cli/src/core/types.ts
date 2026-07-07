@@ -172,6 +172,7 @@ export interface CliOptions {
   scopeCiEnforcementReadiness?: string
   scopeCiEnforcementRecord?: string
   guardedGraphUpdateBoundaryRecord?: string
+  guardedGraphUpdateApplyPlan?: string
   hookHealth?: string
   userPromptAdvisory?: string
   preflightSession?: string

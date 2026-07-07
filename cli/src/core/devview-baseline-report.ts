@@ -27,6 +27,7 @@ export interface DevViewBaselineReportOptions {
   scopeCiEnforcementReadiness?: string
   scopeCiEnforcementRecord?: string
   guardedGraphUpdateBoundaryRecord?: string
+  guardedGraphUpdateApplyPlan?: string
   output?: string
   markdown?: string
 }
@@ -51,6 +52,7 @@ export interface DevViewBaselineSourceSummary {
   status: string | null
   classification: BaselineClassification | 'not-provided'
   authorityStatus: 'source-summary-only-no-new-authority'
+  sourceFactSummary?: JsonRecord
 }
 
 export interface DevViewBaselineLane {
@@ -86,6 +88,7 @@ export interface DevViewCoreBaselineFreezeReport {
   sourceScopeCiEnforcementReadiness: string | null
   sourceScopeCiEnforcementRecord: string | null
   sourceGuardedGraphUpdateBoundaryRecord: string | null
+  sourceGuardedGraphUpdateApplyPlan: string | null
   sourceArtifacts: DevViewBaselineSourceSummary[]
   classificationTaxonomy: Array<{
     classification: BaselineClassification
@@ -249,6 +252,12 @@ const OPTIONAL_SOURCE_DEFS = [
     optionKey: 'guardedGraphUpdateBoundaryRecord',
     expectedRole: 'devview-guarded-graph-update-boundary-record',
   },
+  {
+    sourceId: 'guarded-graph-update-apply-plan',
+    label: 'Guarded Graph Update apply plan',
+    optionKey: 'guardedGraphUpdateApplyPlan',
+    expectedRole: 'devview-guarded-graph-update-apply-plan',
+  },
 ] as const
 
 export async function reportDevViewBaselineFile(
@@ -377,6 +386,7 @@ function validateSources(sources: LoadedSource[]): DevViewBaselineFinding[] {
       continue
     }
     validateRoleStatus(source, findings)
+    validateExactOptionalSourceShape(source, findings)
     validateUnsafeAuthoritySignals(source, findings)
   }
   return findings
@@ -411,6 +421,60 @@ function validateRoleStatus(source: LoadedSource, findings: DevViewBaselineFindi
       field: `${source.sourceId}.status`,
       message: `${source.label} has no status field and is summarized as advisory/partial only.`,
     })
+  }
+}
+
+function validateExactOptionalSourceShape(source: LoadedSource, findings: DevViewBaselineFinding[]): void {
+  const record = source.record
+  if (!record) return
+  if (source.sourceId !== 'guarded-graph-update-apply-plan') return
+  const role = stringValue(record.artifactRole)
+  const status = stringValue(record.status)
+  if (
+    role !== 'devview-guarded-graph-update-apply-plan' ||
+    !['devview-guarded-graph-update-apply-plan-ready', 'devview-guarded-graph-update-apply-plan-blocked'].includes(
+      status,
+    )
+  ) {
+    findings.push({
+      code: 'DEVVIEW_BASELINE_GUARDED_APPLY_PLAN_ROLE_STATUS_INVALID',
+      severity: 'error',
+      field: `${source.sourceId}.status`,
+      message: `${source.label} must use the DevView guarded graph update apply plan role and a known plan status.`,
+      expected: 'devview-guarded-graph-update-apply-plan with ready or blocked guarded graph update apply plan status',
+      actual: { artifactRole: role, status },
+    })
+  }
+  if (record.applyPlanOnly !== true) {
+    findings.push({
+      code: 'DEVVIEW_BASELINE_GUARDED_APPLY_PLAN_NOT_PLAN_ONLY',
+      severity: 'error',
+      field: `${source.sourceId}.applyPlanOnly`,
+      message: `${source.label} must be a plan-only source fact.`,
+      expected: true,
+      actual: record.applyPlanOnly,
+    })
+  }
+  for (const field of [
+    'graphDeltaApplied',
+    'graphSourceMutated',
+    'applyCommandExecuted',
+    'providerInvoked',
+    'networkCallMade',
+    'hooksActivated',
+    'approvalAutomationEnabled',
+    'userAcceptanceAutomated',
+  ]) {
+    if (field in record && record[field] !== false) {
+      findings.push({
+        code: 'DEVVIEW_BASELINE_GUARDED_APPLY_PLAN_UNSAFE_FLAG',
+        severity: 'error',
+        field: `${source.sourceId}.${field}`,
+        message: `${source.label} must keep ${field}:false.`,
+        expected: false,
+        actual: record[field],
+      })
+    }
   }
 }
 
@@ -455,6 +519,8 @@ function validateUnsafeAuthoritySignals(source: LoadedSource, findings: DevViewB
     allowTopLevelGuardedUpdateReady:
       source.sourceId === 'guarded-graph-update-boundary-record' &&
       isGuardedGraphUpdateBoundarySourceFactAllowed(record),
+    allowTopLevelApplyPlanOnly:
+      source.sourceId === 'guarded-graph-update-apply-plan' && isGuardedGraphUpdateApplyPlanSourceFactAllowed(record),
   })
   for (const entry of unsafe) {
     findings.push({
@@ -531,6 +597,23 @@ function isGuardedGraphUpdateBoundarySourceFactAllowed(record: JsonRecord): bool
   )
 }
 
+function isGuardedGraphUpdateApplyPlanSourceFactAllowed(record: JsonRecord): boolean {
+  return (
+    record.artifactRole === 'devview-guarded-graph-update-apply-plan' &&
+    (record.status === 'devview-guarded-graph-update-apply-plan-ready' ||
+      record.status === 'devview-guarded-graph-update-apply-plan-blocked') &&
+    record.applyPlanOnly === true &&
+    record.graphSourceMutated === false &&
+    record.graphDeltaApplied === false &&
+    record.applyCommandExecuted === false &&
+    record.providerInvoked === false &&
+    record.networkCallMade === false &&
+    record.hooksActivated === false &&
+    record.approvalAutomationEnabled === false &&
+    record.userAcceptanceAutomated === false
+  )
+}
+
 function buildReport(
   root: string,
   sources: LoadedSource[],
@@ -569,6 +652,7 @@ function buildReport(
     sourceScopeCiEnforcementReadiness: sourcePath('scope-ci-enforcement-readiness'),
     sourceScopeCiEnforcementRecord: sourcePath('scope-ci-enforcement-record'),
     sourceGuardedGraphUpdateBoundaryRecord: sourcePath('guarded-graph-update-boundary-record'),
+    sourceGuardedGraphUpdateApplyPlan: sourcePath('guarded-graph-update-apply-plan'),
     sourceArtifacts: sources.map((source) => summarizeSource(root, source)),
     classificationTaxonomy: buildClassificationTaxonomy(),
     baselineLanes: buildBaselineLanes(finalHandoff.record ?? {}, roadmapAudit.record ?? {}),
@@ -641,6 +725,7 @@ function summarizeSource(root: string, source: LoadedSource): DevViewBaselineSou
     }
   }
   const status = stringValue(source.record.status)
+  const sourceFactSummary = buildSourceFactSummary(source)
   return {
     sourceId: source.sourceId,
     label: source.label,
@@ -651,6 +736,7 @@ function summarizeSource(root: string, source: LoadedSource): DevViewBaselineSou
     status: status || null,
     classification: classifyStatus(source.sourceId, status),
     authorityStatus: 'source-summary-only-no-new-authority',
+    ...(sourceFactSummary ? { sourceFactSummary } : {}),
   }
 }
 
@@ -669,12 +755,34 @@ function classifyStatus(sourceId: string, status: string): BaselineClassificatio
   ) {
     return 'completed'
   }
+  if (sourceId === 'guarded-graph-update-apply-plan') {
+    return normalized.includes('blocked') ? 'blocked' : normalized.includes('ready') ? 'advisory' : 'advisory'
+  }
   if (sourceId === 'graph-delta-apply-report') {
     return normalized.includes('applied') ? 'advisory' : 'blocked'
   }
   if (sourceId.includes('readiness')) return normalized.includes('ready') ? 'advisory' : 'blocked'
   if (sourceId === 'approved-apply-dry-run') return normalized.includes('ready') ? 'advisory' : 'blocked'
   return 'advisory'
+}
+
+function buildSourceFactSummary(source: LoadedSource): JsonRecord | null {
+  const record = source.record
+  if (!record) return null
+  if (source.sourceId !== 'guarded-graph-update-apply-plan') return null
+  const operationSummary = asRecord(record.operationSummary)
+  return {
+    applyPlanStatus: stringValue(record.applyPlanStatus) || null,
+    operationCount: numberValue(operationSummary?.operationCount),
+    operationKinds: arrayStrings(operationSummary?.operationKinds),
+    unresolvedOperationCount:
+      numberValue(operationSummary?.unsupportedOperationCount) ?? arrayRecords(record.unresolvedOperations).length,
+    graphSourceOriginalHash: stringValue(record.graphSourceOriginalHash) || null,
+    planComparisonStatus: stringValue(record.planComparisonStatus) || null,
+    applyPlanOnly: record.applyPlanOnly === true,
+    graphDeltaApplied: record.graphDeltaApplied === true,
+    graphSourceMutated: record.graphSourceMutated === true,
+  }
 }
 
 function buildClassificationTaxonomy(): DevViewCoreBaselineFreezeReport['classificationTaxonomy'] {
@@ -954,6 +1062,7 @@ const UNSAFE_TRUE_FIELDS = new Set([
   'graphSourceMutationAllowed',
   'graphDeltaApplyEnabled',
   'guardedUpdateReady',
+  'applyPlanOnly',
   'mutationAllowed',
   'acceptanceAllowed',
   'equivalenceAllowed',
@@ -967,6 +1076,7 @@ function collectUnsafeAuthoritySignals(
     allowTopLevelAcceptedEvidence?: boolean
     allowTopLevelScopeCiEnforcement?: boolean
     allowTopLevelGuardedUpdateReady?: boolean
+    allowTopLevelApplyPlanOnly?: boolean
   } = {},
 ): Array<{ path: string }> {
   const findings: Array<{ path: string }> = []
@@ -988,7 +1098,8 @@ function collectUnsafeAuthoritySignals(
           options.allowTopLevelScopeCiEnforcement &&
           (nextPath === 'scopeEnforced' || nextPath === 'ciEnforcementEnabled')
         ) &&
-        !(options.allowTopLevelGuardedUpdateReady && nextPath === 'guardedUpdateReady')
+        !(options.allowTopLevelGuardedUpdateReady && nextPath === 'guardedUpdateReady') &&
+        !(options.allowTopLevelApplyPlanOnly && nextPath === 'applyPlanOnly')
       ) {
         findings.push({ path: nextPath })
       }
@@ -1096,6 +1207,10 @@ function arrayRecords(value: unknown): JsonRecord[] {
 
 function arrayStrings(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : []
+}
+
+function numberValue(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null
 }
 
 function resolveRepoPath(root: string, candidatePath: string): string {

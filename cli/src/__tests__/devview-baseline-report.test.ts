@@ -48,6 +48,7 @@ describe('DevView core baseline freeze report CLI', () => {
     )
     expect(payload.sourceScopeCiEnforcementRecord).toBe('generated/scope-ci-record.json')
     expect(payload.sourceGuardedGraphUpdateBoundaryRecord).toBe('generated/guarded-boundary-record.json')
+    expect(payload.sourceGuardedGraphUpdateApplyPlan).toBe('generated/guarded-apply-plan.json')
     expect(
       payload.sourceArtifacts.map((entry: { sourceId: string; classification: string }) => [
         entry.sourceId,
@@ -65,7 +66,25 @@ describe('DevView core baseline freeze report CLI', () => {
         ['scope-ci-enforcement-readiness', 'blocked'],
         ['scope-ci-enforcement-record', 'completed'],
         ['guarded-graph-update-boundary-record', 'completed'],
+        ['guarded-graph-update-apply-plan', 'advisory'],
       ]),
+    )
+    expect(
+      payload.sourceArtifacts.find(
+        (entry: { sourceId: string }) => entry.sourceId === 'guarded-graph-update-apply-plan',
+      ).sourceFactSummary,
+    ).toEqual(
+      expect.objectContaining({
+        applyPlanStatus: 'ready-deterministic-diff-preview-created',
+        operationCount: 1,
+        operationKinds: ['update-node'],
+        unresolvedOperationCount: 0,
+        graphSourceOriginalHash: 'sha256:graph-source',
+        planComparisonStatus: 'matched-boundary-proposal-and-current-graph-source',
+        applyPlanOnly: true,
+        graphDeltaApplied: false,
+        graphSourceMutated: false,
+      }),
     )
     expectSafetyFalse(payload.safetyInvariantSummary)
     expect(written.writtenOutputPath).toBe('.tmp/baseline.json')
@@ -101,8 +120,32 @@ describe('DevView core baseline freeze report CLI', () => {
     )
     expect(
       payload.sourceArtifacts.filter((entry: { readStatus: string }) => entry.readStatus === 'missing-optional'),
-    ).toHaveLength(15)
+    ).toHaveLength(16)
     expectSafetyFalse(payload.safetyInvariantSummary)
+  })
+
+  it('summarizes blocked Guarded Graph Update apply plans as blocked source facts', async () => {
+    const workspace = createWorkspace()
+    writeBaselineInputs(workspace)
+    writeJson(
+      join(workspace, 'generated/guarded-apply-plan.json'),
+      guardedGraphUpdateApplyPlan('devview-guarded-graph-update-apply-plan-blocked'),
+    )
+
+    const result = await runDevViewCli([...baseArgs(), '--output', '.tmp/baseline.json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    const applyPlan = payload.sourceArtifacts.find(
+      (entry: { sourceId: string }) => entry.sourceId === 'guarded-graph-update-apply-plan',
+    )
+    expect(applyPlan.classification).toBe('blocked')
+    expect(applyPlan.sourceFactSummary.applyPlanStatus).toBe('blocked-no-concrete-operations')
+    expect(payload.safetyInvariantSummary.graphDeltaApplied).toBe(false)
+    expect(payload.safetyInvariantSummary.graphSourceMutated).toBe(false)
   })
 
   it('blocks unsafe output overwrite before writing', async () => {
@@ -175,6 +218,33 @@ describe('DevView core baseline freeze report CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
     expect(payload.issues[0].message).toContain('runtimeEvidenceSatisfied')
+    expect(existsSync(join(workspace, '.tmp/baseline.json'))).toBe(false)
+  })
+
+  it('blocks wrong Guarded Graph Update apply plan source with zero writes', async () => {
+    const workspace = createWorkspace()
+    writeBaselineInputs(workspace)
+    writeJson(join(workspace, 'generated/guarded-apply-plan.json'), {
+      artifactRole: 'devview-graph-delta-apply-report',
+      status: 'devview-graph-delta-apply-blocked',
+      applyPlanOnly: true,
+      graphDeltaApplied: true,
+      graphSourceMutated: false,
+      providerInvoked: false,
+      networkCallMade: false,
+      hooksActivated: false,
+      approvalAutomationEnabled: false,
+      userAcceptanceAutomated: false,
+    })
+
+    const result = await runDevViewCli([...baseArgs(), '--output', '.tmp/baseline.json'], {
+      cwd: workspace,
+      pluginRoot,
+    })
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.issues[0].message).toContain('Guarded Graph Update apply plan')
     expect(existsSync(join(workspace, '.tmp/baseline.json'))).toBe(false)
   })
 
@@ -315,6 +385,8 @@ function baseArgs(): string[] {
     'generated/scope-ci-record.json',
     '--guarded-graph-update-boundary-record',
     'generated/guarded-boundary-record.json',
+    '--guarded-graph-update-apply-plan',
+    'generated/guarded-apply-plan.json',
     '--json',
   ]
 }
@@ -444,6 +516,7 @@ function writeBaselineInputs(
   )
   writeJson(join(workspace, 'generated/scope-ci-record.json'), scopeCiEnforcementRecord())
   writeJson(join(workspace, 'generated/guarded-boundary-record.json'), guardedGraphUpdateBoundaryRecord())
+  writeJson(join(workspace, 'generated/guarded-apply-plan.json'), guardedGraphUpdateApplyPlan())
   writeJson(join(workspace, 'generated/roadmap.json'), {
     artifactRole: 'devview-roadmap-completion-audit-preview',
     status: 'devview-roadmap-completion-audit-previewed',
@@ -575,6 +648,47 @@ function guardedGraphUpdateBoundaryRecord(): Record<string, unknown> {
     extensionsExecuted: false,
     shellCommandsExecuted: false,
     filesMutated: false,
+  }
+}
+
+function guardedGraphUpdateApplyPlan(
+  status:
+    | 'devview-guarded-graph-update-apply-plan-ready'
+    | 'devview-guarded-graph-update-apply-plan-blocked' = 'devview-guarded-graph-update-apply-plan-ready',
+): Record<string, unknown> {
+  return {
+    artifactRole: 'devview-guarded-graph-update-apply-plan',
+    status,
+    applyPlanStatus:
+      status === 'devview-guarded-graph-update-apply-plan-ready'
+        ? 'ready-deterministic-diff-preview-created'
+        : 'blocked-no-concrete-operations',
+    graphSourceOriginalHash: 'sha256:graph-source',
+    planComparisonStatus: 'matched-boundary-proposal-and-current-graph-source',
+    operationSummary: {
+      operationCount: 1,
+      supportedOperationCount: status === 'devview-guarded-graph-update-apply-plan-ready' ? 1 : 0,
+      unsupportedOperationCount: status === 'devview-guarded-graph-update-apply-plan-ready' ? 0 : 1,
+      operationKinds: ['update-node'],
+    },
+    unresolvedOperations: status === 'devview-guarded-graph-update-apply-plan-ready' ? [] : [{ code: 'NO_CONCRETE' }],
+    guardedUpdateReady: false,
+    applyPlanOnly: true,
+    applyCommandExecuted: false,
+    applyCommandEnabled: false,
+    applyDeferred: true,
+    graphDeltaApplied: false,
+    graphSourceMutated: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    hooksActivated: false,
+    approvalAutomationEnabled: false,
+    userAcceptanceAutomated: false,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
   }
 }
 
