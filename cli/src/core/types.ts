@@ -228,6 +228,7 @@ export interface CliOptions {
   packageArtifactDigest?: string
   provenanceAttestationValidation?: string
   provenanceVerificationReadiness?: string
+  ciBranchGovernanceReadiness?: string
   workflow?: string
   sourceRef?: string
   buildCommand?: string

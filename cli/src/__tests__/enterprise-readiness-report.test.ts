@@ -914,6 +914,166 @@ describe('security report-enterprise-readiness CLI', () => {
     expectSafetyFalse(payload)
   })
 
+  it('summarizes CI/branch governance readiness without treating it as external CI activation', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/ci-branch-governance-readiness.json'), ciBranchGovernanceReadinessReport())
+
+    const result = await runDevViewCli(
+      [
+        'security',
+        'report-enterprise-readiness',
+        '--ci-branch-governance-readiness',
+        '.tmp/ci-branch-governance-readiness.json',
+        '--output',
+        '.tmp/enterprise-readiness.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.readinessLevel).toBe('not-ready')
+    expect(payload.sourceCiBranchGovernanceReadinessReports).toHaveLength(1)
+    expect(payload.sourceCiBranchGovernanceReadinessReports[0]).toEqual(
+      expect.objectContaining({
+        path: '.tmp/ci-branch-governance-readiness.json',
+        artifactRole: 'devview-ci-branch-governance-readiness-report',
+        status: 'devview-ci-branch-governance-readiness-reported',
+        ciBranchGovernanceReadinessStatus: 'report-only-readiness-recorded-not-enforced',
+        workflowInventoryFileCount: 2,
+        candidateRequiredCheckCount: 3,
+        requiredChecksPolicyPresent: false,
+        requiredChecksConfigured: false,
+        requiredChecksMutated: false,
+        branchProtectionPolicyPresent: false,
+        branchProtectionChanged: false,
+        branchProtectionMutated: false,
+        externalCiMutation: false,
+        providerInvoked: false,
+        networkCallMade: false,
+        apiCallMade: false,
+        hooksActivated: false,
+        providerNetworkDefaultDenyLinked: true,
+        rbacPolicyValidationLinked: true,
+        signingReadinessLinked: true,
+        provenanceVerificationReadinessLinked: true,
+        findingCount: 3,
+        downstreamActionCount: 2,
+      }),
+    )
+    expect(payload.scopeCiGovernanceReadiness.status).toBe('readiness-recorded')
+    expect(payload.scopeCiGovernanceReadiness.ciBranchGovernanceReadinessSourceCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.workflowInventoryFileCount).toBe(2)
+    expect(payload.scopeCiGovernanceReadiness.candidateRequiredCheckCount).toBe(3)
+    expect(payload.scopeCiGovernanceReadiness.requiredChecksConfiguredCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.requiredChecksMutatedCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.branchProtectionChangedCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.branchProtectionMutatedCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.externalCiMutationCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.providerInvokedCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.networkCallMadeCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.apiCallMadeCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.hooksActivatedCount).toBe(0)
+    expect(payload.scopeCiGovernanceReadiness.providerNetworkPolicyLinkedCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.rbacPolicyValidationLinkedCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.signingReadinessLinkedCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.provenanceVerificationReadinessLinkedCount).toBe(1)
+    expect(payload.scopeCiGovernanceReadiness.findingCount).toBe(3)
+    expect(payload.scopeCiGovernanceReadiness.downstreamActionCount).toBe(2)
+    expect(payload.enterpriseReadinessFindings.map((entry: { code: string }) => entry.code)).toEqual(
+      expect.arrayContaining([
+        'ENTERPRISE_CI_BRANCH_GOVERNANCE_READINESS_RECORDED',
+        'ENTERPRISE_CI_ACTIVATION_GOVERNANCE_MISSING',
+        'ENTERPRISE_RBAC_SIGNING_MISSING',
+      ]),
+    )
+    expect(payload.enterpriseReadinessFindings.map((entry: { code: string }) => entry.code)).not.toContain(
+      'ENTERPRISE_CI_BRANCH_GOVERNANCE_READINESS_NOT_SUPPLIED',
+    )
+    expectSafetyFalse(payload)
+  })
+
+  it('blocks invalid or authority-claiming CI/branch governance readiness sources with zero writes', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/wrong-ci-branch.json'), {
+      ...ciBranchGovernanceReadinessReport(),
+      status: 'wrong',
+    })
+    writeJson(join(workspace, '.tmp/branch-ci-branch.json'), {
+      ...ciBranchGovernanceReadinessReport(),
+      branchProtectionMutated: true,
+    })
+    writeJson(join(workspace, '.tmp/required-checks-ci-branch.json'), {
+      ...ciBranchGovernanceReadinessReport(),
+      requiredChecksGovernanceReadiness: {
+        ...(ciBranchGovernanceReadinessReport().requiredChecksGovernanceReadiness as Record<string, unknown>),
+        requiredChecksConfigured: true,
+      },
+    })
+    writeJson(join(workspace, '.tmp/provider-ci-branch.json'), {
+      ...ciBranchGovernanceReadinessReport(),
+      ciProviderGovernanceReadiness: {
+        ...(ciBranchGovernanceReadinessReport().ciProviderGovernanceReadiness as Record<string, unknown>),
+        providerInvoked: true,
+      },
+    })
+    writeJson(join(workspace, '.tmp/rbac-ci-branch.json'), {
+      ...ciBranchGovernanceReadinessReport(),
+      rbacEnforced: true,
+    })
+
+    const wrong = await runEnterpriseWithCiBranchGovernanceReadiness(
+      workspace,
+      '.tmp/wrong-ci-branch.json',
+      '.tmp/wrong-ci-branch-enterprise.json',
+    )
+    const branch = await runEnterpriseWithCiBranchGovernanceReadiness(
+      workspace,
+      '.tmp/branch-ci-branch.json',
+      '.tmp/branch-ci-branch-enterprise.json',
+    )
+    const requiredChecks = await runEnterpriseWithCiBranchGovernanceReadiness(
+      workspace,
+      '.tmp/required-checks-ci-branch.json',
+      '.tmp/required-checks-ci-branch-enterprise.json',
+    )
+    const provider = await runEnterpriseWithCiBranchGovernanceReadiness(
+      workspace,
+      '.tmp/provider-ci-branch.json',
+      '.tmp/provider-ci-branch-enterprise.json',
+    )
+    const rbac = await runEnterpriseWithCiBranchGovernanceReadiness(
+      workspace,
+      '.tmp/rbac-ci-branch.json',
+      '.tmp/rbac-ci-branch-enterprise.json',
+    )
+
+    expect(wrong.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(wrong.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_CI_BRANCH_GOVERNANCE_SOURCE_ROLE_STATUS_INVALID',
+    )
+    expect(existsSync(join(workspace, '.tmp/wrong-ci-branch-enterprise.json'))).toBe(false)
+
+    for (const [result, output] of [
+      [branch, '.tmp/branch-ci-branch-enterprise.json'],
+      [requiredChecks, '.tmp/required-checks-ci-branch-enterprise.json'],
+      [provider, '.tmp/provider-ci-branch-enterprise.json'],
+    ] as const) {
+      expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+      expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+        'ENTERPRISE_READINESS_UNSAFE_SOURCE_AUTHORITY_FLAG',
+      )
+      expect(existsSync(join(workspace, output))).toBe(false)
+    }
+
+    expect(rbac.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(rbac.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_CI_BRANCH_GOVERNANCE_AUTHORITY_CLAIM_UNSUPPORTED',
+    )
+    expect(existsSync(join(workspace, '.tmp/rbac-ci-branch-enterprise.json'))).toBe(false)
+  })
+
   it('blocks invalid or authority-claiming release provenance readiness sources with zero writes', async () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, '.tmp/wrong-release-provenance.json'), {
@@ -1853,6 +2013,7 @@ describe('security report-enterprise-readiness CLI', () => {
     writeJson(join(workspace, '.tmp/sbom-validation.json'), sbomValidationReport())
     writeJson(join(workspace, '.tmp/package-provenance-inputs.json'), packageProvenanceInputsRecord())
     writeJson(join(workspace, '.tmp/package-artifact-digest.json'), packageArtifactDigestRecord())
+    writeJson(join(workspace, '.tmp/ci-branch-governance-readiness.json'), ciBranchGovernanceReadinessReport())
     const cases = [
       { output: '.tmp/benchmark-governance.json', expected: 'would overwrite a source input' },
       {
@@ -1893,6 +2054,11 @@ describe('security report-enterprise-readiness CLI', () => {
       {
         sourceArgs: ['--package-artifact-digest', '.tmp/package-artifact-digest.json'],
         output: '.tmp/package-artifact-digest.json',
+        expected: 'would overwrite a source input',
+      },
+      {
+        sourceArgs: ['--ci-branch-governance-readiness', '.tmp/ci-branch-governance-readiness.json'],
+        output: '.tmp/ci-branch-governance-readiness.json',
         expected: 'would overwrite a source input',
       },
       { output: '.tmp/enterprise.json', markdown: '.tmp/enterprise.json', expected: 'must be different' },
@@ -3193,6 +3359,128 @@ function provenanceVerificationReadinessReport(overrides: Record<string, unknown
   }
 }
 
+function ciBranchGovernanceReadinessReport(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    schemaVersion: 1,
+    artifactRole: 'devview-ci-branch-governance-readiness-report',
+    status: 'devview-ci-branch-governance-readiness-reported',
+    readinessScope: 'ci-branch-governance-readiness-report-only',
+    sourceFactsOnly: true,
+    reportOnly: true,
+    ciBranchGovernanceReadinessStatus: 'report-only-readiness-recorded-not-enforced',
+    workflowInventory: {
+      sourceCount: 2,
+      candidateRequiredChecks: ['Quality Gate', 'Candidate B Read-Model Check', 'validate'],
+      workflows: [
+        { path: '.github/workflows/ci.yml', sha256: 'a'.repeat(64), byteLength: 1024 },
+        { path: '.github/workflows/read-model-evidence.yml', sha256: 'b'.repeat(64), byteLength: 512 },
+      ],
+    },
+    requiredChecksGovernanceReadiness: {
+      requiredChecksPolicyPresent: false,
+      requiredChecksConfigured: false,
+      requiredChecksMutated: false,
+    },
+    branchProtectionGovernanceReadiness: {
+      branchProtectionPolicyPresent: false,
+      branchProtectionChanged: false,
+      branchProtectionMutated: false,
+    },
+    ciProviderGovernanceReadiness: {
+      providerNetworkDefaultDenyLinked: true,
+      defaultProviderPolicy: 'deny',
+      defaultNetworkPolicy: 'deny',
+      providerInvoked: false,
+      networkCallMade: false,
+      apiCallMade: false,
+    },
+    scopeCiLifecycleBoundary: {
+      scopeCiReadinessSupplied: true,
+      scopeCiRecordSupplied: true,
+      internalScopeLifecycleRecorded: true,
+      internalCiLifecycleRecorded: true,
+      externalCiMutation: false,
+      requiredChecksConfigured: false,
+      branchProtectionMutated: false,
+      hooksActivated: false,
+    },
+    rbacPrerequisiteReadiness: {
+      policyValidationLinked: true,
+      rbacEnforced: false,
+      permissionVerified: false,
+    },
+    signingAndProvenancePrerequisiteReadiness: {
+      signingReadinessLinked: true,
+      provenanceVerificationReadinessLinked: true,
+      cryptographicSignatureVerified: false,
+      realSlsaVerificationPerformed: false,
+      realInTotoVerificationPerformed: false,
+    },
+    governanceFindings: [
+      {
+        severity: 'satisfied',
+        code: 'CI_BRANCH_GOVERNANCE_WORKFLOW_INVENTORY_RECORDED',
+        message: 'Workflow inventory recorded.',
+      },
+      {
+        severity: 'gap',
+        code: 'CI_BRANCH_GOVERNANCE_EXTERNAL_GOVERNANCE_NOT_READY',
+        message: 'External governance missing.',
+      },
+      {
+        severity: 'satisfied',
+        code: 'CI_BRANCH_GOVERNANCE_PROVIDER_NETWORK_POLICY_LINKED',
+        message: 'Provider policy linked.',
+      },
+    ],
+    downstreamActionPlan: ['Integrate into enterprise readiness.', 'Add declarative CI/branch policy validation.'],
+    githubMutated: false,
+    githubWorkflowMutated: false,
+    workflowExecuted: false,
+    workflowsExecuted: false,
+    branchProtectionChanged: false,
+    branchProtectionMutated: false,
+    requiredChecksConfigured: false,
+    requiredChecksMutated: false,
+    externalCiMutated: false,
+    hooksActivated: false,
+    ciProviderCalled: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    apiCallMade: false,
+    cryptographicSignatureVerified: false,
+    cryptographicSigningImplemented: false,
+    keyGenerated: false,
+    privateKeyStored: false,
+    keyRegistryCreated: false,
+    trustRootCreated: false,
+    rbacEnforced: false,
+    permissionVerified: false,
+    rbacPermissionVerified: false,
+    packageArtifactGeneratedByDevView: false,
+    packageArtifactGenerated: false,
+    packageTarballGenerated: false,
+    packageSigned: false,
+    sbomGeneratedByDevView: false,
+    sbomGenerated: false,
+    sbomAttested: false,
+    provenanceAttestationGenerated: false,
+    provenanceAttestationVerified: false,
+    provenanceAttested: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
+    approvalAutomationEnabled: false,
+    userAcceptanceAutomated: false,
+    enterpriseGateActivated: false,
+    ...overrides,
+  }
+}
+
 function safetyFlags(): Record<string, unknown> {
   return {
     benchmarkExecuted: false,
@@ -3407,6 +3695,25 @@ function runEnterpriseWithProvenanceVerificationReadiness(
       'report-enterprise-readiness',
       '--provenance-verification-readiness',
       provenanceVerificationReadiness,
+      '--output',
+      output,
+      '--json',
+    ],
+    { cwd: workspace, pluginRoot },
+  )
+}
+
+function runEnterpriseWithCiBranchGovernanceReadiness(
+  workspace: string,
+  ciBranchGovernanceReadiness: string,
+  output: string,
+) {
+  return runDevViewCli(
+    [
+      'security',
+      'report-enterprise-readiness',
+      '--ci-branch-governance-readiness',
+      ciBranchGovernanceReadiness,
       '--output',
       output,
       '--json',

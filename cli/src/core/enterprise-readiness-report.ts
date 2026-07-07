@@ -46,12 +46,19 @@ const PROVENANCE_ATTESTATION_VALIDATION_ROLE = 'devview-provenance-attestation-v
 const PROVENANCE_ATTESTATION_VALIDATION_STATUS = 'devview-provenance-attestation-validation-passed'
 const PROVENANCE_VERIFICATION_READINESS_ROLE = 'devview-provenance-verification-readiness-report'
 const PROVENANCE_VERIFICATION_READINESS_STATUS = 'devview-provenance-verification-readiness-reported'
+const CI_BRANCH_GOVERNANCE_READINESS_ROLE = 'devview-ci-branch-governance-readiness-report'
+const CI_BRANCH_GOVERNANCE_READINESS_STATUS = 'devview-ci-branch-governance-readiness-reported'
 
 const unsafeAuthorityFields = [
   'enterpriseGateActivated',
   'providerInvoked',
   'networkCallMade',
   'apiCallMade',
+  'ciProviderCalled',
+  'githubMutated',
+  'githubWorkflowMutated',
+  'workflowExecuted',
+  'workflowsExecuted',
   'shellCommandExecuted',
   'shellCommandsExecuted',
   'extensionExecutionAllowed',
@@ -147,6 +154,7 @@ export interface EnterpriseReadinessReportOptions {
   packageArtifactDigest?: string
   provenanceAttestationValidation?: string
   provenanceVerificationReadiness?: string
+  ciBranchGovernanceReadiness?: string
   output?: string
   markdown?: string
 }
@@ -437,6 +445,32 @@ export interface EnterpriseReadinessReport {
     findingCount: number | null
     downstreamActionCount: number | null
   }>
+  sourceCiBranchGovernanceReadinessReports: Array<{
+    supplied: true
+    path: string
+    artifactRole: string | null
+    status: string | null
+    ciBranchGovernanceReadinessStatus: string | null
+    workflowInventoryFileCount: number | null
+    candidateRequiredCheckCount: number | null
+    requiredChecksPolicyPresent: boolean | null
+    requiredChecksConfigured: boolean | null
+    requiredChecksMutated: boolean | null
+    branchProtectionPolicyPresent: boolean | null
+    branchProtectionChanged: boolean | null
+    branchProtectionMutated: boolean | null
+    externalCiMutation: boolean | null
+    providerInvoked: boolean | null
+    networkCallMade: boolean | null
+    apiCallMade: boolean | null
+    hooksActivated: boolean | null
+    providerNetworkDefaultDenyLinked: boolean | null
+    rbacPolicyValidationLinked: boolean | null
+    signingReadinessLinked: boolean | null
+    provenanceVerificationReadinessLinked: boolean | null
+    findingCount: number | null
+    downstreamActionCount: number | null
+  }>
   releaseSurfaceReadiness: {
     status: 'satisfied' | 'failed' | 'not-supplied'
     packageAllowlistPresent: boolean
@@ -607,9 +641,31 @@ export interface EnterpriseReadinessReport {
     gaps: string[]
   }
   scopeCiGovernanceReadiness: {
-    status: 'gap'
+    status: 'gap' | 'readiness-recorded'
     scopeCiRecordLifecyclePresent: true
     externalCiMutationDisabled: true
+    ciBranchGovernanceReadinessSourceCount: number
+    sourceStatuses: string[]
+    readinessStatuses: string[]
+    workflowInventoryFileCount: number
+    candidateRequiredCheckCount: number
+    requiredChecksPolicyPresentCount: number
+    requiredChecksConfiguredCount: number
+    requiredChecksMutatedCount: number
+    branchProtectionPolicyPresentCount: number
+    branchProtectionChangedCount: number
+    branchProtectionMutatedCount: number
+    externalCiMutationCount: number
+    providerInvokedCount: number
+    networkCallMadeCount: number
+    apiCallMadeCount: number
+    hooksActivatedCount: number
+    providerNetworkPolicyLinkedCount: number
+    rbacPolicyValidationLinkedCount: number
+    signingReadinessLinkedCount: number
+    provenanceVerificationReadinessLinkedCount: number
+    findingCount: number
+    downstreamActionCount: number
     gaps: string[]
   }
   rbacAndSigningReadiness: {
@@ -721,6 +777,7 @@ interface LoadedSource {
     | 'package-artifact-digest-record'
     | 'provenance-attestation-validation-report'
     | 'provenance-verification-readiness-report'
+    | 'ci-branch-governance-readiness-report'
   record: JsonRecord | null
   readError: string | null
 }
@@ -749,6 +806,7 @@ export async function reportEnterpriseReadiness(
   const packageArtifactDigestPaths = parseList(options.packageArtifactDigest)
   const provenanceAttestationValidationPaths = parseList(options.provenanceAttestationValidation)
   const provenanceVerificationReadinessPaths = parseList(options.provenanceVerificationReadiness)
+  const ciBranchGovernanceReadinessPaths = parseList(options.ciBranchGovernanceReadiness)
   const sourcePaths = [
     options.benchmarkGovernanceVerification,
     options.releaseSurfaceValidation,
@@ -763,6 +821,7 @@ export async function reportEnterpriseReadiness(
     ...packageArtifactDigestPaths,
     ...provenanceAttestationValidationPaths,
     ...provenanceVerificationReadinessPaths,
+    ...ciBranchGovernanceReadinessPaths,
   ].filter((entry): entry is string => Boolean(entry))
   await assertOutputAuthority(
     root,
@@ -813,6 +872,9 @@ export async function reportEnterpriseReadiness(
       loadSource(root, entry, 'provenance-verification-readiness-report'),
     ),
   )
+  const ciBranchGovernanceReadinessReports = await Promise.all(
+    ciBranchGovernanceReadinessPaths.map((entry) => loadSource(root, entry, 'ci-branch-governance-readiness-report')),
+  )
   const blockingFindings = validateSources(
     benchmarkGovernance,
     releaseSurface,
@@ -827,6 +889,7 @@ export async function reportEnterpriseReadiness(
     packageArtifactDigestRecords,
     provenanceAttestationValidationReports,
     provenanceVerificationReadinessReports,
+    ciBranchGovernanceReadinessReports,
   )
   if (blockingFindings.length > 0) {
     throw new EnterpriseReadinessReportValidationError(
@@ -844,6 +907,7 @@ export async function reportEnterpriseReadiness(
         packageArtifactDigestRecords,
         provenanceAttestationValidationReports,
         provenanceVerificationReadinessReports,
+        ciBranchGovernanceReadinessReports,
         blockingFindings,
         true,
       ),
@@ -864,6 +928,7 @@ export async function reportEnterpriseReadiness(
     packageArtifactDigestRecords,
     provenanceAttestationValidationReports,
     provenanceVerificationReadinessReports,
+    ciBranchGovernanceReadinessReports,
     buildFindings(
       benchmarkGovernance,
       releaseSurface,
@@ -878,6 +943,7 @@ export async function reportEnterpriseReadiness(
       packageArtifactDigestRecords,
       provenanceAttestationValidationReports,
       provenanceVerificationReadinessReports,
+      ciBranchGovernanceReadinessReports,
     ),
   )
   const outputPath = resolveRepoPath(root, options.output ?? '')
@@ -906,6 +972,7 @@ function buildReport(
   packageArtifactDigestRecords: LoadedSource[],
   provenanceAttestationValidationReports: LoadedSource[],
   provenanceVerificationReadinessReports: LoadedSource[],
+  ciBranchGovernanceReadinessReports: LoadedSource[],
   findings: EnterpriseReadinessFinding[],
   blocked = false,
 ): EnterpriseReadinessReport {
@@ -932,6 +999,9 @@ function buildReport(
     .map((entry) => entry.record)
     .filter(isJsonRecord)
   const provenanceVerificationReadinessRecords = provenanceVerificationReadinessReports
+    .map((entry) => entry.record)
+    .filter(isJsonRecord)
+  const ciBranchGovernanceReadinessRecords = ciBranchGovernanceReadinessReports
     .map((entry) => entry.record)
     .filter(isJsonRecord)
   const releaseStatus = releaseReadinessStatus(releaseRecord)
@@ -999,6 +1069,9 @@ function buildReport(
     ),
     sourceProvenanceVerificationReadinessReports: provenanceVerificationReadinessReports.map((source) =>
       provenanceVerificationReadinessSummary(source),
+    ),
+    sourceCiBranchGovernanceReadinessReports: ciBranchGovernanceReadinessReports.map((source) =>
+      ciBranchGovernanceReadinessSummary(source),
     ),
     releaseSurfaceReadiness: {
       status: releaseStatus,
@@ -1374,13 +1447,75 @@ function buildReport(
       gaps: providerNetworkPolicyGaps(providerNetworkRecord),
     },
     scopeCiGovernanceReadiness: {
-      status: 'gap',
+      status: ciBranchGovernanceReadinessRecords.length > 0 ? 'readiness-recorded' : 'gap',
       scopeCiRecordLifecyclePresent: true,
       externalCiMutationDisabled: true,
-      gaps: [
-        'External branch protection and required check activation remain disabled.',
-        'Scope/CI activation lacks enterprise actor identity and policy-gated rollout records.',
-      ],
+      ciBranchGovernanceReadinessSourceCount: ciBranchGovernanceReadinessRecords.length,
+      sourceStatuses: uniqueStrings(ciBranchGovernanceReadinessRecords.map((record) => stringValue(record.status))),
+      readinessStatuses: uniqueStrings(
+        ciBranchGovernanceReadinessRecords.map((record) => stringValue(record.ciBranchGovernanceReadinessStatus)),
+      ),
+      workflowInventoryFileCount: ciBranchGovernanceReadinessRecords.reduce(
+        (total, record) => total + (numberValue(asRecord(record.workflowInventory)?.sourceCount) ?? 0),
+        0,
+      ),
+      candidateRequiredCheckCount: ciBranchGovernanceReadinessRecords.reduce(
+        (total, record) => total + (arrayLength(asRecord(record.workflowInventory)?.candidateRequiredChecks) ?? 0),
+        0,
+      ),
+      requiredChecksPolicyPresentCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.requiredChecksGovernanceReadiness)?.requiredChecksPolicyPresent),
+      ).length,
+      requiredChecksConfiguredCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.requiredChecksGovernanceReadiness)?.requiredChecksConfigured),
+      ).length,
+      requiredChecksMutatedCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.requiredChecksGovernanceReadiness)?.requiredChecksMutated),
+      ).length,
+      branchProtectionPolicyPresentCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.branchProtectionGovernanceReadiness)?.branchProtectionPolicyPresent),
+      ).length,
+      branchProtectionChangedCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.branchProtectionGovernanceReadiness)?.branchProtectionChanged),
+      ).length,
+      branchProtectionMutatedCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.branchProtectionGovernanceReadiness)?.branchProtectionMutated),
+      ).length,
+      externalCiMutationCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.scopeCiLifecycleBoundary)?.externalCiMutation),
+      ).length,
+      providerInvokedCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.ciProviderGovernanceReadiness)?.providerInvoked),
+      ).length,
+      networkCallMadeCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.ciProviderGovernanceReadiness)?.networkCallMade),
+      ).length,
+      apiCallMadeCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.ciProviderGovernanceReadiness)?.apiCallMade),
+      ).length,
+      hooksActivatedCount: ciBranchGovernanceReadinessRecords.filter((record) => booleanValue(record.hooksActivated))
+        .length,
+      providerNetworkPolicyLinkedCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.ciProviderGovernanceReadiness)?.providerNetworkDefaultDenyLinked),
+      ).length,
+      rbacPolicyValidationLinkedCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.rbacPrerequisiteReadiness)?.policyValidationLinked),
+      ).length,
+      signingReadinessLinkedCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.signingAndProvenancePrerequisiteReadiness)?.signingReadinessLinked),
+      ).length,
+      provenanceVerificationReadinessLinkedCount: ciBranchGovernanceReadinessRecords.filter((record) =>
+        booleanValue(asRecord(record.signingAndProvenancePrerequisiteReadiness)?.provenanceVerificationReadinessLinked),
+      ).length,
+      findingCount: ciBranchGovernanceReadinessRecords.reduce(
+        (total, record) => total + (arrayLength(record.governanceFindings) ?? 0),
+        0,
+      ),
+      downstreamActionCount: ciBranchGovernanceReadinessRecords.reduce(
+        (total, record) => total + (arrayLength(record.downstreamActionPlan) ?? 0),
+        0,
+      ),
+      gaps: scopeCiGovernanceGaps(ciBranchGovernanceReadinessRecords),
     },
     rbacAndSigningReadiness: {
       status: 'gap',
@@ -1548,6 +1683,7 @@ function validateSources(
   packageArtifactDigestRecords: LoadedSource[],
   provenanceAttestationValidationReports: LoadedSource[],
   provenanceVerificationReadinessReports: LoadedSource[],
+  ciBranchGovernanceReadinessReports: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
   for (const source of [
@@ -1564,6 +1700,7 @@ function validateSources(
     ...packageArtifactDigestRecords,
     ...provenanceAttestationValidationReports,
     ...provenanceVerificationReadinessReports,
+    ...ciBranchGovernanceReadinessReports,
   ].filter((entry): entry is LoadedSource => Boolean(entry))) {
     if (source.readError) {
       findings.push(blockingFinding('ENTERPRISE_READINESS_SOURCE_READ_FAILED', source.readError, source.relativePath))
@@ -1616,8 +1753,10 @@ function validateSources(
       validatePackageArtifactDigestSource(source, record, findings)
     } else if (source.sourceKind === 'provenance-attestation-validation-report') {
       validateProvenanceAttestationValidationSource(source, record, findings)
-    } else {
+    } else if (source.sourceKind === 'provenance-verification-readiness-report') {
       validateProvenanceVerificationReadinessSource(source, record, findings)
+    } else {
+      validateCiBranchGovernanceReadinessSource(source, record, findings)
     }
     for (const hit of collectUnsafeAuthorityHits(record)) {
       findings.push({
@@ -1646,6 +1785,7 @@ function buildFindings(
   packageArtifactDigestRecords: LoadedSource[],
   provenanceAttestationValidationReports: LoadedSource[],
   provenanceVerificationReadinessReports: LoadedSource[],
+  ciBranchGovernanceReadinessReports: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
   const benchmarkRecord = benchmarkGovernance?.record ?? null
@@ -1671,6 +1811,9 @@ function buildFindings(
     .map((entry) => entry.record)
     .filter(isJsonRecord)
   const provenanceVerificationReadinessRecords = provenanceVerificationReadinessReports
+    .map((entry) => entry.record)
+    .filter(isJsonRecord)
+  const ciBranchGovernanceReadinessRecords = ciBranchGovernanceReadinessReports
     .map((entry) => entry.record)
     .filter(isJsonRecord)
 
@@ -1911,6 +2054,23 @@ function buildFindings(
       message:
         'Provenance verification readiness source is recorded as report-only readiness, not as real SLSA/in-toto or cryptographic verification.',
       path: provenanceVerificationReadinessReports[0]?.relativePath,
+    })
+  }
+
+  if (ciBranchGovernanceReadinessRecords.length === 0) {
+    findings.push({
+      severity: 'gap',
+      code: 'ENTERPRISE_CI_BRANCH_GOVERNANCE_READINESS_NOT_SUPPLIED',
+      message:
+        'CI/branch governance readiness report was not supplied; workflow inventory and external CI activation gaps are not source-governed.',
+    })
+  } else {
+    findings.push({
+      severity: 'satisfied',
+      code: 'ENTERPRISE_CI_BRANCH_GOVERNANCE_READINESS_RECORDED',
+      message:
+        'CI/branch governance readiness source is recorded as report-only readiness, not as external CI activation.',
+      path: ciBranchGovernanceReadinessReports[0]?.relativePath,
     })
   }
 
@@ -2405,6 +2565,35 @@ function validateProvenanceVerificationReadinessSource(
   }
 }
 
+function validateCiBranchGovernanceReadinessSource(
+  source: LoadedSource,
+  record: JsonRecord,
+  findings: EnterpriseReadinessFinding[],
+): void {
+  if (
+    record.artifactRole !== CI_BRANCH_GOVERNANCE_READINESS_ROLE ||
+    record.status !== CI_BRANCH_GOVERNANCE_READINESS_STATUS
+  ) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_CI_BRANCH_GOVERNANCE_SOURCE_ROLE_STATUS_INVALID',
+        `${source.relativePath} must be ${CI_BRANCH_GOVERNANCE_READINESS_ROLE} with reported status.`,
+        source.relativePath,
+      ),
+    )
+  }
+  for (const hit of collectTrueFieldHits(record, releaseProvenanceAuthorityFields)) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_CI_BRANCH_GOVERNANCE_AUTHORITY_CLAIM_UNSUPPORTED',
+        `${source.relativePath} claims CI/release/signing/RBAC authority field ${hit.field}: true; enterprise v1 only accepts CI/branch governance readiness source facts.`,
+        source.relativePath,
+        hit.field,
+      ),
+    )
+  }
+}
+
 async function loadSource(
   root: string,
   requestedPath: string,
@@ -2499,6 +2688,7 @@ function renderMarkdown(report: EnterpriseReadinessReport): string {
     `- packageArtifactDigestRecords: ${report.packageArtifactDigestReadiness.sourceCount}`,
     `- provenanceAttestationValidationReports: ${report.provenanceAttestationValidationReadiness.sourceCount}`,
     `- provenanceVerificationReadinessReports: ${report.provenanceVerificationReadiness.sourceCount}`,
+    `- ciBranchGovernanceReadinessReports: ${report.scopeCiGovernanceReadiness.ciBranchGovernanceReadinessSourceCount}`,
     '',
     '## Findings',
     ...report.enterpriseReadinessFindings.map((entry) => `- [${entry.severity}] ${entry.code}: ${entry.message}`),
@@ -2697,6 +2887,50 @@ function provenanceVerificationReadinessGaps(records: JsonRecord[]): string[] {
     gaps.push('No provenance verification readiness source links provider/network default-deny policy.')
   }
   gaps.push('Key registry, trust root, RBAC enforcement, CI governance, and enterprise gate activation remain missing.')
+  return gaps
+}
+
+function scopeCiGovernanceGaps(records: JsonRecord[]): string[] {
+  if (records.length === 0) {
+    return [
+      'CI/branch governance readiness report is not supplied.',
+      'External branch protection and required check activation remain disabled.',
+      'Scope/CI activation lacks enterprise actor identity and policy-gated rollout records.',
+    ]
+  }
+  const gaps = [
+    'CI/branch governance readiness is source-fact-only and does not configure required checks, branch protection, providers, hooks, or enterprise gates.',
+  ]
+  if (!records.some((record) => (numberValue(asRecord(record.workflowInventory)?.sourceCount) ?? 0) > 0)) {
+    gaps.push('No CI/branch governance readiness source records workflow inventory.')
+  }
+  if (
+    !records.some((record) =>
+      booleanValue(asRecord(record.ciProviderGovernanceReadiness)?.providerNetworkDefaultDenyLinked),
+    )
+  ) {
+    gaps.push('No CI/branch governance readiness source links provider/network default-deny readiness.')
+  }
+  if (!records.some((record) => booleanValue(asRecord(record.rbacPrerequisiteReadiness)?.policyValidationLinked))) {
+    gaps.push('No CI/branch governance readiness source links RBAC policy validation.')
+  }
+  if (
+    !records.some((record) =>
+      booleanValue(asRecord(record.signingAndProvenancePrerequisiteReadiness)?.signingReadinessLinked),
+    )
+  ) {
+    gaps.push('No CI/branch governance readiness source links signing/key governance readiness.')
+  }
+  if (
+    !records.some((record) =>
+      booleanValue(asRecord(record.signingAndProvenancePrerequisiteReadiness)?.provenanceVerificationReadinessLinked),
+    )
+  ) {
+    gaps.push('No CI/branch governance readiness source links provenance verification readiness.')
+  }
+  gaps.push(
+    'Required checks policy, branch protection policy, CI provider mutation, hooks, and RBAC enforcement remain missing.',
+  )
   return gaps
 }
 
@@ -3103,6 +3337,44 @@ function provenanceVerificationReadinessSummary(
   }
 }
 
+function ciBranchGovernanceReadinessSummary(
+  source: LoadedSource,
+): EnterpriseReadinessReport['sourceCiBranchGovernanceReadinessReports'][number] {
+  const record = source.record ?? {}
+  const workflowInventory = asRecord(record.workflowInventory)
+  const requiredChecks = asRecord(record.requiredChecksGovernanceReadiness)
+  const branchProtection = asRecord(record.branchProtectionGovernanceReadiness)
+  const ciProvider = asRecord(record.ciProviderGovernanceReadiness)
+  const rbacPrerequisite = asRecord(record.rbacPrerequisiteReadiness)
+  const signingAndProvenance = asRecord(record.signingAndProvenancePrerequisiteReadiness)
+  return {
+    supplied: true,
+    path: source.relativePath,
+    artifactRole: stringValue(record.artifactRole),
+    status: stringValue(record.status),
+    ciBranchGovernanceReadinessStatus: stringValue(record.ciBranchGovernanceReadinessStatus),
+    workflowInventoryFileCount: numberValue(workflowInventory?.sourceCount),
+    candidateRequiredCheckCount: arrayLength(workflowInventory?.candidateRequiredChecks),
+    requiredChecksPolicyPresent: booleanOrNull(requiredChecks?.requiredChecksPolicyPresent),
+    requiredChecksConfigured: booleanOrNull(requiredChecks?.requiredChecksConfigured),
+    requiredChecksMutated: booleanOrNull(requiredChecks?.requiredChecksMutated),
+    branchProtectionPolicyPresent: booleanOrNull(branchProtection?.branchProtectionPolicyPresent),
+    branchProtectionChanged: booleanOrNull(branchProtection?.branchProtectionChanged),
+    branchProtectionMutated: booleanOrNull(branchProtection?.branchProtectionMutated),
+    externalCiMutation: booleanOrNull(asRecord(record.scopeCiLifecycleBoundary)?.externalCiMutation),
+    providerInvoked: booleanOrNull(ciProvider?.providerInvoked),
+    networkCallMade: booleanOrNull(ciProvider?.networkCallMade),
+    apiCallMade: booleanOrNull(ciProvider?.apiCallMade),
+    hooksActivated: booleanOrNull(record.hooksActivated),
+    providerNetworkDefaultDenyLinked: booleanOrNull(ciProvider?.providerNetworkDefaultDenyLinked),
+    rbacPolicyValidationLinked: booleanOrNull(rbacPrerequisite?.policyValidationLinked),
+    signingReadinessLinked: booleanOrNull(signingAndProvenance?.signingReadinessLinked),
+    provenanceVerificationReadinessLinked: booleanOrNull(signingAndProvenance?.provenanceVerificationReadinessLinked),
+    findingCount: arrayLength(record.governanceFindings),
+    downstreamActionCount: arrayLength(record.downstreamActionPlan),
+  }
+}
+
 function payloadDigestVerifiedCount(records: JsonRecord[]): number {
   return records.filter((record) => booleanValue(asRecord(record.payloadVerification)?.digestMatches)).length
 }
@@ -3156,6 +3428,9 @@ function downstreamActionPlan(findings: EnterpriseReadinessFinding[]): string[] 
   }
   if (openFindings.some((entry) => entry.code.includes('PROVENANCE_VERIFICATION_READINESS'))) {
     actions.add('Attach provenance verification readiness before planning signed provenance verification.')
+  }
+  if (openFindings.some((entry) => entry.code.includes('CI_BRANCH_GOVERNANCE_READINESS'))) {
+    actions.add('Attach CI/branch governance readiness before planning required-check or branch protection policy.')
   }
   if (openFindings.some((entry) => entry.code.includes('RBAC_POLICY_VALIDATION'))) {
     actions.add('Attach RBAC policy validation before planning RBAC enforcement or signed policy rollout.')
