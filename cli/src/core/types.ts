@@ -231,6 +231,7 @@ export interface CliOptions {
   ciBranchGovernanceReadiness?: string
   ciBranchPolicyValidation?: string
   ciBranchActivationPlan?: string
+  ciBranchActivationAuthorityReadiness?: string
   workflow?: string
   sourceRef?: string
   buildCommand?: string
