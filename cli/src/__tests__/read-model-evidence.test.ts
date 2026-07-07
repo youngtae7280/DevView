@@ -4098,7 +4098,7 @@ describe('read-model Evidence builder', () => {
 })
 
 async function createExampleWorkspace(): Promise<string> {
-  const workspace = await mkdtemp(join(tmpdir(), 'pbe-read-model-'))
+  const workspace = await mkdtemp(join(tmpdir(), 'devview-read-model-'))
   workspaces.push(workspace)
   await Promise.all(exampleWorkspacePaths.map((entry) => copyWorkspacePath(entry, workspace)))
   return workspace
@@ -4155,7 +4155,7 @@ async function mutateRegistry(
 }
 
 async function createAggregateReportWorkspace(): Promise<string> {
-  const workspace = await mkdtemp(join(tmpdir(), 'pbe-read-model-aggregate-'))
+  const workspace = await mkdtemp(join(tmpdir(), 'devview-read-model-aggregate-'))
   workspaces.push(workspace)
   await writeValidationReportFixture(
     workspace,
