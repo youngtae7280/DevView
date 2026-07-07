@@ -250,6 +250,8 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     graphifyImportValidations: undefined as string | undefined,
     suiteLock: undefined as string | undefined,
     governancePolicy: undefined as string | undefined,
+    benchmarkGovernanceVerification: undefined as string | undefined,
+    releaseSurfaceValidation: undefined as string | undefined,
     graphifyExport: undefined as string | undefined,
     mapping: undefined as string | undefined,
     base: undefined as string | undefined,
@@ -1316,6 +1318,20 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--governance-policy requires a file path.' }
       }
       options.governancePolicy = value
+      index += 1
+    } else if (arg === '--benchmark-governance-verification') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--benchmark-governance-verification requires a file path.' }
+      }
+      options.benchmarkGovernanceVerification = value
+      index += 1
+    } else if (arg === '--release-surface-validation') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--release-surface-validation requires a file path.' }
+      }
+      options.releaseSurfaceValidation = value
       index += 1
     } else if (arg === '--graphify-export') {
       const value = argv[index + 1]

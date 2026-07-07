@@ -115,6 +115,8 @@ Commands:
                        Summarize stored benchmark evaluation reports into a comparison matrix without executing benchmarks
   benchmark validate-graphify-import
                        Validate static Graphify export and mapping fixtures without live Graphify activity
+  security report-enterprise-readiness
+                       Aggregate enterprise hardening readiness as a report-only assessment
   work-journal render  Render static cumulative DevView Work Journal HTML/data without execution or authority
   init                 Internal compatibility initializer for legacy migration inputs
   status               Internal compatibility status for legacy migration inputs

@@ -99,6 +99,7 @@ import { productPatchApplyCommand, productPatchProposeCommand } from './product.
 import { reviewSubmitCommand } from './review.js'
 import { revisionCompleteCommand, revisionStartCommand } from './revision.js'
 import { productIntakeCheckCommand, productIntakeCloseCommand } from './product-intake.js'
+import { securityReportEnterpriseReadinessCommand } from './security.js'
 import {
   coverageAuditCompleteCommand,
   dependencyAuditCompleteCommand,
@@ -166,6 +167,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'benchmark' && subcommand === 'validate-graphify-import') {
     return benchmarkValidateGraphifyImportCommand(context)
+  }
+  if (command === 'security' && subcommand === 'report-enterprise-readiness') {
+    return securityReportEnterpriseReadinessCommand(context)
   }
   if (command === 'gate') {
     if (subcommand === 'assess') {

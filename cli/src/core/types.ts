@@ -208,6 +208,8 @@ export interface CliOptions {
   graphifyImportValidations?: string
   suiteLock?: string
   governancePolicy?: string
+  benchmarkGovernanceVerification?: string
+  releaseSurfaceValidation?: string
   graphifyExport?: string
   mapping?: string
   base?: string
