@@ -16,6 +16,7 @@ export interface DevViewBaselineReportOptions {
   hookActivationChain?: string
   extensionReadiness?: string
   extensionProfileCatalog?: string
+  extensionContextPlan?: string
   applyReadiness?: string
   approvedApplyDryRun?: string
   applyReport?: string
@@ -79,6 +80,7 @@ export interface DevViewCoreBaselineFreezeReport {
   sourceHookActivationChain: string | null
   sourceExtensionReadiness: string | null
   sourceExtensionProfileCatalog: string | null
+  sourceExtensionContextPlan: string | null
   sourceApplyReadiness: string | null
   sourceApprovedApplyDryRun: string | null
   sourceGraphDeltaApplyReport: string | null
@@ -189,6 +191,12 @@ const OPTIONAL_SOURCE_DEFS = [
     label: 'Project-specific extension profile catalog',
     optionKey: 'extensionProfileCatalog',
     expectedRole: 'devview-extension-profile-catalog',
+  },
+  {
+    sourceId: 'extension-context-plan',
+    label: 'Project-specific extension context plan',
+    optionKey: 'extensionContextPlan',
+    expectedRole: 'devview-extension-context-plan',
   },
   {
     sourceId: 'graph-delta-apply-readiness',
@@ -447,6 +455,10 @@ function validateExactOptionalSourceShape(source: LoadedSource, findings: DevVie
     validateExtensionProfileCatalogSourceShape(source, record, findings)
     return
   }
+  if (source.sourceId === 'extension-context-plan') {
+    validateExtensionContextPlanSourceShape(source, record, findings)
+    return
+  }
   if (source.sourceId === 'guarded-graph-update-apply-report') {
     validateGuardedGraphUpdateApplyReportSourceShape(source, record, findings)
     return
@@ -548,6 +560,65 @@ function validateExtensionProfileCatalogSourceShape(
     if (field in record && record[field] !== false) {
       findings.push({
         code: 'DEVVIEW_BASELINE_EXTENSION_PROFILE_CATALOG_UNSAFE_FLAG',
+        severity: 'error',
+        field: `${source.sourceId}.${field}`,
+        message: `${source.label} must keep ${field}:false.`,
+        expected: false,
+        actual: record[field],
+      })
+    }
+  }
+}
+
+function validateExtensionContextPlanSourceShape(
+  source: LoadedSource,
+  record: JsonRecord,
+  findings: DevViewBaselineFinding[],
+): void {
+  const role = stringValue(record.artifactRole)
+  const status = stringValue(record.status)
+  const knownStatuses = ['devview-extension-context-plan-generated', 'devview-extension-context-plan-blocked']
+  if (role !== 'devview-extension-context-plan' || !knownStatuses.includes(status)) {
+    findings.push({
+      code: 'DEVVIEW_BASELINE_EXTENSION_CONTEXT_PLAN_ROLE_STATUS_INVALID',
+      severity: 'error',
+      field: `${source.sourceId}.status`,
+      message: `${source.label} must use the DevView extension context plan role and a known plan status.`,
+      expected: 'devview-extension-context-plan with generated or blocked status',
+      actual: { artifactRole: role, status },
+    })
+  }
+  for (const field of [
+    'extensionExecutionAllowed',
+    'extensionsExecuted',
+    'providerInvoked',
+    'networkCallMade',
+    'shellCommandsExecuted',
+    'filesMutated',
+    'graphSourceMutated',
+    'graphDeltaApplied',
+    'runtimeEvidenceSatisfied',
+    'evidenceAccepted',
+    'equivalenceProven',
+    'scopeEnforced',
+    'ciEnforcementEnabled',
+    'hooksActivated',
+    'branchProtectionChanged',
+    'branchProtectionMutated',
+    'requiredChecksConfigured',
+    'requiredChecksMutated',
+    'externalCiMutated',
+    'diffRejectionEnabled',
+    'diffRejectionActivated',
+    'approvalAutomationEnabled',
+    'userAcceptanceAutomated',
+    'traversalAuthorityGranted',
+    'contextPackMutated',
+    'viewTreeMutated',
+  ]) {
+    if (field in record && record[field] !== false) {
+      findings.push({
+        code: 'DEVVIEW_BASELINE_EXTENSION_CONTEXT_PLAN_UNSAFE_FLAG',
         severity: 'error',
         field: `${source.sourceId}.${field}`,
         message: `${source.label} must keep ${field}:false.`,
@@ -841,6 +912,7 @@ function buildReport(
     sourceHookActivationChain: sourcePath('hook-activation-chain'),
     sourceExtensionReadiness: sourcePath('extension-readiness'),
     sourceExtensionProfileCatalog: sourcePath('extension-profile-catalog'),
+    sourceExtensionContextPlan: sourcePath('extension-context-plan'),
     sourceApplyReadiness: sourcePath('graph-delta-apply-readiness'),
     sourceApprovedApplyDryRun: sourcePath('approved-apply-dry-run'),
     sourceGraphDeltaApplyReport: sourcePath('graph-delta-apply-report'),
@@ -967,6 +1039,9 @@ function classifyStatus(sourceId: string, status: string): BaselineClassificatio
   if (sourceId === 'extension-profile-catalog') {
     return normalized.includes('blocked') ? 'blocked' : normalized.includes('compiled') ? 'advisory' : 'advisory'
   }
+  if (sourceId === 'extension-context-plan') {
+    return normalized.includes('blocked') ? 'blocked' : normalized.includes('generated') ? 'advisory' : 'advisory'
+  }
   if (sourceId === 'graph-delta-apply-report') {
     return normalized.includes('applied') ? 'advisory' : 'blocked'
   }
@@ -1015,6 +1090,39 @@ function buildSourceFactSummary(source: LoadedSource): JsonRecord | null {
       providerInvoked: record.providerInvoked === true,
       networkCallMade: record.networkCallMade === true,
       shellCommandsExecuted: record.shellCommandsExecuted === true,
+    }
+  }
+  if (source.sourceId === 'extension-context-plan') {
+    const viewTreeHintPlan = asRecord(record.viewTreeHintPlan)
+    const contextPackHintPlan = asRecord(record.contextPackHintPlan)
+    const evidencePolicyHintPlan = asRecord(record.evidencePolicyHintPlan)
+    const graphIngestionPlanning = asRecord(record.graphIngestionPlanning)
+    const nativeRetrofitPlanning = asRecord(record.nativeRetrofitPlanning)
+    return {
+      extensionContextPlanStatus: stringValue(record.extensionContextPlanStatus) || null,
+      planningScope: stringValue(record.planningScope) || null,
+      viewTreeHintCount: arrayStrings(viewTreeHintPlan?.applicableViewTreeExtractorExtensions).length,
+      canInformViewTree: viewTreeHintPlan?.canInformViewTree === true,
+      viewTreeAlignmentStatus: stringValue(viewTreeHintPlan?.alignmentStatus) || null,
+      contextPackHintCount: arrayStrings(contextPackHintPlan?.contextPackExtensions).length,
+      canInformContextPack: contextPackHintPlan?.canInformContextPack === true,
+      contextPackAlignmentStatus: stringValue(contextPackHintPlan?.alignmentStatus) || null,
+      evidenceAdapterCount: arrayStrings(evidencePolicyHintPlan?.evidenceAdapters).length,
+      policyExtensionCount: arrayStrings(evidencePolicyHintPlan?.policyExtensions).length,
+      graphIngestionCandidateCount: numberValue(graphIngestionPlanning?.candidateCount),
+      graphifyCandidateCount: numberValue(graphIngestionPlanning?.graphifyCandidateCount),
+      nativeRetrofitHintStatus: stringValue(nativeRetrofitPlanning?.hintStatus) || null,
+      nativeRetrofitMode: stringValue(nativeRetrofitPlanning?.mode) || null,
+      downstreamActionCount: arrayRecords(record.downstreamActionPlan).length,
+      sourceViewTreeAlignmentSupplied: Boolean(record.sourceViewTree),
+      sourceContextPackAlignmentSupplied: Boolean(record.sourceContextPack),
+      extensionExecutionAllowed: record.extensionExecutionAllowed === true,
+      providerInvoked: record.providerInvoked === true,
+      networkCallMade: record.networkCallMade === true,
+      shellCommandsExecuted: record.shellCommandsExecuted === true,
+      traversalAuthorityGranted: record.traversalAuthorityGranted === true,
+      viewTreeMutated: record.viewTreeMutated === true,
+      contextPackMutated: record.contextPackMutated === true,
     }
   }
   if (source.sourceId === 'guarded-graph-update-apply-report') {
@@ -1331,6 +1439,13 @@ const UNSAFE_TRUE_FIELDS = new Set([
   'graphDeltaApplyEnabled',
   'guardedUpdateReady',
   'applyPlanOnly',
+  'traversalAuthorityGranted',
+  'contextPackMutated',
+  'viewTreeMutated',
+  'canExecuteExtensionCode',
+  'canSatisfyEvidence',
+  'canProveEquivalence',
+  'canEnforceScope',
   'mutationAllowed',
   'acceptanceAllowed',
   'equivalenceAllowed',

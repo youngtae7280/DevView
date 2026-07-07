@@ -42,6 +42,7 @@ describe('DevView core baseline freeze report CLI', () => {
     expect(payload.sourceGraphDeltaApplyReport).toBe('generated/graph-delta-apply-report.json')
     expect(payload.sourceExtensionReadiness).toBe('generated/extension-readiness.json')
     expect(payload.sourceExtensionProfileCatalog).toBe('generated/extension-profile-catalog.json')
+    expect(payload.sourceExtensionContextPlan).toBe('generated/extension-context-plan.json')
     expect(payload.sourceEvidenceDecision).toBe('generated/evidence-decision.json')
     expect(payload.sourceAcceptedEvidence).toBe('generated/accepted-evidence.json')
     expect(payload.sourceRuntimeEvidenceSatisfactionReadiness).toBe(
@@ -62,6 +63,7 @@ describe('DevView core baseline freeze report CLI', () => {
         ['graph-delta-apply-report', 'blocked'],
         ['extension-readiness', 'advisory'],
         ['extension-profile-catalog', 'advisory'],
+        ['extension-context-plan', 'advisory'],
         ['evidence-decision', 'completed'],
         ['accepted-evidence', 'completed'],
         ['runtime-evidence-satisfaction-readiness', 'blocked'],
@@ -91,6 +93,29 @@ describe('DevView core baseline freeze report CLI', () => {
           canInformGraphIngestionPlanning: true,
           canExecuteExtensionCode: false,
         }),
+      }),
+    )
+    expect(
+      payload.sourceArtifacts.find((entry: { sourceId: string }) => entry.sourceId === 'extension-context-plan')
+        .sourceFactSummary,
+    ).toEqual(
+      expect.objectContaining({
+        extensionContextPlanStatus: 'generated-report-only-hints',
+        planningScope: 'extension-context-planning-report-only',
+        viewTreeHintCount: 1,
+        canInformViewTree: true,
+        contextPackHintCount: 1,
+        canInformContextPack: true,
+        evidenceAdapterCount: 1,
+        policyExtensionCount: 1,
+        graphIngestionCandidateCount: 1,
+        nativeRetrofitHintStatus: 'profile-mode-declared',
+        downstreamActionCount: 3,
+        sourceViewTreeAlignmentSupplied: true,
+        sourceContextPackAlignmentSupplied: true,
+        traversalAuthorityGranted: false,
+        viewTreeMutated: false,
+        contextPackMutated: false,
       }),
     )
     expect(
@@ -144,7 +169,7 @@ describe('DevView core baseline freeze report CLI', () => {
     )
     expect(
       payload.sourceArtifacts.filter((entry: { readStatus: string }) => entry.readStatus === 'missing-optional'),
-    ).toHaveLength(18)
+    ).toHaveLength(19)
     expectSafetyFalse(payload.safetyInvariantSummary)
   })
 
@@ -174,6 +199,38 @@ describe('DevView core baseline freeze report CLI', () => {
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
     expect(payload.issues[0].message).toContain('EXTENSION_PROFILE_CATALOG_ROLE_STATUS_INVALID')
+    expect(existsSync(join(workspace, '.tmp/baseline.json'))).toBe(false)
+  })
+
+  it('blocks wrong extension context plan role/status with traversal or execution flags as zero-write', async () => {
+    const workspace = createWorkspace()
+    writeBaselineInputs(workspace)
+    writeJson(join(workspace, 'generated/not-extension-context-plan.json'), {
+      artifactRole: 'devview-extension-profile-catalog',
+      status: 'devview-extension-profile-catalog-compiled',
+      extensionExecutionAllowed: true,
+      providerInvoked: true,
+      networkCallMade: true,
+      shellCommandsExecuted: true,
+      traversalAuthorityGranted: true,
+      viewTreeMutated: true,
+      contextPackMutated: true,
+    })
+
+    const result = await runDevViewCli(
+      [
+        ...baseArgs(),
+        '--extension-context-plan',
+        'generated/not-extension-context-plan.json',
+        '--output',
+        '.tmp/baseline.json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.issues[0].message).toContain('EXTENSION_CONTEXT_PLAN_ROLE_STATUS_INVALID')
     expect(existsSync(join(workspace, '.tmp/baseline.json'))).toBe(false)
   })
 
@@ -523,6 +580,8 @@ function baseArgs(): string[] {
     'generated/extension-readiness.json',
     '--extension-profile-catalog',
     'generated/extension-profile-catalog.json',
+    '--extension-context-plan',
+    'generated/extension-context-plan.json',
     '--apply-readiness',
     'generated/apply-readiness.json',
     '--approved-apply-dry-run',
@@ -609,6 +668,7 @@ function writeBaselineInputs(
     nonEnforcing: true,
   })
   writeJson(join(workspace, 'generated/extension-profile-catalog.json'), extensionProfileCatalog())
+  writeJson(join(workspace, 'generated/extension-context-plan.json'), extensionContextPlan())
   writeJson(join(workspace, 'generated/apply-readiness.json'), readiness('devview-graph-delta-apply-readiness-preview'))
   writeJson(join(workspace, 'generated/approved-apply-dry-run.json'), {
     artifactRole: 'devview-approved-apply-dry-run-report',
@@ -809,6 +869,93 @@ function extensionProfileCatalog(
     diffRejectionActivated: false,
     approvalAutomationEnabled: false,
     userAcceptanceAutomated: false,
+  }
+}
+
+function extensionContextPlan(
+  status:
+    | 'devview-extension-context-plan-generated'
+    | 'devview-extension-context-plan-blocked' = 'devview-extension-context-plan-generated',
+): Record<string, unknown> {
+  return {
+    artifactRole: 'devview-extension-context-plan',
+    status,
+    planningScope: 'extension-context-planning-report-only',
+    extensionContextPlanStatus:
+      status === 'devview-extension-context-plan-generated'
+        ? 'generated-report-only-hints'
+        : 'blocked-extension-profile-catalog-invalid',
+    sourceExtensionProfileCatalog: 'generated/extension-profile-catalog.json',
+    sourceViewTree: 'generated/view-tree.json',
+    sourceContextPack: 'generated/context-pack.json',
+    viewTreeHintPlan: {
+      applicableViewTreeExtractorExtensions: ['todo-view-tree'],
+      analyzerExtensions: ['todo-graphify-protocol'],
+      graphIngestionCandidates: ['todo-graphify-protocol'],
+      canInformViewTree: true,
+      alignmentStatus: 'view-tree-extension-hints-available-for-source-view-tree',
+      authorityStatus: 'hint-only-not-traversal-authority',
+    },
+    contextPackHintPlan: {
+      contextPackExtensions: ['todo-view-tree'],
+      analyzerExtensions: ['todo-graphify-protocol'],
+      canInformContextPack: true,
+      alignmentStatus: 'context-pack-extension-hints-available-for-source-context-pack',
+      authorityStatus: 'hint-only-not-context-pack-authority',
+    },
+    evidencePolicyHintPlan: {
+      evidenceAdapters: ['todo-evidence-adapter'],
+      policyExtensions: ['todo-policy-extension'],
+      canSatisfyEvidence: false,
+      canProveEquivalence: false,
+      canEnforceScope: false,
+      authorityStatus: 'hint-only-not-evidence-proof-or-scope-authority',
+    },
+    graphIngestionPlanning: {
+      candidates: [{ extensionId: 'todo-graphify-protocol', graphProviderKind: 'graphify' }],
+      candidateCount: 1,
+      graphifyCandidateCount: 1,
+      providerInvoked: false,
+      networkCallMade: false,
+      shellCommandsExecuted: false,
+      executionAllowed: false,
+      authorityStatus: 'protocol-only-not-graph-ingestion-authority',
+    },
+    nativeRetrofitPlanning: {
+      mode: 'native',
+      hintStatus: 'profile-mode-declared',
+    },
+    downstreamActionPlan: [
+      { actionId: 'connect-view-tree-hints' },
+      { actionId: 'connect-context-pack-hints' },
+      { actionId: 'plan-graph-ingestion-protocol' },
+    ],
+    extensionExecutionAllowed: false,
+    extensionsExecuted: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    shellCommandsExecuted: false,
+    filesMutated: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
+    hooksActivated: false,
+    branchProtectionChanged: false,
+    branchProtectionMutated: false,
+    requiredChecksConfigured: false,
+    requiredChecksMutated: false,
+    externalCiMutated: false,
+    diffRejectionEnabled: false,
+    diffRejectionActivated: false,
+    approvalAutomationEnabled: false,
+    userAcceptanceAutomated: false,
+    traversalAuthorityGranted: false,
+    viewTreeMutated: false,
+    contextPackMutated: false,
   }
 }
 

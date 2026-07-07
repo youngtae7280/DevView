@@ -33,6 +33,13 @@ const unsafeAuthorityFields = [
   'shellCommandExecuted',
   'shellCommandsExecuted',
   'filesMutated',
+  'traversalAuthorityGranted',
+  'contextPackMutated',
+  'viewTreeMutated',
+  'canExecuteExtensionCode',
+  'canSatisfyEvidence',
+  'canProveEquivalence',
+  'canEnforceScope',
 ]
 
 export interface WorkJournalRenderOptions {
@@ -45,6 +52,7 @@ export interface WorkJournalRenderOptions {
   instructionPack?: string
   extensionReadiness?: string
   extensionProfileCatalog?: string
+  extensionContextPlan?: string
   runtimeEvidenceSatisfactionReadiness?: string
   runtimeEvidenceSatisfactionRecord?: string
   equivalenceProofReadiness?: string
@@ -107,13 +115,30 @@ export interface WorkJournalAuthoritySummary {
   extensions: {
     readinessStatus: string | null
     catalogStatus: string | null
-    displayState: 'catalog-compiled' | 'catalog-blocked' | 'readiness-ready' | 'readiness-blocked' | 'not-provided'
+    contextPlanStatus: string | null
+    displayState:
+      | 'context-plan-generated'
+      | 'context-plan-blocked'
+      | 'catalog-compiled'
+      | 'catalog-blocked'
+      | 'readiness-ready'
+      | 'readiness-blocked'
+      | 'not-provided'
     catalogEntryCount: number | null
     capabilityGroupCounts: JsonRecord | null
     graphIngestionCandidateCount: number | null
     nativeRetrofitHintStatus: string | null
     nativeRetrofitMode: string | null
     downstreamCompatibility: JsonRecord | null
+    viewTreeHintCount: number | null
+    contextPackHintCount: number | null
+    canInformViewTree: boolean | null
+    canInformContextPack: boolean | null
+    viewTreeAlignmentStatus: string | null
+    contextPackAlignmentStatus: string | null
+    evidenceAdapterCount: number | null
+    policyExtensionCount: number | null
+    downstreamActionCount: number | null
     executionAllowed: false
     providerInvoked: false
     networkCallMade: false
@@ -239,6 +264,11 @@ const SOURCE_DEFS = [
     sourceId: 'extension-profile-catalog',
     label: 'Extension profile catalog',
     optionKey: 'extensionProfileCatalog',
+  },
+  {
+    sourceId: 'extension-context-plan',
+    label: 'Extension context plan',
+    optionKey: 'extensionContextPlan',
   },
   {
     sourceId: 'runtime-evidence-satisfaction-readiness',
@@ -433,6 +463,45 @@ function validateSourceRecordShape(source: LoadedArtifact): void {
       'diffRejectionActivated',
       'approvalAutomationEnabled',
       'userAcceptanceAutomated',
+    ])
+  }
+  if (source.sourceId === 'extension-context-plan') {
+    const knownStatuses = ['devview-extension-context-plan-generated', 'devview-extension-context-plan-blocked']
+    if (
+      record.artifactRole !== 'devview-extension-context-plan' ||
+      !knownStatuses.includes(stringValue(record.status))
+    ) {
+      throw new Error('Work Journal extension context plan source has an unsupported role/status.')
+    }
+    requireFalseFields(source.label, record, [
+      'extensionExecutionAllowed',
+      'extensionsExecuted',
+      'extensionCodeExecuted',
+      'providerInvoked',
+      'networkCallMade',
+      'shellCommandExecuted',
+      'shellCommandsExecuted',
+      'filesMutated',
+      'graphSourceMutated',
+      'graphDeltaApplied',
+      'runtimeEvidenceSatisfied',
+      'evidenceAccepted',
+      'equivalenceProven',
+      'scopeEnforced',
+      'ciEnforcementEnabled',
+      'hooksActivated',
+      'branchProtectionChanged',
+      'branchProtectionMutated',
+      'requiredChecksConfigured',
+      'requiredChecksMutated',
+      'externalCiMutated',
+      'diffRejectionEnabled',
+      'diffRejectionActivated',
+      'approvalAutomationEnabled',
+      'userAcceptanceAutomated',
+      'traversalAuthorityGranted',
+      'contextPackMutated',
+      'viewTreeMutated',
     ])
   }
   if (source.sourceId === 'equivalence-proof-record') {
@@ -804,6 +873,9 @@ function classifyArtifact(sourceId: string, status: string): WorkJournalArtifact
   if (sourceId === 'extension-profile-catalog') {
     return normalized.includes('blocked') ? 'blocked' : normalized.includes('compiled') ? 'advisory' : 'advisory'
   }
+  if (sourceId === 'extension-context-plan') {
+    return normalized.includes('blocked') ? 'blocked' : normalized.includes('generated') ? 'advisory' : 'advisory'
+  }
   if (sourceId === 'runtime-evidence-satisfaction-readiness')
     return normalized.includes('ready') ? 'advisory' : 'blocked'
   if (sourceId === 'equivalence-proof-readiness' || sourceId === 'scope-ci')
@@ -822,6 +894,7 @@ function buildFlow(artifacts: WorkJournalArtifactSummary[]): WorkJournalFlowStep
     actualSourceId?: string
     readinessSourceId?: string
     planSourceId?: string
+    alternatePlanSourceId?: string
   }> = [
     {
       stepId: 'maintainability-graph',
@@ -850,10 +923,11 @@ function buildFlow(artifacts: WorkJournalArtifactSummary[]): WorkJournalFlowStep
     {
       stepId: 'extension-readiness',
       label: 'Project Extensions',
-      summary: 'Compiled extension catalog when present; otherwise profile and manifest readiness.',
+      summary: 'Context planning when present; otherwise compiled catalog or profile and manifest readiness.',
       sourceId: 'extension-readiness',
       readinessSourceId: 'extension-readiness',
-      planSourceId: 'extension-profile-catalog',
+      planSourceId: 'extension-context-plan',
+      alternatePlanSourceId: 'extension-profile-catalog',
     },
     {
       stepId: 'runtime-evidence',
@@ -907,7 +981,12 @@ function buildFlow(artifacts: WorkJournalArtifactSummary[]): WorkJournalFlowStep
       ? artifacts.find((entry) => entry.sourceId === stage.planSourceId)
       : undefined
     const plan = planCandidate?.classification === 'not-provided' ? undefined : planCandidate
-    const artifact = actual ?? plan ?? readiness ?? artifacts.find((entry) => entry.sourceId === stage.sourceId)
+    const alternatePlanCandidate = stage.alternatePlanSourceId
+      ? artifacts.find((entry) => entry.sourceId === stage.alternatePlanSourceId)
+      : undefined
+    const alternatePlan = alternatePlanCandidate?.classification === 'not-provided' ? undefined : alternatePlanCandidate
+    const artifact =
+      actual ?? plan ?? alternatePlan ?? readiness ?? artifacts.find((entry) => entry.sourceId === stage.sourceId)
     const classification = artifact?.classification ?? 'not-provided'
     return {
       stepId: stage.stepId,
@@ -999,6 +1078,7 @@ function buildScopeSummary(
 function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJournalAuthoritySummary {
   const extensionReadiness = artifacts.find((artifact) => artifact.sourceId === 'extension-readiness')
   const extensionCatalog = artifacts.find((artifact) => artifact.sourceId === 'extension-profile-catalog')
+  const extensionContextPlan = artifacts.find((artifact) => artifact.sourceId === 'extension-context-plan')
   const runtimeReadiness = artifacts.find((artifact) => artifact.sourceId === 'runtime-evidence-satisfaction-readiness')
   const runtimeRecord = artifacts.find((artifact) => artifact.sourceId === 'runtime-evidence-satisfaction-record')
   const equivalenceReadiness = artifacts.find((artifact) => artifact.sourceId === 'equivalence-proof-readiness')
@@ -1010,41 +1090,66 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
   const guardedApplyReport = artifacts.find((artifact) => artifact.sourceId === 'guarded-graph-update-apply-report')
   const applyReport = artifacts.find((artifact) => artifact.sourceId === 'guarded-update')
   const extensionCatalogSourceFacts = asRecord(extensionCatalog?.sourceFactSummary)
+  const extensionContextPlanSourceFacts = asRecord(extensionContextPlan?.sourceFactSummary)
   const guardedApplySourceFacts = asRecord(guardedApplyReport?.sourceFactSummary)
   return {
     extensions: {
       readinessStatus: extensionReadiness?.status ?? null,
       catalogStatus: extensionCatalog?.status ?? null,
+      contextPlanStatus: extensionContextPlan?.status ?? null,
       displayState:
-        extensionCatalog?.classification === 'advisory'
-          ? 'catalog-compiled'
-          : extensionCatalog?.classification === 'blocked'
-            ? 'catalog-blocked'
-            : extensionReadiness?.classification === 'advisory'
-              ? 'readiness-ready'
-              : extensionReadiness?.classification === 'blocked'
-                ? 'readiness-blocked'
-                : 'not-provided',
+        extensionContextPlan?.classification === 'advisory'
+          ? 'context-plan-generated'
+          : extensionContextPlan?.classification === 'blocked'
+            ? 'context-plan-blocked'
+            : extensionCatalog?.classification === 'advisory'
+              ? 'catalog-compiled'
+              : extensionCatalog?.classification === 'blocked'
+                ? 'catalog-blocked'
+                : extensionReadiness?.classification === 'advisory'
+                  ? 'readiness-ready'
+                  : extensionReadiness?.classification === 'blocked'
+                    ? 'readiness-blocked'
+                    : 'not-provided',
       catalogEntryCount: numberValue(extensionCatalogSourceFacts?.catalogEntryCount),
       capabilityGroupCounts: asRecord(extensionCatalogSourceFacts?.capabilityGroupCounts),
       graphIngestionCandidateCount: numberValue(extensionCatalogSourceFacts?.graphIngestionCandidateCount),
       nativeRetrofitHintStatus: stringValue(extensionCatalogSourceFacts?.nativeRetrofitHintStatus) || null,
       nativeRetrofitMode: stringValue(extensionCatalogSourceFacts?.nativeRetrofitMode) || null,
       downstreamCompatibility: asRecord(extensionCatalogSourceFacts?.downstreamCompatibility),
+      viewTreeHintCount: numberValue(extensionContextPlanSourceFacts?.viewTreeHintCount),
+      contextPackHintCount: numberValue(extensionContextPlanSourceFacts?.contextPackHintCount),
+      canInformViewTree:
+        'canInformViewTree' in (extensionContextPlanSourceFacts ?? {})
+          ? extensionContextPlanSourceFacts?.canInformViewTree === true
+          : null,
+      canInformContextPack:
+        'canInformContextPack' in (extensionContextPlanSourceFacts ?? {})
+          ? extensionContextPlanSourceFacts?.canInformContextPack === true
+          : null,
+      viewTreeAlignmentStatus: stringValue(extensionContextPlanSourceFacts?.viewTreeAlignmentStatus) || null,
+      contextPackAlignmentStatus: stringValue(extensionContextPlanSourceFacts?.contextPackAlignmentStatus) || null,
+      evidenceAdapterCount: numberValue(extensionContextPlanSourceFacts?.evidenceAdapterCount),
+      policyExtensionCount: numberValue(extensionContextPlanSourceFacts?.policyExtensionCount),
+      downstreamActionCount: numberValue(extensionContextPlanSourceFacts?.downstreamActionCount),
       executionAllowed: false,
       providerInvoked: false,
       networkCallMade: false,
       shellCommandsExecuted: false,
       nextAction:
-        extensionCatalog?.classification === 'advisory'
-          ? 'Use the compiled catalog as report-only source facts for future View Tree, Context Pack, Evidence, policy, and graph-ingestion planning; do not execute extensions.'
-          : extensionCatalog?.classification === 'blocked'
-            ? 'Resolve extension catalog blockers before using extension capability hints.'
-            : extensionReadiness?.classification === 'advisory'
-              ? 'Compile the ready extension profile into a report-only catalog before downstream planning.'
-              : extensionReadiness?.classification === 'blocked'
-                ? 'Resolve extension readiness blockers before compiling a catalog.'
-                : 'Provide extension readiness and catalog artifacts if project-specific extension hints are needed.',
+        extensionContextPlan?.classification === 'advisory'
+          ? 'Use extension context plan hints as report-only input for future View Tree and Context Pack planning; do not execute extensions or grant traversal authority.'
+          : extensionContextPlan?.classification === 'blocked'
+            ? 'Resolve extension context plan blockers before using planning hints.'
+            : extensionCatalog?.classification === 'advisory'
+              ? 'Use the compiled catalog as report-only source facts for future View Tree, Context Pack, Evidence, policy, and graph-ingestion planning; do not execute extensions.'
+              : extensionCatalog?.classification === 'blocked'
+                ? 'Resolve extension catalog blockers before using extension capability hints.'
+                : extensionReadiness?.classification === 'advisory'
+                  ? 'Compile the ready extension profile into a report-only catalog before downstream planning.'
+                  : extensionReadiness?.classification === 'blocked'
+                    ? 'Resolve extension readiness blockers before compiling a catalog.'
+                    : 'Provide extension readiness and catalog artifacts if project-specific extension hints are needed.',
     },
     runtimeEvidence: {
       readinessStatus: runtimeReadiness?.status ?? null,
@@ -1183,6 +1288,39 @@ function buildSourceFactSummary(source: LoadedArtifact): JsonRecord | null {
       providerInvoked: record.providerInvoked === true,
       networkCallMade: record.networkCallMade === true,
       shellCommandsExecuted: record.shellCommandsExecuted === true,
+    }
+  }
+  if (source.sourceId === 'extension-context-plan') {
+    const viewTreeHintPlan = asRecord(record.viewTreeHintPlan)
+    const contextPackHintPlan = asRecord(record.contextPackHintPlan)
+    const evidencePolicyHintPlan = asRecord(record.evidencePolicyHintPlan)
+    const graphIngestionPlanning = asRecord(record.graphIngestionPlanning)
+    const nativeRetrofitPlanning = asRecord(record.nativeRetrofitPlanning)
+    return {
+      extensionContextPlanStatus: stringValue(record.extensionContextPlanStatus) || null,
+      planningScope: stringValue(record.planningScope) || null,
+      viewTreeHintCount: arrayStrings(viewTreeHintPlan?.applicableViewTreeExtractorExtensions).length,
+      canInformViewTree: viewTreeHintPlan?.canInformViewTree === true,
+      viewTreeAlignmentStatus: stringValue(viewTreeHintPlan?.alignmentStatus) || null,
+      contextPackHintCount: arrayStrings(contextPackHintPlan?.contextPackExtensions).length,
+      canInformContextPack: contextPackHintPlan?.canInformContextPack === true,
+      contextPackAlignmentStatus: stringValue(contextPackHintPlan?.alignmentStatus) || null,
+      evidenceAdapterCount: arrayStrings(evidencePolicyHintPlan?.evidenceAdapters).length,
+      policyExtensionCount: arrayStrings(evidencePolicyHintPlan?.policyExtensions).length,
+      graphIngestionCandidateCount: numberValue(graphIngestionPlanning?.candidateCount),
+      graphifyCandidateCount: numberValue(graphIngestionPlanning?.graphifyCandidateCount),
+      nativeRetrofitHintStatus: stringValue(nativeRetrofitPlanning?.hintStatus) || null,
+      nativeRetrofitMode: stringValue(nativeRetrofitPlanning?.mode) || null,
+      downstreamActionCount: arrayRecords(record.downstreamActionPlan).length,
+      sourceViewTreeAlignmentSupplied: Boolean(record.sourceViewTree),
+      sourceContextPackAlignmentSupplied: Boolean(record.sourceContextPack),
+      extensionExecutionAllowed: record.extensionExecutionAllowed === true,
+      providerInvoked: record.providerInvoked === true,
+      networkCallMade: record.networkCallMade === true,
+      shellCommandsExecuted: record.shellCommandsExecuted === true,
+      traversalAuthorityGranted: record.traversalAuthorityGranted === true,
+      viewTreeMutated: record.viewTreeMutated === true,
+      contextPackMutated: record.contextPackMutated === true,
     }
   }
   if (source.sourceId === 'guarded-graph-update-apply-report') {
@@ -1743,7 +1881,7 @@ function renderWorkJournalHtml(journal: WorkJournalDataPreview): string {
         '<div class="metric"><span>Blocks</span><strong>' + esc(fmt(scope.protectedPathBlocks)) + '</strong></div>' +
         '</div>' +
         '<div class="authority-list">' +
-        authorityRow('Extensions', extensions.displayState, extensions.catalogStatus || extensions.readinessStatus || extensions.nextAction) +
+        authorityRow('Extensions', extensions.displayState, extensions.contextPlanStatus || extensions.catalogStatus || extensions.readinessStatus || extensions.nextAction) +
         authorityRow('Runtime Evidence', runtime.displayState, runtime.actualRecordStatus || runtime.readinessStatus) +
         authorityRow('Equivalence Proof', equivalence.displayState, equivalence.actualRecordStatus || equivalence.readinessStatus) +
         authorityRow('Scope/CI', scopeCi.displayState, scopeCi.actualRecordStatus || scopeCi.readinessStatus || scopeCi.activationStatus) +
@@ -1773,7 +1911,7 @@ function renderWorkJournalHtml(journal: WorkJournalDataPreview): string {
         '<details><summary>Journal safety boundary</summary><pre>' + esc(data.nonExecutionBoundary) + '</pre></details>';
     }
     function relatedSourceIds(stepId) {
-      if (stepId === 'extension-readiness') return ['extension-readiness', 'extension-profile-catalog'];
+      if (stepId === 'extension-readiness') return ['extension-readiness', 'extension-profile-catalog', 'extension-context-plan'];
       if (stepId === 'runtime-evidence') return ['runtime-evidence-satisfaction-readiness', 'runtime-evidence-satisfaction-record'];
       if (stepId === 'equivalence-proof') return ['equivalence-proof-readiness', 'equivalence-proof-record'];
       if (stepId === 'scope-ci') return ['scope-ci', 'scope-ci-enforcement-record'];

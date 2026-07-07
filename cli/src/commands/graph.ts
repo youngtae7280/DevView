@@ -3953,6 +3953,7 @@ export async function graphReadModelReportDevViewBaselineCommand(context: Comman
       hookActivationChain: context.options.hookActivationChain,
       extensionReadiness: context.options.extensionReadiness,
       extensionProfileCatalog: context.options.extensionProfileCatalog,
+      extensionContextPlan: context.options.extensionContextPlan,
       applyReadiness: context.options.applyReadiness,
       approvedApplyDryRun: context.options.approvedApplyDryRun,
       applyReport: context.options.applyReport,

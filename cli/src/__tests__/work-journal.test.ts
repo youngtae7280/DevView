@@ -258,6 +258,84 @@ describe('DevView Work Journal renderer', () => {
     expect(html).toContain('Source artifacts and provenance')
   })
 
+  it('summarizes extension context plans separately from readiness and catalog without traversal authority', async () => {
+    const workspace = createWorkspace()
+    writeWorkJournalSources(workspace)
+    writeJson(join(workspace, 'generated/extension-profile-catalog.json'), extensionProfileCatalog())
+    writeJson(join(workspace, 'generated/extension-context-plan.json'), extensionContextPlan())
+
+    const result = await runDevViewCli(
+      workJournalArgs(undefined, undefined, undefined, [
+        '--extension-profile-catalog',
+        'generated/extension-profile-catalog.json',
+        '--extension-context-plan',
+        'generated/extension-context-plan.json',
+      ]),
+      { cwd: workspace, pluginRoot },
+    )
+    const data = JSON.parse(readFileSync(join(workspace, '.devview/generated/work-journal/index.data.json'), 'utf8'))
+    const run = JSON.parse(
+      readFileSync(join(workspace, '.devview/generated/work-journal/runs/todo-add/run.json'), 'utf8'),
+    )
+    const html = readFileSync(join(workspace, '.devview/generated/work-journal/index.html'), 'utf8')
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(run.authoritySummary.extensions).toEqual(
+      expect.objectContaining({
+        readinessStatus: 'devview-extension-readiness-ready',
+        catalogStatus: 'devview-extension-profile-catalog-compiled',
+        contextPlanStatus: 'devview-extension-context-plan-generated',
+        displayState: 'context-plan-generated',
+        viewTreeHintCount: 1,
+        contextPackHintCount: 1,
+        canInformViewTree: true,
+        canInformContextPack: true,
+        graphIngestionCandidateCount: 1,
+        nativeRetrofitHintStatus: 'profile-mode-declared',
+        nativeRetrofitMode: 'native',
+        evidenceAdapterCount: 1,
+        policyExtensionCount: 1,
+        downstreamActionCount: 3,
+        executionAllowed: false,
+        providerInvoked: false,
+        networkCallMade: false,
+        shellCommandsExecuted: false,
+      }),
+    )
+    expect(run.flow.find((step: { stepId: string }) => step.stepId === 'extension-readiness')).toEqual(
+      expect.objectContaining({
+        sourceId: 'extension-context-plan',
+        authority: 'preview-only',
+        status: 'devview-extension-context-plan-generated',
+      }),
+    )
+    const contextPlanArtifact = run.artifacts.find(
+      (artifact: { sourceId: string }) => artifact.sourceId === 'extension-context-plan',
+    )
+    expect(contextPlanArtifact.sourceFactSummary).toEqual(
+      expect.objectContaining({
+        extensionContextPlanStatus: 'generated-report-only-hints',
+        viewTreeHintCount: 1,
+        contextPackHintCount: 1,
+        graphIngestionCandidateCount: 1,
+        sourceViewTreeAlignmentSupplied: true,
+        sourceContextPackAlignmentSupplied: true,
+        traversalAuthorityGranted: false,
+        viewTreeMutated: false,
+        contextPackMutated: false,
+      }),
+    )
+    expect(data.safetyFlags.extensionExecutionAllowed).toBe(false)
+    expect(data.safetyFlags.extensionsExecuted).toBe(false)
+    expect(data.safetyFlags.providerInvoked).toBe(false)
+    expect(data.safetyFlags.networkCallMade).toBe(false)
+    expect(data.safetyFlags.shellCommandsExecuted).toBe(false)
+    expect(data.safetyFlags.graphSourceMutated).toBe(false)
+    expect(data.safetyFlags.graphDeltaApplied).toBe(false)
+    expect(html).toContain('context-plan-generated')
+    expect(html).toContain('Source artifacts and provenance')
+  })
+
   it('summarizes actual Scope/CI enforcement records as source facts without mutating external systems', async () => {
     const workspace = createWorkspace()
     writeWorkJournalSources(workspace)
@@ -762,6 +840,37 @@ describe('DevView Work Journal renderer', () => {
     expect(existsSync(join(workspace, '.tmp/run.json'))).toBe(false)
   })
 
+  it('blocks wrong extension context plan role/status with execution or traversal flags before writing outputs', async () => {
+    const workspace = createWorkspace()
+    writeWorkJournalSources(workspace)
+    writeJson(join(workspace, 'generated/not-extension-context-plan.json'), {
+      artifactRole: 'devview-extension-profile-catalog',
+      status: 'devview-extension-profile-catalog-compiled',
+      extensionExecutionAllowed: true,
+      providerInvoked: true,
+      networkCallMade: true,
+      shellCommandsExecuted: true,
+      traversalAuthorityGranted: true,
+      viewTreeMutated: true,
+      contextPackMutated: true,
+    })
+
+    const result = await runDevViewCli(
+      workJournalArgs('.tmp/journal.html', '.tmp/journal.data.json', '.tmp/run.json', [
+        '--extension-context-plan',
+        'generated/not-extension-context-plan.json',
+      ]),
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.issues[0].message).toContain('unsupported role/status')
+    expect(existsSync(join(workspace, '.tmp/journal.html'))).toBe(false)
+    expect(existsSync(join(workspace, '.tmp/journal.data.json'))).toBe(false)
+    expect(existsSync(join(workspace, '.tmp/run.json'))).toBe(false)
+  })
+
   it('blocks wrong Scope/CI record role/status with authority true before writing outputs', async () => {
     const workspace = createWorkspace()
     writeWorkJournalSources(workspace)
@@ -1139,6 +1248,93 @@ function extensionProfileCatalog(
     diffRejectionActivated: false,
     approvalAutomationEnabled: false,
     userAcceptanceAutomated: false,
+  }
+}
+
+function extensionContextPlan(
+  status:
+    | 'devview-extension-context-plan-generated'
+    | 'devview-extension-context-plan-blocked' = 'devview-extension-context-plan-generated',
+): Record<string, unknown> {
+  return {
+    artifactRole: 'devview-extension-context-plan',
+    status,
+    planningScope: 'extension-context-planning-report-only',
+    extensionContextPlanStatus:
+      status === 'devview-extension-context-plan-generated'
+        ? 'generated-report-only-hints'
+        : 'blocked-extension-profile-catalog-invalid',
+    sourceExtensionProfileCatalog: 'generated/extension-profile-catalog.json',
+    sourceViewTree: 'generated/view-tree.json',
+    sourceContextPack: 'generated/context-pack.json',
+    viewTreeHintPlan: {
+      applicableViewTreeExtractorExtensions: ['todo-view-tree'],
+      analyzerExtensions: ['todo-graphify-protocol'],
+      graphIngestionCandidates: ['todo-graphify-protocol'],
+      canInformViewTree: true,
+      alignmentStatus: 'view-tree-extension-hints-available-for-source-view-tree',
+      authorityStatus: 'hint-only-not-traversal-authority',
+    },
+    contextPackHintPlan: {
+      contextPackExtensions: ['todo-view-tree'],
+      analyzerExtensions: ['todo-graphify-protocol'],
+      canInformContextPack: true,
+      alignmentStatus: 'context-pack-extension-hints-available-for-source-context-pack',
+      authorityStatus: 'hint-only-not-context-pack-authority',
+    },
+    evidencePolicyHintPlan: {
+      evidenceAdapters: ['todo-evidence-adapter'],
+      policyExtensions: ['todo-policy-extension'],
+      canSatisfyEvidence: false,
+      canProveEquivalence: false,
+      canEnforceScope: false,
+      authorityStatus: 'hint-only-not-evidence-proof-or-scope-authority',
+    },
+    graphIngestionPlanning: {
+      candidates: [{ extensionId: 'todo-graphify-protocol', graphProviderKind: 'graphify' }],
+      candidateCount: 1,
+      graphifyCandidateCount: 1,
+      providerInvoked: false,
+      networkCallMade: false,
+      shellCommandsExecuted: false,
+      executionAllowed: false,
+      authorityStatus: 'protocol-only-not-graph-ingestion-authority',
+    },
+    nativeRetrofitPlanning: {
+      mode: 'native',
+      hintStatus: 'profile-mode-declared',
+    },
+    downstreamActionPlan: [
+      { actionId: 'connect-view-tree-hints' },
+      { actionId: 'connect-context-pack-hints' },
+      { actionId: 'plan-graph-ingestion-protocol' },
+    ],
+    extensionExecutionAllowed: false,
+    extensionsExecuted: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    shellCommandsExecuted: false,
+    filesMutated: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
+    hooksActivated: false,
+    branchProtectionChanged: false,
+    branchProtectionMutated: false,
+    requiredChecksConfigured: false,
+    requiredChecksMutated: false,
+    externalCiMutated: false,
+    diffRejectionEnabled: false,
+    diffRejectionActivated: false,
+    approvalAutomationEnabled: false,
+    userAcceptanceAutomated: false,
+    traversalAuthorityGranted: false,
+    viewTreeMutated: false,
+    contextPackMutated: false,
   }
 }
 

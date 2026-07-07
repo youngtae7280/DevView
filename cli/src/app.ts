@@ -217,6 +217,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     hookActivationChain: undefined as string | undefined,
     extensionReadiness: undefined as string | undefined,
     extensionProfileCatalog: undefined as string | undefined,
+    extensionContextPlan: undefined as string | undefined,
     scopeCiEnforcementReadiness: undefined as string | undefined,
     scopeCiEnforcementRecord: undefined as string | undefined,
     guardedGraphUpdateBoundaryRecord: undefined as string | undefined,
@@ -1065,6 +1066,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--extension-profile-catalog requires a file path.' }
       }
       options.extensionProfileCatalog = value
+      index += 1
+    } else if (arg === '--extension-context-plan') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--extension-context-plan requires a file path.' }
+      }
+      options.extensionContextPlan = value
       index += 1
     } else if (arg === '--scope-ci-enforcement-readiness') {
       const value = argv[index + 1]

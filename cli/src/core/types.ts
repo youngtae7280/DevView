@@ -175,6 +175,7 @@ export interface CliOptions {
   hookActivationChain?: string
   extensionReadiness?: string
   extensionProfileCatalog?: string
+  extensionContextPlan?: string
   scopeCiEnforcementReadiness?: string
   scopeCiEnforcementRecord?: string
   guardedGraphUpdateBoundaryRecord?: string
