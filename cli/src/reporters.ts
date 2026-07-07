@@ -98,6 +98,7 @@ Commands:
   validate             Run DevView validators
   report-legacy-artifacts
                        Report remaining legacy names and migration inputs without mutating files
+  cleanup-legacy       Plan legacy example migration/delete/compatibility operations; requires --dry-run
   init                 Internal compatibility initializer for legacy migration inputs
   status               Internal compatibility status for legacy migration inputs
   gate <stage>         Check whether a stage can be entered, including review-result

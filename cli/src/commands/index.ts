@@ -69,6 +69,7 @@ import {
   graphReadModelValidateRequestIrGraphCommand,
   graphReadModelValidateRequestIrCommand,
   graphReadModelValidateCommand,
+  cleanupLegacyCommand,
   reportLegacyArtifactsCommand,
 } from './graph.js'
 import { impactAnalyzeCommand } from './impact.js'
@@ -108,6 +109,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'report-legacy-artifacts') {
     return reportLegacyArtifactsCommand(context)
+  }
+  if (command === 'cleanup-legacy') {
+    return cleanupLegacyCommand(context)
   }
   if (command === 'gate') {
     if (subcommand === 'assess') {

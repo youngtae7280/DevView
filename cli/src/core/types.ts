@@ -175,6 +175,7 @@ export interface CliOptions {
   chainCommand?: string
   base?: string
   head?: string
+  scope?: string
 }
 
 export interface CliEnvironment {

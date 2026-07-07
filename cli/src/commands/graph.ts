@@ -30,6 +30,7 @@ import { generateHookScriptScaffoldFile } from '../core/hook-script-scaffold.js'
 import { generateHookScriptTemplatePreviewFile } from '../core/hook-script-template-preview.js'
 import { generateInstructionPackFile } from '../core/instruction-pack-generator.js'
 import { reportLegacyArtifacts } from '../core/legacy-artifact-audit.js'
+import { reportLegacyCleanupMigrationPlan } from '../core/legacy-cleanup-migration-plan.js'
 import { renderDevViewGraphHtmlFile } from '../core/devview-graph-html.js'
 import { reportProjectMemoryExtensionGapsFile } from '../core/project-memory-extension-gap-report.js'
 import { reportProjectMemoryImpactFile } from '../core/project-memory-impact-report.js'
@@ -146,6 +147,61 @@ export async function reportLegacyArtifactsCommand(context: CommandContext): Pro
           severity: 'error',
           message,
           suggestedFix: 'Check the repository path and rerun the legacy audit. The command does not mutate files.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function cleanupLegacyCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.dryRun) {
+    return {
+      ok: false,
+      command: 'cleanup-legacy',
+      exitCode: ExitCode.InvalidArguments,
+      message: 'cleanup-legacy is dry-run only in this slice. Rerun with --dry-run.',
+      issues: [
+        issue({
+          validator: 'DevViewLegacyCleanupMigrationPlan',
+          code: 'DEVVIEW_LEGACY_CLEANUP_DRY_RUN_REQUIRED',
+          severity: 'error',
+          message: 'cleanup-legacy requires --dry-run. No non-dry-run cleanup behavior exists in this slice.',
+          suggestedFix:
+            'Run `devview cleanup-legacy --dry-run --scope examples --output <plan.json> --markdown <plan.md> --json`.',
+        }),
+      ],
+    }
+  }
+
+  try {
+    const result = reportLegacyCleanupMigrationPlan(context.options.root, {
+      dryRun: context.options.dryRun,
+      scope: context.options.scope,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'cleanup-legacy',
+      exitCode: ExitCode.Success,
+      message: 'DevView legacy cleanup migration dry-run plan generated.',
+      issues: [],
+      data: result as unknown as Record<string, unknown>,
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'cleanup-legacy',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'DevView legacy cleanup migration dry-run blocked.',
+      issues: [
+        issue({
+          validator: 'DevViewLegacyCleanupMigrationPlan',
+          code: 'DEVVIEW_LEGACY_CLEANUP_PLAN_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix: 'Check --dry-run, --scope, and output paths. This command writes only explicit report outputs.',
         }),
       ],
     }

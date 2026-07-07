@@ -225,3 +225,17 @@ devview report-legacy-artifacts --json
 Reports remaining legacy names and migration inputs without changing files. Findings are classified as
 `canonical-devview`, `needs-devview-rename`, `migration-fixture-only`, `delete-candidate`, or
 `internal-hidden-compatibility`.
+
+### Legacy Cleanup Dry Run
+
+```bash
+devview cleanup-legacy \
+  --dry-run \
+  --scope examples \
+  --output <legacy-cleanup-plan.json> \
+  --markdown <legacy-cleanup-plan.md> \
+  --json
+```
+
+Turns legacy audit findings into planned rename, rewrite, move, delete, and hidden-compatibility operations. The command
+requires `--dry-run` and never renames, deletes, moves, rewrites, migrates storage, or changes source authority.

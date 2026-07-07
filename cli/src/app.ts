@@ -214,6 +214,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     chainCommand: undefined as string | undefined,
     base: undefined as string | undefined,
     head: undefined as string | undefined,
+    scope: undefined as string | undefined,
   }
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -1047,6 +1048,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--head requires a git ref.' }
       }
       options.head = value
+      index += 1
+    } else if (arg === '--scope') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--scope requires a value.' }
+      }
+      options.scope = value
       index += 1
     } else if (arg === '--stage') {
       const value = argv[index + 1]
