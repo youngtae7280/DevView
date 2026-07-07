@@ -1,5 +1,5 @@
-import { PBE_STATE } from '../core/state-machine.js'
-import { transitionPbeState } from '../core/state-transition.js'
+import { DEVVIEW_STATE } from '../core/state-machine.js'
+import { transitionDevViewState } from '../core/state-transition.js'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { hasErrors } from '../core/types.js'
 import {
@@ -7,7 +7,7 @@ import {
   validateFileChanges,
   validateTraceability,
   validateVisualDesign,
-} from '../validators/pbe-validators.js'
+} from '../validators/devview-validators.js'
 import { type CommandContext, hasVisualWork, transitionFailed } from './shared.js'
 
 export async function reviewSubmitCommand(context: CommandContext): Promise<CommandResult> {
@@ -24,10 +24,12 @@ export async function reviewSubmitCommand(context: CommandContext): Promise<Comm
     return transitionFailed('review submit', 'Review submit failed. State was not changed.', issues)
   }
   const visualWork = hasVisualWork(context.options.root)
-  return transitionPbeState(
+  return transitionDevViewState(
     context.options.root,
     'review submit',
-    visualWork ? [PBE_STATE.VISUAL_AUDIT_DONE, PBE_STATE.WAITING_REVIEW_RESULT] : [PBE_STATE.WAITING_REVIEW_RESULT],
+    visualWork
+      ? [DEVVIEW_STATE.VISUAL_AUDIT_DONE, DEVVIEW_STATE.WAITING_REVIEW_RESULT]
+      : [DEVVIEW_STATE.WAITING_REVIEW_RESULT],
     {
       completedSteps: visualWork ? ['visual_implementation_audit', 'review_result'] : ['review_result'],
       stage: 'complete',

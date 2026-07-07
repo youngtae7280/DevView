@@ -1,17 +1,17 @@
-import { PBE_STATE } from '../core/state-machine.js'
-import { transitionPbeState } from '../core/state-transition.js'
+import { DEVVIEW_STATE } from '../core/state-machine.js'
+import { transitionDevViewState } from '../core/state-transition.js'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { hasErrors } from '../core/types.js'
-import { validateAcep, validateEvidence, validateTraceability } from '../validators/pbe-validators.js'
+import { validateExecutionPack, validateEvidence, validateTraceability } from '../validators/devview-validators.js'
 import { type CommandContext, hasVisualWork, transitionFailed } from './shared.js'
 
 export async function executionStartCommand(context: CommandContext): Promise<CommandResult> {
   const issues: ValidationIssue[] = []
-  issues.push(...(await validateAcep(context.options.root)))
+  issues.push(...(await validateExecutionPack(context.options.root)))
   if (hasErrors(issues)) {
     return transitionFailed('execution start', 'Execution start failed. State was not changed.', issues)
   }
-  return transitionPbeState(context.options.root, 'execution start', [PBE_STATE.EXECUTION_IN_PROGRESS], {
+  return transitionDevViewState(context.options.root, 'execution start', [DEVVIEW_STATE.EXECUTION_IN_PROGRESS], {
     completedSteps: ['execution_start'],
     stage: 'execution_pack_running',
     mode: 'execution_pack_execution',
@@ -25,7 +25,7 @@ export async function executionStartCommand(context: CommandContext): Promise<Co
 
 export async function executionCompleteCommand(context: CommandContext): Promise<CommandResult> {
   const issues: ValidationIssue[] = []
-  issues.push(...(await validateAcep(context.options.root)))
+  issues.push(...(await validateExecutionPack(context.options.root)))
   issues.push(...(await validateTraceability(context.options.root, { stage: 'execution' })))
   issues.push(
     ...(await validateEvidence(context.options.root, {
@@ -37,7 +37,7 @@ export async function executionCompleteCommand(context: CommandContext): Promise
     return transitionFailed('execution complete', 'Execution completion failed. State was not changed.', issues)
   }
   const visualWork = hasVisualWork(context.options.root)
-  return transitionPbeState(context.options.root, 'execution complete', [PBE_STATE.EXECUTION_PACK_RUN_DONE], {
+  return transitionDevViewState(context.options.root, 'execution complete', [DEVVIEW_STATE.EXECUTION_PACK_RUN_DONE], {
     completedSteps: ['run_execution_pack'],
     stage: 'execution_pack_running',
     mode: 'execution_pack_execution',

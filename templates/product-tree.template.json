@@ -30,7 +30,7 @@
     }
   ],
   "assumptions": [],
-  "decisionQueueRef": ".pbe/control/decision-queue.json",
+  "decisionQueueRef": ".devview/control/decision-queue.json",
   "examples": {
     "productNodeWithAcceptanceCriteria": {
       "id": "P1",

@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { generateInstructionPack, renderInstructionPackMarkdown } from '../core/instruction-pack-generator'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
@@ -99,7 +99,7 @@ describe('Instruction Pack generator CLI', () => {
     const outputPath = join('.tmp', 'instruction-pack.json')
     const markdownPath = join('.tmp', 'instruction-pack.md')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -146,7 +146,7 @@ describe('Instruction Pack generator CLI', () => {
     })
     const graphSourceBefore = readFileSync(join(workspace, 'graph-source.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -177,7 +177,7 @@ describe('Instruction Pack generator CLI', () => {
     })
     const graphSourceBefore = readFileSync(join(workspace, 'graph-source.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -206,7 +206,7 @@ describe('Instruction Pack generator CLI', () => {
     writeJson(join(workspace, 'contract-input.json'), validContractInput())
     const contractInputBefore = readFileSync(join(workspace, 'contract-input.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -233,7 +233,7 @@ describe('Instruction Pack generator CLI', () => {
     writeJson(join(workspace, 'contract-input.json'), validContractInput())
     writeTextFile(workspace, evidencePath, 'original evidence\n')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -264,7 +264,7 @@ describe('Instruction Pack generator CLI', () => {
     writeJson(join(workspace, 'contract-input.json'), contractInput)
     writeTextFile(workspace, evidencePath, 'original evidence\n')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -294,7 +294,7 @@ describe('Instruction Pack generator CLI', () => {
     writeJson(join(workspace, 'contract-input.json'), validContractInput())
     writeTextFile(workspace, evidenceTreePath, '{"original":true}\n')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -324,7 +324,7 @@ describe('Instruction Pack generator CLI', () => {
     writeJson(join(workspace, 'contract-input.json'), contractInput)
     writeTextFile(workspace, testTreePath, '{"original":true}\n')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

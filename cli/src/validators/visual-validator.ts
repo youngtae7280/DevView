@@ -33,7 +33,7 @@ export async function validateVisualDesign(
   const uiSurfaceInventory = await readJsonIfExists(root, 'uiSurfaceInventory')
   const componentStyleInventory = await readJsonIfExists(root, 'componentStyleInventory')
   const visualVerificationProfile = await readJsonIfExists(root, 'visualVerificationProfile')
-  const pbeState = await readJsonIfExists(root, 'pbeState')
+  const devviewState = await readJsonIfExists(root, 'devviewState')
 
   if (!hasSelectedVisualWork(product, work, test, visualReference)) {
     return issues
@@ -161,7 +161,7 @@ export async function validateVisualDesign(
         'VisualDesign',
         'UI_SURFACE_INVENTORY_MISSING',
         defaultArtifacts.uiSurfaceInventory,
-        'Selected visual UI work requires ui-surface-inventory.json before VD, ACEP, or review.',
+        'Selected visual UI work requires ui-surface-inventory.json before Verification Design, Execution Pack, or review.',
       ),
     )
   }
@@ -171,7 +171,7 @@ export async function validateVisualDesign(
         'VisualDesign',
         'COMPONENT_STYLE_INVENTORY_MISSING',
         defaultArtifacts.componentStyleInventory,
-        'Selected visual UI work requires component-style-inventory.json before VD, ACEP, or review.',
+        'Selected visual UI work requires component-style-inventory.json before Verification Design, Execution Pack, or review.',
       ),
     )
   }
@@ -181,7 +181,7 @@ export async function validateVisualDesign(
         'VisualDesign',
         'VISUAL_VERIFICATION_PROFILE_MISSING',
         defaultArtifacts.visualVerificationProfile,
-        'Selected visual UI work requires visual-verification-profile.json before VD, ACEP, or review.',
+        'Selected visual UI work requires visual-verification-profile.json before Verification Design, Execution Pack, or review.',
       ),
     )
   }
@@ -228,7 +228,7 @@ export async function validateVisualDesign(
     issues.push(...validateVisualEvidence(root, uiSurfaceInventory, evidence))
   }
   if (options.requireAudit !== false) {
-    issues.push(...validateVisualAudit(root, pbeState, options.requireEvidence === true))
+    issues.push(...validateVisualAudit(root, devviewState, options.requireEvidence === true))
   }
 
   return issues

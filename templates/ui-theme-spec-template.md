@@ -2,7 +2,7 @@
 
 ## Visual Source
 
-- Visual reference: `.pbe/blueprint/visual-reference.json`
+- Visual reference: `.devview/blueprint/visual-reference.json`
 - Primary source:
 - Status:
 - Scope:
@@ -47,4 +47,4 @@
 
 - Required screenshots:
 - Manual visual checks:
-- Visual audit path: `.pbe/evidence/visual-audit.md`
+- Visual audit path: `.devview/evidence/visual-audit.md`

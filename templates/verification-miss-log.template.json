@@ -14,7 +14,7 @@
       "occurrenceCount": 1,
       "summary": "Previous verification missed a user-visible parity issue.",
       "whyPreviousVerificationMissedThis": ["Build and open smoke did not verify runtime layout parity."],
-      "requiredPbeImprovements": [
+      "requiredDevViewImprovements": [
         "Promote the missed dimension into a Test Tree, Evidence, visual profile, or stop condition."
       ],
       "promotionDecision": "pending",

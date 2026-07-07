@@ -1,7 +1,7 @@
 import { cpSync, existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace } from './fixtures/workspace'
 
@@ -18,7 +18,7 @@ describe('Project Memory extension gap report CLI', () => {
     const output = join('.tmp', 'windowsutility-extension-gaps.json')
     const markdown = join('.tmp', 'windowsutility-extension-gaps.md')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -72,7 +72,7 @@ describe('Project Memory extension gap report CLI', () => {
     )
     const before = readFileSync(projectMemoryPath, 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

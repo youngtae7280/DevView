@@ -2,6 +2,6 @@
   "name": "ambiguous-acceptance",
   "description": "Structured acceptance criterion contains an abstract quality term.",
   "mutation": "ambiguousAcceptance",
-  "command": ["rpd", "check", "--json"],
+  "command": ["product-intake", "check", "--json"],
   "expectedIssueCode": "AC_ABSTRACT_TERM"
 }

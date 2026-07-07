@@ -16,9 +16,9 @@ Cycle ID: {{cycleId}}
 ## Required Action
 
 1. Stop implementation for the affected task.
-2. Record or request a Change Node in `.pbe/control/change-tree.json`.
+2. Record or request a Change Node in `.devview/control/change-tree.json`.
 3. Map affected Product, Project, Work, Test, and Evidence nodes.
-4. Update or request `.pbe/control/impact-tree.json`.
+4. Update or request `.devview/control/impact-tree.json`.
 5. Resume only after the change is approved or the task is revised back inside the active cycle.
 
 ## Codex Must Not

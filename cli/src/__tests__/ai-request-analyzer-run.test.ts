@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { analyzeRequestFile, analyzeRequestWithDisabledProvider } from '../core/ai-request-analyzer-run'
 import { createOpenAiAnalyzerProviderAdapter } from '../core/ai-request-analyzer-openai-provider-adapter'
 import { validateRequestIrCandidateSchemaOnly } from '../core/request-ir-candidate-validator'
@@ -62,7 +62,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'pack.json'), validAnalyzerPack())
     const outputPath = join('.tmp', 'provider-disabled.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -95,7 +95,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'provider-config.json'), validProviderConfig('disabled'))
     const outputPath = join('.tmp', 'provider-config-disabled.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -132,7 +132,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'pack.json'), validAnalyzerPack())
     writeJson(join(workspace, 'provider-config.json'), validProviderConfig('unavailable'))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -163,7 +163,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'pack.json'), validAnalyzerPack())
     writeJson(join(workspace, 'provider-config.json'), validProviderConfig('configured-not-invoked'))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -200,7 +200,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     })
     const outputPath = join('.tmp', 'provider-config-disabled.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -238,7 +238,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'external-candidate.json'), validRequestIrCandidate())
     const outputPath = join('.tmp', 'imported-candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -276,7 +276,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'external-candidate.json'), validRequestIrCandidate())
     const outputPath = join('.tmp', 'imported-candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -317,7 +317,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'mock-provider-response.json'), validMockProviderResponse())
     const outputPath = join('.tmp', 'mock-provider-candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -365,7 +365,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'provider-config.json'), validProviderConfig('configured-invocation-enabled-preview'))
     const outputPath = join('.tmp', 'mock-provider-candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -402,7 +402,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'mock-provider-response.json'), validMockProviderResponse())
     const outputPath = join('.tmp', 'candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -440,7 +440,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'mock-provider-response.json'), validMockProviderResponse())
     const outputPath = join('.tmp', 'candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -475,7 +475,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'provider-config.json'), validProviderConfig('configured-openai-invocation-enabled'))
     const outputPath = join('.tmp', 'candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -521,7 +521,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'pack.json'), validAnalyzerPack())
     writeJson(join(workspace, 'provider-config.json'), validProviderConfig('configured-openai-invocation-enabled'))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -552,7 +552,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'pack.json'), validAnalyzerPack())
     writeJson(join(workspace, 'provider-config.json'), validProviderConfig('configured-openai-invocation-enabled'))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -582,7 +582,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'pack.json'), validAnalyzerPack())
     writeJson(join(workspace, 'provider-config.json'), validProviderConfig('configured-openai-invocation-enabled'))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -615,7 +615,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'provider-config.json'), validProviderConfig('configured-openai-invocation-enabled'))
     writeJson(join(workspace, 'mock-provider-response.json'), validMockProviderResponse())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -828,7 +828,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     })
     const outputPath = join('.tmp', 'candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -870,7 +870,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     })
     const outputPath = join('.tmp', 'candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -917,7 +917,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     })
     const outputPath = join('.tmp', 'candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -959,7 +959,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     })
     const outputPath = join('.tmp', 'candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -995,7 +995,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'mock-provider-response.json'), validMockProviderResponse())
     const mockResponseBefore = readFileSync(join(workspace, 'mock-provider-response.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -1029,7 +1029,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'external-candidate.json'), validRequestIrCandidate())
     const outputPath = join('.tmp', 'imported-candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -1072,7 +1072,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     })
     const outputPath = join('.tmp', 'imported-candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -1108,7 +1108,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     })
     const outputPath = join('.tmp', 'imported-candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -1141,7 +1141,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'external-candidate.json'), validRequestIrCandidate())
     const packBefore = readFileSync(join(workspace, 'pack.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -1172,7 +1172,7 @@ describe('AI Request Analyzer command surface CLI', () => {
     writeJson(join(workspace, 'provider-config.json'), validProviderConfig('disabled'))
     const providerConfigBefore = readFileSync(join(workspace, 'provider-config.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

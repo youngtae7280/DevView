@@ -19,7 +19,7 @@ export async function validateChangeTree(
             severity: 'error',
             file: defaultArtifacts.changeTree,
             message: 'Change Tree is missing.',
-            suggestedFix: 'Run `devview init` or restore .pbe/control/change-tree.json before creating changes.',
+            suggestedFix: 'Run `devview init` or restore .devview/control/change-tree.json before creating changes.',
           }),
         ]
       : []

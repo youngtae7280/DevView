@@ -1,5 +1,5 @@
 import { readGitChangedFiles, normalizeGitPath, type GitChangedFile } from '../core/git-diff.js'
-import { normalizePbeState, PBE_STATE } from '../core/state-machine.js'
+import { normalizeDevViewState, DEVVIEW_STATE } from '../core/state-machine.js'
 import type { ValidationIssue } from '../core/types.js'
 import { issue } from '../core/types.js'
 import { arrayStrings, nodesOf, readJsonIfExists, stringValue, type JsonObject } from './shared.js'
@@ -26,14 +26,14 @@ export async function validateFileChanges(
   }
 
   const changedFiles = diff.files.filter((file) => !isIgnoredPath(file.path))
-  const sourceFiles = changedFiles.filter((file) => !isPbeArtifact(file.path))
+  const sourceFiles = changedFiles.filter((file) => !isDevViewArtifact(file.path))
   if (sourceFiles.length === 0) {
     return []
   }
 
   const workTree = await readJsonIfExists(root, 'workTree')
-  const pbeState = await readJsonIfExists(root, 'pbeState')
-  const context = buildFileGuardContext(workTree, pbeState)
+  const devviewState = await readJsonIfExists(root, 'devviewState')
+  const context = buildFileGuardContext(workTree, devviewState)
   const issues: ValidationIssue[] = []
 
   for (const file of sourceFiles) {
@@ -137,9 +137,9 @@ interface FileGuardContext {
 
 type WorkFileField = 'expected' | 'forbiddenFiles'
 
-function buildFileGuardContext(workTree: JsonObject | null, pbeState: JsonObject | null): FileGuardContext {
-  const currentState = normalizePbeState(getAutoflowState(pbeState))
-  const activeRevision = objectOrNull(pbeState?.activeRevision)
+function buildFileGuardContext(workTree: JsonObject | null, devviewState: JsonObject | null): FileGuardContext {
+  const currentState = normalizeDevViewState(getAutoflowState(devviewState))
+  const activeRevision = objectOrNull(devviewState?.activeRevision)
   const allActiveWorkNodes = nodesOf(workTree).filter((node) => {
     const id = stringValue(node.id)
     return (
@@ -169,9 +169,9 @@ function buildFileGuardContext(workTree: JsonObject | null, pbeState: JsonObject
 function requiresRevisionContext(context: FileGuardContext, options: FileChangeValidationOptions): boolean {
   return (
     options.enforceReviewGuard === true ||
-    context.currentState === PBE_STATE.ACCEPTED ||
-    context.currentState === PBE_STATE.DONE ||
-    context.currentState === PBE_STATE.WAITING_REVIEW_RESULT
+    context.currentState === DEVVIEW_STATE.ACCEPTED ||
+    context.currentState === DEVVIEW_STATE.DONE ||
+    context.currentState === DEVVIEW_STATE.WAITING_REVIEW_RESULT
   )
 }
 
@@ -232,17 +232,17 @@ function isIgnoredPath(filePath: string): boolean {
   )
 }
 
-function isPbeArtifact(filePath: string): boolean {
+function isDevViewArtifact(filePath: string): boolean {
   const normalized = normalizeForMatch(filePath)
-  return normalized.startsWith('.pbe/') || normalized.startsWith('.devview/')
+  return normalized.startsWith('.devview/') || normalized.startsWith('.devview/')
 }
 
 function normalizeForMatch(filePath: string): string {
   return normalizeGitPath(filePath).toLowerCase()
 }
 
-function getAutoflowState(pbeState: JsonObject | null): string {
-  const autoflow = objectOrNull(pbeState?.autoflow)
+function getAutoflowState(devviewState: JsonObject | null): string {
+  const autoflow = objectOrNull(devviewState?.autoflow)
   return stringValue(autoflow?.state)
 }
 
@@ -250,10 +250,10 @@ function objectOrNull(value: unknown): JsonObject | null {
   return typeof value === 'object' && value !== null && !Array.isArray(value) ? (value as JsonObject) : null
 }
 
-export function classifyChangedFiles(files: GitChangedFile[]): { pbeArtifacts: string[]; sourceFiles: string[] } {
+export function classifyChangedFiles(files: GitChangedFile[]): { devviewArtifacts: string[]; sourceFiles: string[] } {
   const visibleFiles = files.map((file) => file.path).filter((file) => !isIgnoredPath(file))
   return {
-    pbeArtifacts: visibleFiles.filter(isPbeArtifact),
-    sourceFiles: visibleFiles.filter((file) => !isPbeArtifact(file)),
+    devviewArtifacts: visibleFiles.filter(isDevViewArtifact),
+    sourceFiles: visibleFiles.filter((file) => !isDevViewArtifact(file)),
   }
 }

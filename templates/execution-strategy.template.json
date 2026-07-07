@@ -9,8 +9,8 @@
   },
   "activeCycle": {
     "cycleId": "CYCLE-001",
-    "cycleTree": ".pbe/execution/cycle-tree.json",
-    "cycleContract": ".pbe/execution/cycle-contract.md",
+    "cycleTree": ".devview/execution/cycle-tree.json",
+    "cycleContract": ".devview/execution/cycle-contract.md",
     "includedProductNodeIds": [],
     "includedProjectNodeIds": [],
     "includedWorkNodeIds": [],
@@ -18,19 +18,19 @@
     "explicitlyExcludedNodeIds": []
   },
   "generatedFrom": [
-    ".pbe/tree/product-tree.json",
-    ".pbe/tree/project-tree.json",
-    ".pbe/tree/work-tree.json",
-    ".pbe/tree/test-tree.json",
-    ".pbe/execution/cycle-tree.json",
-    ".pbe/execution/cycle-contract.md",
-    ".pbe/blueprint/work-graph.json",
-    ".pbe/blueprint/verification-design.json",
-    ".pbe/blueprint/traceability-matrix.json",
-    ".pbe/blueprint/ui-ux-confirmation.md",
-    ".pbe/blueprint/source-of-truth-matrix.md",
-    ".pbe/blueprint/foundation-contract.md",
-    ".pbe/blueprint/parallel-safety-contract.md"
+    ".devview/tree/product-tree.json",
+    ".devview/tree/project-tree.json",
+    ".devview/tree/work-tree.json",
+    ".devview/tree/test-tree.json",
+    ".devview/execution/cycle-tree.json",
+    ".devview/execution/cycle-contract.md",
+    ".devview/blueprint/work-graph.json",
+    ".devview/blueprint/verification-design.json",
+    ".devview/blueprint/traceability-matrix.json",
+    ".devview/blueprint/ui-ux-confirmation.md",
+    ".devview/blueprint/source-of-truth-matrix.md",
+    ".devview/blueprint/foundation-contract.md",
+    ".devview/blueprint/parallel-safety-contract.md"
   ],
   "modeDefinitions": [
     {

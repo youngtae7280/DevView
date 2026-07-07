@@ -3,13 +3,13 @@ import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import process from 'node:process'
-import { runAcepManifestValidator } from './validators/acep-manifest.js'
+import { runExecutionPackManifestValidator } from './validators/execution-pack-manifest.js'
 import { runAutoflowStateValidator } from './validators/autoflow-state.js'
 import { runExamplesValidator } from './validators/examples.js'
 import { runDevViewLayoutValidator } from './validators/devview-layout.js'
 import { runPluginStructureValidator } from './validators/plugin-structure.js'
 import { runRevisionValidator } from './validators/revision.js'
-import { runRpdTransitionValidator } from './validators/rpd-transition.js'
+import { runProductIntakeTransitionValidator } from './validators/product-intake-transition.js'
 import { runSchemasValidator } from './validators/schemas.js'
 import { runSkillsCliSyncValidator } from './validators/skills-cli-sync.js'
 import { runSkillsValidator } from './validators/skills.js'
@@ -38,9 +38,9 @@ const projectValidators = [
     { requireReadmeTerms: validationTarget.kind === 'plugin-repository' },
   ],
   ['Autoflow state', runAutoflowStateValidator, targetRoot],
-  ['RPD transition guard', runRpdTransitionValidator, targetRoot],
+  ['Product Intake transition guard', runProductIntakeTransitionValidator, targetRoot],
   ['WorkGraph', runWorkgraphValidator, targetRoot],
-  ['ACEP manifest', runAcepManifestValidator, targetRoot],
+  ['Execution Pack manifest', runExecutionPackManifestValidator, targetRoot],
   ['Revision', runRevisionValidator, targetRoot],
 ]
 
@@ -121,7 +121,7 @@ function classifyValidationTarget(repoRoot, cwd) {
   if (isPluginRepository) {
     return { kind: 'plugin-repository' }
   }
-  if (existsSync(path.join(cwd, '.devview')) || existsSync(path.join(cwd, '.pbe'))) {
+  if (existsSync(path.join(cwd, '.devview'))) {
     return { kind: 'initialized-project' }
   }
   return { kind: 'uninitialized' }
@@ -131,7 +131,7 @@ function runCompatibilityCore(repoRoot, cwd, targetKind) {
   if (
     targetKind === 'initialized-project' &&
     !existsSync(path.join(cwd, '.devview')) &&
-    !existsSync(path.join(cwd, '.pbe'))
+    !existsSync(path.join(cwd, '.devview'))
   ) {
     return []
   }

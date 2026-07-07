@@ -1,9 +1,9 @@
 import { createIssue } from '../validator-utils/report-utils.js'
 import { readFirstOptionalJson, readOptionalJson } from '../validator-utils/json-utils.js'
 
-const validator = 'RPD transition guard'
+const validator = 'Product Intake transition guard'
 
-const rpdIncompleteRequirementStatuses = new Set([
+const productIntakeIncompleteRequirementStatuses = new Set([
   'pending_interview',
   'interviewing',
   'ready_to_decompose',
@@ -11,7 +11,7 @@ const rpdIncompleteRequirementStatuses = new Set([
   'blocked',
 ])
 
-const rpdTerminalRequirementStatuses = new Set(['confirmed', 'deferred', 'out_of_scope'])
+const productIntakeTerminalRequirementStatuses = new Set(['confirmed', 'deferred', 'out_of_scope'])
 
 const incompleteProductStatuses = new Set([
   'draft',
@@ -24,7 +24,7 @@ const incompleteProductStatuses = new Set([
   'reopened',
 ])
 
-const rpdCompleteProductStatuses = new Set([
+const productIntakeCompleteProductStatuses = new Set([
   'confirmed',
   'accepted',
   'covered',
@@ -36,46 +36,41 @@ const rpdCompleteProductStatuses = new Set([
 ])
 
 const downstreamSteps = new Set([
-  'wpd',
-  'vd',
+  'work_planning',
+  'verification_design',
   'dependency_impact_audit',
   'plan_execution',
   'coverage_audit',
   'ux_audit',
-  'generate_acep',
-  'run_acep',
+  'generate_execution_pack',
+  'run_execution_pack',
 ])
 
 const downstreamStates = new Set([
-  'RPD_DONE',
+  'PRODUCT_INTAKE_DONE',
   'WAITING_UI_UX_CONFIRM',
   'UI_UX_APPROVED',
   'VISUAL_CONTRACT_READY',
-  'WPD_DONE',
+  'WORK_PLANNING_DONE',
   'UI_SURFACE_INVENTORY_DONE',
-  'VD_DONE',
+  'VERIFICATION_DESIGN_DONE',
   'WAITING_IMPLEMENTATION_SCOPE',
   'SCOPE_SELECTED',
-  'ACEP_READY',
-  'ACEP_RUN_DONE',
+  'EXECUTION_PACK_READY',
+  'EXECUTION_PACK_RUN_DONE',
   'VISUAL_AUDIT_DONE',
   'WAITING_REVIEW_RESULT',
   'DONE',
-  // Migration aliases accepted only to guard older .pbe folders.
-  'DEPENDENCY_IMPACT_AUDITED',
-  'WAITING_ARCHITECTURE_RUNWAY_CONFIRM',
-  'ARCHITECTURE_RUNWAY_APPROVED',
-  'PLAN_EXECUTED',
-  'COVERAGE_AUDITED',
-  'UX_AUDITED',
-  'ACEP_GENERATED',
-  'PARTIAL_IMPLEMENTATION_DONE',
-  'WAITING_NEXT_SLICE_DECISION',
-  'SLICE_ACCEPTED',
-  'COMPLETED',
 ])
 
-const downstreamStages = new Set(['wpd', 'vd', 'execution_planning', 'acep_ready', 'acep_running', 'complete'])
+const downstreamStages = new Set([
+  'work_planning',
+  'verification_design',
+  'execution_planning',
+  'execution_pack_ready',
+  'execution_pack_running',
+  'complete',
+])
 
 const reviewDeliveryStatuses = new Set([
   'implemented',
@@ -85,22 +80,26 @@ const reviewDeliveryStatuses = new Set([
   'accepted',
 ])
 
-export function runRpdTransitionValidator({ root }) {
+export function runProductIntakeTransitionValidator({ root }) {
   const issues = []
   const { data: state, issue: stateIssue } = readFirstOptionalJson(
     root,
-    ['.devview/blueprint/devview-state.json', '.devview/blueprint/pbe-state.json', '.pbe/blueprint/pbe-state.json'],
+    ['.devview/blueprint/devview-state.json'],
     validator,
   )
   const { data: requirementTree, issue: requirementIssue } = readOptionalJson(
     root,
-    '.pbe/blueprint/requirement-tree.json',
+    '.devview/blueprint/requirement-tree.json',
     validator,
   )
-  const { data: productTree, issue: productIssue } = readOptionalJson(root, '.pbe/tree/product-tree.json', validator)
+  const { data: productTree, issue: productIssue } = readOptionalJson(
+    root,
+    '.devview/tree/product-tree.json',
+    validator,
+  )
   const { data: decisionQueue, issue: decisionIssue } = readOptionalJson(
     root,
-    '.pbe/control/decision-queue.json',
+    '.devview/control/decision-queue.json',
     validator,
   )
 
@@ -112,39 +111,39 @@ export function runRpdTransitionValidator({ root }) {
     return issues
   }
 
-  const rpdProblems = [
+  const productIntakeProblems = [
     ...findRequirementTreeProblems(requirementTree),
     ...findProductTreeProblems(productTree),
     ...findBlockingDecisionProblems(decisionQueue),
   ]
 
-  if (rpdProblems.length === 0) {
+  if (productIntakeProblems.length === 0) {
     return issues
   }
 
   if (isDownstreamState(state)) {
-    for (const problem of rpdProblems) {
+    for (const problem of productIntakeProblems) {
       issues.push(
         createIssue({
           validator,
           file: problem.file,
-          code: 'RPD_INCOMPLETE_DOWNSTREAM_BLOCKED',
-          message: `${problem.message} Downstream execution/review state is not allowed until RPD is user-confirmed.`,
+          code: 'PRODUCT_INTAKE_INCOMPLETE_DOWNSTREAM_BLOCKED',
+          message: `${problem.message} Downstream execution/review state is not allowed until Product Intake is user-confirmed.`,
           suggestedFix:
-            'Return to RPD, propose the requirement summary/decomposition, get explicit user confirmation, then rerun downstream stages.',
+            'Return to Product Intake, propose the requirement summary/decomposition, get explicit user confirmation, then rerun downstream stages.',
         }),
       )
     }
   }
 
   if (state?.deliveryStatus && reviewDeliveryStatuses.has(state.deliveryStatus)) {
-    for (const problem of rpdProblems) {
+    for (const problem of productIntakeProblems) {
       issues.push(
         createIssue({
           validator,
           file: problem.file,
-          code: 'RPD_INCOMPLETE_DELIVERY_STATUS_BLOCKED',
-          message: `${problem.message} deliveryStatus=${state.deliveryStatus} is not allowed while RPD is incomplete.`,
+          code: 'PRODUCT_INTAKE_INCOMPLETE_DELIVERY_STATUS_BLOCKED',
+          message: `${problem.message} deliveryStatus=${state.deliveryStatus} is not allowed while Product Intake is incomplete.`,
           suggestedFix:
             'Use draft_created_from_assumptions or waiting_root_confirmation until the user confirms the root/leaf requirements.',
         }),
@@ -191,17 +190,17 @@ function findRequirementTreeProblems(tree) {
     const existingChildren = children.filter((childId) => byId.has(childId))
     const isLeaf = existingChildren.length === 0
 
-    if (rpdIncompleteRequirementStatuses.has(node.status)) {
+    if (productIntakeIncompleteRequirementStatuses.has(node.status)) {
       problems.push({
-        file: '.pbe/blueprint/requirement-tree.json',
+        file: '.devview/blueprint/requirement-tree.json',
         message: `Requirement node ${node.id || '<missing id>'} is ${node.status}.`,
       })
       continue
     }
 
-    if (isLeaf && !rpdTerminalRequirementStatuses.has(node.status)) {
+    if (isLeaf && !productIntakeTerminalRequirementStatuses.has(node.status)) {
       problems.push({
-        file: '.pbe/blueprint/requirement-tree.json',
+        file: '.devview/blueprint/requirement-tree.json',
         message: `Requirement leaf ${node.id || '<missing id>'} is ${node.status}, not terminal.`,
       })
     }
@@ -222,15 +221,15 @@ function findProductTreeProblems(tree) {
   for (const node of tree.nodes) {
     if (incompleteProductStatuses.has(node.status)) {
       problems.push({
-        file: '.pbe/tree/product-tree.json',
+        file: '.devview/tree/product-tree.json',
         message: `Product node ${node.id || '<missing id>'} is ${node.status}.`,
       })
     }
   }
 
-  if (root && !rpdCompleteProductStatuses.has(root.status)) {
+  if (root && !productIntakeCompleteProductStatuses.has(root.status)) {
     problems.push({
-      file: '.pbe/tree/product-tree.json',
+      file: '.devview/tree/product-tree.json',
       message: `Product root ${root.id || tree.rootNodeId} is ${root.status}, not confirmed or terminal.`,
     })
   }
@@ -250,7 +249,7 @@ function findBlockingDecisionProblems(queue) {
       return open && blocking
     })
     .map((decision) => ({
-      file: '.pbe/control/decision-queue.json',
+      file: '.devview/control/decision-queue.json',
       message: `Decision ${decision.id || '<missing id>'} is ${decision.status} with blockingLevel=${decision.blockingLevel}.`,
     }))
 }

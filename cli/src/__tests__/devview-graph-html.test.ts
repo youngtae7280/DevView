@@ -1,7 +1,7 @@
 import { cpSync, existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -18,7 +18,7 @@ describe('DevViewGraph HTML inspector CLI', () => {
     const htmlOutput = join('.tmp', 'cardprinterconfig.devviewgraph.html')
     const dataOutput = join('.tmp', 'cardprinterconfig.devviewgraph.data.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -146,7 +146,7 @@ describe('DevViewGraph HTML inspector CLI', () => {
     const graphSourcePath = join(workspace, 'examples/internal-legacy/retrofit/cardprinterconfig/graph-source.json')
     const before = readFileSync(graphSourcePath, 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -183,7 +183,7 @@ describe('DevViewGraph HTML inspector CLI', () => {
     )
     const before = readFileSync(instructionPackPath, 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -215,7 +215,7 @@ describe('DevViewGraph HTML inspector CLI', () => {
     const workspace = createWorkspace()
     writeCardPrinterConfigFixture(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -248,7 +248,7 @@ describe('DevViewGraph HTML inspector CLI', () => {
     const htmlOutput = join('.tmp', 'windowsutility.devviewgraph.html')
     const dataOutput = join('.tmp', 'windowsutility.devviewgraph.data.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -315,7 +315,7 @@ describe('DevViewGraph HTML inspector CLI', () => {
     )
     const before = readFileSync(projectMemoryPath, 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

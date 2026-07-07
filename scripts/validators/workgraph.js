@@ -5,7 +5,7 @@ const validator = 'WorkGraph'
 
 export function runWorkgraphValidator({ root }) {
   const issues = []
-  const { data: workGraph, issue } = readOptionalJson(root, '.pbe/blueprint/work-graph.json', validator)
+  const { data: workGraph, issue } = readOptionalJson(root, '.devview/blueprint/work-graph.json', validator)
   if (issue) {
     issues.push(issue)
   }
@@ -17,10 +17,10 @@ export function runWorkgraphValidator({ root }) {
     issues.push(
       createIssue({
         validator,
-        file: '.pbe/blueprint/work-graph.json',
+        file: '.devview/blueprint/work-graph.json',
         code: 'WORKGRAPH_NODES_INVALID',
         message: 'workGraph.nodes must be an array.',
-        suggestedFix: 'Regenerate WPD WorkGraph with nodes[].',
+        suggestedFix: 'Regenerate Work Planning Graph with nodes[].',
       }),
     )
     return issues
@@ -32,10 +32,10 @@ export function runWorkgraphValidator({ root }) {
       issues.push(
         createIssue({
           validator,
-          file: '.pbe/blueprint/work-graph.json',
+          file: '.devview/blueprint/work-graph.json',
           code: 'WORKGRAPH_TRACEABILITY_MISSING',
           message: `${nodeId} is selected/foundation but lacks relatedRequirementNodeIds.`,
-          suggestedFix: 'Link selected and foundation WorkGraph nodes back to Product/RPD nodes.',
+          suggestedFix: 'Link selected and foundation WorkGraph nodes back to Product Intake nodes.',
         }),
       )
     }
@@ -44,7 +44,7 @@ export function runWorkgraphValidator({ root }) {
       issues.push(
         createIssue({
           validator,
-          file: '.pbe/blueprint/work-graph.json',
+          file: '.devview/blueprint/work-graph.json',
           code: 'PARALLEL_SAFE_WITH_UNKNOWN_FILES',
           message: `${nodeId} is parallel-safe but expectedFiles is empty.`,
           suggestedFix: 'Declare expectedFiles or mark the node as not parallel-safe.',
@@ -62,7 +62,7 @@ export function runWorkgraphValidator({ root }) {
           issues.push(
             createIssue({
               validator,
-              file: '.pbe/blueprint/work-graph.json',
+              file: '.devview/blueprint/work-graph.json',
               code: 'PARALLEL_SAME_FILE_CONFLICT',
               message: `${group.id || '<group>'} includes ${nodeId} and ${touchedFiles.get(file)} touching ${file}.`,
               suggestedFix: 'Move same-file work into one sequential task or add an integration-safe plan.',

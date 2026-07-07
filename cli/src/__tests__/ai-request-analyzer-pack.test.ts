@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { generateAiRequestAnalyzerPack, renderAiRequestAnalyzerPackMarkdown } from '../core/ai-request-analyzer-pack'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
@@ -94,7 +94,7 @@ describe('AI Request Analyzer pack CLI', () => {
     const outputPath = join('.tmp', 'ai-request-analyzer-pack.json')
     const markdownPath = join('.tmp', 'ai-request-analyzer-pack.md')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -134,7 +134,7 @@ describe('AI Request Analyzer pack CLI', () => {
     writeJson(join(workspace, 'schema.json'), validRequestIrSchema())
     const boundaryBefore = readFileSync(join(workspace, 'boundary.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -164,7 +164,7 @@ describe('AI Request Analyzer pack CLI', () => {
     const schemaBefore = readFileSync(join(workspace, 'schema.json'), 'utf8')
     const outputPath = join('.tmp', 'ai-request-analyzer-pack.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

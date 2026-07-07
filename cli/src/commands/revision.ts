@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs'
 import { writeJsonArtifactTransaction } from '../core/artifact-transaction.js'
-import { PBE_STATE } from '../core/state-machine.js'
-import { preparePbeStateTransition, transitionPbeState } from '../core/state-transition.js'
+import { DEVVIEW_STATE } from '../core/state-machine.js'
+import { prepareDevViewStateTransition, transitionDevViewState } from '../core/state-transition.js'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { hasErrors, issue } from '../core/types.js'
 import { readJsonSafe } from '../core/fs.js'
@@ -11,7 +11,7 @@ import {
   revisionAffectedIds,
   validateRevisionComplete,
   type ActiveRevisionContext,
-} from '../validators/pbe-validators.js'
+} from '../validators/devview-validators.js'
 import { arrayObjects, arrayStrings, stringValue, type JsonObject } from '../validators/shared.js'
 import { type CommandContext, transitionFailed } from './shared.js'
 
@@ -25,10 +25,10 @@ export async function revisionStartCommand(context: CommandContext): Promise<Com
   if (hasErrors(invalidation.issues)) {
     return transitionFailed('revision start', 'Revision start failed. State was not changed.', invalidation.issues)
   }
-  const preparedTransition = await preparePbeStateTransition(
+  const preparedTransition = await prepareDevViewStateTransition(
     context.options.root,
     'revision start',
-    [PBE_STATE.REVISION_REQUESTED],
+    [DEVVIEW_STATE.REVISION_REQUESTED],
     {
       completedSteps: ['revision_start'],
       stage: 'revision',
@@ -60,7 +60,7 @@ export async function revisionStartCommand(context: CommandContext): Promise<Com
         validator: 'Revision',
         code: 'REVISION_ARTIFACT_TRANSACTION_FAILED',
         severity: 'error',
-        file: defaultArtifacts.pbeState,
+        file: defaultArtifacts.devviewState,
         message: error instanceof Error ? error.message : String(error),
         suggestedFix:
           'Fix filesystem or artifact write errors, then rerun `devview revision start --change <id>` so state and invalidations commit together.',
@@ -95,7 +95,7 @@ export async function revisionCompleteCommand(context: CommandContext): Promise<
     status: 'completed',
     completedAt,
   }
-  return transitionPbeState(context.options.root, 'revision complete', [PBE_STATE.WORK_PLANNING_IN_PROGRESS], {
+  return transitionDevViewState(context.options.root, 'revision complete', [DEVVIEW_STATE.WORK_PLANNING_IN_PROGRESS], {
     completedSteps: ['revision_complete'],
     stage: 'work_planning',
     mode: 'revision_reverification',

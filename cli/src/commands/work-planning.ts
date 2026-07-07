@@ -1,8 +1,8 @@
-import { PBE_STATE } from '../core/state-machine.js'
-import { transitionPbeState } from '../core/state-transition.js'
+import { DEVVIEW_STATE } from '../core/state-machine.js'
+import { transitionDevViewState } from '../core/state-transition.js'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { hasErrors } from '../core/types.js'
-import { validateRpd, validateVisualDesign, validateWpd } from '../validators/pbe-validators.js'
+import { validateProductIntake, validateVisualDesign, validateWorkPlanning } from '../validators/devview-validators.js'
 import {
   checkResult,
   type CommandContext,
@@ -12,24 +12,26 @@ import {
   uiUxApprovalIssues,
 } from './shared.js'
 
-export async function wpdCheckCommand(context: CommandContext): Promise<CommandResult> {
-  return checkResult('work-planning check', await validateWpd(context.options.root))
+export async function workPlanningCheckCommand(context: CommandContext): Promise<CommandResult> {
+  return checkResult('work-planning check', await validateWorkPlanning(context.options.root))
 }
 
-export async function wpdCloseCommand(context: CommandContext): Promise<CommandResult> {
+export async function workPlanningCloseCommand(context: CommandContext): Promise<CommandResult> {
   const issues: ValidationIssue[] = []
   const visualWork = hasVisualWork(context.options.root)
-  issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
+  issues.push(...(await validateProductIntake(context.options.root, { completionMode: true })))
   issues.push(...uiUxApprovalIssues(context.options.root, await loadState(context.options.root)))
   issues.push(...(await validateVisualDesign(context.options.root, { requireInventory: false })))
-  issues.push(...(await validateWpd(context.options.root)))
+  issues.push(...(await validateWorkPlanning(context.options.root)))
   if (hasErrors(issues)) {
     return transitionFailed('work-planning close', 'Work Planning close failed. State was not changed.', issues)
   }
-  return transitionPbeState(
+  return transitionDevViewState(
     context.options.root,
     'work-planning close',
-    visualWork ? [PBE_STATE.VISUAL_CONTRACT_READY, PBE_STATE.WORK_PLANNING_DONE] : [PBE_STATE.WORK_PLANNING_DONE],
+    visualWork
+      ? [DEVVIEW_STATE.VISUAL_CONTRACT_READY, DEVVIEW_STATE.WORK_PLANNING_DONE]
+      : [DEVVIEW_STATE.WORK_PLANNING_DONE],
     {
       completedSteps: visualWork
         ? ['visual_reference_intake', 'design_system_derive', 'work_planning']

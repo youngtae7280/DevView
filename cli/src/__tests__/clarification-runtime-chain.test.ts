@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -16,7 +16,7 @@ describe('Clarification runtime chain CLI', () => {
     const workspace = createWorkspace()
     writeClarificationInputs(workspace)
 
-    const result = await runPbeCli([...baseArgs(), '--markdown', '.tmp/chain.md'], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli([...baseArgs(), '--markdown', '.tmp/chain.md'], { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stdout)
     const revised = JSON.parse(readFileSync(join(workspace, '.tmp/revised-candidate.json'), 'utf8'))
     const validation = JSON.parse(readFileSync(join(workspace, '.tmp/revised-validation.json'), 'utf8'))
@@ -72,7 +72,7 @@ describe('Clarification runtime chain CLI', () => {
       },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stdout)
     const revised = JSON.parse(readFileSync(join(workspace, '.tmp/revised-candidate.json'), 'utf8'))
 
@@ -95,7 +95,7 @@ describe('Clarification runtime chain CLI', () => {
       },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -114,7 +114,7 @@ describe('Clarification runtime chain CLI', () => {
       },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -145,7 +145,7 @@ describe('Clarification runtime chain CLI', () => {
       },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -160,7 +160,7 @@ describe('Clarification runtime chain CLI', () => {
     writeClarificationInputs(workspace)
     const packBefore = readFileSync(join(workspace, 'pack.json'), 'utf8')
 
-    const result = await runPbeCli([...baseArgs(), '--markdown', 'pack.json'], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli([...baseArgs(), '--markdown', 'pack.json'], { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -182,7 +182,7 @@ describe('Clarification runtime chain CLI', () => {
       status: 'schema-previewed',
     })
 
-    const result = await runPbeCli([...baseArgsWithValidationOutput('schema.json')], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli([...baseArgsWithValidationOutput('schema.json')], { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)

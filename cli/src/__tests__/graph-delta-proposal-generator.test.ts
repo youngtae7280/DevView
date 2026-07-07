@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import {
   buildProposalOnlyGraphDeltaPreview,
   validateGraphDeltaCompatibleSource,
@@ -77,7 +77,7 @@ describe('proposal-only Graph Delta generator CLI', () => {
     writeJson(join(workspace, 'source.json'), validSourceArtifact())
     const outputPath = join(workspace, 'proposal.preview.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'propose-graph-delta', '--source', 'source.json', '--json'],
       { cwd: workspace, pluginRoot },
     )
@@ -100,7 +100,7 @@ describe('proposal-only Graph Delta generator CLI', () => {
     writeJson(join(workspace, 'source.json'), validSourceArtifact())
     const outputPath = join('.tmp', 'graph-delta-proposal.preview.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'propose-graph-delta', '--source', 'source.json', '--output', outputPath, '--json'],
       { cwd: workspace, pluginRoot },
     )
@@ -132,7 +132,7 @@ describe('proposal-only Graph Delta generator CLI', () => {
       },
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'propose-graph-delta', '--source', 'source.json', '--json'],
       { cwd: workspace, pluginRoot },
     )
@@ -153,7 +153,7 @@ describe('proposal-only Graph Delta generator CLI', () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, 'source.json'), { ...validSourceArtifact(), proposalOnly: false })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'propose-graph-delta', '--source', 'source.json', '--json'],
       { cwd: workspace, pluginRoot },
     )

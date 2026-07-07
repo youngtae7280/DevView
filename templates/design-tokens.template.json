@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "artifactType": "design_tokens",
   "status": "draft",
-  "sourceRef": ".pbe/blueprint/visual-reference.json",
+  "sourceRef": ".devview/blueprint/visual-reference.json",
   "tokens": {
     "colors": {
       "pageBackground": { "value": "#F6F7F9", "intent": "Main app background" },

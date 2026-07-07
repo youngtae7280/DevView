@@ -5,7 +5,7 @@ import { resolve, join } from 'node:path'
 const tempRoots: string[] = []
 
 export function createWorkspace(): string {
-  const workspace = mkdtempSync(join(tmpdir(), 'pbe-cli-'))
+  const workspace = mkdtempSync(join(tmpdir(), 'devview-cli-'))
   tempRoots.push(workspace)
   return workspace
 }

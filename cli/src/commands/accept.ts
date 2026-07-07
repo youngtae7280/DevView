@@ -1,6 +1,6 @@
 import { defaultArtifacts } from '../core/project.js'
-import { normalizePbeState, PBE_STATE } from '../core/state-machine.js'
-import { transitionPbeState } from '../core/state-transition.js'
+import { normalizeDevViewState, DEVVIEW_STATE } from '../core/state-machine.js'
+import { transitionDevViewState } from '../core/state-transition.js'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { hasErrors, issue } from '../core/types.js'
 import {
@@ -9,7 +9,7 @@ import {
   validateFileChanges,
   validateTraceability,
   validateVisualDesign,
-} from '../validators/pbe-validators.js'
+} from '../validators/devview-validators.js'
 import { type CommandContext, hasUserAcceptedBranch, loadState, transitionBlocked, transitionFailed } from './shared.js'
 
 export async function acceptCommand(context: CommandContext): Promise<CommandResult> {
@@ -17,15 +17,15 @@ export async function acceptCommand(context: CommandContext): Promise<CommandRes
   const state = await loadState(context.options.root)
   const currentState =
     typeof state?.autoflow === 'object' && state.autoflow !== null
-      ? normalizePbeState((state.autoflow as Record<string, unknown>).state)
+      ? normalizeDevViewState((state.autoflow as Record<string, unknown>).state)
       : null
-  if (state && currentState !== PBE_STATE.WAITING_REVIEW_RESULT) {
+  if (state && currentState !== DEVVIEW_STATE.WAITING_REVIEW_RESULT) {
     return transitionBlocked('accept', 'Accept blocked. State was not changed.', [
       issue({
         validator: 'StateTransition',
         code: 'ACCEPT_STATE_BLOCKED',
         severity: 'error',
-        file: defaultArtifacts.pbeState,
+        file: defaultArtifacts.devviewState,
         message: `devview accept can run only from WAITING_REVIEW_RESULT. Current state is ${String(currentState || 'unknown')}.`,
         suggestedFix:
           'Submit verified work with `devview review submit`, then record user approval and rerun `devview accept`.',
@@ -57,7 +57,7 @@ export async function acceptCommand(context: CommandContext): Promise<CommandRes
   if (hasErrors(issues)) {
     return transitionFailed('accept', 'Accept failed. State was not changed.', issues)
   }
-  return transitionPbeState(context.options.root, 'accept', [PBE_STATE.ACCEPTED, PBE_STATE.DONE], {
+  return transitionDevViewState(context.options.root, 'accept', [DEVVIEW_STATE.ACCEPTED, DEVVIEW_STATE.DONE], {
     completedSteps: ['complete'],
     stage: 'complete',
     deliveryStatus: 'accepted',

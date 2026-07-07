@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -18,7 +18,7 @@ describe('Human Decision Record CLI', () => {
     writeJson(join(workspace, 'proposal.json'), validProposal())
     writeJson(join(workspace, 'review.json'), validReviewPacket())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -77,7 +77,7 @@ describe('Human Decision Record CLI', () => {
     writeJson(join(workspace, 'proposal.json'), validProposal())
     writeJson(join(workspace, 'review.json'), validReviewPacket())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -127,7 +127,7 @@ describe('Human Decision Record CLI', () => {
       writeJson(join(workspace, 'proposal.json'), validProposal())
       writeJson(join(workspace, 'review.json'), validReviewPacket({ humanReviewQuestions: ['Still needs review.'] }))
 
-      const result = await runPbeCli(
+      const result = await runDevViewCli(
         [
           'graph',
           'read-model',
@@ -165,7 +165,7 @@ describe('Human Decision Record CLI', () => {
     writeJson(join(workspace, 'proposal.json'), validProposal())
     writeJson(join(workspace, 'review.json'), validReviewPacket())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -208,7 +208,7 @@ describe('Human Decision Record CLI', () => {
       }),
     )
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -244,7 +244,7 @@ describe('Human Decision Record CLI', () => {
     writeJson(join(workspace, 'proposal.json'), validProposal())
     writeFileSync(join(workspace, 'review.md'), '# Review\n\nHuman notes only.')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -280,7 +280,7 @@ describe('Human Decision Record CLI', () => {
     writeJson(join(workspace, 'proposal.json'), validProposal())
     writeJson(join(workspace, 'review.json'), validReviewPacket({ proposalId: 'GDP-OTHER' }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -316,7 +316,7 @@ describe('Human Decision Record CLI', () => {
     writeJson(join(workspace, 'proposal.json'), validProposal())
     writeJson(join(workspace, 'review.json'), validReviewPacket())
 
-    const actorResult = await runPbeCli(
+    const actorResult = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -341,7 +341,7 @@ describe('Human Decision Record CLI', () => {
       ],
       { cwd: workspace, pluginRoot },
     )
-    const sourceResult = await runPbeCli(
+    const sourceResult = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -381,7 +381,7 @@ describe('Human Decision Record CLI', () => {
     writeJson(join(workspace, 'proposal.json'), validProposal())
     writeJson(join(workspace, 'review.json'), validReviewPacket())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -418,7 +418,7 @@ describe('Human Decision Record CLI', () => {
     writeJson(join(workspace, 'review.json'), validReviewPacket())
     const proposalBefore = readFileSync(join(workspace, 'proposal.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

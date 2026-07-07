@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local/project-blueprint-engine/verification-miss-log.schema.json",
-  "title": "PBE Verification Miss Log",
+  "$id": "https://local/devview/verification-miss-log.schema.json",
+  "title": "DevView Verification Miss Log",
   "type": "object",
   "required": ["misses"],
   "properties": {
@@ -53,7 +53,7 @@
         "whyPreviousVerificationMissedThis": {
           "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
         },
-        "requiredPbeImprovements": { "type": "array", "items": { "type": "string" } },
+        "requiredDevViewImprovements": { "type": "array", "items": { "type": "string" } },
         "promotionDecision": { "enum": ["not_required", "pending", "promoted", "blocked"] },
         "promotion": {
           "type": "object",
@@ -67,7 +67,7 @@
         "promotedEvidenceNodeIds": { "type": "array", "items": { "type": "string" } },
         "promotedContractRefs": { "type": "array", "items": { "type": "string" } },
         "blockingReason": { "type": "string" },
-        "status": { "enum": ["open", "reported_for_pbe_improvement", "promoted", "resolved", "blocked"] }
+        "status": { "enum": ["open", "reported_for_devview_improvement", "promoted", "resolved", "blocked"] }
       },
       "additionalProperties": true
     }

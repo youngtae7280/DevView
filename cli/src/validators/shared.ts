@@ -1,16 +1,16 @@
-import { existsSync, readFileSync } from 'node:fs'
+﻿import { existsSync, readFileSync } from 'node:fs'
 import { artifactPath, artifactRelativePath, defaultArtifacts, stateArtifactPath } from '../core/project.js'
 import { readJsonSafe } from '../core/fs.js'
-import { normalizePbeState } from '../core/state-machine.js'
+import { normalizeDevViewState } from '../core/state-machine.js'
 import type { ValidationIssue } from '../core/types.js'
 import { issue } from '../core/types.js'
 
 export type JsonObject = Record<string, unknown>
 
-export const terminalRpdStatuses = new Set(['confirmed', 'deferred', 'out_of_scope'])
+export const terminalProductIntakeStatuses = new Set(['confirmed', 'deferred', 'out_of_scope'])
 export const executableScopes = new Set(['selected', 'foundation'])
 export const nonExecutableTypes = new Set(['non_goal', 'risk', 'assumption', 'decision'])
-export const legacyVisualAuditPath = '.pbe/evidence/review-reports/visual-audit.md'
+export const legacyVisualAuditPath = '.devview/evidence/review-reports/visual-audit.md'
 export const abstractQualityTerms = [
   '깔끔하게',
   '보기 좋게',
@@ -52,7 +52,7 @@ export async function readJsonIfExists(
   root: string,
   key: Parameters<typeof artifactPath>[1],
 ): Promise<JsonObject | null> {
-  const filePath = key === 'pbeState' || key === 'devviewState' ? stateArtifactPath(root) : artifactPath(root, key)
+  const filePath = key === 'devviewState' ? stateArtifactPath(root) : artifactPath(root, key)
   if (!existsSync(filePath)) {
     return null
   }
@@ -133,7 +133,7 @@ export function validateWorkDependencyGraph(work: JsonObject | null): Validation
       const cycle = [...pathStack.slice(cycleStart), id].join(' -> ')
       issues.push(
         issue({
-          validator: 'WPD',
+          validator: 'WorkPlanning',
           code: 'DEPENDENCY_CYCLE',
           severity: 'error',
           file: defaultArtifacts.workTree,
@@ -284,12 +284,12 @@ export function validateVisualEvidence(
 
 export function validateVisualAudit(
   root: string,
-  pbeState: JsonObject | null,
+  devviewState: JsonObject | null,
   requirePassingResult: boolean,
 ): ValidationIssue[] {
   const issues: ValidationIssue[] = []
   const audit = readVisualAudit(root)
-  const auditRequired = requirePassingResult || visualAuditRequiredByState(pbeState)
+  const auditRequired = requirePassingResult || visualAuditRequiredByState(devviewState)
 
   if (!audit) {
     if (auditRequired) {
@@ -395,12 +395,12 @@ export function readVisualAudit(root: string): { relativePath: string; content: 
   return null
 }
 
-export function visualAuditRequiredByState(pbeState: JsonObject | null): boolean {
-  const state = normalizePbeState(getNestedString(pbeState, ['autoflow', 'state']))
+export function visualAuditRequiredByState(devviewState: JsonObject | null): boolean {
+  const state = normalizeDevViewState(getNestedString(devviewState, ['autoflow', 'state']))
   if (state && ['EXECUTION_PACK_RUN_DONE', 'VISUAL_AUDIT_DONE', 'WAITING_REVIEW_RESULT', 'DONE'].includes(state)) {
     return true
   }
-  return ['submitted_for_review', 'revision_verified', 'accepted'].includes(stringValue(pbeState?.deliveryStatus))
+  return ['submitted_for_review', 'revision_verified', 'accepted'].includes(stringValue(devviewState?.deliveryStatus))
 }
 
 export function markdownSection(content: string, heading: string): string {

@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { validateRequestIrCandidateSchemaOnly } from '../core/request-ir-candidate-validator'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
@@ -88,7 +88,7 @@ describe('Request IR Candidate schema-only validator CLI', () => {
     writeJson(join(workspace, 'candidate.json'), validCandidate())
     const outputPath = join(workspace, 'request-ir-validation.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'validate-request-ir', '--candidate', 'candidate.json', '--json'],
       { cwd: workspace, pluginRoot },
     )
@@ -110,7 +110,7 @@ describe('Request IR Candidate schema-only validator CLI', () => {
     writeJson(join(workspace, 'candidate.json'), validCandidate())
     const outputPath = join('.tmp', 'request-ir-validation.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'validate-request-ir', '--candidate', 'candidate.json', '--output', outputPath, '--json'],
       { cwd: workspace, pluginRoot },
     )
@@ -133,7 +133,7 @@ describe('Request IR Candidate schema-only validator CLI', () => {
       candidateOnly: false,
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'validate-request-ir', '--candidate', 'candidate.json', '--json'],
       { cwd: workspace, pluginRoot },
     )

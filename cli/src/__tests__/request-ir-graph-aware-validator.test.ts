@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { validateRequestIrGraphAware } from '../core/request-ir-graph-aware-validator'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
@@ -105,7 +105,7 @@ describe('Request IR graph-aware validator CLI', () => {
     writeFixtureFiles(workspace)
     const outputPath = join(workspace, 'request-ir-graph-validation.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -137,7 +137,7 @@ describe('Request IR graph-aware validator CLI', () => {
     writeFixtureFiles(workspace)
     const outputPath = join('.tmp', 'request-ir-graph-validation.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -173,7 +173,7 @@ describe('Request IR graph-aware validator CLI', () => {
       requestIrValidationStatus: 'validation-blocked',
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

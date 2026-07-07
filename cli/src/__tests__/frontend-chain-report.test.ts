@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson, writeText } from './fixtures/workspace'
 
@@ -18,7 +18,7 @@ describe('DevView frontend chain report CLI', () => {
     const outputPath = join('.tmp', 'frontend-chain.json')
     const markdownPath = join('.tmp', 'frontend-chain.md')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -60,7 +60,7 @@ describe('DevView frontend chain report CLI', () => {
     const workspace = createWorkspace()
     writeFixtureChain(workspace, { omitInstructionPack: true })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'report-frontend-chain', '--intake', 'generated/intake.json', '--json'],
       { cwd: workspace, pluginRoot },
     )
@@ -83,7 +83,7 @@ describe('DevView frontend chain report CLI', () => {
       },
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'report-frontend-chain', '--intake', 'generated/intake.json', '--json'],
       { cwd: workspace, pluginRoot },
     )
@@ -101,7 +101,7 @@ describe('DevView frontend chain report CLI', () => {
     writeFixtureChain(workspace)
     const intakeBefore = readFileSync(join(workspace, 'generated/intake.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -128,7 +128,7 @@ describe('DevView frontend chain report CLI', () => {
     const schemaBefore = readFileSync(join(workspace, 'generated/schema.json'), 'utf8')
     const outputPath = join('.tmp', 'frontend-chain.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

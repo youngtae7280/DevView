@@ -36,15 +36,7 @@
         "REVISION_REQUESTED",
         "ACCEPTED",
         "DONE",
-        "BLOCKED",
-        "RPD_IN_PROGRESS",
-        "RPD_DONE",
-        "WPD_IN_PROGRESS",
-        "WPD_DONE",
-        "VD_IN_PROGRESS",
-        "VD_DONE",
-        "ACEP_READY",
-        "ACEP_RUN_DONE"
+        "BLOCKED"
       ]
     },
     "completedSteps": {
@@ -81,12 +73,7 @@
           "ux_audit",
           "generate_execution_pack",
           "run_execution_pack",
-          "visual_implementation_audit",
-          "rpd",
-          "wpd",
-          "vd",
-          "generate_acep",
-          "run_acep"
+          "visual_implementation_audit"
         ]
       }
     },

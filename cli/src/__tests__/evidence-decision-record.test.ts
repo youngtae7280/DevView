@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson, writeText } from './fixtures/workspace'
 
@@ -20,7 +20,7 @@ describe('Evidence Decision Record CLI', () => {
     writeJson(join(workspace, 'runtime-report.json'), validRuntimeReport())
     writeJson(join(workspace, 'apply-report.json'), validSourceEvidence())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -78,7 +78,7 @@ describe('Evidence Decision Record CLI', () => {
     writeJson(join(workspace, 'policy.json'), validPolicy())
     writeJson(join(workspace, 'source-evidence.json'), validSourceEvidence())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -121,7 +121,7 @@ describe('Evidence Decision Record CLI', () => {
       writeJson(join(workspace, 'policy.json'), validPolicy())
       writeJson(join(workspace, 'source-evidence.json'), validSourceEvidence())
 
-      const result = await runPbeCli(
+      const result = await runDevViewCli(
         [
           'graph',
           'read-model',
@@ -157,7 +157,7 @@ describe('Evidence Decision Record CLI', () => {
     writeJson(join(workspace, 'policy.json'), validPolicy())
     writeJson(join(workspace, 'source-evidence.json'), validSourceEvidence())
 
-    const actorResult = await runPbeCli(
+    const actorResult = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -180,7 +180,7 @@ describe('Evidence Decision Record CLI', () => {
       ],
       { cwd: workspace, pluginRoot },
     )
-    const sourceResult = await runPbeCli(
+    const sourceResult = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -203,7 +203,7 @@ describe('Evidence Decision Record CLI', () => {
       ],
       { cwd: workspace, pluginRoot },
     )
-    const reviewerResult = await runPbeCli(
+    const reviewerResult = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -241,7 +241,7 @@ describe('Evidence Decision Record CLI', () => {
     writeJson(join(workspace, 'policy.json'), validPolicy())
     writeJson(join(workspace, 'source-evidence.json'), validSourceEvidence())
 
-    const missingResult = await runPbeCli(
+    const missingResult = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -262,7 +262,7 @@ describe('Evidence Decision Record CLI', () => {
       ],
       { cwd: workspace, pluginRoot },
     )
-    const unknownResult = await runPbeCli(
+    const unknownResult = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -300,7 +300,7 @@ describe('Evidence Decision Record CLI', () => {
       evidenceAccepted: true,
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -335,7 +335,7 @@ describe('Evidence Decision Record CLI', () => {
     writeJson(join(workspace, 'source-evidence.json'), validSourceEvidence())
     const evidenceBefore = readFileSync(join(workspace, 'source-evidence.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -373,7 +373,7 @@ describe('Evidence Decision Record CLI', () => {
     writeJson(join(workspace, 'policy.json'), validPolicy())
     writeText(join(workspace, 'evidence.txt'), 'Manual evidence note for later human review.')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

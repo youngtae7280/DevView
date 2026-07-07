@@ -1,6 +1,6 @@
 import { recommendContext } from '../core/context-recommendation.js'
 import { getAutoflow, getOpenBlockingDecisions, loadProject } from '../core/project.js'
-import { normalizePbeState, PBE_STATES, type PbeState } from '../core/state-machine.js'
+import { normalizeDevViewState, DEVVIEW_STATES, type DevViewState } from '../core/state-machine.js'
 import type { CommandResult, ContextStageOption } from '../core/types.js'
 import type { ValidationIssue } from '../core/types.js'
 import { ExitCode, issue } from '../core/types.js'
@@ -35,7 +35,7 @@ export async function statusCommand(context: CommandContext): Promise<CommandRes
   const autoflow = getAutoflow(project.state)
   const openDecisions = getOpenBlockingDecisions(project.decisionQueue)
   const rawState = autoflow.state
-  const state = normalizePbeState(rawState)
+  const state = normalizeDevViewState(rawState)
   const profile = normalizeProfile(autoflow.profile)
   const profileGuidance = profile ? profileGuidanceByProfile[profile] : null
   const stateHistory = Array.isArray(autoflow.stateHistory)
@@ -103,10 +103,10 @@ export async function statusCommand(context: CommandContext): Promise<CommandRes
   }
 }
 
-type PbeProfile = 'full' | 'lite' | 'bypass'
+type DevViewProfile = 'full' | 'lite' | 'bypass'
 
 interface ProfileGuidance {
-  profile: PbeProfile
+  profile: DevViewProfile
   workflowDepth: 'standard' | 'compact' | 'none'
   summary: string
   mustKeepGuards: string[]
@@ -114,7 +114,7 @@ interface ProfileGuidance {
   limitations: string[]
 }
 
-const profileGuidanceByProfile: Record<PbeProfile, ProfileGuidance> = {
+const profileGuidanceByProfile: Record<DevViewProfile, ProfileGuidance> = {
   lite: {
     profile: 'lite',
     workflowDepth: 'compact',
@@ -168,7 +168,7 @@ const profileGuidanceByProfile: Record<PbeProfile, ProfileGuidance> = {
   },
 }
 
-function normalizeProfile(value: unknown): PbeProfile | null {
+function normalizeProfile(value: unknown): DevViewProfile | null {
   if (value === 'full' || value === 'lite' || value === 'bypass') {
     return value
   }
@@ -191,7 +191,7 @@ function formatProfileGuidance(guidance: ProfileGuidance): string[] {
   return ['No-tracking guidance:', `- ${guidance.summary}`]
 }
 
-const recommendedNextCommandByState: Record<PbeState, string | null> = {
+const recommendedNextCommandByState: Record<DevViewState, string | null> = {
   INIT: 'devview product-intake close or devview product-intake check',
   WAITING_ROOT_CONFIRMATION: 'devview product-intake close',
   PRODUCT_INTAKE_IN_PROGRESS: 'devview product-intake check',
@@ -217,7 +217,7 @@ const recommendedNextCommandByState: Record<PbeState, string | null> = {
   BLOCKED: 'devview validate',
 }
 
-function recommendNextCommand(state: PbeState | null, issues: ValidationIssue[]): string | null {
+function recommendNextCommand(state: DevViewState | null, issues: ValidationIssue[]): string | null {
   const issueCommand = issues.find((entry) => entry.severity === 'error' && entry.nextCommand)?.nextCommand
   if (issueCommand) {
     return issueCommand
@@ -229,8 +229,8 @@ function recommendNextCommand(state: PbeState | null, issues: ValidationIssue[])
 }
 
 function recommendStatusContext(
-  state: PbeState | null,
-  profile: PbeProfile | null,
+  state: DevViewState | null,
+  profile: DevViewProfile | null,
   issues: ValidationIssue[],
 ): ReturnType<typeof recommendContext> {
   const contextStage = contextStageForState(state, issues)
@@ -254,14 +254,14 @@ function recommendStatusContext(
   }
 }
 
-function contextStageForState(state: PbeState | null, issues: ValidationIssue[]): ContextStageOption {
+function contextStageForState(state: DevViewState | null, issues: ValidationIssue[]): ContextStageOption {
   if (!state) {
     return 'start'
   }
   if (state === 'BLOCKED') {
     return isReviewRelatedBlock(issues) ? 'review' : 'start'
   }
-  const mapping: Record<Exclude<PbeState, 'BLOCKED'>, ContextStageOption> = {
+  const mapping: Record<Exclude<DevViewState, 'BLOCKED'>, ContextStageOption> = {
     INIT: 'start',
     WAITING_ROOT_CONFIRMATION: 'start',
     PRODUCT_INTAKE_IN_PROGRESS: 'product-intake',
@@ -311,7 +311,7 @@ function formatPathList(paths: string[]): string {
 function collectStatusBlockingIssues(input: {
   loadIssues: ValidationIssue[]
   rawState: unknown
-  state: PbeState | null
+  state: DevViewState | null
   autoflow: Record<string, unknown>
   openDecisions: Record<string, unknown>[]
   activeRevision: Record<string, unknown> | null
@@ -326,7 +326,7 @@ function collectStatusBlockingIssues(input: {
         severity: 'error',
         file: '.devview/blueprint/devview-state.json',
         message: `Unknown DevView autoflow.state: ${String(input.rawState || '<missing>')}.`,
-        suggestedFix: `Run \`devview validate\` and repair the state to one of: ${PBE_STATES.join(', ')}.`,
+        suggestedFix: `Run \`devview validate\` and repair the state to one of: ${DEVVIEW_STATES.join(', ')}.`,
         nextCommand: 'devview validate',
       }),
     )
@@ -338,7 +338,7 @@ function collectStatusBlockingIssues(input: {
         validator: 'DecisionQueue',
         code: 'BLOCKING_DECISION_OPEN',
         severity: 'error',
-        file: '.pbe/control/decision-queue.json',
+        file: '.devview/control/decision-queue.json',
         nodeId: isString(decision.id) ? decision.id : undefined,
         message: `Blocking decision is open: ${String(decision.question || decision.reason || decision.id || 'unknown decision')}.`,
         suggestedFix: 'Resolve the blocking decision before continuing downstream DevView stages.',
@@ -417,7 +417,7 @@ function formatTransition(entry: Record<string, unknown> | null): string {
   if (!entry) {
     return 'none'
   }
-  const from = normalizePbeState(entry.from) || entry.from || '?'
-  const to = normalizePbeState(entry.to) || entry.to || '?'
+  const from = normalizeDevViewState(entry.from) || entry.from || '?'
+  const to = normalizeDevViewState(entry.to) || entry.to || '?'
   return `${String(from)} -> ${String(to)} via ${String(entry.command || '?')}`
 }

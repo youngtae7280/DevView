@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { runPreflightSessionChainFile, type PreflightSessionStageExecutors } from '../core/preflight-session-chain'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
@@ -20,7 +20,7 @@ describe('Preflight session chain CLI', () => {
     const outputDir = join(workspace, 'preflight')
     const markdownPath = join(workspace, 'preflight-summary.md')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -77,7 +77,7 @@ describe('Preflight session chain CLI', () => {
       graphTraversalAllowed: true,
     })
 
-    const result = await runPbeCli(baseArgs('candidate.json'), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs('candidate.json'), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
     const report = JSON.parse(readFileSync(join(workspace, '.tmp/preflight/preflight-session-chain.json'), 'utf8'))
 
@@ -93,7 +93,7 @@ describe('Preflight session chain CLI', () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, 'candidate.json'), calibrationCandidate())
 
-    const result = await runPbeCli(baseArgs('candidate.json'), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs('candidate.json'), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
     const report = JSON.parse(readFileSync(join(workspace, '.tmp/preflight/preflight-session-chain.json'), 'utf8'))
 
@@ -113,7 +113,7 @@ describe('Preflight session chain CLI', () => {
       status: 'request-ir-candidate-schema-previewed',
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -139,7 +139,7 @@ describe('Preflight session chain CLI', () => {
     writeJson(join(workspace, 'candidate.json'), calibrationCandidate())
     const candidateBefore = readFileSync(join(workspace, 'candidate.json'), 'utf8')
 
-    const result = await runPbeCli([...baseArgs('candidate.json'), '--markdown', 'candidate.json'], {
+    const result = await runDevViewCli([...baseArgs('candidate.json'), '--markdown', 'candidate.json'], {
       cwd: workspace,
       pluginRoot,
     })

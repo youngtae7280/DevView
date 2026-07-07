@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -24,7 +24,7 @@ describe('Runtime Evidence Satisfaction Binding Readiness CLI', () => {
     )
     writeJson(join(workspace, 'instruction-pack.json'), validInstructionPack())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -84,7 +84,7 @@ describe('Runtime Evidence Satisfaction Binding Readiness CLI', () => {
     )
     writeJson(join(workspace, 'instruction-pack.json'), validInstructionPack())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -121,7 +121,7 @@ describe('Runtime Evidence Satisfaction Binding Readiness CLI', () => {
       writeJson(join(workspace, 'accepted-evidence.json'), validAcceptedEvidence(acceptedOverride))
       writeJson(join(workspace, 'instruction-pack.json'), validInstructionPack())
 
-      const result = await runPbeCli(
+      const result = await runDevViewCli(
         [
           'graph',
           'read-model',
@@ -158,7 +158,7 @@ describe('Runtime Evidence Satisfaction Binding Readiness CLI', () => {
       writeJson(join(workspace, 'accepted-evidence.json'), validAcceptedEvidence({ [flag]: true }))
       writeJson(join(workspace, 'instruction-pack.json'), validInstructionPack())
 
-      const result = await runPbeCli(
+      const result = await runDevViewCli(
         [
           'graph',
           'read-model',
@@ -187,7 +187,7 @@ describe('Runtime Evidence Satisfaction Binding Readiness CLI', () => {
     writeJson(join(workspace, 'accepted-evidence.json'), validAcceptedEvidence())
     writeJson(join(workspace, 'instruction-pack.json'), validInstructionPack())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -220,7 +220,7 @@ describe('Runtime Evidence Satisfaction Binding Readiness CLI', () => {
     writeJson(join(pathMismatchWorkspace, 'accepted-evidence.json'), validAcceptedEvidence())
     writeJson(join(pathMismatchWorkspace, 'instruction-pack.json'), validInstructionPack())
 
-    const pathMismatch = await runPbeCli(
+    const pathMismatch = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -252,7 +252,7 @@ describe('Runtime Evidence Satisfaction Binding Readiness CLI', () => {
     )
     writeJson(join(hashMismatchWorkspace, 'instruction-pack.json'), validInstructionPack())
 
-    const hashMismatch = await runPbeCli(
+    const hashMismatch = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -312,7 +312,7 @@ describe('Runtime Evidence Satisfaction Binding Readiness CLI', () => {
         runtimeEvidenceSatisfied: unsafeTrue,
       })
 
-      const result = await runPbeCli(
+      const result = await runDevViewCli(
         [
           'graph',
           'read-model',
@@ -344,7 +344,7 @@ describe('Runtime Evidence Satisfaction Binding Readiness CLI', () => {
     writeJson(join(workspace, 'instruction-pack.json'), validInstructionPack())
     const instructionPackBefore = readFileSync(join(workspace, 'instruction-pack.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "id": "WG-001",
   "generatedFrom": [
-    ".pbe/blueprint/requirement-tree.json",
-    ".pbe/blueprint/work-design.json",
-    ".pbe/blueprint/ui-ux-confirmation.md"
+    ".devview/blueprint/requirement-tree.json",
+    ".devview/blueprint/work-design.json",
+    ".devview/blueprint/ui-ux-confirmation.md"
   ],
   "moduleBoundaryCheck": {
     "status": "complete",

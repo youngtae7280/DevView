@@ -9,7 +9,7 @@ import {
   validateProductPatchTree,
   validateState,
   validateVisualDesign,
-} from '../validators/pbe-validators.js'
+} from '../validators/devview-validators.js'
 import { type CommandContext, runNodeScript } from './shared.js'
 
 export async function validateCommand(context: CommandContext): Promise<CommandResult> {
@@ -44,7 +44,7 @@ export async function validateCommand(context: CommandContext): Promise<CommandR
     }
   }
 
-  if (existsSync(path.join(context.options.root, '.devview')) || existsSync(path.join(context.options.root, '.pbe'))) {
+  if (existsSync(path.join(context.options.root, '.devview'))) {
     issues.push(...(await validateState(context.options.root)))
     issues.push(...(await validateAcceptedActors(context.options.root)))
     issues.push(...(await validateChangeTree(context.options.root)))

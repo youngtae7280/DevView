@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -16,10 +16,13 @@ describe('DevView Hook session manifest preview CLI', () => {
     const workspace = createWorkspace()
     writeManifestInputs(workspace)
 
-    const result = await runPbeCli([...baseArgs(), '--output', '.tmp/session.json', '--markdown', '.tmp/session.md'], {
-      cwd: workspace,
-      pluginRoot,
-    })
+    const result = await runDevViewCli(
+      [...baseArgs(), '--output', '.tmp/session.json', '--markdown', '.tmp/session.md'],
+      {
+        cwd: workspace,
+        pluginRoot,
+      },
+    )
 
     const payload = JSON.parse(result.stdout)
     const written = JSON.parse(readFileSync(join(workspace, '.tmp/session.json'), 'utf8'))
@@ -46,7 +49,7 @@ describe('DevView Hook session manifest preview CLI', () => {
     const workspace = createWorkspace()
     writeManifestInputs(workspace, { userPromptContext: { artifactRole: 'wrong-role', status: 'wrong-status' } })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -65,7 +68,7 @@ describe('DevView Hook session manifest preview CLI', () => {
       },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -81,7 +84,7 @@ describe('DevView Hook session manifest preview CLI', () => {
       scriptTemplates: { hooksActive: true },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -95,14 +98,14 @@ describe('DevView Hook session manifest preview CLI', () => {
     writeManifestInputs(workspace)
     const before = readFileSync(join(workspace, 'generated/templates.json'), 'utf8')
 
-    const active = await runPbeCli([...baseArgs(), '--output', '.codex/hooks/session.json'], {
+    const active = await runDevViewCli([...baseArgs(), '--output', '.codex/hooks/session.json'], {
       cwd: workspace,
       pluginRoot,
     })
     expect(active.exitCode).toBe(ExitCode.ValidationFailed)
     expect(JSON.parse(active.stderr).issues[0].message).toContain('active hook/config location')
 
-    const unsafeMarkdown = await runPbeCli(
+    const unsafeMarkdown = await runDevViewCli(
       [...baseArgs(), '--output', '.tmp/session.json', '--markdown', 'generated/templates.json'],
       { cwd: workspace, pluginRoot },
     )

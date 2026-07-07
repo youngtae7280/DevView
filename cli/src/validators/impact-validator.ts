@@ -19,7 +19,7 @@ export async function validateImpactTree(
             severity: 'error',
             file: defaultArtifacts.impactTree,
             message: 'Impact Tree is missing.',
-            suggestedFix: 'Run `devview init` or restore .pbe/control/impact-tree.json before impact analysis.',
+            suggestedFix: 'Run `devview init` or restore .devview/control/impact-tree.json before impact analysis.',
           }),
         ]
       : []

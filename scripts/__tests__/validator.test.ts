@@ -16,7 +16,7 @@ afterEach(() => {
 describe('DevView validator', () => {
   it('rejects parallel tasks that declare the same expected file', () => {
     const workspace = createValidatorWorkspace()
-    writePbeFixture(workspace, {
+    writeDevViewFixture(workspace, {
       firstExpectedFile: 'src/features/shared.ts',
       secondExpectedFile: './src/features/shared.ts',
     })
@@ -29,7 +29,7 @@ describe('DevView validator', () => {
 
   it('accepts parallel tasks with distinct expected files', () => {
     const workspace = createValidatorWorkspace()
-    writePbeFixture(workspace, {
+    writeDevViewFixture(workspace, {
       firstExpectedFile: 'src/features/one.ts',
       secondExpectedFile: 'src/features/two.ts',
     })
@@ -42,7 +42,7 @@ describe('DevView validator', () => {
 
   it('rejects submitted review when the root requirement is still interviewing', () => {
     const workspace = createValidatorWorkspace()
-    writePbeFixture(
+    writeDevViewFixture(
       workspace,
       {
         firstExpectedFile: 'src/features/one.ts',
@@ -57,13 +57,13 @@ describe('DevView validator', () => {
     const result = runValidator(workspace)
 
     expect(result.status).toBe(1)
-    expect(result.output).toContain('RPD_INCOMPLETE_DOWNSTREAM_BLOCKED')
+    expect(result.output).toContain('PRODUCT_INTAKE_INCOMPLETE_DOWNSTREAM_BLOCKED')
     expect(result.output).toContain('Requirement node REQ-1 is interviewing')
   })
 
   it('rejects downstream execution while a blocking decision is open', () => {
     const workspace = createValidatorWorkspace()
-    writePbeFixture(workspace, {
+    writeDevViewFixture(workspace, {
       firstExpectedFile: 'src/features/one.ts',
       secondExpectedFile: 'src/features/two.ts',
     })
@@ -72,7 +72,7 @@ describe('DevView validator', () => {
     const result = runValidator(workspace)
 
     expect(result.status).toBe(1)
-    expect(result.output).toContain('RPD_INCOMPLETE_DOWNSTREAM_BLOCKED')
+    expect(result.output).toContain('PRODUCT_INTAKE_INCOMPLETE_DOWNSTREAM_BLOCKED')
     expect(result.output).toContain('Decision DEC-ROOT is open with blockingLevel=blocking')
   })
 
@@ -85,9 +85,6 @@ describe('DevView validator', () => {
   })
 
   it.each([
-    ['pbe gate code-start', 'SKILL_FORBIDDEN_LEGACY_GATE'],
-    ['pbe gate review-result', 'SKILL_FORBIDDEN_LEGACY_GATE'],
-    ['pbe gate accept', 'SKILL_FORBIDDEN_LEGACY_GATE'],
     ['Set autoflow.nextStep to review_result.', 'SKILL_FORBIDDEN_STATE_EDIT'],
     ['Add run_revision to devview-state.json.autoflow.completedSteps.', 'SKILL_FORBIDDEN_STATE_EDIT'],
     ['Continue automatically to devview-run-revision.', 'SKILL_FORBIDDEN_LEGACY_REVISION_ROUTE'],
@@ -147,7 +144,7 @@ function runValidator(workspace: string) {
   }
 }
 
-function writePbeFixture(
+function writeDevViewFixture(
   workspace: string,
   files: {
     firstExpectedFile: string
@@ -158,47 +155,47 @@ function writePbeFixture(
     deliveryStatus?: string
   } = {},
 ) {
-  const blueprintRoot = join(workspace, '.pbe', 'blueprint')
-  const acepRoot = join(workspace, '.pbe', 'codex-execution-pack')
-  const taskRoot = join(acepRoot, '11-task-cards')
+  const blueprintRoot = join(workspace, '.devview', 'blueprint')
+  const executionPackRoot = join(workspace, '.devview', 'codex-execution-pack')
+  const taskRoot = join(executionPackRoot, '11-task-cards')
   mkdirSync(blueprintRoot, { recursive: true })
   mkdirSync(taskRoot, { recursive: true })
 
-  const pbeState = {
+  const devviewState = {
     schemaVersion: 1,
-    stage: 'acep_ready',
-    mode: 'acep_generation',
+    stage: 'execution_pack_ready',
+    mode: 'execution_pack_generation',
     artifacts: {
-      devviewRoutingContract: '.pbe/blueprint/devview-routing-contract.md',
+      devviewRoutingContract: '.devview/blueprint/devview-routing-contract.md',
     },
     autoflow: {
       schemaVersion: 1,
       enabled: true,
       profile: 'full',
-      state: 'ACEP_READY',
+      state: 'EXECUTION_PACK_READY',
       completedSteps: [
         'start',
-        'rpd',
-        'wpd',
-        'vd',
+        'product_intake',
+        'work_planning',
+        'verification_design',
         'dependency_impact_audit',
         'plan_execution',
         'coverage_audit',
         'ux_audit',
-        'generate_acep',
+        'generate_execution_pack',
       ],
       currentGate: null,
-      nextStep: 'run_acep',
+      nextStep: 'run_execution_pack',
       deterministicSteps: [
-        'rpd',
-        'wpd',
-        'vd',
+        'product_intake',
+        'work_planning',
+        'verification_design',
         'dependency_impact_audit',
         'plan_execution',
         'coverage_audit',
         'ux_audit',
-        'generate_acep',
-        'run_acep',
+        'generate_execution_pack',
+        'run_execution_pack',
       ],
       humanGates: [
         'ui_ux_confirm',
@@ -210,10 +207,10 @@ function writePbeFixture(
     },
   } as Record<string, unknown>
   if (options.deliveryStatus) {
-    pbeState.deliveryStatus = options.deliveryStatus
+    devviewState.deliveryStatus = options.deliveryStatus
   }
-  const legacyStateFile = ['pbe', 'state.json'].join('-')
-  writeJson(join(blueprintRoot, legacyStateFile), pbeState)
+  const stateFile = 'devview-state.json'
+  writeJson(join(blueprintRoot, stateFile), devviewState)
   writeJson(join(blueprintRoot, 'requirement-tree.json'), {
     schemaVersion: 1,
     rootNodeId: 'REQ-1',
@@ -272,18 +269,18 @@ function writePbeFixture(
   writeJson(join(blueprintRoot, 'traceability-matrix.json'), traceability)
 
   for (const file of requiredAcepMarkdownFiles) {
-    writeFileSync(join(acepRoot, file), `# ${file}\n`, 'utf8')
+    writeFileSync(join(executionPackRoot, file), `# ${file}\n`, 'utf8')
   }
   writeFileSync(join(taskRoot, 'task-a.md'), '# Task A\n\n## Execution Strategy\n', 'utf8')
   writeFileSync(join(taskRoot, 'task-b.md'), '# Task B\n\n## Execution Strategy\n', 'utf8')
   writeFileSync(join(taskRoot, 'task-int.md'), '# Task INT\n\n## Execution Strategy\n', 'utf8')
 
-  writeJson(join(acepRoot, '04-traceability-matrix.json'), traceability)
-  writeJson(join(acepRoot, '05-ui-ux-spec.json'), {
+  writeJson(join(executionPackRoot, '04-traceability-matrix.json'), traceability)
+  writeJson(join(executionPackRoot, '05-ui-ux-spec.json'), {
     schemaVersion: 1,
     screens: [],
   })
-  writeJson(join(acepRoot, 'execution-manifest.json'), {
+  writeJson(join(executionPackRoot, 'execution-manifest.json'), {
     schemaVersion: 1,
     autonomyLevel: 'autonomous_until_stop',
     executionStrategy: 'staged_parallel',
@@ -326,7 +323,7 @@ function writePbeFixture(
 }
 
 function writeBlockingDecisionQueue(workspace: string) {
-  const controlRoot = join(workspace, '.pbe', 'control')
+  const controlRoot = join(workspace, '.devview', 'control')
   mkdirSync(controlRoot, { recursive: true })
   writeJson(join(controlRoot, 'decision-queue.json'), {
     version: '0.2.0-tree-control',

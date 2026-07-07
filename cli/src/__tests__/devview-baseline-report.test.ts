@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -16,7 +16,7 @@ describe('DevView core baseline freeze report CLI', () => {
     const workspace = createWorkspace()
     writeBaselineInputs(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [...baseArgs(), '--output', '.tmp/baseline.json', '--markdown', '.tmp/baseline.md'],
       { cwd: workspace, pluginRoot },
     )
@@ -72,7 +72,7 @@ describe('DevView core baseline freeze report CLI', () => {
     const workspace = createWorkspace()
     writeBaselineInputs(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -104,7 +104,7 @@ describe('DevView core baseline freeze report CLI', () => {
     writeBaselineInputs(workspace)
     const before = readFileSync(join(workspace, 'generated/roadmap.json'), 'utf8')
 
-    const result = await runPbeCli([...baseArgs(), '--output', 'generated/roadmap.json'], {
+    const result = await runDevViewCli([...baseArgs(), '--output', 'generated/roadmap.json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -120,7 +120,7 @@ describe('DevView core baseline freeze report CLI', () => {
     writeBaselineInputs(workspace)
     const before = readFileSync(join(workspace, 'generated/frontend-chain.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [...baseArgs(), '--output', '.tmp/baseline.json', '--markdown', 'generated/frontend-chain.json'],
       { cwd: workspace, pluginRoot },
     )
@@ -142,7 +142,7 @@ describe('DevView core baseline freeze report CLI', () => {
       },
     })
 
-    const result = await runPbeCli([...baseArgs(), '--output', '.tmp/baseline.json'], {
+    const result = await runDevViewCli([...baseArgs(), '--output', '.tmp/baseline.json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -161,7 +161,7 @@ describe('DevView core baseline freeze report CLI', () => {
       runtimeEvidenceSatisfied: true,
     })
 
-    const result = await runPbeCli([...baseArgs(), '--output', '.tmp/baseline.json'], {
+    const result = await runDevViewCli([...baseArgs(), '--output', '.tmp/baseline.json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -187,7 +187,7 @@ describe('DevView core baseline freeze report CLI', () => {
       graphSourceMutated: false,
     })
 
-    const result = await runPbeCli([...baseArgs(), '--output', '.tmp/baseline.json'], {
+    const result = await runDevViewCli([...baseArgs(), '--output', '.tmp/baseline.json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -203,7 +203,7 @@ describe('DevView core baseline freeze report CLI', () => {
     writeBaselineInputs(workspace)
     const before = readFileSync(join(workspace, 'generated/runtime-evidence-satisfaction-readiness.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         ...baseArgs(),
         '--output',

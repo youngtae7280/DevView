@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson, writeText } from './fixtures/workspace'
 
@@ -16,7 +16,7 @@ describe('DevView UserPromptSubmit context preview CLI', () => {
     const workspace = createWorkspace()
     writeContextInputs(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -70,7 +70,7 @@ describe('DevView UserPromptSubmit context preview CLI', () => {
       frontendChain: { artifactRole: 'wrong-role', status: 'wrong-status' },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -90,7 +90,7 @@ describe('DevView UserPromptSubmit context preview CLI', () => {
       },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -107,7 +107,7 @@ describe('DevView UserPromptSubmit context preview CLI', () => {
       instructionPack: { runtimeEvidenceSatisfied: true },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -122,7 +122,7 @@ describe('DevView UserPromptSubmit context preview CLI', () => {
     writeContextInputs(workspace)
     const before = readFileSync(join(workspace, 'generated/frontend-chain.json'), 'utf8')
 
-    const overwrite = await runPbeCli([...baseArgs(), '--output', 'generated/frontend-chain.json'], {
+    const overwrite = await runDevViewCli([...baseArgs(), '--output', 'generated/frontend-chain.json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -131,7 +131,7 @@ describe('DevView UserPromptSubmit context preview CLI', () => {
     expect(overwritePayload.issues[0].message).toContain('would overwrite the source frontend chain report')
     expect(readFileSync(join(workspace, 'generated/frontend-chain.json'), 'utf8')).toBe(before)
 
-    const samePath = await runPbeCli(
+    const samePath = await runDevViewCli(
       [...baseArgs(), '--output', '.tmp/context.json', '--markdown', '.tmp/context.json'],
       {
         cwd: workspace,
@@ -148,7 +148,7 @@ describe('DevView UserPromptSubmit context preview CLI', () => {
     writeContextInputs(workspace)
     const markdownBefore = readFileSync(join(workspace, 'generated/instruction-pack.md'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [...baseArgs(), '--output', '.tmp/context.json', '--markdown', 'generated/instruction-pack.md'],
       { cwd: workspace, pluginRoot },
     )
@@ -235,9 +235,9 @@ function writeContextInputs(
     scopeEnforced: false,
     ciEnforcementEnabled: false,
     taskSummary: 'Add Todo App runtime evidence without touching production source.',
-    allowedScope: [{ id: 'allowed-scope-ev-1', paths: ['.pbe/evidence/test-results/todo-add.txt'] }],
+    allowedScope: [{ id: 'allowed-scope-ev-1', paths: ['.devview/evidence/test-results/todo-add.txt'] }],
     forbiddenScope: [{ id: 'forbidden-production-source', paths: ['unresolved:production-source-changes'] }],
-    requiredEvidence: [{ id: 'EV-1', artifact: '.pbe/evidence/test-results/todo-add.txt' }],
+    requiredEvidence: [{ id: 'EV-1', artifact: '.devview/evidence/test-results/todo-add.txt' }],
     outputRequirements: [{ id: 'OR-1', requiredReportTarget: 'Report evidence status without satisfaction claim.' }],
     stopConditions: [{ id: 'STOP-1', condition: 'Stop if production source changes are required.' }],
     knownRisks: [{ id: 'IM-001', mitigation: 'Watch for scope drift.' }],

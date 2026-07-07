@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { generateContractCompilerInput } from '../core/contract-input-generator'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
@@ -142,7 +142,7 @@ describe('Contract compiler input CLI', () => {
     const selectedSliceBefore = readFileSync(join(workspace, 'selected-graph-slice.json'), 'utf8')
     const graphSourceBefore = readFileSync(join(workspace, 'graph-source.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -246,7 +246,7 @@ function validGraphAwareValidation(): Record<string, unknown> {
 
 function validRequestIrCandidate(): Record<string, unknown> {
   return {
-    requestText: 'Todo App에서 add 버튼 동작 증거만 추가해줘. production source는 건드리지 마.',
+    requestText: 'Todo App?�서 add 버튼 ?�작 증거�?추�??�줘. production source??건드리�? �?',
     intentSummaryCandidate: 'Add Todo App runtime evidence only without production source edits.',
     forbiddenScopeIntentCandidate: [
       'production source changes',

@@ -1,9 +1,9 @@
 import { defaultArtifacts } from '../core/project.js'
-import { PBE_STATE } from '../core/state-machine.js'
-import { transitionPbeState } from '../core/state-transition.js'
+import { DEVVIEW_STATE } from '../core/state-machine.js'
+import { transitionDevViewState } from '../core/state-transition.js'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { hasErrors, issue } from '../core/types.js'
-import { validateRpd } from '../validators/pbe-validators.js'
+import { validateProductIntake } from '../validators/devview-validators.js'
 import {
   type CommandContext,
   hasUiWork,
@@ -27,16 +27,16 @@ export async function uiApproveCommand(context: CommandContext): Promise<Command
       }),
     )
   }
-  issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
+  issues.push(...(await validateProductIntake(context.options.root, { completionMode: true })))
   issues.push(...uiUxConfirmationArtifactIssues(context.options.root))
   if (hasErrors(issues)) {
     return transitionFailed('ui approve', 'UI/UX approval failed. State was not changed.', issues)
   }
   const visualWork = hasVisualWork(context.options.root)
-  return transitionPbeState(
+  return transitionDevViewState(
     context.options.root,
     'ui approve',
-    [PBE_STATE.WAITING_UI_UX_CONFIRM, PBE_STATE.UI_UX_APPROVED],
+    [DEVVIEW_STATE.WAITING_UI_UX_CONFIRM, DEVVIEW_STATE.UI_UX_APPROVED],
     {
       completedSteps: ['ui_ux_confirm'],
       stage: 'ui_ux_confirm',

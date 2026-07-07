@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "status": "complete",
   "generatedFrom": [
-    ".pbe/blueprint/requirement-tree.json",
-    ".pbe/blueprint/work-design.json",
-    ".pbe/blueprint/work-graph.json",
-    ".pbe/blueprint/verification-design.json",
-    ".pbe/blueprint/foundation-contract.md"
+    ".devview/blueprint/requirement-tree.json",
+    ".devview/blueprint/work-design.json",
+    ".devview/blueprint/work-graph.json",
+    ".devview/blueprint/verification-design.json",
+    ".devview/blueprint/foundation-contract.md"
   ],
   "futureItems": [
     {

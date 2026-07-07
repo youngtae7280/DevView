@@ -33,7 +33,7 @@ export function runDevViewLayoutValidator({ root, requireReadmeTerms = true }) {
     }
   }
 
-  const storageRoot = dirExists(root, '.devview') ? '.devview' : dirExists(root, '.pbe') ? '.pbe' : null
+  const storageRoot = dirExists(root, '.devview') ? '.devview' : null
   if (!storageRoot) {
     return issues
   }
@@ -55,7 +55,7 @@ export function runDevViewLayoutValidator({ root, requireReadmeTerms = true }) {
           file: relativePath,
           code: 'DEVVIEW_TARGET_DIR_MISSING',
           message: `${relativePath}/ is missing from an existing DevView workspace.`,
-          suggestedFix: `Create ${relativePath}/ or repair the DevView/legacy migration input layout.`,
+          suggestedFix: `Create ${relativePath}/ or repair the DevView layout.`,
         }),
       )
     }

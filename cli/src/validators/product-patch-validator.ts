@@ -23,7 +23,7 @@ export async function validateProductPatchTree(
             severity: 'error',
             file: defaultArtifacts.productPatchTree,
             message: 'Product Patch Tree is missing.',
-            suggestedFix: 'Run `devview init` or restore .pbe/control/product-patch-tree.json.',
+            suggestedFix: 'Run `devview init` or restore .devview/control/product-patch-tree.json.',
           }),
         ]
       : []

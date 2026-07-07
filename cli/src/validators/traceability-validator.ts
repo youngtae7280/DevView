@@ -18,7 +18,7 @@ import {
 
 export const traceabilityStages = ['work-planning', 'verification-design', 'execution', 'review', 'accept'] as const
 export type TraceabilityStage = (typeof traceabilityStages)[number]
-export type TraceabilityStageInput = TraceabilityStage | 'wpd' | 'vd'
+export type TraceabilityStageInput = TraceabilityStage
 
 export interface TraceabilityOptions {
   stage?: TraceabilityStageInput
@@ -498,11 +498,5 @@ function stageAtLeast(stage: TraceabilityStage | undefined, minimum: Traceabilit
 }
 
 function normalizeTraceabilityStage(stage: TraceabilityStageInput | undefined): TraceabilityStage | undefined {
-  if (stage === 'wpd') {
-    return 'work-planning'
-  }
-  if (stage === 'vd') {
-    return 'verification-design'
-  }
   return stage
 }

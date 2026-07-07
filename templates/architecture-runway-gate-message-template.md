@@ -13,8 +13,8 @@
 - Required foundation or high-impact future dependency identified.
 
 ?占쎌꽦/媛깆떊???占쎌텧占?
-- .pbe/blueprint/foundation-contract.md
-- .pbe/blueprint/source-of-truth-matrix.md
+- .devview/blueprint/foundation-contract.md
+- .devview/blueprint/source-of-truth-matrix.md
 - .devview/blueprint/devview-state.json
 
 寃占?

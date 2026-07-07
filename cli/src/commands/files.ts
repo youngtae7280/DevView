@@ -1,5 +1,5 @@
 import type { CommandResult } from '../core/types.js'
-import { validateFileChanges } from '../validators/pbe-validators.js'
+import { validateFileChanges } from '../validators/devview-validators.js'
 import { checkResult, type CommandContext } from './shared.js'
 
 export async function filesCheckCommand(context: CommandContext): Promise<CommandResult> {

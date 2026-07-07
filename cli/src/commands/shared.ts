@@ -1,4 +1,4 @@
-﻿import { execFileSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import {
@@ -9,7 +9,7 @@ import {
   type ArtifactKey,
 } from '../core/project.js'
 import { readJsonSafe, relativePath } from '../core/fs.js'
-import { normalizePbeState, PBE_STATE, pbeStates, type PbeState } from '../core/state-machine.js'
+import { normalizeDevViewState, DEVVIEW_STATE, devviewStates, type DevViewState } from '../core/state-machine.js'
 import type { CliEnvironment, CliOptions, CommandResult, ValidationIssue } from '../core/types.js'
 import { ExitCode, hasErrors, issue } from '../core/types.js'
 
@@ -94,8 +94,8 @@ export function implementationScopeIssues(state: Record<string, unknown> | null)
   const autoflow =
     typeof state?.autoflow === 'object' && state.autoflow !== null ? (state.autoflow as Record<string, unknown>) : {}
   const rawStateValue = String(autoflow.state || '')
-  const stateValue = normalizePbeState(rawStateValue)
-  if (stateValue && statesFrom(PBE_STATE.SCOPE_SELECTED).includes(stateValue)) {
+  const stateValue = normalizeDevViewState(rawStateValue)
+  if (stateValue && statesFrom(DEVVIEW_STATE.SCOPE_SELECTED).includes(stateValue)) {
     return []
   }
   return [
@@ -168,8 +168,8 @@ export function uiUxApprovalIssues(root: string, state: Record<string, unknown> 
   const autoflow =
     typeof state?.autoflow === 'object' && state.autoflow !== null ? (state.autoflow as Record<string, unknown>) : {}
   const rawState = String(autoflow.state || '')
-  const currentState = normalizePbeState(rawState)
-  const statesAfterApproval = statesFrom(PBE_STATE.UI_UX_APPROVED)
+  const currentState = normalizeDevViewState(rawState)
+  const statesAfterApproval = statesFrom(DEVVIEW_STATE.UI_UX_APPROVED)
   if (currentState && statesAfterApproval.includes(currentState)) {
     return []
   }
@@ -200,7 +200,7 @@ export function uiUxConfirmationArtifactIssues(root: string): ValidationIssue[] 
         file: defaultArtifacts.uiUxConfirmation,
         message: 'UI/UX approval requires a confirmation artifact before the state can advance.',
         suggestedFix:
-          'Create .pbe/blueprint/ui-ux-confirmation.md from the user-approved preview, then rerun `devview ui approve`.',
+          'Create .devview/blueprint/ui-ux-confirmation.md from the user-approved preview, then rerun `devview ui approve`.',
       }),
     ]
   }
@@ -314,8 +314,8 @@ export function summarizeCreated(root: string, files: string[]): string[] {
   return files.map((file) => relativePath(root, path.join(root, file)))
 }
 
-export function statesFrom(state: PbeState): PbeState[] {
-  const progressStates = pbeStates.filter((candidate) => !['BLOCKED', 'REVISION_REQUESTED'].includes(candidate))
+export function statesFrom(state: DevViewState): DevViewState[] {
+  const progressStates = devviewStates.filter((candidate) => !['BLOCKED', 'REVISION_REQUESTED'].includes(candidate))
   const index = progressStates.indexOf(state)
   return index === -1 ? [] : [...progressStates.slice(index)]
 }

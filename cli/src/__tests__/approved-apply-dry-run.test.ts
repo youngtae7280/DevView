@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -186,7 +186,7 @@ function workspaceWithReadyInputs(
 async function runDryRun(
   workspace: string,
   options: { includeMutationPolicy?: boolean; markdown?: string } = {},
-): Promise<Awaited<ReturnType<typeof runPbeCli>>> {
+): Promise<Awaited<ReturnType<typeof runDevViewCli>>> {
   const args = [
     'graph',
     'read-model',
@@ -204,7 +204,7 @@ async function runDryRun(
     args.push('--mutation-policy', 'mutation-policy.json')
   }
   args.push('--output', '.tmp/dry-run.json', '--markdown', options.markdown ?? '.tmp/dry-run.md', '--json')
-  return runPbeCli(args, { cwd: workspace, pluginRoot })
+  return runDevViewCli(args, { cwd: workspace, pluginRoot })
 }
 
 function validDecisionRecord(input: { decisionValue?: string; decisionKind?: string } = {}): Record<string, unknown> {

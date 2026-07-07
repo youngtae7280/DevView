@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -16,7 +16,7 @@ describe('DevView Hook script bundle materializer CLI', () => {
     const workspace = createWorkspace()
     writeBundleInputs(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [...baseArgs(), '--bundle-dir', '.tmp/bundle', '--output', '.tmp/bundle.json', '--markdown', '.tmp/bundle.md'],
       { cwd: workspace, pluginRoot },
     )
@@ -51,7 +51,7 @@ describe('DevView Hook script bundle materializer CLI', () => {
     const workspace = createWorkspace()
     writeBundleInputs(workspace, { sessionManifest: { strictModeEnabled: true } })
 
-    const result = await runPbeCli([...baseArgs(), '--bundle-dir', '.tmp/bundle'], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli([...baseArgs(), '--bundle-dir', '.tmp/bundle'], { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -66,14 +66,14 @@ describe('DevView Hook script bundle materializer CLI', () => {
     writeBundleInputs(workspace)
     const before = readFileSync(join(workspace, 'generated/session.json'), 'utf8')
 
-    const activeOutput = await runPbeCli([...baseArgs(), '--output', '.codex/hooks/bundle.json'], {
+    const activeOutput = await runDevViewCli([...baseArgs(), '--output', '.codex/hooks/bundle.json'], {
       cwd: workspace,
       pluginRoot,
     })
     expect(activeOutput.exitCode).toBe(ExitCode.ValidationFailed)
     expect(JSON.parse(activeOutput.stderr).issues[0].message).toContain('active hook/config location')
 
-    const unsafeMarkdown = await runPbeCli(
+    const unsafeMarkdown = await runDevViewCli(
       [
         ...baseArgs(),
         '--bundle-dir',
@@ -98,7 +98,7 @@ describe('DevView Hook script bundle materializer CLI', () => {
     const workspace = createWorkspace()
     writeBundleInputs(workspace)
 
-    const result = await runPbeCli([...baseArgs(), '--bundle-dir', '.codex/hooks'], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli([...baseArgs(), '--bundle-dir', '.codex/hooks'], { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)

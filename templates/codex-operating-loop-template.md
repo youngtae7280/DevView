@@ -15,7 +15,7 @@
 11. Add or update tests.
 12. Run focused validation.
 13. If UI changed, update UI/UX evidence notes.
-14. Attach evidence to `.pbe/evidence/evidence-tree.json` when available.
+14. Attach evidence to `.devview/evidence/evidence-tree.json` when available.
 15. Update coverage notes.
 16. Fix failures.
 17. Move to the next task only when task acceptance criteria and evidence requirements are satisfied.

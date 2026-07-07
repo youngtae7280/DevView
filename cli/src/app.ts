@@ -11,7 +11,10 @@ export interface CliRunResult {
   stderr: string
 }
 
-export async function runPbeCli(argv: string[], env: CliEnvironment = { cwd: process.cwd() }): Promise<CliRunResult> {
+export async function runDevViewCli(
+  argv: string[],
+  env: CliEnvironment = { cwd: process.cwd() },
+): Promise<CliRunResult> {
   const pluginRoot = env.pluginRoot || findPluginRoot(import.meta.url)
   const parsed = parseArgs(argv, env.cwd)
   if ('error' in parsed) {
@@ -1065,9 +1068,6 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
           'product-intake',
           'work-planning',
           'verification-design',
-          'rpd',
-          'wpd',
-          'vd',
           'execution',
           'review',
           'revision',

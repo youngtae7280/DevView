@@ -12,10 +12,10 @@
 - Dependency Impact Audit completed.
 
 ?占쎌꽦/媛깆떊???占쎌텧占?
-- .pbe/blueprint/dependency-impact-audit.md
-- .pbe/blueprint/dependency-impact-audit.json
+- .devview/blueprint/dependency-impact-audit.md
+- .devview/blueprint/dependency-impact-audit.json
 - .devview/blueprint/devview-state.json
-- .pbe/blueprint/source-of-truth-matrix.md
+- .devview/blueprint/source-of-truth-matrix.md
 
 寃占?
 - {validation_summary}

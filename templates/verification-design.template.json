@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "generatedFrom": [
-    ".pbe/blueprint/requirement-tree.json",
-    ".pbe/blueprint/work-design.json",
-    ".pbe/blueprint/work-roadmap.md"
+    ".devview/blueprint/requirement-tree.json",
+    ".devview/blueprint/work-design.json",
+    ".devview/blueprint/work-roadmap.md"
   ],
   "verificationItems": [
     {

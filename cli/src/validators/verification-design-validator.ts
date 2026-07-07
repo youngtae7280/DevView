@@ -16,10 +16,10 @@ import {
   type JsonObject,
 } from './shared.js'
 
-export async function validateVd(root: string): Promise<ValidationIssue[]> {
+export async function validateVerificationDesign(root: string): Promise<ValidationIssue[]> {
   const testPath = artifactPath(root, 'testTree')
   if (!existsSync(testPath)) {
-    return [missingIssue('VD', 'TEST_TREE_MISSING', defaultArtifacts.testTree, 'Test Tree is missing.')]
+    return [missingIssue('VerificationDesign', 'TEST_TREE_MISSING', defaultArtifacts.testTree, 'Test Tree is missing.')]
   }
   const product = await readJsonIfExists(root, 'productTree')
   const work = await readJsonIfExists(root, 'workTree')
@@ -40,7 +40,7 @@ export async function validateVd(root: string): Promise<ValidationIssue[]> {
     if (!covered) {
       issues.push(
         issue({
-          validator: 'VD',
+          validator: 'VerificationDesign',
           code: 'WORK_NOT_TESTED',
           severity: 'error',
           file: defaultArtifacts.testTree,
@@ -70,7 +70,7 @@ export async function validateVd(root: string): Promise<ValidationIssue[]> {
       if (!verifiedCriteria.has(criterionId)) {
         issues.push(
           issue({
-            validator: 'VD',
+            validator: 'VerificationDesign',
             code: 'ACCEPTANCE_NOT_COVERED',
             severity: 'error',
             file: defaultArtifacts.testTree,
@@ -98,7 +98,7 @@ export async function validateVd(root: string): Promise<ValidationIssue[]> {
         ) {
           issues.push(
             issue({
-              validator: 'VD',
+              validator: 'VerificationDesign',
               code: 'UI_ACCEPTANCE_EVIDENCE_NOT_COVERED',
               severity: 'error',
               file: defaultArtifacts.testTree,
@@ -122,7 +122,7 @@ export async function validateVd(root: string): Promise<ValidationIssue[]> {
     ) {
       issues.push(
         issue({
-          validator: 'VD',
+          validator: 'VerificationDesign',
           code: 'UI_EVIDENCE_MISSING',
           severity: 'error',
           file: defaultArtifacts.testTree,

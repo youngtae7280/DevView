@@ -1,15 +1,15 @@
 import { defaultArtifacts, getOpenBlockingDecisions, loadProject } from '../core/project.js'
-import { PBE_STATE } from '../core/state-machine.js'
-import { checkpointPbeState, transitionPbeState } from '../core/state-transition.js'
+import { DEVVIEW_STATE } from '../core/state-machine.js'
+import { checkpointDevViewState, transitionDevViewState } from '../core/state-transition.js'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { hasErrors, issue } from '../core/types.js'
 import {
-  validateRpd,
+  validateProductIntake,
   validateTraceability,
-  validateVd,
+  validateVerificationDesign,
   validateVisualDesign,
-  validateWpd,
-} from '../validators/pbe-validators.js'
+  validateWorkPlanning,
+} from '../validators/devview-validators.js'
 import {
   type CommandContext,
   implementationScopeIssues,
@@ -23,9 +23,9 @@ export async function scopeSelectCommand(context: CommandContext): Promise<Comma
   const issues: ValidationIssue[] = []
   const loadedProject = await loadProject(context.options.root)
   issues.push(...loadedProject.issues)
-  issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
-  issues.push(...(await validateWpd(context.options.root)))
-  issues.push(...(await validateVd(context.options.root)))
+  issues.push(...(await validateProductIntake(context.options.root, { completionMode: true })))
+  issues.push(...(await validateWorkPlanning(context.options.root)))
+  issues.push(...(await validateVerificationDesign(context.options.root)))
   issues.push(...(await validateVisualDesign(context.options.root)))
   for (const decision of getOpenBlockingDecisions(loadedProject.project.decisionQueue)) {
     issues.push(
@@ -43,10 +43,10 @@ export async function scopeSelectCommand(context: CommandContext): Promise<Comma
   if (hasErrors(issues)) {
     return transitionFailed('scope select', 'Scope selection failed. State was not changed.', issues)
   }
-  return transitionPbeState(
+  return transitionDevViewState(
     context.options.root,
     'scope select',
-    [PBE_STATE.WAITING_IMPLEMENTATION_SCOPE, PBE_STATE.SCOPE_SELECTED],
+    [DEVVIEW_STATE.WAITING_IMPLEMENTATION_SCOPE, DEVVIEW_STATE.SCOPE_SELECTED],
     {
       completedSteps: ['implementation_scope'],
       stage: 'execution_planning',
@@ -66,9 +66,9 @@ export async function dependencyAuditCompleteCommand(context: CommandContext): P
   const issues: ValidationIssue[] = []
   const state = await loadState(context.options.root)
   issues.push(...implementationScopeIssues(state))
-  issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
-  issues.push(...(await validateWpd(context.options.root)))
-  issues.push(...(await validateVd(context.options.root)))
+  issues.push(...(await validateProductIntake(context.options.root, { completionMode: true })))
+  issues.push(...(await validateWorkPlanning(context.options.root)))
+  issues.push(...(await validateVerificationDesign(context.options.root)))
   issues.push(...(await validateVisualDesign(context.options.root)))
   issues.push(
     ...requiredArtifactIssues(context.options.root, [
@@ -83,7 +83,7 @@ export async function dependencyAuditCompleteCommand(context: CommandContext): P
       issues,
     )
   }
-  return checkpointPbeState(context.options.root, 'dependency audit complete', [PBE_STATE.SCOPE_SELECTED], {
+  return checkpointDevViewState(context.options.root, 'dependency audit complete', [DEVVIEW_STATE.SCOPE_SELECTED], {
     completedSteps: ['dependency_impact_audit'],
     stage: 'execution_planning',
     mode: 'dependency_impact_audit',
@@ -99,8 +99,8 @@ export async function dependencyAuditCompleteCommand(context: CommandContext): P
 export async function planExecutionCompleteCommand(context: CommandContext): Promise<CommandResult> {
   const issues: ValidationIssue[] = []
   issues.push(...requiredCompletedStepIssues(await loadState(context.options.root), ['dependency_impact_audit']))
-  issues.push(...(await validateWpd(context.options.root)))
-  issues.push(...(await validateVd(context.options.root)))
+  issues.push(...(await validateWorkPlanning(context.options.root)))
+  issues.push(...(await validateVerificationDesign(context.options.root)))
   issues.push(
     ...requiredArtifactIssues(context.options.root, [
       ['dependencyImpactAudit', 'Dependency Impact Audit JSON'],
@@ -117,7 +117,7 @@ export async function planExecutionCompleteCommand(context: CommandContext): Pro
       issues,
     )
   }
-  return checkpointPbeState(context.options.root, 'plan execution complete', [PBE_STATE.SCOPE_SELECTED], {
+  return checkpointDevViewState(context.options.root, 'plan execution complete', [DEVVIEW_STATE.SCOPE_SELECTED], {
     completedSteps: ['plan_execution'],
     stage: 'execution_planning',
     mode: 'plan_execution',
@@ -147,7 +147,7 @@ export async function coverageAuditCompleteCommand(context: CommandContext): Pro
       issues,
     )
   }
-  return checkpointPbeState(context.options.root, 'coverage audit complete', [PBE_STATE.SCOPE_SELECTED], {
+  return checkpointDevViewState(context.options.root, 'coverage audit complete', [DEVVIEW_STATE.SCOPE_SELECTED], {
     completedSteps: ['coverage_audit'],
     stage: 'execution_planning',
     mode: 'coverage_audit',
@@ -174,7 +174,7 @@ export async function uxAuditCompleteCommand(context: CommandContext): Promise<C
   if (hasErrors(issues)) {
     return transitionFailed('ux audit complete', 'UX audit checkpoint failed. State was not changed.', issues)
   }
-  return checkpointPbeState(context.options.root, 'ux audit complete', [PBE_STATE.SCOPE_SELECTED], {
+  return checkpointDevViewState(context.options.root, 'ux audit complete', [DEVVIEW_STATE.SCOPE_SELECTED], {
     completedSteps: ['ux_audit'],
     stage: 'execution_planning',
     mode: 'ux_audit',

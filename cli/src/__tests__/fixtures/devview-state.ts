@@ -17,15 +17,15 @@ export function writeDevViewState(
 ): void {
   writeJson(join(workspace, '.devview', 'blueprint', 'devview-state.json'), {
     version: '0.2.0-alpha',
-    stage: 'rpd',
-    mode: 'rpd_tree_walk',
+    stage: 'product_intake',
+    mode: 'product_intake_tree_walk',
     autoflow: {
       enabled: true,
       profile: options.profile || 'full',
       state,
-      completedSteps: options.completedSteps || ['start', 'rpd'],
+      completedSteps: options.completedSteps || ['start', 'product_intake'],
       currentGate: options.currentGate ?? null,
-      nextStep: options.nextStep ?? 'wpd',
+      nextStep: options.nextStep ?? 'work_planning',
       stateHistory: options.stateHistory || [],
     },
     deliveryStatus: options.deliveryStatus || 'waiting_root_confirmation',

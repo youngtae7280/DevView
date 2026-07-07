@@ -14,15 +14,15 @@
 - accepted / accepted_done?占??占쎌슜?占쎈쭔 占????占쎌뒿?占쎈떎.
 
 ?占쎌꽦/媛깆떊???占쎌텧占?
-- .pbe/review/codex-final-report.md
-- .pbe/review/result-summary.md
-- .pbe/review/validation-results.md
-- .pbe/review/coverage-result.md
-- .pbe/review/ui-ux-evidence.md
-- .pbe/review/user-review-checklist.md
-- .pbe/control/acceptance-tree.json
-- .pbe/control/impact-tree.json
-- .pbe/evidence/evidence-tree.json
+- .devview/review/codex-final-report.md
+- .devview/review/result-summary.md
+- .devview/review/validation-results.md
+- .devview/review/coverage-result.md
+- .devview/review/ui-ux-evidence.md
+- .devview/review/user-review-checklist.md
+- .devview/control/acceptance-tree.json
+- .devview/control/impact-tree.json
+- .devview/evidence/evidence-tree.json
 
 寃占?
 - {validation_summary}

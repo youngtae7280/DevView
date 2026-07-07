@@ -37,7 +37,7 @@ Test Tree Node IDs:
 
 Node Execution Contract:
 
-- `.pbe/codex-execution-pack/11-node-execution-contracts/nec-task-001.md`
+- `.devview/codex-execution-pack/11-node-execution-contracts/nec-task-001.md`
 
 Parallel Group:
 none
@@ -155,30 +155,30 @@ If this task changes UI, list the related `SCREEN-*` IDs from `05-ui-ux-spec.jso
 
 ## UI/UX Confirmation Reference
 
-- `.pbe/codex-execution-pack/07-ui-ux-confirmation.md`
+- `.devview/codex-execution-pack/07-ui-ux-confirmation.md`
 
 ## Visual Design Contract
 
 - Required only for visual UI tasks.
-- Visual reference: `.pbe/blueprint/visual-reference.json`
-- Theme spec: `.pbe/blueprint/ui-theme-spec.md`
+- Visual reference: `.devview/blueprint/visual-reference.json`
+- Theme spec: `.devview/blueprint/ui-theme-spec.md`
 - Visual source:
 - Waiver:
 
 ## Design Token Source
 
-- `.pbe/blueprint/design-tokens.json`
+- `.devview/blueprint/design-tokens.json`
 - Token groups required: colors, spacing, radius, typography, border, shadow, motion
 
 ## Component Style Contract
 
-- `.pbe/blueprint/component-style-contract.json`
+- `.devview/blueprint/component-style-contract.json`
 - Shared components changed:
 - Local exceptions:
 
 ## UI Surface Inventory
 
-- `.pbe/control/ui-surface-inventory.json`
+- `.devview/control/ui-surface-inventory.json`
 - Surface IDs:
 - Required visual states:
 

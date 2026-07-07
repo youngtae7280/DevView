@@ -1,67 +1,64 @@
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { readJsonSafe } from './fs.js'
-import type { PbeProject, ValidationIssue } from './types.js'
+import type { DevViewProject, ValidationIssue } from './types.js'
 import { issue } from './types.js'
 
 export const defaultArtifacts = {
-  productTree: '.pbe/tree/product-tree.json',
-  projectTree: '.pbe/tree/project-tree.json',
-  workTree: '.pbe/tree/work-tree.json',
-  testTree: '.pbe/tree/test-tree.json',
-  cycleTree: '.pbe/execution/cycle-tree.json',
-  cycleContract: '.pbe/execution/cycle-contract.md',
-  decisionQueue: '.pbe/control/decision-queue.json',
-  changeTree: '.pbe/control/change-tree.json',
-  impactTree: '.pbe/control/impact-tree.json',
-  productPatchTree: '.pbe/control/product-patch-tree.json',
-  acceptanceTree: '.pbe/control/acceptance-tree.json',
-  evidenceTree: '.pbe/evidence/evidence-tree.json',
-  devviewState: '.pbe/blueprint/devview-state.json',
-  pbeState: '.pbe/blueprint/pbe-state.json',
-  devviewRoutingContract: '.pbe/blueprint/devview-routing-contract.md',
-  dependencyImpactAudit: '.pbe/blueprint/dependency-impact-audit.json',
-  dependencyImpactAuditMarkdown: '.pbe/blueprint/dependency-impact-audit.md',
-  executionStrategy: '.pbe/blueprint/execution-strategy.json',
-  executionStrategyMarkdown: '.pbe/blueprint/execution-strategy.md',
-  coverageAudit: '.pbe/blueprint/coverage-audit.md',
-  uxAudit: '.pbe/blueprint/ux-audit.md',
-  projectBrief: '.pbe/blueprint/project-brief.md',
-  requirementTree: '.pbe/blueprint/requirement-tree.json',
-  requirementTreeMarkdown: '.pbe/blueprint/requirement-tree.md',
-  rpdInterviewLog: '.pbe/blueprint/rpd-interview-log.md',
-  rpdSummary: '.pbe/blueprint/rpd-summary.md',
-  uiUxPreview: '.pbe/blueprint/ui-ux-preview.json',
-  uiUxPreviewMarkdown: '.pbe/blueprint/ui-ux-preview.md',
-  uiUxConfirmation: '.pbe/blueprint/ui-ux-confirmation.md',
-  uiUxConfirmationLog: '.pbe/blueprint/ui-ux-confirmation-log.md',
-  sourceOfTruthMatrix: '.pbe/blueprint/source-of-truth-matrix.md',
-  devviewInvariants: '.pbe/blueprint/devview-invariants.md',
-  visualReference: '.pbe/blueprint/visual-reference.json',
-  visualReferenceMarkdown: '.pbe/blueprint/visual-reference.md',
-  uiThemeSpec: '.pbe/blueprint/ui-theme-spec.md',
-  designTokens: '.pbe/blueprint/design-tokens.json',
-  componentStyleContract: '.pbe/blueprint/component-style-contract.json',
-  uiSurfaceInventory: '.pbe/control/ui-surface-inventory.json',
-  componentStyleInventory: '.pbe/control/component-style-inventory.json',
-  visualVerificationProfile: '.pbe/control/visual-verification-profile.json',
-  visualAudit: '.pbe/evidence/visual-audit.md',
-  executionManifest: '.pbe/codex-execution-pack/execution-manifest.json',
-  finalCoverageCheck: '.pbe/codex-execution-pack/16-final-coverage-check.md',
+  productTree: '.devview/tree/product-tree.json',
+  projectTree: '.devview/tree/project-tree.json',
+  workTree: '.devview/tree/work-tree.json',
+  testTree: '.devview/tree/test-tree.json',
+  cycleTree: '.devview/execution/cycle-tree.json',
+  cycleContract: '.devview/execution/cycle-contract.md',
+  decisionQueue: '.devview/control/decision-queue.json',
+  changeTree: '.devview/control/change-tree.json',
+  impactTree: '.devview/control/impact-tree.json',
+  productPatchTree: '.devview/control/product-patch-tree.json',
+  acceptanceTree: '.devview/control/acceptance-tree.json',
+  evidenceTree: '.devview/evidence/evidence-tree.json',
+  devviewState: '.devview/blueprint/devview-state.json',
+  devviewRoutingContract: '.devview/blueprint/devview-routing-contract.md',
+  dependencyImpactAudit: '.devview/blueprint/dependency-impact-audit.json',
+  dependencyImpactAuditMarkdown: '.devview/blueprint/dependency-impact-audit.md',
+  executionStrategy: '.devview/blueprint/execution-strategy.json',
+  executionStrategyMarkdown: '.devview/blueprint/execution-strategy.md',
+  coverageAudit: '.devview/blueprint/coverage-audit.md',
+  uxAudit: '.devview/blueprint/ux-audit.md',
+  projectBrief: '.devview/blueprint/project-brief.md',
+  requirementTree: '.devview/blueprint/requirement-tree.json',
+  requirementTreeMarkdown: '.devview/blueprint/requirement-tree.md',
+  productIntakeInterviewLog: '.devview/blueprint/product-intake-interview-log.md',
+  productIntakeSummary: '.devview/blueprint/product-intake-summary.md',
+  uiUxPreview: '.devview/blueprint/ui-ux-preview.json',
+  uiUxPreviewMarkdown: '.devview/blueprint/ui-ux-preview.md',
+  uiUxConfirmation: '.devview/blueprint/ui-ux-confirmation.md',
+  uiUxConfirmationLog: '.devview/blueprint/ui-ux-confirmation-log.md',
+  sourceOfTruthMatrix: '.devview/blueprint/source-of-truth-matrix.md',
+  devviewInvariants: '.devview/blueprint/devview-invariants.md',
+  visualReference: '.devview/blueprint/visual-reference.json',
+  visualReferenceMarkdown: '.devview/blueprint/visual-reference.md',
+  uiThemeSpec: '.devview/blueprint/ui-theme-spec.md',
+  designTokens: '.devview/blueprint/design-tokens.json',
+  componentStyleContract: '.devview/blueprint/component-style-contract.json',
+  uiSurfaceInventory: '.devview/control/ui-surface-inventory.json',
+  componentStyleInventory: '.devview/control/component-style-inventory.json',
+  visualVerificationProfile: '.devview/control/visual-verification-profile.json',
+  visualAudit: '.devview/evidence/visual-audit.md',
+  executionManifest: '.devview/codex-execution-pack/execution-manifest.json',
+  finalCoverageCheck: '.devview/codex-execution-pack/16-final-coverage-check.md',
 } as const
 
 export type ArtifactKey = keyof typeof defaultArtifacts
 
-export function projectStorageRoot(root: string): '.devview' | '.pbe' {
-  if (existsSync(path.join(root, '.devview'))) return '.devview'
-  if (existsSync(path.join(root, '.pbe'))) return '.pbe'
+export function projectStorageRoot(root: string): '.devview' {
+  void root
   return '.devview'
 }
 
 export function artifactRelativePath(root: string, key: ArtifactKey): string {
-  const relativePath = defaultArtifacts[key]
-  const storageRoot = projectStorageRoot(root)
-  return storageRoot === '.devview' ? relativePath.replace(/^\.pbe\//, '.devview/') : relativePath
+  void root
+  return defaultArtifacts[key]
 }
 
 export function artifactPath(root: string, key: ArtifactKey): string {
@@ -69,11 +66,7 @@ export function artifactPath(root: string, key: ArtifactKey): string {
 }
 
 export function stateArtifactCandidates(root: string): string[] {
-  return [
-    path.join(root, '.devview', 'blueprint', 'devview-state.json'),
-    path.join(root, '.devview', 'blueprint', 'pbe-state.json'),
-    path.join(root, '.pbe', 'blueprint', 'pbe-state.json'),
-  ]
+  return [path.join(root, '.devview', 'blueprint', 'devview-state.json')]
 }
 
 export function stateArtifactPath(root: string): string {
@@ -86,11 +79,7 @@ export function canonicalStateArtifactRelativePath(root: string): string {
 }
 
 export function routingContractCandidates(root: string): string[] {
-  return [
-    path.join(root, '.devview', 'blueprint', 'devview-routing-contract.md'),
-    path.join(root, '.devview', 'blueprint', 'pbe-routing-contract.md'),
-    path.join(root, '.pbe', 'blueprint', 'pbe-routing-contract.md'),
-  ]
+  return [path.join(root, '.devview', 'blueprint', 'devview-routing-contract.md')]
 }
 
 export function routingContractPath(root: string): string {
@@ -99,7 +88,7 @@ export function routingContractPath(root: string): string {
   )
 }
 
-export async function loadProject(root: string): Promise<{ project: PbeProject; issues: ValidationIssue[] }> {
+export async function loadProject(root: string): Promise<{ project: DevViewProject; issues: ValidationIssue[] }> {
   const statePath = stateArtifactPath(root)
   const decisionQueuePath = artifactPath(root, 'decisionQueue')
   const storageRoot = projectStorageRoot(root)
@@ -116,7 +105,7 @@ export async function loadProject(root: string): Promise<{ project: PbeProject; 
       issues.push(
         issue({
           validator: 'Project',
-          code: 'PBE_STATE_INVALID_JSON',
+          code: 'DEVVIEW_STATE_INVALID_JSON',
           severity: 'error',
           file: canonicalStateArtifactRelativePath(root),
           message: `Could not parse devview-state.json: ${parsed.error}`,
@@ -147,7 +136,7 @@ export async function loadProject(root: string): Promise<{ project: PbeProject; 
   return {
     project: {
       root,
-      pbeDir: path.join(root, storageRoot),
+      devviewDir: path.join(root, storageRoot),
       initialized,
       statePath,
       state,

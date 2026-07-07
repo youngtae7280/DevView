@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import { writeJson } from './workspace'
 
-export function writeMinimalPbe(
+export function writeMinimalDevView(
   workspace: string,
   options: {
     productTitle: string
@@ -96,7 +96,7 @@ export function writeMinimalPbe(
       state: 'INIT',
       completedSteps: ['start'],
       currentGate: null,
-      nextStep: 'rpd',
+      nextStep: 'product_intake',
       lastUserAction: options.acceptedByAssistant ? { actor: 'assistant' } : { actor: 'user' },
       stateHistory: [],
     },

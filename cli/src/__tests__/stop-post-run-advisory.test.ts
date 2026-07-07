@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson, writeText } from './fixtures/workspace'
 
@@ -16,7 +16,7 @@ describe('Stop/Post Run advisory report CLI', () => {
     const workspace = createWorkspace()
     writeStopPostRunInputs(workspace)
 
-    const result = await runPbeCli([...baseArgs(), ...completeArgs()], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli([...baseArgs(), ...completeArgs()], { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stdout)
     const report = JSON.parse(readFileSync(join(workspace, '.tmp/stop-post-run.json'), 'utf8'))
     const markdown = readFileSync(join(workspace, '.tmp/stop-post-run.md'), 'utf8')
@@ -51,7 +51,7 @@ describe('Stop/Post Run advisory report CLI', () => {
       changedFiles: { normalizedChangedFiles: [], changedFiles: [], generatedFileHandling: { generatedFiles: [] } },
     })
 
-    const result = await runPbeCli([...baseArgs(), '--changed-files', 'generated/changed-files.json'], {
+    const result = await runDevViewCli([...baseArgs(), '--changed-files', 'generated/changed-files.json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -69,7 +69,7 @@ describe('Stop/Post Run advisory report CLI', () => {
     const workspace = createWorkspace()
     writeStopPostRunInputs(workspace)
 
-    const result = await runPbeCli([...baseArgs(), '--changed-files', 'generated/changed-files.json'], {
+    const result = await runDevViewCli([...baseArgs(), '--changed-files', 'generated/changed-files.json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -88,7 +88,7 @@ describe('Stop/Post Run advisory report CLI', () => {
     const workspace = createWorkspace()
     writeStopPostRunInputs(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         ...baseArgs(),
         '--changed-files',
@@ -114,7 +114,7 @@ describe('Stop/Post Run advisory report CLI', () => {
       },
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         ...baseArgs(),
         '--changed-files',
@@ -141,7 +141,7 @@ describe('Stop/Post Run advisory report CLI', () => {
       },
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         ...baseArgs(),
         '--changed-files',
@@ -163,7 +163,7 @@ describe('Stop/Post Run advisory report CLI', () => {
     const workspace = createWorkspace()
     writeStopPostRunInputs(workspace)
 
-    const missingProposal = await runPbeCli(
+    const missingProposal = await runDevViewCli(
       [
         ...baseArgs(),
         '--changed-files',
@@ -181,7 +181,7 @@ describe('Stop/Post Run advisory report CLI', () => {
     expect(missingProposalPayload.postRunCompletenessStatus).toBe('missing-proposal')
     expect(missingProposalPayload.nextRequiredCommands[0]).toContain('propose-graph-delta')
 
-    const missingReview = await runPbeCli(
+    const missingReview = await runDevViewCli(
       [
         ...baseArgs('.tmp/stop-post-run-review.json', '.tmp/stop-post-run-review.md'),
         '--changed-files',
@@ -213,7 +213,7 @@ describe('Stop/Post Run advisory report CLI', () => {
       },
     })
 
-    const result = await runPbeCli([...baseArgs(), ...completeArgs()], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli([...baseArgs(), ...completeArgs()], { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stdout)
 
     expect(result.exitCode).toBe(ExitCode.Success)
@@ -230,7 +230,7 @@ describe('Stop/Post Run advisory report CLI', () => {
     const workspace = createWorkspace()
     writeStopPostRunInputs(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         ...baseArgs('.tmp/unsafe.json', 'generated/instruction-pack.json'),
         '--changed-files',
@@ -251,7 +251,7 @@ describe('Stop/Post Run advisory report CLI', () => {
     const workspace = createWorkspace()
     writeStopPostRunInputs(workspace)
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stdout)
 
     expect(result.exitCode).toBe(ExitCode.Success)

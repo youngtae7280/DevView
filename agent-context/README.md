@@ -6,9 +6,9 @@ Read this router first, then open only the smallest context card that matches th
 
 - New repository, first slice, or workflow depth: [start.md](start.md)
 - Compact bounded work: [lite.md](lite.md)
-- Product meaning, ambiguity, or root intent: [rpd.md](rpd.md)
-- Work planning, expected files, or module boundaries: [wpd.md](wpd.md)
-- Verification and proof design: [vd.md](vd.md)
+- Product meaning, ambiguity, or root intent: [product-intake.md](product-intake.md)
+- Work planning, expected files, or module boundaries: [work-planning.md](work-planning.md)
+- Verification and proof design: [verification-design.md](verification-design.md)
 - Runtime evidence or proof quality: [evidence.md](evidence.md)
 - Review, rejection, or acceptance boundary: [review.md](review.md)
 - Bounded follow-up changes: [revision.md](revision.md)

@@ -700,7 +700,6 @@ export interface SliceReadModelConfig {
     sourceOfTruthMatrix?: string
     evidenceOutput?: string
     devviewState?: string
-    pbeState?: string
   }
   sourceArtifactRelativePaths: string[]
   retainedWarnings: Array<Record<string, unknown>>
@@ -3271,8 +3270,8 @@ async function loadSliceData(sliceDir: string, profile: SliceReadModelConfig): P
     evidenceOutput: await readOptionalText(
       profile.artifacts.evidenceOutput ? artifactPath(profile.artifacts.evidenceOutput) : undefined,
     ),
-    pbeState: await readOptionalJson<Record<string, unknown>>(
-      profile.artifacts.pbeState ? artifactPath(profile.artifacts.pbeState) : undefined,
+    devviewState: await readOptionalJson<Record<string, unknown>>(
+      profile.artifacts.devviewState ? artifactPath(profile.artifacts.devviewState) : undefined,
       {},
     ),
   }

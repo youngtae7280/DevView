@@ -172,7 +172,7 @@ export function mapDetectedStageToGateTransition(stage: ContextRecommendation['d
     documentation: 'work-scope',
     'work-planning': 'product-to-work',
     'verification-design': 'work-to-test',
-    execution: 'acep-preflight',
+    execution: 'execution-pack-preflight',
     review: 'review-revision',
     revision: 'review-revision',
     'product-patch': 'product-patch',

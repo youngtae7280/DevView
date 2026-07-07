@@ -98,7 +98,7 @@ export interface GraphExecutionContractReport {
   }
   escalationTriggers: string[]
   compatibility: {
-    acepRemainsExecutionPackagingPath: true
+    executionPackRemainsPackagingPath: true
     note: string
     retainedCompatibilityArtifacts: string[]
     fallbackReferences: string[]
@@ -175,7 +175,7 @@ export async function buildGraphExecutionContractReport(
       sourceFiles: profile.sourceArtifactRelativePaths.map((entry) =>
         isSliceRelativeArtifact(entry) ? `${profile.supportedSlice}/${entry}` : entry,
       ),
-      note: 'This first surface reports source files only. Concrete expectedFiles/forbiddenFiles remain in ACEP or tree-native Work artifacts until graph-native execution contracts are promoted.',
+      note: 'This first surface reports source files only. Concrete expectedFiles/forbiddenFiles remain in Execution Pack or tree-native Work artifacts until graph-native execution contracts are promoted.',
     },
     commandPlan: {
       readModelCommands: [
@@ -183,7 +183,11 @@ export async function buildGraphExecutionContractReport(
         'node dist/cli/index.js graph read-model validate --all --json',
         'node dist/cli/index.js graph read-model report-health --json',
       ],
-      compatibilityExecutionCommands: ['devview acep check', 'devview acep ready', 'devview execution start'],
+      compatibilityExecutionCommands: [
+        'devview execution-pack check',
+        'devview execution-pack ready',
+        'devview execution start',
+      ],
       sequentialDefault: true,
     },
     escalationTriggers: [
@@ -197,8 +201,8 @@ export async function buildGraphExecutionContractReport(
       'review/user acceptance disagreement',
     ],
     compatibility: {
-      acepRemainsExecutionPackagingPath: true,
-      note: 'ACEP, codex-execution-pack, Cycle Contracts, Node Execution Contracts, and task-card views remain the compatibility execution packaging path. This report does not replace or weaken them.',
+      executionPackRemainsPackagingPath: true,
+      note: 'Execution Pack, codex-execution-pack, Cycle Contracts, Node Execution Contracts, and task-card views remain the compatibility execution packaging path. This report does not replace or weaken them.',
       retainedCompatibilityArtifacts: projection.retainedCompatibilityArtifacts,
       fallbackReferences: projection.fallbackReferences,
     },
@@ -208,7 +212,7 @@ export async function buildGraphExecutionContractReport(
       'does not create a required validation gate',
       'does not expand source authority',
       'does not replace user acceptance',
-      'does not retire ACEP or tree-native compatibility artifacts',
+      'does not retire Execution Pack or tree-native compatibility artifacts',
     ],
   }
 }

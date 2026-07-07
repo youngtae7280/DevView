@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import {
   generateClarificationInterviewPack,
   renderClarificationInterviewPackMarkdown,
@@ -135,7 +135,7 @@ describe('Clarification Interview pack CLI', () => {
     const outputPath = join('.tmp', 'clarification-interview-pack.json')
     const markdownPath = join('.tmp', 'clarification-interview-pack.md')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -175,7 +175,7 @@ describe('Clarification Interview pack CLI', () => {
     writeJson(join(workspace, 'boundary.json'), { ...validClarificationBoundary(), artifactRole: 'wrong-role' })
     writeJson(join(workspace, 'candidate.json'), validRequestIrCandidate())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -199,7 +199,7 @@ describe('Clarification Interview pack CLI', () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, 'boundary.json'), validClarificationBoundary())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -225,7 +225,7 @@ describe('Clarification Interview pack CLI', () => {
     writeJson(join(workspace, 'candidate.json'), validRequestIrCandidate())
     const boundaryBefore = readFileSync(join(workspace, 'boundary.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -256,7 +256,7 @@ describe('Clarification Interview pack CLI', () => {
     const schemaBefore = readFileSync(join(workspace, 'schema.json'), 'utf8')
     const outputPath = join('.tmp', 'clarification-interview-pack.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

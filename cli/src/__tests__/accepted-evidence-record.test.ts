@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -18,7 +18,7 @@ describe('Accepted Evidence Record CLI', () => {
     writeJson(join(workspace, 'source-evidence.json'), validSourceEvidence())
     writeJson(join(workspace, 'decision.json'), validEvidenceDecision())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -74,7 +74,7 @@ describe('Accepted Evidence Record CLI', () => {
         }),
       )
 
-      const result = await runPbeCli(
+      const result = await runDevViewCli(
         [
           'graph',
           'read-model',
@@ -106,7 +106,7 @@ describe('Accepted Evidence Record CLI', () => {
     delete decision.decisionLifecycleHardeningStatus
     writeJson(join(workspace, 'decision.json'), decision)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -136,7 +136,7 @@ describe('Accepted Evidence Record CLI', () => {
     writeJson(join(workspace, 'other-source-evidence.json'), validSourceEvidence())
     writeJson(join(workspace, 'decision.json'), validEvidenceDecision())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -170,7 +170,7 @@ describe('Accepted Evidence Record CLI', () => {
       writeJson(join(workspace, 'source-evidence.json'), { ...validSourceEvidence(), ...override })
       writeJson(join(workspace, 'decision.json'), validEvidenceDecision())
 
-      const result = await runPbeCli(
+      const result = await runDevViewCli(
         [
           'graph',
           'read-model',
@@ -205,7 +205,7 @@ describe('Accepted Evidence Record CLI', () => {
       }),
     )
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -237,7 +237,7 @@ describe('Accepted Evidence Record CLI', () => {
     })
     writeJson(join(workspace, 'decision.json'), validEvidenceDecision())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -266,7 +266,7 @@ describe('Accepted Evidence Record CLI', () => {
     writeJson(join(workspace, 'source-evidence.json'), validSourceEvidence())
     writeJson(join(workspace, 'decision.json'), validEvidenceDecision())
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -296,7 +296,7 @@ describe('Accepted Evidence Record CLI', () => {
       writeJson(join(workspace, 'source-evidence.json'), validSourceEvidence())
       writeJson(join(workspace, 'decision.json'), validEvidenceDecision(override))
 
-      const result = await runPbeCli(
+      const result = await runDevViewCli(
         [
           'graph',
           'read-model',
@@ -326,7 +326,7 @@ describe('Accepted Evidence Record CLI', () => {
     writeJson(join(workspace, 'decision.json'), validEvidenceDecision())
     const sourceBefore = readFileSync(join(workspace, 'source-evidence.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

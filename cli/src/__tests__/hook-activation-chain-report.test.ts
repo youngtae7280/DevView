@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -16,7 +16,7 @@ describe('DevView Hook activation preview chain report CLI', () => {
     const workspace = createWorkspace()
     writeActivationInputs(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [...baseArgs(), '--output', '.tmp/activation.json', '--markdown', '.tmp/activation.md'],
       {
         cwd: workspace,
@@ -49,7 +49,7 @@ describe('DevView Hook activation preview chain report CLI', () => {
     const workspace = createWorkspace()
     writeActivationInputs(workspace, { userPromptContext: { artifactRole: 'wrong-role', status: 'wrong-status' } })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -64,7 +64,7 @@ describe('DevView Hook activation preview chain report CLI', () => {
       sessionManifest: { sourceHookScriptTemplatePreview: 'generated/not-the-template.json' },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -88,7 +88,7 @@ describe('DevView Hook activation preview chain report CLI', () => {
       },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
     const codes = payload.issues.map((entry: { code: string }) => entry.code)
 
@@ -104,7 +104,7 @@ describe('DevView Hook activation preview chain report CLI', () => {
       sessionManifest: { actualBlockingHookBehaviorImplemented: true },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -118,14 +118,14 @@ describe('DevView Hook activation preview chain report CLI', () => {
     writeActivationInputs(workspace)
     const before = readFileSync(join(workspace, 'generated/session.json'), 'utf8')
 
-    const active = await runPbeCli([...baseArgs(), '--output', '.codex/hooks/activation.json'], {
+    const active = await runDevViewCli([...baseArgs(), '--output', '.codex/hooks/activation.json'], {
       cwd: workspace,
       pluginRoot,
     })
     expect(active.exitCode).toBe(ExitCode.ValidationFailed)
     expect(JSON.parse(active.stderr).issues[0].message).toContain('active hook/config location')
 
-    const unsafeMarkdown = await runPbeCli(
+    const unsafeMarkdown = await runDevViewCli(
       [...baseArgs(), '--output', '.tmp/activation.json', '--markdown', 'generated/session.json'],
       { cwd: workspace, pluginRoot },
     )

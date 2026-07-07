@@ -1,27 +1,27 @@
-import { PBE_STATE } from '../core/state-machine.js'
-import { transitionPbeState } from '../core/state-transition.js'
+import { DEVVIEW_STATE } from '../core/state-machine.js'
+import { transitionDevViewState } from '../core/state-transition.js'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { hasErrors } from '../core/types.js'
 import {
-  validateRpd,
+  validateProductIntake,
   validateTraceability,
-  validateVd,
+  validateVerificationDesign,
   validateVisualDesign,
-  validateWpd,
-} from '../validators/pbe-validators.js'
+  validateWorkPlanning,
+} from '../validators/devview-validators.js'
 import { checkResult, type CommandContext, hasVisualWork, transitionFailed } from './shared.js'
 
-export async function vdCheckCommand(context: CommandContext): Promise<CommandResult> {
-  return checkResult('verification-design check', await validateVd(context.options.root))
+export async function verificationDesignCheckCommand(context: CommandContext): Promise<CommandResult> {
+  return checkResult('verification-design check', await validateVerificationDesign(context.options.root))
 }
 
-export async function vdCloseCommand(context: CommandContext): Promise<CommandResult> {
+export async function verificationDesignCloseCommand(context: CommandContext): Promise<CommandResult> {
   const issues: ValidationIssue[] = []
   const visualWork = hasVisualWork(context.options.root)
-  issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
-  issues.push(...(await validateWpd(context.options.root)))
+  issues.push(...(await validateProductIntake(context.options.root, { completionMode: true })))
+  issues.push(...(await validateWorkPlanning(context.options.root)))
   issues.push(...(await validateVisualDesign(context.options.root)))
-  issues.push(...(await validateVd(context.options.root)))
+  issues.push(...(await validateVerificationDesign(context.options.root)))
   issues.push(...(await validateTraceability(context.options.root, { stage: 'verification-design' })))
   if (hasErrors(issues)) {
     return transitionFailed(
@@ -30,12 +30,12 @@ export async function vdCloseCommand(context: CommandContext): Promise<CommandRe
       issues,
     )
   }
-  return transitionPbeState(
+  return transitionDevViewState(
     context.options.root,
     'verification-design close',
     visualWork
-      ? [PBE_STATE.UI_SURFACE_INVENTORY_DONE, PBE_STATE.VERIFICATION_DESIGN_DONE]
-      : [PBE_STATE.VERIFICATION_DESIGN_DONE],
+      ? [DEVVIEW_STATE.UI_SURFACE_INVENTORY_DONE, DEVVIEW_STATE.VERIFICATION_DESIGN_DONE]
+      : [DEVVIEW_STATE.VERIFICATION_DESIGN_DONE],
     {
       completedSteps: visualWork ? ['ui_surface_inventory', 'verification_design'] : ['verification_design'],
       stage: 'verification_design',

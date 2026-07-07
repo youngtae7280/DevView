@@ -12,102 +12,102 @@ const ajv = new Ajv2020({ allErrors: true, strict: false })
 const schemaTargets = {
   product: {
     schema: 'schemas/product-tree.schema.json',
-    target: '.pbe/tree/product-tree.json',
+    target: '.devview/tree/product-tree.json',
     template: 'templates/product-tree.template.json',
   },
   project: {
     schema: 'schemas/project-tree.schema.json',
-    target: '.pbe/tree/project-tree.json',
+    target: '.devview/tree/project-tree.json',
     template: 'templates/project-tree.template.json',
   },
   work: {
     schema: 'schemas/work-tree.schema.json',
-    target: '.pbe/tree/work-tree.json',
+    target: '.devview/tree/work-tree.json',
     template: 'templates/work-tree.template.json',
   },
   test: {
     schema: 'schemas/test-tree.schema.json',
-    target: '.pbe/tree/test-tree.json',
+    target: '.devview/tree/test-tree.json',
     template: 'templates/test-tree.template.json',
   },
   cycle: {
     schema: 'schemas/cycle-tree.schema.json',
-    target: '.pbe/execution/cycle-tree.json',
+    target: '.devview/execution/cycle-tree.json',
     template: 'templates/cycle-tree.template.json',
   },
   decision: {
     schema: 'schemas/decision-queue.schema.json',
-    target: '.pbe/control/decision-queue.json',
+    target: '.devview/control/decision-queue.json',
     template: 'templates/decision-queue.template.json',
   },
   change: {
     schema: 'schemas/change-tree.schema.json',
-    target: '.pbe/control/change-tree.json',
+    target: '.devview/control/change-tree.json',
     template: 'templates/change-tree.template.json',
   },
   impact: {
     schema: 'schemas/impact-tree.schema.json',
-    target: '.pbe/control/impact-tree.json',
+    target: '.devview/control/impact-tree.json',
     template: 'templates/impact-tree.template.json',
   },
   evidence: {
     schema: 'schemas/evidence-tree.schema.json',
-    target: '.pbe/evidence/evidence-tree.json',
+    target: '.devview/evidence/evidence-tree.json',
     template: 'templates/evidence-tree.template.json',
   },
   acceptance: {
     schema: 'schemas/acceptance-tree.schema.json',
-    target: '.pbe/control/acceptance-tree.json',
+    target: '.devview/control/acceptance-tree.json',
     template: 'templates/acceptance-tree.template.json',
   },
   legacyInventory: {
     schema: 'schemas/legacy-control-inventory.schema.json',
-    target: '.pbe/control/legacy-control-inventory.json',
+    target: '.devview/control/legacy-control-inventory.json',
     template: 'templates/legacy-control-inventory.template.json',
   },
   surfaceCompletion: {
     schema: 'schemas/surface-completion-ledger.schema.json',
-    target: '.pbe/control/surface-completion-ledger.json',
+    target: '.devview/control/surface-completion-ledger.json',
     template: 'templates/surface-completion-ledger.template.json',
   },
   hardwareReadiness: {
     schema: 'schemas/hardware-readiness-ledger.schema.json',
-    target: '.pbe/control/hardware-readiness-ledger.json',
+    target: '.devview/control/hardware-readiness-ledger.json',
     template: 'templates/hardware-readiness-ledger.template.json',
   },
   visualReference: {
     schema: 'schemas/visual-reference.schema.json',
-    target: '.pbe/blueprint/visual-reference.json',
+    target: '.devview/blueprint/visual-reference.json',
     template: 'templates/visual-reference.template.json',
   },
   designTokens: {
     schema: 'schemas/design-tokens.schema.json',
-    target: '.pbe/blueprint/design-tokens.json',
+    target: '.devview/blueprint/design-tokens.json',
     template: 'templates/design-tokens.template.json',
   },
   componentStyleContract: {
     schema: 'schemas/component-style-contract.schema.json',
-    target: '.pbe/blueprint/component-style-contract.json',
+    target: '.devview/blueprint/component-style-contract.json',
     template: 'templates/component-style-contract.template.json',
   },
   uiSurfaceInventory: {
     schema: 'schemas/ui-surface-inventory.schema.json',
-    target: '.pbe/control/ui-surface-inventory.json',
+    target: '.devview/control/ui-surface-inventory.json',
     template: 'templates/ui-surface-inventory.template.json',
   },
   componentStyleInventory: {
     schema: 'schemas/component-style-inventory.schema.json',
-    target: '.pbe/control/component-style-inventory.json',
+    target: '.devview/control/component-style-inventory.json',
     template: 'templates/component-style-inventory.template.json',
   },
   visualVerification: {
     schema: 'schemas/visual-verification-profile.schema.json',
-    target: '.pbe/control/visual-verification-profile.json',
+    target: '.devview/control/visual-verification-profile.json',
     template: 'templates/visual-verification-profile.template.json',
   },
   verificationMiss: {
     schema: 'schemas/verification-miss-log.schema.json',
-    target: '.pbe/control/verification-miss-log.json',
+    target: '.devview/control/verification-miss-log.json',
     template: 'templates/verification-miss-log.template.json',
   },
 }
@@ -1044,19 +1044,19 @@ function validateVisualDesignContractArtifacts(data) {
   }
 
   if (!data.designTokens) {
-    errors.push('visual work requires .pbe/blueprint/design-tokens.json')
+    errors.push('visual work requires .devview/blueprint/design-tokens.json')
   }
   if (!data.componentStyleContract) {
-    errors.push('visual work requires .pbe/blueprint/component-style-contract.json')
+    errors.push('visual work requires .devview/blueprint/component-style-contract.json')
   }
   if (!data.uiSurfaceInventory) {
-    errors.push('visual work requires .pbe/control/ui-surface-inventory.json')
+    errors.push('visual work requires .devview/control/ui-surface-inventory.json')
   }
   if (!data.visualVerification) {
-    errors.push('visual work requires .pbe/control/visual-verification-profile.json')
+    errors.push('visual work requires .devview/control/visual-verification-profile.json')
   }
-  if (!existsSync(path.join(targetRoot, '.pbe/blueprint/ui-theme-spec.md'))) {
-    errors.push('visual work requires .pbe/blueprint/ui-theme-spec.md')
+  if (!existsSync(path.join(targetRoot, '.devview/blueprint/ui-theme-spec.md'))) {
+    errors.push('visual work requires .devview/blueprint/ui-theme-spec.md')
   }
 
   const tokenGroups = ['colors', 'spacing', 'radius', 'typography', 'border', 'shadow', 'motion']
@@ -1110,7 +1110,7 @@ function validateVerificationMissLog(missLog, refs) {
     if (
       missType === 'legacy_subdialog_control_miss' &&
       !['proposed', 'promoted', 'blocked'].includes(promotionDecision) &&
-      miss.status !== 'reported_for_pbe_improvement'
+      miss.status !== 'reported_for_devview_improvement'
     ) {
       errors.push(
         `verification miss ${miss.id} is a legacy subdialog control miss but lacks promotion or blocking decision`,

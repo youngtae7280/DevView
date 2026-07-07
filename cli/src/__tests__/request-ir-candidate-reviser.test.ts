@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { reviseRequestIrCandidateFromClarificationAnswers } from '../core/request-ir-candidate-reviser'
 import { validateRequestIrCandidateSchemaOnly } from '../core/request-ir-candidate-validator'
 import { ExitCode } from '../core/types'
@@ -157,7 +157,7 @@ describe('Request IR Candidate clarification revision CLI', () => {
     const candidateBefore = readFileSync(join(workspace, 'candidate.json'), 'utf8')
     const outputPath = join('.tmp', 'revised-candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -194,7 +194,7 @@ describe('Request IR Candidate clarification revision CLI', () => {
     writeJson(join(workspace, 'candidate.json'), validRequestIrCandidate())
     const packBefore = readFileSync(join(workspace, 'pack.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -238,7 +238,7 @@ describe('Request IR Candidate clarification revision CLI', () => {
     writeJson(join(workspace, 'candidate.json'), validRequestIrCandidate())
     const outputPath = join('.tmp', 'revised-candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -271,7 +271,7 @@ describe('Request IR Candidate clarification revision CLI', () => {
     writeJson(join(workspace, 'candidate.json'), validRequestIrCandidate())
     const outputPath = join('.tmp', 'revised-candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -306,7 +306,7 @@ describe('Request IR Candidate clarification revision CLI', () => {
     writeJson(join(workspace, 'candidate.json'), validRequestIrCandidate())
     const outputPath = join('.tmp', 'revised-candidate.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

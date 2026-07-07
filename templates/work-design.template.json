@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "generatedFrom": [
-    ".pbe/blueprint/requirement-tree.json",
-    ".pbe/blueprint/product-intake-summary.md",
-    ".pbe/blueprint/ui-ux-confirmation.md"
+    ".devview/blueprint/requirement-tree.json",
+    ".devview/blueprint/product-intake-summary.md",
+    ".devview/blueprint/ui-ux-confirmation.md"
   ],
   "moduleBoundaryCheck": {
     "status": "complete",

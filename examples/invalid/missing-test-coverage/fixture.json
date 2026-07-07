@@ -2,6 +2,6 @@
   "name": "missing-test-coverage",
   "description": "Selected Work node has no Test Tree coverage.",
   "mutation": "missingTestCoverage",
-  "command": ["trace", "check", "--stage", "vd", "--json"],
+  "command": ["trace", "check", "--stage", "verification-design", "--json"],
   "expectedIssueCode": "WORK_TEST_LINK_MISSING"
 }

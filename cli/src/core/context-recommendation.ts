@@ -1,7 +1,7 @@
 import type { ContextStageOption } from './types.js'
 
 export type ContextProfileOption = 'full' | 'lite' | 'bypass'
-type CanonicalContextStageOption = Exclude<ContextStageOption, 'docs' | 'rpd' | 'wpd' | 'vd'>
+type CanonicalContextStageOption = Exclude<ContextStageOption, 'docs'>
 
 export interface ContextRecommendationInput {
   brief?: string
@@ -34,18 +34,18 @@ const stageContexts: Record<CanonicalContextStageOption, StageContextDefinition>
   },
   'product-intake': {
     skills: ['devview-product-intake'],
-    readFirst: ['agent-context/rpd.md'],
-    readOnlyIfNeeded: ['docs/rpd-interview-mode.md', 'docs/ambiguity-taxonomy.md'],
+    readFirst: ['agent-context/product-intake.md'],
+    readOnlyIfNeeded: ['docs/ambiguity-taxonomy.md'],
   },
   'work-planning': {
     skills: ['devview-work-planning'],
-    readFirst: ['agent-context/wpd.md'],
+    readFirst: ['agent-context/work-planning.md'],
     readOnlyIfNeeded: ['docs/parallel-safety.md'],
   },
   'verification-design': {
     skills: ['devview-verification-design'],
-    readFirst: ['agent-context/vd.md', 'agent-context/evidence.md'],
-    readOnlyIfNeeded: ['docs/vd-quality-rubric.md', 'docs/evidence-quality-rubric.md'],
+    readFirst: ['agent-context/verification-design.md', 'agent-context/evidence.md'],
+    readOnlyIfNeeded: ['docs/evidence-quality-rubric.md'],
   },
   execution: {
     skills: ['devview-run-execution-pack'],
@@ -88,10 +88,8 @@ const fullDocs = [
   'README.md',
   'docs/cli-reference.md',
   'docs/lite-mode-policy.md',
-  'docs/rpd-interview-mode.md',
   'docs/ambiguity-taxonomy.md',
   'docs/parallel-safety.md',
-  'docs/vd-quality-rubric.md',
   'docs/evidence-quality-rubric.md',
   'docs/review-failure-recovery.md',
   'docs/product-patch-proposals.md',
@@ -107,7 +105,7 @@ const notes = [
   'This command is read-only and does not modify DevView state.',
 ]
 
-export const contextStages = [...Object.keys(stageContexts), 'docs', 'rpd', 'wpd', 'vd'] as ContextStageOption[]
+export const contextStages = [...Object.keys(stageContexts), 'docs'] as ContextStageOption[]
 
 export function isContextStage(value: string): value is ContextStageOption {
   return contextStages.includes(value as ContextStageOption)
@@ -167,15 +165,6 @@ export function recommendContext(input: ContextRecommendationInput): ContextReco
 function normalizeContextStage(stage: ContextStageOption): CanonicalContextStageOption {
   if (stage === 'docs') {
     return 'documentation'
-  }
-  if (stage === 'rpd') {
-    return 'product-intake'
-  }
-  if (stage === 'wpd') {
-    return 'work-planning'
-  }
-  if (stage === 'vd') {
-    return 'verification-design'
   }
   return stage
 }

@@ -2,7 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { mkdir } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -16,7 +16,7 @@ describe('DevView legacy artifact audit CLI', () => {
   it('uses DevView as the public CLI help identity', async () => {
     const workspace = createWorkspace()
 
-    const result = await runPbeCli(['--help'], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(['--help'], { cwd: workspace, pluginRoot })
 
     expect(result.exitCode).toBe(ExitCode.Success)
     expect(result.stdout).toContain('DevView CLI')
@@ -36,7 +36,7 @@ describe('DevView legacy artifact audit CLI', () => {
     writeFileSync(join(workspace, 'cli/src/compat.ts'), 'const command = "pbe validate"\n', 'utf8')
 
     const before = readFileSync(join(workspace, 'docs/old.md'), 'utf8')
-    const result = await runPbeCli(['report-legacy-artifacts', '--json'], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(['report-legacy-artifacts', '--json'], { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stdout)
 
     expect(result.exitCode).toBe(ExitCode.Success)
@@ -59,7 +59,7 @@ describe('DevView legacy artifact audit CLI', () => {
     await mkdir(join(workspace, 'docs/internal-legacy'), { recursive: true })
     writeFileSync(join(workspace, 'docs/internal-legacy/old.md'), 'Historical PBE migration note.\n', 'utf8')
 
-    const result = await runPbeCli(['report-legacy-artifacts', '--json'], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(['report-legacy-artifacts', '--json'], { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stdout)
     const finding = payload.findings.find(
       (entry: Record<string, unknown>) => entry.path === 'docs/internal-legacy/old.md',
@@ -80,7 +80,7 @@ describe('DevView legacy artifact audit CLI', () => {
     writeFileSync(join(workspace, 'outputs/retrofit/report.md'), 'Retrofit PBE output.\n', 'utf8')
     writeFileSync(join(workspace, 'work/native/demo/README.md'), 'Native PBE target.\n', 'utf8')
 
-    const result = await runPbeCli(['report-legacy-artifacts', '--json'], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(['report-legacy-artifacts', '--json'], { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stdout)
     const byPath = new Map(payload.findings.map((entry: Record<string, unknown>) => [entry.path, entry]))
 
@@ -99,10 +99,13 @@ describe('DevView legacy artifact audit CLI', () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, 'package.json'), { scripts: { legacy: 'pbe validate' } })
 
-    const result = await runPbeCli(['graph', 'read-model', 'report-legacy-artifacts', '--output', '.tmp/audit.json'], {
-      cwd: workspace,
-      pluginRoot,
-    })
+    const result = await runDevViewCli(
+      ['graph', 'read-model', 'report-legacy-artifacts', '--output', '.tmp/audit.json'],
+      {
+        cwd: workspace,
+        pluginRoot,
+      },
+    )
 
     const outputPath = join(workspace, '.tmp/audit.json')
     const written = JSON.parse(readFileSync(outputPath, 'utf8'))

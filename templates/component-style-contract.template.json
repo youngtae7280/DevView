@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "artifactType": "component_style_contract",
   "status": "draft",
-  "sourceRef": ".pbe/blueprint/design-tokens.json",
+  "sourceRef": ".devview/blueprint/design-tokens.json",
   "components": [
     {
       "componentName": "Button",

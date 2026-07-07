@@ -13,10 +13,10 @@ import {
   validateWorkDependencyGraph,
 } from './shared.js'
 
-export async function validateWpd(root: string): Promise<ValidationIssue[]> {
+export async function validateWorkPlanning(root: string): Promise<ValidationIssue[]> {
   const workPath = artifactPath(root, 'workTree')
   if (!existsSync(workPath)) {
-    return [missingIssue('WPD', 'WORK_TREE_MISSING', defaultArtifacts.workTree, 'Work Tree is missing.')]
+    return [missingIssue('WorkPlanning', 'WORK_TREE_MISSING', defaultArtifacts.workTree, 'Work Tree is missing.')]
   }
   const work = await readJsonIfExists(root, 'workTree')
   const issues: ValidationIssue[] = []
@@ -34,7 +34,7 @@ export async function validateWpd(root: string): Promise<ValidationIssue[]> {
     ) {
       issues.push(
         issue({
-          validator: 'WPD',
+          validator: 'WorkPlanning',
           code: 'EXPECTED_FILES_MISSING',
           severity: 'error',
           file: defaultArtifacts.workTree,
@@ -48,7 +48,7 @@ export async function validateWpd(root: string): Promise<ValidationIssue[]> {
       if (!workIds.has(dependencyId)) {
         issues.push(
           missingLinkIssue(
-            'WPD',
+            'WorkPlanning',
             'WORK_PRODUCT_LINK_MISSING',
             defaultArtifacts.workTree,
             workId,

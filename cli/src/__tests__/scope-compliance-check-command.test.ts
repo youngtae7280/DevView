@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs'
 import { readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson, writeText } from './fixtures/workspace'
 
@@ -35,7 +35,7 @@ describe('scope compliance advisory CLI', () => {
       changedPath: 'src/todos.ts',
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'check-scope', '--base', 'HEAD~1', '--head', 'HEAD', '--json'],
       {
         cwd: workspace,
@@ -75,7 +75,7 @@ describe('scope compliance advisory CLI', () => {
       changedPath: 'src/todos.ts',
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'check-scope', '--base', 'missing-ref', '--head', 'HEAD', '--json'],
       {
         cwd: workspace,
@@ -103,7 +103,7 @@ describe('scope compliance advisory CLI', () => {
     })
     const markdownPath = join('.tmp', 'scope-compliance-runtime-report.md')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -162,7 +162,7 @@ describe('scope compliance advisory CLI', () => {
       changedContents: 'export const value = "working-tree"\n',
     })
 
-    const result = await runPbeCli(['graph', 'read-model', 'check-scope', '--working-tree', '--json'], {
+    const result = await runDevViewCli(['graph', 'read-model', 'check-scope', '--working-tree', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -202,7 +202,7 @@ describe('scope compliance advisory CLI', () => {
     })
     execFileSync('git', ['add', 'src/todos.ts'], { cwd: workspace, stdio: 'ignore' })
 
-    const result = await runPbeCli(['graph', 'read-model', 'check-scope', '--staged', '--json'], {
+    const result = await runDevViewCli(['graph', 'read-model', 'check-scope', '--staged', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -240,7 +240,7 @@ describe('scope compliance advisory CLI', () => {
     })
     writeText(join(workspace, 'src', 'new.ts'), 'export const value = "untracked"\n')
 
-    const result = await runPbeCli(['graph', 'read-model', 'check-scope', '--untracked', '--json'], {
+    const result = await runDevViewCli(['graph', 'read-model', 'check-scope', '--untracked', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -277,7 +277,7 @@ describe('scope compliance advisory CLI', () => {
       changedPath: 'src/todos.ts',
     })
 
-    const result = await runPbeCli(['graph', 'read-model', 'check-scope', '--working-tree', '--json'], {
+    const result = await runDevViewCli(['graph', 'read-model', 'check-scope', '--working-tree', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -301,11 +301,11 @@ describe('scope compliance advisory CLI', () => {
       changedPath: 'src/todos.ts',
     })
 
-    const stagedResult = await runPbeCli(['graph', 'read-model', 'check-scope', '--staged', '--json'], {
+    const stagedResult = await runDevViewCli(['graph', 'read-model', 'check-scope', '--staged', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
-    const untrackedResult = await runPbeCli(['graph', 'read-model', 'check-scope', '--untracked', '--json'], {
+    const untrackedResult = await runDevViewCli(['graph', 'read-model', 'check-scope', '--untracked', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -333,7 +333,7 @@ describe('scope compliance advisory CLI', () => {
       changedPath: 'src/todos.ts',
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'check-scope', '--working-tree', '--base', 'HEAD~1', '--head', 'HEAD', '--json'],
       {
         cwd: workspace,
@@ -353,10 +353,13 @@ describe('scope compliance advisory CLI', () => {
       changedPath: 'src/todos.ts',
     })
 
-    const result = await runPbeCli(['graph', 'read-model', 'check-scope', '--working-tree', '--untracked', '--json'], {
-      cwd: workspace,
-      pluginRoot,
-    })
+    const result = await runDevViewCli(
+      ['graph', 'read-model', 'check-scope', '--working-tree', '--untracked', '--json'],
+      {
+        cwd: workspace,
+        pluginRoot,
+      },
+    )
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.InvalidArguments)

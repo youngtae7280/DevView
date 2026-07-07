@@ -2,7 +2,7 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app.js'
+import { runDevViewCli } from '../app.js'
 
 interface IntentCriticalExample {
   schemaVersion: number
@@ -113,7 +113,7 @@ async function readProjection(path: string): Promise<EdgeIntentProjection> {
 }
 
 async function runProjectIntentCli(graphSource: string, output: string): Promise<EdgeIntentProjection> {
-  const result = await runPbeCli(
+  const result = await runDevViewCli(
     ['graph', 'read-model', 'project-intent', '--graph-source', graphSource, '--output', output, '--json'],
     { cwd: resolve('.') },
   )
@@ -129,7 +129,7 @@ async function runProjectIntentCli(graphSource: string, output: string): Promise
 }
 
 async function runIntentReportCli(extraArgs: string[] = []): Promise<EdgeIntentProjectionReport> {
-  const result = await runPbeCli(['graph', 'read-model', 'report-intent', ...extraArgs, '--json'], {
+  const result = await runDevViewCli(['graph', 'read-model', 'report-intent', ...extraArgs, '--json'], {
     cwd: resolve('.'),
   })
   expect(result.stderr).toBe('')
@@ -355,7 +355,7 @@ describe('intent-critical Graph-source examples', () => {
       const invalidPath = join(tempRoot, 'invalid-graph-source-intent.json')
       await writeFile(invalidPath, `${JSON.stringify(source, null, 2)}\n`, 'utf8')
 
-      const result = await runPbeCli(
+      const result = await runDevViewCli(
         [
           'graph',
           'read-model',
@@ -390,7 +390,7 @@ describe('intent-critical Graph-source examples', () => {
       const invalidPath = join(tempRoot, 'invalid-graph-source-intent.json')
       await writeFile(invalidPath, `${JSON.stringify(source, null, 2)}\n`, 'utf8')
 
-      const result = await runPbeCli(
+      const result = await runDevViewCli(
         ['graph', 'read-model', 'report-intent', '--graph-source', invalidPath, '--json'],
         { cwd: resolve('.') },
       )

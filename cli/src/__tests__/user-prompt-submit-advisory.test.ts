@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson, writeText } from './fixtures/workspace'
 
@@ -17,7 +17,7 @@ describe('UserPromptSubmit advisory report CLI', () => {
     const workspace = createWorkspace()
     writeAdvisoryInputs(workspace)
 
-    const result = await runPbeCli(baseArgs(workspace), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(workspace), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stdout)
     const report = JSON.parse(readFileSync(join(workspace, '.tmp/advisory.json'), 'utf8'))
     const markdown = readFileSync(join(workspace, '.tmp/advisory.md'), 'utf8')
@@ -52,7 +52,7 @@ describe('UserPromptSubmit advisory report CLI', () => {
     const workspace = createWorkspace()
     writeAdvisoryInputs(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -107,7 +107,7 @@ describe('UserPromptSubmit advisory report CLI', () => {
       },
     })
 
-    const result = await runPbeCli(baseArgs(workspace), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(workspace), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stdout)
     const report = JSON.parse(readFileSync(join(workspace, '.tmp/advisory.json'), 'utf8'))
 
@@ -124,7 +124,10 @@ describe('UserPromptSubmit advisory report CLI', () => {
     const workspace = createWorkspace()
     writeAdvisoryInputs(workspace)
 
-    const result = await runPbeCli([...baseArgs(workspace), '--devview-mode', 'off'], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli([...baseArgs(workspace), '--devview-mode', 'off'], {
+      cwd: workspace,
+      pluginRoot,
+    })
     const payload = JSON.parse(result.stdout)
 
     expect(result.exitCode).toBe(ExitCode.Success)
@@ -139,7 +142,10 @@ describe('UserPromptSubmit advisory report CLI', () => {
     const workspace = createWorkspace()
     writeAdvisoryInputs(workspace)
 
-    const result = await runPbeCli([...baseArgs(workspace), '--devview-mode', 'guided'], { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli([...baseArgs(workspace), '--devview-mode', 'guided'], {
+      cwd: workspace,
+      pluginRoot,
+    })
     const payload = JSON.parse(result.stdout)
 
     expect(result.exitCode).toBe(ExitCode.Success)
@@ -154,7 +160,7 @@ describe('UserPromptSubmit advisory report CLI', () => {
     const workspace = createWorkspace()
     writeAdvisoryInputs(workspace)
 
-    const result = await runPbeCli([...baseArgs(workspace), '--devview-mode', 'strict-disabled'], {
+    const result = await runDevViewCli([...baseArgs(workspace), '--devview-mode', 'strict-disabled'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -171,7 +177,7 @@ describe('UserPromptSubmit advisory report CLI', () => {
     const workspace = createWorkspace()
     writeAdvisoryInputs(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -201,7 +207,7 @@ describe('UserPromptSubmit advisory report CLI', () => {
     const workspace = createWorkspace()
     writeAdvisoryInputs(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

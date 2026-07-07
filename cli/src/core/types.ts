@@ -9,22 +9,12 @@ export enum ExitCode {
 }
 
 export type IssueSeverity = 'info' | 'warning' | 'error'
-export type TraceabilityStageOption =
-  | 'work-planning'
-  | 'verification-design'
-  | 'execution'
-  | 'review'
-  | 'accept'
-  | 'wpd'
-  | 'vd'
+export type TraceabilityStageOption = 'work-planning' | 'verification-design' | 'execution' | 'review' | 'accept'
 export type ContextStageOption =
   | 'start'
   | 'product-intake'
   | 'work-planning'
   | 'verification-design'
-  | 'rpd'
-  | 'wpd'
-  | 'vd'
   | 'execution'
   | 'review'
   | 'revision'
@@ -198,9 +188,9 @@ export interface ParsedArgs {
   options: CliOptions
 }
 
-export interface PbeProject {
+export interface DevViewProject {
   root: string
-  pbeDir: string
+  devviewDir: string
   initialized: boolean
   statePath: string
   state: Record<string, unknown> | null
@@ -336,7 +326,7 @@ function inferNodeType(input: ValidationIssue): string | undefined {
   if (file.includes('impact-tree')) {
     return 'Impact'
   }
-  if (file.includes('devview-state') || file.includes('pbe-state')) {
+  if (file.includes('devview-state')) {
     return 'State'
   }
   return undefined

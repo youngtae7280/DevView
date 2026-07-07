@@ -15,44 +15,53 @@ const targetContext = {}
 const schemaIdByTargetLabel = new Map([
   ['.devview/blueprint/devview-state.json', 'https://local/devview/devview-state.schema.json'],
   ['.devview/blueprint/pbe-state.json', 'https://local/devview/devview-state.schema.json'],
-  ['.pbe/blueprint/pbe-state.json', 'https://local/devview/devview-state.schema.json'],
+  ['.devview/blueprint/pbe-state.json', 'https://local/devview/devview-state.schema.json'],
   ['.devview/blueprint/requirement-tree.json', 'https://local/project-blueprint-engine/requirement-tree.schema.json'],
-  ['.pbe/blueprint/requirement-tree.json', 'https://local/project-blueprint-engine/requirement-tree.schema.json'],
+  ['.devview/blueprint/requirement-tree.json', 'https://local/project-blueprint-engine/requirement-tree.schema.json'],
   ['.devview/blueprint/ui-ux-preview.json', 'https://local/project-blueprint-engine/ui-ux-preview.schema.json'],
-  ['.pbe/blueprint/ui-ux-preview.json', 'https://local/project-blueprint-engine/ui-ux-preview.schema.json'],
+  ['.devview/blueprint/ui-ux-preview.json', 'https://local/project-blueprint-engine/ui-ux-preview.schema.json'],
   ['.devview/blueprint/work-design.json', 'https://local/project-blueprint-engine/work-design.schema.json'],
-  ['.pbe/blueprint/work-design.json', 'https://local/project-blueprint-engine/work-design.schema.json'],
+  ['.devview/blueprint/work-design.json', 'https://local/project-blueprint-engine/work-design.schema.json'],
   ['.devview/blueprint/work-graph.json', 'https://local/project-blueprint-engine/work-graph.schema.json'],
-  ['.pbe/blueprint/work-graph.json', 'https://local/project-blueprint-engine/work-graph.schema.json'],
+  ['.devview/blueprint/work-graph.json', 'https://local/project-blueprint-engine/work-graph.schema.json'],
   [
     '.devview/blueprint/verification-design.json',
     'https://local/project-blueprint-engine/verification-design.schema.json',
   ],
-  ['.pbe/blueprint/verification-design.json', 'https://local/project-blueprint-engine/verification-design.schema.json'],
+  [
+    '.devview/blueprint/verification-design.json',
+    'https://local/project-blueprint-engine/verification-design.schema.json',
+  ],
   [
     '.devview/blueprint/dependency-impact-audit.json',
     'https://local/project-blueprint-engine/dependency-impact-audit.schema.json',
   ],
   [
-    '.pbe/blueprint/dependency-impact-audit.json',
+    '.devview/blueprint/dependency-impact-audit.json',
     'https://local/project-blueprint-engine/dependency-impact-audit.schema.json',
   ],
   [
     '.devview/blueprint/execution-strategy.json',
     'https://local/project-blueprint-engine/execution-strategy.schema.json',
   ],
-  ['.pbe/blueprint/execution-strategy.json', 'https://local/project-blueprint-engine/execution-strategy.schema.json'],
+  [
+    '.devview/blueprint/execution-strategy.json',
+    'https://local/project-blueprint-engine/execution-strategy.schema.json',
+  ],
   [
     '.devview/blueprint/traceability-matrix.json',
     'https://local/project-blueprint-engine/traceability-matrix.schema.json',
   ],
-  ['.pbe/blueprint/traceability-matrix.json', 'https://local/project-blueprint-engine/traceability-matrix.schema.json'],
+  [
+    '.devview/blueprint/traceability-matrix.json',
+    'https://local/project-blueprint-engine/traceability-matrix.schema.json',
+  ],
   [
     '.devview/codex-execution-pack/execution-manifest.json',
     'https://local/project-blueprint-engine/execution-manifest.schema.json',
   ],
   [
-    '.pbe/codex-execution-pack/execution-manifest.json',
+    '.devview/codex-execution-pack/execution-manifest.json',
     'https://local/project-blueprint-engine/execution-manifest.schema.json',
   ],
   [
@@ -60,19 +69,19 @@ const schemaIdByTargetLabel = new Map([
     'https://local/project-blueprint-engine/traceability-matrix.schema.json',
   ],
   [
-    '.pbe/codex-execution-pack/04-traceability-matrix.json',
+    '.devview/codex-execution-pack/04-traceability-matrix.json',
     'https://local/project-blueprint-engine/traceability-matrix.schema.json',
   ],
   ['.devview/codex-execution-pack/05-ui-ux-spec.json', 'https://local/project-blueprint-engine/ui-ux-spec.schema.json'],
-  ['.pbe/codex-execution-pack/05-ui-ux-spec.json', 'https://local/project-blueprint-engine/ui-ux-spec.schema.json'],
+  ['.devview/codex-execution-pack/05-ui-ux-spec.json', 'https://local/project-blueprint-engine/ui-ux-spec.schema.json'],
   ['.devview/review/feedback-items.json', 'https://local/project-blueprint-engine/feedback-items.schema.json'],
-  ['.pbe/review/feedback-items.json', 'https://local/project-blueprint-engine/feedback-items.schema.json'],
+  ['.devview/review/feedback-items.json', 'https://local/project-blueprint-engine/feedback-items.schema.json'],
   [
     '.devview/control/legacy-control-inventory.json',
     'https://local/project-blueprint-engine/legacy-control-inventory.schema.json',
   ],
   [
-    '.pbe/control/legacy-control-inventory.json',
+    '.devview/control/legacy-control-inventory.json',
     'https://local/project-blueprint-engine/legacy-control-inventory.schema.json',
   ],
   [
@@ -80,7 +89,7 @@ const schemaIdByTargetLabel = new Map([
     'https://local/project-blueprint-engine/surface-completion-ledger.schema.json',
   ],
   [
-    '.pbe/control/surface-completion-ledger.json',
+    '.devview/control/surface-completion-ledger.json',
     'https://local/project-blueprint-engine/surface-completion-ledger.schema.json',
   ],
   [
@@ -88,7 +97,7 @@ const schemaIdByTargetLabel = new Map([
     'https://local/project-blueprint-engine/hardware-readiness-ledger.schema.json',
   ],
   [
-    '.pbe/control/hardware-readiness-ledger.json',
+    '.devview/control/hardware-readiness-ledger.json',
     'https://local/project-blueprint-engine/hardware-readiness-ledger.schema.json',
   ],
   [
@@ -96,7 +105,7 @@ const schemaIdByTargetLabel = new Map([
     'https://local/project-blueprint-engine/visual-verification-profile.schema.json',
   ],
   [
-    '.pbe/control/visual-verification-profile.json',
+    '.devview/control/visual-verification-profile.json',
     'https://local/project-blueprint-engine/visual-verification-profile.schema.json',
   ],
   [
@@ -104,7 +113,7 @@ const schemaIdByTargetLabel = new Map([
     'https://local/project-blueprint-engine/verification-miss-log.schema.json',
   ],
   [
-    '.pbe/control/verification-miss-log.json',
+    '.devview/control/verification-miss-log.json',
     'https://local/project-blueprint-engine/verification-miss-log.schema.json',
   ],
 ])
@@ -641,9 +650,9 @@ function validateOptionalAcepTarget() {
 function stateRequiresAcep(state) {
   const value = state?.autoflow?.state
   return new Set([
-    'ACEP_READY',
+    'EXECUTION_PACK_READY',
     'EXECUTION_IN_PROGRESS',
-    'ACEP_RUN_DONE',
+    'EXECUTION_PACK_RUN_DONE',
     'VISUAL_AUDIT_DONE',
     'WAITING_REVIEW_RESULT',
     'ACCEPTED',
@@ -687,7 +696,7 @@ function validateTargetAgainstSchema(value, label) {
 }
 
 function getSchemaIdForTargetLabel(label) {
-  if (label.startsWith('.pbe/revisions/') && label.endsWith('/revision-manifest.json')) {
+  if (label.startsWith('.devview/revisions/') && label.endsWith('/revision-manifest.json')) {
     return 'https://local/project-blueprint-engine/revision-manifest.schema.json'
   }
   return schemaIdByTargetLabel.get(label)
@@ -1035,7 +1044,7 @@ function validateExecutionStrategy(strategy, label) {
 
 function validateExecutionManifest(manifest, acepRoot) {
   if (!Array.isArray(manifest.tasks)) {
-    errors.push('ACEP_MANIFEST_FIELD_INVALID: execution-manifest.json tasks must be an array')
+    errors.push('EXECUTION_PACK_MANIFEST_FIELD_INVALID: execution-manifest.json tasks must be an array')
     return
   }
 
@@ -1111,7 +1120,7 @@ function validateExecutionManifest(manifest, acepRoot) {
   }
 
   if (!Array.isArray(manifest.phases)) {
-    errors.push('ACEP_MANIFEST_FIELD_INVALID: execution-manifest.json phases must be an array')
+    errors.push('EXECUTION_PACK_MANIFEST_FIELD_INVALID: execution-manifest.json phases must be an array')
   } else {
     validatePhasesAndParallelGroups(manifest.phases, taskById, 'execution-manifest.json', {
       requireTaskDefinitions: true,
@@ -1328,7 +1337,13 @@ function validatePbeRouting(context) {
     )
   }
 
-  const deterministicPastDependency = ['plan_execution', 'coverage_audit', 'ux_audit', 'generate_acep', 'run_acep']
+  const deterministicPastDependency = [
+    'plan_execution',
+    'coverage_audit',
+    'ux_audit',
+    'generate_execution_pack',
+    'run_execution_pack',
+  ]
   const needsDependencyAudit =
     autoflow.completedSteps?.includes('dependency_impact_audit') ||
     deterministicPastDependency.includes(autoflow.nextStep)
@@ -1405,7 +1420,7 @@ function validatePbeCrossArtifacts(context) {
   }
 
   if (context.blueprintTraceability) {
-    validateTraceabilityReferences(context.blueprintTraceability, '.pbe/blueprint/traceability-matrix.json', {
+    validateTraceabilityReferences(context.blueprintTraceability, '.devview/blueprint/traceability-matrix.json', {
       requirementIds,
       verificationIds,
     })
@@ -1487,7 +1502,7 @@ function validateOptionalRevisionTargets() {
       errors.push(`Revision ${entry} is missing revision-manifest.json`)
       continue
     }
-    const manifest = parseTargetJson(manifestPath, `.pbe/revisions/${entry}/revision-manifest.json`)
+    const manifest = parseTargetJson(manifestPath, `.devview/revisions/${entry}/revision-manifest.json`)
     if (manifest) {
       validateRevisionManifest(manifest, revisionRoot, entry)
     }
@@ -1568,7 +1583,7 @@ function validateRevisionDiffBoundary(manifest, revisionId) {
   const forbiddenFiles = [...(manifest.forbiddenFiles || []), ...(manifest.mustNotTouch || [])]
 
   for (const file of changedFiles) {
-    if (file.startsWith('.pbe/')) {
+    if (file.startsWith('.devview/')) {
       continue
     }
     if (matchesAnyPath(file, forbiddenFiles)) {
@@ -1772,7 +1787,7 @@ function validateUiUxSpec(uiUxSpec) {
 }
 
 function resolveAcepReference(acepRoot, reference) {
-  if (reference.startsWith('.pbe/')) {
+  if (reference.startsWith('.devview/')) {
     return path.join(targetRoot, reference)
   }
   if (reference.startsWith('.pbe\\')) {

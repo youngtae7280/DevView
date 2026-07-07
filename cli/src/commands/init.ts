@@ -1,24 +1,24 @@
 import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
-import { defaultArtifacts, projectStorageRoot } from '../core/project.js'
+import { defaultArtifacts } from '../core/project.js'
 import { ensureDir, writeJsonAtomic, writeTextAtomic } from '../core/fs.js'
-import { PBE_STATE } from '../core/state-machine.js'
+import { DEVVIEW_STATE } from '../core/state-machine.js'
 import type { CommandResult } from '../core/types.js'
 import { ExitCode } from '../core/types.js'
 import { type CommandContext, invalidCommand } from './shared.js'
 
 const initDirs = [
-  '.pbe/tree',
-  '.pbe/execution/node-execution-contracts',
-  '.pbe/control',
-  '.pbe/evidence/screenshots',
-  '.pbe/evidence/review-reports',
-  '.pbe/evidence/test-results',
-  '.pbe/evidence/logs',
-  '.pbe/blueprint',
-  '.pbe/codex-execution-pack',
-  '.pbe/review',
-  '.pbe/revisions',
+  '.devview/tree',
+  '.devview/execution/node-execution-contracts',
+  '.devview/control',
+  '.devview/evidence/screenshots',
+  '.devview/evidence/review-reports',
+  '.devview/evidence/test-results',
+  '.devview/evidence/logs',
+  '.devview/blueprint',
+  '.devview/codex-execution-pack',
+  '.devview/review',
+  '.devview/revisions',
 ]
 
 const jsonTemplateTargets: Array<{
@@ -47,7 +47,7 @@ const jsonTemplateTargets: Array<{
     target: defaultArtifacts.requirementTree,
     transform: transformRequirementTree,
   },
-  { template: 'devview-state.template.json', target: defaultArtifacts.devviewState, transform: transformPbeState },
+  { template: 'devview-state.template.json', target: defaultArtifacts.devviewState, transform: transformDevViewState },
 ]
 
 const textTemplateTargets: Array<{ template?: string; target: string; fallback: (context: CommandContext) => string }> =
@@ -61,9 +61,9 @@ const textTemplateTargets: Array<{ template?: string; target: string; fallback: 
       fallback: (context) =>
         `# Requirement Tree\n\nRoot request: ${context.options.brief || 'Initial project request'}\n`,
     },
-    { target: defaultArtifacts.rpdInterviewLog, fallback: () => '# Product Intake Interview Log\n\n' },
+    { target: defaultArtifacts.productIntakeInterviewLog, fallback: () => '# Product Intake Interview Log\n\n' },
     {
-      target: defaultArtifacts.rpdSummary,
+      target: defaultArtifacts.productIntakeSummary,
       fallback: () => '# Product Intake Summary\n\nProduct Intake is not closed yet.\n',
     },
     {
@@ -104,25 +104,14 @@ export async function initCommand(context: CommandContext): Promise<CommandResul
     return invalidCommand(`Invalid profile: ${String(profile)}`)
   }
 
-  const storageRoot = projectStorageRoot(context.options.root)
-  const resolveStorageTarget = (target: string): string => {
-    if (
-      target === defaultArtifacts.devviewState ||
-      target === defaultArtifacts.devviewRoutingContract ||
-      target === defaultArtifacts.devviewInvariants
-    ) {
-      return target.replace(/^\.pbe\//, '.devview/')
-    }
-    return storageRoot === '.devview' ? target.replace(/^\.pbe\//, '.devview/') : target
-  }
   const created: string[] = []
   const skipped: string[] = []
   for (const dir of initDirs) {
-    await ensureDir(path.join(context.options.root, resolveStorageTarget(dir)))
+    await ensureDir(path.join(context.options.root, dir))
   }
 
   for (const target of jsonTemplateTargets) {
-    const resolvedTarget = resolveStorageTarget(target.target)
+    const resolvedTarget = target.target
     const outputPath = path.join(context.options.root, resolvedTarget)
     if (existsSync(outputPath) && !context.options.force) {
       skipped.push(resolvedTarget)
@@ -136,7 +125,7 @@ export async function initCommand(context: CommandContext): Promise<CommandResul
   }
 
   for (const target of textTemplateTargets) {
-    const resolvedTarget = resolveStorageTarget(target.target)
+    const resolvedTarget = target.target
     const outputPath = path.join(context.options.root, resolvedTarget)
     if (existsSync(outputPath) && !context.options.force) {
       skipped.push(resolvedTarget)
@@ -205,25 +194,16 @@ function transformRequirementTree(value: Record<string, unknown>, context: Comma
   return value
 }
 
-function transformPbeState(value: Record<string, unknown>, context: CommandContext): Record<string, unknown> {
+function transformDevViewState(value: Record<string, unknown>, context: CommandContext): Record<string, unknown> {
   const now = new Date().toISOString()
-  const storageRoot = projectStorageRoot(context.options.root)
   value.createdAt = now
   value.updatedAt = now
   value.deliveryStatus = 'waiting_root_confirmation'
-  if (typeof value.artifacts === 'object' && value.artifacts !== null) {
-    const artifacts = value.artifacts as Record<string, unknown>
-    for (const [key, artifactPath] of Object.entries(artifacts)) {
-      if (typeof artifactPath === 'string' && artifactPath.startsWith('.pbe/')) {
-        artifacts[key] = storageRoot === '.devview' ? artifactPath.replace(/^\.pbe\//, '.devview/') : artifactPath
-      }
-    }
-  }
   if (typeof value.autoflow === 'object' && value.autoflow !== null) {
     const autoflow = value.autoflow as Record<string, unknown>
     autoflow.enabled = true
     autoflow.profile = context.options.profile || 'full'
-    autoflow.state = PBE_STATE.INIT
+    autoflow.state = DEVVIEW_STATE.INIT
     autoflow.completedSteps = ['start']
     autoflow.currentGate = null
     autoflow.nextStep = 'product_intake'

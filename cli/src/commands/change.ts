@@ -3,7 +3,7 @@ import { artifactPath, defaultArtifacts } from '../core/project.js'
 import { readJsonSafe, writeJsonAtomic } from '../core/fs.js'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { ExitCode, hasErrors, issue } from '../core/types.js'
-import { validateChangeTree } from '../validators/pbe-validators.js'
+import { validateChangeTree } from '../validators/devview-validators.js'
 import { arrayObjects, stringValue, type JsonObject } from '../validators/shared.js'
 import { type CommandContext, transitionFailed } from './shared.js'
 

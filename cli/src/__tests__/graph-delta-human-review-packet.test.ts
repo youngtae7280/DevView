@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import {
   buildGraphDeltaHumanReviewPacket,
   validateProposalOnlyGraphDeltaPreview,
@@ -66,7 +66,7 @@ describe('Graph Delta human review packet CLI', () => {
     writeJson(join(workspace, 'proposal.preview.json'), validProposalPreview())
     const markdownPath = join(workspace, 'review-packet.md')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'review-graph-delta', '--proposal', 'proposal.preview.json', '--json'],
       { cwd: workspace, pluginRoot },
     )
@@ -89,7 +89,7 @@ describe('Graph Delta human review packet CLI', () => {
     writeJson(join(workspace, 'proposal.preview.json'), validProposalPreview())
     const markdownPath = join('.tmp', 'review-packet.md')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -119,7 +119,7 @@ describe('Graph Delta human review packet CLI', () => {
       boundaries: { ...validProposalPreview().boundaries, graphDeltaApplied: true },
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'review-graph-delta', '--proposal', 'proposal.preview.json', '--json'],
       { cwd: workspace, pluginRoot },
     )

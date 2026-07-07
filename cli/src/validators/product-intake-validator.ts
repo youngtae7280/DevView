@@ -13,16 +13,19 @@ import {
   isExecutableProductNode,
   nodesOf,
   stringValue,
-  terminalRpdStatuses,
+  terminalProductIntakeStatuses,
   validateAcceptanceCriterion,
   type JsonObject,
 } from './shared.js'
 
-export interface RpdCheckOptions {
+export interface ProductIntakeCheckOptions {
   completionMode: boolean
 }
 
-export async function validateRpd(root: string, options: RpdCheckOptions): Promise<ValidationIssue[]> {
+export async function validateProductIntake(
+  root: string,
+  options: ProductIntakeCheckOptions,
+): Promise<ValidationIssue[]> {
   const issues: ValidationIssue[] = []
   const productPath = artifactPath(root, 'productTree')
   const requirementPath = artifactPath(root, 'requirementTree')
@@ -31,12 +34,13 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
   if (!existsSync(productPath)) {
     return [
       issue({
-        validator: 'RPD',
+        validator: 'ProductIntake',
         code: 'PRODUCT_TREE_MISSING',
         severity: 'error',
         file: defaultArtifacts.productTree,
         message: 'Product Tree is missing.',
-        suggestedFix: 'Run `devview init` or create .pbe/tree/product-tree.json before running RPD checks.',
+        suggestedFix:
+          'Run `devview init` or create .devview/tree/product-tree.json before running Product Intake checks.',
       }),
     ]
   }
@@ -45,7 +49,7 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
   if (!product.ok) {
     return [
       issue({
-        validator: 'RPD',
+        validator: 'ProductIntake',
         code: 'JSON_INVALID',
         severity: 'error',
         file: defaultArtifacts.productTree,
@@ -58,7 +62,7 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
   if (!existsSync(requirementPath)) {
     issues.push(
       issue({
-        validator: 'RPD',
+        validator: 'ProductIntake',
         code: 'COMPAT_REQUIREMENT_TREE_MISSING',
         severity: 'error',
         file: defaultArtifacts.requirementTree,
@@ -72,7 +76,7 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
   if (!rootNode) {
     issues.push(
       issue({
-        validator: 'RPD',
+        validator: 'ProductIntake',
         code: 'PRODUCT_ROOT_MISSING',
         severity: 'error',
         file: defaultArtifacts.productTree,
@@ -85,7 +89,7 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
   if (options.completionMode && rootNode && !hasUserConfirmationEvidence(rootNode)) {
     issues.push(
       issue({
-        validator: 'RPD',
+        validator: 'ProductIntake',
         code: 'ROOT_NOT_CONFIRMED_BY_USER',
         severity: 'error',
         file: defaultArtifacts.productTree,
@@ -103,17 +107,17 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
     const status = stringValue(node.status)
     const executable = isExecutableProductNode(node)
 
-    if (options.completionMode && isLeaf && !terminalRpdStatuses.has(status)) {
+    if (options.completionMode && isLeaf && !terminalProductIntakeStatuses.has(status)) {
       issues.push(
         issue({
-          validator: 'RPD',
+          validator: 'ProductIntake',
           code: status === 'blocked' ? 'NODE_BLOCKED' : 'LEAF_NOT_TERMINAL',
           severity: 'error',
           file: defaultArtifacts.productTree,
           nodeId,
           message: `Product leaf ${nodeId} is ${status || 'missing status'}, not confirmed/deferred/out_of_scope.`,
           suggestedFix:
-            'Continue RPD for this node or explicitly mark it confirmed, deferred, or out_of_scope with user-backed rationale.',
+            'Continue Product Intake for this node or explicitly mark it confirmed, deferred, or out_of_scope with user-backed rationale.',
         }),
       )
     }
@@ -121,14 +125,14 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
     if (executable && ['partial', 'ambiguous'].includes(getNestedString(node, ['ambiguity', 'status']))) {
       issues.push(
         issue({
-          validator: 'RPD',
+          validator: 'ProductIntake',
           code: 'AMBIGUITY_UNRESOLVED',
           severity: 'error',
           file: defaultArtifacts.productTree,
           nodeId,
           message: `Selected executable Product node ${nodeId} still has unresolved ambiguity.`,
           suggestedFix:
-            'Ask exactly one focused RPD question and resolve ambiguity into concrete acceptance criteria before WPD.',
+            'Ask exactly one focused Product Intake question and resolve ambiguity into concrete acceptance criteria before Work Planning.',
         }),
       )
     }
@@ -136,7 +140,7 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
     if (executable && status === 'needs_clarification') {
       issues.push(
         issue({
-          validator: 'RPD',
+          validator: 'ProductIntake',
           code: 'NODE_NEEDS_CLARIFICATION',
           severity: 'error',
           file: defaultArtifacts.productTree,
@@ -155,7 +159,7 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
     ) {
       issues.push(
         issue({
-          validator: 'RPD',
+          validator: 'ProductIntake',
           code: 'ACCEPTANCE_CRITERIA_MISSING',
           severity: 'error',
           file: defaultArtifacts.productTree,
@@ -171,7 +175,7 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
     if (executable && unresolvedTerms.length > 0) {
       issues.push(
         issue({
-          validator: 'RPD',
+          validator: 'ProductIntake',
           code: 'ABSTRACT_QUALITY_TERM',
           severity: 'error',
           file: defaultArtifacts.productTree,
@@ -194,13 +198,14 @@ export async function validateRpd(root: string, options: RpdCheckOptions): Promi
       for (const decision of getOpenBlockingDecisions(queue.value)) {
         issues.push(
           issue({
-            validator: 'RPD',
+            validator: 'ProductIntake',
             code: 'BLOCKING_DECISION_OPEN',
             severity: 'error',
             file: defaultArtifacts.decisionQueue,
             nodeId: stringValue(decision.targetNodeId),
             message: `Blocking decision ${String(decision.id)} is still open: ${String(decision.question || decision.reason || '')}`,
-            suggestedFix: 'Ask the user to resolve this decision before closing RPD or entering downstream stages.',
+            suggestedFix:
+              'Ask the user to resolve this decision before closing Product Intake or entering downstream stages.',
           }),
         )
       }

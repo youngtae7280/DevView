@@ -10,12 +10,12 @@ export function writeVisualContractArtifacts(
     artifactType: 'visual_reference',
     status: 'confirmed',
     visualWorkRequired: true,
-    primarySource: 'default_pbe_clean_theme',
+    primarySource: 'default_devview_clean_theme',
     sources: [
       {
         sourceId: 'VISUAL-SOURCE-1',
-        sourceType: 'default_pbe_clean_theme',
-        description: 'Default PBE Clean Theme',
+        sourceType: 'default_devview_clean_theme',
+        description: 'Default DevView Clean Theme',
         providedBy: 'codex',
         scope: 'selected_slice',
       },

@@ -1,13 +1,13 @@
 import { createIssue } from '../validator-utils/report-utils.js'
 import { readOptionalJson } from '../validator-utils/json-utils.js'
 
-const validator = 'ACEP manifest'
+const validator = 'Execution Pack manifest'
 
-export function runAcepManifestValidator({ root }) {
+export function runExecutionPackManifestValidator({ root }) {
   const issues = []
   const { data: manifest, issue } = readOptionalJson(
     root,
-    '.pbe/codex-execution-pack/execution-manifest.json',
+    '.devview/codex-execution-pack/execution-manifest.json',
     validator,
   )
   if (issue) {
@@ -21,10 +21,10 @@ export function runAcepManifestValidator({ root }) {
     issues.push(
       createIssue({
         validator,
-        file: '.pbe/codex-execution-pack/execution-manifest.json',
-        code: 'ACEP_MANIFEST_FIELD_INVALID',
+        file: '.devview/codex-execution-pack/execution-manifest.json',
+        code: 'EXECUTION_PACK_MANIFEST_FIELD_INVALID',
         message: 'phases must be an array.',
-        suggestedFix: 'Regenerate ACEP manifest with phases[].',
+        suggestedFix: 'Regenerate Execution Pack manifest with phases[].',
       }),
     )
   }
@@ -33,10 +33,10 @@ export function runAcepManifestValidator({ root }) {
     issues.push(
       createIssue({
         validator,
-        file: '.pbe/codex-execution-pack/execution-manifest.json',
-        code: 'ACEP_MANIFEST_FIELD_INVALID',
+        file: '.devview/codex-execution-pack/execution-manifest.json',
+        code: 'EXECUTION_PACK_MANIFEST_FIELD_INVALID',
         message: 'validationCommands must be an array when present.',
-        suggestedFix: 'Regenerate ACEP manifest with validationCommands[] or omit it for legacy ACEP.',
+        suggestedFix: 'Regenerate Execution Pack manifest with validationCommands[] or omit the optional package.',
       }),
     )
   }
@@ -45,9 +45,9 @@ export function runAcepManifestValidator({ root }) {
     issues.push(
       createIssue({
         validator,
-        file: '.pbe/codex-execution-pack/execution-manifest.json',
+        file: '.devview/codex-execution-pack/execution-manifest.json',
         code: 'CODEX_SELF_ACCEPTANCE',
-        message: 'ACEP manifest cannot end in accepted because only the user can accept results.',
+        message: 'Execution Pack manifest cannot end in accepted because only the user can accept results.',
         suggestedFix: 'Use submitted_for_review and wait for the review result gate.',
       }),
     )

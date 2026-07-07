@@ -2,9 +2,9 @@ import { canonicalStateArtifactRelativePath, stateArtifactPath } from './project
 import { readJsonSafe, writeJsonAtomic } from './fs.js'
 import {
   assertTransition,
-  normalizePbeState,
+  normalizeDevViewState,
   stateMachineIssues,
-  type PbeState,
+  type DevViewState,
   type StateHistoryEntry,
 } from './state-machine.js'
 import type { CommandResult, ValidationIssue } from './types.js'
@@ -25,19 +25,19 @@ export interface StateTransitionUpdate {
   data?: Record<string, unknown>
 }
 
-export interface PreparedPbeStateTransition {
+export interface PreparedDevViewStateTransition {
   statePath: string
   state: Record<string, unknown>
   result: CommandResult
 }
 
-export async function transitionPbeState(
+export async function transitionDevViewState(
   root: string,
   command: string,
-  targets: PbeState[],
+  targets: DevViewState[],
   update: StateTransitionUpdate,
 ): Promise<CommandResult> {
-  const prepared = await preparePbeStateTransition(root, command, targets, update)
+  const prepared = await prepareDevViewStateTransition(root, command, targets, update)
   if (!prepared.ok) {
     return prepared.result
   }
@@ -46,10 +46,10 @@ export async function transitionPbeState(
   return prepared.result
 }
 
-export async function preparePbeStateTransition(
+export async function prepareDevViewStateTransition(
   root: string,
   command: string,
-  targets: PbeState[],
+  targets: DevViewState[],
   update: StateTransitionUpdate,
 ): Promise<
   | { ok: true; statePath: string; state: Record<string, unknown>; result: CommandResult }
@@ -68,7 +68,7 @@ export async function preparePbeStateTransition(
         issues: [
           issue({
             validator: 'StateTransition',
-            code: 'PBE_STATE_INVALID_JSON',
+            code: 'DEVVIEW_STATE_INVALID_JSON',
             severity: 'error',
             file: canonicalStateArtifactRelativePath(root),
             message: parsed.error,
@@ -82,7 +82,7 @@ export async function preparePbeStateTransition(
   const state = parsed.value
   const autoflow =
     typeof state.autoflow === 'object' && state.autoflow !== null ? (state.autoflow as Record<string, unknown>) : {}
-  const current = normalizePbeState(autoflow.state)
+  const current = normalizeDevViewState(autoflow.state)
   if (!current) {
     return {
       ok: false,
@@ -98,7 +98,7 @@ export async function preparePbeStateTransition(
             severity: 'error',
             file: canonicalStateArtifactRelativePath(root),
             message: `Cannot transition from unknown state: ${String(autoflow.state || '<missing>')}.`,
-            suggestedFix: 'Repair autoflow.state to a canonical state or known migration alias.',
+            suggestedFix: 'Repair autoflow.state to a canonical DevView state.',
           }),
         ],
       },
@@ -235,10 +235,10 @@ export async function preparePbeStateTransition(
   }
 }
 
-export async function checkpointPbeState(
+export async function checkpointDevViewState(
   root: string,
   command: string,
-  allowedStates: PbeState[],
+  allowedStates: DevViewState[],
   update: StateTransitionUpdate,
 ): Promise<CommandResult> {
   const statePath = stateArtifactPath(root)
@@ -252,7 +252,7 @@ export async function checkpointPbeState(
       issues: [
         issue({
           validator: 'StateCheckpoint',
-          code: 'PBE_STATE_INVALID_JSON',
+          code: 'DEVVIEW_STATE_INVALID_JSON',
           severity: 'error',
           file: canonicalStateArtifactRelativePath(root),
           message: parsed.error,
@@ -265,7 +265,7 @@ export async function checkpointPbeState(
   const state = parsed.value
   const autoflow =
     typeof state.autoflow === 'object' && state.autoflow !== null ? (state.autoflow as Record<string, unknown>) : {}
-  const current = normalizePbeState(autoflow.state)
+  const current = normalizeDevViewState(autoflow.state)
   if (!current) {
     return {
       ok: false,
@@ -279,7 +279,7 @@ export async function checkpointPbeState(
           severity: 'error',
           file: canonicalStateArtifactRelativePath(root),
           message: `Cannot update checkpoint from unknown state: ${String(autoflow.state || '<missing>')}.`,
-          suggestedFix: 'Repair autoflow.state to a canonical state or known migration alias.',
+          suggestedFix: 'Repair autoflow.state to a canonical DevView state.',
         }),
       ],
     }

@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -17,7 +17,7 @@ describe('Evidence Acceptance readiness CLI', () => {
     writeJson(join(workspace, 'policy.json'), validPolicy())
     writeJson(join(workspace, 'mutation-readiness.json'), validMutationReadiness({ ready: false }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -56,7 +56,7 @@ describe('Evidence Acceptance readiness CLI', () => {
     writeJson(join(workspace, 'policy.json'), validPolicy())
     writeJson(join(workspace, 'mutation-readiness.json'), validMutationReadiness({ ready: true }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -93,7 +93,7 @@ describe('Evidence Acceptance readiness CLI', () => {
       evidenceAccepted: true,
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -120,7 +120,7 @@ describe('Evidence Acceptance readiness CLI', () => {
     writeJson(join(workspace, 'policy.json'), { ...validPolicy(), runtimeEvidenceSatisfied: true })
     writeJson(join(workspace, 'mutation-readiness.json'), validMutationReadiness({ ready: true }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -148,7 +148,7 @@ describe('Evidence Acceptance readiness CLI', () => {
     writeJson(join(workspace, 'mutation-readiness.json'), validMutationReadiness({ ready: true }))
     const sourceBefore = readFileSync(join(workspace, 'mutation-readiness.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

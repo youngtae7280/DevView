@@ -11,7 +11,7 @@ export function runAutoflowStateValidator({ root }) {
     relativePath,
   } = readFirstOptionalJson(
     root,
-    ['.devview/blueprint/devview-state.json', '.devview/blueprint/pbe-state.json', '.pbe/blueprint/pbe-state.json'],
+    ['.devview/blueprint/devview-state.json', '.devview/blueprint/pbe-state.json', '.devview/blueprint/pbe-state.json'],
     validator,
   )
   if (issue) {

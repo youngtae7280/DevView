@@ -374,7 +374,7 @@ describe('DevView legacy tree validator', () => {
 })
 
 function createTreeValidatorWorkspace() {
-  const workspace = mkdtempSync(join(tmpdir(), 'pbe-tree-validator-'))
+  const workspace = mkdtempSync(join(tmpdir(), 'devview-tree-validator-'))
   tempRoots.push(workspace)
 
   for (const entry of ['schemas', 'templates']) {
@@ -406,7 +406,7 @@ function runTreeValidator(workspace: string) {
 }
 
 function writeProductTree(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'tree', 'product-tree.json'), {
+  writeJson(join(workspace, '.devview', 'tree', 'product-tree.json'), {
     version: '0.2.0-tree-control',
     rootNodeId: 'PT-ROOT',
     nodes: [
@@ -452,7 +452,7 @@ function writeProductTree(workspace: string) {
 }
 
 function writeProductTreeWithoutAcceptanceCriteria(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'tree', 'product-tree.json'), {
+  writeJson(join(workspace, '.devview', 'tree', 'product-tree.json'), {
     version: '0.2.0-tree-control',
     rootNodeId: 'PT-ROOT',
     nodes: [
@@ -478,7 +478,7 @@ function writeProductTreeWithoutAcceptanceCriteria(workspace: string) {
 }
 
 function writeAmbiguousProductTree(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'tree', 'product-tree.json'), {
+  writeJson(join(workspace, '.devview', 'tree', 'product-tree.json'), {
     version: '0.2.0-tree-control',
     rootNodeId: 'PT-ROOT',
     nodes: [
@@ -514,7 +514,7 @@ function writeWorkTree(
   productNodeId: string,
   options: { satisfiesAcceptanceCriteriaIds?: string[] } = {},
 ) {
-  writeJson(join(workspace, '.pbe', 'tree', 'work-tree.json'), {
+  writeJson(join(workspace, '.devview', 'tree', 'work-tree.json'), {
     version: '0.2.0-tree-control',
     rootNodeId: 'WT-ROOT',
     nodes: [
@@ -550,7 +550,7 @@ function writeWorkTree(
 }
 
 function writeRootOnlyTestTree(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'tree', 'test-tree.json'), {
+  writeJson(join(workspace, '.devview', 'tree', 'test-tree.json'), {
     version: '0.2.0-tree-control',
     rootNodeId: 'TT-ROOT',
     nodes: [
@@ -576,7 +576,7 @@ function writeTestTree(
   status: string,
   options: { verifiesAcceptanceCriteriaIds?: string[] } = {},
 ) {
-  writeJson(join(workspace, '.pbe', 'tree', 'test-tree.json'), {
+  writeJson(join(workspace, '.devview', 'tree', 'test-tree.json'), {
     version: '0.2.0-tree-control',
     rootNodeId: 'TT-ROOT',
     nodes: [
@@ -616,7 +616,7 @@ function writeCycleTree(
     includedTestNodeIds: string[]
   },
 ) {
-  writeJson(join(workspace, '.pbe', 'execution', 'cycle-tree.json'), {
+  writeJson(join(workspace, '.devview', 'execution', 'cycle-tree.json'), {
     version: '0.2.0-tree-control',
     activeCycleId: 'CYCLE-1',
     cycles: [
@@ -648,7 +648,7 @@ function writeEvidenceTree(
     evidenceForAcceptanceCriteriaIds?: string[]
   }>,
 ) {
-  writeJson(join(workspace, '.pbe', 'evidence', 'evidence-tree.json'), {
+  writeJson(join(workspace, '.devview', 'evidence', 'evidence-tree.json'), {
     version: '0.2.0-tree-control',
     evidence,
   })
@@ -660,7 +660,7 @@ function writeAcceptanceTree(
   evidenceNodeId: string,
   options: { includeDecisionSource?: boolean } = {},
 ) {
-  writeJson(join(workspace, '.pbe', 'control', 'acceptance-tree.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'acceptance-tree.json'), {
     version: '0.2.0-tree-control',
     branches: [
       {
@@ -684,7 +684,7 @@ function writeAcceptanceTree(
 }
 
 function writeChangeTreeWithCriteriaDelta(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'control', 'change-tree.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'change-tree.json'), {
     version: '0.2.0-tree-control',
     changes: [
       {
@@ -706,7 +706,7 @@ function writeChangeTreeWithCriteriaDelta(workspace: string) {
 }
 
 function writeImpactTreeWithoutCriteriaRetest(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'control', 'impact-tree.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'impact-tree.json'), {
     version: '0.2.0-tree-control',
     impacts: [
       {
@@ -723,7 +723,7 @@ function writeImpactTreeWithoutCriteriaRetest(workspace: string) {
 }
 
 function writeSurfaceCompletionLedger(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'control', 'surface-completion-ledger.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'surface-completion-ledger.json'), {
     version: '0.2.1-parity-completeness',
     surfaces: [
       {
@@ -748,7 +748,7 @@ function writeSurfaceCompletionLedger(workspace: string) {
 }
 
 function writeCommandMappedDialogSurface(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'control', 'surface-completion-ledger.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'surface-completion-ledger.json'), {
     version: '0.2.1-parity-completeness',
     profileApplicability: ['legacy_migration', 'subdialog_parity'],
     surfaces: [
@@ -796,7 +796,7 @@ function writeCommandMappedDialogSurface(workspace: string) {
 }
 
 function writeLegacyInventoryWithUnverifiedHandler(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'control', 'legacy-control-inventory.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'legacy-control-inventory.json'), {
     version: '0.2.1-parity-completeness',
     inventories: [
       {
@@ -841,7 +841,7 @@ function writeLegacyInventoryWithUnverifiedHandler(workspace: string) {
 }
 
 function writeParityReviewedSurfaceWithInventory(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'control', 'surface-completion-ledger.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'surface-completion-ledger.json'), {
     version: '0.2.1-parity-completeness',
     surfaces: [
       {
@@ -884,7 +884,7 @@ function writeParityReviewedSurfaceWithInventory(workspace: string) {
 }
 
 function writeHardwareGatedSurfaceWithoutSubstituteEvidence(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'control', 'surface-completion-ledger.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'surface-completion-ledger.json'), {
     version: '0.2.1-parity-completeness',
     surfaces: [
       {
@@ -920,7 +920,7 @@ function writeHardwareGatedSurfaceWithoutSubstituteEvidence(workspace: string) {
 }
 
 function writeHardwareReadinessLedger(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'control', 'hardware-readiness-ledger.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'hardware-readiness-ledger.json'), {
     version: '0.2.1-parity-completeness',
     features: [
       {
@@ -938,7 +938,7 @@ function writeHardwareReadinessLedger(workspace: string) {
 }
 
 function writeVerificationMissLog(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'control', 'verification-miss-log.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'verification-miss-log.json'), {
     version: '0.2.1-parity-completeness',
     misses: [
       {
@@ -968,7 +968,7 @@ function writeVisualVerificationProfile(
     evidenceNodeIds?: string[]
   } = {},
 ) {
-  writeJson(join(workspace, '.pbe', 'control', 'visual-verification-profile.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'visual-verification-profile.json'), {
     version: '0.2.1-parity-completeness',
     schemaVersion: '1.0.0',
     artifactType: 'visual_verification_profile',
@@ -994,7 +994,7 @@ function writeVisualVerificationProfile(
 }
 
 function writeWindowsUtilityStyleVerificationMissLog(workspace: string) {
-  writeJson(join(workspace, '.pbe', 'control', 'verification-miss-log.json'), {
+  writeJson(join(workspace, '.devview', 'control', 'verification-miss-log.json'), {
     schemaVersion: 1,
     generatedAt: '2026-06-11T00:00:00.000Z',
     misses: [
@@ -1010,12 +1010,12 @@ function writeWindowsUtilityStyleVerificationMissLog(workspace: string) {
           'Validation checked command availability but did not open the dialog.',
           'No child surface inventory existed for controls or event handlers.',
         ],
-        requiredPbeImprovements: ['Promote commands that open dialogs into child surface inventory and tests.'],
+        requiredDevViewImprovements: ['Promote commands that open dialogs into child surface inventory and tests.'],
         promotion: {
           status: 'proposed',
           reason: 'Subdialog controls must become explicit Work/Test nodes.',
         },
-        status: 'reported_for_pbe_improvement',
+        status: 'reported_for_devview_improvement',
       },
     ],
   })

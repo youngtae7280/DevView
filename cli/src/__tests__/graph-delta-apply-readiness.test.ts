@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -18,7 +18,7 @@ describe('Graph Delta Apply readiness CLI', () => {
     writeJson(join(workspace, 'proposal.json'), validProposal())
     writeJson(join(workspace, 'approved-state.json'), validApprovedState({ created: false }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -62,7 +62,7 @@ describe('Graph Delta Apply readiness CLI', () => {
     writeJson(join(workspace, 'proposal.json'), validProposal())
     writeJson(join(workspace, 'approved-state.json'), validApprovedState({ created: true }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -99,7 +99,7 @@ describe('Graph Delta Apply readiness CLI', () => {
     writeJson(join(workspace, 'proposal.json'), { ...validProposal(), proposalId: 'GDP-OTHER' })
     writeJson(join(workspace, 'approved-state.json'), validApprovedState({ created: true }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -133,7 +133,7 @@ describe('Graph Delta Apply readiness CLI', () => {
     writeJson(join(workspace, 'proposal.json'), { ...validProposal(), graphSourceMutated: true })
     writeJson(join(workspace, 'approved-state.json'), validApprovedState({ created: true }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -164,7 +164,7 @@ describe('Graph Delta Apply readiness CLI', () => {
     writeJson(join(workspace, 'approved-state.json'), validApprovedState({ created: true }))
     const proposalBefore = readFileSync(join(workspace, 'proposal.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

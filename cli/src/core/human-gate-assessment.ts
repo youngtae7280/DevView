@@ -4,7 +4,7 @@ export const humanGateTransitions = [
   'work-scope',
   'work-to-test',
   'test-to-evidence',
-  'acep-preflight',
+  'execution-pack-preflight',
   'review-revision',
   'product-patch',
   'acceptance',

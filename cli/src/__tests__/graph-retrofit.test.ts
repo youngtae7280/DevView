@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -13,7 +13,7 @@ afterEach(() => {
 
 describe('graph retrofit CLI', () => {
   it('summarizes a retrofit graph-source without touching the target project', async () => {
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'retrofit',
@@ -43,7 +43,7 @@ describe('graph retrofit CLI', () => {
   })
 
   it('summarizes a large external Kubernetes KEP retrofit graph-source without touching the target project', async () => {
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'retrofit',
@@ -97,7 +97,7 @@ describe('graph retrofit CLI', () => {
   })
 
   it('generates a read-only instruction pack from the Kubernetes KEP retrofit record', async () => {
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'operation',
@@ -140,7 +140,7 @@ describe('graph retrofit CLI', () => {
       edges: [],
     })
 
-    const result = await runPbeCli(['graph', 'retrofit', 'plan', '--graph-source', 'graph-source.json', '--json'], {
+    const result = await runDevViewCli(['graph', 'retrofit', 'plan', '--graph-source', 'graph-source.json', '--json'], {
       cwd: workspace,
       pluginRoot,
     })

@@ -12,9 +12,9 @@
 - product-intake Tree Walk completed or UI/UX preview generated.
 
 ?占쎌꽦/媛깆떊???占쎌텧占?
-- .pbe/blueprint/ui-ux-preview.md
-- .pbe/blueprint/ui-ux-confirmation.md
-- .pbe/blueprint/ui-ux-confirmation-log.md
+- .devview/blueprint/ui-ux-preview.md
+- .devview/blueprint/ui-ux-confirmation.md
+- .devview/blueprint/ui-ux-confirmation-log.md
 
 寃占?
 - {validation_summary}

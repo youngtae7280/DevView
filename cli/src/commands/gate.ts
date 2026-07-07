@@ -5,19 +5,19 @@ import {
   type HumanGateAssessment,
 } from '../core/human-gate-assessment.js'
 import { defaultArtifacts, loadProject } from '../core/project.js'
-import { normalizePbeState, PBE_STATE, type PbeState } from '../core/state-machine.js'
+import { normalizeDevViewState, DEVVIEW_STATE, type DevViewState } from '../core/state-machine.js'
 import type { CommandResult, ValidationIssue } from '../core/types.js'
 import { ExitCode, hasErrors, issue } from '../core/types.js'
 import {
   validateAcceptedActors,
-  validateAcep,
+  validateExecutionPack,
   validateEvidence,
-  validateRpd,
+  validateProductIntake,
   validateTraceability,
-  validateVd,
+  validateVerificationDesign,
   validateVisualDesign,
-  validateWpd,
-} from '../validators/pbe-validators.js'
+  validateWorkPlanning,
+} from '../validators/devview-validators.js'
 import {
   type CommandContext,
   hasUserAcceptedBranch,
@@ -105,20 +105,20 @@ export async function gateCommand(stage: string | undefined, context: CommandCon
   issues.push(...stageStateIssues(canonicalStage, loadedProject.project.state))
 
   if (canonicalStage === 'work-planning') {
-    issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
+    issues.push(...(await validateProductIntake(context.options.root, { completionMode: true })))
     issues.push(...uiUxApprovalIssues(context.options.root, loadedProject.project.state))
     issues.push(...(await validateVisualDesign(context.options.root, { requireInventory: false })))
   } else if (canonicalStage === 'verification-design') {
-    issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
-    issues.push(...(await validateWpd(context.options.root)))
+    issues.push(...(await validateProductIntake(context.options.root, { completionMode: true })))
+    issues.push(...(await validateWorkPlanning(context.options.root)))
     issues.push(...(await validateVisualDesign(context.options.root)))
     issues.push(...(await validateTraceability(context.options.root, { stage: 'verification-design' })))
   } else if (canonicalStage === 'execution-pack') {
-    issues.push(...(await validateRpd(context.options.root, { completionMode: true })))
-    issues.push(...(await validateVd(context.options.root)))
+    issues.push(...(await validateProductIntake(context.options.root, { completionMode: true })))
+    issues.push(...(await validateVerificationDesign(context.options.root)))
     issues.push(...(await validateVisualDesign(context.options.root)))
   } else if (canonicalStage === 'code-start') {
-    issues.push(...(await validateAcep(context.options.root)))
+    issues.push(...(await validateExecutionPack(context.options.root)))
     issues.push(...implementationScopeIssues(await loadState(context.options.root)))
   } else if (canonicalStage === 'review-result') {
     issues.push(...(await validateTraceability(context.options.root, { stage: 'review' })))
@@ -196,14 +196,14 @@ function stageStateIssues(stage: string, state: Record<string, unknown> | null):
   const autoflow =
     typeof state?.autoflow === 'object' && state.autoflow !== null ? (state.autoflow as Record<string, unknown>) : {}
   const rawState = String(autoflow.state || '')
-  const currentState = normalizePbeState(rawState)
-  const allowedByStage: Record<string, PbeState[]> = {
-    'work-planning': [PBE_STATE.PRODUCT_INTAKE_DONE, ...statesFrom(PBE_STATE.UI_UX_APPROVED)],
-    'verification-design': statesFrom(PBE_STATE.WORK_PLANNING_DONE),
-    'execution-pack': statesFrom(PBE_STATE.VERIFICATION_DESIGN_DONE),
-    'code-start': statesFrom(PBE_STATE.SCOPE_SELECTED),
-    'review-result': statesFrom(PBE_STATE.EXECUTION_PACK_RUN_DONE),
-    accept: statesFrom(PBE_STATE.WAITING_REVIEW_RESULT),
+  const currentState = normalizeDevViewState(rawState)
+  const allowedByStage: Record<string, DevViewState[]> = {
+    'work-planning': [DEVVIEW_STATE.PRODUCT_INTAKE_DONE, ...statesFrom(DEVVIEW_STATE.UI_UX_APPROVED)],
+    'verification-design': statesFrom(DEVVIEW_STATE.WORK_PLANNING_DONE),
+    'execution-pack': statesFrom(DEVVIEW_STATE.VERIFICATION_DESIGN_DONE),
+    'code-start': statesFrom(DEVVIEW_STATE.SCOPE_SELECTED),
+    'review-result': statesFrom(DEVVIEW_STATE.EXECUTION_PACK_RUN_DONE),
+    accept: statesFrom(DEVVIEW_STATE.WAITING_REVIEW_RESULT),
   }
   if (currentState && allowedByStage[stage]?.includes(currentState)) {
     return []
@@ -213,7 +213,7 @@ function stageStateIssues(stage: string, state: Record<string, unknown> | null):
       validator: 'Gate',
       code: 'GATE_BLOCKED',
       severity: 'error',
-      file: defaultArtifacts.pbeState,
+      file: defaultArtifacts.devviewState,
       message: `Gate ${stage} is blocked from current state ${rawState || 'unknown'}.`,
       suggestedFix: 'Run the previous required DevView close/check command instead of skipping stages.',
     }),
@@ -222,10 +222,6 @@ function stageStateIssues(stage: string, state: Record<string, unknown> | null):
 
 function normalizeGateStage(stage: string | undefined): string | null {
   const aliases: Record<string, string> = {
-    rpd: 'product-intake',
-    wpd: 'work-planning',
-    vd: 'verification-design',
-    acep: 'execution-pack',
     'review-submit': 'review-result',
     review: 'review-result',
     'implementation-start': 'code-start',

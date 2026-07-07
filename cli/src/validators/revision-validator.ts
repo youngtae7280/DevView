@@ -44,7 +44,7 @@ export async function validateRevisionComplete(root: string, changeId: string | 
     issues.push(
       issue({
         validator: 'Revision',
-        code: 'PBE_STATE_INVALID_JSON',
+        code: 'DEVVIEW_STATE_INVALID_JSON',
         severity: 'error',
         file: canonicalStateArtifactRelativePath(root),
         message: `Could not parse devview-state.json: ${state.error}`,

@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { mkdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeText } from './fixtures/workspace'
 
@@ -16,7 +16,7 @@ describe('DevView legacy cleanup migration plan CLI', () => {
   it('reports dry-run operations and keeps safety flags false', async () => {
     const workspace = createLegacyExamplesWorkspace()
 
-    const result = await runPbeCli(['cleanup-legacy', '--dry-run', '--scope', 'examples', '--json'], {
+    const result = await runDevViewCli(['cleanup-legacy', '--dry-run', '--scope', 'examples', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -45,7 +45,7 @@ describe('DevView legacy cleanup migration plan CLI', () => {
   it('does not report the completed Todo fixture rename when only the DevView path exists', async () => {
     const workspace = createLegacyExamplesWorkspace()
 
-    const result = await runPbeCli(['cleanup-legacy', '--dry-run', '--scope', 'examples', '--json'], {
+    const result = await runDevViewCli(['cleanup-legacy', '--dry-run', '--scope', 'examples', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -61,7 +61,7 @@ describe('DevView legacy cleanup migration plan CLI', () => {
   it('includes high-risk Todo fixture rename operation for old-path migration fixtures without mutating files', async () => {
     const workspace = createLegacyExamplesWorkspace({ includeOldTodoFixture: true })
 
-    const result = await runPbeCli(['cleanup-legacy', '--dry-run', '--scope', 'examples', '--json'], {
+    const result = await runDevViewCli(['cleanup-legacy', '--dry-run', '--scope', 'examples', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -89,7 +89,7 @@ describe('DevView legacy cleanup migration plan CLI', () => {
       'Historical migration fixture with pbe wording.\n',
     )
 
-    const result = await runPbeCli(['cleanup-legacy', '--dry-run', '--scope', 'examples', '--json'], {
+    const result = await runDevViewCli(['cleanup-legacy', '--dry-run', '--scope', 'examples', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -111,7 +111,7 @@ describe('DevView legacy cleanup migration plan CLI', () => {
     const workspace = createLegacyExamplesWorkspace({ includeOldTodoFixture: true })
     mkdirSync(join(workspace, 'examples/valid/todo-app-devview-run'), { recursive: true })
 
-    const result = await runPbeCli(['cleanup-legacy', '--dry-run', '--scope', 'examples', '--json'], {
+    const result = await runDevViewCli(['cleanup-legacy', '--dry-run', '--scope', 'examples', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -127,7 +127,7 @@ describe('DevView legacy cleanup migration plan CLI', () => {
   it('requires --dry-run', async () => {
     const workspace = createLegacyExamplesWorkspace()
 
-    const result = await runPbeCli(['cleanup-legacy', '--scope', 'examples', '--json'], {
+    const result = await runDevViewCli(['cleanup-legacy', '--scope', 'examples', '--json'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -143,7 +143,7 @@ describe('DevView legacy cleanup migration plan CLI', () => {
     const sourcePath = join(workspace, 'examples/README.md')
     const before = readFileSync(sourcePath, 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'cleanup-legacy',
         '--dry-run',
@@ -166,7 +166,7 @@ describe('DevView legacy cleanup migration plan CLI', () => {
   it('blocks output and markdown collision with zero write', async () => {
     const workspace = createLegacyExamplesWorkspace()
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'cleanup-legacy',
         '--dry-run',

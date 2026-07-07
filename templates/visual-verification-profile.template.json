@@ -3,10 +3,10 @@
   "schemaVersion": "1.0.0",
   "artifactType": "visual_verification_profile",
   "status": "draft",
-  "visualContractRef": ".pbe/blueprint/ui-theme-spec.md",
-  "designTokensRef": ".pbe/blueprint/design-tokens.json",
-  "componentContractRef": ".pbe/blueprint/component-style-contract.json",
-  "surfaceInventoryRef": ".pbe/control/ui-surface-inventory.json",
+  "visualContractRef": ".devview/blueprint/ui-theme-spec.md",
+  "designTokensRef": ".devview/blueprint/design-tokens.json",
+  "componentContractRef": ".devview/blueprint/component-style-contract.json",
+  "surfaceInventoryRef": ".devview/control/ui-surface-inventory.json",
   "contractChecks": [
     {
       "checkId": "visual-contract-exists",

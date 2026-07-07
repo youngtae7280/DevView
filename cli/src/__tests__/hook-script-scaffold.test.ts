@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -16,7 +16,7 @@ describe('DevView Hook script scaffold preview CLI', () => {
     const workspace = createWorkspace()
     writeScaffoldInputs(workspace)
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [...baseArgs(), '--output', '.tmp/scaffold.json', '--markdown', '.tmp/scaffold.md'],
       {
         cwd: workspace,
@@ -64,7 +64,7 @@ describe('DevView Hook script scaffold preview CLI', () => {
       userPromptContext: { runtimeEvidenceSatisfied: true },
     })
 
-    const result = await runPbeCli(baseArgs(), { cwd: workspace, pluginRoot })
+    const result = await runDevViewCli(baseArgs(), { cwd: workspace, pluginRoot })
     const payload = JSON.parse(result.stderr)
 
     expect(result.exitCode).toBe(ExitCode.ValidationFailed)
@@ -78,7 +78,7 @@ describe('DevView Hook script scaffold preview CLI', () => {
     const workspace = createWorkspace()
     writeScaffoldInputs(workspace)
 
-    const activePath = await runPbeCli([...baseArgs(), '--output', '.codex/hooks/devview-user-prompt-submit.ps1'], {
+    const activePath = await runDevViewCli([...baseArgs(), '--output', '.codex/hooks/devview-user-prompt-submit.ps1'], {
       cwd: workspace,
       pluginRoot,
     })
@@ -86,7 +86,7 @@ describe('DevView Hook script scaffold preview CLI', () => {
     expect(activePath.exitCode).toBe(ExitCode.ValidationFailed)
     expect(activePayload.issues[0].message).toContain('active hook/config location')
 
-    const samePath = await runPbeCli(
+    const samePath = await runDevViewCli(
       [...baseArgs(), '--output', '.tmp/scaffold.json', '--markdown', '.tmp/scaffold.json'],
       {
         cwd: workspace,
@@ -103,7 +103,7 @@ describe('DevView Hook script scaffold preview CLI', () => {
     writeScaffoldInputs(workspace)
     const before = readFileSync(join(workspace, 'generated/user-prompt-context.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [...baseArgs(), '--output', '.tmp/scaffold.json', '--markdown', 'generated/user-prompt-context.json'],
       { cwd: workspace, pluginRoot },
     )

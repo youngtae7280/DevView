@@ -18,12 +18,7 @@
         "execution_pack_ready",
         "execution_pack_running",
         "complete",
-        "blocked",
-        "rpd",
-        "wpd",
-        "vd",
-        "acep_ready",
-        "acep_running"
+        "blocked"
       ]
     },
     "mode": {
@@ -34,12 +29,7 @@
         "verification_design",
         "execution_planning",
         "execution_pack_generation",
-        "execution_pack_execution",
-        "rpd_tree_walk",
-        "wpd_generation",
-        "vd_generation",
-        "acep_generation",
-        "acep_execution"
+        "execution_pack_execution"
       ]
     },
     "currentNodeId": { "type": ["string", "null"] },

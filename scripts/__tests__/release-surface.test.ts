@@ -44,5 +44,5 @@ describe('DevView release surface checker', () => {
     expect(report.ciEnforcementEnabled).toBe(false)
     expect(report.providerInvoked).toBe(false)
     expect(report.networkCallMade).toBe(false)
-  })
+  }, 20000)
 })

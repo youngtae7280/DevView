@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://local/project-blueprint-engine/work-graph.schema.json",
-  "title": "WPD Work Graph",
+  "title": "Work Planning Graph",
   "type": "object",
   "required": ["id", "nodes", "edges", "summary"],
   "properties": {

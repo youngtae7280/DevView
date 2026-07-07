@@ -12,7 +12,7 @@ export async function validateState(root: string): Promise<ValidationIssue[]> {
     return [
       issue({
         validator: 'State',
-        code: 'PBE_STATE_INVALID_JSON',
+        code: 'DEVVIEW_STATE_INVALID_JSON',
         severity: 'error',
         file: canonicalStateArtifactRelativePath(root),
         message: parsed.error,

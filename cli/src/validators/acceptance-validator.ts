@@ -14,7 +14,7 @@ export async function validateAcceptedActors(root: string): Promise<ValidationIs
   const issues: ValidationIssue[] = []
   const product = await readJsonIfExists(root, 'productTree')
   const acceptance = await readJsonIfExists(root, 'acceptanceTree')
-  const state = await readJsonIfExists(root, 'pbeState')
+  const state = await readJsonIfExists(root, 'devviewState')
 
   for (const node of nodesOf(product)) {
     const status = stringValue(node.status)
@@ -61,7 +61,7 @@ export async function validateAcceptedActors(root: string): Promise<ValidationIs
         validator: 'Acceptance',
         code: 'ASSISTANT_ACCEPTED_STATUS',
         severity: 'error',
-        file: defaultArtifacts.pbeState,
+        file: defaultArtifacts.devviewState,
         message: 'devview-state deliveryStatus is accepted without explicit user acceptance metadata.',
         suggestedFix: 'Use submitted_for_review until the user explicitly accepts the result.',
       }),

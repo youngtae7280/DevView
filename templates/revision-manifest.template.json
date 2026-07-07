@@ -27,7 +27,7 @@
   "affectedVerificationIds": ["TEST-001-UX"],
   "verificationMissIds": ["VML-001"],
   "whyPreviousVerificationMissedThis": "The previous verification checked behavior but did not check runtime visual parity.",
-  "promotedValidationContractRefs": [".pbe/control/visual-verification-profile.json#VVP-001"],
+  "promotedValidationContractRefs": [".devview/control/visual-verification-profile.json#VVP-001"],
   "surfaceReauditRequired": false,
   "allowedFiles": ["src/features/example.ts"],
   "forbiddenFiles": ["package.json", "build config", "deployment files"],

@@ -13,7 +13,7 @@
 
 ## DevView Artifact Independence
 
-- [ ] No two parallel tasks write the same `.pbe` artifact.
+- [ ] No two parallel tasks write the same `.devview` artifact.
 - [ ] No state transition commands run in parallel.
 
 ## Shared Resource Check

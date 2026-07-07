@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import {
   buildGitDerivedChangedFileCollectionArtifact,
   collectGitDerivedChangedFiles,
@@ -263,7 +263,7 @@ describe('git-derived changed-file collection', () => {
   it('rejects base/head refs when working tree mode is selected', async () => {
     const workspace = createCommittedWorkspace('src/todos.ts', 'export const value = "baseline"\n')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -289,7 +289,7 @@ describe('git-derived changed-file collection', () => {
   it('rejects mixed local changed-file modes', async () => {
     const workspace = createCommittedWorkspace('src/todos.ts', 'export const value = "baseline"\n')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'read-model', 'collect-changed-files', '--working-tree', '--staged', '--json'],
       {
         cwd: workspace,
@@ -305,14 +305,14 @@ describe('git-derived changed-file collection', () => {
   it('rejects explicit refs when staged or untracked local mode is selected', async () => {
     const workspace = createCommittedWorkspace('src/todos.ts', 'export const value = "baseline"\n')
 
-    const stagedResult = await runPbeCli(
+    const stagedResult = await runDevViewCli(
       ['graph', 'read-model', 'collect-changed-files', '--staged', '--base', 'HEAD~1', '--head', 'HEAD', '--json'],
       {
         cwd: workspace,
         pluginRoot,
       },
     )
-    const untrackedResult = await runPbeCli(
+    const untrackedResult = await runDevViewCli(
       ['graph', 'read-model', 'collect-changed-files', '--untracked', '--base', 'HEAD~1', '--head', 'HEAD', '--json'],
       {
         cwd: workspace,

@@ -6,11 +6,11 @@ const validator = 'Revision'
 
 export function runRevisionValidator({ root }) {
   const issues = []
-  if (!dirExists(root, '.pbe/revisions')) {
+  if (!dirExists(root, '.devview/revisions')) {
     return issues
   }
 
-  const manifests = listFiles(root, '.pbe/revisions', (file) => file.endsWith('revision-manifest.json'))
+  const manifests = listFiles(root, '.devview/revisions', (file) => file.endsWith('revision-manifest.json'))
   for (const relativePath of manifests) {
     const { data: manifest, issue } = readJson(root, relativePath, validator)
     if (issue) {

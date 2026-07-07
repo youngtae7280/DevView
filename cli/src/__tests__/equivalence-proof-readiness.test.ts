@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
@@ -17,7 +17,7 @@ describe('Equivalence Proof readiness CLI', () => {
     writeJson(join(workspace, 'policy.json'), validPolicy())
     writeJson(join(workspace, 'runtime-readiness.json'), validRuntimeEvidenceSatisfactionReadiness({ ready: false }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -53,7 +53,7 @@ describe('Equivalence Proof readiness CLI', () => {
     writeJson(join(workspace, 'policy.json'), validPolicy())
     writeJson(join(workspace, 'runtime-readiness.json'), validRuntimeEvidenceSatisfactionReadiness({ ready: true }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -82,7 +82,7 @@ describe('Equivalence Proof readiness CLI', () => {
     writeJson(join(workspace, 'policy.json'), validPolicy())
     writeJson(join(workspace, 'evidence-acceptance-readiness.json'), validEvidenceAcceptanceReadiness({ ready: true }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -107,7 +107,7 @@ describe('Equivalence Proof readiness CLI', () => {
     writeJson(join(workspace, 'runtime-readiness.json'), validRuntimeEvidenceSatisfactionReadiness({ ready: false }))
     writeJson(join(workspace, 'evidence-acceptance-readiness.json'), validEvidenceAcceptanceReadiness({ ready: true }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -140,7 +140,7 @@ describe('Equivalence Proof readiness CLI', () => {
       artifactRole: 'devview-accepted-evidence-record',
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -170,7 +170,7 @@ describe('Equivalence Proof readiness CLI', () => {
       runtimeEvidenceSatisfied: unsafeTrue(),
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -201,7 +201,7 @@ describe('Equivalence Proof readiness CLI', () => {
       equivalenceProven: unsafeTrue(),
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -230,7 +230,7 @@ describe('Equivalence Proof readiness CLI', () => {
     writeJson(join(workspace, 'policy.json'), { ...validPolicy(), equivalenceProven: unsafeTrue() })
     writeJson(join(workspace, 'runtime-readiness.json'), validRuntimeEvidenceSatisfactionReadiness({ ready: true }))
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -262,7 +262,7 @@ describe('Equivalence Proof readiness CLI', () => {
     })
     const sourceBefore = readFileSync(join(workspace, 'accepted-evidence.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

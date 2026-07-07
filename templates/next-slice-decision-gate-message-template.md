@@ -12,8 +12,8 @@
 - Review Result approved for the current slice.
 
 ?占쎌꽦/媛깆떊???占쎌텧占?
-- .pbe/review/result-summary.md
-- .pbe/review/user-review-checklist.md
+- .devview/review/result-summary.md
+- .devview/review/user-review-checklist.md
 - .devview/blueprint/devview-state.json
 
 寃占?

@@ -16,8 +16,8 @@ const validExamples = [
     source: validExampleRoot,
     commands: [
       ['validate', '--json'],
-      ['trace', 'check', '--stage', 'wpd', '--json'],
-      ['trace', 'check', '--stage', 'vd', '--json'],
+      ['trace', 'check', '--stage', 'work-planning', '--json'],
+      ['trace', 'check', '--stage', 'verification-design', '--json'],
       ['trace', 'check', '--stage', 'execution', '--json'],
       ['trace', 'check', '--stage', 'review', '--json'],
       ['trace', 'check', '--stage', 'accept', '--json'],
@@ -170,7 +170,7 @@ function applyMutation(root, mutation) {
       evidence.evidence[0].createdAt = '2026-06-12T08:00:00.000Z'
       evidence.evidence[0].updatedAt = '2026-06-12T08:05:00.000Z'
       writeArtifact(root, '.devview/evidence/evidence-tree.json', evidence)
-      writeStateFor(root, 'ACEP_RUN_DONE', 'verified')
+      writeStateFor(root, 'EXECUTION_PACK_RUN_DONE', 'verified')
       break
     }
     case 'assistantAccepted': {
@@ -207,7 +207,7 @@ function writeStateFor(root, targetState, deliveryStatus) {
   state.autoflow.state = targetState
   state.autoflow.stateHistory = index >= 0 ? history.slice(0, index + 1) : []
   state.autoflow.currentGate = targetState === 'WAITING_REVIEW_RESULT' ? 'review_result' : null
-  state.autoflow.nextStep = targetState === 'ACEP_RUN_DONE' ? 'review_result' : null
+  state.autoflow.nextStep = targetState === 'EXECUTION_PACK_RUN_DONE' ? 'review_result' : null
   state.deliveryStatus = deliveryStatus
   if (deliveryStatus !== 'accepted') {
     delete state.acceptance

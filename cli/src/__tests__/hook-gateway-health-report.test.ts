@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { generateHookGatewayHealthReport } from '../core/hook-gateway-health-report'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
@@ -58,7 +58,7 @@ describe('Hook Gateway health report CLI', () => {
     const boundaryBefore = readFileSync(join(workspace, 'boundary.json'), 'utf8')
     const outputPath = join('.tmp', 'hook-gateway-health.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -90,7 +90,7 @@ describe('Hook Gateway health report CLI', () => {
     writeJson(join(workspace, 'boundary.json'), validBoundary())
     const boundaryBefore = readFileSync(join(workspace, 'boundary.json'), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -129,7 +129,7 @@ describe('Hook Gateway health report CLI', () => {
       'examples/valid/todo-app-devview-run/generated/request-ir-candidate-schema.runtime-evidence-only.preview.json'
     const linkedBefore = readFileSync(join(workspace, linkedPath), 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',

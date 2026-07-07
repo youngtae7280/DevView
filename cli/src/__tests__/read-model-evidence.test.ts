@@ -2,7 +2,7 @@ import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { buildGraphExecutionContractReport } from '../core/graph-execution-contract'
 import {
   buildReadModelRegistryCommandPlans,
@@ -252,7 +252,7 @@ describe('read-model Evidence builder', () => {
   it('writes a Todo App graph source candidate projection without promoting the structure-only profile', async () => {
     const workspace = await createExampleWorkspace()
     const outputPath = 'examples/valid/todo-app-devview-run/generated/graph-source-read-model-projection.json'
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -357,7 +357,7 @@ describe('read-model Evidence builder', () => {
   })
 
   it('observes Todo App candidate projection contracts outside positive validate-all semantics', async () => {
-    const result = await runPbeCli(['graph', 'read-model', 'observe-candidates', '--json'], {
+    const result = await runDevViewCli(['graph', 'read-model', 'observe-candidates', '--json'], {
       cwd: resolve('.'),
       pluginRoot: resolve('.'),
     })
@@ -404,7 +404,7 @@ describe('read-model Evidence builder', () => {
     projection.validateAllBoundary = 'This projection is source authority.'
     await writeFile(projectionPath, JSON.stringify(projection, null, 2))
 
-    const result = await runPbeCli(['graph', 'read-model', 'observe-candidates', '--json'], {
+    const result = await runDevViewCli(['graph', 'read-model', 'observe-candidates', '--json'], {
       cwd: workspace,
       pluginRoot: resolve('.'),
     })
@@ -438,7 +438,7 @@ describe('read-model Evidence builder', () => {
     const workspace = await createExampleWorkspace()
     const outputPath =
       'examples/internal-legacy/adoption/todo-search-slice/generated/graph-source-read-model-projection.json'
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'read-model',
@@ -673,8 +673,8 @@ describe('read-model Evidence builder', () => {
     expect(report.verificationRequirements.requiredArtifacts).toHaveProperty('parityReport')
     expect(report.verificationRequirements.requiredArtifacts).toHaveProperty('scopedPilotMarker')
     expect(report.commandPlan.sequentialDefault).toBe(true)
-    expect(report.compatibility.acepRemainsExecutionPackagingPath).toBe(true)
-    expect(report.compatibility.note).toContain('ACEP')
+    expect(report.compatibility.executionPackRemainsPackagingPath).toBe(true)
+    expect(report.compatibility.note).toContain('Execution Pack')
     expect(report.limitations).toContain('does not mutate .devview active state')
   })
 
@@ -707,12 +707,12 @@ describe('read-model Evidence builder', () => {
     expect(report.verificationRequirements.requiredArtifacts).not.toHaveProperty('scopedPilotMarker')
     expect(report.sourceAuthorityBoundary).toContain('structure-only')
     expect(report.nonPromotionStatement).toContain('does not promote Todo App')
-    expect(report.compatibility.acepRemainsExecutionPackagingPath).toBe(true)
+    expect(report.compatibility.executionPackRemainsPackagingPath).toBe(true)
     expect(report.limitations).toContain('does not expand source authority')
   })
 
   it('reports graph-native execution contract JSON through the CLI without mutating active state', async () => {
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'execution-contract', 'report', '--slice', todoSearchReadModelProfile.supportedSlice, '--json'],
       { cwd: resolve('.'), pluginRoot: resolve('.') },
     )
@@ -722,12 +722,12 @@ describe('read-model Evidence builder', () => {
     expect(payload.command).toBe('graph execution-contract report')
     expect(payload.profileId).toBe(todoSearchReadModelProfile.profileId)
     expect(payload.contract.source.profileId).toBe(todoSearchReadModelProfile.profileId)
-    expect(payload.contract.compatibility.acepRemainsExecutionPackagingPath).toBe(true)
+    expect(payload.contract.compatibility.executionPackRemainsPackagingPath).toBe(true)
     expect(payload.contract.userAcceptanceBoundary).toContain('acceptance')
   })
 
   it('fails graph-native execution contract reporting for an unknown slice', async () => {
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'execution-contract', 'report', '--slice', 'examples/not-configured', '--json'],
       { cwd: resolve('.'), pluginRoot: resolve('.') },
     )
@@ -1115,7 +1115,7 @@ describe('read-model Evidence builder', () => {
   it('exposes the Compiler Boundary MVP through the CLI', async () => {
     const workspace = await createExampleWorkspace()
 
-    const result = await runPbeCli(['graph', 'read-model', 'report-compiler-boundary', '--json'], {
+    const result = await runDevViewCli(['graph', 'read-model', 'report-compiler-boundary', '--json'], {
       cwd: workspace,
       pluginRoot: resolve('.'),
     })
@@ -1328,7 +1328,7 @@ describe('read-model Evidence builder', () => {
   it('exposes the Compiler Input Model MVP through the CLI', async () => {
     const workspace = await createExampleWorkspace()
 
-    const result = await runPbeCli(['graph', 'read-model', 'report-compiler-input', '--json'], {
+    const result = await runDevViewCli(['graph', 'read-model', 'report-compiler-input', '--json'], {
       cwd: workspace,
       pluginRoot: resolve('.'),
     })
@@ -2813,7 +2813,7 @@ describe('read-model Evidence builder', () => {
   it('exposes Contract Compiler Dry-Run v0.1 through the CLI', async () => {
     const workspace = await createExampleWorkspace()
 
-    const result = await runPbeCli(['graph', 'read-model', 'compile-contract', '--dry-run', '--json'], {
+    const result = await runDevViewCli(['graph', 'read-model', 'compile-contract', '--dry-run', '--json'], {
       cwd: workspace,
       pluginRoot: resolve('.'),
     })
@@ -3051,7 +3051,7 @@ describe('read-model Evidence builder', () => {
       'examples/internal-legacy/read-model-aggregate/generated/read-model-health-report-output.md',
     )
 
-    const result = await runPbeCli(['graph', 'read-model', 'report-health', '--json', '--markdown', markdownPath], {
+    const result = await runDevViewCli(['graph', 'read-model', 'report-health', '--json', '--markdown', markdownPath], {
       cwd: workspace,
       pluginRoot: resolve('.'),
     })

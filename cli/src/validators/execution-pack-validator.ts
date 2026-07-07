@@ -17,7 +17,7 @@ import {
   type JsonObject,
 } from './shared.js'
 
-export async function validateAcep(root: string): Promise<ValidationIssue[]> {
+export async function validateExecutionPack(root: string): Promise<ValidationIssue[]> {
   const manifestPath = artifactPath(root, 'executionManifest')
   const manifestRelativePath = artifactRelativePath(root, 'executionManifest')
   const finalCoverageRelativePath = artifactRelativePath(root, 'finalCoverageCheck')

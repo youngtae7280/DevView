@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { runPbeCli } from '../app'
+import { runDevViewCli } from '../app'
 import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson, writeText } from './fixtures/workspace'
 
@@ -17,7 +17,7 @@ describe('graph operation CLI', () => {
     const workspace = createWorkspace()
     const outputPath = join(workspace, 'pack.json')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'operation',
@@ -129,7 +129,7 @@ describe('graph operation CLI', () => {
       ],
     })
 
-    const pack = await runPbeCli(
+    const pack = await runDevViewCli(
       [
         'graph',
         'operation',
@@ -146,7 +146,7 @@ describe('graph operation CLI', () => {
     )
     expect(pack.exitCode).toBe(ExitCode.Success)
 
-    const delta = await runPbeCli(
+    const delta = await runDevViewCli(
       [
         'graph',
         'operation',
@@ -169,7 +169,7 @@ describe('graph operation CLI', () => {
     expect(deltaPayload.changedFiles).toEqual([{ path: 'index.js', additions: '1', deletions: '1' }])
     expect(deltaPayload.boundaries.appliesPatch).toBe(false)
 
-    const proposal = await runPbeCli(
+    const proposal = await runDevViewCli(
       ['graph', 'operation', 'propose-update', '--graph-delta', 'delta.json', '--output', 'proposal.json', '--json'],
       { cwd: workspace, pluginRoot },
     )
@@ -206,7 +206,7 @@ describe('graph operation CLI', () => {
       verification: { finalState: {} },
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'operation',
@@ -227,7 +227,7 @@ describe('graph operation CLI', () => {
   })
 
   it('previews the operation-chain wrapper without running scripts', async () => {
-    const result = await runPbeCli(['graph', 'operation', 'run-chain', '--dry-run', '--json'], {
+    const result = await runDevViewCli(['graph', 'operation', 'run-chain', '--dry-run', '--json'], {
       cwd: pluginRoot,
       pluginRoot,
     })
@@ -246,7 +246,7 @@ describe('graph operation CLI', () => {
   })
 
   it('rejects unsupported operation-chain wrapper commands', async () => {
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'operation', 'run-chain', '--chain-command', 'unknown-command', '--dry-run', '--json'],
       {
         cwd: pluginRoot,
@@ -265,7 +265,7 @@ describe('graph operation CLI', () => {
     )
     const before = readFileSync(graphSourcePath, 'utf8')
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       [
         'graph',
         'operation',
@@ -344,16 +344,19 @@ describe('graph operation CLI', () => {
       },
     })
 
-    const preview = await runPbeCli(['graph', 'operation', 'apply-proposal', '--proposal', 'proposal.json', '--json'], {
-      cwd: workspace,
-      pluginRoot,
-    })
+    const preview = await runDevViewCli(
+      ['graph', 'operation', 'apply-proposal', '--proposal', 'proposal.json', '--json'],
+      {
+        cwd: workspace,
+        pluginRoot,
+      },
+    )
     expect(preview.exitCode).toBe(ExitCode.Success)
     expect(JSON.parse(readFileSync(join(workspace, 'graph-source.json'), 'utf8')).nodes[0].state).toBe(
       'planned-not-implemented',
     )
 
-    const applied = await runPbeCli(
+    const applied = await runDevViewCli(
       ['graph', 'operation', 'apply-proposal', '--proposal', 'proposal.json', '--apply', '--json'],
       {
         cwd: workspace,
@@ -405,7 +408,7 @@ describe('graph operation CLI', () => {
       },
     })
 
-    const result = await runPbeCli(
+    const result = await runDevViewCli(
       ['graph', 'operation', 'apply-proposal', '--proposal', 'proposal.json', '--apply', '--json'],
       {
         cwd: workspace,
