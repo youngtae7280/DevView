@@ -130,6 +130,7 @@ export interface CliOptions {
   traversalPlan?: string
   viewTree?: string
   selectedSlice?: string
+  contextPack?: string
   contractInput?: string
   approvedState?: string
   approvedStateBoundary?: string

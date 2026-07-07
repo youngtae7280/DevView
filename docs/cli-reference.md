@@ -69,6 +69,24 @@ catalog for downstream View Tree, Context Pack, Evidence, policy, workflow, and 
 a source fact only: it does not execute extension code, call providers, make network calls, run shell commands, mutate
 the Maintainability Graph, satisfy runtime Evidence, prove equivalence, or enforce scope/CI.
 
+### Project-Specific Extension Context Plan
+
+```bash
+devview extensions plan-context \
+  --extension-profile-catalog <extension-profile-catalog.json> \
+  --view-tree <view-tree.json> \
+  --context-pack <context-pack.json> \
+  --output <extension-context-plan.json> \
+  --markdown <extension-context-plan.md> \
+  --json
+```
+
+Connects compiled extension catalog hints to View Tree, Context Pack, Evidence, policy, Native/Retrofit, and
+protocol-only graph-ingestion planning. `--view-tree` and `--context-pack` are optional; when supplied, they are checked
+and summarized without mutation. The report does not execute extension code, run shell commands, install or invoke
+Graphify, call providers, make network calls, mutate View Tree or Context Pack artifacts, mutate the Maintainability
+Graph, satisfy runtime Evidence, prove equivalence, enforce scope/CI, activate hooks, or automate approval.
+
 ### Work Journal
 
 ```bash

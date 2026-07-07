@@ -5,7 +5,11 @@ import { executionPackCheckCommand, executionPackReadyCommand } from './executio
 import { changeCreateCommand } from './change.js'
 import { contextPackCommand, contextRecommendCommand } from './context.js'
 import { executionCompleteCommand, executionStartCommand } from './execution.js'
-import { extensionsCompileProfileCommand, extensionsReportReadinessCommand } from './extensions.js'
+import {
+  extensionsCompileProfileCommand,
+  extensionsPlanContextCommand,
+  extensionsReportReadinessCommand,
+} from './extensions.js'
 import { filesCheckCommand } from './files.js'
 import { gateAssessCommand, gateCommand } from './gate.js'
 import {
@@ -126,6 +130,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'extensions' && subcommand === 'compile-profile') {
     return extensionsCompileProfileCommand(context)
+  }
+  if (command === 'extensions' && subcommand === 'plan-context') {
+    return extensionsPlanContextCommand(context)
   }
   if (command === 'work-journal' && subcommand === 'render') {
     return workJournalRenderCommand(context)

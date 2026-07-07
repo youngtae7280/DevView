@@ -172,6 +172,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     traversalPlan: undefined as string | undefined,
     viewTree: undefined as string | undefined,
     selectedSlice: undefined as string | undefined,
+    contextPack: undefined as string | undefined,
     contractInput: undefined as string | undefined,
     approvedState: undefined as string | undefined,
     approvedStateBoundary: undefined as string | undefined,
@@ -749,6 +750,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--contract-input requires a file path.' }
       }
       options.contractInput = value
+      index += 1
+    } else if (arg === '--context-pack') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--context-pack requires a file path.' }
+      }
+      options.contextPack = value
       index += 1
     } else if (arg === '--approved-state') {
       const value = argv[index + 1]

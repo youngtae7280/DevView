@@ -103,6 +103,8 @@ Commands:
                        Report Project Profile and Extension Manifest readiness without executing extension code
   extensions compile-profile
                        Compile declarative Project Profile and Extension Manifest capabilities into a report-only catalog
+  extensions plan-context
+                       Connect extension catalog hints to View Tree and Context Pack planning without executing extensions
   work-journal render  Render static cumulative DevView Work Journal HTML/data without execution or authority
   init                 Internal compatibility initializer for legacy migration inputs
   status               Internal compatibility status for legacy migration inputs
@@ -325,9 +327,9 @@ Options:
   --graph-delta <file> Graph delta file for graph operation propose-update.
   --target-repo <path> Target git repository path for graph operation capture-delta.
   --manual <file>      Manual parity artifact for graph read-model comparison.
-  --output <file>      Output file for extensions compile-profile, graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-approved-apply-dry-run, apply-graph-delta, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-runtime-evidence-satisfaction-readiness, record-runtime-evidence-satisfaction, report-equivalence-proof-readiness, record-equivalence-proof, report-scope-ci-enforcement-readiness, record-scope-ci-enforcement, record-guarded-graph-update-boundary, plan-guarded-graph-update, apply-guarded-graph-update, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, run-clarification-chain, validate-request-ir, validate-request-ir-graph, plan-traversal, generate-view-tree, select-slice, generate-contract-input, generate-instruction-pack, report-project-memory-extension-gaps, report-project-memory-impact, render-devview-graph, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, report-user-prompt-submit-advisory, report-stop-post-run-advisory, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, report-hook-activation-chain, or report-devview-baseline.
+  --output <file>      Output file for extensions compile-profile, extensions plan-context, graph read-model projection, project-intent, collect-changed-files, check-scope, propose-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-approved-apply-dry-run, apply-graph-delta, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-runtime-evidence-satisfaction-readiness, record-runtime-evidence-satisfaction, report-equivalence-proof-readiness, record-equivalence-proof, report-scope-ci-enforcement-readiness, record-scope-ci-enforcement, record-guarded-graph-update-boundary, plan-guarded-graph-update, apply-guarded-graph-update, generate-ai-request-analyzer-pack, analyze-request, generate-clarification-interview-pack, revise-request-ir-candidate, run-clarification-chain, validate-request-ir, validate-request-ir-graph, plan-traversal, generate-view-tree, select-slice, generate-contract-input, generate-instruction-pack, report-project-memory-extension-gaps, report-project-memory-impact, render-devview-graph, report-hook-gateway-health, report-frontend-chain, prepare-user-prompt-context, report-user-prompt-submit-advisory, report-stop-post-run-advisory, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, report-hook-activation-chain, or report-devview-baseline.
   --data-output <file> Data JSON output for graph read-model render-devview-graph.
-  --markdown <file>    Optional Markdown summary output for extensions compile-profile, graph read-model report-health, check-scope, review-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-approved-apply-dry-run, apply-graph-delta, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-runtime-evidence-satisfaction-readiness, record-runtime-evidence-satisfaction, report-equivalence-proof-readiness, record-equivalence-proof, report-scope-ci-enforcement-readiness, record-scope-ci-enforcement, record-guarded-graph-update-boundary, plan-guarded-graph-update, apply-guarded-graph-update, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, run-clarification-chain, run-preflight-session, generate-instruction-pack, report-project-memory-extension-gaps, report-project-memory-impact, report-frontend-chain, prepare-user-prompt-context, report-user-prompt-submit-advisory, report-stop-post-run-advisory, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, report-hook-activation-chain, or report-devview-baseline.
+  --markdown <file>    Optional Markdown summary output for extensions compile-profile, extensions plan-context, graph read-model report-health, check-scope, review-graph-delta, record-human-decision, create-approved-proposal-state, check-graph-delta-apply, report-approved-apply-dry-run, apply-graph-delta, report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-runtime-evidence-satisfaction-readiness, record-runtime-evidence-satisfaction, report-equivalence-proof-readiness, record-equivalence-proof, report-scope-ci-enforcement-readiness, record-scope-ci-enforcement, record-guarded-graph-update-boundary, plan-guarded-graph-update, apply-guarded-graph-update, generate-ai-request-analyzer-pack, generate-clarification-interview-pack, run-clarification-chain, run-preflight-session, generate-instruction-pack, report-project-memory-extension-gaps, report-project-memory-impact, report-frontend-chain, prepare-user-prompt-context, report-user-prompt-submit-advisory, report-stop-post-run-advisory, generate-hook-script-scaffold, generate-hook-script-templates, generate-hook-session-manifest, materialize-hook-script-bundle, report-hook-activation-chain, or report-devview-baseline.
   --proposal <file>    Graph update proposal file for graph operation apply-proposal, graph read-model review-graph-delta, record-human-decision, report-approved-apply-dry-run, apply-graph-delta, record-evidence-decision, create-accepted-evidence-record, record-guarded-graph-update-boundary, plan-guarded-graph-update, or apply-guarded-graph-update.
   --review-packet <file>
                        Human Review Packet file for graph read-model record-human-decision or report-stop-post-run-advisory.
@@ -366,7 +368,7 @@ Options:
   --extension-readiness <file>
                        Project-specific extension readiness report for extensions compile-profile, graph read-model report-devview-baseline, or work-journal render.
   --extension-profile-catalog <file>
-                       Project-specific extension profile catalog for graph read-model report-devview-baseline or work-journal render.
+                       Project-specific extension profile catalog for extensions plan-context, graph read-model report-devview-baseline, or work-journal render.
   --scope-ci-enforcement-readiness <file>
                        Scope/CI Enforcement readiness file for graph read-model record-scope-ci-enforcement or report-devview-baseline.
   --scope-ci-enforcement-record <file>
@@ -410,11 +412,13 @@ Options:
   --traversal-plan <file>
                        Graph Traversal Plan file for graph read-model generate-view-tree or select-slice.
   --view-tree <file>
-                       View Tree preview file for graph read-model generate-contract-input.
+                       View Tree preview file for extensions plan-context or graph read-model generate-contract-input.
   --selected-slice <file>
                        Compatibility alias for --view-tree.
   --contract-input <file>
-                       Contract Compiler Input file for graph read-model generate-instruction-pack.
+                       Contract Compiler Input file for graph read-model generate-instruction-pack or extensions plan-context.
+  --context-pack <file>
+                       Context Pack input for extensions plan-context. Compatibility: --contract-input can also be used.
   --scaffold <file>    Hook script scaffold preview for graph read-model generate-hook-script-templates.
   --script-scaffold <file>
                        Hook script scaffold preview for graph read-model generate-hook-session-manifest.

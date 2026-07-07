@@ -52,3 +52,20 @@ executed by this command. Native and retrofit signals are summarized as profile 
 
 The catalog does not grant traversal, Context Pack, Evidence, policy, enforcement, provider, network, shell, or graph
 mutation authority.
+
+## Context Planning
+
+```bash
+devview extensions plan-context \
+  --extension-profile-catalog .tmp/devview-extension-profile-catalog.json \
+  --view-tree .tmp/devview-view-tree.json \
+  --context-pack .tmp/devview-context-pack.json \
+  --output .tmp/devview-extension-context-plan.json \
+  --markdown .tmp/devview-extension-context-plan.md \
+  --json
+```
+
+The context plan connects catalog hints to View Tree and Context Pack planning as source facts only. It can summarize
+which extractor, analyzer, context, Evidence, policy, Native/Retrofit, or protocol-only graph-ingestion hints are
+available, but it does not execute adapters, install or run external graph tooling, mutate artifacts, or grant traversal,
+Evidence, proof, scope, CI, hook, provider, network, shell, approval, or user-acceptance authority.
