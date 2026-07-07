@@ -54,6 +54,7 @@ export async function securityReportEnterpriseReadinessCommand(context: CommandC
       packageProvenanceInputs: context.options.packageProvenanceInputs,
       packageArtifactDigest: context.options.packageArtifactDigest,
       provenanceAttestationValidation: context.options.provenanceAttestationValidation,
+      provenanceVerificationReadiness: context.options.provenanceVerificationReadiness,
       output: context.options.output,
       markdown: context.options.markdown,
     })

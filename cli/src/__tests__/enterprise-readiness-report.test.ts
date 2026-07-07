@@ -837,6 +837,83 @@ describe('security report-enterprise-readiness CLI', () => {
     expectSafetyFalse(payload)
   })
 
+  it('summarizes provenance verification readiness without treating it as real verification', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/provenance-verification-readiness.json'), provenanceVerificationReadinessReport())
+
+    const result = await runDevViewCli(
+      [
+        'security',
+        'report-enterprise-readiness',
+        '--provenance-verification-readiness',
+        '.tmp/provenance-verification-readiness.json',
+        '--output',
+        '.tmp/enterprise-readiness.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.readinessLevel).toBe('not-ready')
+    expect(payload.sourceProvenanceVerificationReadinessReports).toHaveLength(1)
+    expect(payload.sourceProvenanceVerificationReadinessReports[0]).toEqual(
+      expect.objectContaining({
+        path: '.tmp/provenance-verification-readiness.json',
+        artifactRole: 'devview-provenance-verification-readiness-report',
+        status: 'devview-provenance-verification-readiness-reported',
+        provenanceVerificationReadinessStatus: 'not-ready-key-trust-and-signature-policy-missing',
+        attestationValidationLinked: true,
+        signingReadinessLinked: true,
+        rbacPolicyValidationLinked: true,
+        recordEnvelopeVerificationLinked: true,
+        providerNetworkDefaultDenyLinked: true,
+        realSlsaVerificationPerformed: false,
+        realInTotoVerificationPerformed: false,
+        cryptographicSignatureVerified: false,
+        signatureVerificationStatus: 'not-performed-readiness-only',
+        provenanceAttestationGenerated: false,
+        provenanceAttestationVerified: false,
+        keyRegistryPresent: false,
+        trustRootPresent: false,
+        findingCount: 7,
+        downstreamActionCount: 3,
+      }),
+    )
+    expect(payload.provenanceVerificationReadiness.status).toBe('verification-readiness-recorded')
+    expect(payload.provenanceVerificationReadiness.sourceCount).toBe(1)
+    expect(payload.provenanceVerificationReadiness.sourceStatuses).toEqual([
+      'devview-provenance-verification-readiness-reported',
+    ])
+    expect(payload.provenanceVerificationReadiness.readinessStatuses).toEqual([
+      'not-ready-key-trust-and-signature-policy-missing',
+    ])
+    expect(payload.provenanceVerificationReadiness.staticAttestationValidationLinkedCount).toBe(1)
+    expect(payload.provenanceVerificationReadiness.signingReadinessLinkedCount).toBe(1)
+    expect(payload.provenanceVerificationReadiness.rbacPolicyValidationLinkedCount).toBe(1)
+    expect(payload.provenanceVerificationReadiness.recordEnvelopeVerificationLinkedCount).toBe(1)
+    expect(payload.provenanceVerificationReadiness.providerNetworkDefaultDenyLinkedCount).toBe(1)
+    expect(payload.provenanceVerificationReadiness.realSlsaVerificationPerformedCount).toBe(0)
+    expect(payload.provenanceVerificationReadiness.realInTotoVerificationPerformedCount).toBe(0)
+    expect(payload.provenanceVerificationReadiness.cryptographicSignatureVerifiedCount).toBe(0)
+    expect(payload.provenanceVerificationReadiness.keyRegistryPresentCount).toBe(0)
+    expect(payload.provenanceVerificationReadiness.trustRootPresentCount).toBe(0)
+    expect(payload.provenanceVerificationReadiness.findingCount).toBe(7)
+    expect(payload.provenanceVerificationReadiness.downstreamActionCount).toBe(3)
+    expect(payload.enterpriseReadinessFindings.map((entry: { code: string }) => entry.code)).toEqual(
+      expect.arrayContaining([
+        'ENTERPRISE_PROVENANCE_VERIFICATION_READINESS_RECORDED',
+        'ENTERPRISE_RELEASE_PROVENANCE_ARTIFACTS_MISSING',
+        'ENTERPRISE_RBAC_SIGNING_MISSING',
+      ]),
+    )
+    expect(payload.enterpriseReadinessFindings.map((entry: { code: string }) => entry.code)).not.toContain(
+      'ENTERPRISE_PROVENANCE_VERIFICATION_READINESS_NOT_SUPPLIED',
+    )
+    expectSafetyFalse(payload)
+  })
+
   it('blocks invalid or authority-claiming release provenance readiness sources with zero writes', async () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, '.tmp/wrong-release-provenance.json'), {
@@ -1268,6 +1345,76 @@ describe('security report-enterprise-readiness CLI', () => {
       'ENTERPRISE_READINESS_UNSAFE_SOURCE_AUTHORITY_FLAG',
     )
     expect(existsSync(join(workspace, '.tmp/network-provenance-attestation-enterprise.json'))).toBe(false)
+  })
+
+  it('blocks invalid or authority-claiming provenance verification readiness sources with zero writes', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/wrong-provenance-verification-readiness.json'), {
+      ...provenanceVerificationReadinessReport(),
+      status: 'devview-provenance-verification-readiness-blocked',
+    })
+    writeJson(join(workspace, '.tmp/slsa-provenance-verification-readiness.json'), {
+      ...provenanceVerificationReadinessReport(),
+      verificationBoundary: {
+        ...(provenanceVerificationReadinessReport().verificationBoundary as Record<string, unknown>),
+        realSlsaVerificationPerformed: true,
+      },
+    })
+    writeJson(join(workspace, '.tmp/crypto-provenance-verification-readiness.json'), {
+      ...provenanceVerificationReadinessReport(),
+      verificationBoundary: {
+        ...(provenanceVerificationReadinessReport().verificationBoundary as Record<string, unknown>),
+        cryptographicSignatureVerified: true,
+      },
+    })
+    writeJson(join(workspace, '.tmp/key-provenance-verification-readiness.json'), {
+      ...provenanceVerificationReadinessReport(),
+      keyGenerated: true,
+    })
+    writeJson(join(workspace, '.tmp/rbac-provenance-verification-readiness.json'), {
+      ...provenanceVerificationReadinessReport(),
+      rbacEnforced: true,
+    })
+    writeJson(join(workspace, '.tmp/network-provenance-verification-readiness.json'), {
+      ...provenanceVerificationReadinessReport(),
+      networkCallMade: true,
+    })
+
+    const wrong = await runEnterpriseWithProvenanceVerificationReadiness(
+      workspace,
+      '.tmp/wrong-provenance-verification-readiness.json',
+      '.tmp/wrong-provenance-verification-enterprise.json',
+    )
+    expect(wrong.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(wrong.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_PROVENANCE_VERIFICATION_READINESS_SOURCE_ROLE_STATUS_INVALID',
+    )
+    expect(existsSync(join(workspace, '.tmp/wrong-provenance-verification-enterprise.json'))).toBe(false)
+
+    for (const [source, output] of [
+      ['.tmp/slsa-provenance-verification-readiness.json', '.tmp/slsa-provenance-verification-enterprise.json'],
+      ['.tmp/crypto-provenance-verification-readiness.json', '.tmp/crypto-provenance-verification-enterprise.json'],
+      ['.tmp/key-provenance-verification-readiness.json', '.tmp/key-provenance-verification-enterprise.json'],
+      ['.tmp/rbac-provenance-verification-readiness.json', '.tmp/rbac-provenance-verification-enterprise.json'],
+    ] as const) {
+      const result = await runEnterpriseWithProvenanceVerificationReadiness(workspace, source, output)
+      expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+      expect(JSON.parse(result.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+        'ENTERPRISE_READINESS_PROVENANCE_VERIFICATION_AUTHORITY_CLAIM_UNSUPPORTED',
+      )
+      expect(existsSync(join(workspace, output))).toBe(false)
+    }
+
+    const network = await runEnterpriseWithProvenanceVerificationReadiness(
+      workspace,
+      '.tmp/network-provenance-verification-readiness.json',
+      '.tmp/network-provenance-verification-enterprise.json',
+    )
+    expect(network.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(network.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_UNSAFE_SOURCE_AUTHORITY_FLAG',
+    )
+    expect(existsSync(join(workspace, '.tmp/network-provenance-verification-enterprise.json'))).toBe(false)
   })
 
   it('blocks invalid or authority-claiming RBAC policy validation sources with zero writes', async () => {
@@ -2860,6 +3007,192 @@ function provenanceAttestationValidationReport(overrides: Record<string, unknown
   }
 }
 
+function provenanceVerificationReadinessReport(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    schemaVersion: 1,
+    artifactRole: 'devview-provenance-verification-readiness-report',
+    status: 'devview-provenance-verification-readiness-reported',
+    readinessScope: 'provenance-verification-readiness-report-only',
+    sourceFactsOnly: true,
+    reportOnly: true,
+    provenanceVerificationReadinessStatus: 'not-ready-key-trust-and-signature-policy-missing',
+    sourceProvenanceAttestationValidation: {
+      supplied: true,
+      path: '.tmp/provenance-attestation-validation.json',
+      artifactRole: 'devview-provenance-attestation-validation-report',
+      status: 'devview-provenance-attestation-validation-passed',
+      attestationFormat: 'devview-minimal-provenance-v1',
+      attestationDigestPresent: true,
+      packageDigestAlignmentStatus: 'matched',
+      provenanceInputAlignmentStatus: 'matched',
+      signatureValidationStatus: 'not-performed-source-fact-only',
+      provenanceAttestationGeneratedByDevView: false,
+      provenanceAttestationGenerated: false,
+      provenanceAttestationVerified: false,
+      packageSigned: false,
+    },
+    sourceSigningReadiness: {
+      supplied: true,
+      path: '.tmp/signing-readiness.json',
+      artifactRole: 'devview-signing-readiness-report',
+      status: 'devview-signing-readiness-reported',
+      signingReadinessStatus: 'not-ready-policy-and-key-governance-missing',
+      keyGovernanceStatus: 'not-ready',
+      keyRegistryPresent: false,
+      trustRootPresent: false,
+      privateKeyStoragePresent: false,
+      noPrivateKeyStorageInRepo: true,
+      signaturePolicyStatus: 'not-ready',
+      detachedSignaturePolicyPresent: false,
+      signatureFormatPolicyPresent: false,
+      rbacActorModelPresent: true,
+      rbacPermissionMatrixPresent: true,
+      rbacRoleAssignmentRegistryPresent: false,
+    },
+    sourceRbacPolicyValidation: {
+      supplied: true,
+      path: '.tmp/rbac-policy-validation.json',
+      artifactRole: 'devview-rbac-policy-validation-report',
+      status: 'devview-rbac-policy-validation-passed',
+      rbacPolicyValidationStatus: 'passed',
+      defaultDenyConfigured: true,
+      actorCount: 2,
+      roleAssignmentCount: 2,
+      permissionGrantCount: 2,
+      automationRestrictionDeclared: true,
+      extensionAuthorRestrictionDeclared: true,
+      noEnforcementPerformed: true,
+    },
+    sourceRecordEnvelopeVerification: {
+      supplied: true,
+      path: '.tmp/record-envelope-verification.json',
+      artifactRole: 'devview-record-envelope-verification-report',
+      status: 'devview-record-envelope-verified',
+      signatureVerificationMode: 'not-performed-unsigned-preview-only',
+      payloadDigestMatches: true,
+      allSourceDigestsMatch: true,
+      previousEnvelopeChainLinkVerified: false,
+      verificationDigestPresent: true,
+      cryptographicSignatureVerified: false,
+      rbacPermissionVerified: false,
+      rbacEnforced: false,
+      permissionVerified: false,
+    },
+    sourceProviderNetworkPolicy: {
+      supplied: true,
+      path: '.tmp/provider-network-policy.json',
+      artifactRole: 'devview-provider-network-default-deny-policy-report',
+      status: 'devview-provider-network-default-deny-policy-recorded',
+      defaultProviderPolicy: 'deny',
+      defaultNetworkPolicy: 'deny',
+      explicitAllowSupported: false,
+      providerAllowlistCount: 0,
+      networkAllowlistCount: 0,
+      futureAllowRequirementCount: 6,
+      blockedCapabilityCount: 5,
+    },
+    verificationBoundary: {
+      realSlsaVerificationPerformed: false,
+      realInTotoVerificationPerformed: false,
+      cryptographicSignatureVerified: false,
+      signatureVerificationStatus: 'not-performed-readiness-only',
+      provenanceAttestationGenerated: false,
+      provenanceAttestationVerified: false,
+      packageSigned: false,
+    },
+    keyTrustReadiness: {
+      status: 'not-ready',
+      keyRegistryPresent: false,
+      trustRootPresent: false,
+      keyRotationMetadataPresent: false,
+      keyRevocationMetadataPresent: false,
+      timestampPolicyPresent: false,
+      gaps: ['Key registry is absent.', 'Trust root is absent.', 'Rotation/revocation metadata is absent.'],
+    },
+    signaturePolicyReadiness: {
+      status: 'not-ready',
+      detachedSignaturePolicyPresent: false,
+      allowedAlgorithmPolicyPresent: false,
+      canonicalizationPolicy: 'raw-byte-digest-boundary-recorded',
+      timestampPolicy: 'explicit-input-only-required-future',
+      gaps: ['Detached signature policy is absent.', 'Allowed algorithm policy is absent.'],
+    },
+    rbacPrerequisiteReadiness: {
+      actorPolicyPresent: true,
+      rbacEnforced: false,
+      permissionVerified: false,
+      policyValidationPresent: true,
+      defaultDenyPolicyValidated: true,
+      gaps: ['RBAC enforcement is absent.', 'Permission verification is absent.'],
+    },
+    networkIsolationReadiness: {
+      providerNetworkDefaultDenyRecorded: true,
+      providerInvoked: false,
+      networkCallMade: false,
+      apiCallMade: false,
+    },
+    futureVerificationRequirements: [
+      'Signed provenance attestation verification policy',
+      'Key registry and trust root',
+      'RBAC permission verification',
+      'CI governance boundary',
+    ],
+    provenanceVerificationFindings: [
+      { severity: 'satisfied', code: 'PROVENANCE_VERIFICATION_ATTESTATION_VALIDATION_LINKED' },
+      { severity: 'satisfied', code: 'PROVENANCE_VERIFICATION_SIGNING_READINESS_LINKED' },
+      { severity: 'satisfied', code: 'PROVENANCE_VERIFICATION_RBAC_POLICY_VALIDATION_LINKED' },
+      { severity: 'satisfied', code: 'PROVENANCE_VERIFICATION_RECORD_ENVELOPE_VERIFICATION_LINKED' },
+      { severity: 'satisfied', code: 'PROVENANCE_VERIFICATION_PROVIDER_NETWORK_POLICY_LINKED' },
+      { severity: 'gap', code: 'PROVENANCE_VERIFICATION_KEY_TRUST_MISSING' },
+      { severity: 'gap', code: 'PROVENANCE_VERIFICATION_CRYPTO_NOT_PERFORMED' },
+    ],
+    downstreamActionPlan: [
+      'Integrate provenance verification readiness into enterprise readiness as a source fact.',
+      'Define signed provenance verification policy and key trust model before real verification.',
+      'Keep real SLSA/in-toto verification behind RBAC, signing, and CI governance.',
+    ],
+    realSlsaVerificationPerformed: false,
+    realInTotoVerificationPerformed: false,
+    provenanceAttestationGeneratedByDevView: false,
+    provenanceAttestationGenerated: false,
+    provenanceAttestationVerified: false,
+    provenanceAttestationPresent: false,
+    provenanceAttested: false,
+    releaseProvenanceAttested: false,
+    npmProvenanceEnabled: false,
+    slsaProvenanceGenerated: false,
+    slsaProvenanceVerified: false,
+    inTotoStatementVerified: false,
+    packagePublished: false,
+    publishingPerformed: false,
+    packageArtifactGeneratedByDevView: false,
+    packageArtifactGenerated: false,
+    packageTarballGenerated: false,
+    packageSigned: false,
+    packageSigningPresent: false,
+    packageSignaturePresent: false,
+    packageSignatureVerified: false,
+    sbomGeneratedByDevView: false,
+    sbomGenerated: false,
+    sbomAttested: false,
+    cryptographicSigningImplemented: false,
+    cryptographicSignaturePresent: false,
+    cryptographicSignatureVerified: false,
+    keyGenerated: false,
+    privateKeyStored: false,
+    keyManagementImplemented: false,
+    keyRegistryPresent: false,
+    trustRootPresent: false,
+    keyRegistryCreated: false,
+    trustRootCreated: false,
+    rbacEnforced: false,
+    permissionVerified: false,
+    rbacPermissionVerified: false,
+    ...safetyFlags(),
+    ...overrides,
+  }
+}
+
 function safetyFlags(): Record<string, unknown> {
   return {
     benchmarkExecuted: false,
@@ -3055,6 +3388,25 @@ function runEnterpriseWithProvenanceAttestationValidation(
       'report-enterprise-readiness',
       '--provenance-attestation-validation',
       provenanceAttestationValidation,
+      '--output',
+      output,
+      '--json',
+    ],
+    { cwd: workspace, pluginRoot },
+  )
+}
+
+function runEnterpriseWithProvenanceVerificationReadiness(
+  workspace: string,
+  provenanceVerificationReadiness: string,
+  output: string,
+) {
+  return runDevViewCli(
+    [
+      'security',
+      'report-enterprise-readiness',
+      '--provenance-verification-readiness',
+      provenanceVerificationReadiness,
       '--output',
       output,
       '--json',

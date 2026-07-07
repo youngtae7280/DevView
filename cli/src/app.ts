@@ -269,6 +269,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     packageProvenanceInputs: undefined as string | undefined,
     packageArtifactDigest: undefined as string | undefined,
     provenanceAttestationValidation: undefined as string | undefined,
+    provenanceVerificationReadiness: undefined as string | undefined,
     sourceRef: undefined as string | undefined,
     buildCommand: undefined as string | undefined,
     rbacReadiness: undefined as string | undefined,
@@ -1482,6 +1483,15 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.provenanceAttestationValidation = options.provenanceAttestationValidation
         ? `${options.provenanceAttestationValidation},${value}`
+        : value
+      index += 1
+    } else if (arg === '--provenance-verification-readiness') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--provenance-verification-readiness requires one or more file paths.' }
+      }
+      options.provenanceVerificationReadiness = options.provenanceVerificationReadiness
+        ? `${options.provenanceVerificationReadiness},${value}`
         : value
       index += 1
     } else if (arg === '--source-ref') {
