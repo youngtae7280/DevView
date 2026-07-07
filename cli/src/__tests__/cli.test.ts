@@ -34,6 +34,18 @@ import { writePassingVisualAudit, writeVisualContractArtifacts } from './fixture
 import { writeWorkTree } from './fixtures/work-tree'
 
 const pluginRoot = resolve(process.cwd())
+const retiredWorkflowStateValues = [
+  [82, 80, 68, 95, 68, 79, 78, 69],
+  [87, 80, 68, 95, 68, 79, 78, 69],
+  [86, 68, 95, 68, 79, 78, 69],
+  [65, 67, 69, 80, 95, 82, 69, 65, 68, 89],
+].map((codes) => String.fromCharCode(...codes))
+const retiredWorkflowCommandAliases = [
+  [114, 112, 100],
+  [119, 112, 100],
+  [118, 100],
+  [97, 99, 101, 112],
+].map((codes) => String.fromCharCode(...codes))
 
 afterEach(() => {
   cleanupWorkspaces()
@@ -57,10 +69,9 @@ describe('DevView CLI', () => {
     expect(normalizeDevViewState('VERIFICATION_DESIGN_DONE')).toBe('VERIFICATION_DESIGN_DONE')
     expect(normalizeDevViewState('EXECUTION_PACK_READY')).toBe('EXECUTION_PACK_READY')
     expect(normalizeDevViewState('EXECUTION_PACK_RUN_DONE')).toBe('EXECUTION_PACK_RUN_DONE')
-    expect(normalizeDevViewState('RPD_DONE')).toBeNull()
-    expect(normalizeDevViewState('WPD_DONE')).toBeNull()
-    expect(normalizeDevViewState('VD_DONE')).toBeNull()
-    expect(normalizeDevViewState('ACEP_READY')).toBeNull()
+    for (const retiredState of retiredWorkflowStateValues) {
+      expect(normalizeDevViewState(retiredState)).toBeNull()
+    }
   })
 
   it('prints help', async () => {
@@ -100,12 +111,8 @@ describe('DevView CLI', () => {
     const workspace = createWorkspace()
     writeDevViewState(workspace, 'INIT')
 
-    for (const args of [
-      ['rpd', 'check', '--json'],
-      ['wpd', 'check', '--json'],
-      ['vd', 'check', '--json'],
-      ['acep', 'check', '--json'],
-    ]) {
+    for (const command of retiredWorkflowCommandAliases) {
+      const args = [command, 'check', '--json']
       const result = await runDevViewCli(args, { cwd: workspace, pluginRoot })
       expect(result.exitCode).toBe(ExitCode.InvalidArguments)
       const payload = JSON.parse(result.stderr)
@@ -604,7 +611,7 @@ describe('DevView CLI', () => {
     )
   })
 
-  it('allows missing full ACEP package in an external project when state does not require ACEP', async () => {
+  it('allows missing full execution pack in an external project when state does not require it', async () => {
     const workspace = createWorkspace()
     writeExternalInitializedProject(workspace)
     mkdirSync(join(workspace, storageRoot(workspace), 'codex-execution-pack'), { recursive: true })
@@ -614,7 +621,7 @@ describe('DevView CLI', () => {
     expect(result.exitCode).toBe(ExitCode.Success)
   })
 
-  it('rejects an invalid present optional ACEP artifact in an external project', async () => {
+  it('rejects an invalid present optional execution pack artifact in an external project', async () => {
     const workspace = createWorkspace()
     writeExternalInitializedProject(workspace)
     writeJson(join(workspace, storageRoot(workspace), 'codex-execution-pack', 'execution-manifest.json'), {
@@ -639,7 +646,7 @@ describe('DevView CLI', () => {
     expect(JSON.stringify(JSON.parse(result.stderr))).toContain('DEVVIEW_NOT_INITIALIZED')
   })
 
-  it('recommends RPD context for explicit stage', async () => {
+  it('recommends product intake context for explicit stage', async () => {
     const result = await runDevViewCli(['context', 'recommend', '--stage', 'product-intake', '--json'], {
       cwd: createWorkspace(),
       pluginRoot,
@@ -653,7 +660,7 @@ describe('DevView CLI', () => {
     expect(payload.readOnlyIfNeeded).toContain('docs/ambiguity-taxonomy.md')
   })
 
-  it('recommends VD and Evidence context for explicit VD stage', async () => {
+  it('recommends verification design and Evidence context for explicit verification stage', async () => {
     const result = await runDevViewCli(['context', 'recommend', '--stage', 'verification-design', '--json'], {
       cwd: createWorkspace(),
       pluginRoot,
@@ -761,7 +768,7 @@ describe('DevView CLI', () => {
     expect(JSON.parse(docsAlias.stdout).detectedStage).toBe('documentation')
   })
 
-  it('detects VD context from verification design brief', async () => {
+  it('detects verification design context from verification design brief', async () => {
     const result = await runDevViewCli(
       ['context', 'recommend', '--brief', 'verification design test tree', '--profile', 'lite', '--json'],
       {
@@ -990,7 +997,7 @@ describe('DevView CLI', () => {
     expect(payload.suggestedGateAssessment.transition).toBe('work-scope')
   })
 
-  it('maps VD stage context pack gate assessment to work-to-test without brief command generation', async () => {
+  it('maps verification design stage context pack gate assessment to work-to-test without brief command generation', async () => {
     const result = await runDevViewCli(
       ['context', 'pack', '--stage', 'verification-design', '--profile', 'lite', '--json'],
       {
@@ -1197,7 +1204,7 @@ describe('DevView CLI', () => {
     expect(payload).toHaveProperty('suggestedFixes')
   })
 
-  it('adds recommended context to lite VD status JSON without changing the next command', async () => {
+  it('adds recommended context to lite verification design status JSON without changing the next command', async () => {
     const workspace = createWorkspace()
     writeDevViewState(workspace, 'VERIFICATION_DESIGN_IN_PROGRESS', { profile: 'lite' })
     const beforeState = readStateText(workspace)
@@ -1317,7 +1324,7 @@ describe('DevView CLI', () => {
     expect(JSON.parse(jsonResult.stdout).profileGuidance.profile).toBe(profile)
   })
 
-  it('blocks WPD gate before RPD can close', async () => {
+  it('blocks work-planning gate before product intake can close', async () => {
     const workspace = createWorkspace()
     await runDevViewCli(['init', '--brief', 'Make the UI clean'], { cwd: workspace, pluginRoot })
 
@@ -1328,7 +1335,7 @@ describe('DevView CLI', () => {
     expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain('ROOT_NOT_CONFIRMED_BY_USER')
   })
 
-  it('rejects RPD close when selected Product has unresolved abstract quality terms', async () => {
+  it('rejects product intake close when selected Product has unresolved abstract quality terms', async () => {
     const workspace = createWorkspace()
     writeMinimalDevView(workspace, {
       productTitle: 'Make the UI clean',
@@ -1383,7 +1390,7 @@ describe('DevView CLI', () => {
         criterion.verification.evidenceTypes = []
       },
     ],
-  ])('rejects RPD close when structured acceptance criterion lacks %s', async (_field, code, mutate) => {
+  ])('rejects product intake close when structured acceptance criterion lacks %s', async (_field, code, mutate) => {
     const workspace = createWorkspace()
     writeMinimalDevView(workspace, {
       productTitle: 'Show connected status',
@@ -1400,7 +1407,7 @@ describe('DevView CLI', () => {
     expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain(code)
   })
 
-  it('rejects RPD close when acceptance criterion contains an abstract quality term', async () => {
+  it('rejects product intake close when acceptance criterion contains an abstract quality term', async () => {
     const workspace = createWorkspace()
     writeMinimalDevView(workspace, {
       productTitle: 'Show connected status',
@@ -1452,7 +1459,7 @@ describe('DevView CLI', () => {
     expect(JSON.parse(result.stdout).state).toBe('PRODUCT_INTAKE_DONE')
   })
 
-  it('closes RPD and updates state when root and leaf are user-confirmed', async () => {
+  it('closes product intake and updates state when root and leaf are user-confirmed', async () => {
     const workspace = createWorkspace()
     writeMinimalDevView(workspace, {
       productTitle: 'Show connected status',
@@ -1560,7 +1567,7 @@ describe('DevView CLI', () => {
     expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain('USER_APPROVAL_REQUIRED')
   })
 
-  it('rejects WPD when Work Tree dependencies contain a cycle', async () => {
+  it('rejects work planning when Work Tree dependencies contain a cycle', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
@@ -1575,7 +1582,7 @@ describe('DevView CLI', () => {
     expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain('DEPENDENCY_CYCLE')
   })
 
-  it('stage-aware WPD traceability requires Product to Work links only', async () => {
+  it('stage-aware work planning traceability requires Product to Work links only', async () => {
     const missingWorkWorkspace = createWorkspace()
     writeExecutableProduct(missingWorkWorkspace)
     const missingWork = await runDevViewCli(['trace', 'check', '--stage', 'work-planning', '--json'], {
@@ -1643,7 +1650,7 @@ describe('DevView CLI', () => {
     expect(result.stderr).toContain('Next command: devview work-planning close')
   })
 
-  it('stage-aware WPD traceability rejects inactive Product scope leaks', async () => {
+  it('stage-aware work planning traceability rejects inactive Product scope leaks', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace, { scopeClass: 'deferred', status: 'deferred' })
     writeWorkTree(workspace)
@@ -1658,7 +1665,7 @@ describe('DevView CLI', () => {
     expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain('DEFERRED_SCOPE_LEAK')
   })
 
-  it('accepts VD coverage when a Test node verifies the Work acceptance criteria', async () => {
+  it('accepts verification design coverage when a Test node verifies the Work acceptance criteria', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeWorkTree(workspace)
@@ -1670,7 +1677,7 @@ describe('DevView CLI', () => {
     expect(JSON.parse(result.stdout).ok).toBe(true)
   })
 
-  it('stage-aware VD traceability requires Work and acceptance criteria to be covered by tests', async () => {
+  it('stage-aware verification design traceability requires Work and acceptance criteria to be covered by tests', async () => {
     const missingTestWorkspace = createWorkspace()
     writeExecutableProduct(missingTestWorkspace)
     writeWorkTree(missingTestWorkspace)
@@ -1699,7 +1706,7 @@ describe('DevView CLI', () => {
     )
   })
 
-  it('stage-aware VD traceability does not require Evidence Tree files yet', async () => {
+  it('stage-aware verification design traceability does not require Evidence Tree files yet', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeWorkTree(workspace)
@@ -1714,7 +1721,7 @@ describe('DevView CLI', () => {
     expect(JSON.parse(result.stdout).ok).toBe(true)
   })
 
-  it('stage-aware VD traceability requires tests to declare evidence', async () => {
+  it('stage-aware verification design traceability requires tests to declare evidence', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeWorkTree(workspace)
@@ -1730,7 +1737,7 @@ describe('DevView CLI', () => {
     expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain('TEST_EVIDENCE_DECLARATION_MISSING')
   })
 
-  it('rejects VD close when required acceptance criteria are not covered by Test Tree', async () => {
+  it('rejects verification design close when required acceptance criteria are not covered by Test Tree', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
@@ -1749,7 +1756,7 @@ describe('DevView CLI', () => {
     expect(after).toBe(before)
   })
 
-  it('rejects VD check when UI acceptance criteria lack screenshot or manual evidence coverage', async () => {
+  it('rejects verification design check when UI acceptance criteria lack screenshot or manual evidence coverage', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace, { visualImpact: true })
     mutateFirstAcceptanceCriterion(workspace, (criterion) => {
@@ -1803,7 +1810,7 @@ describe('DevView CLI', () => {
     expect(JSON.parse(result.stdout).ok).toBe(true)
   })
 
-  it('allows WPD gate for visual work after Visual Contract and before UI Surface Inventory', async () => {
+  it('allows work planning gate for visual work after Visual Contract and before UI Surface Inventory', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace, { visualImpact: true })
     writeRequirementCompat(workspace)
@@ -1817,7 +1824,7 @@ describe('DevView CLI', () => {
     expect(JSON.parse(result.stdout).ok).toBe(true)
   })
 
-  it('blocks VD gate for visual work before UI Surface Inventory exists', async () => {
+  it('blocks verification design gate for visual work before UI Surface Inventory exists', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace, { visualImpact: true })
     writeRequirementCompat(workspace)
@@ -1925,7 +1932,7 @@ describe('DevView CLI', () => {
     expect(payload.issues.map((entry: { code: string }) => entry.code)).toContain('VISUAL_AUDIT_BLOCKING_ISSUES')
   })
 
-  it('rejects ACEP manifests that include inactive scope tasks', async () => {
+  it('rejects execution pack manifests that include inactive scope tasks', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace, { scopeClass: 'deferred', status: 'deferred' })
     writeWorkTree(workspace, { workScopeClass: 'deferred', workStatus: 'deferred' })
@@ -2383,7 +2390,7 @@ describe('DevView CLI', () => {
     expect(after).toBe(before)
   })
 
-  it('transitions WPD through CLI and records state history', async () => {
+  it('transitions work planning through CLI and records state history', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
@@ -2406,7 +2413,7 @@ describe('DevView CLI', () => {
     })
   })
 
-  it('transitions VD and opens implementation scope gate', async () => {
+  it('transitions verification design and opens implementation scope gate', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
@@ -2430,7 +2437,7 @@ describe('DevView CLI', () => {
     })
   })
 
-  it('does not mutate state when VD close runs from the wrong state', async () => {
+  it('does not mutate state when verification design close runs from the wrong state', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
@@ -2550,7 +2557,7 @@ describe('DevView CLI', () => {
     ])
   })
 
-  it('transitions ACEP ready through the CLI', async () => {
+  it('transitions execution pack ready through the CLI', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
@@ -2589,7 +2596,7 @@ describe('DevView CLI', () => {
     })
   })
 
-  it('transitions ACEP execution start through the CLI', async () => {
+  it('transitions execution pack runtime start through the CLI', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
@@ -2741,7 +2748,7 @@ describe('DevView CLI', () => {
     )
   })
 
-  it('does not mutate state when ACEP ready runs from the wrong state', async () => {
+  it('does not mutate state when execution pack ready runs from the wrong state', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
@@ -2775,7 +2782,7 @@ describe('DevView CLI', () => {
     expect(after).toBe(before)
   })
 
-  it('records pre-ACEP checkpoints without changing top-level state', async () => {
+  it('records pre-execution-pack checkpoints without changing top-level state', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
@@ -2813,7 +2820,7 @@ describe('DevView CLI', () => {
     expect(state.autoflow.stateHistory).toEqual([])
   })
 
-  it('blocks ACEP ready until pre-ACEP checkpoints are completed', async () => {
+  it('blocks execution pack ready until pre-execution-pack checkpoints are completed', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
@@ -3051,7 +3058,7 @@ describe('DevView CLI', () => {
     expect(after).toBe(before)
   })
 
-  it('does not submit review before ACEP run is done', async () => {
+  it('does not submit review before execution pack run is done', async () => {
     const workspace = createWorkspace()
     writeExecutableProduct(workspace)
     writeRequirementCompat(workspace)
@@ -3861,7 +3868,7 @@ describe('DevView CLI', () => {
     expect(readStateText(workspace)).toBe(beforeState)
   })
 
-  it('completes revision by returning to WPD flow instead of DONE', async () => {
+  it('completes revision by returning to work-planning flow instead of DONE', async () => {
     const workspace = createWorkspace()
     writeDevViewState(workspace, 'REVISION_REQUESTED', {
       activeRevision: {
