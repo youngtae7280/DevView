@@ -101,6 +101,7 @@ import { revisionCompleteCommand, revisionStartCommand } from './revision.js'
 import { productIntakeCheckCommand, productIntakeCloseCommand } from './product-intake.js'
 import {
   securityPreviewRecordEnvelopeCommand,
+  securityPlanCiBranchActivationCommand,
   securityRecordPackageArtifactDigestCommand,
   securityRecordPackageProvenanceInputsCommand,
   securityReportCiBranchGovernanceReadinessCommand,
@@ -213,6 +214,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'security' && subcommand === 'validate-ci-branch-policy') {
     return securityValidateCiBranchPolicyCommand(context)
+  }
+  if (command === 'security' && subcommand === 'plan-ci-branch-activation') {
+    return securityPlanCiBranchActivationCommand(context)
   }
   if (command === 'security' && subcommand === 'validate-rbac-policy') {
     return securityValidateRbacPolicyCommand(context)

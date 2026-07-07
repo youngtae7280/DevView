@@ -26,6 +26,7 @@ import {
   CiBranchGovernanceReadinessReportValidationError,
   reportCiBranchGovernanceReadiness,
 } from '../core/ci-branch-governance-readiness-report.js'
+import { CiBranchActivationPlanValidationError, planCiBranchActivation } from '../core/ci-branch-activation-plan.js'
 import { CiBranchPolicyValidationError, validateCiBranchPolicy } from '../core/ci-branch-policy-validation.js'
 import { RbacPolicyValidationError, validateRbacPolicy } from '../core/rbac-policy-validation.js'
 import { RbacReadinessReportValidationError, reportRbacReadiness } from '../core/rbac-readiness-report.js'
@@ -702,6 +703,75 @@ export async function securityValidateCiBranchPolicyCommand(context: CommandCont
           message,
           suggestedFix:
             'Provide --policy and --output and write CI/branch policy validation outputs outside source/control artifacts and source inputs.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function securityPlanCiBranchActivationCommand(context: CommandContext): Promise<CommandResult> {
+  try {
+    const report = await planCiBranchActivation(context.options.root, {
+      ciBranchPolicyValidation: context.options.ciBranchPolicyValidation,
+      ciBranchGovernanceReadiness: context.options.ciBranchGovernanceReadiness,
+      providerNetworkPolicyReport: context.options.providerNetworkPolicyReport,
+      rbacPolicyValidation: context.options.rbacPolicyValidation,
+      signingReadiness: context.options.signingReadiness,
+      provenanceVerificationReadiness: context.options.provenanceVerificationReadiness,
+      recordEnvelopeVerification: context.options.recordEnvelopeVerification,
+      releaseSurfaceValidation: context.options.releaseSurfaceValidation,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'security plan-ci-branch-activation',
+      exitCode: ExitCode.Success,
+      message:
+        'CI/branch activation plan recorded as a non-authoritative report-only sequence without CI provider calls, branch mutation, hooks, or enterprise gate activation.',
+      issues: [],
+      data: { ...report },
+    }
+  } catch (error) {
+    if (error instanceof CiBranchActivationPlanValidationError) {
+      const report = error.report
+      const blockers = report.planFindings.filter((finding) => finding.severity === 'blocker')
+      return {
+        ok: false,
+        command: 'security plan-ci-branch-activation',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'CI/branch activation planning is blocked before any output write.',
+        issues: blockers.map((finding) =>
+          issue({
+            validator: 'CiBranchActivationPlan',
+            code: finding.code,
+            severity: 'error',
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide exact report-only CI/branch source facts with required-check, branch, hook, provider, RBAC, signing, key, provenance, and enterprise authority flags false.',
+          }),
+        ),
+        data: { ...report },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'security plan-ci-branch-activation',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'CI/branch activation planning could not run.',
+      issues: [
+        issue({
+          validator: 'CiBranchActivationPlan',
+          code: 'CI_BRANCH_ACTIVATION_PLAN_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide --ci-branch-policy-validation and --output and write activation plan outputs outside source/control artifacts and source inputs.',
         }),
       ],
     }

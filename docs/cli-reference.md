@@ -440,6 +440,33 @@ material, or authority claims block with zero-write behavior. The output role is
 required-check configuration, branch protection mutation, CI provider activation, RBAC enforcement, signing, or an
 enterprise gate.
 
+### CI / Branch Activation Plan
+
+```bash
+devview security plan-ci-branch-activation \
+  --ci-branch-policy-validation <ci-branch-policy-validation.json> \
+  --ci-branch-governance-readiness <ci-branch-governance-readiness.json> \
+  --provider-network-policy-report <provider-network-policy-report.json> \
+  --rbac-policy-validation <rbac-policy-validation.json> \
+  --signing-readiness <signing-readiness.json> \
+  --provenance-verification-readiness <provenance-verification-readiness.json> \
+  --record-envelope-verification <record-envelope-verification.json> \
+  --release-surface-validation <release-surface-validation.json> \
+  --output <ci-branch-activation-plan.json> \
+  --markdown <ci-branch-activation-plan.md> \
+  --json
+```
+
+Records a non-authoritative, report-only future activation sequence from a validated CI/branch policy and optional
+governance prerequisites. The plan summarizes declared required checks, matched workflow candidates, target branches,
+provider/network default-deny posture, RBAC policy validation, signing readiness, provenance verification readiness,
+unsigned envelope digest verification, and release-surface validation where supplied. Every activation step is marked
+`future-only-not-executed`, and the report keeps required checks, branch protection, `.github`, hooks, CI provider/API,
+RBAC enforcement, signing, key, provenance generation, and enterprise gate flags false. The output role is
+`devview-ci-branch-activation-plan-report` with status `devview-ci-branch-activation-plan-recorded`; this is not
+external CI activation, branch protection configuration, required-check configuration, provider authorization, or an
+enterprise gate.
+
 ### Provider/Network Default-Deny Policy
 
 ```bash
