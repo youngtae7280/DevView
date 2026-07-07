@@ -114,6 +114,7 @@ import {
   securityReportReleaseProvenanceCommand,
   securityReportSigningReadinessCommand,
   securityValidateCiBranchPolicyCommand,
+  securityValidateProviderActivationGrantPolicyCommand,
   securityValidateProvenanceAttestationCommand,
   securityValidateSbomArtifactCommand,
   securityValidateRbacPolicyCommand,
@@ -195,6 +196,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'security' && subcommand === 'report-provider-activation-authorization-readiness') {
     return securityReportProviderActivationAuthorizationReadinessCommand(context)
+  }
+  if (command === 'security' && subcommand === 'validate-provider-activation-grant-policy') {
+    return securityValidateProviderActivationGrantPolicyCommand(context)
   }
   if (command === 'security' && subcommand === 'report-release-provenance') {
     return securityReportReleaseProvenanceCommand(context)

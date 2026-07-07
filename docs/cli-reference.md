@@ -549,6 +549,38 @@ to remain false. The output role is `devview-provider-activation-authorization-r
 `devview-provider-activation-authorization-readiness-reported`; this is not provider authorization, provider/API
 execution, allowlist activation, signing, signature verification, RBAC enforcement, or an enterprise gate.
 
+### Provider Activation Grant Policy Validation
+
+```bash
+devview security validate-provider-activation-grant-policy \
+  --policy <provider-activation-grant-policy.json> \
+  --provider-network-policy-report <provider-network-policy-report.json> \
+  --provider-activation-authorization-readiness <provider-activation-authorization-readiness.json> \
+  --ci-branch-activation-authority-readiness <ci-branch-activation-authority-readiness.json> \
+  --ci-branch-activation-plan <ci-branch-activation-plan.json> \
+  --rbac-policy-validation <rbac-policy-validation.json> \
+  --signing-readiness <signing-readiness.json> \
+  --record-envelope-verification <record-envelope-verification.json> \
+  --provenance-verification-readiness <provenance-verification-readiness.json> \
+  --enterprise-readiness <enterprise-readiness.json> \
+  --output <provider-activation-grant-policy-validation.json> \
+  --markdown <provider-activation-grant-policy-validation.md> \
+  --json
+```
+
+Validates a declarative provider activation grant policy as a report-only source fact. `--policy`,
+`--provider-network-policy-report`, `--provider-activation-authorization-readiness`, and `--output` are required; other
+inputs are optional prerequisite source facts. The policy must use role `devview-provider-activation-grant-policy`,
+status `devview-provider-activation-grant-policy-configured`, scope
+`provider-activation-grant-policy-validation-report-only`, `activationMode: report-only-no-activation`, and provider and
+network defaults of `deny`. Provider/network/API allowlists and grants must remain empty, provider/API calls and
+allowlist/grant activation must remain false, and signed-policy, key/trust, RBAC-enforcement, branch-protection,
+required-check, hook, graph, package/SBOM/provenance, approval, and enterprise-gate authority claims must remain false.
+The output role is `devview-provider-activation-grant-policy-validation-report` with status
+`devview-provider-activation-grant-policy-validation-passed`; this is not provider authorization, provider grant
+activation, provider/API execution, allowlist activation, signing, signature verification, RBAC enforcement, branch
+configuration, or an enterprise gate.
+
 ### RBAC Role Assignment Policy Validation
 
 ```bash

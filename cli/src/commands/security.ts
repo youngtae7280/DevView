@@ -11,6 +11,10 @@ import {
   reportProviderActivationAuthorizationReadiness,
 } from '../core/provider-activation-authorization-readiness-report.js'
 import {
+  ProviderActivationGrantPolicyValidationError,
+  validateProviderActivationGrantPolicy,
+} from '../core/provider-activation-grant-policy-validation.js'
+import {
   PackageProvenanceInputsRecordValidationError,
   recordPackageProvenanceInputs,
 } from '../core/package-provenance-inputs-record.js'
@@ -258,6 +262,79 @@ export async function securityReportProviderActivationAuthorizationReadinessComm
           message,
           suggestedFix:
             'Provide --provider-network-policy-report and --output and write outputs outside source/control artifacts and source inputs.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function securityValidateProviderActivationGrantPolicyCommand(
+  context: CommandContext,
+): Promise<CommandResult> {
+  try {
+    const report = await validateProviderActivationGrantPolicy(context.options.root, {
+      policy: context.options.policy,
+      providerNetworkPolicyReport: context.options.providerNetworkPolicyReport,
+      providerActivationAuthorizationReadiness: context.options.providerActivationAuthorizationReadiness,
+      ciBranchActivationAuthorityReadiness: context.options.ciBranchActivationAuthorityReadiness,
+      ciBranchActivationPlan: context.options.ciBranchActivationPlan,
+      rbacPolicyValidation: context.options.rbacPolicyValidation,
+      signingReadiness: context.options.signingReadiness,
+      recordEnvelopeVerification: context.options.recordEnvelopeVerification,
+      provenanceVerificationReadiness: context.options.provenanceVerificationReadiness,
+      enterpriseReadiness: context.options.enterpriseReadiness,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'security validate-provider-activation-grant-policy',
+      exitCode: ExitCode.Success,
+      message:
+        'Provider activation grant policy validated without provider grants, allowlist activation, provider/API calls, signing, RBAC enforcement, branch mutation, hooks, or enterprise gate activation.',
+      issues: [],
+      data: { ...report },
+    }
+  } catch (error) {
+    if (error instanceof ProviderActivationGrantPolicyValidationError) {
+      const report = error.report
+      const blockers = report.validationFindings.filter((finding) => finding.severity === 'blocker')
+      return {
+        ok: false,
+        command: 'security validate-provider-activation-grant-policy',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'Provider activation grant policy validation is blocked before any output write.',
+        issues: blockers.map((finding) =>
+          issue({
+            validator: 'ProviderActivationGrantPolicyValidation',
+            code: finding.code,
+            severity: 'error',
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide an exact report-only provider activation grant policy with default-deny posture, empty allowlists, and provider/API/RBAC/signing/CI authority claims false.',
+          }),
+        ),
+        data: { ...report },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'security validate-provider-activation-grant-policy',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Provider activation grant policy validation could not run.',
+      issues: [
+        issue({
+          validator: 'ProviderActivationGrantPolicyValidation',
+          code: 'PROVIDER_ACTIVATION_GRANT_POLICY_VALIDATION_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide --policy, --provider-network-policy-report, --provider-activation-authorization-readiness, and --output outside source/control artifacts.',
         }),
       ],
     }
