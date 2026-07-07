@@ -256,13 +256,23 @@ devview graph read-model record-scope-ci-enforcement \
   --equivalence-proof-record <equivalence-proof-record.json> \
   --output <scope-ci-enforcement-record.json> \
   --json
+
+devview graph read-model record-guarded-graph-update-boundary \
+  --proposal <graph-delta-proposal.json> \
+  --runtime-evidence-satisfaction-record <runtime-satisfaction-record.json> \
+  --equivalence-proof-record <equivalence-proof-record.json> \
+  --scope-ci-enforcement-record <scope-ci-enforcement-record.json> \
+  --output <guarded-graph-update-boundary-record.json> \
+  --json
 ```
 
 Readiness commands are report-only. The Equivalence Proof record command can prove only one explicit runtime Evidence
 obligation from an actual runtime satisfaction record. The Scope/CI Enforcement record command can record deterministic
 DevView Scope/CI lifecycle authority only from ready Scope/CI readiness plus an actual Equivalence Proof record. It
 still does not mutate external CI, configure required checks, change branch protection, activate hooks, reject diffs,
-apply a Graph Delta, or mutate graph-source.
+apply a Graph Delta, or mutate graph-source. The Guarded Graph Update boundary record validates the actual runtime,
+proof, Scope/CI, and Graph Delta proposal inputs as future-apply preconditions while explicitly deferring the apply
+command and leaving graph-source unchanged.
 
 ### Baseline And Final Handoff
 

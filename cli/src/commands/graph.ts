@@ -11,6 +11,7 @@ import { recordEvidenceDecisionFile } from '../core/evidence-decision-record.js'
 import { reportEvidenceAcceptanceReadinessFile } from '../core/evidence-acceptance-readiness.js'
 import { recordEquivalenceProofFile } from '../core/equivalence-proof-record.js'
 import { reportEquivalenceProofReadinessFile } from '../core/equivalence-proof-readiness.js'
+import { recordGuardedGraphUpdateBoundaryFile } from '../core/guarded-graph-update-boundary-record.js'
 import { reportGraphSourceMutationReadinessFile } from '../core/graph-source-mutation-readiness.js'
 import { recordScopeCiEnforcementFile } from '../core/scope-ci-enforcement-record.js'
 import { reportScopeCiEnforcementReadinessFile } from '../core/scope-ci-enforcement-readiness.js'
@@ -1865,6 +1866,74 @@ export async function graphReadModelRecordScopeCiEnforcementCommand(context: Com
           message,
           suggestedFix:
             'Provide a ready Scope/CI Enforcement readiness preview, an actual Equivalence Proof record, and dedicated output paths. This command records lifecycle authority only and never mutates external CI, branch protection, hooks, graph-source, or providers.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelRecordGuardedGraphUpdateBoundaryCommand(
+  context: CommandContext,
+): Promise<CommandResult> {
+  if (!context.options.proposal) {
+    return invalidCommand('graph read-model record-guarded-graph-update-boundary requires --proposal <file>.')
+  }
+  if (!context.options.runtimeEvidenceSatisfactionRecord) {
+    return invalidCommand(
+      'graph read-model record-guarded-graph-update-boundary requires --runtime-evidence-satisfaction-record <file>.',
+    )
+  }
+  if (!context.options.equivalenceProofRecord) {
+    return invalidCommand(
+      'graph read-model record-guarded-graph-update-boundary requires --equivalence-proof-record <file>.',
+    )
+  }
+  if (!context.options.scopeCiEnforcementRecord) {
+    return invalidCommand(
+      'graph read-model record-guarded-graph-update-boundary requires --scope-ci-enforcement-record <file>.',
+    )
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph read-model record-guarded-graph-update-boundary requires --output <file>.')
+  }
+
+  try {
+    const result = await recordGuardedGraphUpdateBoundaryFile(context.options.root, {
+      proposal: context.options.proposal,
+      runtimeEvidenceSatisfactionRecord: context.options.runtimeEvidenceSatisfactionRecord,
+      equivalenceProofRecord: context.options.equivalenceProofRecord,
+      scopeCiEnforcementRecord: context.options.scopeCiEnforcementRecord,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph read-model record-guarded-graph-update-boundary',
+      exitCode: ExitCode.Success,
+      message: 'Guarded Graph Update boundary record created without applying graph deltas or mutating graph-source.',
+      issues: [],
+      data: {
+        ...result.record,
+        ...(result.outputPath ? { outputPath: result.outputPath } : {}),
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: 'Use this boundary record as deterministic precondition context for a future guarded graph update apply command. This command did not apply graph deltas, mutate graph-source, mutate .github, activate hooks, call providers, execute extensions, or automate approval.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model record-guarded-graph-update-boundary',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Guarded Graph Update boundary record blocked.',
+      issues: [
+        issue({
+          validator: 'GuardedGraphUpdateBoundaryRecord',
+          code: 'GUARDED_GRAPH_UPDATE_BOUNDARY_RECORD_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a safe Graph Delta proposal, actual runtime satisfaction, actual Equivalence Proof, actual Scope/CI Enforcement records, and dedicated output paths. This command never applies graph deltas or mutates graph-source.',
         }),
       ],
     }

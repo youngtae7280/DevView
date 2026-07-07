@@ -57,6 +57,7 @@ import {
   graphReadModelRecordRuntimeEvidenceSatisfactionCommand,
   graphReadModelReportRuntimeEvidenceSatisfactionReadinessCommand,
   graphReadModelRecordEquivalenceProofCommand,
+  graphReadModelRecordGuardedGraphUpdateBoundaryCommand,
   graphReadModelReportEquivalenceProofReadinessCommand,
   graphReadModelReportFrontendChainCommand,
   graphReadModelReportProjectMemoryExtensionGapsCommand,
@@ -339,6 +340,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'record-scope-ci-enforcement') {
     return graphReadModelRecordScopeCiEnforcementCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'record-guarded-graph-update-boundary') {
+    return graphReadModelRecordGuardedGraphUpdateBoundaryCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-ai-request-analyzer-pack') {
     return graphReadModelGenerateAiRequestAnalyzerPackCommand(context)
