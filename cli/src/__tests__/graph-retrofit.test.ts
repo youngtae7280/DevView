@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { runDevViewCli } from '../app'
@@ -12,121 +11,61 @@ afterEach(() => {
 })
 
 describe('graph retrofit CLI', () => {
-  it('summarizes a retrofit graph-source without touching the target project', async () => {
+  it('summarizes a synthetic retrofit graph-source without touching a target project', async () => {
+    const workspace = createWorkspace()
+    writeSyntheticRetrofitFixture(workspace)
+
     const result = await runDevViewCli(
-      [
-        'graph',
-        'retrofit',
-        'plan',
-        '--graph-source',
-        'examples/internal-legacy/retrofit/cardprinterconfig/graph-source.json',
-        '--json',
-      ],
-      { cwd: pluginRoot, pluginRoot },
+      ['graph', 'retrofit', 'plan', '--graph-source', 'fixtures/retrofit/graph-source.json', '--json'],
+      { cwd: workspace, pluginRoot },
     )
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.status).toBe('retrofit-plan-pass')
-    expect(payload.target.projectName).toBe('CardPrinterConfig')
+    expect(payload.target.projectName).toBe('Synthetic Retrofit Fixture')
     expect(payload.counts.records).toBe(2)
-    expect(payload.counts.forbiddenBoundaries).toBe(2)
+    expect(payload.counts.forbiddenBoundaries).toBe(1)
     expect(payload.edgeIntentSummary.missingClaimCount).toBe(0)
-    expect(payload.implementationReadyRecords.map((entry: { id: string }) => entry.id)).toEqual([
-      'change.laminator-tag-layout',
-    ])
-    expect(payload.retainedReferenceRecords.map((entry: { id: string }) => entry.id)).toEqual([
-      'change.smart51-test-setting',
-    ])
+    expect(payload.implementationReadyRecords.map((entry: { id: string }) => entry.id)).toEqual(
+      expect.arrayContaining(['change.synthetic-active']),
+    )
+    expect(payload.retainedReferenceRecords).toEqual([])
     expect(payload.boundaries.mutatesTargetRepo).toBe(false)
     expect(payload.boundaries.appliesPatch).toBe(false)
   })
 
-  it('summarizes a large external Kubernetes KEP retrofit graph-source without touching the target project', async () => {
-    const result = await runDevViewCli(
-      [
-        'graph',
-        'retrofit',
-        'plan',
-        '--graph-source',
-        'examples/internal-legacy/retrofit/open-source/kubernetes-sidecar-kep/graph-source.json',
-        '--json',
-      ],
-      { cwd: pluginRoot, pluginRoot },
-    )
+  it('generates a read-only instruction pack from a synthetic retrofit record', async () => {
+    const workspace = createWorkspace()
+    writeSyntheticRetrofitFixture(workspace)
 
-    expect(result.exitCode).toBe(ExitCode.Success)
-    const payload = JSON.parse(result.stdout)
-    expect(payload.status).toBe('retrofit-plan-pass')
-    expect(payload.target.projectName).toBe('kubernetes/kubernetes KEP-753 Sidecar Containers')
-    expect(payload.target.observedSourceRef).toBe('2846ba9cdbbde11f02435cfdfccf1850d99be47b')
-    expect(payload.counts.records).toBe(1)
-    expect(payload.counts.nodes).toBe(19)
-    expect(payload.counts.edges).toBe(17)
-    expect(payload.counts.forbiddenBoundaries).toBe(3)
-    expect(payload.edgeIntentSummary.edgeIntentCount).toBe(17)
-    expect(payload.edgeIntentSummary.missingClaimCount).toBe(0)
-    expect(payload.edgeIntentSummary.missingClassificationCount).toBe(0)
-    expect(payload.implementationReadyRecords.map((entry: { id: string }) => entry.id)).toEqual([
-      'change.kep753.sidecar-intent-map',
-    ])
-    expect(payload.boundaries.mutatesTargetRepo).toBe(false)
-    expect(payload.boundaries.appliesPatch).toBe(false)
-    expect(payload.boundaries.claimsMaintainerIntent).toBe(false)
-
-    const sourceMap = JSON.parse(
-      readFileSync(
-        resolve(
-          pluginRoot,
-          'examples/internal-legacy/retrofit/open-source/kubernetes-sidecar-kep/support/kep753-source-map.json',
-        ),
-        'utf8',
-      ),
-    )
-    expect(sourceMap.kepSectionAnchors.map((entry: { section: string }) => entry.section)).toContain('Non-Goals')
-    expect(sourceMap.symbolAnchors.map((entry: { symbol: string }) => entry.symbol)).toEqual(
-      expect.arrayContaining([
-        'IsRestartableInitContainer',
-        'computeInitContainerActions',
-        'AggregateContainerRequests',
-      ]),
-    )
-    expect(sourceMap.testAnchors.map((entry: { symbol: string }) => entry.symbol)).toEqual(
-      expect.arrayContaining(['TestIsContainerRestartable', 'TestLifeCycleHookForRestartableInitContainer']),
-    )
-  })
-
-  it('generates a read-only instruction pack from the Kubernetes KEP retrofit record', async () => {
     const result = await runDevViewCli(
       [
         'graph',
         'operation',
         'generate-pack',
         '--graph-source',
-        'examples/internal-legacy/retrofit/open-source/kubernetes-sidecar-kep/graph-source.json',
+        'fixtures/retrofit/graph-source.json',
         '--record',
-        'change.kep753.sidecar-intent-map',
+        'change.synthetic-active',
         '--json',
       ],
-      { cwd: pluginRoot, pluginRoot },
+      { cwd: workspace, pluginRoot },
     )
 
     expect(result.exitCode).toBe(ExitCode.Success)
     const payload = JSON.parse(result.stdout)
     expect(payload.status).toBe('generated-from-graph-source')
     expect(payload.artifactRole).toBe('retrofit-instruction-pack-v0')
-    expect(payload.sourceRecordId).toBe('change.kep753.sidecar-intent-map')
-    expect(payload.target.projectName).toBe('kubernetes/kubernetes')
-    expect(payload.allowedScope.files).toContain('keps/sig-node/753-sidecar-containers/README.md')
-    expect(payload.allowedScope.files).toContain('pkg/kubelet/kuberuntime/kuberuntime_container.go')
-    expect(payload.allowedScope.files).toContain('staging/src/k8s.io/component-helpers/resource/helpers.go')
-    expect(payload.allowedScope.files).toContain('test/e2e_node/container_lifecycle_test.go')
+    expect(payload.sourceRecordId).toBe('change.synthetic-active')
+    expect(payload.target.projectName).toBe('Synthetic Retrofit Fixture')
+    expect(payload.allowedScope.files).toEqual(['src/synthetic-view.ts'])
     expect(payload.forbiddenScope.flows.map((entry: { flow?: string }) => entry.flow)).toContain(
-      'kubernetes/kubernetes code mutation',
+      'unrelated configuration rewrite',
     )
     expect(payload.executionBoundary.mayModifyExternalProject).toBe(false)
     expect(payload.graphContext.edgeIntents.map((entry: { id: string }) => entry.id)).toContain(
-      'edge.intent-map-guards-target-mutation',
+      'edge.synthetic-active-guards-boundary',
     )
   })
 
@@ -149,3 +88,106 @@ describe('graph retrofit CLI', () => {
     expect(JSON.parse(result.stderr).issues[0].message).toContain('retrofit-graph-source-v0')
   })
 })
+
+function writeSyntheticRetrofitFixture(workspace: string): void {
+  writeJson(resolve(workspace, 'fixtures/retrofit/records/active.json'), {
+    status: 'planned-not-implemented',
+    target: { projectName: 'Synthetic Retrofit Fixture' },
+    userConfirmedIntent: {
+      summary: 'Adjust the synthetic view layout.',
+      includedBehavior: ['update the synthetic view only'],
+      excludedBehavior: ['unrelated configuration rewrite'],
+    },
+    implementationPlan: {
+      expectedFiles: ['src/synthetic-view.ts'],
+      expectedFlow: 'layout-only change',
+      nonGoals: ['configuration rewrite'],
+    },
+    forbiddenFlows: [{ flow: 'unrelated configuration rewrite', reason: 'outside selected scope' }],
+    evidence: {
+      build: { status: 'not-run' },
+      runtime: { status: 'not-run' },
+      hardware: { status: 'not-required' },
+    },
+    finalState: {
+      status: 'implemented-build-pass-runtime-pass',
+      activeCodeState: 'active-local-behavior-change',
+    },
+  })
+  writeJson(resolve(workspace, 'fixtures/retrofit/records/reference.json'), {
+    status: 'implemented-then-retained-reference',
+    target: { projectName: 'Synthetic Retrofit Fixture' },
+    userConfirmedIntent: { summary: 'Retained reference record.' },
+    implementationPlan: { expectedFiles: ['src/reference.ts'] },
+    evidence: { build: { status: 'pass' }, runtime: { status: 'pass' }, hardware: { status: 'not-required' } },
+    finalState: {
+      status: 'implemented-then-retained-reference',
+      activeCodeState: 'retained-reference-only',
+    },
+  })
+  writeJson(resolve(workspace, 'fixtures/retrofit/graph-source.json'), {
+    schemaVersion: 1,
+    artifactRole: 'retrofit-graph-source-v0',
+    status: 'active-retrofit-graph-source',
+    target: { projectName: 'Synthetic Retrofit Fixture' },
+    records: [
+      {
+        id: 'change.synthetic-reference',
+        path: 'fixtures/retrofit/records/reference.json',
+        expectedStatus: 'implemented-then-retained-reference',
+        expectedActiveCodeState: 'retained-reference-only',
+      },
+      {
+        id: 'change.synthetic-active',
+        path: 'fixtures/retrofit/records/active.json',
+        expectedStatus: 'planned-not-implemented',
+        expectedActiveCodeState: 'active-local-behavior-change',
+      },
+    ],
+    nodes: [
+      { id: 'module.synthetic-view', kind: 'module', state: 'observed', intentClaim: 'Synthetic view module.' },
+      {
+        id: 'boundary.synthetic-config',
+        kind: 'forbidden-flow-boundary',
+        state: 'user-confirmed',
+        intentClaim: 'Configuration rewrites are outside selected scope.',
+      },
+      {
+        id: 'change.synthetic-active',
+        kind: 'retrofit-change-record',
+        state: 'planned-not-implemented',
+        intentClaim: 'Synthetic active change.',
+      },
+      {
+        id: 'change.synthetic-reference',
+        kind: 'retrofit-change-record',
+        state: 'implemented-then-retained-reference',
+        intentClaim: 'Synthetic reference change.',
+      },
+    ],
+    edges: [
+      {
+        id: 'edge.synthetic-view-drives-active',
+        from: 'module.synthetic-view',
+        to: 'change.synthetic-active',
+        kind: 'change-driver',
+        edgeIntent: {
+          classifications: ['behavior-change'],
+          claim: 'The synthetic view drives the active change.',
+          confidence: 'observed-high',
+        },
+      },
+      {
+        id: 'edge.synthetic-active-guards-boundary',
+        from: 'change.synthetic-active',
+        to: 'boundary.synthetic-config',
+        kind: 'forbidden-flow-guard',
+        edgeIntent: {
+          classifications: ['non-goal'],
+          claim: 'The active change must not rewrite configuration.',
+          confidence: 'user-confirmed',
+        },
+      },
+    ],
+  })
+}

@@ -20,21 +20,19 @@
     "extensionRequiresHumanReviewPacket": true
   },
   "exampleTaxonomyProfile": {
-    "taxonomyProfileId": "legacy-retrofit-windowsutility-v0",
-    "baseProfile": "legacy-retrofit",
+    "taxonomyProfileId": "synthetic-retrofit-extension-v0",
+    "baseProfile": "synthetic-retrofit",
     "profileAuthorityStatus": "preview-only-not-approved",
     "coreNodeKinds": ["requirement", "task", "change", "check", "evidence", "decision", "risk"],
     "extensionNodeKinds": [
-      "legacy-utility-module",
+      "synthetic-adapter",
       "execution-flow",
       "ui-layout-surface",
       "forbidden-flow-boundary",
-      "integration-target",
-      "native-interop",
-      "hardware-boundary"
+      "integration-target"
     ],
     "extensionEdgeKinds": [
-      "legacy-module-scope",
+      "synthetic-module-scope",
       "execution-ownership",
       "ui-surface-ownership",
       "forbidden-flow-guard",
@@ -42,16 +40,16 @@
     ],
     "extensionKindRationale": [
       {
-        "kind": "legacy-utility-module",
-        "reason": "Represent observed Utility_Windows utility directories without granting edit authority."
+        "kind": "synthetic-adapter",
+        "reason": "Represent observed project-specific adapter modules without granting edit authority."
       },
       {
         "kind": "execution-flow",
-        "reason": "Represent behavior-preservation flows such as read/write/save/load or hardware calls."
+        "reason": "Represent behavior-preservation flows such as read/write/save/load calls."
       },
       {
         "kind": "ui-layout-surface",
-        "reason": "Represent bounded UI/resource surfaces such as CardPrinterConfig dialog layout."
+        "reason": "Represent bounded UI/resource surfaces such as synthetic panel layout."
       },
       {
         "kind": "forbidden-flow-boundary",
@@ -59,7 +57,7 @@
       },
       {
         "kind": "integration-target",
-        "reason": "Represent WindowsUtility migration or parity targets as context-only until work is approved."
+        "reason": "Represent project migration or parity targets as context-only until work is approved."
       }
     ]
   },

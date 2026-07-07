@@ -153,8 +153,6 @@ Commands:
                        Capture a graph delta from an allowed target repo diff
   graph operation propose-update
                        Generate a graph update proposal from a graph delta
-  graph operation run-chain
-                       Run or plan the local internal operation-chain wrapper without knowing the underlying script path
   graph retrofit plan  Summarize a retrofit graph-source before implementation without touching the target project
   graph read-model generate
                        Generate bounded read-model Evidence from a selected slice
@@ -470,8 +468,6 @@ Options:
                        Project Profile file for extensions report-readiness. Defaults to .devview/project-profile.json.
   --extensions-dir <dir>
                        Extension Manifest directory for extensions report-readiness. Defaults to .devview/extensions.
-  --chain-command <name>
-                       Wrapped graph operation script command. Defaults to operation-chain.
   --base <ref>         Base git ref for graph read-model collect-changed-files or check-scope.
   --head <ref>         Head git ref for graph read-model collect-changed-files or check-scope.
   --working-tree       Use tracked unstaged working tree changes for graph read-model collect-changed-files or check-scope; mutually exclusive with --base/--head, --staged, and --untracked.

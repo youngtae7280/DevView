@@ -800,11 +800,12 @@ function buildProjectMemorySummary(root: string, input: GraphInput): DevViewGrap
   }
   const identity = asRecord(input.projectMemory.projectIdentity) ?? {}
   const direction = asRecord(input.projectMemory.projectDirection) ?? {}
-  const portfolio = asRecord(input.projectMemory.portfolioModel) ?? {}
   const taxonomy = asRecord(input.projectMemory.taxonomyProfileRef) ?? {}
   const viewTree = asRecord(input.projectMemory.viewTreeProfileRef) ?? {}
-  const wholePortfolio = asRecord(portfolio.wholeWindowsUtility) ?? {}
-  const cardPrinterConfig = asRecord(portfolio.cardPrinterConfig) ?? {}
+  const portfolio = asRecord(input.projectMemory.portfolioModel) ?? {}
+  const portfolioEntries = Object.values(portfolio).map((entry) => asRecord(entry) ?? {})
+  const portfolioSummary = portfolioEntries[0] ?? {}
+  const detailedSlice = portfolioEntries[1] ?? portfolioSummary
   return {
     sourceProjectMemory: relativePath(root, input.projectMemoryPath),
     artifactRole: stringValue(input.projectMemory.artifactRole),
@@ -814,9 +815,9 @@ function buildProjectMemorySummary(root: string, input: GraphInput): DevViewGrap
     projectName: stringValue(identity.projectName),
     devviewMode: stringValue(input.projectMemory.devviewMode),
     currentDirection: stringValue(direction.current),
-    portfolioRole: stringValue(wholePortfolio.role),
-    detailedSliceRole: stringValue(cardPrinterConfig.role),
-    detailedSliceLabel: 'CardPrinterConfig',
+    portfolioRole: stringValue(portfolioSummary.role),
+    detailedSliceRole: stringValue(detailedSlice.role),
+    detailedSliceLabel: stringValue(detailedSlice.label) || stringValue(detailedSlice.role),
     taxonomyProfileId: stringValue(taxonomy.taxonomyProfileId),
     taxonomyAuthorityStatus: stringValue(taxonomy.authorityStatus),
     viewTreeProfileId: stringValue(viewTree.viewTreeProfileId),
@@ -2629,13 +2630,19 @@ function applyDeterministicLayout(
     assigned.add(id)
   }
 
-  if (byId.has('product.windowsutility-legacy')) {
-    applyWindowsUtilityPortfolioLayout(nodes, setNode, assigned)
-  } else {
-    applyCardPrinterConfigNetworkLayout(nodes, setNode, assigned)
+  const recordNode = byId.get(recordId)
+  if (recordNode) {
+    setNode(recordNode.id, 900, 430)
+  }
+  for (const [index, node] of sortLayoutNodes(nodes.filter((entry) => entry.kind === 'product-intent')).entries()) {
+    setNode(node.id, 330, 250 + index * 170)
+  }
+  for (const [index, node] of sortLayoutNodes(
+    nodes.filter((entry) => entry.kind === 'forbidden-flow-boundary'),
+  ).entries()) {
+    setNode(node.id, 1320, 275 + index * 190)
   }
 
-  const recordNode = byId.get(recordId)
   const remainingSelected = sortLayoutNodes(
     nodes.filter((node) => selectedNodeIds.has(node.id) && !assigned.has(node.id)),
   )
@@ -2682,79 +2689,6 @@ function buildViewport(nodes: DevViewGraphNode[]): { width: number; height: numb
     width: maxX,
     height: maxY,
   }
-}
-
-function applyWindowsUtilityPortfolioLayout(
-  nodes: DevViewGraphNode[],
-  setNode: (id: string, x: number, y: number) => void,
-  assigned: Set<string>,
-): void {
-  setNode('product.windowsutility-legacy', 520, 430)
-  setNode('module.cardprinterconfig', 830, 400)
-  setNode('product.cardprinterconfig', 1040, 400)
-  setNode('product.windowsutility-integrated', 1170, 745)
-
-  const legacyModules = sortLayoutNodes(
-    nodes.filter((node) => node.kind === 'legacy-utility-module' && node.id !== 'module.cardprinterconfig'),
-  )
-  const innerLegacy = legacyModules.filter((_, index) => index % 2 === 0)
-  const outerLegacy = legacyModules.filter((_, index) => index % 2 === 1)
-  placeOrbit(innerLegacy, {
-    centerX: 590,
-    centerY: 470,
-    radiusX: 300,
-    radiusY: 330,
-    startDegrees: 112,
-    endDegrees: 248,
-    assigned,
-  })
-  placeOrbit(outerLegacy, {
-    centerX: 590,
-    centerY: 470,
-    radiusX: 470,
-    radiusY: 425,
-    startDegrees: 104,
-    endDegrees: 256,
-    assigned,
-  })
-
-  const integrationTargets = sortLayoutNodes(nodes.filter((node) => node.kind === 'integration-target'))
-  placeOrbit(integrationTargets, {
-    centerX: 1240,
-    centerY: 775,
-    radiusX: 250,
-    radiusY: 150,
-    startDegrees: 205,
-    endDegrees: 335,
-    assigned,
-  })
-
-  setCardPrinterDetailPositions(setNode, 0, 0)
-}
-
-function applyCardPrinterConfigNetworkLayout(
-  _nodes: DevViewGraphNode[],
-  setNode: (id: string, x: number, y: number) => void,
-  _assigned: Set<string>,
-): void {
-  setNode('product.cardprinterconfig', 430, 360)
-  setCardPrinterDetailPositions(setNode, -520, -40)
-}
-
-function setCardPrinterDetailPositions(
-  setNode: (id: string, x: number, y: number) => void,
-  offsetX: number,
-  offsetY: number,
-): void {
-  setNode('module.smart51-printer', 970 + offsetX, 170 + offsetY)
-  setNode('flow.smart51-getconfig-index-000', 1160 + offsetX, 105 + offsetY)
-  setNode('change.smart51-test-setting', 1355 + offsetX, 150 + offsetY)
-  setNode('boundary.smart51-test-read-only', 1490 + offsetX, 280 + offsetY)
-  setNode('module.smart51-laminator', 960 + offsetX, 600 + offsetY)
-  setNode('module.smart52-laminator', 1120 + offsetX, 640 + offsetY)
-  setNode('ui.laminator-tag-param-columns', 1245 + offsetX, 520 + offsetY)
-  setNode('change.laminator-tag-layout', 1380 + offsetX, 425 + offsetY)
-  setNode('boundary.laminator-layout-only', 1510 + offsetX, 555 + offsetY)
 }
 
 function placeOrbit(

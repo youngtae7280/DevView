@@ -102,11 +102,11 @@
       }
     ],
     "advisoryCheckScopeIsSourceAuthority": false,
-    "forbiddenInterpretation": "CH-001 remains a review candidate only. It is not an apply-ready operation-chain record, fixture approval, graph-source mutation, runtime Evidence satisfaction, or source-authority promotion."
+    "forbiddenInterpretation": "CH-001 remains a review candidate only. It is not an apply-ready graph-delta proposal record, fixture approval, graph-source mutation, runtime Evidence satisfaction, or source-authority promotion."
   },
   "graphDeltaPathPolicy": {
     "graphDeltaPathStatus": "unresolved-output-path-policy-required",
-    "graphDeltaPathCandidate": "outputs/devview/todo-app-devview-run/graph-update-proposals/<proposal-id>.graph-update-proposal.json",
+    "graphDeltaPathCandidate": ".tmp/devview-graph-update-proposals/<proposal-id>.graph-update-proposal.json",
     "graphDeltaPathAuthorityStatus": "candidate-only-not-written",
     "runtimeCliDefault": "stdout-or-.tmp-only",
     "trackedCalibrationPreviewPathCandidate": "examples/valid/todo-app-devview-run/generated/graph-delta-proposal-candidate.runtime-evidence-only.preview.json",

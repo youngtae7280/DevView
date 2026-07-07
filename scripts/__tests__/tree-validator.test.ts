@@ -192,9 +192,9 @@ describe('DevView legacy tree validator', () => {
     expect(result.output).toContain('is hardware-gated but lacks mock/fake/UI-automation substitute evidence')
   })
 
-  it('accepts WindowsUtility-style verification miss process-improvement logs', () => {
+  it('accepts verification miss process-improvement logs', () => {
     const workspace = createTreeValidatorWorkspace()
-    writeWindowsUtilityStyleVerificationMissLog(workspace)
+    writeVerificationMissProcessImprovementLog(workspace)
 
     const result = runTreeValidator(workspace)
 
@@ -993,7 +993,7 @@ function writeVisualVerificationProfile(
   })
 }
 
-function writeWindowsUtilityStyleVerificationMissLog(workspace: string) {
+function writeVerificationMissProcessImprovementLog(workspace: string) {
   writeJson(join(workspace, '.devview', 'control', 'verification-miss-log.json'), {
     schemaVersion: 1,
     generatedAt: '2026-06-11T00:00:00.000Z',

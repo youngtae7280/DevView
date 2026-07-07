@@ -1,7 +1,7 @@
 # Retrofit Schemas
 
-This directory holds draft DevView retrofit contracts that were extracted from
-real maintenance dogfood work.
+This directory holds draft DevView retrofit contracts for future native and
+retrofit project profiles.
 
 Current contracts:
 
@@ -11,11 +11,5 @@ Current contracts:
   - protocol for closing real-device evidence without confusing it with build
     evidence
 
-These files are not enforcement rules yet. They are fixture-backed contracts
-for validating the shape of future DevView retrofit records.
-
-Validate the current formal fixtures with:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\validate-retrofit-fixtures-v0.ps1
-```
+These files are not enforcement rules yet. They describe the shape of future
+DevView retrofit records without shipping project-specific fixtures.

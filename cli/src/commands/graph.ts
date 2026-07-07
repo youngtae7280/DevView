@@ -54,7 +54,6 @@ import {
   captureGraphDelta,
   generateGraphInstructionPack,
   proposeGraphUpdate,
-  runGraphOperationChain,
 } from '../core/graph-operation.js'
 import { buildRetrofitPlan } from '../core/graph-retrofit.js'
 import {
@@ -204,49 +203,6 @@ export async function cleanupLegacyCommand(context: CommandContext): Promise<Com
           severity: 'error',
           message,
           suggestedFix: 'Check --dry-run, --scope, and output paths. This command writes only explicit report outputs.',
-        }),
-      ],
-    }
-  }
-}
-
-export async function graphOperationRunChainCommand(context: CommandContext): Promise<CommandResult> {
-  try {
-    const result = await runGraphOperationChain(context.options.root, context.env.pluginRoot, {
-      command: context.options.chainCommand,
-      dryRun: context.options.dryRun,
-      output: context.options.output,
-    })
-    return {
-      ok: true,
-      command: 'graph operation run-chain',
-      exitCode: ExitCode.Success,
-      message: context.options.dryRun
-        ? 'Graph operation chain execution plan created.'
-        : 'Graph operation chain command completed.',
-      issues: [],
-      data: {
-        ...result,
-        next: context.options.dryRun
-          ? 'Rerun without --dry-run to execute the wrapped operation-chain script.'
-          : 'Review generated outputs and run graph operation apply-proposal for any approved graph update proposal.',
-      },
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    return {
-      ok: false,
-      command: 'graph operation run-chain',
-      exitCode: ExitCode.ValidationFailed,
-      message: 'Graph operation chain command blocked.',
-      issues: [
-        issue({
-          validator: 'GraphOperationRunChain',
-          code: 'GRAPH_OPERATION_CHAIN_BLOCKED',
-          severity: 'error',
-          message,
-          suggestedFix:
-            'Use --dry-run to inspect the wrapped command, or run scripts/invoke-devview-legacy-v0.ps1 directly for detailed troubleshooting.',
         }),
       ],
     }

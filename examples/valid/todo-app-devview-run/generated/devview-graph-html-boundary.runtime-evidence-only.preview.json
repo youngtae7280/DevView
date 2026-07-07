@@ -57,24 +57,20 @@
     "subgraphClick": "highlight selected task subgraph and show task type, start node, selected node/edge chips, required viewpoint tree breakdown, allowed files, forbidden flows, and verification requirements"
   },
   "demoCalibration": {
-    "graphSource": "examples/internal-legacy/retrofit/windowsutility/graph-source.json",
-    "record": "change.laminator-tag-layout",
-    "instructionPack": "outputs/retrofit/instruction-packs/windowsutility-laminator-tag-layout.instruction-pack.json",
-    "projectMemory": "examples/internal-legacy/retrofit/windowsutility/devview-project-memory.preview.json",
-    "htmlOutput": "outputs/devview-graph/windowsutility.devviewgraph.html",
-    "dataOutput": "outputs/devview-graph/windowsutility.devviewgraph.data.json",
+    "graphSource": "fixtures/graph/graph-source.json",
+    "record": "change.synthetic-active",
+    "instructionPack": "fixtures/graph/instruction-pack.json",
+    "projectMemory": "fixtures/graph/project-memory.json",
+    "htmlOutput": ".tmp/synthetic.devviewgraph.html",
+    "dataOutput": ".tmp/synthetic.devviewgraph.data.json",
     "portfolioGraphMustInclude": [
-      "product.windowsutility-legacy",
-      "product.windowsutility-integrated",
-      "module.cardprinterconfig",
-      "integration.config"
+      "product.synthetic",
+      "module.synthetic-view",
+      "ui.synthetic-panel",
+      "boundary.synthetic-config"
     ],
-    "selectedSubgraphMustInclude": [
-      "change.laminator-tag-layout",
-      "ui.laminator-tag-param-columns",
-      "boundary.laminator-layout-only"
-    ],
-    "contextRecordMustRemainUnselected": "change.smart51-test-setting"
+    "selectedSubgraphMustInclude": ["change.synthetic-active", "ui.synthetic-panel", "boundary.synthetic-config"],
+    "contextRecordMustRemainUnselected": "change.synthetic-reference"
   },
   "outputAuthorityGuard": {
     "outputAndDataOutputSamePathForbidden": true,

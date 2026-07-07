@@ -16,10 +16,7 @@
   "humanReviewPacketCore": "cli/src/core/graph-delta-human-review-packet.ts",
   "existingGraphUpdateProposalSchema": "schemas/devview/graph-update-proposal-v0.json",
   "existingGraphDeltaSchema": "schemas/devview/graph-delta-v0.json",
-  "existingGraphOperationDocs": [
-    "docs/concept/graph-operation-chain-productization.md",
-    "docs/graph-operation-runbook.md"
-  ],
+  "existingGraphOperationDocs": ["docs/graph-operation-runbook.md"],
   "existingGraphOperationCommands": [
     {
       "command": "graph operation capture-delta",

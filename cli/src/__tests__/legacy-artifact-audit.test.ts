@@ -96,30 +96,12 @@ describe('DevView legacy artifact audit CLI', () => {
     expect(finding.classification).toBe('internal-hidden-compatibility')
   })
 
-  it('classifies internal legacy examples and output archives as hidden compatibility', async () => {
+  it('classifies internal legacy examples as hidden compatibility', async () => {
     const workspace = createWorkspace()
     await mkdir(join(workspace, 'examples/internal-legacy/adoption'), { recursive: true })
-    await mkdir(join(workspace, 'outputs/devview-legacy-operation-chain'), { recursive: true })
-    await mkdir(join(workspace, 'outputs/retrofit'), { recursive: true })
-    await mkdir(join(workspace, 'work/native/demo'), { recursive: true })
     writeFileSync(
       join(workspace, 'examples/internal-legacy/adoption/fixture.md'),
       `Historical ${RETIRED_PRODUCT_ACRONYM_UPPER} fixture.\n`,
-      'utf8',
-    )
-    writeFileSync(
-      join(workspace, 'outputs/devview-legacy-operation-chain/report.md'),
-      `Legacy ${RETIRED_PRODUCT_ACRONYM_UPPER} output.\n`,
-      'utf8',
-    )
-    writeFileSync(
-      join(workspace, 'outputs/retrofit/report.md'),
-      `Retrofit ${RETIRED_PRODUCT_ACRONYM_UPPER} output.\n`,
-      'utf8',
-    )
-    writeFileSync(
-      join(workspace, 'work/native/demo/README.md'),
-      `Native ${RETIRED_PRODUCT_ACRONYM_UPPER} target.\n`,
       'utf8',
     )
 
@@ -128,14 +110,9 @@ describe('DevView legacy artifact audit CLI', () => {
     const byPath = new Map(payload.findings.map((entry: Record<string, unknown>) => [entry.path, entry]))
 
     expect(result.exitCode).toBe(ExitCode.Success)
-    for (const path of [
-      'examples/internal-legacy/adoption/fixture.md',
-      'outputs/devview-legacy-operation-chain/report.md',
-      'outputs/retrofit/report.md',
-      'work/native/demo/README.md',
-    ]) {
-      expect(byPath.get(path)).toMatchObject({ classification: 'internal-hidden-compatibility' })
-    }
+    expect(byPath.get('examples/internal-legacy/adoption/fixture.md')).toMatchObject({
+      classification: 'internal-hidden-compatibility',
+    })
   })
 
   it('writes an optional report file only when requested', async () => {

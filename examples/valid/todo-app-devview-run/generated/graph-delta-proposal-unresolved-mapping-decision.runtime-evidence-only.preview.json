@@ -53,7 +53,7 @@
       }
     ],
     "candidateMeaning": "CH-001 records a structure-only change node preserving completed add-todo behavior while future revisions are assessed.",
-    "whyNotFinal": "Todo App runtime-evidence-only remains a calibration fixture and its graph-source uses structure-only sourceRecords rather than the operation-chain graph-source records expected by devview-graph-update-proposal-v0 apply flow.",
+    "whyNotFinal": "Todo App runtime-evidence-only remains a calibration fixture and its graph-source uses structure-only sourceRecords rather than graph-delta proposal records expected by devview-graph-update-proposal-v0 apply flow.",
     "advisoryCheckScopeIsSourceAuthority": false,
     "requiresHumanReview": true,
     "proposalGeneratorUse": "The proposal-only generator may use CH-001 as the default sourceRecordId candidate only when explicitly operating in Todo App runtime-evidence-only calibration preview mode.",
@@ -66,21 +66,13 @@
     "graphDeltaCompatibleSourceArtifact": "examples/valid/todo-app-devview-run/generated/graph-delta-compatible-source.runtime-evidence-only.preview.json",
     "reason": "Advisory check-scope output and git-derived changed-file collection are not graph delta artifacts. Existing devview-graph-update-proposal-v0 expects graphDeltaPath to point to a graph-delta-v0-compatible artifact.",
     "existingOutputConvention": {
-      "graphDeltaExamples": [
-        "outputs/native/graph-counter-demo/graph-deltas/counter-step-two.graph-delta.json",
-        "outputs/retrofit/open-source/escape-html/graph-deltas/symbol-stringification.graph-delta.json",
-        "outputs/retrofit/open-source/todo-vue/graph-deltas/readme-local-command-boundary.graph-delta.json"
-      ],
-      "graphUpdateProposalExamples": [
-        "outputs/native/graph-counter-demo/graph-update-proposals/counter-step-two.graph-update-proposal.json",
-        "outputs/retrofit/open-source/escape-html/graph-update-proposals/symbol-stringification.graph-update-proposal.json",
-        "outputs/retrofit/open-source/todo-vue/graph-update-proposals/readme-local-command-boundary.graph-update-proposal.json"
-      ]
+      "graphDeltaExamples": [".tmp/devview-graph-delta.synthetic-preview.json"],
+      "graphUpdateProposalExamples": [".tmp/devview-graph-update-proposal.synthetic-preview.json"]
     },
     "futurePreviewOutputPolicy": {
       "runtimeCliDefault": "stdout-or-.tmp-only",
       "trackedCalibrationPreviewPathCandidate": "examples/valid/todo-app-devview-run/generated/graph-delta-proposal-candidate.runtime-evidence-only.preview.json",
-      "operationChainOutputConventionCandidate": "outputs/devview/todo-app-devview-run/graph-update-proposals/<proposal-id>.graph-update-proposal.json",
+      "proposalOutputConventionCandidate": ".tmp/devview-graph-update-proposals/<proposal-id>.graph-update-proposal.json",
       "pathPolicyStatus": "proposal-output-path-candidates-identified-not-selected-for-implementation"
     },
     "proposalGeneratorUse": "The proposal-only generator must not populate graphDeltaPath from check-scope output unless a graph-delta-compatible source artifact is explicitly created or selected.",
@@ -148,7 +140,7 @@
       "requiredBeforeProposalOnlyGenerator": false
     },
     {
-      "mappingId": "operation-chain-record-binding",
+      "mappingId": "graph-delta-record-binding",
       "status": "structure-only-source-record-candidate-review-required",
       "requiredBeforeApplyReadyProposal": true
     },

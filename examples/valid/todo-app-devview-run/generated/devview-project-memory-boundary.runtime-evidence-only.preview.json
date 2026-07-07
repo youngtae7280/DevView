@@ -64,7 +64,7 @@
     "projectProfileSchemaBoundary": "examples/valid/todo-app-devview-run/generated/devview-project-profile-schema-boundary.runtime-evidence-only.preview.json",
     "taxonomyProfileExtensionBoundary": "examples/valid/todo-app-devview-run/generated/devview-taxonomy-profile-extension-boundary.runtime-evidence-only.preview.json",
     "projectDirectionChangeBoundary": "examples/valid/todo-app-devview-run/generated/devview-project-direction-change-boundary.runtime-evidence-only.preview.json",
-    "windowsUtilityProjectMemoryPreview": "examples/internal-legacy/retrofit/windowsutility/devview-project-memory.preview.json"
+    "syntheticProjectMemoryPreview": "fixtures/graph/project-memory.json"
   },
   "extensionAuthorityRules": {
     "coreVocabularyAuthority": "existing-devview-core-vocabulary-only",

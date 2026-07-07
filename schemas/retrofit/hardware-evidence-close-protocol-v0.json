@@ -1,5 +1,5 @@
 {
-  "$id": "https://project-blueprint-engine.local/schemas/retrofit/hardware-evidence-close-protocol-v0.json",
+  "$id": "https://devview.local/schemas/retrofit/hardware-evidence-close-protocol-v0.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schemaVersion": 1,
   "artifactRole": "retrofit-hardware-evidence-close-protocol-v0",
@@ -24,11 +24,11 @@
     "unexpectedBehavior": "none | describe",
     "excludedBehaviorStillExcluded": "yes | no | unknown"
   },
-  "smart51TestExample": {
+  "deviceReadExample": {
     "hardwareStatus": "pass",
     "observedBy": "user",
-    "observedBehavior": "The SMART-51 Factory test field displays correctly after actual GetConfig.",
-    "scopeConfirmed": "GetConfig display only",
+    "observedBehavior": "The target device read is displayed correctly after a real hardware check.",
+    "scopeConfirmed": "display-only hardware read",
     "excludedBehaviorStillExcluded": "Set/save/load behavior remains outside the requested scope."
   },
   "guardrails": [

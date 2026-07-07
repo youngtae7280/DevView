@@ -23,10 +23,11 @@ examples/valid/todo-app-devview-run/generated/devview-taxonomy-profile-extension
 examples/valid/todo-app-devview-run/generated/devview-project-direction-change-boundary.runtime-evidence-only.preview.json
 ```
 
-The first WindowsUtility retrofit memory preview is:
+The current synthetic Project Memory preview used by tests is generated in temporary workspaces only. The canonical
+boundary shape is represented by:
 
 ```text
-examples/internal-legacy/retrofit/windowsutility/devview-project-memory.preview.json
+examples/valid/todo-app-devview-run/generated/devview-project-memory-boundary.runtime-evidence-only.preview.json
 ```
 
 These artifacts are preview-only. They do not approve a profile, apply taxonomy extensions, change traversal behavior,
@@ -64,18 +65,18 @@ Project Memory Candidate
 Unapproved extension vocabulary is not traversal authority, not selected-slice authority, not contract authority, and
 not instruction-pack authority.
 
-## WindowsUtility Preview
+## Synthetic Retrofit Preview
 
-The WindowsUtility preview records `devviewMode: retrofit` and `projectDirection.current:
-legacy-preserving-retrofit`. It separates:
+The synthetic retrofit preview records `devviewMode: retrofit` and a project direction such as
+`synthetic-retrofit`. It separates:
 
-- whole WindowsUtility / Utility_Windows portfolio: observed inventory, context-only
-- CardPrinterConfig: detailed retrofit slice with graph-backed records and instruction-pack context
+- whole project portfolio: observed inventory, context-only
+- focused slice: detailed retrofit context with graph-backed records and instruction-pack preview context
 
-The preview references the `legacy-retrofit-windowsutility-v0` taxonomy profile candidate. That profile includes
-extension candidates such as `legacy-utility-module`, `execution-flow`, `ui-layout-surface`,
-`forbidden-flow-boundary`, `integration-target`, `native-interop`, and `hardware-boundary`. Those are project-specific
-extension candidates only; they do not become authority until a future human-reviewed project memory revision exists.
+The preview can reference a taxonomy profile candidate such as `synthetic-retrofit-extension-v0`. That profile may
+include extension candidates such as `synthetic-adapter`, `execution-flow`, `ui-layout-surface`,
+`forbidden-flow-boundary`, and `integration-target`. Those are project-specific extension candidates only; they do not
+become authority until a future human-reviewed project memory revision exists.
 
 ## Direction Changes
 
@@ -105,11 +106,8 @@ It compares Project Memory required extension vocabulary against current graph-s
 missing, extra, deprecated, and unapproved kinds. It remains advisory and proposal-only. It does not apply extensions,
 mutate graph-source, change traversal, or authorize contracts.
 
-The WindowsUtility calibration report is:
-
-```text
-examples/internal-legacy/retrofit/windowsutility/project-memory-extension-gaps.preview.json
-```
+Tests create synthetic calibration reports in temporary workspaces. No project-specific calibration fixture is shipped
+in the DevView repo.
 
 ## Impact Report
 
@@ -122,9 +120,5 @@ graph read-model report-project-memory-impact
 It reads a direction-change candidate and reports preservation, improvement, source authority, taxonomy, and view tree
 impact before any future revision can be reviewed. It does not approve or apply a Project Memory revision.
 
-The WindowsUtility behavior-preserving refactor candidate and impact report are:
-
-```text
-examples/internal-legacy/retrofit/windowsutility/project-direction-change.behavior-preserving-refactor.preview.json
-examples/internal-legacy/retrofit/windowsutility/project-memory-impact.behavior-preserving-refactor.preview.json
-```
+Tests create synthetic direction-change candidates and impact reports in temporary workspaces. No project-specific
+direction-change fixture is shipped in the DevView repo.

@@ -181,7 +181,6 @@ export interface CliOptions {
   schema?: string
   projectProfile?: string
   extensionsDir?: string
-  chainCommand?: string
   base?: string
   head?: string
   scope?: string

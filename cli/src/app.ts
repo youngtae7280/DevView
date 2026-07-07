@@ -223,7 +223,6 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     schema: undefined as string | undefined,
     projectProfile: undefined as string | undefined,
     extensionsDir: undefined as string | undefined,
-    chainCommand: undefined as string | undefined,
     base: undefined as string | undefined,
     head: undefined as string | undefined,
     scope: undefined as string | undefined,
@@ -1102,13 +1101,6 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--extensions-dir requires a directory path.' }
       }
       options.extensionsDir = value
-      index += 1
-    } else if (arg === '--chain-command') {
-      const value = argv[index + 1]
-      if (!value) {
-        return { error: '--chain-command requires a command name.' }
-      }
-      options.chainCommand = value
       index += 1
     } else if (arg === '--base') {
       const value = argv[index + 1]

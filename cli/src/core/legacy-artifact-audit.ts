@@ -192,11 +192,7 @@ function classifyPath(relativeFile: string): LegacyArtifactClassification {
   if (
     relativeFile.startsWith('docs/internal-legacy/') ||
     relativeFile.startsWith('docs/archive/') ||
-    relativeFile.startsWith('examples/internal-legacy/') ||
-    relativeFile.startsWith('outputs/devview-legacy-operation-chain/') ||
-    relativeFile.startsWith('outputs/native/') ||
-    relativeFile.startsWith('outputs/retrofit/') ||
-    relativeFile.startsWith('work/native/')
+    relativeFile.startsWith('examples/internal-legacy/')
   ) {
     return 'internal-hidden-compatibility'
   }

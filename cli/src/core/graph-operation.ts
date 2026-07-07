@@ -86,42 +86,6 @@ export interface GraphOperationApplyProposalResult {
   }
 }
 
-export type GraphOperationChainCommand =
-  | 'operation-chain'
-  | 'artifact-inventory'
-  | 'core-schemas'
-  | 'retrofit-smoke'
-  | 'evaluate-dogfood'
-
-export interface GraphOperationRunChainOptions {
-  command?: string
-  dryRun?: boolean
-  output?: string
-}
-
-export interface GraphOperationRunChainResult {
-  status:
-    | 'devview-legacy-operation-chain-plan-pass'
-    | 'devview-legacy-operation-chain-pass'
-    | 'devview-legacy-dogfood-evaluation-pass'
-  chainCommand: GraphOperationChainCommand
-  dryRun: boolean
-  scriptPath: string
-  shell: string
-  args: string[]
-  cwd: string
-  stdout?: string
-  stderr?: string
-  outputPath?: string
-  boundaries: {
-    wrapsExistingScript: true
-    mutatesSourceCode: false
-    appliesGraphProposal: false
-    enablesEnforcement: false
-    retiresTreeArtifacts: false
-  }
-}
-
 export interface GraphOperationGeneratePackOptions {
   recordId: string
   output?: string
@@ -293,51 +257,6 @@ export async function applyGraphUpdateProposal(
   }
 
   return result
-}
-
-export async function runGraphOperationChain(
-  root: string,
-  pluginRoot: string,
-  options: GraphOperationRunChainOptions = {},
-): Promise<GraphOperationRunChainResult> {
-  const command = normalizeChainCommand(options.command)
-  const scriptPath = path.join(pluginRoot, 'scripts', 'invoke-devview-legacy-v0.ps1')
-  const shell = process.platform === 'win32' ? 'powershell' : 'pwsh'
-  const args =
-    process.platform === 'win32'
-      ? ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, '-Command', command]
-      : ['-NoProfile', '-File', scriptPath, '-Command', command]
-
-  const baseResult: GraphOperationRunChainResult = {
-    status: options.dryRun ? 'devview-legacy-operation-chain-plan-pass' : chainStatusFor(command),
-    chainCommand: command,
-    dryRun: Boolean(options.dryRun),
-    scriptPath: relativePath(root, scriptPath),
-    shell,
-    args,
-    cwd: relativePath(root, pluginRoot) || '.',
-    boundaries: {
-      wrapsExistingScript: true,
-      mutatesSourceCode: false,
-      appliesGraphProposal: false,
-      enablesEnforcement: false,
-      retiresTreeArtifacts: false,
-    },
-  }
-
-  if (!options.dryRun) {
-    const execution = await runProcess(shell, args, pluginRoot)
-    baseResult.stdout = execution.stdout
-    baseResult.stderr = execution.stderr
-  }
-
-  if (options.output) {
-    const outputPath = resolveRepoPath(root, options.output)
-    await writeJsonAtomic(outputPath, baseResult)
-    baseResult.outputPath = relativePath(root, outputPath)
-  }
-
-  return baseResult
 }
 
 export async function generateGraphInstructionPack(
@@ -583,55 +502,6 @@ function resolveRepoPath(root: string, filePath: string): string {
   return path.isAbsolute(filePath) ? filePath : path.join(root, filePath)
 }
 
-function normalizeChainCommand(value?: string): GraphOperationChainCommand {
-  const command = value || 'operation-chain'
-  const allowed: GraphOperationChainCommand[] = [
-    'operation-chain',
-    'artifact-inventory',
-    'core-schemas',
-    'retrofit-smoke',
-    'evaluate-dogfood',
-  ]
-  if (!allowed.includes(command as GraphOperationChainCommand)) {
-    throw new Error(`Unsupported graph operation chain command: ${command}. Allowed: ${allowed.join(', ')}`)
-  }
-  return command as GraphOperationChainCommand
-}
-
-function chainStatusFor(
-  command: GraphOperationChainCommand,
-): 'devview-legacy-operation-chain-pass' | 'devview-legacy-dogfood-evaluation-pass' {
-  if (command === 'evaluate-dogfood') {
-    return 'devview-legacy-dogfood-evaluation-pass'
-  }
-  return 'devview-legacy-operation-chain-pass'
-}
-
-function runProcess(command: string, args: string[], cwd: string): Promise<{ stdout: string; stderr: string }> {
-  return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { cwd, windowsHide: true })
-    let stdout = ''
-    let stderr = ''
-
-    child.stdout.on('data', (chunk) => {
-      stdout += String(chunk)
-    })
-    child.stderr.on('data', (chunk) => {
-      stderr += String(chunk)
-    })
-    child.on('error', (error) => {
-      reject(new Error(`Could not start ${command}: ${error.message}`))
-    })
-    child.on('close', (code) => {
-      if (code === 0) {
-        resolve({ stdout, stderr })
-      } else {
-        reject(new Error(`${command} exited with code ${code}.\n${stderr || stdout}`.trim()))
-      }
-    })
-  })
-}
-
 async function loadJson<T>(filePath: string): Promise<T> {
   const result = await readJsonSafe<T>(filePath)
   if (!result.ok) {
@@ -726,6 +596,31 @@ async function readGitLines(targetRepoPath: string, gitArgs: string[]): Promise<
     .split(/\r?\n/)
     .map((entry) => entry.trim())
     .filter(Boolean)
+}
+
+function runProcess(command: string, args: string[], cwd: string): Promise<{ stdout: string; stderr: string }> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { cwd, windowsHide: true })
+    let stdout = ''
+    let stderr = ''
+
+    child.stdout.on('data', (chunk) => {
+      stdout += String(chunk)
+    })
+    child.stderr.on('data', (chunk) => {
+      stderr += String(chunk)
+    })
+    child.on('error', (error) => {
+      reject(new Error(`Could not start ${command}: ${error.message}`))
+    })
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve({ stdout, stderr })
+      } else {
+        reject(new Error(`${command} exited with code ${code}.\n${stderr || stdout}`.trim()))
+      }
+    })
+  })
 }
 
 function parseNumstatLine(line: string): { path: string; additions: string; deletions: string } | undefined {
