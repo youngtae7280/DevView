@@ -85,6 +85,11 @@ and optional golden-answer context coverage. It produces source facts for future
 `codex-graphify-devview` candidate-result fixtures while keeping Graphify activity, provider activity, native benchmark
 activity, graph updates, and lifecycle authority false.
 
+The Native minimal benchmark includes stored `codex-graphify` and `codex-graphify-devview` candidate-result fixtures.
+The combined arm references the static Graphify import validation report as a source fact, then relies on stored DevView
+context, evidence, and graph/update summaries for scoring. It is still just JSON fixture data: no benchmark task,
+Graphify integration, provider, native build/test, graph update, or lifecycle authority action is performed.
+
 ## Static Fixture Skeletons
 
 The repository includes minimal Native and Retrofit benchmark skeletons under

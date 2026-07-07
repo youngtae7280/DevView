@@ -12,13 +12,25 @@ afterEach(() => {
 })
 
 describe('benchmark summarize-comparison CLI', () => {
-  it('aggregates native fixture reports and computes DevView versus Codex-only deltas', async () => {
+  it('aggregates native fixture reports into a four-arm comparison matrix', async () => {
     const workspace = createWorkspace()
     const devviewEvaluation = await evaluateFixture(
       workspace,
       'native-minimal',
       'candidate.codex-devview.json',
       '.tmp/native-devview-evaluation.json',
+    )
+    const graphifyEvaluation = await evaluateFixture(
+      workspace,
+      'native-minimal',
+      'candidate.codex-graphify.json',
+      '.tmp/native-graphify-evaluation.json',
+    )
+    const graphifyDevviewEvaluation = await evaluateFixture(
+      workspace,
+      'native-minimal',
+      'candidate.codex-graphify-devview.json',
+      '.tmp/native-graphify-devview-evaluation.json',
     )
     const codexOnlyEvaluation = await evaluateFixture(
       workspace,
@@ -29,7 +41,10 @@ describe('benchmark summarize-comparison CLI', () => {
 
     const result = await runDevViewCli(
       [
-        ...comparisonArgs([devviewEvaluation, codexOnlyEvaluation], '.tmp/native-comparison-summary.json'),
+        ...comparisonArgs(
+          [devviewEvaluation, graphifyEvaluation, graphifyDevviewEvaluation, codexOnlyEvaluation],
+          '.tmp/native-comparison-summary.json',
+        ),
         '--markdown',
         '.tmp/native-comparison-summary.md',
         '--json',
@@ -39,6 +54,12 @@ describe('benchmark summarize-comparison CLI', () => {
     const payload = JSON.parse(result.stdout)
     const taskRow = payload.taskRows[0]
     const delta = payload.aggregateDeltas.find((entry: { label: string }) => entry.label === 'DevView vs Codex-only')
+    const graphifyDelta = payload.aggregateDeltas.find(
+      (entry: { label: string }) => entry.label === 'Graphify vs Codex-only',
+    )
+    const graphifyDevviewDelta = payload.aggregateDeltas.find(
+      (entry: { label: string }) => entry.label === 'DevView+Graphify vs DevView',
+    )
 
     expect(result.exitCode).toBe(ExitCode.Success)
     expect(payload.artifactRole).toBe('devview-benchmark-comparison-summary-report')
@@ -48,9 +69,16 @@ describe('benchmark summarize-comparison CLI', () => {
     expect(taskRow.armColumns['codex-devview'].overallScore).toBeGreaterThan(
       taskRow.armColumns['codex-only'].overallScore,
     )
-    expect(taskRow.missingArms).toEqual(expect.arrayContaining(['codex-graphify', 'codex-graphify-devview']))
+    expect(taskRow.armColumns['codex-graphify'].comparisonArm).toBe('codex-graphify')
+    expect(taskRow.armColumns['codex-graphify-devview'].comparisonArm).toBe('codex-graphify-devview')
+    expect(
+      taskRow.armColumns['codex-graphify-devview'].sourceCandidateFacts.graphifyImportValidationReportPresent,
+    ).toBe(true)
+    expect(taskRow.missingArms).toEqual([])
     expect(delta.overallScoreDelta).toBeGreaterThan(0)
     expect(delta.passedDelta).toBe('improved')
+    expect(graphifyDelta.overallScoreDelta).toBeGreaterThan(0)
+    expect(graphifyDevviewDelta.overallScoreDelta).toBeGreaterThanOrEqual(0)
     expect(payload.interpretabilitySummary.workJournalUsefulnessAverage).toBeGreaterThan(0)
     expect(existsSync(join(workspace, '.tmp/native-comparison-summary.md'))).toBe(true)
     expectSafetyFalse(payload)

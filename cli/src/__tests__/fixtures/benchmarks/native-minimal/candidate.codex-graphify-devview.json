@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "artifactRole": "devview-benchmark-candidate-result",
+  "status": "devview-benchmark-candidate-result-submitted",
+  "taskId": "native-filter-empty-state",
+  "projectMode": "native",
+  "comparisonArm": "codex-graphify-devview",
+  "armComparisonGroupId": "native-filter-empty-state-arms",
+  "reportedOutcome": "implemented",
+  "changedFiles": [
+    {
+      "path": "src/todo-filter.ts",
+      "status": "modified"
+    },
+    {
+      "path": "docs/evidence/filter-empty-state.md",
+      "status": "added"
+    }
+  ],
+  "selectedContext": {
+    "files": ["src/todo-filter.ts", "docs/evidence/filter-empty-state.md"],
+    "nodeIds": ["node.todo-filter", "node.empty-state"],
+    "edgeIds": ["edge.filter-empty-state"],
+    "evidenceIds": ["evidence.filter-empty-state"]
+  },
+  "providedEvidence": [
+    {
+      "evidenceId": "evidence.filter-empty-state",
+      "status": "present"
+    }
+  ],
+  "graphDeltaSummary": {
+    "operations": [
+      {
+        "operationId": "op-empty-state-acceptance",
+        "action": "replace-field",
+        "targetId": "node.empty-state",
+        "fieldPath": "status"
+      }
+    ]
+  },
+  "sourceFacts": [
+    {
+      "artifactRole": "devview-graphify-import-validation-report",
+      "status": "devview-graphify-import-validation-passed",
+      "sourceArtifactPath": ".tmp/benchmark-fixtures/graphify-import-validation.json",
+      "sourceGraphifyExport": "cli/src/__tests__/fixtures/benchmarks/graphify-import-minimal/graphify-export.fixture.json",
+      "sourceMapping": "cli/src/__tests__/fixtures/benchmarks/graphify-import-minimal/graphify-to-devview-mapping.json",
+      "nodeMappingCoverage": {
+        "graphifyNodeCount": 3,
+        "mappedNodeCount": 2
+      },
+      "edgeMappingCoverage": {
+        "graphifyEdgeCount": 2,
+        "mappedEdgeCount": 1
+      },
+      "contextRelevanceCoverage": {
+        "expectedContextCount": 6,
+        "mappedExpectedContextCount": 6
+      },
+      "graphifyExecuted": false,
+      "providerInvoked": false,
+      "networkCallMade": false,
+      "shellCommandsExecuted": false
+    }
+  ],
+  "regressionSignals": {
+    "parityPreserved": true
+  },
+  "executionMetrics": {
+    "iterationCount": 2,
+    "elapsedMs": 2300,
+    "costProxy": 1
+  },
+  "workJournalSummary": {
+    "status": "ready",
+    "nextAction": "review four-arm benchmark comparison output",
+    "authoritySummaryVisible": true,
+    "sourceFactSummaryVisible": true
+  },
+  "benchmarkExecuted": false,
+  "candidateExecuted": false,
+  "graphifyExecuted": false,
+  "nativeBenchmarkExecuted": false,
+  "providerInvoked": false,
+  "networkCallMade": false,
+  "shellCommandsExecuted": false,
+  "extensionExecutionAllowed": false,
+  "extensionsExecuted": false,
+  "graphSourceMutated": false,
+  "graphDeltaApplied": false,
+  "runtimeEvidenceSatisfied": false,
+  "evidenceAccepted": false,
+  "equivalenceProven": false,
+  "scopeEnforced": false,
+  "ciEnforcementEnabled": false,
+  "hooksActivated": false,
+  "approvalAutomationEnabled": false,
+  "userAcceptanceAutomated": false
+}

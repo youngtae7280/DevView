@@ -107,6 +107,19 @@ describe('benchmark evaluate-result CLI', () => {
     )
     const codexOnlyPayload = JSON.parse(codexOnlyResult.stdout)
 
+    const graphifyDevviewResult = await runDevViewCli(
+      [
+        ...fixtureEvaluationArgs(
+          'native-minimal',
+          'candidate.codex-graphify-devview.json',
+          '.tmp/native-graphify-devview.json',
+        ),
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const graphifyDevviewPayload = JSON.parse(graphifyDevviewResult.stdout)
+
     expect(devviewResult.exitCode).toBe(ExitCode.Success)
     expect(devviewPayload.projectMode).toBe('native')
     expect(devviewPayload.comparisonArm).toBe('codex-devview')
@@ -129,6 +142,16 @@ describe('benchmark evaluate-result CLI', () => {
       ]),
     )
     expectSafetyFalse(codexOnlyPayload)
+
+    expect(graphifyDevviewResult.exitCode).toBe(ExitCode.Success)
+    expect(graphifyDevviewPayload.comparisonArm).toBe('codex-graphify-devview')
+    expect(graphifyDevviewPayload.overallScore).toBeGreaterThanOrEqual(devviewPayload.overallScore)
+    expect(graphifyDevviewPayload.graphifyExecuted).toBe(false)
+    expect(graphifyDevviewPayload.sourceCandidateFacts.graphifyImportValidationReportPresent).toBe(true)
+    expect(graphifyDevviewPayload.sourceCandidateFacts.artifactRoles).toContain(
+      'devview-graphify-import-validation-report',
+    )
+    expectSafetyFalse(graphifyDevviewPayload)
   })
 
   it('scores stored retrofit benchmark fixture skeletons and preserves Graphify comparison arm labels', async () => {

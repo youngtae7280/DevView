@@ -4,7 +4,7 @@
   "status": "devview-benchmark-golden-answer-ready",
   "taskId": "native-filter-empty-state",
   "projectMode": "native",
-  "expectedComparisonArms": ["codex-only", "codex-devview"],
+  "expectedComparisonArms": ["codex-only", "codex-graphify", "codex-devview", "codex-graphify-devview"],
   "expectedOutcome": "implemented",
   "allowedFiles": ["src/todo-filter.ts", "src/todo-filter.test.ts", "docs/evidence/filter-empty-state.md"],
   "forbiddenFiles": ["src/storage.ts", "src/app-config.ts"],

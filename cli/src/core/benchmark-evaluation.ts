@@ -123,6 +123,14 @@ export interface BenchmarkEvaluationReport {
   sourceTask: string
   sourceGoldenAnswer: string
   sourceCandidateResult: string
+  sourceCandidateFacts: {
+    sourceFactCount: number
+    artifactRoles: string[]
+    sourceFactStatuses: string[]
+    sourceFactPaths: string[]
+    graphifyImportValidationReportPresent: boolean
+    reportOnlySourceFacts: true
+  }
   sourceIdentityComparison: {
     suiteTaskStatus: 'matched' | 'not-modeled' | 'mismatched'
     taskGoldenStatus: 'matched' | 'mismatched'
@@ -275,6 +283,7 @@ function buildReport(
     sourceTask: inputs.task.relativePath,
     sourceGoldenAnswer: inputs.golden.relativePath,
     sourceCandidateResult: inputs.candidate.relativePath,
+    sourceCandidateFacts: summarizeCandidateSourceFacts(candidate),
     sourceIdentityComparison: identity,
     overallScore,
     maxScore,
@@ -736,6 +745,33 @@ function resolveWeights(suite: JsonRecord, task: JsonRecord, golden: JsonRecord)
     if (value !== null && value >= 0) result[dimensionId] = value
   }
   return result
+}
+
+function summarizeCandidateSourceFacts(candidate: JsonRecord): BenchmarkEvaluationReport['sourceCandidateFacts'] {
+  const facts = [
+    ...arrayRecords(candidate.sourceFacts),
+    ...arrayRecords(candidate.sourceArtifacts),
+    ...arrayRecords(candidate.producedArtifacts),
+  ]
+  const artifactRoles = uniqueStrings(facts.map((entry) => stringValue(entry.artifactRole)))
+  const sourceFactStatuses = uniqueStrings(facts.map((entry) => stringValue(entry.status)))
+  const sourceFactPaths = uniqueStrings(
+    facts.map(
+      (entry) =>
+        stringValue(entry.sourceArtifactPath) ??
+        stringValue(entry.artifactPath) ??
+        stringValue(entry.path) ??
+        stringValue(entry.sourcePath),
+    ),
+  )
+  return {
+    sourceFactCount: facts.length,
+    artifactRoles,
+    sourceFactStatuses,
+    sourceFactPaths,
+    graphifyImportValidationReportPresent: artifactRoles.includes('devview-graphify-import-validation-report'),
+    reportOnlySourceFacts: true,
+  }
 }
 
 function renderMarkdown(report: BenchmarkEvaluationReport): string {

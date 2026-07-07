@@ -82,6 +82,7 @@ export interface BenchmarkArmSummary {
   hardFailureCount: number
   findingCount: number
   dimensionScores: BenchmarkDimensionSummary[]
+  sourceCandidateFacts: JsonRecord | null
 }
 
 export interface BenchmarkComparisonDelta {
@@ -320,6 +321,7 @@ function summarizeArm(evaluation: LoadedEvaluation): BenchmarkArmSummary {
       maxScore: numberValue(entry.maxScore) ?? 0,
       ratio: numberValue(entry.ratio) ?? 0,
     })),
+    sourceCandidateFacts: asRecord(record.sourceCandidateFacts),
   }
 }
 
@@ -556,6 +558,10 @@ function normalizeComparisonArm(value: string | null | undefined): ComparisonArm
 
 function arrayRecords(value: unknown): JsonRecord[] {
   return Array.isArray(value) ? value.filter((entry): entry is JsonRecord => isRecord(entry)) : []
+}
+
+function asRecord(value: unknown): JsonRecord | null {
+  return isRecord(value) ? value : null
 }
 
 function stringValue(value: unknown): string | null {

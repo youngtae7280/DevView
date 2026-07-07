@@ -5,7 +5,7 @@
   "taskId": "native-filter-empty-state",
   "taskKind": "feature-addition",
   "projectMode": "native",
-  "comparisonArms": ["codex-only", "codex-devview"],
+  "comparisonArms": ["codex-only", "codex-graphify", "codex-devview", "codex-graphify-devview"],
   "armComparisonGroupId": "native-filter-empty-state-arms",
   "taskSummary": "Add a deterministic empty-state message for an active filter without touching storage or configuration.",
   "benchmarkExecuted": false,

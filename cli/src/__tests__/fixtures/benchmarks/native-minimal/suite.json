@@ -5,6 +5,6 @@
   "suiteId": "native-minimal-static-suite",
   "suiteScope": "static-native-benchmark-fixture-report-only",
   "taskIds": ["native-filter-empty-state"],
-  "comparisonArms": ["codex-only", "codex-devview"],
+  "comparisonArms": ["codex-only", "codex-graphify", "codex-devview", "codex-graphify-devview"],
   "passThreshold": 70
 }
