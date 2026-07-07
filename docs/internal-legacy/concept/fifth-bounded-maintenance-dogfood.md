@@ -8,7 +8,7 @@ Run a retrofit PBE maintenance dogfood pass after the claim wording change by cl
 
 Selected maintenance change:
 
-- fixture: `examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json`
+- fixture: `examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json`
 - field: `intentRecords[0].edgeIntent.anchors[1].artifact`
 - old anchor artifact: `rollback/audit review history`
 - new anchor artifact: `rollback/audit and replacement-evidence review history`

@@ -2,32 +2,28 @@
 
 Use when:
 
-- WorkGraph, staged parallel execution, dependency impact, or file scope risk is involved.
 - Multiple tasks could run at once.
-- Validation commands, generated outputs, or `.pbe` artifacts may collide.
+- Dependency impact, staged execution, or file-scope risk is involved.
+- Validation commands or generated outputs may collide.
 
 Do:
 
 - Default to sequential unless parallel safety is proven.
-- Check same-file, same-artifact, same-state, same-evidence, and same-generated-resource collisions.
+- Check same-file, same-artifact, same-state, same-evidence, same-output, and same-integration collisions.
 - Require integration work and integration evidence for every parallel group.
-- Keep generated resources such as `dist`, coverage, temp output, and clean/build steps serialized.
-- On Windows, run `validate:pbe` and `test:examples` sequentially.
+- Keep generated resources such as build output, coverage, temp output, and clean/build steps serialized.
+- On Windows, serialize validation commands that share output paths.
 
 Do not:
 
 - Parallelize unknown write sets.
-- Parallelize shared schemas, shared types, build config, package config, auth, permissions, migrations, or same `.pbe` state transitions.
-- Treat distinct Product nodes as automatically parallel-safe.
+- Parallelize shared schemas, shared types, build config, package config, auth, permissions, migrations, or same-state
+  transitions.
+- Treat distinct product requests as automatically parallel-safe.
 - Run clean/build/test commands concurrently when they share output paths.
 
-Escalate / read full docs when:
+Escalate when:
 
 - Shared files or generated outputs are involved.
 - Any task has unknown expected files.
 - Human approval is needed for a larger parallel group.
-
-Full references:
-
-- [docs/parallel-safety.md](../docs/parallel-safety.md)
-- [docs/troubleshooting.md](../docs/troubleshooting.md)

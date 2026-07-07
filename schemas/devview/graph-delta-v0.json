@@ -1,8 +1,8 @@
 {
-  "$id": "https://project-blueprint-engine.local/schemas/devview/graph-delta-v0.json",
+  "$id": "https://devview.local/schemas/devview/graph-delta-v0.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schemaVersion": 1,
-  "artifactRole": "pbe-graph-delta-schema-v0",
+  "artifactRole": "devview-graph-delta-schema-v0",
   "status": "draft-active",
   "purpose": "Common graph-delta contract generated from a target repo diff and the instruction pack that bounded it.",
   "artifactRoleVocabulary": ["native-graph-delta-v0", "retrofit-graph-delta-v0"],

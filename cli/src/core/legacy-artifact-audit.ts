@@ -192,6 +192,18 @@ function scanFile(root: string, file: string): LegacyArtifactFinding[] {
 
 function classifyPath(relativeFile: string): LegacyArtifactClassification {
   if (
+    relativeFile.startsWith('docs/internal-legacy/') ||
+    relativeFile.startsWith('docs/archive/') ||
+    relativeFile.startsWith('examples/internal-legacy/') ||
+    relativeFile.startsWith('outputs/devview-legacy-operation-chain/') ||
+    relativeFile.startsWith('outputs/native/') ||
+    relativeFile.startsWith('outputs/retrofit/') ||
+    relativeFile.startsWith('work/native/')
+  ) {
+    return 'internal-hidden-compatibility'
+  }
+
+  if (
     relativeFile === 'README.md' ||
     relativeFile === 'package.json' ||
     relativeFile === 'package-lock.json' ||
@@ -216,10 +228,6 @@ function classifyPath(relativeFile: string): LegacyArtifactClassification {
 
   if (relativeFile.startsWith('examples/') || relativeFile.includes('/generated/') || relativeFile.includes('/.pbe/')) {
     return 'migration-fixture-only'
-  }
-
-  if (relativeFile.startsWith('docs/internal-legacy/') || relativeFile.startsWith('docs/archive/')) {
-    return 'internal-hidden-compatibility'
   }
 
   if (relativeFile.startsWith('docs/')) {

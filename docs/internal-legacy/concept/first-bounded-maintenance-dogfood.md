@@ -9,7 +9,7 @@ safe change without changing application behavior.
 
 Selected scenario:
 
-- fixture: `examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json`
+- fixture: `examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json`
 - maintenance question: can a compatibility export be removed because the current graph-source projection already shows
   the same visible fields?
 - dogfood outcome: no behavior or fixture change. The maintenance decision is to preserve the compatibility export until
@@ -33,7 +33,7 @@ This made the bounded maintenance task a documentation/evidence decision, not a 
 Focused command:
 
 ```bash
-node dist/cli/index.js graph read-model report-intent --graph-source examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json --json
+node dist/cli/index.js graph read-model report-intent --graph-source examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json --json
 ```
 
 Observed signal:
@@ -64,7 +64,7 @@ Commands run during the dogfood pass:
 ```bash
 npm run build:cli
 node dist/cli/index.js graph read-model report-intent --json
-node dist/cli/index.js graph read-model report-intent --graph-source examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json --json
+node dist/cli/index.js graph read-model report-intent --graph-source examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json --json
 node dist/cli/index.js graph read-model report-health --json --markdown .tmp/dogfood-read-model-health.md
 node dist/cli/index.js graph read-model validate --all --json
 npm run test:read-model:e2e

@@ -1,36 +1,27 @@
-# WPD Context
-
-WPD is tree-control compatibility context for deriving Project/Work shape from Product Tree intent. For
-Graph-source/read-model source-authority work, do not treat WPD output as the primary graph source unless a later
-approved transition explicitly promotes it.
+# Work Planning Context
 
 Use when:
 
-- RPD/Product Tree is confirmed and selected scope needs Work nodes.
-- The task is about work planning, expected files, module boundaries, or parallel safety.
+- Selected product scope needs concrete work items.
+- The task is about expected files, module boundaries, dependency risk, or implementation order.
 
 Do:
 
-- Split selected Product scope into Work nodes.
-- Record `expectedFiles`, `forbiddenFiles`, dependencies, and affected domains.
-- Consider File Change Guard before execution.
-- Keep selected/foundation/deferred/blocked/out-of-scope classification.
-- Treat parallel safety as file, artifact, state, evidence, and integration safety.
+- Split selected scope into bounded work items.
+- Record expected files, forbidden files, dependencies, and affected domains.
+- Keep selected, foundation, deferred, blocked, and out-of-scope classifications clear.
+- Treat parallel safety as file, artifact, state, evidence, generated-output, and integration safety.
 - Use sequential execution when safety is uncertain.
 
 Do not:
 
-- Use RPD nodes directly as coding tasks.
+- Use product intent directly as coding tasks.
 - Leave expected files unknown for parallel tasks.
-- Parallelize tasks that touch the same source file, `.pbe` artifact, state transition, evidence file, or generated resource.
+- Parallelize work that touches the same source file, state, evidence, generated output, or integration boundary.
 - Turn deferred scope into foundation behavior.
 
-Escalate / read full docs when:
+Escalate when:
 
-- Shared files, generated outputs, build state, or `.pbe` artifacts could collide.
+- Shared files, generated outputs, or build state could collide.
 - Module boundaries are unknown.
 - Future modules affect current structure.
-
-Full references:
-
-- [docs/parallel-safety.md](../docs/parallel-safety.md)

@@ -36,11 +36,11 @@ jobs:
       DEVVIEW_CANDIDATE_OBSERVATION_OUTPUT: examples/internal-legacy/read-model-aggregate/generated/read-model-candidate-observation-output.json
       DEVVIEW_AGGREGATE_SLICES: examples/internal-legacy/adoption/todo-search-slice,examples/valid/todo-app-devview-run
       DEVVIEW_E2E_SMOKE_OUTPUT: examples/internal-legacy/read-model-aggregate/generated/read-model-e2e-smoke-output.json
-      DEVVIEW_INTENT_NATIVE_GRAPH_SOURCE: examples/internal-legacy/intent-critical/native-pbe-maintenance/graph-source-intent.json
-      DEVVIEW_INTENT_NATIVE_PROJECTION: examples/internal-legacy/intent-critical/native-pbe-maintenance/generated/edge-intent-read-model-projection.json
+      DEVVIEW_INTENT_NATIVE_GRAPH_SOURCE: examples/internal-legacy/intent-critical/native-maintenance-legacy/graph-source-intent.json
+      DEVVIEW_INTENT_NATIVE_PROJECTION: examples/internal-legacy/intent-critical/native-maintenance-legacy/generated/edge-intent-read-model-projection.json
       DEVVIEW_INTENT_NATIVE_OUTPUT: examples/internal-legacy/read-model-aggregate/generated/read-model-edge-intent-native-output.json
-      DEVVIEW_INTENT_RETROFIT_GRAPH_SOURCE: examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json
-      DEVVIEW_INTENT_RETROFIT_PROJECTION: examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/generated/edge-intent-read-model-projection.json
+      DEVVIEW_INTENT_RETROFIT_GRAPH_SOURCE: examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json
+      DEVVIEW_INTENT_RETROFIT_PROJECTION: examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/generated/edge-intent-read-model-projection.json
       DEVVIEW_INTENT_RETROFIT_OUTPUT: examples/internal-legacy/read-model-aggregate/generated/read-model-edge-intent-retrofit-output.json
       DEVVIEW_EDGE_INTENT_OBSERVATION_OUTPUT: examples/internal-legacy/read-model-aggregate/generated/read-model-edge-intent-observation-output.json
       DEVVIEW_HEALTH_REPORT_OUTPUT: examples/internal-legacy/read-model-aggregate/generated/read-model-health-report-output.json
@@ -594,5 +594,5 @@ jobs:
             outputs/devview-legacy-operation-chain/**
             outputs/native/**
             outputs/retrofit/**
-            examples/internal-legacy/intent-critical/native-pbe-maintenance/generated/edge-intent-read-model-projection.json
-            examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/generated/edge-intent-read-model-projection.json
+            examples/internal-legacy/intent-critical/native-maintenance-legacy/generated/edge-intent-read-model-projection.json
+            examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/generated/edge-intent-read-model-projection.json

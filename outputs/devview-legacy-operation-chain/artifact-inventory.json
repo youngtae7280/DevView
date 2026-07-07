@@ -403,27 +403,27 @@
       "bytes": 2007
     },
     {
-      "path": "examples/internal-legacy/intent-critical/native-pbe-maintenance/graph-source-intent.json",
+      "path": "examples/internal-legacy/intent-critical/native-maintenance-legacy/graph-source-intent.json",
       "bytes": 2986
     },
     {
-      "path": "examples/internal-legacy/intent-critical/native-pbe-maintenance/README.md",
+      "path": "examples/internal-legacy/intent-critical/native-maintenance-legacy/README.md",
       "bytes": 953
     },
     {
-      "path": "examples/internal-legacy/intent-critical/native-pbe-maintenance/generated/edge-intent-read-model-projection.json",
+      "path": "examples/internal-legacy/intent-critical/native-maintenance-legacy/generated/edge-intent-read-model-projection.json",
       "bytes": 1749
     },
     {
-      "path": "examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json",
+      "path": "examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json",
       "bytes": 3324
     },
     {
-      "path": "examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/README.md",
+      "path": "examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/README.md",
       "bytes": 1001
     },
     {
-      "path": "examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/generated/edge-intent-read-model-projection.json",
+      "path": "examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/generated/edge-intent-read-model-projection.json",
       "bytes": 1850
     },
     {

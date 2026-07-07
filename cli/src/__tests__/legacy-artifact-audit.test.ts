@@ -69,6 +69,32 @@ describe('DevView legacy artifact audit CLI', () => {
     expect(finding.classification).toBe('internal-hidden-compatibility')
   })
 
+  it('classifies internal legacy examples and output archives as hidden compatibility', async () => {
+    const workspace = createWorkspace()
+    await mkdir(join(workspace, 'examples/internal-legacy/adoption'), { recursive: true })
+    await mkdir(join(workspace, 'outputs/devview-legacy-operation-chain'), { recursive: true })
+    await mkdir(join(workspace, 'outputs/retrofit'), { recursive: true })
+    await mkdir(join(workspace, 'work/native/demo'), { recursive: true })
+    writeFileSync(join(workspace, 'examples/internal-legacy/adoption/fixture.md'), 'Historical PBE fixture.\n', 'utf8')
+    writeFileSync(join(workspace, 'outputs/devview-legacy-operation-chain/report.md'), 'Legacy PBE output.\n', 'utf8')
+    writeFileSync(join(workspace, 'outputs/retrofit/report.md'), 'Retrofit PBE output.\n', 'utf8')
+    writeFileSync(join(workspace, 'work/native/demo/README.md'), 'Native PBE target.\n', 'utf8')
+
+    const result = await runPbeCli(['report-legacy-artifacts', '--json'], { cwd: workspace, pluginRoot })
+    const payload = JSON.parse(result.stdout)
+    const byPath = new Map(payload.findings.map((entry: Record<string, unknown>) => [entry.path, entry]))
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    for (const path of [
+      'examples/internal-legacy/adoption/fixture.md',
+      'outputs/devview-legacy-operation-chain/report.md',
+      'outputs/retrofit/report.md',
+      'work/native/demo/README.md',
+    ]) {
+      expect(byPath.get(path)).toMatchObject({ classification: 'internal-hidden-compatibility' })
+    }
+  })
+
   it('writes an optional report file only when requested', async () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, 'package.json'), { scripts: { legacy: 'pbe validate' } })

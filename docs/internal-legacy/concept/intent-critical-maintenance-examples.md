@@ -13,8 +13,8 @@ intent is represented as graph edge annotation, not as a separate source ledger.
 
 The first intent-critical examples are:
 
-- `examples/internal-legacy/intent-critical/native-pbe-maintenance`
-- `examples/internal-legacy/intent-critical/retrofit-pbe-maintenance`
+- `examples/internal-legacy/intent-critical/native-maintenance-legacy`
+- `examples/internal-legacy/intent-critical/retrofit-maintenance-legacy`
 
 ## Native PBE Example
 

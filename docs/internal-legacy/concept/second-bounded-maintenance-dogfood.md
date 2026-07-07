@@ -9,7 +9,7 @@ Run a second small Graph-source PBE dogfood pass with a real fixture wording cha
 
 Selected maintenance change:
 
-- fixture: `examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json`
+- fixture: `examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json`
 - field: `intentRecords[0].edgeIntent.claim`
 - old claim: `compatibility export stays until explicit retirement approval`
 - new claim: `compatibility export remains until explicit retirement approval and replacement evidence`
@@ -57,7 +57,7 @@ Expected unchanged values:
 `graph read-model project-intent` regenerated the retrofit projection successfully:
 
 ```bash
-node dist/cli/index.js graph read-model project-intent --graph-source examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json --output examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/generated/edge-intent-read-model-projection.json --json
+node dist/cli/index.js graph read-model project-intent --graph-source examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json --output examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/generated/edge-intent-read-model-projection.json --json
 ```
 
 Observed projection result:
@@ -75,8 +75,8 @@ Commands run after the wording change:
 
 ```bash
 npm run build:cli
-node dist/cli/index.js graph read-model project-intent --graph-source examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json --output examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/generated/edge-intent-read-model-projection.json --json
-node dist/cli/index.js graph read-model report-intent --graph-source examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json --json
+node dist/cli/index.js graph read-model project-intent --graph-source examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json --output examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/generated/edge-intent-read-model-projection.json --json
+node dist/cli/index.js graph read-model report-intent --graph-source examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json --json
 node dist/cli/index.js graph read-model report-intent --json
 node dist/cli/index.js graph read-model report-health --json
 node dist/cli/index.js graph read-model validate --all --json

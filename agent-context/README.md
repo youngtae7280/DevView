@@ -1,94 +1,33 @@
-# PBE Agent Context Router
+# DevView Agent Context Router
 
-Do not read all PBE docs by default.
-
-Read this router first, then read only the card that matches the current task.
+Read this router first, then open only the smallest context card that matches the task.
 
 ## Routing
 
-Start/init:
-
-- [start.md](start.md)
-
-Compact depth / compatibility `lite` metadata:
-
-- [lite.md](lite.md)
-
-RPD / ambiguity:
-
-- [rpd.md](rpd.md)
-
-WPD / work planning:
-
-- [wpd.md](wpd.md)
-
-VD / test design:
-
-- [vd.md](vd.md)
-
-Execution / evidence:
-
-- [evidence.md](evidence.md)
-
-Review / repeated rejection:
-
-- [review.md](review.md)
-
-Revision:
-
-- [revision.md](revision.md)
-
-Product meaning change:
-
-- [product-patch.md](product-patch.md)
-
-Parallel / dependency risk:
-
-- [parallel.md](parallel.md)
-
-Documentation / troubleshooting / install docs:
-
-- [lite.md](lite.md)
-- [evidence.md](evidence.md)
-
-## Policy Reading Rule
-
-For policy decisions, read `docs/policies.md` before opening long-form policy documents. Use the original policy
-documents only when the compact policy index is insufficient, the task directly touches that risk area, or
-validation/user instructions require the original source.
+- New repository, first slice, or workflow depth: [start.md](start.md)
+- Compact bounded work: [lite.md](lite.md)
+- Product meaning, ambiguity, or root intent: [rpd.md](rpd.md)
+- Work planning, expected files, or module boundaries: [wpd.md](wpd.md)
+- Verification and proof design: [vd.md](vd.md)
+- Runtime evidence or proof quality: [evidence.md](evidence.md)
+- Review, rejection, or acceptance boundary: [review.md](review.md)
+- Bounded follow-up changes: [revision.md](revision.md)
+- Product meaning changes: [product-patch.md](product-patch.md)
+- Parallel or dependency risk: [parallel.md](parallel.md)
 
 ## Rule
 
-Start with the smallest matching card.
+Start with the smallest matching card. Load public DevView docs only when the card or task requires them.
 
-Load full docs only when the card says to.
+If the task is unclear, ask one concise question instead of scanning every document.
 
-If the task is unclear, ask one question instead of scanning all docs.
+## DevView Boundary
 
-## Graph-First Boundary
-
-RPD, WPD, VD, ACEP, `.pbe/blueprint/*`, and `.pbe/codex-execution-pack/*` remain valid compatibility context for
-tree-control closure. They are not the source-authority direction for Graph-source/read-model work.
-
-When a task is about Graph-source, read-model projection, source authority, structure-only status, registry-backed
-validate-all, or tree-native retirement, prefer the graph-source concept docs over tree-stage context cards.
+Prefer Maintainability Graph, View Tree, Context Pack, Runtime Evidence, Graph Delta, and guarded update concepts for
+current work. Historical tree-control material is migration context only and should not be treated as public product
+guidance.
 
 ## CLI Support
 
-Use `pbe context recommend` to get a read-first context list from a brief, stage, or profile.
-
-This command is read-only and should be used before broad docs scanning.
-
-`pbe status --json` may include `recommendedContext` for the current state/profile. Prefer that when an active PBE run
-exists.
-
-Use `pbe context recommend` when starting from a brief or when no active run exists.
-
-Suggested routing flow:
-
-1. `pbe context recommend`: choose the smallest relevant context.
-2. `pbe context pack`: create a compact prompt-ready bundle from `readFirst`.
-3. Agent works from the included context first.
-4. If a suggested gate assessment is shown, run or consider it before turning Product intent into Work/Test decisions.
-5. Ask the Human Gate question only when the assessment requires it.
-6. Read full docs only when the pack or task requires it.
+Use DevView read-model and audit commands for deterministic local checks. Context routing is advisory: it must not create
+approval, evidence acceptance, runtime satisfaction, graph mutation, or enforcement.

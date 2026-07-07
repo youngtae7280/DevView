@@ -255,13 +255,15 @@ function buildRewriteOperation(
     0,
   )
   if (legacyCount === 0) return null
+  const internalLegacy = sourcePath.startsWith('examples/internal-legacy/')
   return {
     operationKind: 'rewrite-content',
     sourcePath,
-    recommendedAction:
-      'Rewrite legacy command identities, product names, and path provenance to DevView terminology during the matching fixture migration slice.',
-    classification: 'needs-devview-rename',
-    riskLevel: sourcePath.includes('/generated') ? 'high' : 'medium',
+    recommendedAction: internalLegacy
+      ? 'Keep this internal legacy fixture as migration material until a later reviewed archive-retirement slice rewrites or deletes it.'
+      : 'Rewrite legacy command identities, product names, and path provenance to DevView terminology during the matching fixture migration slice.',
+    classification: internalLegacy ? 'internal-hidden-compatibility' : 'needs-devview-rename',
+    riskLevel: internalLegacy ? 'medium' : sourcePath.includes('/generated') ? 'high' : 'medium',
     dependencyRefs: filesWithActionableLegacy.map((file) => file.relativePath).slice(0, MAX_REFS),
     dependencyRefCount: filesWithActionableLegacy.length,
     blockingRefs: filesWithActionableLegacy.map((file) => file.relativePath).slice(0, MAX_REFS),

@@ -4,7 +4,7 @@
   "exampleKind": "retrofit-pbe",
   "status": "intent-preservation-fixture",
   "sourceMode": "retrofit-intent-recovered",
-  "sourceSlice": "examples/internal-legacy/intent-critical/retrofit-pbe-maintenance",
+  "sourceSlice": "examples/internal-legacy/intent-critical/retrofit-maintenance-legacy",
   "maintenanceScenario": "A maintainer removes a compatibility export because the graph-source projection already contains the same visible fields.",
   "vibeCodingRisk": "Without the recovered compatibility intent, an AI-assisted cleanup may delete fallback evidence needed for rollback, audit comparison, or external consumers.",
   "intentRecords": [

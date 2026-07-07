@@ -4,13 +4,13 @@ Status: completed / non-enforcing / report-only
 
 ## Completed Dogfoods
 
-| #   | Scenario                         | Scope                        | Change type                 | Result                                                                 |
-| --- | -------------------------------- | ---------------------------- | --------------------------- | ---------------------------------------------------------------------- |
-| 1   | Retrofit compatibility cleanup   | `retrofit-pbe-maintenance`   | report-only decision record | Prevented deleting compatibility export without retirement approval.   |
-| 2   | Retrofit claim wording           | `retrofit-pbe-maintenance`   | fixture claim + projection  | Added replacement-evidence boundary to the short edgeIntent claim.     |
-| 3   | Todo Search documentation        | `adoption/todo-search-slice` | README consistency fix      | Clarified where current limited Graph-source status is represented.    |
-| 4   | Native clear-search wording      | `native-pbe-maintenance`     | fixture claim + projection  | Clarified that full-list restoration happens after the query clears.   |
-| 5   | Retrofit fallback anchor wording | `retrofit-pbe-maintenance`   | fixture anchor + projection | Aligned fallback anchor with rollback/audit/replacement-evidence need. |
+| #   | Scenario                         | Scope                         | Change type                 | Result                                                                 |
+| --- | -------------------------------- | ----------------------------- | --------------------------- | ---------------------------------------------------------------------- |
+| 1   | Retrofit compatibility cleanup   | `retrofit-maintenance-legacy` | report-only decision record | Prevented deleting compatibility export without retirement approval.   |
+| 2   | Retrofit claim wording           | `retrofit-maintenance-legacy` | fixture claim + projection  | Added replacement-evidence boundary to the short edgeIntent claim.     |
+| 3   | Todo Search documentation        | `adoption/todo-search-slice`  | README consistency fix      | Clarified where current limited Graph-source status is represented.    |
+| 4   | Native clear-search wording      | `native-maintenance-legacy`   | fixture claim + projection  | Clarified that full-list restoration happens after the query clears.   |
+| 5   | Retrofit fallback anchor wording | `retrofit-maintenance-legacy` | fixture anchor + projection | Aligned fallback anchor with rollback/audit/replacement-evidence need. |
 
 ## Native And Retrofit Coverage
 

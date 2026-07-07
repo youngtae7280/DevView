@@ -1,8 +1,8 @@
 {
-  "$id": "https://project-blueprint-engine.local/schemas/devview/instruction-pack-v0.json",
+  "$id": "https://devview.local/schemas/devview/instruction-pack-v0.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "schemaVersion": 1,
-  "artifactRole": "pbe-instruction-pack-schema-v0",
+  "artifactRole": "devview-instruction-pack-schema-v0",
   "status": "draft-active",
   "purpose": "Common instruction-pack contract generated from graph-source plus one selected change record.",
   "artifactRoleVocabulary": ["native-instruction-pack-v0", "retrofit-instruction-pack-v0"],

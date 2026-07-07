@@ -4,7 +4,7 @@
   "exampleKind": "native-pbe",
   "status": "intent-preservation-fixture",
   "sourceMode": "graph-source-intent-first",
-  "sourceSlice": "examples/internal-legacy/intent-critical/native-pbe-maintenance",
+  "sourceSlice": "examples/internal-legacy/intent-critical/native-maintenance-legacy",
   "maintenanceScenario": "A maintainer changes empty Todo search to return no results because it appears simpler.",
   "vibeCodingRisk": "Without the original UX intent, an AI-assisted maintenance pass may optimize the search implementation and accidentally remove the clear-search full-list behavior.",
   "intentRecords": [

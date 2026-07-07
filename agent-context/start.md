@@ -2,37 +2,32 @@
 
 Use when:
 
-- The user starts PBE with `@project-blueprint-engine start`.
-- The user asks to apply PBE to a new or existing repository.
-- The current task is about initialization, workflow-depth sizing, or first-slice setup.
+- The user starts DevView work in a new or existing repository.
+- The task is about first-slice setup, workflow depth, or initial graph context.
 
 Do:
 
-- Treat `start` alone as valid.
-- Do not require a `Brief:` label.
-- Inspect minimal repo signals before initializing: existing `.pbe`, README, package/project metadata, current conversation task.
-- Recommend or infer workflow depth only after the task or slice is reasonably clear.
-- Use `pbe profile recommend --brief "<brief>"` when a target task is available.
+- Inspect minimal repo signals before proposing setup.
+- Recommend a compact or full planning depth only after the task is reasonably clear.
 - Explain that start does not mean broad repo conversion.
 - Ask one concise question when the target task or slice is unclear.
 - Wait for user confirmation before broad workflow adaptation or large file changes.
 
 Do not:
 
-- Initialize with an arbitrary brief.
-- Convert the whole repo just because PBE started.
-- Require the user to write Product Tree JSON.
-- Create code, docs, decks, images, or review reports before Root confirmation.
-- Read every PBE doc before choosing the smallest next card.
+- Initialize from an arbitrary brief.
+- Convert the whole repo just because DevView has started.
+- Require the user to hand-author graph or tree JSON.
+- Create deliverables before the root intent is clear.
+- Read every archived document before choosing the smallest next card.
 
-Escalate / read full docs when:
+Escalate when:
 
-- The workflow depth is unclear after minimal inspection.
-- The task involves UI/UX, architecture, hardware, migration, parallel work, or repeated review failure.
-- The user asks how PBE start works in detail.
+- The workflow depth remains unclear after minimal inspection.
+- The task involves UI, architecture, hardware, migration, parallel work, or repeated review failure.
 
-Full references:
+References:
 
 - [README.md](../README.md)
 - [docs/cli-reference.md](../docs/cli-reference.md)
-- [docs/lite-mode-policy.md](../docs/lite-mode-policy.md)
+- [docs/concept/devview-terminology.md](../docs/concept/devview-terminology.md)

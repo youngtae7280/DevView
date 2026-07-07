@@ -1,36 +1,34 @@
 # Release Policy
 
-PBE uses explicit plugin and package versions so users can understand whether a new chat is running the updated workflow.
+DevView uses explicit package and plugin versions so users can understand whether a new Codex session is running the
+current workflow.
 
 ## Version Types
 
-- Patch: documentation, examples, schemas, or validator fixes that preserve behavior.
-- Minor: new optional PBE artifacts, gates, validators, or skill protocol rules that preserve existing public paths.
-- Major: incompatible public path, skill name, command, or artifact contract changes. Avoid these unless a migration guide and aliases are available.
+- Patch: documentation, examples, schemas, validator fixes, or report-shape clarifications that preserve behavior.
+- Minor: optional DevView lifecycle reports, policy boundaries, validators, or command surfaces that preserve existing
+  public paths.
+- Major: incompatible public command, artifact, storage, or workflow changes. Avoid these unless migration guidance and
+  transition behavior are available.
 
 ## Required Release Checks
 
-Before pushing plugin changes:
+Before pushing plugin changes, run the focused checks for the touched area plus the requested release validation. Common
+checks include:
 
 ```text
-npm run validate
-npm run validate:pbe
-npm run validate:pbe:v2
-npm run typecheck
-npm run lint
-npm test
-npm run build
-python scripts/update_plugin_cachebuster.py <plugin-path>
-python scripts/validate_plugin.py <plugin-path>
-git diff --check
+npm run build:cli
+npm run validate:devview
+npm run format:check
+npm run devview:runtime:smoke
+git -c core.longpaths=true diff --check
 ```
-
-The cachebuster step updates the personal plugin copy so newly opened Codex chats can install the latest plugin version.
 
 ## Compatibility Rules
 
-- Preserve existing skill names.
-- Preserve `.codex-plugin/plugin.json`.
-- Preserve v1 `.pbe/blueprint/*` views as compatibility artifacts.
-- Preserve `RPD`, `WPD`, `VD`, `ACEP`, and `Revision` terms as compatibility names.
-- Do not remove or rename public paths without aliases and migration notes.
+- Keep public DevView terminology canonical.
+- Keep historical migration material internal unless a reviewed slice rewrites it.
+- Preserve hidden legacy guards for existing user repositories until an explicit migration lifecycle retires them.
+- Do not remove or rename public paths without migration notes and validation.
+
+Historical release policy text is retained in `docs/internal-legacy/release-history-legacy-release-policy.md`.

@@ -621,8 +621,8 @@ interface EdgeIntentProjectionFixtureSummary {
 }
 
 const defaultIntentCriticalGraphSourcePaths = [
-  'examples/internal-legacy/intent-critical/native-pbe-maintenance/graph-source-intent.json',
-  'examples/internal-legacy/intent-critical/retrofit-pbe-maintenance/graph-source-intent.json',
+  'examples/internal-legacy/intent-critical/native-maintenance-legacy/graph-source-intent.json',
+  'examples/internal-legacy/intent-critical/retrofit-maintenance-legacy/graph-source-intent.json',
 ]
 
 interface TreeNode {

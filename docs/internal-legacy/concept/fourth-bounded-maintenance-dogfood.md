@@ -8,7 +8,7 @@ Run a native PBE maintenance dogfood pass against the intent-critical fixture.
 
 Selected maintenance change:
 
-- fixture: `examples/internal-legacy/intent-critical/native-pbe-maintenance/graph-source-intent.json`
+- fixture: `examples/internal-legacy/intent-critical/native-maintenance-legacy/graph-source-intent.json`
 - field: `intentRecords[0].edgeIntent.claim`
 - old claim: `empty search restores the full list after clearing a query`
 - new claim: `empty search restores the full list after the query is cleared`
