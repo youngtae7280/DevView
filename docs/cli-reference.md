@@ -519,6 +519,32 @@ identity/RBAC, project-level grants, audit records, no-network defaults, and san
 The command never invokes providers, makes network/API calls, executes extensions, runs Graphify, mutates graph-source,
 configures CI, activates hooks, or automates approval.
 
+### Provider Activation Authorization Readiness
+
+```bash
+devview security report-provider-activation-authorization-readiness \
+  --provider-network-policy-report <provider-network-policy-report.json> \
+  --ci-branch-activation-authority-readiness <ci-branch-activation-authority-readiness.json> \
+  --ci-branch-activation-plan <ci-branch-activation-plan.json> \
+  --rbac-policy-validation <rbac-policy-validation.json> \
+  --signing-readiness <signing-readiness.json> \
+  --record-envelope-verification <record-envelope-verification.json> \
+  --provenance-verification-readiness <provenance-verification-readiness.json> \
+  --enterprise-readiness <enterprise-readiness.json> \
+  --output <provider-activation-authorization-readiness.json> \
+  --markdown <provider-activation-authorization-readiness.md> \
+  --json
+```
+
+Reports the provider activation authorization prerequisites that remain missing before any provider/API activation or
+allowlist/grant policy can exist. `--provider-network-policy-report` and `--output` are required; the other inputs are
+optional report-only source facts. The command requires provider/network defaults to remain `deny`, provider/network/API
+allowlists and grants to remain empty, and signed-policy, provider-grant, RBAC-enforcement, cryptographic-verification,
+branch-protection, required-check, hook, graph, package/SBOM/provenance, approval, and enterprise-gate authority claims
+to remain false. The output role is `devview-provider-activation-authorization-readiness-report` with status
+`devview-provider-activation-authorization-readiness-reported`; this is not provider authorization, provider/API
+execution, allowlist activation, signing, signature verification, RBAC enforcement, or an enterprise gate.
+
 ### RBAC Role Assignment Policy Validation
 
 ```bash

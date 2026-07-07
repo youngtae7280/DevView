@@ -7,6 +7,10 @@ import {
   reportProviderNetworkPolicy,
 } from '../core/provider-network-policy-report.js'
 import {
+  ProviderActivationAuthorizationReadinessReportValidationError,
+  reportProviderActivationAuthorizationReadiness,
+} from '../core/provider-activation-authorization-readiness-report.js'
+import {
   PackageProvenanceInputsRecordValidationError,
   recordPackageProvenanceInputs,
 } from '../core/package-provenance-inputs-record.js'
@@ -182,6 +186,77 @@ export async function securityReportProviderNetworkPolicyCommand(context: Comman
           message,
           suggestedFix:
             'Provide --output and write provider/network policy outputs outside source/control artifacts and source inputs.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function securityReportProviderActivationAuthorizationReadinessCommand(
+  context: CommandContext,
+): Promise<CommandResult> {
+  try {
+    const report = await reportProviderActivationAuthorizationReadiness(context.options.root, {
+      providerNetworkPolicyReport: context.options.providerNetworkPolicyReport,
+      ciBranchActivationAuthorityReadiness: context.options.ciBranchActivationAuthorityReadiness,
+      ciBranchActivationPlan: context.options.ciBranchActivationPlan,
+      rbacPolicyValidation: context.options.rbacPolicyValidation,
+      signingReadiness: context.options.signingReadiness,
+      recordEnvelopeVerification: context.options.recordEnvelopeVerification,
+      provenanceVerificationReadiness: context.options.provenanceVerificationReadiness,
+      enterpriseReadiness: context.options.enterpriseReadiness,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'security report-provider-activation-authorization-readiness',
+      exitCode: ExitCode.Success,
+      message:
+        'Provider activation authorization readiness reported without provider calls, allowlist activation, signing, RBAC enforcement, branch mutation, hooks, or enterprise gate activation.',
+      issues: [],
+      data: { ...report },
+    }
+  } catch (error) {
+    if (error instanceof ProviderActivationAuthorizationReadinessReportValidationError) {
+      const report = error.report
+      const blockers = report.authorizationFindings.filter((finding) => finding.severity === 'blocker')
+      return {
+        ok: false,
+        command: 'security report-provider-activation-authorization-readiness',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'Provider activation authorization readiness reporting is blocked before any output write.',
+        issues: blockers.map((finding) =>
+          issue({
+            validator: 'ProviderActivationAuthorizationReadiness',
+            code: finding.code,
+            severity: 'error',
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide exact report-only source facts with default-deny provider/network posture, empty allowlists, and provider/API/RBAC/signing/CI authority claims false.',
+          }),
+        ),
+        data: { ...report },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'security report-provider-activation-authorization-readiness',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Provider activation authorization readiness reporting could not run.',
+      issues: [
+        issue({
+          validator: 'ProviderActivationAuthorizationReadiness',
+          code: 'PROVIDER_ACTIVATION_AUTHORIZATION_READINESS_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide --provider-network-policy-report and --output and write outputs outside source/control artifacts and source inputs.',
         }),
       ],
     }

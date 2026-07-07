@@ -119,6 +119,8 @@ Commands:
                        Aggregate enterprise hardening readiness as a report-only assessment
   security report-provider-network-policy
                        Record provider/network default-deny policy posture without provider or network activity
+  security report-provider-activation-authorization-readiness
+                       Report provider activation authorization prerequisites without provider/API calls or grants
   security report-release-provenance
                        Report package provenance, SBOM, and package signing readiness without creating release artifacts
   security validate-sbom-artifact
@@ -446,19 +448,19 @@ Options:
   --rbac-readiness <file>
                        RBAC readiness source for security report-signing-readiness.
   --enterprise-readiness <file>
-                       Enterprise readiness source for security report-provider-network-policy, report-signing-readiness, or report-release-provenance.
+                       Enterprise readiness source for security report-provider-network-policy, report-provider-activation-authorization-readiness, report-signing-readiness, or report-release-provenance.
   --provider-network-policy-report <file>
-                       Provider/network default-deny policy report for security report-enterprise-readiness, report-provenance-verification-readiness, report-ci-branch-governance-readiness, validate-ci-branch-policy, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness.
+                       Provider/network default-deny policy report for security report-enterprise-readiness, report-provider-activation-authorization-readiness, report-provenance-verification-readiness, report-ci-branch-governance-readiness, validate-ci-branch-policy, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness.
   --release-surface-validation <file>
                        Release surface validation report for security report-ci-branch-governance-readiness, record-package-provenance-inputs, record-package-artifact-digest, or plan-ci-branch-activation.
   --record-envelope-preview <file>
                        Unsigned record envelope preview for security report-enterprise-readiness, report-signing-readiness, or verify-record-envelope; repeat or comma-separate for multiples.
   --record-envelope-verification <file>
-                       Record envelope verification report for security report-enterprise-readiness, report-signing-readiness, report-provenance-verification-readiness, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples.
+                       Record envelope verification report for security report-enterprise-readiness, report-signing-readiness, report-provider-activation-authorization-readiness, report-provenance-verification-readiness, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples.
   --signing-readiness <file>
-                       Signing/key governance readiness report for security report-enterprise-readiness, report-release-provenance, report-provenance-verification-readiness, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples.
+                       Signing/key governance readiness report for security report-enterprise-readiness, report-release-provenance, report-provider-activation-authorization-readiness, report-provenance-verification-readiness, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples.
   --rbac-policy-validation <file>
-                       RBAC policy validation report for security report-enterprise-readiness, report-release-provenance, report-provenance-verification-readiness, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples.
+                       RBAC policy validation report for security report-enterprise-readiness, report-release-provenance, report-provider-activation-authorization-readiness, report-provenance-verification-readiness, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples.
   --release-provenance-readiness <file>
                        Release provenance/SBOM readiness report for security report-enterprise-readiness; repeat or comma-separate for multiples.
   --sbom <file>        Wrapped static SBOM source fact for security validate-sbom-artifact.
@@ -478,15 +480,15 @@ Options:
   --provenance-attestation-validation <file>
                        Provenance attestation validation report for security report-enterprise-readiness or report-provenance-verification-readiness; repeat or comma-separate for multiples where supported.
   --provenance-verification-readiness <file>
-                       Provenance verification readiness report for security report-enterprise-readiness, report-ci-branch-governance-readiness, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples where supported.
+                       Provenance verification readiness report for security report-enterprise-readiness, report-provider-activation-authorization-readiness, report-ci-branch-governance-readiness, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples where supported.
   --ci-branch-governance-readiness <file>
                        CI/branch governance readiness report for security report-enterprise-readiness, validate-ci-branch-policy, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples where supported.
   --ci-branch-policy-validation <file>
                        CI/branch policy validation report for security report-enterprise-readiness, plan-ci-branch-activation, or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples where supported.
   --ci-branch-activation-plan <file>
-                       CI/branch activation plan report for security report-enterprise-readiness or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples where supported.
+                       CI/branch activation plan report for security report-enterprise-readiness, report-provider-activation-authorization-readiness, or report-ci-branch-activation-authority-readiness; repeat or comma-separate for multiples where supported.
   --ci-branch-activation-authority-readiness <file>
-                       CI/branch activation authority readiness report for security report-enterprise-readiness; repeat or comma-separate for multiples where supported.
+                       CI/branch activation authority readiness report for security report-enterprise-readiness or report-provider-activation-authorization-readiness; repeat or comma-separate for multiples where supported.
   --workflow <file>    Explicit local workflow file for security report-ci-branch-governance-readiness; repeat or comma-separate for multiples.
   --source-ref <value>
                        Explicit source ref label for security record-package-provenance-inputs; metadata only, not verified.
