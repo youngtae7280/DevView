@@ -1,6 +1,6 @@
-{
+﻿{
   "status": "devview-legacy-artifact-inventory-pass",
-  "repoRoot": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin",
+  "repoRoot": "C:\\Users\\ytkim\\Desktop\\kyt_work\\DevView Plugin",
   "workspaceGitRepo": true,
   "artifactCount": 265,
   "artifactRoots": ["schemas", "examples", "scripts", "outputs"],

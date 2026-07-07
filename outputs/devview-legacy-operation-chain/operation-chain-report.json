@@ -1,7 +1,7 @@
 ﻿{
   "status": "devview-legacy-operation-chain-pass",
   "operationChain": "graph-source -\u003e instruction pack -\u003e local change -\u003e graph delta",
-  "repoRoot": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin",
+  "repoRoot": "C:\\Users\\ytkim\\Desktop\\kyt_work\\DevView Plugin",
   "checks": {
     "cardPrinterConfigRetrofit": "devview-legacy-retrofit-smoke-pass",
     "openSourceCjsonRetrofit": "open-source-cjson-dogfood-pass",

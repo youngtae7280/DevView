@@ -6,7 +6,7 @@ Record: change.escape-html-symbol-stringification
 
 ## User Intent
 
-Use a real external behavior-change dogfood to prove PBE can recover existing stringification intent, implement a narrow Symbol input behavior change, and validate it with the project's own tests.
+Use a real external behavior-change dogfood to prove DevView can recover existing stringification intent, implement a narrow Symbol input behavior change, and validate it with the project's own tests.
 
 ## Allowed Files
 
@@ -17,7 +17,7 @@ Use a real external behavior-change dogfood to prove PBE can recover existing st
 
 - escape entity vocabulary: The selected slice only changes pre-escape input coercion for Symbol values.
 - package metadata or dependencies: The project baseline tests already pass; tooling updates would obscure the behavior dogfood.
-- upstream contribution flow: This is local PBE dogfood and does not claim maintainer acceptance.
+- upstream contribution flow: This is local DevView dogfood and does not claim maintainer acceptance.
 
 ## Graph Edge Intent
 

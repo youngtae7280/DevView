@@ -1,7 +1,7 @@
 ﻿{
   "status": "devview-legacy-retrofit-smoke-pass",
   "mode": "fixture-only",
-  "repoRoot": "C:\\Users\\ytkim\\Desktop\\kyt_work\\Project Blueprint Engine Plugin",
+  "repoRoot": "C:\\Users\\ytkim\\Desktop\\kyt_work\\DevView Plugin",
   "fixtureValidation": "retrofit-fixtures-pass",
   "graphSourceValidation": "retrofit-graph-source-pass",
   "graphSourceNodeCount": 10,

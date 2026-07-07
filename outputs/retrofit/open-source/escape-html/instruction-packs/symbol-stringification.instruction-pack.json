@@ -12,7 +12,7 @@
     "writeBoundary": "Modify only index.js and test/index.js; do not change package metadata, dependencies, README API wording, escaping rules, or upstream repository state"
   },
   "userConfirmedIntent": {
-    "summary": "Use a real external behavior-change dogfood to prove PBE can recover existing stringification intent, implement a narrow Symbol input behavior change, and validate it with the project\u0027s own tests.",
+    "summary": "Use a real external behavior-change dogfood to prove DevView can recover existing stringification intent, implement a narrow Symbol input behavior change, and validate it with the project\u0027s own tests.",
     "includedBehavior": [
       "Preserve existing escaping for quote, apostrophe, ampersand, less-than, and greater-than characters.",
       "Preserve existing stringification behavior for undefined, null, numbers, and objects.",
@@ -51,7 +51,7 @@
       },
       {
         "flow": "upstream contribution flow",
-        "reason": "This is local PBE dogfood and does not claim maintainer acceptance."
+        "reason": "This is local DevView dogfood and does not claim maintainer acceptance."
       }
     ],
     "excludedBehavior": [

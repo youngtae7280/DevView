@@ -119,7 +119,7 @@
       "activeCodeState": "reverted",
       "remainingRisks": [
         "No active CardPrinterConfig behavior remains from this test change.",
-        "The report remains useful as a validated retrofit PBE lifecycle example.",
+        "The report remains useful as a validated retrofit DevView lifecycle example.",
         "A future reimplementation should start from this record and still require explicit user approval."
       ],
       "nextAllowedActions": [
