@@ -219,6 +219,7 @@ export interface CliOptions {
   releaseSurfaceValidation?: string
   providerNetworkPolicyReport?: string
   recordEnvelopePreview?: string
+  recordEnvelopeVerification?: string
   enterpriseReadiness?: string
   graphifyExport?: string
   mapping?: string

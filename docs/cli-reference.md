@@ -208,19 +208,21 @@ devview security report-enterprise-readiness \
   --release-surface-validation <release-surface-validation.json> \
   --provider-network-policy-report <provider-network-policy-report.json> \
   --record-envelope-preview <record-envelope-preview.json> \
+  --record-envelope-verification <record-envelope-verification.json> \
   --output <enterprise-readiness.json> \
   --markdown <enterprise-readiness.md> \
   --json
 ```
 
 Aggregates enterprise hardening posture into a report-only readiness assessment. The report carries benchmark governance
-release-surface validation, provider/network default-deny policy reports, and unsigned record envelope previews as
-source facts, then lists remaining enterprise gaps for extension execution policy, guarded graph update governance,
-Scope/CI activation governance, RBAC, signing, audit, and tamper-evidence. `--record-envelope-preview` may be repeated
-or comma-separated. Envelope previews update audit/tamper readiness as unsigned deterministic source facts only; the
-report still does not claim cryptographic signing, key management, or RBAC enforcement. It does not activate enterprise
-gates, execute extensions, call providers, make network calls, mutate graph-source, configure CI, activate hooks, or
-automate approval.
+release-surface validation, provider/network default-deny policy reports, unsigned record envelope previews, and record
+envelope verification reports as source facts, then lists remaining enterprise gaps for extension execution policy,
+guarded graph update governance, Scope/CI activation governance, RBAC, signing, audit, and tamper-evidence.
+`--record-envelope-preview` and `--record-envelope-verification` may be repeated or comma-separated. Envelope previews
+record unsigned payload/source digest intent; envelope verification reports show those digests were independently
+recomputed. The report still does not claim cryptographic signing, key management, or RBAC enforcement. It does not
+activate enterprise gates, execute extensions, call providers, make network calls, mutate graph-source, configure CI,
+activate hooks, or automate approval.
 
 ### Provider/Network Default-Deny Policy
 

@@ -261,6 +261,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     releaseSurfaceValidation: undefined as string | undefined,
     providerNetworkPolicyReport: undefined as string | undefined,
     recordEnvelopePreview: undefined as string | undefined,
+    recordEnvelopeVerification: undefined as string | undefined,
     enterpriseReadiness: undefined as string | undefined,
     graphifyExport: undefined as string | undefined,
     mapping: undefined as string | undefined,
@@ -1406,6 +1407,15 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.recordEnvelopePreview = options.recordEnvelopePreview
         ? `${options.recordEnvelopePreview},${value}`
+        : value
+      index += 1
+    } else if (arg === '--record-envelope-verification') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--record-envelope-verification requires one or more file paths.' }
+      }
+      options.recordEnvelopeVerification = options.recordEnvelopeVerification
+        ? `${options.recordEnvelopeVerification},${value}`
         : value
       index += 1
     } else if (arg === '--enterprise-readiness') {

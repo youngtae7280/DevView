@@ -421,6 +421,8 @@ Options:
   --actor-role <role>  Actor role claim for security preview-record-envelope; repeat or comma-separate for multiples.
   --record-envelope-preview <file>
                        Unsigned record envelope preview for security report-enterprise-readiness or verify-record-envelope; repeat or comma-separate for multiples.
+  --record-envelope-verification <file>
+                       Record envelope verification report for security report-enterprise-readiness; repeat or comma-separate for multiples.
   --authorize-graph-source-mutation
                        Required explicit authorization flag for graph read-model apply-guarded-graph-update.
   --policy <file>      Policy boundary file for graph read-model report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-equivalence-proof-readiness, record-equivalence-proof, report-scope-ci-enforcement-readiness, or security report-provider-network-policy.

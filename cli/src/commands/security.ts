@@ -23,6 +23,7 @@ export async function securityReportEnterpriseReadinessCommand(context: CommandC
       releaseSurfaceValidation: context.options.releaseSurfaceValidation,
       providerNetworkPolicyReport: context.options.providerNetworkPolicyReport,
       recordEnvelopePreview: context.options.recordEnvelopePreview,
+      recordEnvelopeVerification: context.options.recordEnvelopeVerification,
       output: context.options.output,
       markdown: context.options.markdown,
     })

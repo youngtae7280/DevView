@@ -181,6 +181,125 @@ describe('security report-enterprise-readiness CLI', () => {
     expectSafetyFalse(payload)
   })
 
+  it('summarizes record envelope verification separately from unsigned preview facts', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/benchmark-governance.json'), benchmarkGovernanceReport())
+    writeJson(join(workspace, '.tmp/release-surface.json'), releaseSurfaceReport())
+    writeJson(join(workspace, '.tmp/provider-network-policy-report.json'), providerNetworkPolicyReport())
+    writeJson(join(workspace, '.tmp/record-envelope-preview.json'), recordEnvelopePreview())
+    writeJson(join(workspace, '.tmp/record-envelope-verification.json'), recordEnvelopeVerification())
+
+    const result = await runDevViewCli(
+      [
+        'security',
+        'report-enterprise-readiness',
+        '--benchmark-governance-verification',
+        '.tmp/benchmark-governance.json',
+        '--release-surface-validation',
+        '.tmp/release-surface.json',
+        '--provider-network-policy-report',
+        '.tmp/provider-network-policy-report.json',
+        '--record-envelope-preview',
+        '.tmp/record-envelope-preview.json',
+        '--record-envelope-verification',
+        '.tmp/record-envelope-verification.json',
+        '--output',
+        '.tmp/enterprise-readiness.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.readinessLevel).toBe('not-ready')
+    expect(payload.sourceRecordEnvelopeVerifications).toHaveLength(1)
+    expect(payload.sourceRecordEnvelopeVerifications[0]).toEqual(
+      expect.objectContaining({
+        path: '.tmp/record-envelope-verification.json',
+        artifactRole: 'devview-record-envelope-verification-report',
+        status: 'devview-record-envelope-verified',
+        sourcePreviewPath: '.tmp/record-envelope-preview.json',
+        payloadDigestMatches: true,
+        sourceArtifactExpectedCount: 1,
+        sourceArtifactActualCount: 1,
+        allSourceDigestsMatch: true,
+        previousEnvelopeChainLinkVerified: false,
+        signatureVerificationMode: 'not-performed-unsigned-preview-only',
+        cryptographicSignatureVerified: false,
+        rbacPermissionVerified: false,
+        rbacEnforced: false,
+        permissionVerified: false,
+      }),
+    )
+    expect(payload.rbacAndSigningReadiness.signedRecordEnvelopePresent).toBe(false)
+    expect(payload.rbacAndSigningReadiness.unsignedRecordEnvelopePreviewCount).toBe(1)
+    expect(payload.rbacAndSigningReadiness.recordEnvelopeVerificationCount).toBe(1)
+    expect(payload.rbacAndSigningReadiness.payloadDigestVerifiedCount).toBe(1)
+    expect(payload.rbacAndSigningReadiness.sourceDigestsVerifiedCount).toBe(1)
+    expect(payload.rbacAndSigningReadiness.previousEnvelopeChainLinkVerifiedCount).toBe(0)
+    expect(payload.auditAndTamperEvidenceReadiness.envelopePreviewCount).toBe(1)
+    expect(payload.auditAndTamperEvidenceReadiness.envelopeVerificationCount).toBe(1)
+    expect(payload.auditAndTamperEvidenceReadiness.envelopePayloadDigestVerifiedCount).toBe(1)
+    expect(payload.auditAndTamperEvidenceReadiness.envelopeSourceDigestsVerifiedCount).toBe(1)
+    expect(payload.auditAndTamperEvidenceReadiness.previousEnvelopeChainLinkVerifiedCount).toBe(0)
+    expect(payload.enterpriseReadinessFindings.map((entry: { code: string }) => entry.code)).toEqual(
+      expect.arrayContaining([
+        'ENTERPRISE_RECORD_ENVELOPE_PREVIEW_RECORDED',
+        'ENTERPRISE_RECORD_ENVELOPE_VERIFICATION_RECORDED',
+        'ENTERPRISE_RBAC_SIGNING_MISSING',
+      ]),
+    )
+    expectSafetyFalse(payload)
+  })
+
+  it('summarizes multiple record envelope verification inputs from repeated options', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/verification-a.json'), recordEnvelopeVerification())
+    writeJson(
+      join(workspace, '.tmp/verification-b.json'),
+      recordEnvelopeVerification({
+        previousEnvelopeVerification: {
+          required: true,
+          supplied: true,
+          expectedSha256: 'e'.repeat(64),
+          actualSha256: 'e'.repeat(64),
+          digestMatches: true,
+          chainLinkVerified: true,
+          expectedPath: '.tmp/previous.envelope.json',
+          actualPath: '.tmp/previous.envelope.json',
+          pathMatches: true,
+        },
+      }),
+    )
+
+    const result = await runDevViewCli(
+      [
+        'security',
+        'report-enterprise-readiness',
+        '--record-envelope-verification',
+        '.tmp/verification-a.json',
+        '--record-envelope-verification',
+        '.tmp/verification-b.json',
+        '--output',
+        '.tmp/enterprise-readiness.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.sourceRecordEnvelopeVerifications).toHaveLength(2)
+    expect(payload.rbacAndSigningReadiness.recordEnvelopeVerificationCount).toBe(2)
+    expect(payload.rbacAndSigningReadiness.payloadDigestVerifiedCount).toBe(2)
+    expect(payload.rbacAndSigningReadiness.sourceDigestsVerifiedCount).toBe(2)
+    expect(payload.rbacAndSigningReadiness.previousEnvelopeChainLinkVerifiedCount).toBe(1)
+    expect(payload.auditAndTamperEvidenceReadiness.envelopeVerificationCount).toBe(2)
+    expect(payload.readinessLevel).toBe('not-ready')
+    expectSafetyFalse(payload)
+  })
+
   it('records not-supplied areas cleanly while keeping report-only safety flags false', async () => {
     const workspace = createWorkspace()
 
@@ -360,6 +479,71 @@ describe('security report-enterprise-readiness CLI', () => {
     expect(existsSync(join(workspace, '.tmp/unsafe-enterprise.json'))).toBe(false)
   })
 
+  it('blocks invalid or authority-claiming record envelope verification sources with zero writes', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, '.tmp/wrong-verification.json'), {
+      ...recordEnvelopeVerification(),
+      status: 'devview-record-envelope-verification-blocked',
+    })
+    writeJson(join(workspace, '.tmp/crypto-verification.json'), {
+      ...recordEnvelopeVerification(),
+      cryptographicSignatureVerified: true,
+    })
+    writeJson(join(workspace, '.tmp/rbac-verification.json'), {
+      ...recordEnvelopeVerification(),
+      rbacPermissionVerified: true,
+    })
+    writeJson(join(workspace, '.tmp/unsafe-verification.json'), {
+      ...recordEnvelopeVerification(),
+      networkCallMade: true,
+    })
+
+    const wrong = await runEnterpriseWithEnvelopeVerification(
+      workspace,
+      '.tmp/wrong-verification.json',
+      '.tmp/wrong-verification-enterprise.json',
+    )
+    const crypto = await runEnterpriseWithEnvelopeVerification(
+      workspace,
+      '.tmp/crypto-verification.json',
+      '.tmp/crypto-verification-enterprise.json',
+    )
+    const rbac = await runEnterpriseWithEnvelopeVerification(
+      workspace,
+      '.tmp/rbac-verification.json',
+      '.tmp/rbac-verification-enterprise.json',
+    )
+    const unsafe = await runEnterpriseWithEnvelopeVerification(
+      workspace,
+      '.tmp/unsafe-verification.json',
+      '.tmp/unsafe-verification-enterprise.json',
+    )
+
+    expect(wrong.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(wrong.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_RECORD_ENVELOPE_VERIFICATION_SOURCE_ROLE_STATUS_INVALID',
+    )
+    expect(existsSync(join(workspace, '.tmp/wrong-verification-enterprise.json'))).toBe(false)
+
+    expect(crypto.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(crypto.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_RECORD_ENVELOPE_VERIFICATION_AUTHORITY_CLAIM_UNSUPPORTED',
+    )
+    expect(existsSync(join(workspace, '.tmp/crypto-verification-enterprise.json'))).toBe(false)
+
+    expect(rbac.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(rbac.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_RECORD_ENVELOPE_VERIFICATION_AUTHORITY_CLAIM_UNSUPPORTED',
+    )
+    expect(existsSync(join(workspace, '.tmp/rbac-verification-enterprise.json'))).toBe(false)
+
+    expect(unsafe.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(JSON.parse(unsafe.stderr).issues.map((entry: { code: string }) => entry.code)).toContain(
+      'ENTERPRISE_READINESS_UNSAFE_SOURCE_AUTHORITY_FLAG',
+    )
+    expect(existsSync(join(workspace, '.tmp/unsafe-verification-enterprise.json'))).toBe(false)
+  })
+
   it('blocks release surface source failures as enterprise blockers but accepts the source shape', async () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, '.tmp/benchmark-governance.json'), benchmarkGovernanceReport())
@@ -397,11 +581,17 @@ describe('security report-enterprise-readiness CLI', () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, '.tmp/benchmark-governance.json'), benchmarkGovernanceReport())
     writeJson(join(workspace, '.tmp/record-envelope-preview.json'), recordEnvelopePreview())
+    writeJson(join(workspace, '.tmp/record-envelope-verification.json'), recordEnvelopeVerification())
     const cases = [
       { output: '.tmp/benchmark-governance.json', expected: 'would overwrite a source input' },
       {
         sourceArgs: ['--record-envelope-preview', '.tmp/record-envelope-preview.json'],
         output: '.tmp/record-envelope-preview.json',
+        expected: 'would overwrite a source input',
+      },
+      {
+        sourceArgs: ['--record-envelope-verification', '.tmp/record-envelope-verification.json'],
+        output: '.tmp/record-envelope-verification.json',
         expected: 'would overwrite a source input',
       },
       { output: '.tmp/enterprise.json', markdown: '.tmp/enterprise.json', expected: 'must be different' },
@@ -637,6 +827,96 @@ function recordEnvelopePreview(overrides: Record<string, unknown> = {}): Record<
   }
 }
 
+function recordEnvelopeVerification(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    schemaVersion: 1,
+    artifactRole: 'devview-record-envelope-verification-report',
+    status: 'devview-record-envelope-verified',
+    verificationScope: 'record-envelope-verification-report-only',
+    sourceFactsOnly: true,
+    reportOnly: true,
+    sourceRecordEnvelopePreview: {
+      path: '.tmp/record-envelope-preview.json',
+      artifactRole: 'devview-record-envelope-preview',
+      status: 'devview-record-envelope-previewed',
+      signatureMode: 'unsigned-deterministic-preview',
+      envelopeSha256Present: true,
+      envelopePayloadDigestPresent: true,
+    },
+    payloadVerification: {
+      expectedPath: '.tmp/rbac-readiness.json',
+      actualPath: '.tmp/rbac-readiness.json',
+      pathMatches: true,
+      expectedArtifactRole: 'devview-rbac-readiness-report',
+      actualArtifactRole: 'devview-rbac-readiness-report',
+      artifactRoleMatches: true,
+      expectedStatus: 'devview-rbac-readiness-reported',
+      actualStatus: 'devview-rbac-readiness-reported',
+      statusMatches: true,
+      expectedSha256: 'a'.repeat(64),
+      actualSha256: 'a'.repeat(64),
+      digestMatches: true,
+      expectedByteLength: 1024,
+      actualByteLength: 1024,
+      byteLengthMatches: true,
+    },
+    sourceArtifactVerification: {
+      expectedCount: 1,
+      actualCount: 1,
+      allSourceDigestsMatch: true,
+      missingExpectedPaths: [],
+      unexpectedActualPaths: [],
+      matches: [
+        {
+          expectedPath: '.tmp/source.json',
+          actualPath: '.tmp/source.json',
+          pathMatches: true,
+          expectedArtifactRole: 'devview-provider-network-default-deny-policy-report',
+          actualArtifactRole: 'devview-provider-network-default-deny-policy-report',
+          artifactRoleMatches: true,
+          expectedStatus: 'devview-provider-network-default-deny-policy-recorded',
+          actualStatus: 'devview-provider-network-default-deny-policy-recorded',
+          statusMatches: true,
+          expectedSha256: 'b'.repeat(64),
+          actualSha256: 'b'.repeat(64),
+          digestMatches: true,
+          expectedByteLength: 512,
+          actualByteLength: 512,
+          byteLengthMatches: true,
+        },
+      ],
+    },
+    previousEnvelopeVerification: {
+      required: false,
+      supplied: false,
+      expectedSha256: null,
+      actualSha256: null,
+      digestMatches: null,
+      chainLinkVerified: false,
+      expectedPath: null,
+      actualPath: null,
+      pathMatches: null,
+    },
+    envelopeStructuralChecks: {
+      envelopeSha256Present: true,
+      envelopePayloadDigestPresent: true,
+      payloadHashRecorded: true,
+      sourceDigestsRecorded: true,
+      actorIdentityRecorded: true,
+    },
+    verificationDigest: 'e'.repeat(64),
+    signatureVerificationMode: 'not-performed-unsigned-preview-only',
+    cryptographicSignatureVerified: false,
+    rbacPermissionVerified: false,
+    rbacEnforced: false,
+    permissionVerified: false,
+    verificationFindings: [],
+    downstreamActionPlan: [],
+    ...safetyFlags(),
+    ...overrides,
+  }
+}
+
 function safetyFlags(): Record<string, unknown> {
   return {
     benchmarkExecuted: false,
@@ -724,6 +1004,21 @@ function runEnterpriseWithEnvelope(workspace: string, envelopePreview: string, o
       'report-enterprise-readiness',
       '--record-envelope-preview',
       envelopePreview,
+      '--output',
+      output,
+      '--json',
+    ],
+    { cwd: workspace, pluginRoot },
+  )
+}
+
+function runEnterpriseWithEnvelopeVerification(workspace: string, envelopeVerification: string, output: string) {
+  return runDevViewCli(
+    [
+      'security',
+      'report-enterprise-readiness',
+      '--record-envelope-verification',
+      envelopeVerification,
       '--output',
       output,
       '--json',
