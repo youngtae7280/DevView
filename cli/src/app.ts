@@ -130,6 +130,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     record: undefined as string | undefined,
     instructionPack: undefined as string | undefined,
     graphDelta: undefined as string | undefined,
+    applyPlan: undefined as string | undefined,
     targetRepo: undefined as string | undefined,
     manual: undefined as string | undefined,
     output: undefined as string | undefined,
@@ -161,6 +162,9 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     decisionActorType: undefined as string | undefined,
     decisionSource: undefined as string | undefined,
     decisionTimestamp: undefined as string | undefined,
+    operator: undefined as string | undefined,
+    authorizationRationale: undefined as string | undefined,
+    authorizeGraphSourceMutation: false,
     runtimeReport: undefined as string | undefined,
     candidate: undefined as string | undefined,
     schemaValidation: undefined as string | undefined,
@@ -458,6 +462,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.graphDelta = value
       index += 1
+    } else if (arg === '--apply-plan') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--apply-plan requires a file path.' }
+      }
+      options.applyPlan = value
+      index += 1
     } else if (arg === '--target-repo') {
       const value = argv[index + 1]
       if (!value) {
@@ -665,6 +676,22 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.decisionTimestamp = value
       index += 1
+    } else if (arg === '--operator') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--operator requires a value.' }
+      }
+      options.operator = value
+      index += 1
+    } else if (arg === '--authorization-rationale') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--authorization-rationale requires a value.' }
+      }
+      options.authorizationRationale = value
+      index += 1
+    } else if (arg === '--authorize-graph-source-mutation') {
+      options.authorizeGraphSourceMutation = true
     } else if (arg === '--runtime-report') {
       const value = argv[index + 1]
       if (!value) {

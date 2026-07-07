@@ -276,6 +276,21 @@ devview graph read-model plan-guarded-graph-update \
   --output <guarded-graph-update-apply-plan.json> \
   --markdown <guarded-graph-update-apply-plan.md> \
   --json
+
+devview graph read-model apply-guarded-graph-update \
+  --graph-source <maintainability-graph.json> \
+  --proposal <graph-delta-proposal.json> \
+  --apply-plan <guarded-graph-update-apply-plan.json> \
+  --guarded-graph-update-boundary-record <guarded-graph-update-boundary-record.json> \
+  --backup-dir <backup-dir> \
+  --read-model-output <read-model-output.json> \
+  --validation-output <post-apply-validation.json> \
+  --output <guarded-graph-update-apply-report.json> \
+  --operator <operator-id> \
+  --authorization-rationale <human-authored-rationale> \
+  --authorize-graph-source-mutation \
+  --markdown <guarded-graph-update-apply-report.md> \
+  --json
 ```
 
 Readiness commands are report-only. The Equivalence Proof record command can prove only one explicit runtime Evidence
@@ -286,7 +301,12 @@ apply a Graph Delta, or mutate graph-source. The Guarded Graph Update boundary r
 proof, Scope/CI, and Graph Delta proposal inputs as future-apply preconditions while explicitly deferring the apply
 command and leaving graph-source unchanged. The Guarded Graph Update apply plan command consumes that boundary record,
 the current graph-source, and the Graph Delta proposal to preview concrete before/after field changes. It is
-non-mutating and produces `graphDeltaApplied:false`, `graphSourceMutated:false`, and `applyPlanOnly:true`.
+non-mutating and produces `graphDeltaApplied:false`, `graphSourceMutated:false`, and `applyPlanOnly:true`. The Guarded
+Graph Update apply command is the first policy-gated graph-source mutation surface: it requires a ready apply plan,
+matching boundary record and proposal, an exact graph-source hash match, an exclusive backup, and explicit operator
+authorization. It mutates only the named `--graph-source` JSON and writes only the requested backup, read-model,
+validation, JSON report, and optional Markdown report. It does not mutate external CI, branch protection, required
+checks, hooks, providers, networks, approval automation, or user acceptance.
 
 ### Baseline And Final Handoff
 

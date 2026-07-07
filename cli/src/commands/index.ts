@@ -37,6 +37,7 @@ import {
   graphReadModelObserveCandidatesCommand,
   graphReadModelPlanTraversalCommand,
   graphReadModelPlanGuardedGraphUpdateCommand,
+  graphReadModelApplyGuardedGraphUpdateCommand,
   graphReadModelPrepareUserPromptContextCommand,
   graphReadModelReportUserPromptSubmitAdvisoryCommand,
   graphReadModelReportStopPostRunAdvisoryCommand,
@@ -347,6 +348,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'plan-guarded-graph-update') {
     return graphReadModelPlanGuardedGraphUpdateCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'apply-guarded-graph-update') {
+    return graphReadModelApplyGuardedGraphUpdateCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate-ai-request-analyzer-pack') {
     return graphReadModelGenerateAiRequestAnalyzerPackCommand(context)

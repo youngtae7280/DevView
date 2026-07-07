@@ -41,6 +41,7 @@ import { reportProjectMemoryImpactFile } from '../core/project-memory-impact-rep
 import { reportFrontendChainFile } from '../core/frontend-chain-report.js'
 import { generateProposalOnlyGraphDeltaPreview } from '../core/graph-delta-proposal-generator.js'
 import { planGuardedGraphUpdateFile } from '../core/guarded-graph-update-apply-plan.js'
+import { applyGuardedGraphUpdateFile } from '../core/guarded-graph-update-apply.js'
 import { reviseRequestIrCandidateFile } from '../core/request-ir-candidate-reviser.js'
 import { generateSelectedGraphSliceFile } from '../core/selected-graph-slice.js'
 import { reportStopPostRunAdvisoryFile } from '../core/stop-post-run-advisory.js'
@@ -2011,6 +2012,110 @@ export async function graphReadModelPlanGuardedGraphUpdateCommand(context: Comma
           message,
           suggestedFix:
             'Provide a safe graph-source, matching Graph Delta proposal, ready Guarded Graph Update boundary record, and dedicated output paths. This command never mutates graph-source.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function graphReadModelApplyGuardedGraphUpdateCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.graphSource) {
+    return invalidCommand('graph read-model apply-guarded-graph-update requires --graph-source <file>.')
+  }
+  if (!context.options.proposal) {
+    return invalidCommand('graph read-model apply-guarded-graph-update requires --proposal <file>.')
+  }
+  if (!context.options.applyPlan) {
+    return invalidCommand('graph read-model apply-guarded-graph-update requires --apply-plan <file>.')
+  }
+  if (!context.options.guardedGraphUpdateBoundaryRecord) {
+    return invalidCommand(
+      'graph read-model apply-guarded-graph-update requires --guarded-graph-update-boundary-record <file>.',
+    )
+  }
+  if (!context.options.backupDir) {
+    return invalidCommand('graph read-model apply-guarded-graph-update requires --backup-dir <dir>.')
+  }
+  if (!context.options.readModelOutput) {
+    return invalidCommand('graph read-model apply-guarded-graph-update requires --read-model-output <file>.')
+  }
+  if (!context.options.validationOutput) {
+    return invalidCommand('graph read-model apply-guarded-graph-update requires --validation-output <file>.')
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph read-model apply-guarded-graph-update requires --output <file>.')
+  }
+  if (!context.options.operator) {
+    return invalidCommand('graph read-model apply-guarded-graph-update requires --operator <id>.')
+  }
+  if (!context.options.authorizationRationale) {
+    return invalidCommand('graph read-model apply-guarded-graph-update requires --authorization-rationale <text>.')
+  }
+  if (!context.options.authorizeGraphSourceMutation) {
+    return invalidCommand('graph read-model apply-guarded-graph-update requires --authorize-graph-source-mutation.')
+  }
+
+  try {
+    const result = await applyGuardedGraphUpdateFile(context.options.root, {
+      graphSource: context.options.graphSource,
+      proposal: context.options.proposal,
+      applyPlan: context.options.applyPlan,
+      guardedGraphUpdateBoundaryRecord: context.options.guardedGraphUpdateBoundaryRecord,
+      backupDir: context.options.backupDir,
+      readModelOutput: context.options.readModelOutput,
+      validationOutput: context.options.validationOutput,
+      output: context.options.output,
+      operator: context.options.operator,
+      authorizationRationale: context.options.authorizationRationale,
+      authorizeGraphSourceMutation: context.options.authorizeGraphSourceMutation,
+      markdown: context.options.markdown,
+    })
+    const errorFindings = result.report.validationFindings.filter((finding) => finding.severity === 'error')
+    const applied = result.report.status === 'devview-guarded-graph-update-applied'
+    return {
+      ok: applied,
+      command: 'graph read-model apply-guarded-graph-update',
+      exitCode: applied ? ExitCode.Success : ExitCode.ValidationFailed,
+      message: applied
+        ? 'Guarded Graph Update applied to the explicit graph-source target after authorization, backup, and post-apply validation.'
+        : 'Guarded Graph Update rolled back after post-apply validation failed.',
+      issues: errorFindings.map((findingEntry) =>
+        issue({
+          validator: 'GuardedGraphUpdateApply',
+          code: findingEntry.code,
+          severity: findingEntry.severity,
+          message: findingEntry.message,
+          reason: findingEntry.field ? `Field: ${findingEntry.field}` : undefined,
+          suggestedFix:
+            result.report.status === 'devview-guarded-graph-update-apply-rolled-back'
+              ? 'Inspect the rollback report and repair the post-apply validation output path or graph-source projection before retrying from a fresh apply plan.'
+              : 'Repair the guarded apply inputs and rerun with explicit authorization, backup, and validation outputs.',
+        }),
+      ),
+      data: {
+        ...result.report,
+        outputPath: result.outputPath,
+        ...(result.markdownReport ? { markdownReport: result.markdownReport } : {}),
+        next: applied
+          ? 'Review the apply report and post-apply validation output. Baseline and Work Journal ingestion remain a separate visibility slice.'
+          : 'The graph-source was restored from backup if rollback succeeded. Regenerate a fresh apply plan before retrying.',
+      },
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph read-model apply-guarded-graph-update',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Guarded Graph Update Apply blocked before graph-source mutation.',
+      issues: [
+        issue({
+          validator: 'GuardedGraphUpdateApply',
+          code: 'GUARDED_GRAPH_UPDATE_APPLY_BLOCKED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide a current graph-source, matching proposal, ready guarded apply plan and boundary record, explicit operator authorization, and dedicated backup/read-model/validation/report paths. Preflight blockers are zero-write.',
         }),
       ],
     }

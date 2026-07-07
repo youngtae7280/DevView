@@ -88,6 +88,7 @@ export interface CliOptions {
   record?: string
   instructionPack?: string
   graphDelta?: string
+  applyPlan?: string
   targetRepo?: string
   manual?: string
   output?: string
@@ -119,6 +120,9 @@ export interface CliOptions {
   decisionActorType?: string
   decisionSource?: string
   decisionTimestamp?: string
+  operator?: string
+  authorizationRationale?: string
+  authorizeGraphSourceMutation: boolean
   runtimeReport?: string
   candidate?: string
   schemaValidation?: string
