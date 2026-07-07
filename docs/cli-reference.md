@@ -276,6 +276,30 @@ release provenance readiness, and optional release-surface validation facts. It 
 v1, run SBOM generators, run `npm pack`, publish packages, sign packages, create provenance attestations, call
 providers, make network calls, enforce RBAC, or activate enterprise gates.
 
+### Package Provenance Inputs Record
+
+```bash
+devview security record-package-provenance-inputs \
+  --package-json <package.json> \
+  --release-surface-validation <release-surface-validation.json> \
+  --release-provenance-readiness <release-provenance-readiness.json> \
+  --sbom-validation <sbom-validation-report.json> \
+  --source-ref <git-ref-or-commit-label> \
+  --build-command <command-label> \
+  --output <package-provenance-inputs.json> \
+  --markdown <package-provenance-inputs.md> \
+  --json
+```
+
+Records deterministic package/source/build input facts needed for future package provenance attestation. The command
+hashes the supplied package metadata and optional release-surface, release provenance readiness, and SBOM validation
+source facts, then records explicit `--source-ref` and `--build-command` values as labels only. It does not execute the
+build command, shell out to git, run `npm pack`, create package tarballs, generate SBOMs, sign packages, create
+provenance attestations, create keys, enforce RBAC, call providers, make network calls, or activate enterprise gates.
+`--package-json` defaults to the plugin `package.json`. Source inputs must use exact report-only artifact roles/statuses
+and matching package identity, with package signing, SBOM generation/attestation, provenance attestation, key/RBAC,
+provider/network, graph/lifecycle, CI, hook, and approval authority flags false.
+
 ### Provider/Network Default-Deny Policy
 
 ```bash

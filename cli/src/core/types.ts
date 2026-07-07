@@ -221,6 +221,8 @@ export interface CliOptions {
   sbom?: string
   packageJson?: string
   sbomValidation?: string
+  sourceRef?: string
+  buildCommand?: string
   rbacReadiness?: string
   rbacPolicyValidation?: string
   releaseProvenanceReadiness?: string

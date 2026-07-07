@@ -123,6 +123,8 @@ Commands:
                        Report package provenance, SBOM, and package signing readiness without creating release artifacts
   security validate-sbom-artifact
                        Validate a wrapped preexisting SBOM artifact without generating SBOMs or attestations
+  security record-package-provenance-inputs
+                       Record package/source/build input facts without creating package artifacts or attestations
   security validate-rbac-policy
                        Validate declarative RBAC role assignment policy without enforcing RBAC
   security report-rbac-readiness
@@ -443,9 +445,13 @@ Options:
                        Release provenance/SBOM readiness report for security report-enterprise-readiness; repeat or comma-separate for multiples.
   --sbom <file>        Wrapped static SBOM source fact for security validate-sbom-artifact.
   --package-json <file>
-                       Package metadata source for security validate-sbom-artifact; defaults to the plugin package.json.
+                       Package metadata source for security validate-sbom-artifact or record-package-provenance-inputs; defaults to the plugin package.json.
   --sbom-validation <file>
-                       SBOM validation report for security report-enterprise-readiness; repeat or comma-separate for multiples.
+                       SBOM validation report for security report-enterprise-readiness or record-package-provenance-inputs; repeat or comma-separate for multiples.
+  --source-ref <value>
+                       Explicit source ref label for security record-package-provenance-inputs; metadata only, not verified.
+  --build-command <value>
+                       Explicit build command label for security record-package-provenance-inputs; metadata only, never executed.
   --authorize-graph-source-mutation
                        Required explicit authorization flag for graph read-model apply-guarded-graph-update.
   --policy <file>      Policy boundary file for graph read-model report-graph-source-mutation-readiness, report-evidence-acceptance-readiness, record-evidence-decision, create-accepted-evidence-record, report-equivalence-proof-readiness, record-equivalence-proof, report-scope-ci-enforcement-readiness, security report-provider-network-policy, or security validate-rbac-policy.

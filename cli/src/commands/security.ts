@@ -6,6 +6,10 @@ import {
   ProviderNetworkPolicyReportValidationError,
   reportProviderNetworkPolicy,
 } from '../core/provider-network-policy-report.js'
+import {
+  PackageProvenanceInputsRecordValidationError,
+  recordPackageProvenanceInputs,
+} from '../core/package-provenance-inputs-record.js'
 import { RbacPolicyValidationError, validateRbacPolicy } from '../core/rbac-policy-validation.js'
 import { RbacReadinessReportValidationError, reportRbacReadiness } from '../core/rbac-readiness-report.js'
 import { RecordEnvelopePreviewValidationError, previewRecordEnvelope } from '../core/record-envelope-preview.js'
@@ -275,6 +279,72 @@ export async function securityValidateSbomArtifactCommand(context: CommandContex
           message,
           suggestedFix:
             'Provide --sbom and --output and write SBOM validation outputs outside source/control artifacts and source inputs.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function securityRecordPackageProvenanceInputsCommand(context: CommandContext): Promise<CommandResult> {
+  try {
+    const report = await recordPackageProvenanceInputs(context.options.root, {
+      packageJson: context.options.packageJson,
+      releaseSurfaceValidation: context.options.releaseSurfaceValidation,
+      releaseProvenanceReadiness: context.options.releaseProvenanceReadiness,
+      sbomValidation: context.options.sbomValidation,
+      sourceRef: context.options.sourceRef,
+      buildCommand: context.options.buildCommand,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'security record-package-provenance-inputs',
+      exitCode: ExitCode.Success,
+      message: 'Package provenance inputs recorded as deterministic report-only source facts.',
+      issues: [],
+      data: { ...report },
+    }
+  } catch (error) {
+    if (error instanceof PackageProvenanceInputsRecordValidationError) {
+      const report = error.report
+      const blockers = report.packageProvenanceFindings.filter((finding) => finding.severity === 'blocker')
+      return {
+        ok: false,
+        command: 'security record-package-provenance-inputs',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'Package provenance inputs recording is blocked before any output write.',
+        issues: blockers.map((finding) =>
+          issue({
+            validator: 'PackageProvenanceInputs',
+            code: finding.code,
+            severity: 'error',
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide package/release/SBOM source facts with exact role/status, matching package identity, and no package signing, SBOM generation, provenance, provider/network, or lifecycle authority claims.',
+          }),
+        ),
+        data: { ...report },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'security record-package-provenance-inputs',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Package provenance inputs recording could not run.',
+      issues: [
+        issue({
+          validator: 'PackageProvenanceInputs',
+          code: 'PACKAGE_PROVENANCE_INPUTS_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide --output and write package provenance input outputs outside source/control artifacts and source inputs.',
         }),
       ],
     }

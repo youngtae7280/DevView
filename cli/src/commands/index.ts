@@ -101,6 +101,7 @@ import { revisionCompleteCommand, revisionStartCommand } from './revision.js'
 import { productIntakeCheckCommand, productIntakeCloseCommand } from './product-intake.js'
 import {
   securityPreviewRecordEnvelopeCommand,
+  securityRecordPackageProvenanceInputsCommand,
   securityReportEnterpriseReadinessCommand,
   securityReportProviderNetworkPolicyCommand,
   securityReportRbacReadinessCommand,
@@ -189,6 +190,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'security' && subcommand === 'validate-sbom-artifact') {
     return securityValidateSbomArtifactCommand(context)
+  }
+  if (command === 'security' && subcommand === 'record-package-provenance-inputs') {
+    return securityRecordPackageProvenanceInputsCommand(context)
   }
   if (command === 'security' && subcommand === 'validate-rbac-policy') {
     return securityValidateRbacPolicyCommand(context)
