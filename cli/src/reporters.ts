@@ -119,6 +119,8 @@ Commands:
                        Aggregate enterprise hardening readiness as a report-only assessment
   security report-provider-network-policy
                        Record provider/network default-deny policy posture without provider or network activity
+  security report-rbac-readiness
+                       Record RBAC actor identity readiness without signing or enforcement
   work-journal render  Render static cumulative DevView Work Journal HTML/data without execution or authority
   init                 Internal compatibility initializer for legacy migration inputs
   status               Internal compatibility status for legacy migration inputs

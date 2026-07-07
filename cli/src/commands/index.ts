@@ -99,7 +99,11 @@ import { productPatchApplyCommand, productPatchProposeCommand } from './product.
 import { reviewSubmitCommand } from './review.js'
 import { revisionCompleteCommand, revisionStartCommand } from './revision.js'
 import { productIntakeCheckCommand, productIntakeCloseCommand } from './product-intake.js'
-import { securityReportEnterpriseReadinessCommand, securityReportProviderNetworkPolicyCommand } from './security.js'
+import {
+  securityReportEnterpriseReadinessCommand,
+  securityReportProviderNetworkPolicyCommand,
+  securityReportRbacReadinessCommand,
+} from './security.js'
 import {
   coverageAuditCompleteCommand,
   dependencyAuditCompleteCommand,
@@ -173,6 +177,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'security' && subcommand === 'report-provider-network-policy') {
     return securityReportProviderNetworkPolicyCommand(context)
+  }
+  if (command === 'security' && subcommand === 'report-rbac-readiness') {
+    return securityReportRbacReadinessCommand(context)
   }
   if (command === 'gate') {
     if (subcommand === 'assess') {

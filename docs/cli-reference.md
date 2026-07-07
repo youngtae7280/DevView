@@ -237,6 +237,26 @@ identity/RBAC, project-level grants, audit records, no-network defaults, and san
 The command never invokes providers, makes network/API calls, executes extensions, runs Graphify, mutates graph-source,
 configures CI, activates hooks, or automates approval.
 
+### RBAC / Actor Identity Readiness
+
+```bash
+devview security report-rbac-readiness \
+  --enterprise-readiness <enterprise-readiness.json> \
+  --provider-network-policy-report <provider-network-policy-report.json> \
+  --benchmark-governance-verification <benchmark-governance-verification.json> \
+  --output <rbac-readiness.json> \
+  --markdown <rbac-readiness.md> \
+  --json
+```
+
+Records the report-only RBAC and actor identity model before signed record envelopes or enforcement exist. The report
+defines actors, proposed actor identity fields, role-permission mappings, artifact-permission mappings, default-deny
+authority posture, missing signed-policy and key-management gaps, and future-only signing/enforcement requirements.
+Optional enterprise readiness, provider/network policy, and benchmark governance reports are summarized as source facts
+only. The command does not perform cryptographic signing, generate or store keys, enforce RBAC, call providers, make
+network/API calls, execute extensions, mutate graph-source, create lifecycle authority records, configure CI, activate
+hooks, or automate approval.
+
 ### Graphify Import Validation
 
 ```bash

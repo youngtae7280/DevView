@@ -6,6 +6,7 @@ import {
   ProviderNetworkPolicyReportValidationError,
   reportProviderNetworkPolicy,
 } from '../core/provider-network-policy-report.js'
+import { RbacReadinessReportValidationError, reportRbacReadiness } from '../core/rbac-readiness-report.js'
 import type { CommandResult } from '../core/types.js'
 import { ExitCode, issue } from '../core/types.js'
 import type { CommandContext } from './shared.js'
@@ -129,6 +130,69 @@ export async function securityReportProviderNetworkPolicyCommand(context: Comman
           message,
           suggestedFix:
             'Provide --output and write provider/network policy outputs outside source/control artifacts and source inputs.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function securityReportRbacReadinessCommand(context: CommandContext): Promise<CommandResult> {
+  try {
+    const report = await reportRbacReadiness(context.options.root, {
+      enterpriseReadiness: context.options.enterpriseReadiness,
+      providerNetworkPolicyReport: context.options.providerNetworkPolicyReport,
+      benchmarkGovernanceVerification: context.options.benchmarkGovernanceVerification,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'security report-rbac-readiness',
+      exitCode: ExitCode.Success,
+      message: 'RBAC and actor identity readiness recorded as a report-only artifact.',
+      issues: [],
+      data: { ...report },
+    }
+  } catch (error) {
+    if (error instanceof RbacReadinessReportValidationError) {
+      const report = error.report
+      const blockers = report.rbacReadinessFindings.filter((finding) => finding.severity === 'blocker')
+      return {
+        ok: false,
+        command: 'security report-rbac-readiness',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'RBAC readiness reporting is blocked before any RBAC enforcement or signing.',
+        issues: blockers.map((finding) =>
+          issue({
+            validator: 'RbacReadiness',
+            code: finding.code,
+            severity: 'error',
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide exact report-only source artifacts with unsafe provider, execution, graph, lifecycle, CI, hook, and approval flags false.',
+          }),
+        ),
+        data: { ...report },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'security report-rbac-readiness',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'RBAC readiness reporting could not run.',
+      issues: [
+        issue({
+          validator: 'RbacReadiness',
+          code: 'RBAC_READINESS_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide --output and write RBAC readiness outputs outside source/control artifacts and inputs.',
         }),
       ],
     }
