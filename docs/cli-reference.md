@@ -215,6 +215,7 @@ devview security report-enterprise-readiness \
   --sbom-validation <sbom-validation-report.json> \
   --package-provenance-inputs <package-provenance-inputs.json> \
   --package-artifact-digest <package-artifact-digest-record.json> \
+  --provenance-attestation-validation <provenance-attestation-validation.json> \
   --output <enterprise-readiness.json> \
   --markdown <enterprise-readiness.md> \
   --json
@@ -223,19 +224,22 @@ devview security report-enterprise-readiness \
 Aggregates enterprise hardening posture into a report-only readiness assessment. The report carries benchmark governance
 release-surface validation, provider/network default-deny policy reports, unsigned record envelope previews, record
 envelope verification reports, signing/key governance readiness reports, RBAC policy validation reports, and release
-provenance/SBOM readiness reports, structural SBOM validation reports, and package provenance inputs records as source
-facts, package artifact digest records as source facts, then lists remaining enterprise gaps for extension execution
-policy, guarded graph update governance, Scope/CI activation governance, RBAC, signing, audit, release provenance, and
-tamper-evidence. `--record-envelope-preview`, `--record-envelope-verification`, `--signing-readiness`,
-`--rbac-policy-validation`, `--release-provenance-readiness`, `--sbom-validation`, `--package-provenance-inputs`, and
-`--package-artifact-digest` may be repeated or comma-separated. Envelope previews record unsigned payload/source digest
-intent; envelope verification reports show those digests were independently recomputed; signing readiness reports
-summarize key registry, trust root, signature policy, and RBAC prerequisites; RBAC policy validation reports summarize
-declarative role-assignment policy validation; release provenance readiness reports summarize package allowlist/checker,
-SBOM, package signing, and provenance attestation readiness; SBOM validation reports summarize wrapped static SBOM
-structural validation and digests; package provenance inputs records summarize package/source/build input digests;
-package artifact digest records summarize preexisting artifact byte hashes. The report still does not claim package
-generation, SBOM generation, SBOM attestation, vulnerability/license approval, package signing, provenance attestation,
+provenance/SBOM readiness reports, structural SBOM validation reports, package provenance inputs records, package
+artifact digest records, and provenance attestation validation reports as source facts, then lists remaining enterprise
+gaps for extension execution policy, guarded graph update governance, Scope/CI activation governance, RBAC, signing,
+audit, release provenance, and tamper-evidence. `--record-envelope-preview`, `--record-envelope-verification`,
+`--signing-readiness`, `--rbac-policy-validation`, `--release-provenance-readiness`, `--sbom-validation`,
+`--package-provenance-inputs`, `--package-artifact-digest`, and `--provenance-attestation-validation` may be repeated or
+comma-separated. Envelope previews record unsigned payload/source digest intent; envelope verification reports show
+those digests were independently recomputed; signing readiness reports summarize key registry, trust root, signature
+policy, and RBAC prerequisites; RBAC policy validation reports summarize declarative role-assignment policy validation;
+release provenance readiness reports summarize package allowlist/checker, SBOM, package signing, and provenance
+attestation readiness; SBOM validation reports summarize wrapped static SBOM structural validation and digests; package
+provenance inputs records summarize package/source/build input digests; package artifact digest records summarize
+preexisting artifact byte hashes; provenance attestation validation reports summarize wrapped static attestation
+structure, byte digest, and package digest/source-input alignment without real SLSA/in-toto or cryptographic
+verification. The report still does not claim package generation, SBOM generation, SBOM attestation,
+vulnerability/license approval, package signing, provenance attestation generation, provenance attestation verification,
 cryptographic signing, key management, RBAC enforcement, or permission verification. It does not activate enterprise
 gates, execute extensions, call providers, make network calls, mutate graph-source, configure CI, activate hooks, or
 automate approval.

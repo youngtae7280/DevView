@@ -226,6 +226,7 @@ export interface CliOptions {
   sbomValidation?: string
   packageProvenanceInputs?: string
   packageArtifactDigest?: string
+  provenanceAttestationValidation?: string
   sourceRef?: string
   buildCommand?: string
   rbacReadiness?: string

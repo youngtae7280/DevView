@@ -42,6 +42,8 @@ const PACKAGE_PROVENANCE_INPUTS_ROLE = 'devview-package-provenance-inputs-record
 const PACKAGE_PROVENANCE_INPUTS_STATUS = 'devview-package-provenance-inputs-recorded'
 const PACKAGE_ARTIFACT_DIGEST_ROLE = 'devview-package-artifact-digest-record'
 const PACKAGE_ARTIFACT_DIGEST_STATUS = 'devview-package-artifact-digest-recorded'
+const PROVENANCE_ATTESTATION_VALIDATION_ROLE = 'devview-provenance-attestation-validation-report'
+const PROVENANCE_ATTESTATION_VALIDATION_STATUS = 'devview-provenance-attestation-validation-passed'
 
 const unsafeAuthorityFields = [
   'enterpriseGateActivated',
@@ -115,10 +117,14 @@ const releaseProvenanceAuthorityFields = [
   'packagePublished',
   'publishingPerformed',
   'provenanceAttestationPresent',
+  'provenanceAttestationGeneratedByDevView',
+  'provenanceAttestationGenerated',
+  'provenanceAttestationVerified',
   'provenanceAttested',
   'releaseProvenanceAttested',
   'npmProvenanceEnabled',
   'slsaProvenanceGenerated',
+  'inTotoStatementVerified',
   ...signingReadinessAuthorityFields,
 ]
 
@@ -134,6 +140,7 @@ export interface EnterpriseReadinessReportOptions {
   sbomValidation?: string
   packageProvenanceInputs?: string
   packageArtifactDigest?: string
+  provenanceAttestationValidation?: string
   output?: string
   markdown?: string
 }
@@ -376,6 +383,32 @@ export interface EnterpriseReadinessReport {
     sbomAttested: boolean | null
     provenanceAttested: boolean | null
   }>
+  sourceProvenanceAttestationValidationReports: Array<{
+    supplied: true
+    path: string
+    artifactRole: string | null
+    status: string | null
+    attestationValidationStatus: string | null
+    signatureValidationStatus: string | null
+    attestationFormat: string | null
+    packageName: string | null
+    packageVersion: string | null
+    attestationSha256Present: boolean
+    packageDigestAlignmentStatus: string | null
+    packageDigestMatches: boolean | null
+    provenanceInputAlignmentStatus: string | null
+    provenanceInputMatches: boolean | null
+    findingCount: number | null
+    downstreamActionCount: number | null
+    provenanceAttestationGeneratedByDevView: boolean | null
+    provenanceAttestationGenerated: boolean | null
+    provenanceAttestationVerified: boolean | null
+    provenanceAttested: boolean | null
+    packageSigned: boolean | null
+    packageSigningPresent: boolean | null
+    sbomAttested: boolean | null
+    cryptographicSignatureVerified: boolean | null
+  }>
   releaseSurfaceReadiness: {
     status: 'satisfied' | 'failed' | 'not-supplied'
     packageAllowlistPresent: boolean
@@ -462,6 +495,28 @@ export interface EnterpriseReadinessReport {
     sourceArtifactDigestCount: number
     packageProvenanceInputsLinkedCount: number
     releaseSurfaceValidationLinkedCount: number
+    findingCount: number
+    downstreamActionCount: number
+    gaps: string[]
+  }
+  provenanceAttestationValidationReadiness: {
+    status: 'gap' | 'structural-validation-recorded'
+    sourceCount: number
+    sourceStatuses: string[]
+    attestationValidationStatuses: string[]
+    attestationFormats: string[]
+    attestationDigestPresentCount: number
+    packageDigestMatchedCount: number
+    provenanceInputMatchedCount: number
+    signatureValidationStatuses: string[]
+    provenanceAttestationGeneratedByDevViewCount: number
+    provenanceAttestationGeneratedCount: number
+    provenanceAttestationVerifiedCount: number
+    provenanceAttestedCount: number
+    packageSignedCount: number
+    packageSigningPresentCount: number
+    sbomAttestedCount: number
+    cryptographicSignatureVerifiedCount: number
     findingCount: number
     downstreamActionCount: number
     gaps: string[]
@@ -617,6 +672,7 @@ interface LoadedSource {
     | 'sbom-validation-report'
     | 'package-provenance-inputs-record'
     | 'package-artifact-digest-record'
+    | 'provenance-attestation-validation-report'
   record: JsonRecord | null
   readError: string | null
 }
@@ -643,6 +699,7 @@ export async function reportEnterpriseReadiness(
   const sbomValidationPaths = parseList(options.sbomValidation)
   const packageProvenanceInputsPaths = parseList(options.packageProvenanceInputs)
   const packageArtifactDigestPaths = parseList(options.packageArtifactDigest)
+  const provenanceAttestationValidationPaths = parseList(options.provenanceAttestationValidation)
   const sourcePaths = [
     options.benchmarkGovernanceVerification,
     options.releaseSurfaceValidation,
@@ -655,6 +712,7 @@ export async function reportEnterpriseReadiness(
     ...sbomValidationPaths,
     ...packageProvenanceInputsPaths,
     ...packageArtifactDigestPaths,
+    ...provenanceAttestationValidationPaths,
   ].filter((entry): entry is string => Boolean(entry))
   await assertOutputAuthority(
     root,
@@ -695,6 +753,11 @@ export async function reportEnterpriseReadiness(
   const packageArtifactDigestRecords = await Promise.all(
     packageArtifactDigestPaths.map((entry) => loadSource(root, entry, 'package-artifact-digest-record')),
   )
+  const provenanceAttestationValidationReports = await Promise.all(
+    provenanceAttestationValidationPaths.map((entry) =>
+      loadSource(root, entry, 'provenance-attestation-validation-report'),
+    ),
+  )
   const blockingFindings = validateSources(
     benchmarkGovernance,
     releaseSurface,
@@ -707,6 +770,7 @@ export async function reportEnterpriseReadiness(
     sbomValidationReports,
     packageProvenanceInputsRecords,
     packageArtifactDigestRecords,
+    provenanceAttestationValidationReports,
   )
   if (blockingFindings.length > 0) {
     throw new EnterpriseReadinessReportValidationError(
@@ -722,6 +786,7 @@ export async function reportEnterpriseReadiness(
         sbomValidationReports,
         packageProvenanceInputsRecords,
         packageArtifactDigestRecords,
+        provenanceAttestationValidationReports,
         blockingFindings,
         true,
       ),
@@ -740,6 +805,7 @@ export async function reportEnterpriseReadiness(
     sbomValidationReports,
     packageProvenanceInputsRecords,
     packageArtifactDigestRecords,
+    provenanceAttestationValidationReports,
     buildFindings(
       benchmarkGovernance,
       releaseSurface,
@@ -752,6 +818,7 @@ export async function reportEnterpriseReadiness(
       sbomValidationReports,
       packageProvenanceInputsRecords,
       packageArtifactDigestRecords,
+      provenanceAttestationValidationReports,
     ),
   )
   const outputPath = resolveRepoPath(root, options.output ?? '')
@@ -778,6 +845,7 @@ function buildReport(
   sbomValidationReports: LoadedSource[],
   packageProvenanceInputsRecords: LoadedSource[],
   packageArtifactDigestRecords: LoadedSource[],
+  provenanceAttestationValidationReports: LoadedSource[],
   findings: EnterpriseReadinessFinding[],
   blocked = false,
 ): EnterpriseReadinessReport {
@@ -798,6 +866,9 @@ function buildReport(
     .map((entry) => entry.record)
     .filter(isJsonRecord)
   const packageArtifactDigestJsonRecords = packageArtifactDigestRecords
+    .map((entry) => entry.record)
+    .filter(isJsonRecord)
+  const provenanceAttestationValidationRecords = provenanceAttestationValidationReports
     .map((entry) => entry.record)
     .filter(isJsonRecord)
   const releaseStatus = releaseReadinessStatus(releaseRecord)
@@ -859,6 +930,9 @@ function buildReport(
     ),
     sourcePackageArtifactDigestRecords: packageArtifactDigestRecords.map((source) =>
       packageArtifactDigestSummary(source),
+    ),
+    sourceProvenanceAttestationValidationReports: provenanceAttestationValidationReports.map((source) =>
+      provenanceAttestationValidationSummary(source),
     ),
     releaseSurfaceReadiness: {
       status: releaseStatus,
@@ -1084,6 +1158,62 @@ function buildReport(
       ),
       gaps: packageArtifactDigestGaps(packageArtifactDigestJsonRecords),
     },
+    provenanceAttestationValidationReadiness: {
+      status: provenanceAttestationValidationRecords.length > 0 ? 'structural-validation-recorded' : 'gap',
+      sourceCount: provenanceAttestationValidationRecords.length,
+      sourceStatuses: uniqueStrings(provenanceAttestationValidationRecords.map((record) => stringValue(record.status))),
+      attestationValidationStatuses: uniqueStrings(
+        provenanceAttestationValidationRecords.map((record) => stringValue(record.attestationValidationStatus)),
+      ),
+      attestationFormats: uniqueStrings(
+        provenanceAttestationValidationRecords.map((record) =>
+          stringValue(asRecord(record.sourceAttestationArtifact)?.attestationFormat),
+        ),
+      ),
+      attestationDigestPresentCount: provenanceAttestationValidationRecords.filter((record) =>
+        Boolean(stringValue(asRecord(record.digestSummary)?.attestationSha256)),
+      ).length,
+      packageDigestMatchedCount: provenanceAttestationValidationRecords.filter((record) =>
+        booleanValue(asRecord(record.packageDigestAlignment)?.packageDigestMatches),
+      ).length,
+      provenanceInputMatchedCount: provenanceAttestationValidationRecords.filter(
+        (record) => stringValue(asRecord(record.provenanceInputAlignment)?.alignmentStatus) === 'matched',
+      ).length,
+      signatureValidationStatuses: uniqueStrings(
+        provenanceAttestationValidationRecords.map((record) => stringValue(record.signatureValidationStatus)),
+      ),
+      provenanceAttestationGeneratedByDevViewCount: provenanceAttestationValidationRecords.filter((record) =>
+        booleanValue(record.provenanceAttestationGeneratedByDevView),
+      ).length,
+      provenanceAttestationGeneratedCount: provenanceAttestationValidationRecords.filter((record) =>
+        booleanValue(record.provenanceAttestationGenerated),
+      ).length,
+      provenanceAttestationVerifiedCount: provenanceAttestationValidationRecords.filter((record) =>
+        booleanValue(record.provenanceAttestationVerified),
+      ).length,
+      provenanceAttestedCount: provenanceAttestationValidationRecords.filter((record) =>
+        booleanValue(record.provenanceAttested),
+      ).length,
+      packageSignedCount: provenanceAttestationValidationRecords.filter((record) => booleanValue(record.packageSigned))
+        .length,
+      packageSigningPresentCount: provenanceAttestationValidationRecords.filter((record) =>
+        booleanValue(record.packageSigningPresent),
+      ).length,
+      sbomAttestedCount: provenanceAttestationValidationRecords.filter((record) => booleanValue(record.sbomAttested))
+        .length,
+      cryptographicSignatureVerifiedCount: provenanceAttestationValidationRecords.filter((record) =>
+        booleanValue(record.cryptographicSignatureVerified),
+      ).length,
+      findingCount: provenanceAttestationValidationRecords.reduce(
+        (total, record) => total + (arrayLength(record.validationFindings) ?? 0),
+        0,
+      ),
+      downstreamActionCount: provenanceAttestationValidationRecords.reduce(
+        (total, record) => total + (arrayLength(record.downstreamActionPlan) ?? 0),
+        0,
+      ),
+      gaps: provenanceAttestationValidationGaps(provenanceAttestationValidationRecords),
+    },
     extensionExecutionReadiness: {
       status: 'partial',
       declarativeReportOnlyChainPresent: true,
@@ -1301,6 +1431,7 @@ function validateSources(
   sbomValidationReports: LoadedSource[],
   packageProvenanceInputsRecords: LoadedSource[],
   packageArtifactDigestRecords: LoadedSource[],
+  provenanceAttestationValidationReports: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
   for (const source of [
@@ -1315,6 +1446,7 @@ function validateSources(
     ...sbomValidationReports,
     ...packageProvenanceInputsRecords,
     ...packageArtifactDigestRecords,
+    ...provenanceAttestationValidationReports,
   ].filter((entry): entry is LoadedSource => Boolean(entry))) {
     if (source.readError) {
       findings.push(blockingFinding('ENTERPRISE_READINESS_SOURCE_READ_FAILED', source.readError, source.relativePath))
@@ -1363,8 +1495,10 @@ function validateSources(
       validateSbomValidationSource(source, record, findings)
     } else if (source.sourceKind === 'package-provenance-inputs-record') {
       validatePackageProvenanceInputsSource(source, record, findings)
-    } else {
+    } else if (source.sourceKind === 'package-artifact-digest-record') {
       validatePackageArtifactDigestSource(source, record, findings)
+    } else {
+      validateProvenanceAttestationValidationSource(source, record, findings)
     }
     for (const hit of collectUnsafeAuthorityHits(record)) {
       findings.push({
@@ -1391,6 +1525,7 @@ function buildFindings(
   sbomValidationReports: LoadedSource[],
   packageProvenanceInputsRecords: LoadedSource[],
   packageArtifactDigestRecords: LoadedSource[],
+  provenanceAttestationValidationReports: LoadedSource[],
 ): EnterpriseReadinessFinding[] {
   const findings: EnterpriseReadinessFinding[] = []
   const benchmarkRecord = benchmarkGovernance?.record ?? null
@@ -1410,6 +1545,9 @@ function buildFindings(
     .map((entry) => entry.record)
     .filter(isJsonRecord)
   const packageArtifactDigestJsonRecords = packageArtifactDigestRecords
+    .map((entry) => entry.record)
+    .filter(isJsonRecord)
+  const provenanceAttestationValidationRecords = provenanceAttestationValidationReports
     .map((entry) => entry.record)
     .filter(isJsonRecord)
 
@@ -1616,6 +1754,23 @@ function buildFindings(
       message:
         'Preexisting package artifact digest is recorded as a source fact only, not as package generation, signing, or provenance attestation.',
       path: packageArtifactDigestRecords[0]?.relativePath,
+    })
+  }
+
+  if (provenanceAttestationValidationRecords.length === 0) {
+    findings.push({
+      severity: 'gap',
+      code: 'ENTERPRISE_PROVENANCE_ATTESTATION_VALIDATION_NOT_SUPPLIED',
+      message:
+        'Provenance attestation validation report was not supplied; static attestation source facts have not been structurally validated.',
+    })
+  } else {
+    findings.push({
+      severity: 'satisfied',
+      code: 'ENTERPRISE_PROVENANCE_ATTESTATION_VALIDATION_RECORDED',
+      message:
+        'Static wrapped provenance attestation validation source is recorded as structural source-fact validation, not as real attestation generation or cryptographic verification.',
+      path: provenanceAttestationValidationReports[0]?.relativePath,
     })
   }
 
@@ -2011,6 +2166,65 @@ function validatePackageArtifactDigestSource(
   }
 }
 
+function validateProvenanceAttestationValidationSource(
+  source: LoadedSource,
+  record: JsonRecord,
+  findings: EnterpriseReadinessFinding[],
+): void {
+  if (
+    record.artifactRole !== PROVENANCE_ATTESTATION_VALIDATION_ROLE ||
+    record.status !== PROVENANCE_ATTESTATION_VALIDATION_STATUS
+  ) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_PROVENANCE_ATTESTATION_VALIDATION_SOURCE_ROLE_STATUS_INVALID',
+        `${source.relativePath} must be ${PROVENANCE_ATTESTATION_VALIDATION_ROLE} with passed status.`,
+        source.relativePath,
+      ),
+    )
+  }
+  if (record.signatureValidationStatus !== 'not-performed-source-fact-only') {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_PROVENANCE_ATTESTATION_SIGNATURE_STATUS_UNSUPPORTED',
+        `${source.relativePath} must keep signatureValidationStatus as not-performed-source-fact-only.`,
+        source.relativePath,
+        'signatureValidationStatus',
+      ),
+    )
+  }
+  if (record.attestationValidationStatus !== 'validated-structural-source-fact-only') {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_PROVENANCE_ATTESTATION_VALIDATION_STATUS_UNSUPPORTED',
+        `${source.relativePath} must report structural source-fact-only attestation validation status.`,
+        source.relativePath,
+        'attestationValidationStatus',
+      ),
+    )
+  }
+  if (!stringValue(asRecord(record.sourceAttestationArtifact)?.sha256)) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_PROVENANCE_ATTESTATION_SHA256_MISSING',
+        `${source.relativePath} must record an attestation artifact sha256.`,
+        source.relativePath,
+        'sourceAttestationArtifact.sha256',
+      ),
+    )
+  }
+  for (const hit of collectTrueFieldHits(record, releaseProvenanceAuthorityFields)) {
+    findings.push(
+      blockingFinding(
+        'ENTERPRISE_READINESS_PROVENANCE_ATTESTATION_VALIDATION_AUTHORITY_CLAIM_UNSUPPORTED',
+        `${source.relativePath} claims attestation/signing/provenance authority field ${hit.field}: true; enterprise v1 only accepts structural attestation validation source facts.`,
+        source.relativePath,
+        hit.field,
+      ),
+    )
+  }
+}
+
 async function loadSource(
   root: string,
   requestedPath: string,
@@ -2103,6 +2317,7 @@ function renderMarkdown(report: EnterpriseReadinessReport): string {
     `- sbomValidationReports: ${report.sbomValidationReadiness.sourceCount}`,
     `- packageProvenanceInputsRecords: ${report.packageProvenanceInputsReadiness.sourceCount}`,
     `- packageArtifactDigestRecords: ${report.packageArtifactDigestReadiness.sourceCount}`,
+    `- provenanceAttestationValidationReports: ${report.provenanceAttestationValidationReadiness.sourceCount}`,
     '',
     '## Findings',
     ...report.enterpriseReadinessFindings.map((entry) => `- [${entry.severity}] ${entry.code}: ${entry.message}`),
@@ -2256,6 +2471,28 @@ function packageArtifactDigestGaps(records: JsonRecord[]): string[] {
     gaps.push('No package artifact digest source links release-surface validation.')
   }
   gaps.push('Provenance attestation, package signing, SBOM attestation, and CI governance remain missing.')
+  return gaps
+}
+
+function provenanceAttestationValidationGaps(records: JsonRecord[]): string[] {
+  if (records.length === 0) {
+    return ['Provenance attestation validation report is not supplied.']
+  }
+  const gaps = [
+    'Provenance attestation validation is structural source-fact validation only and does not generate, sign, or verify a real attestation.',
+  ]
+  if (!records.some((record) => stringValue(asRecord(record.packageDigestAlignment)?.alignmentStatus) === 'matched')) {
+    gaps.push('No provenance attestation validation source reports matched package artifact digest alignment.')
+  }
+  if (
+    !records.some((record) => stringValue(asRecord(record.provenanceInputAlignment)?.alignmentStatus) === 'matched')
+  ) {
+    gaps.push('No provenance attestation validation source reports matched package provenance input alignment.')
+  }
+  if (!records.some((record) => Boolean(stringValue(asRecord(record.digestSummary)?.attestationSha256)))) {
+    gaps.push('No provenance attestation validation source records an attestation byte digest.')
+  }
+  gaps.push('Real SLSA/in-toto verification, package signing, key/RBAC enforcement, and CI governance remain missing.')
   return gaps
 }
 
@@ -2596,6 +2833,42 @@ function packageArtifactDigestSummary(
   }
 }
 
+function provenanceAttestationValidationSummary(
+  source: LoadedSource,
+): EnterpriseReadinessReport['sourceProvenanceAttestationValidationReports'][number] {
+  const record = source.record ?? {}
+  const attestation = asRecord(record.sourceAttestationArtifact)
+  const digest = asRecord(record.digestSummary)
+  const packageDigestAlignment = asRecord(record.packageDigestAlignment)
+  const provenanceInputAlignment = asRecord(record.provenanceInputAlignment)
+  return {
+    supplied: true,
+    path: source.relativePath,
+    artifactRole: stringValue(record.artifactRole),
+    status: stringValue(record.status),
+    attestationValidationStatus: stringValue(record.attestationValidationStatus),
+    signatureValidationStatus: stringValue(record.signatureValidationStatus),
+    attestationFormat: stringValue(attestation?.attestationFormat),
+    packageName: stringValue(attestation?.packageName),
+    packageVersion: stringValue(attestation?.packageVersion),
+    attestationSha256Present: Boolean(stringValue(attestation?.sha256) ?? stringValue(digest?.attestationSha256)),
+    packageDigestAlignmentStatus: stringValue(packageDigestAlignment?.alignmentStatus),
+    packageDigestMatches: booleanOrNull(packageDigestAlignment?.packageDigestMatches),
+    provenanceInputAlignmentStatus: stringValue(provenanceInputAlignment?.alignmentStatus),
+    provenanceInputMatches: stringValue(provenanceInputAlignment?.alignmentStatus) === 'matched',
+    findingCount: arrayLength(record.validationFindings),
+    downstreamActionCount: arrayLength(record.downstreamActionPlan),
+    provenanceAttestationGeneratedByDevView: booleanOrNull(record.provenanceAttestationGeneratedByDevView),
+    provenanceAttestationGenerated: booleanOrNull(record.provenanceAttestationGenerated),
+    provenanceAttestationVerified: booleanOrNull(record.provenanceAttestationVerified),
+    provenanceAttested: booleanOrNull(record.provenanceAttested),
+    packageSigned: booleanOrNull(record.packageSigned),
+    packageSigningPresent: booleanOrNull(record.packageSigningPresent),
+    sbomAttested: booleanOrNull(record.sbomAttested),
+    cryptographicSignatureVerified: booleanOrNull(record.cryptographicSignatureVerified),
+  }
+}
+
 function payloadDigestVerifiedCount(records: JsonRecord[]): number {
   return records.filter((record) => booleanValue(asRecord(record.payloadVerification)?.digestMatches)).length
 }
@@ -2643,6 +2916,9 @@ function downstreamActionPlan(findings: EnterpriseReadinessFinding[]): string[] 
   }
   if (openFindings.some((entry) => entry.code.includes('PACKAGE_ARTIFACT_DIGEST'))) {
     actions.add('Attach package artifact digest records before provenance attestation planning.')
+  }
+  if (openFindings.some((entry) => entry.code.includes('PROVENANCE_ATTESTATION_VALIDATION'))) {
+    actions.add('Attach structural provenance attestation validation before any release provenance claim.')
   }
   if (openFindings.some((entry) => entry.code.includes('RBAC_POLICY_VALIDATION'))) {
     actions.add('Attach RBAC policy validation before planning RBAC enforcement or signed policy rollout.')

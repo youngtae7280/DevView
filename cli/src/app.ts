@@ -268,6 +268,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     sbomValidation: undefined as string | undefined,
     packageProvenanceInputs: undefined as string | undefined,
     packageArtifactDigest: undefined as string | undefined,
+    provenanceAttestationValidation: undefined as string | undefined,
     sourceRef: undefined as string | undefined,
     buildCommand: undefined as string | undefined,
     rbacReadiness: undefined as string | undefined,
@@ -1472,6 +1473,15 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
       }
       options.packageArtifactDigest = options.packageArtifactDigest
         ? `${options.packageArtifactDigest},${value}`
+        : value
+      index += 1
+    } else if (arg === '--provenance-attestation-validation') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--provenance-attestation-validation requires one or more file paths.' }
+      }
+      options.provenanceAttestationValidation = options.provenanceAttestationValidation
+        ? `${options.provenanceAttestationValidation},${value}`
         : value
       index += 1
     } else if (arg === '--source-ref') {
