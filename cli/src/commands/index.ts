@@ -104,6 +104,7 @@ import {
   securityPlanCiBranchActivationCommand,
   securityRecordPackageArtifactDigestCommand,
   securityRecordPackageProvenanceInputsCommand,
+  securityReportCiBranchActivationAuthorityReadinessCommand,
   securityReportCiBranchGovernanceReadinessCommand,
   securityReportEnterpriseReadinessCommand,
   securityReportProviderNetworkPolicyCommand,
@@ -217,6 +218,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'security' && subcommand === 'plan-ci-branch-activation') {
     return securityPlanCiBranchActivationCommand(context)
+  }
+  if (command === 'security' && subcommand === 'report-ci-branch-activation-authority-readiness') {
+    return securityReportCiBranchActivationAuthorityReadinessCommand(context)
   }
   if (command === 'security' && subcommand === 'validate-rbac-policy') {
     return securityValidateRbacPolicyCommand(context)

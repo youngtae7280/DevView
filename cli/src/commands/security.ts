@@ -27,6 +27,10 @@ import {
   reportCiBranchGovernanceReadiness,
 } from '../core/ci-branch-governance-readiness-report.js'
 import { CiBranchActivationPlanValidationError, planCiBranchActivation } from '../core/ci-branch-activation-plan.js'
+import {
+  CiBranchActivationAuthorityReadinessReportValidationError,
+  reportCiBranchActivationAuthorityReadiness,
+} from '../core/ci-branch-activation-authority-readiness-report.js'
 import { CiBranchPolicyValidationError, validateCiBranchPolicy } from '../core/ci-branch-policy-validation.js'
 import { RbacPolicyValidationError, validateRbacPolicy } from '../core/rbac-policy-validation.js'
 import { RbacReadinessReportValidationError, reportRbacReadiness } from '../core/rbac-readiness-report.js'
@@ -773,6 +777,77 @@ export async function securityPlanCiBranchActivationCommand(context: CommandCont
           message,
           suggestedFix:
             'Provide --ci-branch-policy-validation and --output and write activation plan outputs outside source/control artifacts and source inputs.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function securityReportCiBranchActivationAuthorityReadinessCommand(
+  context: CommandContext,
+): Promise<CommandResult> {
+  try {
+    const report = await reportCiBranchActivationAuthorityReadiness(context.options.root, {
+      ciBranchActivationPlan: context.options.ciBranchActivationPlan,
+      ciBranchPolicyValidation: context.options.ciBranchPolicyValidation,
+      ciBranchGovernanceReadiness: context.options.ciBranchGovernanceReadiness,
+      providerNetworkPolicyReport: context.options.providerNetworkPolicyReport,
+      rbacPolicyValidation: context.options.rbacPolicyValidation,
+      signingReadiness: context.options.signingReadiness,
+      recordEnvelopeVerification: context.options.recordEnvelopeVerification,
+      provenanceVerificationReadiness: context.options.provenanceVerificationReadiness,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'security report-ci-branch-activation-authority-readiness',
+      exitCode: ExitCode.Success,
+      message:
+        'CI/branch activation authority readiness reported without signing, RBAC enforcement, provider calls, branch mutation, hooks, or enterprise gate activation.',
+      issues: [],
+      data: { ...report },
+    }
+  } catch (error) {
+    if (error instanceof CiBranchActivationAuthorityReadinessReportValidationError) {
+      const report = error.report
+      const blockers = report.authorityFindings.filter((finding) => finding.severity === 'blocker')
+      return {
+        ok: false,
+        command: 'security report-ci-branch-activation-authority-readiness',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'CI/branch activation authority readiness reporting is blocked before any output write.',
+        issues: blockers.map((finding) =>
+          issue({
+            validator: 'CiBranchActivationAuthorityReadiness',
+            code: finding.code,
+            severity: 'error',
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide exact report-only source facts with signed policy, provider grants, RBAC enforcement, required-check, branch, hook, provider, signing, key, provenance, and enterprise authority claims false.',
+          }),
+        ),
+        data: { ...report },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'security report-ci-branch-activation-authority-readiness',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'CI/branch activation authority readiness reporting could not run.',
+      issues: [
+        issue({
+          validator: 'CiBranchActivationAuthorityReadiness',
+          code: 'CI_BRANCH_ACTIVATION_AUTHORITY_READINESS_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide --ci-branch-activation-plan and --output and write outputs outside source/control artifacts and source inputs.',
         }),
       ],
     }

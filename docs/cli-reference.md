@@ -469,6 +469,33 @@ RBAC enforcement, signing, key, provenance generation, and enterprise gate flags
 external CI activation, branch protection configuration, required-check configuration, provider authorization, or an
 enterprise gate.
 
+### CI / Branch Activation Authority Readiness
+
+```bash
+devview security report-ci-branch-activation-authority-readiness \
+  --ci-branch-activation-plan <ci-branch-activation-plan.json> \
+  --ci-branch-policy-validation <ci-branch-policy-validation.json> \
+  --ci-branch-governance-readiness <ci-branch-governance-readiness.json> \
+  --provider-network-policy-report <provider-network-policy-report.json> \
+  --rbac-policy-validation <rbac-policy-validation.json> \
+  --signing-readiness <signing-readiness.json> \
+  --record-envelope-verification <record-envelope-verification.json> \
+  --provenance-verification-readiness <provenance-verification-readiness.json> \
+  --output <ci-branch-activation-authority-readiness.json> \
+  --markdown <ci-branch-activation-authority-readiness.md> \
+  --json
+```
+
+Reports the signed policy, RBAC, record-envelope, and provider authorization prerequisites that remain missing before a
+CI/branch activation plan can ever become authority-bearing. `--ci-branch-activation-plan` and `--output` are required;
+the other inputs are optional report-only source facts. The command requires exact source roles/statuses, keeps provider
+and network defaults deny with empty allowlists, requires activation steps to remain `future-only-not-executed`, and
+blocks signed-policy, provider-grant, RBAC-enforcement, cryptographic-verification, required-check, branch-protection,
+hook, provider/API, key/trust, provenance, graph, approval, or enterprise-gate authority claims with zero-write
+behavior. The output role is `devview-ci-branch-activation-authority-readiness-report` with status
+`devview-ci-branch-activation-authority-readiness-reported`; this is not activation, provider authorization, signing,
+signature verification, RBAC enforcement, or an enterprise gate.
+
 ### Provider/Network Default-Deny Policy
 
 ```bash
