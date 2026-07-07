@@ -12,125 +12,430 @@
           Segoe UI,
           Arial,
           sans-serif;
-        background: #f6f7f9;
-        color: #20242c;
+        --journal-ink: #1f2933;
+        --journal-muted: #667085;
+        --journal-line: #d8dee8;
+        --journal-soft-line: #edf0f4;
+        --journal-surface: #ffffff;
+        --journal-ground: #f5f7fa;
+        --journal-accent: #2563a8;
+        --journal-accent-soft: #edf5ff;
+        --journal-blocked: #9b2f1f;
+        --journal-blocked-soft: #fff0ed;
+        --journal-ok: #1f6f4a;
+        --journal-ok-soft: #eef8f2;
+      }
+      * {
+        box-sizing: border-box;
       }
       body {
         margin: 0;
+        background: var(--journal-ground);
+        color: var(--journal-ink);
       }
-      header {
-        padding: 28px 32px 18px;
-        background: #ffffff;
-        border-bottom: 1px solid #d7dce3;
+      .shell {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 286px minmax(520px, 1fr) 340px;
+      }
+      .rail,
+      .inspector {
+        background: var(--journal-surface);
+        border-color: var(--journal-line);
+        min-width: 0;
+      }
+      .rail {
+        border-right: 1px solid var(--journal-line);
+        padding: 18px 14px;
+        overflow: auto;
+      }
+      .workspace {
+        padding: 18px;
+        overflow: auto;
+        min-width: 0;
+      }
+      .inspector {
+        border-left: 1px solid var(--journal-line);
+        padding: 18px;
+        overflow: auto;
       }
       h1 {
         margin: 0;
-        font-size: 26px;
+        font-size: 20px;
         letter-spacing: 0;
       }
-      .sub {
-        margin-top: 8px;
-        color: #5b6472;
-        max-width: 880px;
-        line-height: 1.5;
+      h2 {
+        margin: 0 0 8px;
+        font-size: 12px;
+        color: var(--journal-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
       }
-      main {
-        display: grid;
-        grid-template-columns: minmax(260px, 330px) 1fr;
-        gap: 18px;
-        padding: 18px;
+      h3 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        letter-spacing: 0;
       }
-      aside,
-      section {
-        background: #ffffff;
-        border: 1px solid #d7dce3;
-        border-radius: 8px;
-      }
-      aside {
-        padding: 14px;
-      }
-      section {
-        padding: 18px;
+      p {
+        margin: 0;
+        line-height: 1.45;
       }
       button {
-        width: 100%;
-        text-align: left;
-        border: 1px solid #cbd2dc;
-        background: #fbfcfd;
-        border-radius: 6px;
-        padding: 10px;
-        cursor: pointer;
+        font: inherit;
+        color: inherit;
       }
-      button.active {
-        border-color: #2364aa;
-        background: #eef5ff;
-      }
-      .status {
-        display: inline-block;
-        padding: 3px 7px;
-        border-radius: 999px;
-        background: #edf0f4;
+      code,
+      pre {
+        font-family: Consolas, ui-monospace, SFMono-Regular, monospace;
         font-size: 12px;
       }
-      .blocked {
-        background: #fff0ed;
-        color: #9b2f1f;
+      .subtitle {
+        margin-top: 6px;
+        color: var(--journal-muted);
+        line-height: 1.45;
+        font-size: 13px;
       }
-      .advisory {
-        background: #eef5ff;
-        color: #174f8c;
+      .badge-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 12px;
       }
-      .timeline {
-        display: grid;
-        gap: 10px;
-        margin-top: 16px;
+      .badge,
+      .status {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--journal-line);
+        border-radius: 999px;
+        padding: 3px 7px;
+        background: #fbfcfd;
+        font-size: 12px;
+        min-height: 22px;
       }
-      .step {
-        border: 1px solid #d7dce3;
-        border-radius: 6px;
-        padding: 12px;
+      .status.blocked,
+      .authority-blocked {
+        border-color: #f1c8bf;
+        background: var(--journal-blocked-soft);
+        color: var(--journal-blocked);
       }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-        gap: 10px;
+      .status.ready-for-review,
+      .status.completed,
+      .authority-actual-record,
+      .authority-actual-record-satisfied,
+      .authority-actual-record-proven {
+        border-color: #c8e6d3;
+        background: var(--journal-ok-soft);
+        color: var(--journal-ok);
+      }
+      .status.advisory,
+      .authority-preview-only,
+      .authority-preview-only-ready {
+        border-color: #c9d9ee;
+        background: var(--journal-accent-soft);
+        color: var(--journal-accent);
+      }
+      .authority-preview-only-blocked {
+        border-color: #f1c8bf;
+        background: var(--journal-blocked-soft);
+        color: var(--journal-blocked);
+      }
+      .status.not-provided,
+      .authority-not-provided,
+      .authority-source-summary-only,
+      .authority-future-not-provided {
+        color: var(--journal-muted);
+      }
+      .section {
+        border-top: 1px solid var(--journal-soft-line);
+        padding-top: 14px;
         margin-top: 14px;
       }
-      .artifact {
-        border: 1px solid #d7dce3;
-        border-radius: 6px;
-        padding: 10px;
-        overflow-wrap: anywhere;
+      .run-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
       }
-      code {
-        font-family: Consolas, monospace;
+      .run-item,
+      .inspect-item {
+        width: 100%;
+        text-align: left;
+        border: 1px solid var(--journal-line);
+        background: #fbfcfd;
+        border-radius: 6px;
+        padding: 9px;
+        cursor: pointer;
+      }
+      .run-item:hover,
+      .run-item.active,
+      .inspect-item:hover,
+      .inspect-item.active {
+        border-color: var(--journal-accent);
+        background: var(--journal-accent-soft);
+      }
+      .run-item strong,
+      .inspect-item strong {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 13px;
+      }
+      .run-item span,
+      .inspect-item span {
+        color: var(--journal-muted);
         font-size: 12px;
       }
-      @media (max-width: 820px) {
-        main {
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(130px, 1fr));
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .summary-cell {
+        border: 1px solid var(--journal-line);
+        border-radius: 6px;
+        background: var(--journal-surface);
+        padding: 10px;
+        min-width: 0;
+      }
+      .summary-cell span {
+        display: block;
+        color: var(--journal-muted);
+        font-size: 11px;
+        margin-bottom: 4px;
+      }
+      .summary-cell strong {
+        display: block;
+        font-size: 14px;
+        overflow-wrap: anywhere;
+      }
+      .workflow-panel {
+        border: 1px solid var(--journal-line);
+        border-radius: 8px;
+        background: var(--journal-surface);
+        overflow: hidden;
+      }
+      .workflow-heading {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: baseline;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--journal-soft-line);
+      }
+      .workflow-heading strong {
+        font-size: 13px;
+      }
+      .workflow-heading span {
+        color: var(--journal-muted);
+        font-size: 12px;
+      }
+      .workflow-step-list {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 12px;
+        min-height: 94px;
+      }
+      .workflow-step {
+        min-width: 132px;
+        max-width: 156px;
+        display: grid;
+        grid-template-columns: 22px 1fr;
+        gap: 8px;
+        align-items: start;
+        border: 1px solid var(--journal-line);
+        border-radius: 6px;
+        background: #fbfcfd;
+        padding: 9px;
+        cursor: pointer;
+      }
+      .workflow-step:hover,
+      .workflow-step.active {
+        border-color: var(--journal-accent);
+        background: var(--journal-accent-soft);
+      }
+      .workflow-index {
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--journal-line);
+        border-radius: 50%;
+        font-size: 11px;
+        color: var(--journal-muted);
+        background: #fff;
+      }
+      .workflow-text {
+        min-width: 0;
+      }
+      .workflow-text strong,
+      .workflow-text span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .workflow-text strong {
+        font-size: 12px;
+      }
+      .workflow-text span {
+        margin-top: 2px;
+        color: var(--journal-muted);
+        font-size: 11px;
+      }
+      .decision-panel {
+        margin-top: 12px;
+        border: 1px solid var(--journal-line);
+        border-radius: 8px;
+        background: var(--journal-surface);
+        padding: 14px;
+      }
+      .decision-panel .reason {
+        margin-top: 8px;
+        color: var(--journal-muted);
+        font-size: 13px;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .metric {
+        border: 1px solid var(--journal-soft-line);
+        border-radius: 6px;
+        padding: 8px;
+      }
+      .metric span {
+        display: block;
+        color: var(--journal-muted);
+        font-size: 11px;
+      }
+      .metric strong {
+        display: block;
+        margin-top: 3px;
+        font-size: 15px;
+      }
+      .authority-list {
+        display: grid;
+        gap: 7px;
+        margin-top: 12px;
+      }
+      .authority-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid var(--journal-soft-line);
+        border-radius: 6px;
+        padding: 8px;
+        font-size: 12px;
+      }
+      .detail h2 {
+        color: var(--journal-ink);
+        font-size: 16px;
+        text-transform: none;
+        letter-spacing: 0;
+        margin-bottom: 4px;
+      }
+      .detail .sub {
+        color: var(--journal-muted);
+        font-size: 12px;
+        margin-bottom: 12px;
+      }
+      .detail-row {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 10px;
+        border-top: 1px solid var(--journal-soft-line);
+        padding: 8px 0;
+        font-size: 12px;
+      }
+      .detail-row span:first-child {
+        color: var(--journal-muted);
+      }
+      details {
+        margin-top: 12px;
+        border: 1px solid var(--journal-soft-line);
+        border-radius: 6px;
+        background: #fbfcfd;
+      }
+      summary {
+        cursor: pointer;
+        padding: 8px 10px;
+        color: var(--journal-muted);
+        font-size: 12px;
+      }
+      pre {
+        margin: 0;
+        padding: 10px;
+        overflow: auto;
+        max-height: 280px;
+        border-top: 1px solid var(--journal-soft-line);
+        white-space: pre-wrap;
+      }
+      @media (max-width: 1040px) {
+        .shell {
+          grid-template-columns: 1fr;
+        }
+        .rail,
+        .inspector {
+          border: 0;
+          border-bottom: 1px solid var(--journal-line);
+        }
+        .summary-grid {
+          grid-template-columns: repeat(2, minmax(130px, 1fr));
+        }
+      }
+      @media (max-width: 640px) {
+        .summary-grid,
+        .metrics {
           grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
   <body>
-    <header>
-      <h1>DevView Work Journal</h1>
-      <div class="sub">
-        A static, cumulative journal of DevView work. It summarizes Maintainability Graph context, View Tree, Context
-        Pack, Instruction Pack, Evidence, proof/readiness, Graph Delta, guarded update, and audit provenance without
-        creating authority.
-      </div>
-    </header>
-    <main>
-      <aside>
-        <h2>Works</h2>
-        <div id="run-list"></div>
+    <div class="shell">
+      <aside class="rail">
+        <h1>DevView Work Journal</h1>
+        <p class="subtitle">Cumulative static work history. Report-only; no execution or authority promotion.</p>
+        <div class="badge-row">
+          <span class="badge">Static HTML</span>
+          <span class="badge">Preview shell</span>
+          <span class="badge">Inspector</span>
+        </div>
+        <div class="section">
+          <h2>Current Work</h2>
+          <div id="current-summary"></div>
+        </div>
+        <div class="section">
+          <h2>Run History</h2>
+          <div id="run-list" class="run-list"></div>
+        </div>
+        <div class="section">
+          <h2>Inspect</h2>
+          <div id="inspect-actions" class="run-list"></div>
+        </div>
       </aside>
-      <section>
-        <div id="detail"></div>
-      </section>
-    </main>
+      <main class="workspace">
+        <div class="summary-grid" id="summary-grid"></div>
+        <section class="workflow-panel" aria-label="Current Work Flow">
+          <div class="workflow-heading">
+            <strong>Current Work Flow</strong>
+            <span>Click a step to inspect readiness or actual authority source.</span>
+          </div>
+          <div id="workflow-step-list" class="workflow-step-list"></div>
+        </section>
+        <section class="decision-panel" id="decision-panel"></section>
+      </main>
+      <aside class="inspector">
+        <div id="detail" class="detail"></div>
+      </aside>
+    </div>
     <script type="application/json" id="journal-data">
       {
         &quot;schemaVersion&quot;: 1,
@@ -144,8 +449,46 @@
             &quot;runId&quot;: &quot;todo-add-runtime-evidence&quot;,
             &quot;title&quot;: &quot;Todo Add Runtime Evidence Calibration&quot;,
             &quot;status&quot;: &quot;blocked&quot;,
-            &quot;nextAction&quot;: &quot;Review blocked stage: Runtime Evidence satisfaction readiness.&quot;,
-            &quot;blockedReason&quot;: &quot;Runtime Evidence satisfaction readiness is devview-runtime-evidence-satisfaction-readiness-blocked.&quot;,
+            &quot;nextAction&quot;: &quot;Review blocked stage: Runtime Evidence.&quot;,
+            &quot;blockedReason&quot;: &quot;Runtime Evidence is devview-runtime-evidence-satisfaction-readiness-blocked.&quot;,
+            &quot;decisionSummary&quot;: &quot;Runtime Evidence is devview-runtime-evidence-satisfaction-readiness-blocked.&quot;,
+            &quot;evidenceSummary&quot;: {
+              &quot;required&quot;: 2,
+              &quot;provided&quot;: 0,
+              &quot;missing&quot;: 2,
+              &quot;status&quot;: &quot;devview-runtime-evidence-satisfaction-readiness-blocked&quot;
+            },
+            &quot;scopeSummary&quot;: {
+              &quot;allowed&quot;: 2,
+              &quot;forbidden&quot;: 3,
+              &quot;violations&quot;: null,
+              &quot;protectedPathBlocks&quot;: null,
+              &quot;status&quot;: &quot;devview-scope-ci-enforcement-readiness-blocked&quot;
+            },
+            &quot;authoritySummary&quot;: {
+              &quot;runtimeEvidence&quot;: {
+                &quot;readinessStatus&quot;: &quot;devview-runtime-evidence-satisfaction-readiness-blocked&quot;,
+                &quot;actualRecordStatus&quot;: null,
+                &quot;displayState&quot;: &quot;preview-only-blocked&quot;
+              },
+              &quot;equivalenceProof&quot;: {
+                &quot;readinessStatus&quot;: &quot;devview-equivalence-proof-readiness-blocked&quot;,
+                &quot;actualRecordStatus&quot;: null,
+                &quot;displayState&quot;: &quot;preview-only-blocked&quot;
+              },
+              &quot;scopeCi&quot;: {
+                &quot;readinessStatus&quot;: &quot;devview-scope-ci-enforcement-readiness-blocked&quot;,
+                &quot;activationStatus&quot;: &quot;future-not-provided&quot;,
+                &quot;displayState&quot;: &quot;preview-only-blocked&quot;
+              },
+              &quot;journalAuthorityFlags&quot;: {
+                &quot;runtimeEvidenceSatisfied&quot;: false,
+                &quot;evidenceAccepted&quot;: false,
+                &quot;equivalenceProven&quot;: false,
+                &quot;scopeEnforced&quot;: false,
+                &quot;ciEnforcementEnabled&quot;: false
+              }
+            },
             &quot;flow&quot;: [
               {
                 &quot;stepId&quot;: &quot;maintainability-graph&quot;,
@@ -188,18 +531,18 @@
                 &quot;authority&quot;: &quot;preview-only&quot;
               },
               {
-                &quot;stepId&quot;: &quot;runtime-evidence-satisfaction&quot;,
+                &quot;stepId&quot;: &quot;runtime-evidence&quot;,
                 &quot;label&quot;: &quot;Runtime Evidence&quot;,
-                &quot;summary&quot;: &quot;Runtime obligation binding readiness or future satisfaction.&quot;,
-                &quot;sourceId&quot;: &quot;runtime-evidence-satisfaction&quot;,
+                &quot;summary&quot;: &quot;Actual satisfaction record when present; otherwise readiness-only binding state.&quot;,
+                &quot;sourceId&quot;: &quot;runtime-evidence-satisfaction-readiness&quot;,
                 &quot;status&quot;: &quot;devview-runtime-evidence-satisfaction-readiness-blocked&quot;,
                 &quot;authority&quot;: &quot;blocked&quot;
               },
               {
                 &quot;stepId&quot;: &quot;equivalence-proof&quot;,
                 &quot;label&quot;: &quot;Equivalence Proof&quot;,
-                &quot;summary&quot;: &quot;Proof/readiness state for semantic equivalence.&quot;,
-                &quot;sourceId&quot;: &quot;equivalence-proof&quot;,
+                &quot;summary&quot;: &quot;Actual proof record when present; otherwise readiness-only proof state.&quot;,
+                &quot;sourceId&quot;: &quot;equivalence-proof-readiness&quot;,
                 &quot;status&quot;: &quot;devview-equivalence-proof-readiness-blocked&quot;,
                 &quot;authority&quot;: &quot;blocked&quot;
               },
@@ -222,7 +565,7 @@
               {
                 &quot;stepId&quot;: &quot;scope-ci&quot;,
                 &quot;label&quot;: &quot;Scope/CI&quot;,
-                &quot;summary&quot;: &quot;Scope and CI enforcement readiness state.&quot;,
+                &quot;summary&quot;: &quot;Scope and CI enforcement readiness state; activation is future-only here.&quot;,
                 &quot;sourceId&quot;: &quot;scope-ci&quot;,
                 &quot;status&quot;: &quot;devview-scope-ci-enforcement-readiness-blocked&quot;,
                 &quot;authority&quot;: &quot;blocked&quot;
@@ -284,7 +627,7 @@
                 &quot;classification&quot;: &quot;advisory&quot;
               },
               {
-                &quot;sourceId&quot;: &quot;runtime-evidence-satisfaction&quot;,
+                &quot;sourceId&quot;: &quot;runtime-evidence-satisfaction-readiness&quot;,
                 &quot;label&quot;: &quot;Runtime Evidence satisfaction readiness&quot;,
                 &quot;path&quot;: &quot;examples/valid/todo-app-devview-run/generated/devview-runtime-evidence-satisfaction-readiness.blocked-obligation-mismatch.runtime-evidence-only.preview.json&quot;,
                 &quot;artifactRole&quot;: &quot;devview-runtime-evidence-satisfaction-readiness-preview&quot;,
@@ -293,13 +636,31 @@
                 &quot;classification&quot;: &quot;blocked&quot;
               },
               {
-                &quot;sourceId&quot;: &quot;equivalence-proof&quot;,
+                &quot;sourceId&quot;: &quot;runtime-evidence-satisfaction-record&quot;,
+                &quot;label&quot;: &quot;Runtime Evidence satisfaction record&quot;,
+                &quot;path&quot;: null,
+                &quot;artifactRole&quot;: null,
+                &quot;status&quot;: null,
+                &quot;authorityStatus&quot;: &quot;source-summary-only-no-new-authority&quot;,
+                &quot;classification&quot;: &quot;not-provided&quot;
+              },
+              {
+                &quot;sourceId&quot;: &quot;equivalence-proof-readiness&quot;,
                 &quot;label&quot;: &quot;Equivalence proof readiness&quot;,
                 &quot;path&quot;: &quot;examples/valid/todo-app-devview-run/generated/devview-equivalence-proof-readiness.blocked-runtime-evidence-satisfaction-readiness.runtime-evidence-only.preview.json&quot;,
                 &quot;artifactRole&quot;: &quot;devview-equivalence-proof-readiness-preview&quot;,
                 &quot;status&quot;: &quot;devview-equivalence-proof-readiness-blocked&quot;,
                 &quot;authorityStatus&quot;: &quot;source-summary-only-no-new-authority&quot;,
                 &quot;classification&quot;: &quot;blocked&quot;
+              },
+              {
+                &quot;sourceId&quot;: &quot;equivalence-proof-record&quot;,
+                &quot;label&quot;: &quot;Equivalence proof record&quot;,
+                &quot;path&quot;: null,
+                &quot;artifactRole&quot;: null,
+                &quot;status&quot;: null,
+                &quot;authorityStatus&quot;: &quot;source-summary-only-no-new-authority&quot;,
+                &quot;classification&quot;: &quot;not-provided&quot;
               },
               {
                 &quot;sourceId&quot;: &quot;scope-ci&quot;,
@@ -367,13 +728,13 @@
                 &quot;status&quot;: &quot;devview-extension-readiness-ready&quot;
               },
               {
-                &quot;sourceId&quot;: &quot;runtime-evidence-satisfaction&quot;,
+                &quot;sourceId&quot;: &quot;runtime-evidence-satisfaction-readiness&quot;,
                 &quot;path&quot;: &quot;examples/valid/todo-app-devview-run/generated/devview-runtime-evidence-satisfaction-readiness.blocked-obligation-mismatch.runtime-evidence-only.preview.json&quot;,
                 &quot;artifactRole&quot;: &quot;devview-runtime-evidence-satisfaction-readiness-preview&quot;,
                 &quot;status&quot;: &quot;devview-runtime-evidence-satisfaction-readiness-blocked&quot;
               },
               {
-                &quot;sourceId&quot;: &quot;equivalence-proof&quot;,
+                &quot;sourceId&quot;: &quot;equivalence-proof-readiness&quot;,
                 &quot;path&quot;: &quot;examples/valid/todo-app-devview-run/generated/devview-equivalence-proof-readiness.blocked-runtime-evidence-satisfaction-readiness.runtime-evidence-only.preview.json&quot;,
                 &quot;artifactRole&quot;: &quot;devview-equivalence-proof-readiness-preview&quot;,
                 &quot;status&quot;: &quot;devview-equivalence-proof-readiness-blocked&quot;
@@ -428,25 +789,70 @@
     </script>
     <script>
       const data = JSON.parse(document.getElementById('journal-data').textContent)
-      let selected = data.currentRunId
+      const state = { selectedRunId: data.currentRunId, selectedStepId: '' }
       function esc(value) {
         return String(value ?? '').replace(
           /[&<>"']/g,
           (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char],
         )
       }
+      function currentRun() {
+        const runs = data.runs || []
+        return runs.find((entry) => entry.runId === state.selectedRunId) || runs[0] || null
+      }
+      function currentStep(run) {
+        if (!run) return null
+        return (run.flow || []).find((entry) => entry.stepId === state.selectedStepId) || (run.flow || [])[0] || null
+      }
+      function fmt(value) {
+        return value === null || value === undefined ? 'unknown' : value
+      }
+      function statusClass(value) {
+        const text = String(value || '').toLowerCase()
+        if (text.includes('blocked')) return 'blocked'
+        if (text.includes('record') || text.includes('ready') || text.includes('complete')) return 'completed'
+        if (text.includes('not-provided')) return 'not-provided'
+        return 'advisory'
+      }
+      function authorityClass(value) {
+        return (
+          'authority-' +
+          String(value || 'not-provided')
+            .replace(/[^a-z0-9-]+/gi, '-')
+            .toLowerCase()
+        )
+      }
       function render() {
         const runs = data.runs || []
+        const run = currentRun()
+        if (!run) return
+        if (!state.selectedStepId || !(run.flow || []).some((step) => step.stepId === state.selectedStepId)) {
+          const firstBlocked = (run.flow || []).find((step) => step.authority === 'blocked')
+          state.selectedStepId = (firstBlocked || (run.flow || [])[0] || {}).stepId || ''
+        }
+        const step = currentStep(run)
+        renderRunList(runs)
+        renderCurrentSummary(run)
+        renderInspectActions(run)
+        renderSummaryGrid(run)
+        renderWorkflow(run)
+        renderDecision(run)
+        renderInspector(run, step)
+      }
+      function renderRunList(runs) {
         document.getElementById('run-list').innerHTML = runs
           .map(
             (run) =>
-              '<button class="' +
-              (run.runId === selected ? 'active' : '') +
+              '<button class="run-item ' +
+              (run.runId === state.selectedRunId ? 'active' : '') +
               '" data-run="' +
               esc(run.runId) +
-              '"><strong>' +
+              '">' +
+              '<strong>' +
               esc(run.title) +
-              '</strong><br><span class="status ' +
+              '</strong><span>' +
+              esc(run.runId) +
+              '</span><br><span class="status ' +
               esc(run.status) +
               '">' +
               esc(run.status) +
@@ -455,56 +861,209 @@
           .join('')
         document.querySelectorAll('[data-run]').forEach((button) =>
           button.addEventListener('click', () => {
-            selected = button.getAttribute('data-run')
+            state.selectedRunId = button.getAttribute('data-run')
+            state.selectedStepId = ''
             render()
           }),
         )
-        const run = runs.find((entry) => entry.runId === selected) || runs[0]
-        if (!run) return
-        document.getElementById('detail').innerHTML =
-          '<h2>' +
+      }
+      function renderCurrentSummary(run) {
+        document.getElementById('current-summary').innerHTML =
+          '<p><strong>' +
           esc(run.title) +
-          '</h2><p><span class="status ' +
+          '</strong></p>' +
+          '<p class="subtitle">' +
+          esc(run.blockedReason || run.decisionSummary || 'Ready for review.') +
+          '</p>' +
+          '<div class="badge-row"><span class="status ' +
           esc(run.status) +
           '">' +
           esc(run.status) +
-          '</span></p><p><strong>Next action:</strong> ' +
+          '</span></div>'
+      }
+      function renderInspectActions(run) {
+        document.getElementById('inspect-actions').innerHTML = (run.flow || [])
+          .map(
+            (step) =>
+              '<button class="inspect-item ' +
+              (step.stepId === state.selectedStepId ? 'active' : '') +
+              '" data-step="' +
+              esc(step.stepId) +
+              '">' +
+              '<strong>' +
+              esc(step.label) +
+              '</strong><span>' +
+              esc(step.authority) +
+              '</span></button>',
+          )
+          .join('')
+        document.querySelectorAll('[data-step]').forEach((button) =>
+          button.addEventListener('click', () => {
+            state.selectedStepId = button.getAttribute('data-step')
+            render()
+          }),
+        )
+      }
+      function renderSummaryGrid(run) {
+        const evidence = run.evidenceSummary || {}
+        const scope = run.scopeSummary || {}
+        const authority = run.authoritySummary || {}
+        const runtime = authority.runtimeEvidence || {}
+        const equivalence = authority.equivalenceProof || {}
+        document.getElementById('summary-grid').innerHTML =
+          '<div class="summary-cell"><span>Status</span><strong>' +
+          esc(run.status) +
+          '</strong></div>' +
+          '<div class="summary-cell"><span>Runtime Evidence</span><strong>' +
+          esc(runtime.displayState || 'not-provided') +
+          '</strong></div>' +
+          '<div class="summary-cell"><span>Equivalence</span><strong>' +
+          esc(equivalence.displayState || 'not-provided') +
+          '</strong></div>' +
+          '<div class="summary-cell"><span>Scope</span><strong>' +
+          esc(scope.status || 'not-provided') +
+          '</strong></div>' +
+          '<div class="summary-cell"><span>Evidence required</span><strong>' +
+          esc(fmt(evidence.required)) +
+          '</strong></div>' +
+          '<div class="summary-cell"><span>Evidence provided</span><strong>' +
+          esc(fmt(evidence.provided)) +
+          '</strong></div>' +
+          '<div class="summary-cell"><span>Evidence missing</span><strong>' +
+          esc(fmt(evidence.missing)) +
+          '</strong></div>' +
+          '<div class="summary-cell"><span>Authority</span><strong>journal flags false</strong></div>'
+      }
+      function renderWorkflow(run) {
+        document.getElementById('workflow-step-list').innerHTML = (run.flow || [])
+          .map(
+            (step, index) =>
+              '<button class="workflow-step ' +
+              (step.stepId === state.selectedStepId ? 'active' : '') +
+              '" data-step="' +
+              esc(step.stepId) +
+              '">' +
+              '<span class="workflow-index">' +
+              (index + 1) +
+              '</span><span class="workflow-text"><strong>' +
+              esc(step.label) +
+              '</strong><span>' +
+              esc(step.authority) +
+              '</span></span></button>',
+          )
+          .join('')
+        document.querySelectorAll('[data-step]').forEach((button) =>
+          button.addEventListener('click', () => {
+            state.selectedStepId = button.getAttribute('data-step')
+            render()
+          }),
+        )
+      }
+      function renderDecision(run) {
+        const evidence = run.evidenceSummary || {}
+        const scope = run.scopeSummary || {}
+        const authority = run.authoritySummary || {}
+        const runtime = authority.runtimeEvidence || {}
+        const equivalence = authority.equivalenceProof || {}
+        const scopeCi = authority.scopeCi || {}
+        document.getElementById('decision-panel').innerHTML =
+          '<h3>Selected Run Decision</h3><p>' +
+          esc(run.decisionSummary || run.blockedReason || 'Ready for review.') +
+          '</p>' +
+          '<p class="reason"><strong>Next action:</strong> ' +
           esc(run.nextAction) +
           '</p>' +
-          (run.blockedReason ? '<p><strong>Blocked reason:</strong> ' + esc(run.blockedReason) + '</p>' : '') +
-          '<h3>Flow Timeline</h3><div class="timeline">' +
-          run.flow
-            .map(
-              (step) =>
-                '<div class="step"><strong>' +
-                esc(step.label) +
-                '</strong><br>' +
-                esc(step.summary) +
-                '<br><code>' +
-                esc(step.status) +
-                '</code></div>',
-            )
-            .join('') +
-          '</div><h3>Artifacts / Audit Provenance</h3><div class="grid">' +
-          run.artifacts
-            .map(
-              (artifact) =>
-                '<div class="artifact"><strong>' +
-                esc(artifact.label) +
-                '</strong><br><code>' +
-                esc(artifact.path || 'not provided') +
-                '</code><br>' +
-                esc(artifact.artifactRole || 'no role') +
-                '<br><span class="status ' +
-                esc(artifact.classification) +
-                '">' +
-                esc(artifact.classification) +
-                '</span></div>',
-            )
-            .join('') +
-          '</div><h3>Safety</h3><p>' +
+          '<div class="metrics">' +
+          '<div class="metric"><span>Evidence</span><strong>' +
+          esc(fmt(evidence.provided)) +
+          ' / ' +
+          esc(fmt(evidence.required)) +
+          '</strong></div>' +
+          '<div class="metric"><span>Scope allowed/forbidden</span><strong>' +
+          esc(fmt(scope.allowed)) +
+          ' / ' +
+          esc(fmt(scope.forbidden)) +
+          '</strong></div>' +
+          '<div class="metric"><span>Blocks</span><strong>' +
+          esc(fmt(scope.protectedPathBlocks)) +
+          '</strong></div>' +
+          '</div>' +
+          '<div class="authority-list">' +
+          authorityRow(
+            'Runtime Evidence',
+            runtime.displayState,
+            runtime.actualRecordStatus || runtime.readinessStatus,
+          ) +
+          authorityRow(
+            'Equivalence Proof',
+            equivalence.displayState,
+            equivalence.actualRecordStatus || equivalence.readinessStatus,
+          ) +
+          authorityRow('Scope/CI', scopeCi.displayState, scopeCi.activationStatus || scopeCi.readinessStatus) +
+          '</div>'
+      }
+      function authorityRow(label, stateValue, status) {
+        return (
+          '<div class="authority-row"><span>' +
+          esc(label) +
+          '</span><span class="status ' +
+          authorityClass(stateValue) +
+          '">' +
+          esc(stateValue || 'not-provided') +
+          '</span></div>' +
+          '<div class="authority-row"><span>' +
+          esc(label) +
+          ' source</span><code>' +
+          esc(status || 'not provided') +
+          '</code></div>'
+        )
+      }
+      function renderInspector(run, step) {
+        if (!step) {
+          document.getElementById('detail').innerHTML = '<h2>No step selected</h2>'
+          return
+        }
+        const artifacts = run.artifacts || []
+        const primary = artifacts.find((artifact) => artifact.sourceId === step.sourceId)
+        const related = artifacts.filter(
+          (artifact) =>
+            artifact.sourceId === step.sourceId || relatedSourceIds(step.stepId).includes(artifact.sourceId),
+        )
+        document.getElementById('detail').innerHTML =
+          '<h2>' +
+          esc(step.label) +
+          '</h2><p class="sub">' +
+          esc(step.summary) +
+          '</p>' +
+          '<div class="detail-row"><span>Status</span><span><code>' +
+          esc(step.status) +
+          '</code></span></div>' +
+          '<div class="detail-row"><span>Authority</span><span class="status ' +
+          authorityClass(step.authority) +
+          '">' +
+          esc(step.authority) +
+          '</span></div>' +
+          '<div class="detail-row"><span>Source</span><span>' +
+          esc(primary?.label || step.sourceId) +
+          '</span></div>' +
+          '<div class="detail-row"><span>Path</span><span><code>' +
+          esc(primary?.path || 'not provided') +
+          '</code></span></div>' +
+          '<details><summary>Source artifacts and provenance</summary><pre>' +
+          esc(JSON.stringify(related.length ? related : artifacts, null, 2)) +
+          '</pre></details>' +
+          '<details><summary>Run JSON</summary><pre>' +
+          esc(JSON.stringify(run, null, 2)) +
+          '</pre></details>' +
+          '<details><summary>Journal safety boundary</summary><pre>' +
           esc(data.nonExecutionBoundary) +
-          '</p>'
+          '</pre></details>'
+      }
+      function relatedSourceIds(stepId) {
+        if (stepId === 'runtime-evidence')
+          return ['runtime-evidence-satisfaction-readiness', 'runtime-evidence-satisfaction-record']
+        if (stepId === 'equivalence-proof') return ['equivalence-proof-readiness', 'equivalence-proof-record']
+        return []
       }
       render()
     </script>

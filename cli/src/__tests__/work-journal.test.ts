@@ -35,7 +35,27 @@ describe('DevView Work Journal renderer', () => {
     expect(data.runs).toHaveLength(1)
     expect(run.runId).toBe('todo-add')
     expect(run.status).toBe('blocked')
-    expect(run.blockedReason).toContain('Runtime Evidence satisfaction readiness')
+    expect(run.blockedReason).toContain('Runtime Evidence')
+    expect(run.evidenceSummary).toEqual(
+      expect.objectContaining({
+        required: 2,
+        provided: 0,
+        missing: 2,
+        status: 'devview-runtime-evidence-satisfaction-readiness-blocked',
+      }),
+    )
+    expect(run.scopeSummary).toEqual(
+      expect.objectContaining({
+        allowed: 2,
+        forbidden: 1,
+        violations: 0,
+        protectedPathBlocks: 1,
+      }),
+    )
+    expect(run.authoritySummary.runtimeEvidence.displayState).toBe('preview-only-blocked')
+    expect(run.authoritySummary.equivalenceProof.displayState).toBe('preview-only-blocked')
+    expect(run.authoritySummary.journalAuthorityFlags.runtimeEvidenceSatisfied).toBe(false)
+    expect(run.authoritySummary.journalAuthorityFlags.equivalenceProven).toBe(false)
     expect(run.flow.map((step: { label: string }) => step.label)).toEqual([
       'Maintainability Graph',
       'View Tree',
@@ -56,8 +76,10 @@ describe('DevView Work Journal renderer', () => {
         'context-pack',
         'instruction-pack',
         'extension-readiness',
-        'runtime-evidence-satisfaction',
-        'equivalence-proof',
+        'runtime-evidence-satisfaction-readiness',
+        'runtime-evidence-satisfaction-record',
+        'equivalence-proof-readiness',
+        'equivalence-proof-record',
         'scope-ci',
         'graph-delta',
         'guarded-update',
@@ -83,9 +105,78 @@ describe('DevView Work Journal renderer', () => {
     expect(data.safetyFlags.userAcceptanceAutomated).toBe(false)
     expect(data.safetyFlags.nonEnforcing).toBe(true)
     expect(html).toContain('DevView Work Journal')
-    expect(html).toContain('Flow Timeline')
-    expect(html).toContain('Artifacts / Audit Provenance')
+    expect(html).toContain('Current Work Flow')
+    expect(html).toContain('workflow-step-list')
+    expect(html).toContain('class="inspector"')
+    expect(html).toContain('Source artifacts and provenance')
+    expect(html).toContain('Run JSON')
     expect(html).toContain('static visualization/report artifact')
+  })
+
+  it('summarizes actual runtime and equivalence records as source facts without promoting journal authority', async () => {
+    const workspace = createWorkspace()
+    writeWorkJournalSources(workspace)
+    writeActualAuthorityRecords(workspace)
+
+    const result = await runDevViewCli(
+      workJournalArgs(undefined, undefined, undefined, [
+        '--runtime-evidence-satisfaction-record',
+        'generated/runtime-satisfaction-record.json',
+        '--equivalence-proof-record',
+        'generated/equivalence-proof-record.json',
+      ]),
+      { cwd: workspace, pluginRoot },
+    )
+    const data = JSON.parse(readFileSync(join(workspace, '.devview/generated/work-journal/index.data.json'), 'utf8'))
+    const run = JSON.parse(
+      readFileSync(join(workspace, '.devview/generated/work-journal/runs/todo-add/run.json'), 'utf8'),
+    )
+    const html = readFileSync(join(workspace, '.devview/generated/work-journal/index.html'), 'utf8')
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(run.authoritySummary.runtimeEvidence).toEqual(
+      expect.objectContaining({
+        readinessStatus: 'devview-runtime-evidence-satisfaction-readiness-blocked',
+        actualRecordStatus: 'devview-runtime-evidence-satisfaction-recorded',
+        displayState: 'actual-record-satisfied',
+      }),
+    )
+    expect(run.authoritySummary.equivalenceProof).toEqual(
+      expect.objectContaining({
+        readinessStatus: 'devview-equivalence-proof-readiness-blocked',
+        actualRecordStatus: 'devview-equivalence-proof-recorded',
+        displayState: 'actual-record-proven',
+      }),
+    )
+    expect(run.flow.find((step: { stepId: string }) => step.stepId === 'runtime-evidence')).toEqual(
+      expect.objectContaining({
+        sourceId: 'runtime-evidence-satisfaction-record',
+        authority: 'actual-record',
+        status: 'devview-runtime-evidence-satisfaction-recorded',
+      }),
+    )
+    expect(run.flow.find((step: { stepId: string }) => step.stepId === 'equivalence-proof')).toEqual(
+      expect.objectContaining({
+        sourceId: 'equivalence-proof-record',
+        authority: 'actual-record',
+        status: 'devview-equivalence-proof-recorded',
+      }),
+    )
+    expect(run.evidenceSummary).toEqual(
+      expect.objectContaining({
+        required: 2,
+        provided: 1,
+        missing: 1,
+        status: 'actual-runtime-evidence-satisfaction-record-present',
+      }),
+    )
+    expect(data.safetyFlags.runtimeEvidenceSatisfied).toBe(false)
+    expect(data.safetyFlags.equivalenceProven).toBe(false)
+    expect(data.safetyFlags.scopeEnforced).toBe(false)
+    expect(data.safetyFlags.ciEnforcementEnabled).toBe(false)
+    expect(html).toContain('actual-record-satisfied')
+    expect(html).toContain('actual-record-proven')
+    expect(html).toContain('preview-only-blocked')
   })
 
   it('preserves previous Work Journal runs and replaces the current run deterministically', async () => {
@@ -233,12 +324,42 @@ describe('DevView Work Journal renderer', () => {
     expect(existsSync(join(workspace, '.tmp/journal.data.json'))).toBe(false)
     expect(existsSync(join(workspace, '.tmp/run.json'))).toBe(false)
   })
+
+  it('blocks wrong actual record role/status with authority true before writing outputs', async () => {
+    const workspace = createWorkspace()
+    writeWorkJournalSources(workspace)
+    writeJson(join(workspace, 'generated/not-runtime-record.json'), {
+      artifactRole: 'devview-runtime-evidence-satisfaction-readiness-preview',
+      status: 'devview-runtime-evidence-satisfaction-readiness-ready',
+      runtimeEvidenceSatisfied: true,
+      evidenceAccepted: false,
+      equivalenceProven: false,
+      scopeEnforced: false,
+      ciEnforcementEnabled: false,
+    })
+
+    const result = await runDevViewCli(
+      workJournalArgs('.tmp/journal.html', '.tmp/journal.data.json', '.tmp/run.json', [
+        '--runtime-evidence-satisfaction-record',
+        'generated/not-runtime-record.json',
+      ]),
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.issues[0].message).toContain('unsupported role/status')
+    expect(existsSync(join(workspace, '.tmp/journal.html'))).toBe(false)
+    expect(existsSync(join(workspace, '.tmp/journal.data.json'))).toBe(false)
+    expect(existsSync(join(workspace, '.tmp/run.json'))).toBe(false)
+  })
 })
 
 function workJournalArgs(
   output = '.devview/generated/work-journal/index.html',
   dataOutput = '.devview/generated/work-journal/index.data.json',
   runOutput = '.devview/generated/work-journal/runs/todo-add/run.json',
+  extraArgs: string[] = [],
 ): string[] {
   return [
     'work-journal',
@@ -275,6 +396,7 @@ function workJournalArgs(
     dataOutput,
     '--run-output',
     runOutput,
+    ...extraArgs,
     '--json',
   ]
 }
@@ -305,10 +427,13 @@ function writeWorkJournalSources(workspace: string): void {
     artifactRole: 'contract-compiler-input-preview',
     status: 'contract-compiler-input-generated',
     boundedSubgraph: { nodeIds: ['todo.add'] },
+    allowedFiles: ['src/todo.ts', 'test/todo.test.ts'],
+    forbiddenFiles: ['src/payment.ts'],
   })
   writeJson(join(workspace, 'generated/instruction-pack.json'), {
     artifactRole: 'instruction-pack-preview',
     status: 'instruction-pack-generated',
+    requiredEvidence: [{ id: 'required-evidence-1' }, { id: 'required-evidence-2' }],
   })
   writeJson(join(workspace, 'generated/extension-readiness.json'), {
     artifactRole: 'devview-extension-readiness-preview',
@@ -347,6 +472,8 @@ function writeWorkJournalSources(workspace: string): void {
     artifactRole: 'devview-scope-ci-enforcement-readiness-preview',
     status: 'devview-scope-ci-enforcement-readiness-blocked',
     scopeCiEnforcementReadinessStatus: 'blocked-equivalence-proof-readiness-not-ready',
+    scopeViolationCount: 0,
+    protectedPathBlockCount: 1,
     evidenceAccepted: false,
     runtimeEvidenceSatisfied: false,
     equivalenceProven: false,
@@ -364,6 +491,49 @@ function writeWorkJournalSources(workspace: string): void {
     applyStatus: 'blocked-no-concrete-mutation-operations',
     graphSourceMutated: false,
     graphDeltaApplied: false,
+  })
+}
+
+function writeActualAuthorityRecords(workspace: string): void {
+  writeJson(join(workspace, 'generated/runtime-satisfaction-record.json'), {
+    artifactRole: 'devview-runtime-evidence-satisfaction-record',
+    status: 'devview-runtime-evidence-satisfaction-recorded',
+    requiredEvidenceId: 'required-evidence-1',
+    runtimeEvidenceSatisfied: true,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    approvalAutomationEnabled: false,
+    userAcceptanceAutomated: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    extensionExecutionAllowed: false,
+    extensionsExecuted: false,
+    shellCommandsExecuted: false,
+    filesMutated: false,
+  })
+  writeJson(join(workspace, 'generated/equivalence-proof-record.json'), {
+    artifactRole: 'devview-equivalence-proof-record',
+    status: 'devview-equivalence-proof-recorded',
+    sourceRuntimeEvidenceSatisfied: true,
+    equivalenceProven: true,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    approvalAutomationEnabled: false,
+    userAcceptanceAutomated: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    extensionExecutionAllowed: false,
+    extensionsExecuted: false,
+    shellCommandsExecuted: false,
+    filesMutated: false,
   })
 }
 

@@ -346,11 +346,13 @@ Options:
   --evidence-acceptance-readiness <file>
                        Optional legacy Evidence Acceptance readiness provenance for graph read-model report-equivalence-proof-readiness.
   --runtime-evidence-satisfaction-readiness <file>
-                       Runtime Evidence Satisfaction readiness file for graph read-model record-runtime-evidence-satisfaction, report-equivalence-proof-readiness, or report-devview-baseline.
+                       Runtime Evidence Satisfaction readiness file for graph read-model record-runtime-evidence-satisfaction, report-equivalence-proof-readiness, report-devview-baseline, or work-journal render.
   --runtime-evidence-satisfaction-record <file>
-                       Runtime Evidence Satisfaction record file for graph read-model record-equivalence-proof.
+                       Runtime Evidence Satisfaction record file for graph read-model record-equivalence-proof or work-journal render.
   --equivalence-proof-readiness <file>
-                       Equivalence Proof readiness file for graph read-model report-scope-ci-enforcement-readiness or report-devview-baseline.
+                       Equivalence Proof readiness file for graph read-model report-scope-ci-enforcement-readiness, report-devview-baseline, or work-journal render.
+  --equivalence-proof-record <file>
+                       Equivalence Proof record file for work-journal render.
   --extension-readiness <file>
                        Project-specific extension readiness report for graph read-model report-devview-baseline.
   --scope-ci-enforcement-readiness <file>

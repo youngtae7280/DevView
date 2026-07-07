@@ -65,7 +65,9 @@ devview work-journal render \
   --instruction-pack <instruction-pack.json> \
   --extension-readiness <extension-readiness.json> \
   --runtime-evidence-satisfaction-readiness <runtime-readiness.json> \
+  --runtime-evidence-satisfaction-record <runtime-satisfaction-record.json> \
   --equivalence-proof-readiness <equivalence-readiness.json> \
+  --equivalence-proof-record <equivalence-proof-record.json> \
   --scope-ci-enforcement-readiness <scope-ci-readiness.json> \
   --proposal <graph-delta-proposal.json> \
   --apply-report <apply-report.json> \
@@ -77,9 +79,11 @@ devview work-journal render \
 
 Renders a cumulative static Work Journal preview and per-run data snapshot. If the data output already contains a
 DevView Work Journal data artifact, the command preserves prior runs and replaces the current `--run-id`
-deterministically. The journal is report-only: it summarizes DevView flow, artifacts, blocked reasons, and provenance
-without executing extensions, calling providers, mutating the Maintainability Graph, satisfying runtime Evidence,
-proving equivalence, or enforcing scope/CI.
+deterministically. The default HTML view is compact: run status, blocked/ready reason, next action, a pipeline strip,
+Evidence and scope counts, and preview-only versus actual-authority source state. Full provenance, raw run JSON, paths,
+hashes, and artifact lists stay behind inspector drill-down sections. The journal is report-only: it summarizes DevView
+flow and source facts without executing extensions, calling providers, mutating the Maintainability Graph, creating
+runtime Evidence satisfaction, creating an equivalence proof, or enforcing scope/CI.
 
 ### UserPromptSubmit Advisory
 

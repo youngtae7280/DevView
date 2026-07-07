@@ -145,6 +145,7 @@ export interface CliOptions {
   runtimeEvidenceSatisfactionReadiness?: string
   evidenceAcceptanceReadiness?: string
   equivalenceProofReadiness?: string
+  equivalenceProofRecord?: string
   policy?: string
   applyReport?: string
   checkReport?: string

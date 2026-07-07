@@ -187,6 +187,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     runtimeEvidenceSatisfactionReadiness: undefined as string | undefined,
     evidenceAcceptanceReadiness: undefined as string | undefined,
     equivalenceProofReadiness: undefined as string | undefined,
+    equivalenceProofRecord: undefined as string | undefined,
     policy: undefined as string | undefined,
     applyReport: undefined as string | undefined,
     checkReport: undefined as string | undefined,
@@ -842,6 +843,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--equivalence-proof-readiness requires a file path.' }
       }
       options.equivalenceProofReadiness = value
+      index += 1
+    } else if (arg === '--equivalence-proof-record') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--equivalence-proof-record requires a file path.' }
+      }
+      options.equivalenceProofRecord = value
       index += 1
     } else if (arg === '--policy') {
       const value = argv[index + 1]

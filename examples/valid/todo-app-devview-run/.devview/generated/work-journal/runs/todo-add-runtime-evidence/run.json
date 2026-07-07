@@ -2,8 +2,46 @@
   "runId": "todo-add-runtime-evidence",
   "title": "Todo Add Runtime Evidence Calibration",
   "status": "blocked",
-  "nextAction": "Review blocked stage: Runtime Evidence satisfaction readiness.",
-  "blockedReason": "Runtime Evidence satisfaction readiness is devview-runtime-evidence-satisfaction-readiness-blocked.",
+  "nextAction": "Review blocked stage: Runtime Evidence.",
+  "blockedReason": "Runtime Evidence is devview-runtime-evidence-satisfaction-readiness-blocked.",
+  "decisionSummary": "Runtime Evidence is devview-runtime-evidence-satisfaction-readiness-blocked.",
+  "evidenceSummary": {
+    "required": 2,
+    "provided": 0,
+    "missing": 2,
+    "status": "devview-runtime-evidence-satisfaction-readiness-blocked"
+  },
+  "scopeSummary": {
+    "allowed": 2,
+    "forbidden": 3,
+    "violations": null,
+    "protectedPathBlocks": null,
+    "status": "devview-scope-ci-enforcement-readiness-blocked"
+  },
+  "authoritySummary": {
+    "runtimeEvidence": {
+      "readinessStatus": "devview-runtime-evidence-satisfaction-readiness-blocked",
+      "actualRecordStatus": null,
+      "displayState": "preview-only-blocked"
+    },
+    "equivalenceProof": {
+      "readinessStatus": "devview-equivalence-proof-readiness-blocked",
+      "actualRecordStatus": null,
+      "displayState": "preview-only-blocked"
+    },
+    "scopeCi": {
+      "readinessStatus": "devview-scope-ci-enforcement-readiness-blocked",
+      "activationStatus": "future-not-provided",
+      "displayState": "preview-only-blocked"
+    },
+    "journalAuthorityFlags": {
+      "runtimeEvidenceSatisfied": false,
+      "evidenceAccepted": false,
+      "equivalenceProven": false,
+      "scopeEnforced": false,
+      "ciEnforcementEnabled": false
+    }
+  },
   "flow": [
     {
       "stepId": "maintainability-graph",
@@ -46,18 +84,18 @@
       "authority": "preview-only"
     },
     {
-      "stepId": "runtime-evidence-satisfaction",
+      "stepId": "runtime-evidence",
       "label": "Runtime Evidence",
-      "summary": "Runtime obligation binding readiness or future satisfaction.",
-      "sourceId": "runtime-evidence-satisfaction",
+      "summary": "Actual satisfaction record when present; otherwise readiness-only binding state.",
+      "sourceId": "runtime-evidence-satisfaction-readiness",
       "status": "devview-runtime-evidence-satisfaction-readiness-blocked",
       "authority": "blocked"
     },
     {
       "stepId": "equivalence-proof",
       "label": "Equivalence Proof",
-      "summary": "Proof/readiness state for semantic equivalence.",
-      "sourceId": "equivalence-proof",
+      "summary": "Actual proof record when present; otherwise readiness-only proof state.",
+      "sourceId": "equivalence-proof-readiness",
       "status": "devview-equivalence-proof-readiness-blocked",
       "authority": "blocked"
     },
@@ -80,7 +118,7 @@
     {
       "stepId": "scope-ci",
       "label": "Scope/CI",
-      "summary": "Scope and CI enforcement readiness state.",
+      "summary": "Scope and CI enforcement readiness state; activation is future-only here.",
       "sourceId": "scope-ci",
       "status": "devview-scope-ci-enforcement-readiness-blocked",
       "authority": "blocked"
@@ -142,7 +180,7 @@
       "classification": "advisory"
     },
     {
-      "sourceId": "runtime-evidence-satisfaction",
+      "sourceId": "runtime-evidence-satisfaction-readiness",
       "label": "Runtime Evidence satisfaction readiness",
       "path": "examples/valid/todo-app-devview-run/generated/devview-runtime-evidence-satisfaction-readiness.blocked-obligation-mismatch.runtime-evidence-only.preview.json",
       "artifactRole": "devview-runtime-evidence-satisfaction-readiness-preview",
@@ -151,13 +189,31 @@
       "classification": "blocked"
     },
     {
-      "sourceId": "equivalence-proof",
+      "sourceId": "runtime-evidence-satisfaction-record",
+      "label": "Runtime Evidence satisfaction record",
+      "path": null,
+      "artifactRole": null,
+      "status": null,
+      "authorityStatus": "source-summary-only-no-new-authority",
+      "classification": "not-provided"
+    },
+    {
+      "sourceId": "equivalence-proof-readiness",
       "label": "Equivalence proof readiness",
       "path": "examples/valid/todo-app-devview-run/generated/devview-equivalence-proof-readiness.blocked-runtime-evidence-satisfaction-readiness.runtime-evidence-only.preview.json",
       "artifactRole": "devview-equivalence-proof-readiness-preview",
       "status": "devview-equivalence-proof-readiness-blocked",
       "authorityStatus": "source-summary-only-no-new-authority",
       "classification": "blocked"
+    },
+    {
+      "sourceId": "equivalence-proof-record",
+      "label": "Equivalence proof record",
+      "path": null,
+      "artifactRole": null,
+      "status": null,
+      "authorityStatus": "source-summary-only-no-new-authority",
+      "classification": "not-provided"
     },
     {
       "sourceId": "scope-ci",
@@ -225,13 +281,13 @@
       "status": "devview-extension-readiness-ready"
     },
     {
-      "sourceId": "runtime-evidence-satisfaction",
+      "sourceId": "runtime-evidence-satisfaction-readiness",
       "path": "examples/valid/todo-app-devview-run/generated/devview-runtime-evidence-satisfaction-readiness.blocked-obligation-mismatch.runtime-evidence-only.preview.json",
       "artifactRole": "devview-runtime-evidence-satisfaction-readiness-preview",
       "status": "devview-runtime-evidence-satisfaction-readiness-blocked"
     },
     {
-      "sourceId": "equivalence-proof",
+      "sourceId": "equivalence-proof-readiness",
       "path": "examples/valid/todo-app-devview-run/generated/devview-equivalence-proof-readiness.blocked-runtime-evidence-satisfaction-readiness.runtime-evidence-only.preview.json",
       "artifactRole": "devview-equivalence-proof-readiness-preview",
       "status": "devview-equivalence-proof-readiness-blocked"
