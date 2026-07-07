@@ -26,9 +26,9 @@
       "examples/internal-legacy/adoption/todo-search-slice/approval-brief.md",
       "examples/internal-legacy/adoption/todo-search-slice/evidence-exceptions.md",
       "examples/internal-legacy/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json",
-      "docs/internal-legacy/concept/scoped-source-authority-pilot-execution-record.md",
-      "docs/internal-legacy/concept/scoped-source-authority-pilot-review.md",
-      "docs/internal-legacy/concept/scoped-source-authority-pilot-active-observation.md",
+      "docs/concept/scoped-source-authority-pilot-execution-record.md",
+      "docs/concept/scoped-source-authority-pilot-review.md",
+      "docs/concept/scoped-source-authority-pilot-active-observation.md",
       "examples/internal-legacy/adoption/compatibility-mismatch-slice/compatibility-control-node.md",
       "examples/internal-legacy/adoption/todo-search-slice/graph-source.json"
     ],
@@ -130,17 +130,17 @@
       "status": "present"
     },
     {
-      "relativePath": "docs/internal-legacy/concept/scoped-source-authority-pilot-execution-record.md",
+      "relativePath": "docs/concept/scoped-source-authority-pilot-execution-record.md",
       "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\docs\\internal-legacy\\concept\\scoped-source-authority-pilot-execution-record.md",
       "status": "present"
     },
     {
-      "relativePath": "docs/internal-legacy/concept/scoped-source-authority-pilot-review.md",
+      "relativePath": "docs/concept/scoped-source-authority-pilot-review.md",
       "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\docs\\internal-legacy\\concept\\scoped-source-authority-pilot-review.md",
       "status": "present"
     },
     {
-      "relativePath": "docs/internal-legacy/concept/scoped-source-authority-pilot-active-observation.md",
+      "relativePath": "docs/concept/scoped-source-authority-pilot-active-observation.md",
       "absolutePath": "C:\\Users\\ytkim\\Documents\\Codex\\devview-baseline-freeze-plugin\\docs\\internal-legacy\\concept\\scoped-source-authority-pilot-active-observation.md",
       "status": "present"
     },

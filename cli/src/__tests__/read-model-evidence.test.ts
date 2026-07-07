@@ -60,7 +60,6 @@ const exampleWorkspacePaths = [
   'examples/valid/todo-app-devview-run',
   'examples/internal-legacy/read-model-aggregate',
   'docs/concept',
-  'docs/internal-legacy/concept',
   '.github/workflows/read-model-evidence.yml',
 ]
 const allowedTags = new Set(['target', 'context', 'candidate', 'guard', 'required', 'stale', 'blocked', 'output'])

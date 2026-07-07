@@ -32,9 +32,9 @@ Generated output is reviewable Evidence only and cannot change source authority 
 - examples/internal-legacy/adoption/todo-search-slice/approval-brief.md: present
 - examples/internal-legacy/adoption/todo-search-slice/evidence-exceptions.md: present
 - examples/internal-legacy/adoption/todo-search-slice/generated/scoped-source-authority-pilot-marker.json: present
-- docs/internal-legacy/concept/scoped-source-authority-pilot-execution-record.md: present
-- docs/internal-legacy/concept/scoped-source-authority-pilot-review.md: present
-- docs/internal-legacy/concept/scoped-source-authority-pilot-active-observation.md: present
+- docs/concept/scoped-source-authority-pilot-execution-record.md: present
+- docs/concept/scoped-source-authority-pilot-review.md: present
+- docs/concept/scoped-source-authority-pilot-active-observation.md: present
 - examples/internal-legacy/adoption/compatibility-mismatch-slice/compatibility-control-node.md: present
 - examples/internal-legacy/adoption/todo-search-slice/graph-source.json: present
 
