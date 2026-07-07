@@ -31,6 +31,7 @@ export async function workJournalRenderCommand(context: CommandContext): Promise
       contractInput: context.options.contractInput,
       instructionPack: context.options.instructionPack,
       extensionReadiness: context.options.extensionReadiness,
+      extensionProfileCatalog: context.options.extensionProfileCatalog,
       runtimeEvidenceSatisfactionReadiness: context.options.runtimeEvidenceSatisfactionReadiness,
       runtimeEvidenceSatisfactionRecord: context.options.runtimeEvidenceSatisfactionRecord,
       equivalenceProofReadiness: context.options.equivalenceProofReadiness,

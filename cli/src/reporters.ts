@@ -365,6 +365,8 @@ Options:
                        Equivalence Proof record file for graph read-model record-scope-ci-enforcement, record-guarded-graph-update-boundary, or work-journal render.
   --extension-readiness <file>
                        Project-specific extension readiness report for extensions compile-profile, graph read-model report-devview-baseline, or work-journal render.
+  --extension-profile-catalog <file>
+                       Project-specific extension profile catalog for graph read-model report-devview-baseline or work-journal render.
   --scope-ci-enforcement-readiness <file>
                        Scope/CI Enforcement readiness file for graph read-model record-scope-ci-enforcement or report-devview-baseline.
   --scope-ci-enforcement-record <file>

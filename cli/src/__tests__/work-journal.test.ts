@@ -185,6 +185,79 @@ describe('DevView Work Journal renderer', () => {
     expect(html).toContain('preview-only-blocked')
   })
 
+  it('summarizes compiled extension profile catalogs as report-only source facts', async () => {
+    const workspace = createWorkspace()
+    writeWorkJournalSources(workspace)
+    writeJson(join(workspace, 'generated/extension-profile-catalog.json'), extensionProfileCatalog())
+
+    const result = await runDevViewCli(
+      workJournalArgs(undefined, undefined, undefined, [
+        '--extension-profile-catalog',
+        'generated/extension-profile-catalog.json',
+      ]),
+      { cwd: workspace, pluginRoot },
+    )
+    const data = JSON.parse(readFileSync(join(workspace, '.devview/generated/work-journal/index.data.json'), 'utf8'))
+    const run = JSON.parse(
+      readFileSync(join(workspace, '.devview/generated/work-journal/runs/todo-add/run.json'), 'utf8'),
+    )
+    const html = readFileSync(join(workspace, '.devview/generated/work-journal/index.html'), 'utf8')
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(run.authoritySummary.extensions).toEqual(
+      expect.objectContaining({
+        readinessStatus: 'devview-extension-readiness-ready',
+        catalogStatus: 'devview-extension-profile-catalog-compiled',
+        displayState: 'catalog-compiled',
+        catalogEntryCount: 2,
+        graphIngestionCandidateCount: 1,
+        nativeRetrofitHintStatus: 'profile-mode-declared',
+        nativeRetrofitMode: 'native',
+        executionAllowed: false,
+        providerInvoked: false,
+        networkCallMade: false,
+        shellCommandsExecuted: false,
+      }),
+    )
+    expect(run.authoritySummary.extensions.capabilityGroupCounts).toEqual(
+      expect.objectContaining({
+        analyzerExtensions: 1,
+        viewTreeExtractorExtensions: 1,
+        contextPackExtensions: 1,
+        evidenceAdapters: 1,
+        policyExtensions: 1,
+        graphIngestionCandidates: 1,
+      }),
+    )
+    expect(run.flow.find((step: { stepId: string }) => step.stepId === 'extension-readiness')).toEqual(
+      expect.objectContaining({
+        sourceId: 'extension-profile-catalog',
+        authority: 'preview-only',
+        status: 'devview-extension-profile-catalog-compiled',
+      }),
+    )
+    const catalogArtifact = run.artifacts.find(
+      (artifact: { sourceId: string }) => artifact.sourceId === 'extension-profile-catalog',
+    )
+    expect(catalogArtifact.sourceFactSummary).toEqual(
+      expect.objectContaining({
+        extensionCatalogStatus: 'compiled-declarative-capabilities-only',
+        catalogEntryCount: 2,
+        graphIngestionCandidateCount: 1,
+      }),
+    )
+    expect(data.safetyFlags.extensionExecutionAllowed).toBe(false)
+    expect(data.safetyFlags.extensionsExecuted).toBe(false)
+    expect(data.safetyFlags.providerInvoked).toBe(false)
+    expect(data.safetyFlags.networkCallMade).toBe(false)
+    expect(data.safetyFlags.shellCommandsExecuted).toBe(false)
+    expect(data.safetyFlags.graphSourceMutated).toBe(false)
+    expect(data.safetyFlags.graphDeltaApplied).toBe(false)
+    expect(html).toContain('Extensions')
+    expect(html).toContain('catalog-compiled')
+    expect(html).toContain('Source artifacts and provenance')
+  })
+
   it('summarizes actual Scope/CI enforcement records as source facts without mutating external systems', async () => {
     const workspace = createWorkspace()
     writeWorkJournalSources(workspace)
@@ -661,6 +734,34 @@ describe('DevView Work Journal renderer', () => {
     expect(existsSync(join(workspace, '.tmp/run.json'))).toBe(false)
   })
 
+  it('blocks wrong extension catalog role/status with execution flags before writing outputs', async () => {
+    const workspace = createWorkspace()
+    writeWorkJournalSources(workspace)
+    writeJson(join(workspace, 'generated/not-extension-catalog.json'), {
+      artifactRole: 'devview-extension-readiness-report',
+      status: 'devview-extension-readiness-ready',
+      extensionExecutionAllowed: true,
+      providerInvoked: true,
+      networkCallMade: true,
+      shellCommandsExecuted: true,
+    })
+
+    const result = await runDevViewCli(
+      workJournalArgs('.tmp/journal.html', '.tmp/journal.data.json', '.tmp/run.json', [
+        '--extension-profile-catalog',
+        'generated/not-extension-catalog.json',
+      ]),
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.issues[0].message).toContain('unsupported role/status')
+    expect(existsSync(join(workspace, '.tmp/journal.html'))).toBe(false)
+    expect(existsSync(join(workspace, '.tmp/journal.data.json'))).toBe(false)
+    expect(existsSync(join(workspace, '.tmp/run.json'))).toBe(false)
+  })
+
   it('blocks wrong Scope/CI record role/status with authority true before writing outputs', async () => {
     const workspace = createWorkspace()
     writeWorkJournalSources(workspace)
@@ -962,6 +1063,83 @@ function writeActualAuthorityRecords(workspace: string): void {
     shellCommandsExecuted: false,
     filesMutated: false,
   })
+}
+
+function extensionProfileCatalog(
+  status:
+    | 'devview-extension-profile-catalog-compiled'
+    | 'devview-extension-profile-catalog-blocked' = 'devview-extension-profile-catalog-compiled',
+): Record<string, unknown> {
+  return {
+    artifactRole: 'devview-extension-profile-catalog',
+    status,
+    extensionCatalogStatus:
+      status === 'devview-extension-profile-catalog-compiled'
+        ? 'compiled-declarative-capabilities-only'
+        : 'blocked-invalid-extension-manifest',
+    catalogEntryCount: 2,
+    extensionCatalogEntries: [
+      { extensionId: 'todo-view-tree', extensionKind: 'view-tree-extractor' },
+      { extensionId: 'todo-graphify-protocol', extensionKind: 'analyzer' },
+    ],
+    capabilityCatalog: {
+      analyzerExtensions: ['todo-graphify-protocol'],
+      viewTreeExtractorExtensions: ['todo-view-tree'],
+      contextPackExtensions: ['todo-view-tree'],
+      evidenceAdapters: ['todo-view-tree'],
+      policyExtensions: ['todo-view-tree'],
+      skillWorkflowExtensions: [],
+      graphIngestionCandidates: ['todo-graphify-protocol'],
+    },
+    graphIngestionCandidates: [
+      {
+        extensionId: 'todo-graphify-protocol',
+        protocolStatus: 'protocol-only-not-executed',
+      },
+    ],
+    nativeRetrofitProfileHints: {
+      mode: 'native',
+      hintStatus: 'profile-mode-declared',
+      nativeSignals: ['native'],
+      retrofitSignals: [],
+      sourceFields: ['projectMode'],
+      futureFieldCandidates: [],
+    },
+    downstreamCompatibility: {
+      canInformViewTree: true,
+      canInformContextPack: true,
+      canInformEvidenceAdapterValidation: true,
+      canInformPolicyValidation: true,
+      canInformGraphIngestionPlanning: true,
+      canExecuteExtensionCode: false,
+      canSatisfyEvidence: false,
+      canProveEquivalence: false,
+      canEnforceScope: false,
+    },
+    extensionExecutionAllowed: false,
+    extensionsExecuted: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    shellCommandsExecuted: false,
+    filesMutated: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
+    hooksActivated: false,
+    branchProtectionChanged: false,
+    branchProtectionMutated: false,
+    requiredChecksConfigured: false,
+    requiredChecksMutated: false,
+    externalCiMutated: false,
+    diffRejectionEnabled: false,
+    diffRejectionActivated: false,
+    approvalAutomationEnabled: false,
+    userAcceptanceAutomated: false,
+  }
 }
 
 function guardedGraphUpdateBoundaryRecord(): Record<string, unknown> {

@@ -41,6 +41,7 @@ describe('DevView core baseline freeze report CLI', () => {
     expect(payload.sourceApprovedApplyDryRun).toBe('generated/approved-apply-dry-run.json')
     expect(payload.sourceGraphDeltaApplyReport).toBe('generated/graph-delta-apply-report.json')
     expect(payload.sourceExtensionReadiness).toBe('generated/extension-readiness.json')
+    expect(payload.sourceExtensionProfileCatalog).toBe('generated/extension-profile-catalog.json')
     expect(payload.sourceEvidenceDecision).toBe('generated/evidence-decision.json')
     expect(payload.sourceAcceptedEvidence).toBe('generated/accepted-evidence.json')
     expect(payload.sourceRuntimeEvidenceSatisfactionReadiness).toBe(
@@ -60,6 +61,7 @@ describe('DevView core baseline freeze report CLI', () => {
         ['approved-apply-dry-run', 'advisory'],
         ['graph-delta-apply-report', 'blocked'],
         ['extension-readiness', 'advisory'],
+        ['extension-profile-catalog', 'advisory'],
         ['evidence-decision', 'completed'],
         ['accepted-evidence', 'completed'],
         ['runtime-evidence-satisfaction-readiness', 'blocked'],
@@ -70,6 +72,26 @@ describe('DevView core baseline freeze report CLI', () => {
         ['guarded-graph-update-apply-plan', 'advisory'],
         ['guarded-graph-update-apply-report', 'completed'],
       ]),
+    )
+    expect(
+      payload.sourceArtifacts.find((entry: { sourceId: string }) => entry.sourceId === 'extension-profile-catalog')
+        .sourceFactSummary,
+    ).toEqual(
+      expect.objectContaining({
+        extensionCatalogStatus: 'compiled-declarative-capabilities-only',
+        catalogEntryCount: 2,
+        graphIngestionCandidateCount: 1,
+        nativeRetrofitHintStatus: 'profile-mode-declared',
+        nativeRetrofitMode: 'native',
+        downstreamCompatibility: expect.objectContaining({
+          canInformViewTree: true,
+          canInformContextPack: true,
+          canInformEvidenceAdapterValidation: true,
+          canInformPolicyValidation: true,
+          canInformGraphIngestionPlanning: true,
+          canExecuteExtensionCode: false,
+        }),
+      }),
     )
     expect(
       payload.sourceArtifacts.find(
@@ -122,8 +144,37 @@ describe('DevView core baseline freeze report CLI', () => {
     )
     expect(
       payload.sourceArtifacts.filter((entry: { readStatus: string }) => entry.readStatus === 'missing-optional'),
-    ).toHaveLength(17)
+    ).toHaveLength(18)
     expectSafetyFalse(payload.safetyInvariantSummary)
+  })
+
+  it('blocks wrong extension profile catalog role/status with execution flags as zero-write', async () => {
+    const workspace = createWorkspace()
+    writeBaselineInputs(workspace)
+    writeJson(join(workspace, 'generated/not-extension-catalog.json'), {
+      artifactRole: 'devview-extension-readiness-report',
+      status: 'devview-extension-readiness-ready',
+      extensionExecutionAllowed: true,
+      providerInvoked: true,
+      networkCallMade: true,
+      shellCommandsExecuted: true,
+    })
+
+    const result = await runDevViewCli(
+      [
+        ...baseArgs(),
+        '--extension-profile-catalog',
+        'generated/not-extension-catalog.json',
+        '--output',
+        '.tmp/baseline.json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.issues[0].message).toContain('EXTENSION_PROFILE_CATALOG_ROLE_STATUS_INVALID')
+    expect(existsSync(join(workspace, '.tmp/baseline.json'))).toBe(false)
   })
 
   it('summarizes blocked Guarded Graph Update apply plans as blocked source facts', async () => {
@@ -470,6 +521,8 @@ function baseArgs(): string[] {
     'generated/hook-activation.json',
     '--extension-readiness',
     'generated/extension-readiness.json',
+    '--extension-profile-catalog',
+    'generated/extension-profile-catalog.json',
     '--apply-readiness',
     'generated/apply-readiness.json',
     '--approved-apply-dry-run',
@@ -555,6 +608,7 @@ function writeBaselineInputs(
     ciEnforcementEnabled: false,
     nonEnforcing: true,
   })
+  writeJson(join(workspace, 'generated/extension-profile-catalog.json'), extensionProfileCatalog())
   writeJson(join(workspace, 'generated/apply-readiness.json'), readiness('devview-graph-delta-apply-readiness-preview'))
   writeJson(join(workspace, 'generated/approved-apply-dry-run.json'), {
     artifactRole: 'devview-approved-apply-dry-run-report',
@@ -679,6 +733,83 @@ function writeBaselineInputs(
     },
     ...overrides.finalHandoff,
   })
+}
+
+function extensionProfileCatalog(
+  status:
+    | 'devview-extension-profile-catalog-compiled'
+    | 'devview-extension-profile-catalog-blocked' = 'devview-extension-profile-catalog-compiled',
+): Record<string, unknown> {
+  return {
+    artifactRole: 'devview-extension-profile-catalog',
+    status,
+    extensionCatalogStatus:
+      status === 'devview-extension-profile-catalog-compiled'
+        ? 'compiled-declarative-capabilities-only'
+        : 'blocked-invalid-extension-manifest',
+    catalogEntryCount: 2,
+    extensionCatalogEntries: [
+      { extensionId: 'todo-view-tree', extensionKind: 'view-tree-extractor' },
+      { extensionId: 'todo-graphify-protocol', extensionKind: 'analyzer' },
+    ],
+    capabilityCatalog: {
+      analyzerExtensions: ['todo-graphify-protocol'],
+      viewTreeExtractorExtensions: ['todo-view-tree'],
+      contextPackExtensions: ['todo-view-tree'],
+      evidenceAdapters: ['todo-view-tree'],
+      policyExtensions: ['todo-view-tree'],
+      skillWorkflowExtensions: [],
+      graphIngestionCandidates: ['todo-graphify-protocol'],
+    },
+    graphIngestionCandidates: [
+      {
+        extensionId: 'todo-graphify-protocol',
+        protocolStatus: 'protocol-only-not-executed',
+      },
+    ],
+    nativeRetrofitProfileHints: {
+      mode: 'native',
+      hintStatus: 'profile-mode-declared',
+      nativeSignals: ['native'],
+      retrofitSignals: [],
+      sourceFields: ['projectMode'],
+      futureFieldCandidates: [],
+    },
+    downstreamCompatibility: {
+      canInformViewTree: true,
+      canInformContextPack: true,
+      canInformEvidenceAdapterValidation: true,
+      canInformPolicyValidation: true,
+      canInformGraphIngestionPlanning: true,
+      canExecuteExtensionCode: false,
+      canSatisfyEvidence: false,
+      canProveEquivalence: false,
+      canEnforceScope: false,
+    },
+    extensionExecutionAllowed: false,
+    extensionsExecuted: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    shellCommandsExecuted: false,
+    filesMutated: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
+    hooksActivated: false,
+    branchProtectionChanged: false,
+    branchProtectionMutated: false,
+    requiredChecksConfigured: false,
+    requiredChecksMutated: false,
+    externalCiMutated: false,
+    diffRejectionEnabled: false,
+    diffRejectionActivated: false,
+    approvalAutomationEnabled: false,
+    userAcceptanceAutomated: false,
+  }
 }
 
 function acceptedEvidenceRecord(): Record<string, unknown> {

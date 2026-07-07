@@ -29,6 +29,8 @@ const unsafeAuthorityFields = [
   'networkCallMade',
   'extensionExecutionAllowed',
   'extensionsExecuted',
+  'executionAllowed',
+  'shellCommandExecuted',
   'shellCommandsExecuted',
   'filesMutated',
 ]
@@ -42,6 +44,7 @@ export interface WorkJournalRenderOptions {
   contractInput?: string
   instructionPack?: string
   extensionReadiness?: string
+  extensionProfileCatalog?: string
   runtimeEvidenceSatisfactionReadiness?: string
   runtimeEvidenceSatisfactionRecord?: string
   equivalenceProofReadiness?: string
@@ -101,6 +104,22 @@ export interface WorkJournalScopeSummary {
 }
 
 export interface WorkJournalAuthoritySummary {
+  extensions: {
+    readinessStatus: string | null
+    catalogStatus: string | null
+    displayState: 'catalog-compiled' | 'catalog-blocked' | 'readiness-ready' | 'readiness-blocked' | 'not-provided'
+    catalogEntryCount: number | null
+    capabilityGroupCounts: JsonRecord | null
+    graphIngestionCandidateCount: number | null
+    nativeRetrofitHintStatus: string | null
+    nativeRetrofitMode: string | null
+    downstreamCompatibility: JsonRecord | null
+    executionAllowed: false
+    providerInvoked: false
+    networkCallMade: false
+    shellCommandsExecuted: false
+    nextAction: string
+  }
   runtimeEvidence: {
     readinessStatus: string | null
     actualRecordStatus: string | null
@@ -216,6 +235,11 @@ const SOURCE_DEFS = [
   { sourceId: 'context-pack', label: 'Context Pack / Contract Input', optionKey: 'contractInput' },
   { sourceId: 'instruction-pack', label: 'Instruction Pack', optionKey: 'instructionPack' },
   { sourceId: 'extension-readiness', label: 'Extension readiness', optionKey: 'extensionReadiness' },
+  {
+    sourceId: 'extension-profile-catalog',
+    label: 'Extension profile catalog',
+    optionKey: 'extensionProfileCatalog',
+  },
   {
     sourceId: 'runtime-evidence-satisfaction-readiness',
     label: 'Runtime Evidence satisfaction readiness',
@@ -373,6 +397,42 @@ function validateSourceRecordShape(source: LoadedArtifact): void {
       'extensionsExecuted',
       'shellCommandsExecuted',
       'filesMutated',
+    ])
+  }
+  if (source.sourceId === 'extension-profile-catalog') {
+    const knownStatuses = ['devview-extension-profile-catalog-compiled', 'devview-extension-profile-catalog-blocked']
+    if (
+      record.artifactRole !== 'devview-extension-profile-catalog' ||
+      !knownStatuses.includes(stringValue(record.status))
+    ) {
+      throw new Error('Work Journal extension profile catalog source has an unsupported role/status.')
+    }
+    requireFalseFields(source.label, record, [
+      'extensionExecutionAllowed',
+      'extensionsExecuted',
+      'extensionCodeExecuted',
+      'providerInvoked',
+      'networkCallMade',
+      'shellCommandExecuted',
+      'shellCommandsExecuted',
+      'filesMutated',
+      'graphSourceMutated',
+      'graphDeltaApplied',
+      'runtimeEvidenceSatisfied',
+      'evidenceAccepted',
+      'equivalenceProven',
+      'scopeEnforced',
+      'ciEnforcementEnabled',
+      'hooksActivated',
+      'branchProtectionChanged',
+      'branchProtectionMutated',
+      'requiredChecksConfigured',
+      'requiredChecksMutated',
+      'externalCiMutated',
+      'diffRejectionEnabled',
+      'diffRejectionActivated',
+      'approvalAutomationEnabled',
+      'userAcceptanceAutomated',
     ])
   }
   if (source.sourceId === 'equivalence-proof-record') {
@@ -741,6 +801,9 @@ function classifyArtifact(sourceId: string, status: string): WorkJournalArtifact
     if (normalized.includes('rolled-back') || normalized.includes('blocked')) return 'blocked'
     return normalized.includes('applied') ? 'completed' : 'advisory'
   }
+  if (sourceId === 'extension-profile-catalog') {
+    return normalized.includes('blocked') ? 'blocked' : normalized.includes('compiled') ? 'advisory' : 'advisory'
+  }
   if (sourceId === 'runtime-evidence-satisfaction-readiness')
     return normalized.includes('ready') ? 'advisory' : 'blocked'
   if (sourceId === 'equivalence-proof-readiness' || sourceId === 'scope-ci')
@@ -787,8 +850,10 @@ function buildFlow(artifacts: WorkJournalArtifactSummary[]): WorkJournalFlowStep
     {
       stepId: 'extension-readiness',
       label: 'Project Extensions',
-      summary: 'Project profile and extension manifest readiness.',
+      summary: 'Compiled extension catalog when present; otherwise profile and manifest readiness.',
       sourceId: 'extension-readiness',
+      readinessSourceId: 'extension-readiness',
+      planSourceId: 'extension-profile-catalog',
     },
     {
       stepId: 'runtime-evidence',
@@ -932,6 +997,8 @@ function buildScopeSummary(
 }
 
 function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJournalAuthoritySummary {
+  const extensionReadiness = artifacts.find((artifact) => artifact.sourceId === 'extension-readiness')
+  const extensionCatalog = artifacts.find((artifact) => artifact.sourceId === 'extension-profile-catalog')
   const runtimeReadiness = artifacts.find((artifact) => artifact.sourceId === 'runtime-evidence-satisfaction-readiness')
   const runtimeRecord = artifacts.find((artifact) => artifact.sourceId === 'runtime-evidence-satisfaction-record')
   const equivalenceReadiness = artifacts.find((artifact) => artifact.sourceId === 'equivalence-proof-readiness')
@@ -942,8 +1009,43 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
   const guardedApplyPlan = artifacts.find((artifact) => artifact.sourceId === 'guarded-graph-update-apply-plan')
   const guardedApplyReport = artifacts.find((artifact) => artifact.sourceId === 'guarded-graph-update-apply-report')
   const applyReport = artifacts.find((artifact) => artifact.sourceId === 'guarded-update')
+  const extensionCatalogSourceFacts = asRecord(extensionCatalog?.sourceFactSummary)
   const guardedApplySourceFacts = asRecord(guardedApplyReport?.sourceFactSummary)
   return {
+    extensions: {
+      readinessStatus: extensionReadiness?.status ?? null,
+      catalogStatus: extensionCatalog?.status ?? null,
+      displayState:
+        extensionCatalog?.classification === 'advisory'
+          ? 'catalog-compiled'
+          : extensionCatalog?.classification === 'blocked'
+            ? 'catalog-blocked'
+            : extensionReadiness?.classification === 'advisory'
+              ? 'readiness-ready'
+              : extensionReadiness?.classification === 'blocked'
+                ? 'readiness-blocked'
+                : 'not-provided',
+      catalogEntryCount: numberValue(extensionCatalogSourceFacts?.catalogEntryCount),
+      capabilityGroupCounts: asRecord(extensionCatalogSourceFacts?.capabilityGroupCounts),
+      graphIngestionCandidateCount: numberValue(extensionCatalogSourceFacts?.graphIngestionCandidateCount),
+      nativeRetrofitHintStatus: stringValue(extensionCatalogSourceFacts?.nativeRetrofitHintStatus) || null,
+      nativeRetrofitMode: stringValue(extensionCatalogSourceFacts?.nativeRetrofitMode) || null,
+      downstreamCompatibility: asRecord(extensionCatalogSourceFacts?.downstreamCompatibility),
+      executionAllowed: false,
+      providerInvoked: false,
+      networkCallMade: false,
+      shellCommandsExecuted: false,
+      nextAction:
+        extensionCatalog?.classification === 'advisory'
+          ? 'Use the compiled catalog as report-only source facts for future View Tree, Context Pack, Evidence, policy, and graph-ingestion planning; do not execute extensions.'
+          : extensionCatalog?.classification === 'blocked'
+            ? 'Resolve extension catalog blockers before using extension capability hints.'
+            : extensionReadiness?.classification === 'advisory'
+              ? 'Compile the ready extension profile into a report-only catalog before downstream planning.'
+              : extensionReadiness?.classification === 'blocked'
+                ? 'Resolve extension readiness blockers before compiling a catalog.'
+                : 'Provide extension readiness and catalog artifacts if project-specific extension hints are needed.',
+    },
     runtimeEvidence: {
       readinessStatus: runtimeReadiness?.status ?? null,
       actualRecordStatus: runtimeRecord?.status ?? null,
@@ -1045,6 +1147,44 @@ function buildAuthoritySummary(artifacts: WorkJournalArtifactSummary[]): WorkJou
 function buildSourceFactSummary(source: LoadedArtifact): JsonRecord | null {
   const record = source.record
   if (!record) return null
+  if (source.sourceId === 'extension-profile-catalog') {
+    const capabilityCatalog = asRecord(record.capabilityCatalog)
+    const downstreamCompatibility = asRecord(record.downstreamCompatibility)
+    const nativeRetrofitProfileHints = asRecord(record.nativeRetrofitProfileHints)
+    return {
+      extensionCatalogStatus: stringValue(record.extensionCatalogStatus) || null,
+      catalogEntryCount: numberValue(record.catalogEntryCount) ?? arrayRecords(record.extensionCatalogEntries).length,
+      capabilityGroupCounts: {
+        analyzerExtensions: arrayStrings(capabilityCatalog?.analyzerExtensions).length,
+        viewTreeExtractorExtensions: arrayStrings(capabilityCatalog?.viewTreeExtractorExtensions).length,
+        contextPackExtensions: arrayStrings(capabilityCatalog?.contextPackExtensions).length,
+        evidenceAdapters: arrayStrings(capabilityCatalog?.evidenceAdapters).length,
+        policyExtensions: arrayStrings(capabilityCatalog?.policyExtensions).length,
+        skillWorkflowExtensions: arrayStrings(capabilityCatalog?.skillWorkflowExtensions).length,
+        graphIngestionCandidates: arrayStrings(capabilityCatalog?.graphIngestionCandidates).length,
+      },
+      graphIngestionCandidateCount: arrayRecords(record.graphIngestionCandidates).length,
+      nativeRetrofitHintStatus: stringValue(nativeRetrofitProfileHints?.hintStatus) || null,
+      nativeRetrofitMode: stringValue(nativeRetrofitProfileHints?.mode) || null,
+      downstreamCompatibility: downstreamCompatibility
+        ? {
+            canInformViewTree: downstreamCompatibility.canInformViewTree === true,
+            canInformContextPack: downstreamCompatibility.canInformContextPack === true,
+            canInformEvidenceAdapterValidation: downstreamCompatibility.canInformEvidenceAdapterValidation === true,
+            canInformPolicyValidation: downstreamCompatibility.canInformPolicyValidation === true,
+            canInformGraphIngestionPlanning: downstreamCompatibility.canInformGraphIngestionPlanning === true,
+            canExecuteExtensionCode: downstreamCompatibility.canExecuteExtensionCode === true,
+            canSatisfyEvidence: downstreamCompatibility.canSatisfyEvidence === true,
+            canProveEquivalence: downstreamCompatibility.canProveEquivalence === true,
+            canEnforceScope: downstreamCompatibility.canEnforceScope === true,
+          }
+        : null,
+      extensionExecutionAllowed: record.extensionExecutionAllowed === true,
+      providerInvoked: record.providerInvoked === true,
+      networkCallMade: record.networkCallMade === true,
+      shellCommandsExecuted: record.shellCommandsExecuted === true,
+    }
+  }
   if (source.sourceId === 'guarded-graph-update-apply-report') {
     const operationSummary = asRecord(record.operationApplicationSummary)
     return {
@@ -1562,6 +1702,7 @@ function renderWorkJournalHtml(journal: WorkJournalDataPreview): string {
       const evidence = run.evidenceSummary || {};
       const scope = run.scopeSummary || {};
       const authority = run.authoritySummary || {};
+      const extensions = authority.extensions || {};
       const runtime = authority.runtimeEvidence || {};
       const equivalence = authority.equivalenceProof || {};
       document.getElementById('summary-grid').innerHTML =
@@ -1602,6 +1743,7 @@ function renderWorkJournalHtml(journal: WorkJournalDataPreview): string {
         '<div class="metric"><span>Blocks</span><strong>' + esc(fmt(scope.protectedPathBlocks)) + '</strong></div>' +
         '</div>' +
         '<div class="authority-list">' +
+        authorityRow('Extensions', extensions.displayState, extensions.catalogStatus || extensions.readinessStatus || extensions.nextAction) +
         authorityRow('Runtime Evidence', runtime.displayState, runtime.actualRecordStatus || runtime.readinessStatus) +
         authorityRow('Equivalence Proof', equivalence.displayState, equivalence.actualRecordStatus || equivalence.readinessStatus) +
         authorityRow('Scope/CI', scopeCi.displayState, scopeCi.actualRecordStatus || scopeCi.readinessStatus || scopeCi.activationStatus) +
@@ -1631,6 +1773,7 @@ function renderWorkJournalHtml(journal: WorkJournalDataPreview): string {
         '<details><summary>Journal safety boundary</summary><pre>' + esc(data.nonExecutionBoundary) + '</pre></details>';
     }
     function relatedSourceIds(stepId) {
+      if (stepId === 'extension-readiness') return ['extension-readiness', 'extension-profile-catalog'];
       if (stepId === 'runtime-evidence') return ['runtime-evidence-satisfaction-readiness', 'runtime-evidence-satisfaction-record'];
       if (stepId === 'equivalence-proof') return ['equivalence-proof-readiness', 'equivalence-proof-record'];
       if (stepId === 'scope-ci') return ['scope-ci', 'scope-ci-enforcement-record'];

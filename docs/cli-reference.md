@@ -81,6 +81,7 @@ devview work-journal render \
   --contract-input <context-pack.json> \
   --instruction-pack <instruction-pack.json> \
   --extension-readiness <extension-readiness.json> \
+  --extension-profile-catalog <extension-profile-catalog.json> \
   --runtime-evidence-satisfaction-readiness <runtime-readiness.json> \
   --runtime-evidence-satisfaction-record <runtime-satisfaction-record.json> \
   --equivalence-proof-readiness <equivalence-readiness.json> \
@@ -103,10 +104,11 @@ DevView Work Journal data artifact, the command preserves prior runs and replace
 deterministically. The default HTML view is compact: run status, blocked/ready reason, next action, a pipeline strip,
 Evidence and scope counts, and preview-only versus actual-authority source state. Full provenance, raw run JSON, paths,
 hashes, and artifact lists stay behind inspector drill-down sections. The journal is report-only: it summarizes DevView
-flow and source facts, including deferred guarded-update boundaries and apply-plan previews when provided, without
-executing extensions, calling providers, mutating the Maintainability Graph, applying a Graph Delta, creating runtime
-Evidence satisfaction, creating an equivalence proof, mutating external CI, or changing branch protection. A ready apply
-plan means the next action is explicit policy-gated apply authorization; it does not mean the graph was updated.
+flow and source facts, including compiled extension catalogs, deferred guarded-update boundaries, and apply-plan
+previews when provided, without executing extensions, calling providers, mutating the Maintainability Graph, applying a
+Graph Delta, creating runtime Evidence satisfaction, creating an equivalence proof, mutating external CI, or changing
+branch protection. A ready apply plan means the next action is explicit policy-gated apply authorization; it does not
+mean the graph was updated.
 
 ### UserPromptSubmit Advisory
 
@@ -335,6 +337,7 @@ devview graph read-model report-devview-baseline \
   --frontend-chain <frontend-chain.json> \
   --hook-activation-chain <hook-activation-chain.json> \
   --extension-readiness <extension-readiness.json> \
+  --extension-profile-catalog <extension-profile-catalog.json> \
   --approved-apply-dry-run <approved-apply-dry-run.json> \
   --apply-report <graph-delta-apply-report.json> \
   --evidence-decision <evidence-decision-record.json> \

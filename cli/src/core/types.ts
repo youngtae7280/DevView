@@ -173,6 +173,7 @@ export interface CliOptions {
   finalHandoff?: string
   hookActivationChain?: string
   extensionReadiness?: string
+  extensionProfileCatalog?: string
   scopeCiEnforcementReadiness?: string
   scopeCiEnforcementRecord?: string
   guardedGraphUpdateBoundaryRecord?: string

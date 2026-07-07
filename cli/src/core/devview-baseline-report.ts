@@ -15,6 +15,7 @@ export interface DevViewBaselineReportOptions {
   frontendChain?: string
   hookActivationChain?: string
   extensionReadiness?: string
+  extensionProfileCatalog?: string
   applyReadiness?: string
   approvedApplyDryRun?: string
   applyReport?: string
@@ -77,6 +78,7 @@ export interface DevViewCoreBaselineFreezeReport {
   sourceFrontendChain: string | null
   sourceHookActivationChain: string | null
   sourceExtensionReadiness: string | null
+  sourceExtensionProfileCatalog: string | null
   sourceApplyReadiness: string | null
   sourceApprovedApplyDryRun: string | null
   sourceGraphDeltaApplyReport: string | null
@@ -181,6 +183,12 @@ const OPTIONAL_SOURCE_DEFS = [
     label: 'Project-specific extension readiness',
     optionKey: 'extensionReadiness',
     expectedRole: 'devview-extension-readiness-report',
+  },
+  {
+    sourceId: 'extension-profile-catalog',
+    label: 'Project-specific extension profile catalog',
+    optionKey: 'extensionProfileCatalog',
+    expectedRole: 'devview-extension-profile-catalog',
   },
   {
     sourceId: 'graph-delta-apply-readiness',
@@ -435,6 +443,10 @@ function validateRoleStatus(source: LoadedSource, findings: DevViewBaselineFindi
 function validateExactOptionalSourceShape(source: LoadedSource, findings: DevViewBaselineFinding[]): void {
   const record = source.record
   if (!record) return
+  if (source.sourceId === 'extension-profile-catalog') {
+    validateExtensionProfileCatalogSourceShape(source, record, findings)
+    return
+  }
   if (source.sourceId === 'guarded-graph-update-apply-report') {
     validateGuardedGraphUpdateApplyReportSourceShape(source, record, findings)
     return
@@ -480,6 +492,62 @@ function validateExactOptionalSourceShape(source: LoadedSource, findings: DevVie
     if (field in record && record[field] !== false) {
       findings.push({
         code: 'DEVVIEW_BASELINE_GUARDED_APPLY_PLAN_UNSAFE_FLAG',
+        severity: 'error',
+        field: `${source.sourceId}.${field}`,
+        message: `${source.label} must keep ${field}:false.`,
+        expected: false,
+        actual: record[field],
+      })
+    }
+  }
+}
+
+function validateExtensionProfileCatalogSourceShape(
+  source: LoadedSource,
+  record: JsonRecord,
+  findings: DevViewBaselineFinding[],
+): void {
+  const role = stringValue(record.artifactRole)
+  const status = stringValue(record.status)
+  const knownStatuses = ['devview-extension-profile-catalog-compiled', 'devview-extension-profile-catalog-blocked']
+  if (role !== 'devview-extension-profile-catalog' || !knownStatuses.includes(status)) {
+    findings.push({
+      code: 'DEVVIEW_BASELINE_EXTENSION_PROFILE_CATALOG_ROLE_STATUS_INVALID',
+      severity: 'error',
+      field: `${source.sourceId}.status`,
+      message: `${source.label} must use the DevView extension profile catalog role and a known catalog status.`,
+      expected: 'devview-extension-profile-catalog with compiled or blocked status',
+      actual: { artifactRole: role, status },
+    })
+  }
+  for (const field of [
+    'extensionExecutionAllowed',
+    'extensionsExecuted',
+    'providerInvoked',
+    'networkCallMade',
+    'shellCommandsExecuted',
+    'filesMutated',
+    'graphSourceMutated',
+    'graphDeltaApplied',
+    'runtimeEvidenceSatisfied',
+    'evidenceAccepted',
+    'equivalenceProven',
+    'scopeEnforced',
+    'ciEnforcementEnabled',
+    'hooksActivated',
+    'branchProtectionChanged',
+    'branchProtectionMutated',
+    'requiredChecksConfigured',
+    'requiredChecksMutated',
+    'externalCiMutated',
+    'diffRejectionEnabled',
+    'diffRejectionActivated',
+    'approvalAutomationEnabled',
+    'userAcceptanceAutomated',
+  ]) {
+    if (field in record && record[field] !== false) {
+      findings.push({
+        code: 'DEVVIEW_BASELINE_EXTENSION_PROFILE_CATALOG_UNSAFE_FLAG',
         severity: 'error',
         field: `${source.sourceId}.${field}`,
         message: `${source.label} must keep ${field}:false.`,
@@ -772,6 +840,7 @@ function buildReport(
     sourceFrontendChain: sourcePath('frontend-chain'),
     sourceHookActivationChain: sourcePath('hook-activation-chain'),
     sourceExtensionReadiness: sourcePath('extension-readiness'),
+    sourceExtensionProfileCatalog: sourcePath('extension-profile-catalog'),
     sourceApplyReadiness: sourcePath('graph-delta-apply-readiness'),
     sourceApprovedApplyDryRun: sourcePath('approved-apply-dry-run'),
     sourceGraphDeltaApplyReport: sourcePath('graph-delta-apply-report'),
@@ -895,6 +964,9 @@ function classifyStatus(sourceId: string, status: string): BaselineClassificatio
     if (normalized.includes('rolled-back') || normalized.includes('blocked')) return 'blocked'
     return normalized.includes('applied') ? 'completed' : 'advisory'
   }
+  if (sourceId === 'extension-profile-catalog') {
+    return normalized.includes('blocked') ? 'blocked' : normalized.includes('compiled') ? 'advisory' : 'advisory'
+  }
   if (sourceId === 'graph-delta-apply-report') {
     return normalized.includes('applied') ? 'advisory' : 'blocked'
   }
@@ -906,6 +978,45 @@ function classifyStatus(sourceId: string, status: string): BaselineClassificatio
 function buildSourceFactSummary(source: LoadedSource): JsonRecord | null {
   const record = source.record
   if (!record) return null
+  if (source.sourceId === 'extension-profile-catalog') {
+    const capabilityCatalog = asRecord(record.capabilityCatalog)
+    const downstreamCompatibility = asRecord(record.downstreamCompatibility)
+    const nativeRetrofitProfileHints = asRecord(record.nativeRetrofitProfileHints)
+    const capabilityGroupCounts = {
+      analyzerExtensions: arrayStrings(capabilityCatalog?.analyzerExtensions).length,
+      viewTreeExtractorExtensions: arrayStrings(capabilityCatalog?.viewTreeExtractorExtensions).length,
+      contextPackExtensions: arrayStrings(capabilityCatalog?.contextPackExtensions).length,
+      evidenceAdapters: arrayStrings(capabilityCatalog?.evidenceAdapters).length,
+      policyExtensions: arrayStrings(capabilityCatalog?.policyExtensions).length,
+      skillWorkflowExtensions: arrayStrings(capabilityCatalog?.skillWorkflowExtensions).length,
+      graphIngestionCandidates: arrayStrings(capabilityCatalog?.graphIngestionCandidates).length,
+    }
+    return {
+      extensionCatalogStatus: stringValue(record.extensionCatalogStatus) || null,
+      catalogEntryCount: numberValue(record.catalogEntryCount) ?? arrayRecords(record.extensionCatalogEntries).length,
+      capabilityGroupCounts,
+      graphIngestionCandidateCount: arrayRecords(record.graphIngestionCandidates).length,
+      nativeRetrofitHintStatus: stringValue(nativeRetrofitProfileHints?.hintStatus) || null,
+      nativeRetrofitMode: stringValue(nativeRetrofitProfileHints?.mode) || null,
+      downstreamCompatibility: downstreamCompatibility
+        ? {
+            canInformViewTree: downstreamCompatibility.canInformViewTree === true,
+            canInformContextPack: downstreamCompatibility.canInformContextPack === true,
+            canInformEvidenceAdapterValidation: downstreamCompatibility.canInformEvidenceAdapterValidation === true,
+            canInformPolicyValidation: downstreamCompatibility.canInformPolicyValidation === true,
+            canInformGraphIngestionPlanning: downstreamCompatibility.canInformGraphIngestionPlanning === true,
+            canExecuteExtensionCode: downstreamCompatibility.canExecuteExtensionCode === true,
+            canSatisfyEvidence: downstreamCompatibility.canSatisfyEvidence === true,
+            canProveEquivalence: downstreamCompatibility.canProveEquivalence === true,
+            canEnforceScope: downstreamCompatibility.canEnforceScope === true,
+          }
+        : null,
+      extensionExecutionAllowed: record.extensionExecutionAllowed === true,
+      providerInvoked: record.providerInvoked === true,
+      networkCallMade: record.networkCallMade === true,
+      shellCommandsExecuted: record.shellCommandsExecuted === true,
+    }
+  }
   if (source.sourceId === 'guarded-graph-update-apply-report') {
     const operationSummary = asRecord(record.operationApplicationSummary)
     return {
@@ -1192,7 +1303,9 @@ const UNSAFE_TRUE_FIELDS = new Set([
   'networkCallMade',
   'extensionExecutionAllowed',
   'extensionsExecuted',
+  'executionAllowed',
   'shellCommandsExecuted',
+  'shellCommandExecuted',
   'filesMutated',
   'extensionCodeExecuted',
   'automaticRequestIrGenerationEnabled',
