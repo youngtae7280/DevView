@@ -104,6 +104,7 @@ import {
   securityReportEnterpriseReadinessCommand,
   securityReportProviderNetworkPolicyCommand,
   securityReportRbacReadinessCommand,
+  securityVerifyRecordEnvelopeCommand,
 } from './security.js'
 import {
   coverageAuditCompleteCommand,
@@ -184,6 +185,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'security' && subcommand === 'preview-record-envelope') {
     return securityPreviewRecordEnvelopeCommand(context)
+  }
+  if (command === 'security' && subcommand === 'verify-record-envelope') {
+    return securityVerifyRecordEnvelopeCommand(context)
   }
   if (command === 'gate') {
     if (subcommand === 'assess') {

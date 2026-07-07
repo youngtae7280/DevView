@@ -8,6 +8,10 @@ import {
 } from '../core/provider-network-policy-report.js'
 import { RbacReadinessReportValidationError, reportRbacReadiness } from '../core/rbac-readiness-report.js'
 import { RecordEnvelopePreviewValidationError, previewRecordEnvelope } from '../core/record-envelope-preview.js'
+import {
+  RecordEnvelopeVerificationValidationError,
+  verifyRecordEnvelope,
+} from '../core/record-envelope-verification.js'
 import type { CommandResult } from '../core/types.js'
 import { ExitCode, issue } from '../core/types.js'
 import type { CommandContext } from './shared.js'
@@ -263,6 +267,70 @@ export async function securityPreviewRecordEnvelopeCommand(context: CommandConte
           message,
           suggestedFix:
             'Provide --payload, --required-permission, --actor-id, --actor-type, --actor-role, and --output outside source/control artifacts.',
+        }),
+      ],
+    }
+  }
+}
+
+export async function securityVerifyRecordEnvelopeCommand(context: CommandContext): Promise<CommandResult> {
+  try {
+    const report = await verifyRecordEnvelope(context.options.root, {
+      recordEnvelopePreview: context.options.recordEnvelopePreview,
+      payload: context.options.payload,
+      sourceArtifacts: context.options.sourceArtifacts,
+      previousEnvelope: context.options.previousEnvelope,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+
+    return {
+      ok: true,
+      command: 'security verify-record-envelope',
+      exitCode: ExitCode.Success,
+      message: 'Record envelope preview verified as a deterministic report-only artifact.',
+      issues: [],
+      data: { ...report },
+    }
+  } catch (error) {
+    if (error instanceof RecordEnvelopeVerificationValidationError) {
+      const report = error.report
+      const blockers = report.verificationFindings.filter((finding) => finding.severity === 'blocker')
+      return {
+        ok: false,
+        command: 'security verify-record-envelope',
+        exitCode: ExitCode.ValidationFailed,
+        message: 'Record envelope verification is blocked before any signing, RBAC enforcement, or source mutation.',
+        issues: blockers.map((finding) =>
+          issue({
+            validator: 'RecordEnvelopeVerification',
+            code: finding.code,
+            severity: 'error',
+            message: finding.message,
+            file: finding.path,
+            reason: finding.field ? `Field: ${finding.field}` : undefined,
+            suggestedFix:
+              'Provide the explicit payload, source artifacts, and previous envelope files that match the unsigned preview digests.',
+          }),
+        ),
+        data: { ...report },
+      }
+    }
+
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'security verify-record-envelope',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Record envelope verification could not run.',
+      issues: [
+        issue({
+          validator: 'RecordEnvelopeVerification',
+          code: 'RECORD_ENVELOPE_VERIFICATION_FAILED',
+          severity: 'error',
+          message,
+          suggestedFix:
+            'Provide --record-envelope-preview, --payload, and --output outside source/control artifacts and source inputs.',
         }),
       ],
     }

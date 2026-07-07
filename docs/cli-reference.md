@@ -285,6 +285,28 @@ permission verification and cryptographic signature verification are not perform
 payload/source artifact, does not generate keys, does not sign records, does not enforce RBAC, and keeps
 provider/network/execution/graph/lifecycle authority flags false.
 
+### Record Envelope Verification
+
+```bash
+devview security verify-record-envelope \
+  --record-envelope-preview <record-envelope-preview.json> \
+  --payload <artifact.json> \
+  --source-artifacts <source-a.json,source-b.json> \
+  --previous-envelope <record-envelope-preview.json> \
+  --output <record-envelope-verification.json> \
+  --markdown <record-envelope-verification.md> \
+  --json
+```
+
+Verifies an unsigned envelope preview by recomputing raw byte digests from explicit CLI-supplied payload, source
+artifact, and previous-envelope files. The command checks preview role/status/signature mode, payload path/hash/length,
+source digest coverage, and previous envelope chain hash when present. It emits
+`devview-record-envelope-verification-report` and keeps
+`signatureVerificationMode: not-performed-unsigned-preview-only`, `cryptographicSignatureVerified:false`,
+`rbacPermissionVerified:false`, and `rbacEnforced:false`. It does not sign records, generate or store keys, enforce
+RBAC, mutate payload/source artifacts, call providers/network/API, execute extensions, mutate graph-source, configure
+CI/hooks, or automate approval.
+
 ### Graphify Import Validation
 
 ```bash
