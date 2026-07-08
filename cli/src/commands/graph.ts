@@ -60,6 +60,7 @@ import {
   proposeGraphUpdate,
 } from '../core/graph-operation.js'
 import { buildRetrofitPlan } from '../core/graph-retrofit.js'
+import { CodeSubgraphValidationError, validateCodeSubgraphFile } from '../core/code-subgraph-validation.js'
 import {
   compareReadModelEvidence,
   generateReadModelEvidence,
@@ -348,6 +349,64 @@ export async function graphRetrofitPlanCommand(context: CommandContext): Promise
             'Provide an active retrofit graph-source with records, nodes, edges, edgeIntent, and forbidden-flow boundaries.',
         }),
       ],
+    }
+  }
+}
+
+export async function graphValidateCodeSubgraphCommand(context: CommandContext): Promise<CommandResult> {
+  const codeSubgraph = context.options.codeSubgraph
+  if (!codeSubgraph) {
+    return invalidCommand('graph validate-code-subgraph requires --code-subgraph <file>.')
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph validate-code-subgraph requires --output <file>.')
+  }
+
+  try {
+    const result = await validateCodeSubgraphFile(context.options.root, {
+      codeSubgraph,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph validate-code-subgraph',
+      exitCode: ExitCode.Success,
+      message: 'Code subgraph source fact validated without extraction or graph-source mutation.',
+      issues: [],
+      data: result,
+    }
+  } catch (error) {
+    const findings = error instanceof CodeSubgraphValidationError ? error.report.validationFindings : []
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph validate-code-subgraph',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Code subgraph validation blocked.',
+      issues:
+        findings.length > 0
+          ? findings.map((finding) =>
+              issue({
+                validator: 'CodeSubgraphValidation',
+                code: finding.code,
+                severity: 'error',
+                file: finding.path,
+                message: finding.message,
+                suggestedFix:
+                  'Provide a report-only devview-code-subgraph with supported code node/edge vocabulary, valid endpoints, required provenance, and no unsafe authority flags.',
+              }),
+            )
+          : [
+              issue({
+                validator: 'CodeSubgraphValidation',
+                code: 'CODE_SUBGRAPH_VALIDATION_BLOCKED',
+                severity: 'error',
+                message,
+                suggestedFix:
+                  'Provide --code-subgraph and --output paths outside source/control artifacts, then rerun validation.',
+              }),
+            ],
     }
   }
 }

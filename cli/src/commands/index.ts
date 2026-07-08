@@ -89,6 +89,7 @@ import {
   graphReadModelValidateRequestIrGraphCommand,
   graphReadModelValidateRequestIrCommand,
   graphReadModelValidateCommand,
+  graphValidateCodeSubgraphCommand,
   cleanupLegacyCommand,
   reportLegacyArtifactsCommand,
 } from './graph.js'
@@ -367,6 +368,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'retrofit' && positionals[2] === 'plan') {
     return graphRetrofitPlanCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'validate-code-subgraph') {
+    return graphValidateCodeSubgraphCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate') {
     return graphReadModelGenerateCommand(context)

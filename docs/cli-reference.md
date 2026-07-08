@@ -711,6 +711,23 @@ alignment, and expected context coverage hints for future `codex-graphify` and `
 fixtures. The command is report-only and blocks executable/provider/network instructions or unsafe authority flags
 before output is written.
 
+### Code Subgraph Validation
+
+```bash
+devview graph validate-code-subgraph \
+  --code-subgraph <code-subgraph.json> \
+  --output <code-subgraph-validation.json> \
+  --markdown <code-subgraph-validation.md> \
+  --json
+```
+
+Validates a static `devview-code-subgraph` source fact intended to become the code-structure portion of the unified
+DevView Maintainability Graph. The command checks supported code node kinds, code edge types, endpoint integrity, and
+per-node/per-edge provenance such as source file, source location or source-location status, and
+`extracted`/`inferred`/`ambiguous` confidence. It emits `devview-code-subgraph-validation-report` only. It does not run
+Graphify, run AST extractors, mutate graph-source, generate View Trees or Context Packs, satisfy Evidence, enforce RBAC,
+verify signatures, call providers/network/API, execute shell or extension code, configure CI, or automate approval.
+
 ### Work Journal
 
 ```bash
