@@ -747,6 +747,26 @@ common build/control directories, records unsupported extensions as limitations,
 package scripts, invoke Graphify, call providers/network/API, mutate graph-source, generate View Trees or Context Packs,
 satisfy Evidence, enforce RBAC, verify signatures, configure CI, activate hooks, or automate approval.
 
+### Code Subgraph Merge Plan
+
+```bash
+devview graph plan-code-subgraph-merge \
+  --code-subgraph <devview-code-subgraph.json> \
+  --code-subgraph-validation <code-subgraph-validation.json> \
+  --graph-source <maintainability-graph.json> \
+  --output <code-subgraph-merge-plan.json> \
+  --markdown <code-subgraph-merge-plan.md> \
+  --json
+```
+
+Plans how validated code nodes and code edges would be added to the single DevView Maintainability Graph. The command is
+a dry-run boundary: it accepts only `devview-code-subgraph` source facts and passed
+`devview-code-subgraph-validation-report` artifacts, optionally reads a graph-source JSON to summarize id collisions and
+duplicate edges, and emits `devview-code-subgraph-merge-plan-report`. It does not create a separate code graph, mutate
+graph-source, apply a graph delta, generate View Trees or Context Packs, execute Graphify or project code, call
+providers/network/API, satisfy Evidence, enforce RBAC, verify signatures, configure CI, activate hooks, or automate
+approval.
+
 ### Code Subgraph Validation
 
 ```bash

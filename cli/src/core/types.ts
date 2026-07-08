@@ -85,6 +85,7 @@ export interface CliOptions {
   readModel?: string
   graphSource?: string
   codeSubgraph?: string
+  codeSubgraphValidation?: string
   projectMemory?: string
   directionChange?: string
   record?: string

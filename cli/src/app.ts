@@ -127,6 +127,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     readModel: undefined as string | undefined,
     graphSource: undefined as string | undefined,
     codeSubgraph: undefined as string | undefined,
+    codeSubgraphValidation: undefined as string | undefined,
     projectMemory: undefined as string | undefined,
     directionChange: undefined as string | undefined,
     record: undefined as string | undefined,
@@ -492,6 +493,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--code-subgraph requires a file path.' }
       }
       options.codeSubgraph = value
+      index += 1
+    } else if (arg === '--code-subgraph-validation') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--code-subgraph-validation requires a file path.' }
+      }
+      options.codeSubgraphValidation = value
       index += 1
     } else if (arg === '--read-model') {
       const value = argv[index + 1]

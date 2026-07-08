@@ -24,6 +24,7 @@ import { gateAssessCommand, gateCommand } from './gate.js'
 import {
   graphExecutionContractReportCommand,
   graphImportGraphifyCodeSubgraphCommand,
+  graphPlanCodeSubgraphMergeCommand,
   graphOperationApplyProposalCommand,
   graphOperationCaptureDeltaCommand,
   graphOperationGeneratePackCommand,
@@ -379,6 +380,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'extract-code-subgraph') {
     return graphExtractCodeSubgraphCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'plan-code-subgraph-merge') {
+    return graphPlanCodeSubgraphMergeCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate') {
     return graphReadModelGenerateCommand(context)

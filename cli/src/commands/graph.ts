@@ -69,6 +69,7 @@ import {
   extractNativeCodeSubgraphFile,
   NativeCodeSubgraphExtractionError,
 } from '../core/native-code-subgraph-extractor.js'
+import { CodeSubgraphMergePlanError, planCodeSubgraphMergeFile } from '../core/code-subgraph-merge-plan.js'
 import {
   compareReadModelEvidence,
   generateReadModelEvidence,
@@ -547,6 +548,72 @@ export async function graphExtractCodeSubgraphCommand(context: CommandContext): 
               }),
             ],
       data: error instanceof NativeCodeSubgraphExtractionError ? error.report : undefined,
+    }
+  }
+}
+
+export async function graphPlanCodeSubgraphMergeCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.codeSubgraph && !context.options.codeSubgraphValidation) {
+    return invalidCommand(
+      'graph plan-code-subgraph-merge requires --code-subgraph <file> and/or --code-subgraph-validation <file>.',
+    )
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph plan-code-subgraph-merge requires --output <code-subgraph-merge-plan.json>.')
+  }
+
+  try {
+    const result = await planCodeSubgraphMergeFile(context.options.root, {
+      codeSubgraph: context.options.codeSubgraph,
+      codeSubgraphValidation: context.options.codeSubgraphValidation,
+      graphSource: context.options.graphSource,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph plan-code-subgraph-merge',
+      exitCode: ExitCode.Success,
+      message:
+        'Code subgraph merge plan recorded as a dry-run for the unified DevView Maintainability Graph without mutation.',
+      issues: [],
+      data: result,
+    }
+  } catch (error) {
+    const findings = error instanceof CodeSubgraphMergePlanError ? error.report.mergeFindings : []
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph plan-code-subgraph-merge',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Code subgraph merge plan blocked.',
+      issues:
+        findings.length > 0
+          ? findings
+              .filter((finding) => finding.severity === 'blocker')
+              .map((finding) =>
+                issue({
+                  validator: 'CodeSubgraphMergePlan',
+                  code: finding.code,
+                  severity: 'error',
+                  file: finding.path,
+                  message: finding.message,
+                  reason: finding.field ? `Field: ${finding.field}` : undefined,
+                  suggestedFix:
+                    'Provide validated devview-code-subgraph source facts and dedicated report output paths; this command cannot mutate graph-source or create View Trees/Context Packs.',
+                }),
+              )
+          : [
+              issue({
+                validator: 'CodeSubgraphMergePlan',
+                code: 'CODE_SUBGRAPH_MERGE_PLAN_BLOCKED',
+                severity: 'error',
+                message,
+                suggestedFix:
+                  'Provide --code-subgraph and/or --code-subgraph-validation plus --output paths outside source/control artifacts.',
+              }),
+            ],
+      data: error instanceof CodeSubgraphMergePlanError ? error.report : undefined,
     }
   }
 }
