@@ -18,6 +18,7 @@ const REQUIRED_GROUPS = [
   'stopConditions',
   'knownRisks',
 ]
+const MAX_INSTRUCTION_CODE_SYMBOL_TARGETS = 50
 
 type JsonRecord = Record<string, unknown>
 
@@ -71,6 +72,8 @@ export interface InstructionPackResult {
   nonGoals: string[]
   verificationInstructions: string[]
   graphContext: JsonRecord
+  codeSymbolContext?: JsonRecord
+  codeInspectionTargets?: JsonRecord[]
   trace: JsonRecord[]
   validationFindings: InstructionPackFinding[]
   humanReviewRequired: boolean
@@ -117,6 +120,7 @@ export function generateInstructionPack(
   const outputRequirements = arrayRecords(input?.outputRequirements)
   const stopConditions = arrayRecords(input?.stopConditions)
   const knownRisks = arrayRecords(input?.knownRisks)
+  const codeSymbolProjection = buildInstructionCodeSymbolProjection(input)
 
   const blocked = findings.some((finding) => finding.severity === 'error')
   const humanRequest = asRecord(input?.humanRequest)
@@ -170,10 +174,25 @@ export function generateInstructionPack(
     stopConditions,
     knownRisks,
     outputRequirements,
-    executionInstructions: buildExecutionInstructions(allowedScope, forbiddenScope, requiredEvidence),
+    executionInstructions: buildExecutionInstructions(
+      allowedScope,
+      forbiddenScope,
+      requiredEvidence,
+      codeSymbolProjection.codeInspectionTargets,
+    ),
     nonGoals: buildNonGoals(forbiddenScope),
-    verificationInstructions: buildVerificationInstructions(requiredEvidence, outputRequirements),
-    graphContext: buildGraphContext(input),
+    verificationInstructions: buildVerificationInstructions(
+      requiredEvidence,
+      outputRequirements,
+      codeSymbolProjection.codeInspectionTargets,
+    ),
+    graphContext: buildGraphContext(input, codeSymbolProjection),
+    ...(codeSymbolProjection.codeSymbolContext
+      ? {
+          codeSymbolContext: codeSymbolProjection.codeSymbolContext,
+          codeInspectionTargets: codeSymbolProjection.codeInspectionTargets,
+        }
+      : {}),
     trace,
     validationFindings: [
       ...findings,
@@ -234,6 +253,9 @@ export function renderInstructionPackMarkdown(pack: InstructionPackResult): stri
     '',
     ...renderRiskRows(pack.knownRisks),
     '',
+    ...(pack.codeInspectionTargets && pack.codeInspectionTargets.length > 0
+      ? ['## Code Symbols', '', ...renderCodeSymbolRows(pack.codeInspectionTargets), '']
+      : []),
     '## Non-goals',
     '',
     ...pack.nonGoals.map((entry) => `- ${entry}`),
@@ -487,6 +509,82 @@ function validateContractInputPrerequisites(input: JsonRecord | null, findings: 
   }
 }
 
+function buildInstructionCodeSymbolProjection(input: JsonRecord | null): {
+  codeSymbolContext?: JsonRecord
+  codeInspectionTargets: JsonRecord[]
+} {
+  const sourceContext = asRecord(input?.codeSymbolContext)
+  const sourceTargets = arrayRecords(input?.codeInspectionTargets)
+  if (!sourceContext && sourceTargets.length === 0) {
+    return { codeInspectionTargets: [] }
+  }
+
+  const codeInspectionTargets = sourceTargets
+    .slice(0, MAX_INSTRUCTION_CODE_SYMBOL_TARGETS)
+    .map((target) => ({
+      id: stringValue(target.id),
+      nodeId: stringValue(target.nodeId),
+      nodeKind: stringValue(target.nodeKind),
+      label: stringValue(target.label),
+      sourceFile: stringValue(target.sourceFile),
+      ...(target.sourceLocation ? { sourceLocation: target.sourceLocation } : {}),
+      ...(stringValue(target.sourceLocationStatus)
+        ? { sourceLocationStatus: stringValue(target.sourceLocationStatus) }
+        : {}),
+      confidence: stringValue(target.confidence),
+      inspectReason: stringValue(target.inspectReason),
+      selectedAs: stringArray(target.selectedAs),
+      linkReasons: arrayRecords(target.linkReasons).map((link) => ({
+        linkId: stringValue(link.linkId),
+        sourceNodeId: stringValue(link.sourceNodeId),
+        sourceNodeKind: stringValue(link.sourceNodeKind),
+        linkType: stringValue(link.linkType),
+        confidence: stringValue(link.confidence),
+        ...(stringValue(link.sourceFile) ? { sourceFile: stringValue(link.sourceFile) } : {}),
+        ...(stringValue(link.sourceLocationStatus)
+          ? { sourceLocationStatus: stringValue(link.sourceLocationStatus) }
+          : {}),
+      })),
+      fullSourceIncluded: false,
+      sourceStatus: stringValue(target.sourceStatus) || 'derived-from-contract-input-code-symbol-context',
+    }))
+    .sort((left, right) => left.nodeId.localeCompare(right.nodeId))
+
+  return {
+    codeInspectionTargets,
+    codeSymbolContext: {
+      artifactRole: 'devview-instruction-pack-code-symbol-context',
+      status:
+        codeInspectionTargets.length > 0
+          ? 'devview-instruction-pack-code-symbol-context-carried'
+          : 'devview-instruction-pack-code-symbol-context-empty',
+      sourceContractInputCodeSymbolContextStatus: stringValue(sourceContext?.status),
+      selectedCodeNodeCount: codeInspectionTargets.length,
+      totalContractInputCodeNodeCount: sourceTargets.length,
+      omittedCodeNodeCount:
+        (numberValue(sourceContext?.omittedCodeNodeCount) ?? 0) +
+        Math.max(0, sourceTargets.length - MAX_INSTRUCTION_CODE_SYMBOL_TARGETS),
+      sourceCodeSubgraph: asRecord(sourceContext?.sourceCodeSubgraph),
+      sourceCodeSymbolLinksValidation: asRecord(sourceContext?.sourceCodeSymbolLinksValidation),
+      boundedContext: {
+        maxCodeInspectionTargets: MAX_INSTRUCTION_CODE_SYMBOL_TARGETS,
+        fullSourceFilesIncluded: false,
+        sourceContentDumped: false,
+      },
+      unifiedGraphBoundary: {
+        separateCodeGraphCreated: false,
+        graphSourceMutated: false,
+        graphDeltaApplied: false,
+        codexExecutionTriggered: false,
+        runtimeEvidenceSatisfied: false,
+        equivalenceProven: false,
+        scopeEnforced: false,
+        ciEnforcementEnabled: false,
+      },
+    },
+  }
+}
+
 function buildTarget(input: JsonRecord | null, allowedScope: JsonRecord[]): JsonRecord {
   return {
     projectName: 'Todo App',
@@ -512,6 +610,7 @@ function buildExecutionInstructions(
   allowedScope: JsonRecord[],
   forbiddenScope: JsonRecord[],
   requiredEvidence: JsonRecord[],
+  codeInspectionTargets: JsonRecord[],
 ): string[] {
   const instructions = [
     `Stay within allowed scope only: ${summarizeAllowedScope(allowedScope)}.`,
@@ -530,6 +629,11 @@ function buildExecutionInstructions(
   if (requiredEvidence.some((entry) => stringValue(entry.artifact).startsWith('unresolved:'))) {
     instructions.push('Required evidence contains unresolved artifacts; stop before inventing an evidence output path.')
   }
+  if (codeInspectionTargets.length > 0) {
+    instructions.push(
+      `Inspect linked code symbols before broad source exploration: ${summarizeCodeInspectionTargets(codeInspectionTargets)}.`,
+    )
+  }
   return instructions
 }
 
@@ -545,21 +649,38 @@ function buildNonGoals(forbiddenScope: JsonRecord[]): string[] {
   ])
 }
 
-function buildVerificationInstructions(requiredEvidence: JsonRecord[], outputRequirements: JsonRecord[]): string[] {
+function buildVerificationInstructions(
+  requiredEvidence: JsonRecord[],
+  outputRequirements: JsonRecord[],
+  codeInspectionTargets: JsonRecord[],
+): string[] {
   return [
     ...requiredEvidence.map((entry) => {
       const artifact = stringValue(entry.artifact) || 'unresolved evidence artifact'
       return `Review or produce candidate evidence for ${stringValue(entry.id)} at ${artifact}; keep runtimeEvidenceSatisfied=false until explicit review.`
     }),
     ...outputRequirements.map((entry) => stringValue(entry.requiredReportTarget)).filter(Boolean),
+    ...codeInspectionTargets.map(
+      (entry) =>
+        `When explaining scope, cite why code symbol ${stringValue(entry.nodeId)} was selected: ${summarizeLinkReasons(arrayRecords(entry.linkReasons))}.`,
+    ),
   ]
 }
 
-function buildGraphContext(input: JsonRecord | null): JsonRecord {
+function buildGraphContext(
+  input: JsonRecord | null,
+  codeSymbolProjection: { codeSymbolContext?: JsonRecord; codeInspectionTargets: JsonRecord[] },
+): JsonRecord {
   const graphSnapshot = asRecord(input?.graphSnapshot)
   return {
     sourceGraphSnapshot: graphSnapshot,
     targetScopeCandidates: arrayRecords(input?.targetScopeCandidates),
+    ...(codeSymbolProjection.codeSymbolContext
+      ? {
+          codeSymbolContext: codeSymbolProjection.codeSymbolContext,
+          codeInspectionTargets: codeSymbolProjection.codeInspectionTargets,
+        }
+      : {}),
     mappingTraceSource: 'contract-input-mappingTrace',
     contextAuthority: 'contract-input-derived-trace-context-not-edit-approval',
   }
@@ -641,9 +762,50 @@ function renderRiskRows(entries: JsonRecord[]): string[] {
   return entries.map((entry) => `- ${stringValue(entry.id) || 'risk'}: ${stringValue(entry.mitigation)}`)
 }
 
+function renderCodeSymbolRows(entries: JsonRecord[]): string[] {
+  if (entries.length === 0) {
+    return ['- none']
+  }
+  return entries.map((entry) => {
+    const nodeId = stringValue(entry.nodeId)
+    const nodeKind = stringValue(entry.nodeKind)
+    const sourceFile = stringValue(entry.sourceFile)
+    const linkSummary = summarizeLinkReasons(arrayRecords(entry.linkReasons))
+    const source = sourceFile ? ` in \`${sourceFile}\`` : ''
+    return `- ${nodeKind || 'code'} \`${nodeId || stringValue(entry.id)}\`${source}: ${linkSummary}`
+  })
+}
+
 function summarizeAllowedScope(allowedScope: JsonRecord[]): string {
   const paths = allowedScope.flatMap((entry) => stringArray(entry.paths))
   return paths.length > 0 ? paths.join(', ') : 'no concrete allowed paths'
+}
+
+function summarizeCodeInspectionTargets(entries: JsonRecord[]): string {
+  return entries
+    .slice(0, 8)
+    .map((entry) => {
+      const nodeKind = stringValue(entry.nodeKind) || 'code'
+      const nodeId = stringValue(entry.nodeId) || stringValue(entry.id)
+      const sourceFile = stringValue(entry.sourceFile)
+      return sourceFile ? `${nodeKind} ${nodeId} (${sourceFile})` : `${nodeKind} ${nodeId}`
+    })
+    .join('; ')
+}
+
+function summarizeLinkReasons(linkReasons: JsonRecord[]): string {
+  if (linkReasons.length === 0) {
+    return 'selected from View Tree code symbol context'
+  }
+  return linkReasons
+    .slice(0, 5)
+    .map((link) => {
+      const sourceNodeId = stringValue(link.sourceNodeId)
+      const linkType = stringValue(link.linkType)
+      const confidence = stringValue(link.confidence)
+      return `${sourceNodeId || 'maintenance-node'} ${linkType || 'linked'} (${confidence || 'confidence-unset'})`
+    })
+    .join('; ')
 }
 
 function asRecord(value: unknown): JsonRecord | null {
@@ -663,6 +825,10 @@ function stringArray(value: unknown): string[] {
 
 function stringValue(value: unknown): string {
   return typeof value === 'string' ? value : ''
+}
+
+function numberValue(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null
 }
 
 function isSeverity(value: unknown): value is IssueSeverity {

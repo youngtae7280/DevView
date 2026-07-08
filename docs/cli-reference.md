@@ -811,6 +811,30 @@ why each code symbol was selected. This tranche is View Tree only: it does not g
 code subgraph, mutate graph-source, apply graph deltas, execute code, call providers/network/API, accept Evidence,
 enforce scope/RBAC, configure CI, activate hooks, or automate approval.
 
+### Context And Instruction Symbol Selection
+
+```bash
+devview graph read-model generate-contract-input \
+  --view-tree <view-tree.json> \
+  --output <contract-input.json> \
+  --json
+
+devview graph read-model generate-instruction-pack \
+  --contract-input <contract-input.json> \
+  --output <instruction-pack.json> \
+  --markdown <instruction-pack.md> \
+  --json
+```
+
+When the source View Tree contains `selectedCodeNodes` and `codeSymbolContext`, Contract Input generation carries a
+bounded `codeInspectionTargets` section and a traceable `codeSymbolContext` summary. Instruction Pack generation then
+preserves that compact symbol context and adds review hints that point the AI toward the linked
+file/class/function/method before broad source exploration. These sections preserve maintenance link reasons,
+confidence, source files, and source locations, but they do not dump full source file contents. The generators remain
+deterministic preview steps: they do not execute code, mutate graph-source, apply graph deltas, call
+providers/network/API, accept Evidence, satisfy runtime Evidence, enforce scope/RBAC, configure CI, activate hooks, or
+automate approval.
+
 ### Code Subgraph Validation
 
 ```bash

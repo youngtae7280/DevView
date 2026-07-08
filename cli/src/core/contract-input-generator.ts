@@ -15,6 +15,8 @@ const REQUIRED_INPUT_GROUPS = [
   'stopConditionSources',
   'riskSources',
 ]
+const MAX_CODE_INSPECTION_TARGETS = 50
+const MAX_CODE_LINK_REASONS_PER_TARGET = 5
 
 type JsonRecord = Record<string, unknown>
 
@@ -78,6 +80,8 @@ export interface ContractCompilerInputResult {
   stopConditions: JsonRecord[]
   riskSources: JsonRecord[]
   knownRisks: JsonRecord[]
+  codeSymbolContext?: JsonRecord
+  codeInspectionTargets?: JsonRecord[]
   compilerInputModelCompatibility: {
     requiredInputGroups: string[]
     requiredInputGroupsPresent: string[]
@@ -206,6 +210,11 @@ export function generateContractCompilerInput(
     stringValue(asRecord(graphAwareValidation?.changeTypeCompatibility)?.changeTypeCandidate) ||
     'selected-slice-preview'
   const mappingTrace: JsonRecord[] = []
+  const codeSymbolProjection = buildCodeSymbolProjection({
+    selectedCodeNodes: arrayRecords(slice?.selectedCodeNodes),
+    viewTreeCodeSymbolContext: asRecord(slice?.codeSymbolContext),
+    mappingTrace,
+  })
 
   const targetScopeCandidates = buildTargetScopeCandidates({
     includedScopeNodes,
@@ -271,6 +280,8 @@ export function generateContractCompilerInput(
     graphSourcePath,
     generatedReadModelPath,
     selectedNodes,
+    codeSymbolContext: codeSymbolProjection.codeSymbolContext,
+    codeInspectionTargets: codeSymbolProjection.codeInspectionTargets,
   })
   const humanRequest = {
     id: 'request-todo-app-runtime-evidence-only-contract-input-preview',
@@ -363,6 +374,12 @@ export function generateContractCompilerInput(
     stopConditions,
     riskSources,
     knownRisks,
+    ...(codeSymbolProjection.codeSymbolContext
+      ? {
+          codeSymbolContext: codeSymbolProjection.codeSymbolContext,
+          codeInspectionTargets: codeSymbolProjection.codeInspectionTargets,
+        }
+      : {}),
     compilerInputModelCompatibility: {
       requiredInputGroups: REQUIRED_INPUT_GROUPS,
       requiredInputGroupsPresent: REQUIRED_INPUT_GROUPS.filter((group) => !missingRequiredInputGroups.includes(group)),
@@ -459,6 +476,120 @@ function validateSelectedSlicePrerequisites(slice: JsonRecord | null, findings: 
       })
     }
   }
+}
+
+function buildCodeSymbolProjection(input: {
+  selectedCodeNodes: JsonRecord[]
+  viewTreeCodeSymbolContext: JsonRecord | null
+  mappingTrace: JsonRecord[]
+}): { codeSymbolContext?: JsonRecord; codeInspectionTargets: JsonRecord[] } {
+  if (!input.viewTreeCodeSymbolContext && input.selectedCodeNodes.length === 0) {
+    return { codeInspectionTargets: [] }
+  }
+
+  const sortedNodes = [...input.selectedCodeNodes].sort((left, right) =>
+    stringValue(left.nodeId).localeCompare(stringValue(right.nodeId)),
+  )
+  const boundedNodes = sortedNodes.slice(0, MAX_CODE_INSPECTION_TARGETS)
+  const codeInspectionTargets = boundedNodes.map((node) => {
+    const nodeId = stringValue(node.nodeId)
+    const mappedId = `code-target-${slug(nodeId || 'unknown-code-node')}`
+    const linkReasons = arrayRecords(node.linkedFrom)
+      .slice(0, MAX_CODE_LINK_REASONS_PER_TARGET)
+      .map((link) => ({
+        linkId: stringValue(link.linkId),
+        sourceNodeId: stringValue(link.sourceNodeId),
+        sourceNodeKind: stringValue(link.sourceNodeKind),
+        linkType: stringValue(link.linkType),
+        confidence: stringValue(link.confidence),
+        ...(stringValue(link.sourceFile) ? { sourceFile: stringValue(link.sourceFile) } : {}),
+        ...(stringValue(link.sourceLocationStatus)
+          ? { sourceLocationStatus: stringValue(link.sourceLocationStatus) }
+          : {}),
+        ...(link.sourceLocation ? { sourceLocation: link.sourceLocation } : {}),
+      }))
+    input.mappingTrace.push({
+      targetField: 'codeInspectionTargets',
+      sourceCodeNodeId: nodeId,
+      mappedId,
+      reason: 'selected View Tree code node carried into bounded Contract Input symbol context',
+    })
+    return {
+      id: mappedId,
+      nodeId,
+      nodeKind: stringValue(node.nodeKind),
+      label: stringValue(node.label),
+      sourceFile: stringValue(node.sourceFile),
+      ...(node.sourceLocation ? { sourceLocation: node.sourceLocation } : {}),
+      ...(stringValue(node.sourceLocationStatus)
+        ? { sourceLocationStatus: stringValue(node.sourceLocationStatus) }
+        : {}),
+      ...(stringValue(node.sourceDigest) ? { sourceDigest: stringValue(node.sourceDigest) } : {}),
+      confidence: stringValue(node.confidence),
+      inspectReason: stringValue(node.selectionReason) || 'selected from View Tree code symbol context',
+      selectedAs: stringArray(node.selectedAs),
+      sourceAuthorityStatus: stringValue(node.sourceAuthorityStatus),
+      linkReasons,
+      omittedLinkReasonCount: Math.max(0, arrayRecords(node.linkedFrom).length - MAX_CODE_LINK_REASONS_PER_TARGET),
+      fullSourceIncluded: false,
+      sourceStatus: 'derived-from-view-tree-selected-code-node',
+    }
+  })
+
+  const selectedCodeNodeCount = input.selectedCodeNodes.length
+  const sourceContext = input.viewTreeCodeSymbolContext
+  const sourceCodeSubgraph = asRecord(sourceContext?.sourceCodeSubgraph)
+  const sourceCodeSymbolLinksValidation = asRecord(sourceContext?.sourceCodeSymbolLinksValidation)
+  const codeSymbolContext = {
+    artifactRole: 'devview-contract-input-code-symbol-context',
+    status:
+      codeInspectionTargets.length > 0
+        ? 'devview-contract-input-code-symbol-context-carried'
+        : 'devview-contract-input-code-symbol-context-empty',
+    sourceViewTreeCodeSymbolContextStatus: stringValue(sourceContext?.status),
+    selectedCodeNodeCount: codeInspectionTargets.length,
+    totalViewTreeSelectedCodeNodeCount: selectedCodeNodeCount,
+    omittedCodeNodeCount: Math.max(0, selectedCodeNodeCount - MAX_CODE_INSPECTION_TARGETS),
+    linkedMaintenanceNodeCount: numberValue(sourceContext?.linkedMaintenanceNodeCount) ?? null,
+    selectedLinkCount: numberValue(sourceContext?.selectedLinkCount) ?? null,
+    missingCodeNodeCount: numberValue(sourceContext?.missingCodeNodeCount) ?? 0,
+    sourceCodeSubgraph: sourceCodeSubgraph
+      ? {
+          path: stringValue(sourceCodeSubgraph.path),
+          artifactRole: stringValue(sourceCodeSubgraph.artifactRole),
+          status: stringValue(sourceCodeSubgraph.status),
+          scope: stringValue(sourceCodeSubgraph.scope),
+          sha256: stringValue(sourceCodeSubgraph.sha256),
+        }
+      : null,
+    sourceCodeSymbolLinksValidation: sourceCodeSymbolLinksValidation
+      ? {
+          path: stringValue(sourceCodeSymbolLinksValidation.path),
+          artifactRole: stringValue(sourceCodeSymbolLinksValidation.artifactRole),
+          status: stringValue(sourceCodeSymbolLinksValidation.status),
+          scope: stringValue(sourceCodeSymbolLinksValidation.scope),
+          sha256: stringValue(sourceCodeSymbolLinksValidation.sha256),
+        }
+      : null,
+    boundedContext: {
+      maxCodeInspectionTargets: MAX_CODE_INSPECTION_TARGETS,
+      maxLinkReasonsPerTarget: MAX_CODE_LINK_REASONS_PER_TARGET,
+      fullSourceFilesIncluded: false,
+      sourceContentDumped: false,
+    },
+    unifiedGraphBoundary: {
+      separateCodeGraphCreated: false,
+      graphSourceMutated: false,
+      graphDeltaApplied: false,
+      instructionPackGenerated: false,
+      runtimeEvidenceSatisfied: false,
+      equivalenceProven: false,
+      scopeEnforced: false,
+      ciEnforcementEnabled: false,
+    },
+  }
+
+  return { codeSymbolContext, codeInspectionTargets }
 }
 
 function buildTargetScopeCandidates(input: {
@@ -805,9 +936,18 @@ function buildGraphSnapshot(input: {
   graphSourcePath: string
   generatedReadModelPath: string
   selectedNodes: JsonRecord[]
+  codeSymbolContext?: JsonRecord
+  codeInspectionTargets?: JsonRecord[]
 }): JsonRecord {
   const sourceArtifacts = uniqueStrings(
     input.selectedNodes.map((node) => stringValue(node.sourceArtifact)).filter((entry) => entry.length > 0),
+  )
+  const sourceCodeSubgraph = asRecord(input.codeSymbolContext?.sourceCodeSubgraph)
+  const sourceCodeSymbolLinksValidation = asRecord(input.codeSymbolContext?.sourceCodeSymbolLinksValidation)
+  const codeSourceArtifacts = uniqueStrings(
+    (input.codeInspectionTargets ?? [])
+      .map((target) => stringValue(target.sourceFile))
+      .filter((entry) => entry.length > 0),
   )
   return {
     id: 'graph-snapshot-selected-graph-slice-runtime-evidence-only',
@@ -852,10 +992,35 @@ function buildGraphSnapshot(input: {
         path: input.generatedReadModelPath,
         role: 'generated read-model authority',
       },
+      ...(stringValue(sourceCodeSubgraph?.path)
+        ? [
+            {
+              id: 'devview-code-subgraph',
+              path: stringValue(sourceCodeSubgraph?.path),
+              role: 'code subgraph source fact for selected code symbols',
+              status: stringValue(sourceCodeSubgraph?.status),
+            },
+          ]
+        : []),
+      ...(stringValue(sourceCodeSymbolLinksValidation?.path)
+        ? [
+            {
+              id: 'devview-code-symbol-links-validation',
+              path: stringValue(sourceCodeSymbolLinksValidation?.path),
+              role: 'code symbol link validation source fact for selected code symbols',
+              status: stringValue(sourceCodeSymbolLinksValidation?.status),
+            },
+          ]
+        : []),
       ...sourceArtifacts.map((artifactPath, index) => ({
         id: `selected-node-source-artifact-${index + 1}`,
         path: artifactPath,
         role: 'selected node source artifact',
+      })),
+      ...codeSourceArtifacts.map((artifactPath, index) => ({
+        id: `selected-code-symbol-source-file-${index + 1}`,
+        path: artifactPath,
+        role: 'selected code symbol source file reference-no-content',
       })),
     ],
   }
@@ -911,6 +1076,10 @@ function stringArray(value: unknown): string[] {
 
 function stringValue(value: unknown): string {
   return typeof value === 'string' ? value : ''
+}
+
+function numberValue(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null
 }
 
 function inferFixtureRoot(sourceSelectedGraphSlice: string, graphSourcePath: string): string | null {
