@@ -3141,6 +3141,8 @@ async function graphReadModelViewTreeCommand(
   try {
     const slice = await generateSelectedGraphSliceFile(context.options.root, context.options.traversalPlan, {
       output: context.options.output,
+      codeSubgraph: context.options.codeSubgraph,
+      codeSymbolLinksValidation: context.options.codeSymbolLinksValidation,
     })
     const blocked = slice.result.selectedGraphSliceStatus !== 'generated'
     const errorFindings = slice.result.validationFindings.filter((finding) => finding.severity === 'error')

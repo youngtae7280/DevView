@@ -7,6 +7,10 @@ import { ExitCode } from '../core/types'
 import { cleanupWorkspaces, createWorkspace, writeJson } from './fixtures/workspace'
 
 const pluginRoot = resolve(process.cwd())
+const codeFileId = 'code:file:src/todo.ts'
+const codeClassId = 'code:class:src/todo.ts#TodoList'
+const codeMethodId = 'code:method:src/todo.ts#TodoList.add'
+const codeFunctionId = 'code:function:src/todo.ts#normalizeTodo'
 
 afterEach(() => {
   cleanupWorkspaces()
@@ -46,6 +50,8 @@ describe('Selected graph slice generator core', () => {
       'E-CH-001-TOUCHES-WT-1',
       'E-IM-001-REPORTS-ON-CH-001',
     ])
+    expect(result.selectedCodeNodes).toBeUndefined()
+    expect(result.codeSymbolContext).toBeUndefined()
     expect(result.includedEvidenceNodes.map((node) => node.nodeId).sort()).toEqual(['EV-1', 'TT-1'])
     expect(result.includedRiskNodes.map((node) => node.nodeId)).toEqual(['IM-001'])
     expect(result.selectionTrace.length).toBeGreaterThanOrEqual(9)
@@ -145,6 +151,246 @@ describe('Selected graph slice CLI', () => {
     expect(payload.scopeEnforced).toBe(false)
     expect(payload.ciEnforcementEnabled).toBe(false)
     expect(written.viewTreeArtifactRole).toBe('devview-view-tree-preview')
+  })
+
+  it('includes linked code symbol nodes in View Tree output when validated link facts are supplied', async () => {
+    const workspace = createWorkspace()
+    writeFixtureFiles(workspace)
+    writeJson(join(workspace, 'code-subgraph.json'), validCodeSubgraph())
+    writeJson(
+      join(workspace, 'code-symbol-links.json'),
+      codeSymbolLinksArtifact([
+        codeSymbolLink('link-change-function', 'CH-001', codeFunctionId, 'touches', 'change', 'function'),
+        codeSymbolLink('link-task-class', 'WT-1', codeClassId, 'touches', 'task', 'class'),
+        codeSymbolLink('link-check-file', 'TT-1', codeFileId, 'covers', 'check', 'file'),
+        codeSymbolLink('link-evidence-method', 'EV-1', codeMethodId, 'verifies', 'evidence', 'method'),
+        codeSymbolLink('link-decision-skipped', 'DEC-1', codeFileId, 'documents', 'decision', 'file'),
+      ]),
+    )
+
+    const linkValidation = await runDevViewCli(
+      [
+        'graph',
+        'validate-code-symbol-links',
+        '--links',
+        'code-symbol-links.json',
+        '--code-subgraph',
+        'code-subgraph.json',
+        '--graph-source',
+        'graph-source.json',
+        '--output',
+        '.tmp/code-symbol-links-validation.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    expect(linkValidation.exitCode).toBe(ExitCode.Success)
+
+    const result = await runDevViewCli(
+      [
+        'graph',
+        'read-model',
+        'generate-view-tree',
+        '--traversal-plan',
+        'graph-traversal-plan.json',
+        '--code-subgraph',
+        'code-subgraph.json',
+        '--code-symbol-links-validation',
+        '.tmp/code-symbol-links-validation.json',
+        '--output',
+        '.tmp/view-tree-with-code.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+    const written = JSON.parse(readFileSync(join(workspace, '.tmp/view-tree-with-code.json'), 'utf8'))
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.viewTreeStatus).toBe('devview-view-tree-preview-generated')
+    expect(payload.selectedCodeNodes.map((node: { nodeId: string }) => node.nodeId).sort()).toEqual([
+      codeClassId,
+      codeFileId,
+      codeFunctionId,
+      codeMethodId,
+    ])
+    expect(payload.selectedCodeNodes).not.toContainEqual(expect.objectContaining({ nodeId: 'DEC-1' }))
+    expect(payload.codeSymbolContext).toMatchObject({
+      artifactRole: 'devview-view-tree-code-symbol-context',
+      status: 'devview-view-tree-code-symbol-context-selected',
+      scope: 'unified-maintainability-graph-view-tree-code-selection',
+      selectedCodeNodeCount: 4,
+      linkedMaintenanceNodeCount: 4,
+      selectedLinkCount: 4,
+      unifiedGraphBoundary: {
+        separateCodeGraphCreated: false,
+        graphSourceMutated: false,
+        graphDeltaApplied: false,
+        contextPackGenerated: false,
+        codeSubgraphGenerated: false,
+      },
+    })
+    expect(
+      payload.selectedCodeNodes.find((node: { nodeId: string }) => node.nodeId === codeFunctionId).linkedFrom,
+    ).toContainEqual(
+      expect.objectContaining({
+        linkId: 'link-change-function',
+        sourceNodeId: 'CH-001',
+        sourceNodeKind: 'change',
+        linkType: 'touches',
+        confidence: 'inferred',
+        sourceLocationStatus: 'link-fixture',
+      }),
+    )
+    expect(payload.contextPackBoundary.contextPackGenerated).toBe(false)
+    expect(payload.graphSourceMutated).toBe(false)
+    expect(payload.graphDeltaApplied).toBe(false)
+    expect(written.selectedCodeNodes).toEqual(payload.selectedCodeNodes)
+  })
+
+  it('blocks View Tree code symbol selection when the link validation report role is wrong', async () => {
+    const workspace = createWorkspace()
+    writeFixtureFiles(workspace)
+    writeJson(join(workspace, 'code-subgraph.json'), validCodeSubgraph())
+    writeJson(join(workspace, 'bad-code-symbol-links-validation.json'), {
+      artifactRole: 'not-code-symbol-link-validation-report',
+      status: 'devview-code-symbol-link-validation-passed',
+      scope: 'code-symbol-link-validation-report-only',
+      validatedLinks: [],
+      graphSourceMutated: false,
+      graphDeltaApplied: false,
+      contextPackGenerated: false,
+    })
+
+    const result = await runDevViewCli(
+      [
+        'graph',
+        'read-model',
+        'generate-view-tree',
+        '--traversal-plan',
+        'graph-traversal-plan.json',
+        '--code-subgraph',
+        'code-subgraph.json',
+        '--code-symbol-links-validation',
+        'bad-code-symbol-links-validation.json',
+        '--output',
+        '.tmp/blocked-view-tree.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_LINK_VALIDATION_ROLE_INVALID',
+      }),
+    )
+  })
+
+  it('blocks View Tree code symbol selection when validated links reference missing code nodes', async () => {
+    const workspace = createWorkspace()
+    writeFixtureFiles(workspace)
+    writeJson(join(workspace, 'code-subgraph.json'), validCodeSubgraph())
+    writeJson(join(workspace, 'stale-code-symbol-links-validation.json'), {
+      artifactRole: 'devview-code-symbol-link-validation-report',
+      status: 'devview-code-symbol-link-validation-passed',
+      scope: 'code-symbol-link-validation-report-only',
+      validatedLinks: [
+        {
+          id: 'link-stale-code-node',
+          sourceNodeId: 'CH-001',
+          targetCodeNodeId: 'code:function:src/todo.ts#missing',
+          linkType: 'touches',
+          sourceNodeKind: 'change',
+          targetCodeNodeKind: 'function',
+          sourceLocationStatus: 'link-fixture',
+          confidence: 'inferred',
+        },
+      ],
+      graphSourceMutated: false,
+      graphDeltaApplied: false,
+      contextPackGenerated: false,
+    })
+
+    const result = await runDevViewCli(
+      [
+        'graph',
+        'read-model',
+        'generate-view-tree',
+        '--traversal-plan',
+        'graph-traversal-plan.json',
+        '--code-subgraph',
+        'code-subgraph.json',
+        '--code-symbol-links-validation',
+        'stale-code-symbol-links-validation.json',
+        '--output',
+        '.tmp/stale-view-tree.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_CODE_NODE_MISSING',
+      }),
+    )
+  })
+
+  it('blocks View Tree code symbol selection when optional code inputs claim unsafe authority', async () => {
+    const workspace = createWorkspace()
+    writeFixtureFiles(workspace)
+    writeJson(join(workspace, 'code-subgraph.json'), validCodeSubgraph())
+    writeJson(join(workspace, 'unsafe-code-symbol-links-validation.json'), {
+      artifactRole: 'devview-code-symbol-link-validation-report',
+      status: 'devview-code-symbol-link-validation-passed',
+      scope: 'code-symbol-link-validation-report-only',
+      validatedLinks: [
+        {
+          id: 'link-change-function',
+          sourceNodeId: 'CH-001',
+          targetCodeNodeId: codeFunctionId,
+          linkType: 'touches',
+          sourceNodeKind: 'change',
+          targetCodeNodeKind: 'function',
+          sourceLocationStatus: 'link-fixture',
+          confidence: 'inferred',
+        },
+      ],
+      graphSourceMutated: true,
+      graphDeltaApplied: false,
+      contextPackGenerated: false,
+    })
+
+    const result = await runDevViewCli(
+      [
+        'graph',
+        'read-model',
+        'generate-view-tree',
+        '--traversal-plan',
+        'graph-traversal-plan.json',
+        '--code-subgraph',
+        'code-subgraph.json',
+        '--code-symbol-links-validation',
+        'unsafe-code-symbol-links-validation.json',
+        '--output',
+        '.tmp/unsafe-view-tree.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stderr)
+
+    expect(result.exitCode).toBe(ExitCode.ValidationFailed)
+    expect(payload.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_UNSAFE_AUTHORITY_FLAG',
+      }),
+    )
   })
 
   it('writes only the explicit output path and does not mutate graph source', async () => {
@@ -348,5 +594,141 @@ function validAuthority(): Record<string, unknown> {
       nodes,
       edges,
     },
+  }
+}
+
+function validCodeSubgraph(): Record<string, unknown> {
+  return {
+    schemaVersion: 1,
+    artifactRole: 'devview-code-subgraph',
+    status: 'devview-code-subgraph-supplied',
+    scope: 'code-subgraph-source-fact-only',
+    nodes: [
+      codeNode(codeFileId, 'file', 'src/todo.ts', 'file-node'),
+      codeNode(codeClassId, 'class', 'src/todo.ts', undefined, {
+        startLine: 1,
+        startColumn: 1,
+        endLine: 8,
+        endColumn: 2,
+      }),
+      codeNode(codeMethodId, 'method', 'src/todo.ts', undefined, {
+        startLine: 2,
+        startColumn: 3,
+        endLine: 5,
+        endColumn: 4,
+      }),
+      codeNode(codeFunctionId, 'function', 'src/todo.ts', undefined, {
+        startLine: 10,
+        startColumn: 1,
+        endLine: 12,
+        endColumn: 2,
+      }),
+    ],
+    edges: [
+      codeEdge('code-edge.file-class', codeFileId, codeClassId, 'contains'),
+      codeEdge('code-edge.class-method', codeClassId, codeMethodId, 'contains'),
+      codeEdge('code-edge.file-function', codeFileId, codeFunctionId, 'contains'),
+    ],
+    graphifyExecuted: false,
+    astExtractorExecuted: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    apiCallMade: false,
+    shellCommandsExecuted: false,
+    extensionExecutionAllowed: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    viewTreeGenerated: false,
+    contextPackGenerated: false,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
+    rbacEnforced: false,
+    permissionVerified: false,
+    cryptographicSignatureVerified: false,
+    enterpriseGateActivated: false,
+  }
+}
+
+function codeNode(
+  id: string,
+  kind: string,
+  sourceFile: string,
+  sourceLocationStatus?: string,
+  sourceLocation?: Record<string, number>,
+): Record<string, unknown> {
+  return {
+    id,
+    kind,
+    label: id,
+    sourceFile,
+    ...(sourceLocation ? { sourceLocation } : { sourceLocationStatus }),
+    sourceDigest: 'sha256:fixture',
+    confidence: 'extracted',
+  }
+}
+
+function codeEdge(id: string, from: string, to: string, kind: string): Record<string, unknown> {
+  return {
+    id,
+    from,
+    to,
+    kind,
+    sourceFile: 'src/todo.ts',
+    sourceLocationStatus: 'fixture-edge',
+    sourceDigest: 'sha256:fixture',
+    confidence: 'extracted',
+  }
+}
+
+function codeSymbolLinksArtifact(links: Record<string, unknown>[]): Record<string, unknown> {
+  return {
+    schemaVersion: 1,
+    artifactRole: 'devview-code-symbol-links',
+    status: 'devview-code-symbol-links-supplied',
+    scope: 'code-symbol-link-source-fact-only',
+    links,
+    graphifyExecuted: false,
+    astExtractorExecuted: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    apiCallMade: false,
+    shellCommandsExecuted: false,
+    extensionExecutionAllowed: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+    viewTreeGenerated: false,
+    contextPackGenerated: false,
+    runtimeEvidenceSatisfied: false,
+    evidenceAccepted: false,
+    equivalenceProven: false,
+    scopeEnforced: false,
+    ciEnforcementEnabled: false,
+    rbacEnforced: false,
+    permissionVerified: false,
+    cryptographicSignatureVerified: false,
+    enterpriseGateActivated: false,
+  }
+}
+
+function codeSymbolLink(
+  id: string,
+  sourceNodeId: string,
+  targetCodeNodeId: string,
+  linkType: string,
+  sourceNodeKind: string,
+  targetCodeNodeKind: string,
+): Record<string, unknown> {
+  return {
+    id,
+    sourceNodeId,
+    targetCodeNodeId,
+    linkType,
+    sourceNodeKind,
+    targetCodeNodeKind,
+    sourceLocationStatus: 'link-fixture',
+    confidence: 'inferred',
   }
 }

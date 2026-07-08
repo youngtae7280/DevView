@@ -226,6 +226,19 @@ interface LinkAnalysis {
   }>
 }
 
+export interface ValidatedCodeSymbolLink {
+  id: string
+  sourceNodeId: string
+  targetCodeNodeId: string
+  linkType: string
+  sourceNodeKind: string
+  targetCodeNodeKind: string
+  sourceFile?: string
+  sourceLocationStatus?: string
+  sourceLocation?: unknown
+  confidence: string
+}
+
 export interface CodeSymbolLinkValidationReport extends JsonRecord {
   schemaVersion: 1
   artifactRole: typeof REPORT_ROLE
@@ -304,6 +317,7 @@ export interface CodeSymbolLinkValidationReport extends JsonRecord {
     duplicateSignatureCount: number
     duplicateSignatures: LinkAnalysis['duplicateLinkSignatures']
   }
+  validatedLinks: ValidatedCodeSymbolLink[]
   vocabulary: {
     allowedSourceNodeKinds: string[]
     allowedTargetCodeNodeKinds: string[]
@@ -1085,6 +1099,7 @@ function buildReport(
       duplicateSignatureCount: analysis.duplicateLinkSignatures.length,
       duplicateSignatures: analysis.duplicateLinkSignatures,
     },
+    validatedLinks: extractValidatedLinks(linkRecord),
     vocabulary: {
       allowedSourceNodeKinds: [...sourceNodeKinds],
       allowedTargetCodeNodeKinds: [...codeNodeKinds],
@@ -1136,6 +1151,49 @@ function buildReport(
     cryptographicSignatureVerified: false,
     enterpriseGateActivated: false,
   }
+}
+
+function extractValidatedLinks(record: JsonRecord | null | undefined): ValidatedCodeSymbolLink[] {
+  return arrayRecords(record?.links)
+    .map((link) => {
+      const id = stringValue(link.id)
+      const sourceNodeId = stringValue(link.sourceNodeId ?? link.source)
+      const targetCodeNodeId = stringValue(link.targetCodeNodeId ?? link.targetCodeNode ?? link.target)
+      const linkType = stringValue(link.linkType ?? link.type)?.toLowerCase()
+      const sourceNodeKind = stringValue(link.sourceNodeKind ?? link.sourceKind)?.toLowerCase()
+      const targetCodeNodeKind = stringValue(link.targetCodeNodeKind ?? link.targetKind)?.toLowerCase()
+      const confidence = stringValue(link.confidence)?.toLowerCase()
+      if (
+        !id ||
+        !sourceNodeId ||
+        !targetCodeNodeId ||
+        !linkType ||
+        !sourceNodeKind ||
+        !targetCodeNodeKind ||
+        !confidence
+      ) {
+        return null
+      }
+      return {
+        id,
+        sourceNodeId,
+        targetCodeNodeId,
+        linkType,
+        sourceNodeKind,
+        targetCodeNodeKind,
+        ...(stringValue(link.sourceFile ?? link.source_file)
+          ? { sourceFile: stringValue(link.sourceFile ?? link.source_file) as string }
+          : {}),
+        ...(stringValue(link.sourceLocationStatus)
+          ? { sourceLocationStatus: stringValue(link.sourceLocationStatus) as string }
+          : {}),
+        ...(link.sourceLocation || link.source_location
+          ? { sourceLocation: link.sourceLocation ?? link.source_location }
+          : {}),
+        confidence,
+      }
+    })
+    .filter((entry): entry is ValidatedCodeSymbolLink => Boolean(entry))
 }
 
 async function assertOutputAuthority(

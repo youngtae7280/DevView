@@ -129,6 +129,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     codeSubgraph: undefined as string | undefined,
     codeSubgraphValidation: undefined as string | undefined,
     codeSubgraphMergePlan: undefined as string | undefined,
+    codeSymbolLinksValidation: undefined as string | undefined,
     links: undefined as string | undefined,
     projectMemory: undefined as string | undefined,
     directionChange: undefined as string | undefined,
@@ -509,6 +510,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--code-subgraph-merge-plan requires a file path.' }
       }
       options.codeSubgraphMergePlan = value
+      index += 1
+    } else if (arg === '--code-symbol-links-validation') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--code-symbol-links-validation requires a file path.' }
+      }
+      options.codeSymbolLinksValidation = value
       index += 1
     } else if (arg === '--links') {
       const value = argv[index + 1]

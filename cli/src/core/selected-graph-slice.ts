@@ -1,12 +1,84 @@
+import { createHash } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { readJsonSafe, relativePath, writeJsonAtomic } from './fs.js'
+import {
+  hasCodexControlDirectory,
+  hasDevViewControlDirectory,
+  hasHiddenControlDirectorySegment,
+} from './path-safety.js'
+import { CodeSubgraphValidationError, validateCodeSubgraphRecord } from './code-subgraph-validation.js'
 import type { IssueSeverity } from './types.js'
 
 const SELECTOR_NAME = 'SelectedGraphSliceGenerator'
 const VIEW_TREE_ARTIFACT_ROLE = 'devview-view-tree-preview'
 const VIEW_TREE_KIND = 'maintainability-graph-derived-task-view-tree'
+const CODE_SUBGRAPH_ROLE = 'devview-code-subgraph'
+const CODE_SUBGRAPH_STATUS = 'devview-code-subgraph-supplied'
+const CODE_SUBGRAPH_SCOPE = 'code-subgraph-source-fact-only'
+const CODE_SYMBOL_LINK_VALIDATION_ROLE = 'devview-code-symbol-link-validation-report'
+const CODE_SYMBOL_LINK_VALIDATION_STATUS = 'devview-code-symbol-link-validation-passed'
+const CODE_SYMBOL_LINK_VALIDATION_SCOPE = 'code-symbol-link-validation-report-only'
 
 type JsonRecord = Record<string, unknown>
+
+interface LoadedViewTreeArtifact {
+  relativePath: string
+  record: JsonRecord | null
+  sha256: string | null
+  readError: string | null
+}
+
+const unsafeAuthorityFields = [
+  'providerInvoked',
+  'networkCallMade',
+  'apiCallMade',
+  'shellCommandExecuted',
+  'shellCommandsExecuted',
+  'extensionExecutionAllowed',
+  'extensionsExecuted',
+  'extensionCodeExecuted',
+  'graphifyExecuted',
+  'graphifyLiveRun',
+  'astExtractorExecuted',
+  'filesMutated',
+  'graphSourceMutated',
+  'maintainabilityGraphMutationPlanned',
+  'mutationApplied',
+  'graphDeltaApplied',
+  'viewTreeGenerated',
+  'contextPackGenerated',
+  'runtimeEvidenceSatisfied',
+  'evidenceAccepted',
+  'equivalenceProven',
+  'scopeEnforced',
+  'ciEnforcementEnabled',
+  'hooksActivated',
+  'branchProtectionChanged',
+  'branchProtectionMutated',
+  'requiredChecksConfigured',
+  'requiredChecksMutated',
+  'externalCiMutated',
+  'approvalAutomationEnabled',
+  'userAcceptanceAutomated',
+  'enterpriseGateActivated',
+  'cryptographicSignaturePresent',
+  'cryptographicSignatureVerified',
+  'cryptographicSigningImplemented',
+  'keyGenerated',
+  'privateKeyStored',
+  'keyManagementImplemented',
+  'keyRegistryCreated',
+  'trustRootCreated',
+  'rbacEnforced',
+  'permissionVerified',
+  'rbacPermissionVerified',
+  'providerGrantPresent',
+  'providerGrantVerified',
+  'providerGrantActive',
+  'providerAllowlistActive',
+  'networkAllowlistActive',
+]
 
 export interface SelectedGraphSliceFinding {
   code: string
@@ -59,11 +131,75 @@ export interface ExcludedGraphSliceEdge {
 }
 
 export interface SelectedGraphSliceTraceEntry {
-  action: 'selected-node' | 'selected-edge' | 'excluded-node' | 'excluded-edge' | 'blocked'
+  action: 'selected-node' | 'selected-edge' | 'selected-code-node' | 'excluded-node' | 'excluded-edge' | 'blocked'
   nodeId?: string
   edgeId?: string
   reason: string
   source: string
+}
+
+export interface SelectedGraphSliceCodeLink {
+  linkId: string
+  sourceNodeId: string
+  sourceNodeKind: string
+  linkType: string
+  confidence: string
+  sourceFile?: string
+  sourceLocationStatus?: string
+  sourceLocation?: unknown
+}
+
+export interface SelectedGraphSliceCodeNode {
+  nodeId: string
+  nodeKind: string
+  label?: string
+  sourceFile?: string
+  sourceLocationStatus?: string
+  sourceLocation?: unknown
+  sourceDigest?: string
+  confidence?: string
+  selectionReason: string
+  selectedAs: string[]
+  sourceAuthorityStatus: 'selected-from-devview-code-subgraph-source-fact'
+  linkedFrom: SelectedGraphSliceCodeLink[]
+}
+
+export interface SelectedGraphSliceCodeSymbolContext {
+  artifactRole: 'devview-view-tree-code-symbol-context'
+  status:
+    | 'devview-view-tree-code-symbol-context-selected'
+    | 'devview-view-tree-code-symbol-context-empty'
+    | 'devview-view-tree-code-symbol-context-blocked'
+  scope: 'unified-maintainability-graph-view-tree-code-selection'
+  reportOnly: true
+  sourceCodeSubgraph: {
+    path: string | null
+    artifactRole: string | null
+    status: string | null
+    scope: string | null
+    sha256: string | null
+    nodeCount: number
+    edgeCount: number
+  }
+  sourceCodeSymbolLinksValidation: {
+    path: string | null
+    artifactRole: string | null
+    status: string | null
+    scope: string | null
+    sha256: string | null
+    validatedLinkCount: number
+  }
+  selectedCodeNodeCount: number
+  linkedMaintenanceNodeCount: number
+  selectedLinkCount: number
+  missingCodeNodeCount: number
+  unifiedGraphBoundary: {
+    separateCodeGraphCreated: false
+    graphSourceMutated: false
+    graphDeltaApplied: false
+    contextPackGenerated: false
+    codeSubgraphGenerated: false
+  }
 }
 
 export interface SelectedGraphSliceResult {
@@ -113,6 +249,8 @@ export interface SelectedGraphSliceResult {
   startNodeResolutionStatus: 'resolved' | 'unresolved' | 'ambiguous' | 'blocked'
   selectedNodes: SelectedGraphSliceNode[]
   selectedEdges: SelectedGraphSliceEdge[]
+  selectedCodeNodes?: SelectedGraphSliceCodeNode[]
+  codeSymbolContext?: SelectedGraphSliceCodeSymbolContext
   includedPolicyNodes: SelectedGraphSliceNode[]
   includedScopeNodes: SelectedGraphSliceNode[]
   includedEvidenceNodes: SelectedGraphSliceNode[]
@@ -137,12 +275,26 @@ export interface SelectedGraphSliceFileResult {
   outputPath?: string
 }
 
+export interface SelectedGraphSliceCodeSymbolInputs {
+  codeSubgraph?: unknown
+  codeSymbolLinksValidation?: unknown
+  codeSubgraphPath?: string
+  codeSymbolLinksValidationPath?: string
+  codeSubgraphSha256?: string | null
+  codeSymbolLinksValidationSha256?: string | null
+  codeSubgraphReadError?: string | null
+  codeSymbolLinksValidationReadError?: string | null
+}
+
 export function generateSelectedGraphSlice(
   traversalPlan: unknown,
   authorityInputs: SelectedGraphSliceAuthorityInputs,
   paths: {
     traversalPlanPath?: string
+    codeSubgraphPath?: string
+    codeSymbolLinksValidationPath?: string
   } = {},
+  codeSymbolInputs: SelectedGraphSliceCodeSymbolInputs = {},
 ): SelectedGraphSliceResult {
   const findings: SelectedGraphSliceFinding[] = []
   const selectionTrace: SelectedGraphSliceTraceEntry[] = []
@@ -239,13 +391,13 @@ export function generateSelectedGraphSlice(
     }
   }
 
-  const blocked = findings.some((finding) => finding.severity === 'error')
+  const prerequisiteBlocked = findings.some((finding) => finding.severity === 'error')
   const selectedNodes = new Map<string, SelectedGraphSliceNode>()
   const selectedEdges = new Map<string, SelectedGraphSliceEdge>()
   const excludedNodes: ExcludedGraphSliceNode[] = []
   const excludedEdges: ExcludedGraphSliceEdge[] = []
 
-  if (!blocked && startNode) {
+  if (!prerequisiteBlocked && startNode) {
     const startNodeSlice = toSelectedNode(
       startNode,
       'start node selected from traversal plan startNodeCandidates[0]',
@@ -397,7 +549,7 @@ export function generateSelectedGraphSlice(
         })
       }
     }
-  } else if (blocked) {
+  } else if (prerequisiteBlocked) {
     selectionTrace.push({
       action: 'blocked',
       reason: 'selected graph slice prerequisites failed',
@@ -415,6 +567,13 @@ export function generateSelectedGraphSlice(
   )
   const includedRiskNodes = selectedNodeValues.filter((node) => node.nodeKind === 'finding')
   const includedPolicyNodes = selectedNodeValues.filter((node) => node.nodeKind === 'document')
+  const codeSymbolSelection = selectCodeSymbolsForViewTree(
+    codeSymbolInputs,
+    selectedNodeValues,
+    findings,
+    selectionTrace,
+  )
+  const blocked = findings.some((finding) => finding.severity === 'error')
   const hasEvidenceOrCheck = includedEvidenceNodes.length > 0
   const incomplete = !blocked && !hasEvidenceOrCheck
   if (incomplete) {
@@ -467,7 +626,7 @@ export function generateSelectedGraphSlice(
     generatedReadModelPath,
     selectedGraphSliceId: 'selected-graph-slice-add-todo-runtime-evidence-only',
     selectedGraphSliceStatus: blocked ? 'blocked' : incomplete ? 'incomplete' : 'generated',
-    graphTraversalExecuted: !blocked,
+    graphTraversalExecuted: !prerequisiteBlocked,
     selectedGraphSliceGenerated: !blocked && !incomplete,
     contractInputGenerated: false,
     instructionPackGenerated: false,
@@ -482,6 +641,12 @@ export function generateSelectedGraphSlice(
     startNodeResolutionStatus,
     selectedNodes: selectedNodeValues,
     selectedEdges: selectedEdgeValues,
+    ...(codeSymbolSelection
+      ? {
+          selectedCodeNodes: codeSymbolSelection.selectedCodeNodes,
+          codeSymbolContext: codeSymbolSelection.codeSymbolContext,
+        }
+      : {}),
     includedPolicyNodes,
     includedScopeNodes,
     includedEvidenceNodes,
@@ -506,7 +671,7 @@ export function generateSelectedGraphSlice(
 export async function generateSelectedGraphSliceFile(
   root: string,
   traversalPlanPath: string,
-  options: { output?: string } = {},
+  options: { output?: string; codeSubgraph?: string; codeSymbolLinksValidation?: string } = {},
 ): Promise<SelectedGraphSliceFileResult> {
   const resolvedTraversalPlanPath = resolveRepoPath(root, traversalPlanPath)
   const traversalPlan = await readJsonSafe<Record<string, unknown>>(resolvedTraversalPlanPath)
@@ -520,6 +685,24 @@ export async function generateSelectedGraphSliceFile(
   const generatedReadModel = generatedReadModelPath
     ? await readOptionalJson(resolveRepoPath(root, generatedReadModelPath))
     : undefined
+  const codeSubgraphSource = options.codeSubgraph ? await readArtifact(root, options.codeSubgraph) : null
+  const codeSymbolLinksValidationSource = options.codeSymbolLinksValidation
+    ? await readArtifact(root, options.codeSymbolLinksValidation)
+    : null
+
+  if (options.output) {
+    await assertViewTreeOutputAuthority(
+      root,
+      [
+        resolvedTraversalPlanPath,
+        ...(graphSourcePath ? [resolveRepoPath(root, graphSourcePath)] : []),
+        ...(generatedReadModelPath ? [resolveRepoPath(root, generatedReadModelPath)] : []),
+        ...(options.codeSubgraph ? [resolveRepoPath(root, options.codeSubgraph)] : []),
+        ...(options.codeSymbolLinksValidation ? [resolveRepoPath(root, options.codeSymbolLinksValidation)] : []),
+      ],
+      options.output,
+    )
+  }
 
   const result = generateSelectedGraphSlice(
     traversalPlan.value,
@@ -531,6 +714,22 @@ export async function generateSelectedGraphSliceFile(
     },
     {
       traversalPlanPath: relativePath(root, resolvedTraversalPlanPath),
+      codeSubgraphPath: options.codeSubgraph
+        ? relativePath(root, resolveRepoPath(root, options.codeSubgraph))
+        : undefined,
+      codeSymbolLinksValidationPath: options.codeSymbolLinksValidation
+        ? relativePath(root, resolveRepoPath(root, options.codeSymbolLinksValidation))
+        : undefined,
+    },
+    {
+      codeSubgraph: codeSubgraphSource?.record,
+      codeSymbolLinksValidation: codeSymbolLinksValidationSource?.record,
+      codeSubgraphPath: codeSubgraphSource?.relativePath,
+      codeSymbolLinksValidationPath: codeSymbolLinksValidationSource?.relativePath,
+      codeSubgraphSha256: codeSubgraphSource?.sha256,
+      codeSymbolLinksValidationSha256: codeSymbolLinksValidationSource?.sha256,
+      codeSubgraphReadError: codeSubgraphSource?.readError,
+      codeSymbolLinksValidationReadError: codeSymbolLinksValidationSource?.readError,
     },
   )
 
@@ -544,6 +743,363 @@ export async function generateSelectedGraphSliceFile(
   }
 
   return { result, ...(outputPath ? { outputPath } : {}) }
+}
+
+function selectCodeSymbolsForViewTree(
+  inputs: SelectedGraphSliceCodeSymbolInputs,
+  selectedMaintenanceNodes: SelectedGraphSliceNode[],
+  findings: SelectedGraphSliceFinding[],
+  selectionTrace: SelectedGraphSliceTraceEntry[],
+): { selectedCodeNodes: SelectedGraphSliceCodeNode[]; codeSymbolContext: SelectedGraphSliceCodeSymbolContext } | null {
+  const hasCodeSubgraphInput = Boolean(inputs.codeSubgraph || inputs.codeSubgraphPath)
+  const hasLinkValidationInput = Boolean(inputs.codeSymbolLinksValidation || inputs.codeSymbolLinksValidationPath)
+  if (!hasCodeSubgraphInput && !hasLinkValidationInput) {
+    return null
+  }
+
+  const codeSubgraph = asRecord(inputs.codeSubgraph)
+  const linkValidation = asRecord(inputs.codeSymbolLinksValidation)
+  if (!codeSubgraph || !linkValidation) {
+    const readError = !codeSubgraph ? inputs.codeSubgraphReadError : inputs.codeSymbolLinksValidationReadError
+    findings.push({
+      code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_INPUTS_INCOMPLETE',
+      severity: 'error',
+      field: !codeSubgraph ? 'codeSubgraph' : 'codeSymbolLinksValidation',
+      message: readError
+        ? `View Tree code symbol selection could not read ${!codeSubgraph ? '--code-subgraph' : '--code-symbol-links-validation'}: ${readError}.`
+        : 'View Tree code symbol selection requires both --code-subgraph and --code-symbol-links-validation source facts.',
+      suggestedFix:
+        'Provide a validated code symbol link report and the corresponding devview-code-subgraph source fact.',
+    })
+    selectionTrace.push({
+      action: 'blocked',
+      reason: 'code symbol inputs were incomplete',
+      source: 'code-symbol-context',
+    })
+    return buildCodeSymbolContext(inputs, codeSubgraph, linkValidation, [], 0, 0, 0, true)
+  }
+
+  validateCodeSymbolSources(inputs, codeSubgraph, linkValidation, findings)
+  const linkFacts = arrayRecords(linkValidation.validatedLinks)
+  if (linkFacts.length === 0) {
+    findings.push({
+      code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_LINK_FACTS_MISSING',
+      severity: 'error',
+      field: 'validatedLinks',
+      message:
+        'Code symbol link validation report must include validatedLinks so View Tree selection can preserve link metadata.',
+      suggestedFix: 'Rerun graph validate-code-symbol-links with a version that records sanitized validatedLinks.',
+    })
+  }
+
+  const codeNodeById = new Map<string, JsonRecord>()
+  for (const node of arrayRecords(codeSubgraph.nodes)) {
+    const id = stringValue(node.id)
+    if (id) {
+      codeNodeById.set(normalizePath(id), node)
+    }
+  }
+
+  const selectedMaintenanceNodeIds = new Set(selectedMaintenanceNodes.map((node) => normalizePath(node.nodeId)))
+  const selectedByCodeNodeId = new Map<string, SelectedGraphSliceCodeNode>()
+  const linkedMaintenanceNodeIds = new Set<string>()
+  let selectedLinkCount = 0
+  let missingCodeNodeCount = 0
+
+  for (const link of linkFacts) {
+    const linkId = stringValue(link.id)
+    const sourceNodeId = stringValue(link.sourceNodeId)
+    const targetCodeNodeId = stringValue(link.targetCodeNodeId)
+    const linkType = stringValue(link.linkType)
+    const sourceNodeKind = stringValue(link.sourceNodeKind)
+    const confidence = stringValue(link.confidence)
+    if (!linkId || !sourceNodeId || !targetCodeNodeId || !linkType || !sourceNodeKind || !confidence) {
+      findings.push({
+        code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_LINK_FACT_INVALID',
+        severity: 'error',
+        field: 'validatedLinks',
+        message: 'Code symbol link validation report contains a validatedLinks entry missing required metadata.',
+        suggestedFix: 'Regenerate code symbol link validation from a valid devview-code-symbol-links artifact.',
+      })
+      continue
+    }
+    if (!selectedMaintenanceNodeIds.has(normalizePath(sourceNodeId))) {
+      continue
+    }
+
+    const codeNode = codeNodeById.get(normalizePath(targetCodeNodeId))
+    if (!codeNode) {
+      missingCodeNodeCount += 1
+      findings.push({
+        code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_CODE_NODE_MISSING',
+        severity: 'error',
+        field: 'validatedLinks.targetCodeNodeId',
+        message: `Validated code symbol link "${linkId}" references code node "${targetCodeNodeId}" that is not present in --code-subgraph.`,
+        suggestedFix:
+          'Use the code subgraph that was validated with the code symbol link report, or rerun code symbol link validation.',
+      })
+      continue
+    }
+
+    linkedMaintenanceNodeIds.add(sourceNodeId)
+    selectedLinkCount += 1
+    const key = normalizePath(targetCodeNodeId)
+    const selectedLink = toSelectedCodeLink(link)
+    const existing = selectedByCodeNodeId.get(key)
+    if (existing) {
+      existing.linkedFrom.push(selectedLink)
+      existing.selectedAs = [...new Set([...existing.selectedAs, selectedAsForCodeLinkType(linkType)])].sort()
+      continue
+    }
+
+    const selectedCodeNode = toSelectedCodeNode(
+      codeNode,
+      `linked from selected ${sourceNodeKind} node ${sourceNodeId} through ${linkType} code-symbol link ${linkId}`,
+      [selectedAsForCodeLinkType(linkType)],
+      [selectedLink],
+    )
+    selectedByCodeNodeId.set(key, selectedCodeNode)
+    selectionTrace.push({
+      action: 'selected-code-node',
+      nodeId: selectedCodeNode.nodeId,
+      reason: selectedCodeNode.selectionReason,
+      source: 'code-symbol-link-validation',
+    })
+  }
+
+  const selectedCodeNodes = [...selectedByCodeNodeId.values()].sort((left, right) =>
+    left.nodeId.localeCompare(right.nodeId),
+  )
+  return buildCodeSymbolContext(
+    inputs,
+    codeSubgraph,
+    linkValidation,
+    selectedCodeNodes,
+    linkedMaintenanceNodeIds.size,
+    selectedLinkCount,
+    missingCodeNodeCount,
+    findings.some((finding) => finding.severity === 'error'),
+  )
+}
+
+function validateCodeSymbolSources(
+  inputs: SelectedGraphSliceCodeSymbolInputs,
+  codeSubgraph: JsonRecord,
+  linkValidation: JsonRecord,
+  findings: SelectedGraphSliceFinding[],
+): void {
+  if (codeSubgraph.artifactRole !== CODE_SUBGRAPH_ROLE) {
+    findings.push({
+      code: 'SELECTED_GRAPH_SLICE_CODE_SUBGRAPH_ROLE_INVALID',
+      severity: 'error',
+      field: 'codeSubgraph.artifactRole',
+      message: `Code subgraph artifactRole must be ${CODE_SUBGRAPH_ROLE}.`,
+      expected: CODE_SUBGRAPH_ROLE,
+      actual: codeSubgraph.artifactRole,
+    })
+  }
+  if (codeSubgraph.status !== CODE_SUBGRAPH_STATUS) {
+    findings.push({
+      code: 'SELECTED_GRAPH_SLICE_CODE_SUBGRAPH_STATUS_INVALID',
+      severity: 'error',
+      field: 'codeSubgraph.status',
+      message: `Code subgraph status must be ${CODE_SUBGRAPH_STATUS}.`,
+      expected: CODE_SUBGRAPH_STATUS,
+      actual: codeSubgraph.status,
+    })
+  }
+  if ((codeSubgraph.scope ?? codeSubgraph.codeSubgraphScope) !== CODE_SUBGRAPH_SCOPE) {
+    findings.push({
+      code: 'SELECTED_GRAPH_SLICE_CODE_SUBGRAPH_SCOPE_INVALID',
+      severity: 'error',
+      field: 'codeSubgraph.scope',
+      message: `Code subgraph scope must be ${CODE_SUBGRAPH_SCOPE}.`,
+      expected: CODE_SUBGRAPH_SCOPE,
+      actual: codeSubgraph.scope ?? codeSubgraph.codeSubgraphScope,
+    })
+  }
+  try {
+    validateCodeSubgraphRecord('.', inputs.codeSubgraphPath ?? 'code-subgraph.json', codeSubgraph)
+  } catch (error) {
+    if (error instanceof CodeSubgraphValidationError) {
+      for (const finding of error.report.validationFindings.filter((entry) => entry.severity === 'blocker')) {
+        findings.push({
+          code: `SELECTED_GRAPH_SLICE_${finding.code}`,
+          severity: 'error',
+          field: finding.field,
+          message: `Code subgraph failed validation before View Tree code symbol selection: ${finding.message}`,
+          suggestedFix: 'Provide a valid devview-code-subgraph source fact.',
+        })
+      }
+    } else {
+      findings.push({
+        code: 'SELECTED_GRAPH_SLICE_CODE_SUBGRAPH_VALIDATION_FAILED',
+        severity: 'error',
+        field: 'codeSubgraph',
+        message: error instanceof Error ? error.message : String(error),
+      })
+    }
+  }
+
+  if (linkValidation.artifactRole !== CODE_SYMBOL_LINK_VALIDATION_ROLE) {
+    findings.push({
+      code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_LINK_VALIDATION_ROLE_INVALID',
+      severity: 'error',
+      field: 'codeSymbolLinksValidation.artifactRole',
+      message: `Code symbol link validation artifactRole must be ${CODE_SYMBOL_LINK_VALIDATION_ROLE}.`,
+      expected: CODE_SYMBOL_LINK_VALIDATION_ROLE,
+      actual: linkValidation.artifactRole,
+    })
+  }
+  if (linkValidation.status !== CODE_SYMBOL_LINK_VALIDATION_STATUS) {
+    findings.push({
+      code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_LINK_VALIDATION_STATUS_INVALID',
+      severity: 'error',
+      field: 'codeSymbolLinksValidation.status',
+      message: `Code symbol link validation status must be ${CODE_SYMBOL_LINK_VALIDATION_STATUS}.`,
+      expected: CODE_SYMBOL_LINK_VALIDATION_STATUS,
+      actual: linkValidation.status,
+    })
+  }
+  if ((linkValidation.scope ?? linkValidation.validationScope) !== CODE_SYMBOL_LINK_VALIDATION_SCOPE) {
+    findings.push({
+      code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_LINK_VALIDATION_SCOPE_INVALID',
+      severity: 'error',
+      field: 'codeSymbolLinksValidation.scope',
+      message: `Code symbol link validation scope must be ${CODE_SYMBOL_LINK_VALIDATION_SCOPE}.`,
+      expected: CODE_SYMBOL_LINK_VALIDATION_SCOPE,
+      actual: linkValidation.scope ?? linkValidation.validationScope,
+    })
+  }
+
+  for (const hit of collectUnsafeAuthorityHits(codeSubgraph)) {
+    findings.push({
+      code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_UNSAFE_AUTHORITY_FLAG',
+      severity: 'error',
+      field: `codeSubgraph.${hit.field}`,
+      message: `Code subgraph contains unsafe report-only authority flag ${hit.field}: true.`,
+    })
+  }
+  for (const hit of collectUnsafeAuthorityHits(linkValidation)) {
+    findings.push({
+      code: 'SELECTED_GRAPH_SLICE_CODE_SYMBOL_UNSAFE_AUTHORITY_FLAG',
+      severity: 'error',
+      field: `codeSymbolLinksValidation.${hit.field}`,
+      message: `Code symbol link validation contains unsafe report-only authority flag ${hit.field}: true.`,
+    })
+  }
+}
+
+function buildCodeSymbolContext(
+  inputs: SelectedGraphSliceCodeSymbolInputs,
+  codeSubgraph: JsonRecord | null,
+  linkValidation: JsonRecord | null,
+  selectedCodeNodes: SelectedGraphSliceCodeNode[],
+  linkedMaintenanceNodeCount: number,
+  selectedLinkCount: number,
+  missingCodeNodeCount: number,
+  blocked: boolean,
+): { selectedCodeNodes: SelectedGraphSliceCodeNode[]; codeSymbolContext: SelectedGraphSliceCodeSymbolContext } {
+  const codeNodes = arrayRecords(codeSubgraph?.nodes)
+  const codeEdges = arrayRecords(codeSubgraph?.edges)
+  const linkFacts = arrayRecords(linkValidation?.validatedLinks)
+  return {
+    selectedCodeNodes,
+    codeSymbolContext: {
+      artifactRole: 'devview-view-tree-code-symbol-context',
+      status: blocked
+        ? 'devview-view-tree-code-symbol-context-blocked'
+        : selectedCodeNodes.length > 0
+          ? 'devview-view-tree-code-symbol-context-selected'
+          : 'devview-view-tree-code-symbol-context-empty',
+      scope: 'unified-maintainability-graph-view-tree-code-selection',
+      reportOnly: true,
+      sourceCodeSubgraph: {
+        path: inputs.codeSubgraphPath ?? null,
+        artifactRole: stringValue(codeSubgraph?.artifactRole) || null,
+        status: stringValue(codeSubgraph?.status) || null,
+        scope: stringValue(codeSubgraph?.scope ?? codeSubgraph?.codeSubgraphScope) || null,
+        sha256: inputs.codeSubgraphSha256 ?? null,
+        nodeCount: codeNodes.length,
+        edgeCount: codeEdges.length,
+      },
+      sourceCodeSymbolLinksValidation: {
+        path: inputs.codeSymbolLinksValidationPath ?? null,
+        artifactRole: stringValue(linkValidation?.artifactRole) || null,
+        status: stringValue(linkValidation?.status) || null,
+        scope: stringValue(linkValidation?.scope ?? linkValidation?.validationScope) || null,
+        sha256: inputs.codeSymbolLinksValidationSha256 ?? null,
+        validatedLinkCount: linkFacts.length,
+      },
+      selectedCodeNodeCount: selectedCodeNodes.length,
+      linkedMaintenanceNodeCount,
+      selectedLinkCount,
+      missingCodeNodeCount,
+      unifiedGraphBoundary: {
+        separateCodeGraphCreated: false,
+        graphSourceMutated: false,
+        graphDeltaApplied: false,
+        contextPackGenerated: false,
+        codeSubgraphGenerated: false,
+      },
+    },
+  }
+}
+
+function toSelectedCodeNode(
+  node: JsonRecord,
+  selectionReason: string,
+  selectedAs: string[],
+  linkedFrom: SelectedGraphSliceCodeLink[],
+): SelectedGraphSliceCodeNode {
+  return {
+    nodeId: stringValue(node.id),
+    nodeKind: stringValue(node.kind ?? node.nodeKind),
+    ...(stringValue(node.label ?? node.title) ? { label: stringValue(node.label ?? node.title) } : {}),
+    ...(stringValue(node.sourceFile ?? node.source_file)
+      ? { sourceFile: stringValue(node.sourceFile ?? node.source_file) }
+      : {}),
+    ...(stringValue(node.sourceLocationStatus) ? { sourceLocationStatus: stringValue(node.sourceLocationStatus) } : {}),
+    ...((node.sourceLocation ?? node.source_location)
+      ? { sourceLocation: node.sourceLocation ?? node.source_location }
+      : {}),
+    ...(stringValue(node.sourceDigest) ? { sourceDigest: stringValue(node.sourceDigest) } : {}),
+    ...(stringValue(node.confidence) ? { confidence: stringValue(node.confidence) } : {}),
+    selectionReason,
+    selectedAs: [...new Set(selectedAs)].sort(),
+    sourceAuthorityStatus: 'selected-from-devview-code-subgraph-source-fact',
+    linkedFrom,
+  }
+}
+
+function toSelectedCodeLink(link: JsonRecord): SelectedGraphSliceCodeLink {
+  return {
+    linkId: stringValue(link.id),
+    sourceNodeId: stringValue(link.sourceNodeId),
+    sourceNodeKind: stringValue(link.sourceNodeKind),
+    linkType: stringValue(link.linkType),
+    confidence: stringValue(link.confidence),
+    ...(stringValue(link.sourceFile ?? link.source_file)
+      ? { sourceFile: stringValue(link.sourceFile ?? link.source_file) }
+      : {}),
+    ...(stringValue(link.sourceLocationStatus) ? { sourceLocationStatus: stringValue(link.sourceLocationStatus) } : {}),
+    ...((link.sourceLocation ?? link.source_location)
+      ? { sourceLocation: link.sourceLocation ?? link.source_location }
+      : {}),
+  }
+}
+
+function selectedAsForCodeLinkType(linkType: string): string {
+  if (['verifies', 'covers'].includes(linkType)) {
+    return 'linked-code-evidence-or-check'
+  }
+  if (['satisfies', 'implements_requirement'].includes(linkType)) {
+    return 'linked-code-requirement-scope'
+  }
+  if (['documents', 'constrains', 'reports_on'].includes(linkType)) {
+    return 'linked-code-governance-or-finding'
+  }
+  return 'linked-code-scope'
 }
 
 function validateTraversalPlanPrerequisites(plan: JsonRecord | null, findings: SelectedGraphSliceFinding[]): void {
@@ -625,6 +1181,42 @@ async function readOptionalJson(filePath: string): Promise<unknown> {
   return parsed.ok ? parsed.value : undefined
 }
 
+async function readArtifact(root: string, requestedPath: string): Promise<LoadedViewTreeArtifact> {
+  const resolvedPath = resolveRepoPath(root, requestedPath)
+  try {
+    const bytes = await readFile(resolvedPath)
+    return {
+      relativePath: relativePath(root, resolvedPath),
+      record: JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, '')) as JsonRecord,
+      sha256: createHash('sha256').update(bytes).digest('hex'),
+      readError: null,
+    }
+  } catch (error) {
+    return {
+      relativePath: relativePath(root, resolvedPath),
+      record: null,
+      sha256: null,
+      readError: error instanceof Error ? error.message : String(error),
+    }
+  }
+}
+
+async function assertViewTreeOutputAuthority(root: string, sourcePaths: string[], output: string): Promise<void> {
+  const resolvedOutputPath = resolveRepoPath(root, output)
+  const relativeTarget = relativePath(root, resolvedOutputPath)
+  const sourceSet = new Set(sourcePaths.map(pathKey))
+  if (sourceSet.has(pathKey(resolvedOutputPath))) {
+    throw new Error(`View Tree output would overwrite a source input: ${relativeTarget}.`)
+  }
+  if (isProtectedControlPath(root, resolvedOutputPath)) {
+    throw new Error(`View Tree output is inside a protected control path: ${relativeTarget}.`)
+  }
+  const existingAuthority = await classifyExistingSourceAuthority(resolvedOutputPath)
+  if (existingAuthority || isSourceAuthorityShapedPath(relativeTarget)) {
+    throw new Error(`View Tree output would overwrite a source-authority-shaped path: ${relativeTarget}.`)
+  }
+}
+
 function asRecord(value: unknown): JsonRecord | null {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) {
     return null
@@ -658,6 +1250,49 @@ function mapById(records: JsonRecord[]): Map<string, JsonRecord> {
     }
   }
   return new Map(entries)
+}
+
+async function classifyExistingSourceAuthority(filePath: string): Promise<string | null> {
+  try {
+    const bytes = await readFile(filePath)
+    const parsed = JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, '')) as JsonRecord
+    const role = stringValue(parsed.artifactRole)
+    if (role.includes('graph-source') || role === CODE_SUBGRAPH_ROLE || role === CODE_SYMBOL_LINK_VALIDATION_ROLE) {
+      return `artifactRole ${role}`
+    }
+    if (asRecord(parsed.sourceRecords)) {
+      return 'source-authority-shaped sourceRecords'
+    }
+    if (Array.isArray(parsed.nodes) && Array.isArray(parsed.edges)) {
+      return 'node-edge graph-shaped artifact'
+    }
+  } catch {
+    return null
+  }
+  return null
+}
+
+function collectUnsafeAuthorityHits(
+  value: unknown,
+  pathParts: string[] = [],
+  seen = new Set<unknown>(),
+): Array<{ field: string }> {
+  if (!value || typeof value !== 'object') return []
+  if (seen.has(value)) return []
+  seen.add(value)
+  if (Array.isArray(value)) {
+    return value.flatMap((entry, index) => collectUnsafeAuthorityHits(entry, [...pathParts, String(index)], seen))
+  }
+  const record = value as JsonRecord
+  const hits: Array<{ field: string }> = []
+  for (const [key, entry] of Object.entries(record)) {
+    const nextPath = [...pathParts, key]
+    if (unsafeAuthorityFields.includes(key) && entry === true) {
+      hits.push({ field: nextPath.join('.') })
+    }
+    hits.push(...collectUnsafeAuthorityHits(entry, nextPath, seen))
+  }
+  return hits
 }
 
 function toSelectedNode(
@@ -718,6 +1353,35 @@ function sourceAuthorityForNode(
     return 'selected-from-generated-read-model'
   }
   return 'source-authority-missing'
+}
+
+function pathKey(filePath: string): string {
+  return path.resolve(filePath).replaceAll('\\', '/').toLowerCase()
+}
+
+function normalizePath(value: string): string {
+  return value.replace(/\\/g, '/').toLowerCase()
+}
+
+function isSourceAuthorityShapedPath(filePath: string): boolean {
+  const normalized = normalizePath(filePath)
+  return (
+    normalized.includes('/graph-source') ||
+    normalized.includes('/source-authority') ||
+    normalized.includes('/read-model') ||
+    normalized.endsWith('maintainability-graph.json') ||
+    normalized.endsWith('code-subgraph.json') ||
+    normalized.endsWith('code-symbol-links-validation.json')
+  )
+}
+
+function isProtectedControlPath(root: string, filePath: string): boolean {
+  const relative = relativePath(root, filePath)
+  return (
+    hasDevViewControlDirectory(relative) ||
+    hasCodexControlDirectory(relative) ||
+    hasHiddenControlDirectorySegment(relative)
+  )
 }
 
 function resolveRepoPath(root: string, inputPath: string): string {

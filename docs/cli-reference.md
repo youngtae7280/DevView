@@ -786,9 +786,30 @@ change, check, evidence, requirement, decision, finding, risk, test, document, m
 from a supplied `devview-code-subgraph`. The validator requires supported link types, endpoint ids, source and target
 kinds, source provenance, and `extracted`/`inferred`/`ambiguous` confidence. Code endpoints must exist in the supplied
 code subgraph; when `--graph-source` is supplied, maintenance-side endpoints must also exist. The command emits
-`devview-code-symbol-link-validation-report` only. It does not mutate graph-source, apply a graph delta, accept
-Evidence, satisfy runtime Evidence, enforce scope/RBAC, verify signatures, configure CI, activate hooks, call
-providers/network/API, execute shell/project code, generate View Trees or Context Packs, or automate approval.
+`devview-code-symbol-link-validation-report` only, including sanitized `validatedLinks` metadata for downstream View
+Tree symbol selection. It does not mutate graph-source, apply a graph delta, accept Evidence, satisfy runtime Evidence,
+enforce scope/RBAC, verify signatures, configure CI, activate hooks, call providers/network/API, execute shell/project
+code, generate View Trees or Context Packs, or automate approval.
+
+### View Tree Symbol Selection
+
+```bash
+devview graph read-model generate-view-tree \
+  --traversal-plan <graph-traversal-plan.json> \
+  --code-subgraph <devview-code-subgraph.json> \
+  --code-symbol-links-validation <code-symbol-links-validation.json> \
+  --output <view-tree.json> \
+  --json
+```
+
+Generates the existing deterministic View Tree preview and, when both optional code inputs are supplied, adds linked
+code symbols as first-class selected code nodes in the unified Maintainability Graph view. The command accepts only a
+`devview-code-subgraph` source fact and a passed `devview-code-symbol-link-validation-report`; selected maintenance
+nodes such as change, task, check, evidence, or requirement nodes make their validated target file/class/function/method
+code nodes eligible for `selectedCodeNodes`. Link provenance and confidence are preserved so downstream review can trace
+why each code symbol was selected. This tranche is View Tree only: it does not generate Context Packs, generate a new
+code subgraph, mutate graph-source, apply graph deltas, execute code, call providers/network/API, accept Evidence,
+enforce scope/RBAC, configure CI, activate hooks, or automate approval.
 
 ### Code Subgraph Validation
 

@@ -377,11 +377,13 @@ Options:
   --graph-source <file>
                        Graph source artifact for graph read-model projection, retrofit plan, project-intent, report-intent, project-memory gap reporting, render-devview-graph, plan-code-subgraph-merge, apply-graph-delta, or apply-guarded-graph-update.
   --code-subgraph <file>
-                       Static DevView code subgraph source fact for graph validate-code-subgraph or plan-code-subgraph-merge.
+                       Static DevView code subgraph source fact for graph validate-code-subgraph, plan-code-subgraph-merge, or View Tree symbol selection.
   --code-subgraph-validation <file>
                        Passed DevView code subgraph validation report for graph plan-code-subgraph-merge or graph validate-code-symbol-links.
   --code-subgraph-merge-plan <file>
                        Code subgraph merge plan report for graph validate-code-symbol-links.
+  --code-symbol-links-validation <file>
+                       Passed code symbol link validation report for graph read-model generate-view-tree symbol selection.
   --links <file>       Code symbol links source fact for graph validate-code-symbol-links.
   --project-memory <file>
                        DevView Project Memory preview for extension gap reporting, impact reporting, or render-devview-graph.

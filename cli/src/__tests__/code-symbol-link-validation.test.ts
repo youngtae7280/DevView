@@ -48,6 +48,18 @@ describe('graph validate-code-symbol-links CLI', () => {
     expect(payload.linkValidationSummary.verifiedCodeEndpointCount).toBe(1)
     expect(payload.linkValidationSummary.unverifiedMaintenanceEndpointCount).toBe(1)
     expect(payload.missingEndpointSummary.missingCodeEndpointCount).toBe(0)
+    expect(payload.validatedLinks).toEqual([
+      expect.objectContaining({
+        id: 'link-task-run',
+        sourceNodeId: 'TASK-1',
+        targetCodeNodeId: functionId,
+        linkType: 'touches',
+        sourceNodeKind: 'task',
+        targetCodeNodeKind: 'function',
+        sourceLocationStatus: 'link-fixture',
+        confidence: 'inferred',
+      }),
+    ])
     expect(payload.unifiedGraphBoundary.separateCodeGraphCreated).toBe(false)
     expect(payload.unifiedGraphBoundary.graphSourceMutated).toBe(false)
     expect(payload.unifiedGraphBoundary.graphDeltaApplied).toBe(false)
