@@ -854,6 +854,27 @@ applies graph deltas, generates View Trees or Context Packs, executes code, call
 Evidence, proves runtime behavior, enforces scope/RBAC, verifies signatures, configures CI, activates hooks, or
 automates approval.
 
+### Code Subgraph Refresh Plan
+
+```bash
+devview graph plan-code-subgraph-refresh \
+  --code-subgraph <devview-code-subgraph.json> \
+  --changed-file <src/foo.ts> \
+  --changed-file <src/bar.ts> \
+  --output <code-subgraph-refresh-plan.json> \
+  --markdown <code-subgraph-refresh-plan.md> \
+  --json
+```
+
+Plans a future-only incremental refresh from explicit changed files and the current `devview-code-subgraph`. The command
+validates the code subgraph, normalizes changed file paths, marks matching file/function/class/method nodes and related
+edges as stale candidates, reports reverse call/import/reference/dependency dependents, includes direct containment
+context, and emits `devview-code-subgraph-refresh-plan-report` with `refreshPlanStatus:planned-not-applied`. Unmatched
+changed files are deterministic warnings rather than blockers. Every refresh action is emitted with
+`executionMode:future-only-not-executed`; the command does not run extractors, watch files, install hooks, mutate
+graph-source, apply graph deltas, generate View Trees or Context Packs, call providers/network/API, accept Evidence,
+prove runtime behavior, enforce scope/RBAC, verify signatures, configure CI, or automate approval.
+
 ### View Tree Symbol Selection
 
 ```bash

@@ -73,6 +73,7 @@ import { CodeSubgraphMergePlanError, planCodeSubgraphMergeFile } from '../core/c
 import { CodeSymbolLinkValidationError, validateCodeSymbolLinksFile } from '../core/code-symbol-link-validation.js'
 import { CodeImpactReportError, reportCodeImpactFile } from '../core/code-impact-report.js'
 import { queryUnifiedGraphFile, UnifiedGraphQueryError } from '../core/unified-graph-query.js'
+import { CodeSubgraphRefreshPlanError, planCodeSubgraphRefreshFile } from '../core/code-subgraph-refresh-plan.js'
 import {
   compareReadModelEvidence,
   generateReadModelEvidence,
@@ -822,6 +823,71 @@ export async function graphQueryUnifiedCommand(context: CommandContext): Promise
               }),
             ],
       data: error instanceof UnifiedGraphQueryError ? error.report : undefined,
+    }
+  }
+}
+
+export async function graphPlanCodeSubgraphRefreshCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.codeSubgraph) {
+    return invalidCommand('graph plan-code-subgraph-refresh requires --code-subgraph <devview-code-subgraph.json>.')
+  }
+  if (!context.options.changedFileInputs || context.options.changedFileInputs.length === 0) {
+    return invalidCommand('graph plan-code-subgraph-refresh requires at least one --changed-file <path>.')
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph plan-code-subgraph-refresh requires --output <code-subgraph-refresh-plan.json>.')
+  }
+
+  try {
+    const result = await planCodeSubgraphRefreshFile(context.options.root, {
+      codeSubgraph: context.options.codeSubgraph,
+      changedFiles: context.options.changedFileInputs,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph plan-code-subgraph-refresh',
+      exitCode: ExitCode.Success,
+      message: 'Code subgraph refresh plan recorded without extraction, hooks, watchers, or graph-source mutation.',
+      issues: [],
+      data: result,
+    }
+  } catch (error) {
+    const findings = error instanceof CodeSubgraphRefreshPlanError ? error.report.validationFindings : []
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph plan-code-subgraph-refresh',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Code subgraph refresh plan blocked.',
+      issues:
+        findings.length > 0
+          ? findings
+              .filter((finding) => finding.severity === 'blocker')
+              .map((finding) =>
+                issue({
+                  validator: 'CodeSubgraphRefreshPlan',
+                  code: finding.code,
+                  severity: 'error',
+                  file: finding.path,
+                  message: finding.message,
+                  reason: finding.field ? `Field: ${finding.field}` : undefined,
+                  suggestedFix:
+                    'Provide a valid devview-code-subgraph, explicit changed files inside the repo boundary, and dedicated report output paths.',
+                }),
+              )
+          : [
+              issue({
+                validator: 'CodeSubgraphRefreshPlan',
+                code: 'CODE_SUBGRAPH_REFRESH_PLAN_BLOCKED',
+                severity: 'error',
+                message,
+                suggestedFix:
+                  'Provide --code-subgraph, --changed-file, and --output paths outside source/control artifacts.',
+              }),
+            ],
+      data: error instanceof CodeSubgraphRefreshPlanError ? error.report : undefined,
     }
   }
 }

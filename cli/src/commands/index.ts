@@ -91,6 +91,7 @@ import {
   graphReadModelValidateRequestIrGraphCommand,
   graphReadModelValidateRequestIrCommand,
   graphReadModelValidateCommand,
+  graphPlanCodeSubgraphRefreshCommand,
   graphQueryUnifiedCommand,
   graphReportCodeImpactCommand,
   graphValidateCodeSubgraphCommand,
@@ -386,6 +387,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'plan-code-subgraph-merge') {
     return graphPlanCodeSubgraphMergeCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'plan-code-subgraph-refresh') {
+    return graphPlanCodeSubgraphRefreshCommand(context)
   }
   if (command === 'graph' && subcommand === 'validate-code-symbol-links') {
     return graphValidateCodeSymbolLinksCommand(context)

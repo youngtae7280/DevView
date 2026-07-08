@@ -131,6 +131,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     codeSubgraphMergePlan: undefined as string | undefined,
     codeSymbolLinksValidation: undefined as string | undefined,
     changedSymbols: [] as string[],
+    changedFileInputs: [] as string[],
     mode: undefined as string | undefined,
     node: undefined as string | undefined,
     sourceNode: undefined as string | undefined,
@@ -530,6 +531,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--changed-symbol requires a code node id.' }
       }
       options.changedSymbols.push(...splitIds(value))
+      index += 1
+    } else if (arg === '--changed-file') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--changed-file requires a file path.' }
+      }
+      options.changedFileInputs.push(...splitIds(value))
       index += 1
     } else if (arg === '--mode') {
       const value = argv[index + 1]
