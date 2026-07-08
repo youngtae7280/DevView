@@ -91,6 +91,7 @@ import {
   graphReadModelValidateRequestIrGraphCommand,
   graphReadModelValidateRequestIrCommand,
   graphReadModelValidateCommand,
+  graphReportCodeImpactCommand,
   graphValidateCodeSubgraphCommand,
   graphValidateCodeSymbolLinksCommand,
   cleanupLegacyCommand,
@@ -387,6 +388,9 @@ export async function runCommand(positionals: string[], context: CommandContext)
   }
   if (command === 'graph' && subcommand === 'validate-code-symbol-links') {
     return graphValidateCodeSymbolLinksCommand(context)
+  }
+  if (command === 'graph' && subcommand === 'report-code-impact') {
+    return graphReportCodeImpactCommand(context)
   }
   if (command === 'graph' && subcommand === 'read-model' && positionals[2] === 'generate') {
     return graphReadModelGenerateCommand(context)

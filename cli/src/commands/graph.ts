@@ -71,6 +71,7 @@ import {
 } from '../core/native-code-subgraph-extractor.js'
 import { CodeSubgraphMergePlanError, planCodeSubgraphMergeFile } from '../core/code-subgraph-merge-plan.js'
 import { CodeSymbolLinkValidationError, validateCodeSymbolLinksFile } from '../core/code-symbol-link-validation.js'
+import { CodeImpactReportError, reportCodeImpactFile } from '../core/code-impact-report.js'
 import {
   compareReadModelEvidence,
   generateReadModelEvidence,
@@ -683,6 +684,72 @@ export async function graphValidateCodeSymbolLinksCommand(context: CommandContex
               }),
             ],
       data: error instanceof CodeSymbolLinkValidationError ? error.report : undefined,
+    }
+  }
+}
+
+export async function graphReportCodeImpactCommand(context: CommandContext): Promise<CommandResult> {
+  if (!context.options.codeSubgraph) {
+    return invalidCommand('graph report-code-impact requires --code-subgraph <devview-code-subgraph.json>.')
+  }
+  if (!context.options.changedSymbols || context.options.changedSymbols.length === 0) {
+    return invalidCommand('graph report-code-impact requires at least one --changed-symbol <code-node-id>.')
+  }
+  if (!context.options.output) {
+    return invalidCommand('graph report-code-impact requires --output <code-impact-report.json>.')
+  }
+
+  try {
+    const result = await reportCodeImpactFile(context.options.root, {
+      codeSubgraph: context.options.codeSubgraph,
+      changedSymbols: context.options.changedSymbols,
+      codeSymbolLinksValidation: context.options.codeSymbolLinksValidation,
+      output: context.options.output,
+      markdown: context.options.markdown,
+    })
+    return {
+      ok: true,
+      command: 'graph report-code-impact',
+      exitCode: ExitCode.Success,
+      message: 'Code impact report generated without code execution or graph-source mutation.',
+      issues: [],
+      data: result,
+    }
+  } catch (error) {
+    const findings = error instanceof CodeImpactReportError ? error.report.validationFindings : []
+    const message = error instanceof Error ? error.message : String(error)
+    return {
+      ok: false,
+      command: 'graph report-code-impact',
+      exitCode: ExitCode.ValidationFailed,
+      message: 'Code impact report blocked.',
+      issues:
+        findings.length > 0
+          ? findings
+              .filter((finding) => finding.severity === 'blocker')
+              .map((finding) =>
+                issue({
+                  validator: 'CodeImpactReport',
+                  code: finding.code,
+                  severity: 'error',
+                  file: finding.path,
+                  message: finding.message,
+                  reason: finding.field ? `Field: ${finding.field}` : undefined,
+                  suggestedFix:
+                    'Provide a valid devview-code-subgraph, known changed symbol ids, optional passed code-symbol-link validation, and dedicated report output paths.',
+                }),
+              )
+          : [
+              issue({
+                validator: 'CodeImpactReport',
+                code: 'CODE_IMPACT_REPORT_BLOCKED',
+                severity: 'error',
+                message,
+                suggestedFix:
+                  'Provide --code-subgraph, --changed-symbol, and --output paths outside source/control artifacts, then rerun impact reporting.',
+              }),
+            ],
+      data: error instanceof CodeImpactReportError ? error.report : undefined,
     }
   }
 }

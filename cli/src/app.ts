@@ -130,6 +130,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     codeSubgraphValidation: undefined as string | undefined,
     codeSubgraphMergePlan: undefined as string | undefined,
     codeSymbolLinksValidation: undefined as string | undefined,
+    changedSymbols: [] as string[],
     links: undefined as string | undefined,
     projectMemory: undefined as string | undefined,
     directionChange: undefined as string | undefined,
@@ -517,6 +518,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--code-symbol-links-validation requires a file path.' }
       }
       options.codeSymbolLinksValidation = value
+      index += 1
+    } else if (arg === '--changed-symbol') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--changed-symbol requires a code node id.' }
+      }
+      options.changedSymbols.push(...splitIds(value))
       index += 1
     } else if (arg === '--links') {
       const value = argv[index + 1]

@@ -791,6 +791,28 @@ Tree symbol selection. It does not mutate graph-source, apply a graph delta, acc
 enforce scope/RBAC, verify signatures, configure CI, activate hooks, call providers/network/API, execute shell/project
 code, generate View Trees or Context Packs, or automate approval.
 
+### Code Impact Analysis
+
+```bash
+devview graph report-code-impact \
+  --code-subgraph <devview-code-subgraph.json> \
+  --changed-symbol <code-node-id> \
+  --changed-symbol <code-node-id-2> \
+  --code-symbol-links-validation <code-symbol-links-validation.json> \
+  --output <code-impact-report.json> \
+  --markdown <code-impact-report.md> \
+  --json
+```
+
+Reports static code impact from a supplied `devview-code-subgraph` source fact without reading source files or executing
+project code. The v1 report validates the code subgraph, requires every changed symbol id to exist, then summarizes
+direct callers/callees, import dependents/imported dependencies, reverse containment context, coverage edges, and
+optional maintenance impacts from a passed `devview-code-symbol-link-validation-report`. The output is
+`devview-code-impact-report` with report-only scope and is intended as downstream input for View Tree, Context Pack, and
+future query/path/explain work. It does not mutate graph-source, apply graph deltas, generate View Trees or Context
+Packs, accept Evidence, prove runtime behavior, enforce scope/RBAC, verify signatures, configure CI, activate hooks,
+call providers/network/API, run Graphify, or automate approval.
+
 ### View Tree Symbol Selection
 
 ```bash

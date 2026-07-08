@@ -88,6 +88,7 @@ export interface CliOptions {
   codeSubgraphValidation?: string
   codeSubgraphMergePlan?: string
   codeSymbolLinksValidation?: string
+  changedSymbols?: string[]
   links?: string
   projectMemory?: string
   directionChange?: string
