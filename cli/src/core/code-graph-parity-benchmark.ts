@@ -14,6 +14,7 @@ import {
 } from './code-subgraph-validation.js'
 
 type JsonRecord = Record<string, unknown>
+type CodeGraphParityMode = 'graphify-import' | 'native'
 
 const REPORT_ROLE = 'devview-code-graph-parity-benchmark-report'
 const PASSED_STATUS = 'devview-code-graph-parity-benchmark-passed'
@@ -148,6 +149,7 @@ export interface CodeGraphParityBenchmarkReport extends JsonRecord {
     callsEdgeCount: number
   }
   parity: {
+    mode: CodeGraphParityMode
     achieved: boolean
     nodeRatio: number | null
     graphifyBackedNodeRatio: number | null
@@ -360,12 +362,23 @@ function buildReport(
     sourceGraphifyEdgeKindCounts,
     callsEdgeCount: codeEdgeTypeCounts.calls ?? 0,
   }
+  const parityMode: CodeGraphParityMode =
+    devviewSummary.sourceGraphifyNodeBackedCount > 0 || devviewSummary.sourceGraphifyEdgeBackedCount > 0
+      ? 'graphify-import'
+      : 'native'
+  const graphifyImportParityAchieved =
+    unsupportedGraphifyRelations.length === 0 &&
+    thresholdMet(devviewSummary.sourceGraphifyNodeBackedCount, graphifyNodes.length) &&
+    thresholdMet(devviewSummary.sourceGraphifyEdgeBackedCount, graphifyEdges.length) &&
+    thresholdMet(devviewSummary.callsEdgeCount, graphifyCallLikeCount)
+  const nativeParityAchieved =
+    unsupportedGraphifyRelations.length === 0 &&
+    thresholdMet(devviewSummary.nodeCount, graphifyNodes.length) &&
+    thresholdMet(devviewSummary.edgeCount, graphifyEdges.length) &&
+    thresholdMet(devviewSummary.callsEdgeCount, graphifyCallLikeCount)
   const parity = {
-    achieved:
-      unsupportedGraphifyRelations.length === 0 &&
-      thresholdMet(devviewSummary.sourceGraphifyNodeBackedCount, graphifyNodes.length) &&
-      thresholdMet(devviewSummary.sourceGraphifyEdgeBackedCount, graphifyEdges.length) &&
-      thresholdMet(devviewSummary.callsEdgeCount, graphifyCallLikeCount),
+    mode: parityMode,
+    achieved: parityMode === 'graphify-import' ? graphifyImportParityAchieved : nativeParityAchieved,
     nodeRatio: ratio(devviewSummary.nodeCount, graphifyNodes.length),
     graphifyBackedNodeRatio: ratio(devviewSummary.sourceGraphifyNodeBackedCount, graphifyNodes.length),
     edgeRatio: ratio(devviewSummary.edgeCount, graphifyEdges.length),
@@ -382,12 +395,18 @@ function buildReport(
 
   const blocked = findings.some((finding) => finding.severity === 'blocker')
   if (!blocked) {
+    const achievedMessage =
+      parity.mode === 'graphify-import'
+        ? 'DevView code subgraph Graphify-backed preservation is achieved for nodes, edges, and call-like relations at parity thresholds.'
+        : 'Native DevView code subgraph reaches Graphify aggregate parity thresholds for nodes, edges, and call-like relations.'
+    const gapMessage =
+      parity.mode === 'graphify-import'
+        ? 'DevView code subgraph remains below Graphify-backed preservation thresholds or has unsupported Graphify relations.'
+        : 'Native DevView code subgraph remains below Graphify aggregate parity thresholds or has unsupported Graphify relations.'
     findings.push({
       severity: parity.achieved ? 'satisfied' : 'warning',
       code: parity.achieved ? 'CODE_GRAPH_PARITY_ACHIEVED' : 'CODE_GRAPH_PARITY_GAPS_REMAIN',
-      message: parity.achieved
-        ? 'DevView code subgraph preserves Graphify-backed nodes, edges, and call-like relations at parity thresholds.'
-        : 'DevView code subgraph remains below Graphify parity thresholds or has unsupported Graphify relations.',
+      message: parity.achieved ? achievedMessage : gapMessage,
     })
   }
 
@@ -430,13 +449,19 @@ function buildReport(
       ? [
           'Fix unreadable inputs, unsafe authority flags, invalid code subgraph validation, or invalid Graphify graph shape, then rerun parity comparison.',
         ]
-      : parity.achieved
+      : parity.achieved && parity.mode === 'graphify-import'
         ? [
             'Use this report as evidence that the Graphify static import adapter preserves raw Graphify code graph structure inside a DevView code subgraph source fact.',
           ]
-        : [
-            'Inspect relationParity and count gaps before claiming Graphify parity. Native extractor parity may still require a separate AST extraction tranche.',
-          ],
+        : parity.achieved
+          ? [
+              'Use this report as evidence that the native DevView code subgraph reaches Graphify aggregate node, edge, and call-like parity thresholds without Graphify-backed source facts.',
+            ]
+          : [
+              parity.mode === 'graphify-import'
+                ? 'Inspect Graphify-backed ratios, relationParity, and count gaps before claiming Graphify-backed import preservation.'
+                : 'Inspect aggregate node, edge, call-like ratios, unsupported relations, and relationParity detail before claiming native Graphify aggregate parity.',
+            ],
     benchmarkExecuted: false,
     graphifyExecuted: false,
     astExtractorExecuted: false,
@@ -538,6 +563,7 @@ function renderMarkdown(report: CodeGraphParityBenchmarkReport): string {
     '# Code Graph Parity Benchmark',
     '',
     `Status: ${report.status}`,
+    `Parity mode: ${report.parity.mode}`,
     `Parity achieved: ${report.parity.achieved}`,
     `DevView code subgraph: \`${report.inputs.devviewCodeSubgraph.path}\``,
     `Graphify export: \`${report.inputs.graphifyExport.path}\``,

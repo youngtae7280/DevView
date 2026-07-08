@@ -62,6 +62,7 @@ describe('benchmark compare-code-graph-parity CLI', () => {
     expect(payload.devviewSummary.syntheticGraphifyNodeCount).toBe(1)
     expect(payload.devviewSummary.sourceGraphifyEdgeBackedCount).toBe(10)
     expect(payload.devviewSummary.callsEdgeCount).toBe(2)
+    expect(payload.parity.mode).toBe('graphify-import')
     expect(payload.parity.achieved).toBe(true)
     expect(payload.parity.graphifyBackedNodeRatio).toBe(1)
     expect(payload.parity.graphifyBackedEdgeRatio).toBe(1)
@@ -75,13 +76,188 @@ describe('benchmark compare-code-graph-parity CLI', () => {
       mappedDevviewEdgeKind: 'calls',
       devviewSourceGraphifyEdgeKindCount: 1,
     })
+    expect(parityFinding(payload)).toMatchObject({
+      severity: 'satisfied',
+      message:
+        'DevView code subgraph Graphify-backed preservation is achieved for nodes, edges, and call-like relations at parity thresholds.',
+    })
     expect(payload.benchmarkExecuted).toBe(false)
     expect(payload.graphifyExecuted).toBe(false)
     expect(payload.astExtractorExecuted).toBe(false)
     expect(payload.graphSourceMutated).toBe(false)
     expect(existsSync(join(workspace, '.tmp/code-graph-parity.md'))).toBe(true)
   })
+
+  it('reports native aggregate parity when the code subgraph has no Graphify-backed source facts', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, 'graphify-out', 'graph.json'), realGraphifyExport(workspace))
+    writeJson(join(workspace, '.tmp/native-code-subgraph.json'), nativeCodeSubgraph())
+
+    const result = await runDevViewCli(
+      [
+        'benchmark',
+        'compare-code-graph-parity',
+        '--code-subgraph',
+        '.tmp/native-code-subgraph.json',
+        '--graphify',
+        join('graphify-out', 'graph.json'),
+        '--output',
+        '.tmp/native-code-graph-parity.json',
+        '--markdown',
+        '.tmp/native-code-graph-parity.md',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.parity.mode).toBe('native')
+    expect(payload.devviewSummary.sourceGraphifyNodeBackedCount).toBe(0)
+    expect(payload.devviewSummary.sourceGraphifyEdgeBackedCount).toBe(0)
+    expect(payload.devviewSummary.nodeCount).toBe(7)
+    expect(payload.devviewSummary.edgeCount).toBe(10)
+    expect(payload.devviewSummary.callsEdgeCount).toBe(2)
+    expect(payload.parity.achieved).toBe(true)
+    expect(payload.parity.nodeRatio).toBe(1)
+    expect(payload.parity.edgeRatio).toBe(1)
+    expect(payload.parity.callLikeRatio).toBe(1)
+    expect(payload.parity.graphifyBackedNodeRatio).toBe(0)
+    expect(payload.parity.graphifyBackedEdgeRatio).toBe(0)
+    expect(payload.parity.unsupportedGraphifyRelations).toEqual([])
+    expect(parityFinding(payload)).toMatchObject({
+      severity: 'satisfied',
+      message:
+        'Native DevView code subgraph reaches Graphify aggregate parity thresholds for nodes, edges, and call-like relations.',
+    })
+    expect(payload.downstreamActionPlan).toContain(
+      'Use this report as evidence that the native DevView code subgraph reaches Graphify aggregate node, edge, and call-like parity thresholds without Graphify-backed source facts.',
+    )
+    expect(existsSync(join(workspace, '.tmp/native-code-graph-parity.md'))).toBe(true)
+  })
+
+  it('warns when native aggregate parity is below threshold', async () => {
+    const workspace = createWorkspace()
+    writeJson(join(workspace, 'graphify-out', 'graph.json'), realGraphifyExport(workspace))
+    writeJson(
+      join(workspace, '.tmp/native-code-subgraph-below-threshold.json'),
+      nativeCodeSubgraph({ belowThreshold: true }),
+    )
+
+    const result = await runDevViewCli(
+      [
+        'benchmark',
+        'compare-code-graph-parity',
+        '--code-subgraph',
+        '.tmp/native-code-subgraph-below-threshold.json',
+        '--graphify',
+        join('graphify-out', 'graph.json'),
+        '--output',
+        '.tmp/native-code-graph-parity-below-threshold.json',
+        '--json',
+      ],
+      { cwd: workspace, pluginRoot },
+    )
+    const payload = JSON.parse(result.stdout)
+
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(payload.parity.mode).toBe('native')
+    expect(payload.parity.achieved).toBe(false)
+    expect(payload.parity.nodeRatio).toBeLessThan(0.99)
+    expect(payload.parity.edgeRatio).toBeLessThan(0.99)
+    expect(payload.parity.callLikeRatio).toBe(1)
+    expect(parityFinding(payload)).toMatchObject({
+      severity: 'warning',
+      code: 'CODE_GRAPH_PARITY_GAPS_REMAIN',
+      message:
+        'Native DevView code subgraph remains below Graphify aggregate parity thresholds or has unsupported Graphify relations.',
+    })
+  })
 })
+
+function parityFinding(payload: {
+  findings: Array<{ code: string; severity: string; message: string }>
+}): { code: string; severity: string; message: string } | undefined {
+  return payload.findings.find(
+    (entry) => entry.code === 'CODE_GRAPH_PARITY_ACHIEVED' || entry.code === 'CODE_GRAPH_PARITY_GAPS_REMAIN',
+  )
+}
+
+function nativeCodeSubgraph(options: { belowThreshold?: boolean } = {}): Record<string, unknown> {
+  const nodes = [
+    nativeNode('code.file.app', 'file', 1),
+    nativeNode('code.fn.main', 'function', 10),
+    nativeNode('code.fn.helper', 'function', 14),
+    nativeNode('code.class.service', 'class', 20),
+    nativeNode('code.method.run', 'method', 22),
+    nativeNode('code.interface.port', 'interface', 5),
+    nativeNode('code.type.base', 'type', 3),
+  ]
+  const edges = [
+    nativeEdge('code.edge.contains.main', 'code.file.app', 'code.fn.main', 'contains', 10),
+    nativeEdge('code.edge.imports-from.helper', 'code.file.app', 'code.fn.helper', 'imports_from', 1),
+    nativeEdge('code.edge.imports.helper', 'code.file.app', 'code.fn.helper', 'imports', 2),
+    nativeEdge('code.edge.re-exports.helper', 'code.file.app', 'code.fn.helper', 're_exports', 3),
+    nativeEdge('code.edge.calls.helper', 'code.fn.main', 'code.fn.helper', 'calls', 11),
+    nativeEdge('code.edge.references.service', 'code.fn.main', 'code.class.service', 'references', 12),
+    nativeEdge('code.edge.inherits.base', 'code.class.service', 'code.type.base', 'inherits', 20),
+    nativeEdge('code.edge.implements.port', 'code.class.service', 'code.interface.port', 'implements', 20),
+    nativeEdge('code.edge.method.run', 'code.class.service', 'code.method.run', 'method', 22),
+    nativeEdge('code.edge.calls.run', 'code.fn.main', 'code.method.run', 'calls', 13),
+  ]
+
+  return {
+    schemaVersion: 1,
+    artifactRole: 'devview-code-subgraph',
+    status: 'devview-code-subgraph-supplied',
+    scope: 'code-subgraph-source-fact-only',
+    nodes: options.belowThreshold ? nodes.filter((entry) => entry.id !== 'code.interface.port') : nodes,
+    edges: options.belowThreshold ? edges.filter((entry) => entry.id !== 'code.edge.implements.port') : edges,
+    graphifyExecuted: false,
+    astExtractorExecuted: false,
+    providerInvoked: false,
+    networkCallMade: false,
+    apiCallMade: false,
+    shellCommandsExecuted: false,
+    extensionExecutionAllowed: false,
+    graphSourceMutated: false,
+    graphDeltaApplied: false,
+  }
+}
+
+function nativeNode(id: string, kind: string, line: number): Record<string, unknown> {
+  return {
+    id,
+    kind,
+    label: id.replace(/^code\./, ''),
+    sourceFile: 'src/app.ts',
+    sourceLocation: lineLocation(line),
+    confidence: 'extracted',
+    extractor: 'devview-native',
+  }
+}
+
+function nativeEdge(id: string, from: string, to: string, kind: string, line: number): Record<string, unknown> {
+  return {
+    id,
+    from,
+    to,
+    kind,
+    sourceFile: 'src/app.ts',
+    sourceLocation: lineLocation(line),
+    confidence: 'extracted',
+    extractor: 'devview-native',
+  }
+}
+
+function lineLocation(line: number): Record<string, unknown> {
+  return {
+    startLine: line,
+    startColumn: 1,
+    endLine: line,
+    endColumn: 1,
+  }
+}
 
 function realGraphifyExport(workspace: string): Record<string, unknown> {
   const sourceFile = join(workspace, 'src', 'app.ts')
