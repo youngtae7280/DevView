@@ -754,16 +754,20 @@ automate approval.
 devview graph render-code-graph-html \
   --code-subgraph <devview-code-subgraph.json> \
   --code-subgraph-validation <code-subgraph-validation.json> \
+  --devview-graph-data <devviewgraph.data.json> \
   --output <code-graph.html> \
   --markdown <code-graph-html-render.md> \
   --json
 ```
 
 Renders a read-only HTML inspector from a supplied `devview-code-subgraph` source fact. The view embeds the validated
-code nodes and edges, supports zoom/pan, keeps edge stroke width and node glyphs readable while zooming, and shows a
-Selection Details panel when a node or edge is clicked. It is a visualization boundary only: it does not run Graphify,
-run AST extractors, execute project code, mutate graph-source, apply graph deltas, generate View Trees or Context Packs,
-call providers/network/API, enforce RBAC, verify signatures, configure CI, activate hooks, or automate approval.
+code nodes and edges in a force-directed graph, supports zoom/pan, keeps the fallback SVG strokes and glyphs readable
+while zooming, and shows Selection Details when a node or edge is clicked. When `--devview-graph-data` is supplied, the
+HTML also shows the DevView task explorer, View Tree list, SubGraph list, and read-only workflow trace that explain how
+the selected work slice was derived. This option consumes an existing `devview-graph-html-data-preview`; it does not
+generate View Trees or Context Packs. It is a visualization boundary only: it does not run Graphify, run AST extractors,
+execute project code, mutate graph-source, apply graph deltas, satisfy Evidence, call providers/network/API, enforce
+RBAC, verify signatures, configure CI, activate hooks, or automate approval.
 
 ### Native Code Subgraph Extraction
 

@@ -388,6 +388,8 @@ Options:
   --read-model <file>  Optional generated read-model input for project-memory extension gap reporting.
   --graph-source <file>
                        Graph source artifact for graph read-model projection, retrofit plan, project-intent, report-intent, project-memory gap reporting, render-devview-graph, plan-code-subgraph-merge, apply-graph-delta, or apply-guarded-graph-update.
+  --devview-graph-data <file>
+                       Optional DevViewGraph HTML data preview for graph render-code-graph-html task, View Tree, SubGraph, and workflow context.
   --code-subgraph <file>
                        Static DevView code subgraph source fact for benchmark compare-code-graph-parity, graph validate-code-subgraph, render-code-graph-html, plan-code-subgraph-merge, plan-code-subgraph-refresh, report-code-impact, query-unified, or View Tree symbol selection.
   --code-subgraph-validation <file>

@@ -127,6 +127,7 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
     generated: undefined as string | undefined,
     readModel: undefined as string | undefined,
     graphSource: undefined as string | undefined,
+    devviewGraphData: undefined as string | undefined,
     codeSubgraph: undefined as string | undefined,
     codeSubgraphValidation: undefined as string | undefined,
     codeSubgraphMergePlan: undefined as string | undefined,
@@ -504,6 +505,13 @@ function parseArgs(argv: string[], cwd: string): ParsedArgs | { error: string } 
         return { error: '--graph-source requires a file path.' }
       }
       options.graphSource = value
+      index += 1
+    } else if (arg === '--devview-graph-data') {
+      const value = argv[index + 1]
+      if (!value) {
+        return { error: '--devview-graph-data requires a file path.' }
+      }
+      options.devviewGraphData = value
       index += 1
     } else if (arg === '--code-subgraph') {
       const value = argv[index + 1]

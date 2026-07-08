@@ -15,6 +15,7 @@ describe('graph render-code-graph-html CLI', () => {
   it('renders a selectable zoomable code graph HTML inspector without graph-source mutation', async () => {
     const workspace = createWorkspace()
     writeJson(join(workspace, 'code-subgraph.json'), codeSubgraph())
+    writeJson(join(workspace, 'devview-graph-data.json'), devviewGraphData())
 
     const validation = await runDevViewCli(
       [
@@ -38,6 +39,8 @@ describe('graph render-code-graph-html CLI', () => {
         'code-subgraph.json',
         '--code-subgraph-validation',
         '.tmp/code-subgraph-validation.json',
+        '--devview-graph-data',
+        'devview-graph-data.json',
         '--output',
         '.tmp/code-graph.html',
         '--markdown',
@@ -54,6 +57,9 @@ describe('graph render-code-graph-html CLI', () => {
     expect(payload.status).toBe('devview-code-graph-html-rendered')
     expect(payload.htmlSummary.nodeCount).toBe(3)
     expect(payload.htmlSummary.edgeCount).toBe(2)
+    expect(payload.sourceDevViewGraphData.workflowStepCount).toBe(3)
+    expect(payload.sourceDevViewGraphData.treeCount).toBe(1)
+    expect(payload.sourceDevViewGraphData.subgraphCount).toBe(1)
     expect(payload.htmlSummary.hasZoomControls).toBe(true)
     expect(payload.htmlSummary.hasSelectionInspector).toBe(true)
     expect(payload.htmlSummary.nonScalingEdgeStroke).toBe(true)
@@ -64,6 +70,16 @@ describe('graph render-code-graph-html CLI', () => {
 
     expect(html).toContain('DevView Code Graph')
     expect(html).toContain('Selection Details')
+    expect(html).toContain('Task Explorer')
+    expect(html).toContain('View Trees')
+    expect(html).toContain('SubGraphs')
+    expect(html).toContain('id="workflowDock"')
+    expect(html).toContain('function renderDevViewContext')
+    expect(html).toContain('function showContextDetails')
+    expect(html).toContain('Selected task subgraph')
+    expect(html).toContain('vis-network@9.1.6')
+    expect(html).toContain('forceAtlas2Based')
+    expect(html).toContain('id="network"')
     expect(html).toContain('id="zoomIn"')
     expect(html).toContain('id="zoomOut"')
     expect(html).toContain('id="graphRoot"')
@@ -74,6 +90,8 @@ describe('graph render-code-graph-html CLI', () => {
     expect(html).toContain("circle.setAttribute('r', String(7 / scale))")
     expect(html).toContain("label.setAttribute('font-size', String(11 / scale))")
     expect(html).toContain("label.setAttribute('x', String(11 / scale))")
+    expect(html).toContain('function renderCommunityLegend')
+    expect(html).toContain('function communityKey')
     expect(html).toContain('function selectNode')
     expect(html).toContain('function selectEdge')
     expect(html).toContain('devview-code-subgraph-html-preview')
@@ -169,6 +187,107 @@ function codeSubgraph(): Record<string, unknown> {
     permissionVerified: false,
     cryptographicSignatureVerified: false,
     enterpriseGateActivated: false,
+  }
+}
+
+function devviewGraphData(): Record<string, unknown> {
+  return {
+    schemaVersion: 1,
+    artifactRole: 'devview-graph-html-data-preview',
+    status: 'devview-graph-html-data-generated',
+    requestSummary: {
+      sourceRecordId: 'task.config-flow',
+      userRequest: 'Trace configuration flow before editing.',
+      projectName: 'WindowsUtility',
+      targetSlice: 'Config module',
+      writeBoundary: 'read-only graph preview',
+    },
+    workHistory: [
+      {
+        index: 1,
+        recordId: 'task.config-flow',
+        label: 'config-flow',
+        status: 'planned',
+        activeCodeState: 'read-only',
+      },
+    ],
+    trees: [
+      {
+        id: 'tree.config',
+        label: 'Config View Tree',
+        viewpoint: 'Configuration symbols and task context.',
+        nodeIds: ['task.config-flow', 'function.open'],
+        edgeIds: ['edge.task-open'],
+        packSections: ['graphContext.nodes'],
+      },
+    ],
+    subgraphs: [
+      {
+        id: 'subgraph.config',
+        label: 'Selected task subgraph',
+        taskType: 'read-only-code-symbol-preview',
+        startNodeId: 'task.config-flow',
+        nodeIds: ['task.config-flow', 'function.open'],
+        edgeIds: ['edge.task-open'],
+        allowedFiles: ['src/app.ts'],
+      },
+    ],
+    packMapping: [],
+    compilationTrace: [
+      {
+        step: 'derive view tree',
+        input: 'task.config-flow',
+        output: 'tree.config',
+        status: 'read-only',
+        authority: 'visualization only',
+      },
+    ],
+    workflowSteps: [
+      {
+        index: 1,
+        id: 'workflow.request',
+        label: '1 Request',
+        phase: 'task selection',
+        summary: 'Select the task.',
+        nodeIds: ['task.config-flow'],
+        edgeIds: [],
+        output: 'task.config-flow',
+        authority: 'read-only visualization',
+      },
+      {
+        index: 2,
+        id: 'workflow.tree',
+        label: '2 Tree',
+        phase: 'tree extraction',
+        summary: 'Derive viewpoint tree.',
+        nodeIds: ['task.config-flow', 'function.open'],
+        edgeIds: ['edge.task-open'],
+        output: 'tree.config',
+        authority: 'read-only visualization',
+      },
+      {
+        index: 3,
+        id: 'workflow.subgraph',
+        label: '3 SubGraph',
+        phase: 'bounded subgraph extraction',
+        summary: 'Derive selected subgraph.',
+        nodeIds: ['task.config-flow', 'function.open'],
+        edgeIds: ['edge.task-open'],
+        output: 'subgraph.config',
+        authority: 'read-only visualization',
+      },
+    ],
+    safetyFlags: {
+      readOnlyVisualizationOnly: true,
+      graphSourceMutated: false,
+      graphDeltaApplied: false,
+      codexExecutionTriggered: false,
+      runtimeEvidenceSatisfied: false,
+      scopeEnforced: false,
+      ciEnforcementEnabled: false,
+      humanDecisionRecorded: false,
+      equivalenceProven: false,
+    },
   }
 }
 

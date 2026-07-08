@@ -85,6 +85,7 @@ export interface CliOptions {
   generated?: string
   readModel?: string
   graphSource?: string
+  devviewGraphData?: string
   codeSubgraph?: string
   codeSubgraphValidation?: string
   codeSubgraphMergePlan?: string

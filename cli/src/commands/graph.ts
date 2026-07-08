@@ -906,6 +906,7 @@ export async function graphRenderCodeGraphHtmlCommand(context: CommandContext): 
     const result = await renderCodeGraphHtmlFile(context.options.root, {
       codeSubgraph: context.options.codeSubgraph,
       codeSubgraphValidation: context.options.codeSubgraphValidation,
+      devviewGraphData: context.options.devviewGraphData,
       output: context.options.output,
       markdown: context.options.markdown,
     })
