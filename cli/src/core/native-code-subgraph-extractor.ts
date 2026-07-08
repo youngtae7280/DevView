@@ -16,7 +16,7 @@ import {
 import { matchScopeCompliancePathPattern } from './scope-compliance-path-pattern.js'
 
 type JsonRecord = Record<string, unknown>
-type CodeNodeKind = 'file' | 'class' | 'interface' | 'type' | 'function' | 'method' | 'external_dependency'
+type CodeNodeKind = 'file' | 'class' | 'interface' | 'type' | 'function' | 'method' | 'field' | 'external_dependency'
 type SymbolNodeKind = Exclude<CodeNodeKind, 'file' | 'external_dependency'>
 type Confidence = 'extracted' | 'inferred' | 'ambiguous'
 type ImportBindingKind = 'default' | 'named' | 'namespace' | 'require'
@@ -104,6 +104,7 @@ export interface NativeCodeSubgraphExtractionReport extends JsonRecord {
     typeNodeCount: number
     functionNodeCount: number
     methodNodeCount: number
+    fieldNodeCount: number
     externalDependencyNodeCount: number
     filesWithSymbolNodeCount: number
     importEdgeCount: number
@@ -855,6 +856,17 @@ function addVariableDeclarationSymbols(
     })
     return
   }
+  if (!currentClass && isTopLevelVariableDeclaration(declaration)) {
+    addSymbol(state, fileIndex, {
+      name,
+      qualifiedName: name,
+      kind: 'field',
+      declaration,
+      exported,
+      defaultExport: false,
+      parentClass: null,
+    })
+  }
   if (ts.isObjectLiteralExpression(initializer)) {
     addObjectLiteralFunctionSymbols(state, fileIndex, initializer, name, exported, currentClass)
   }
@@ -1513,7 +1525,7 @@ function buildReport(
 }
 
 function extractionSummary(state: ExtractionState): NativeCodeSubgraphExtractionReport['extractionSummary'] {
-  const symbolNodeKinds = new Set(['class', 'interface', 'type', 'function', 'method'])
+  const symbolNodeKinds = new Set(['class', 'interface', 'type', 'function', 'method', 'field'])
   const filesWithSymbols = new Set(
     state.nodes
       .filter((entry) => symbolNodeKinds.has(String(entry.kind)))
@@ -1527,6 +1539,7 @@ function extractionSummary(state: ExtractionState): NativeCodeSubgraphExtraction
     typeNodeCount: state.nodes.filter((entry) => entry.kind === 'type').length,
     functionNodeCount: state.nodes.filter((entry) => entry.kind === 'function').length,
     methodNodeCount: state.nodes.filter((entry) => entry.kind === 'method').length,
+    fieldNodeCount: state.nodes.filter((entry) => entry.kind === 'field').length,
     externalDependencyNodeCount: state.nodes.filter((entry) => entry.kind === 'external_dependency').length,
     filesWithSymbolNodeCount: filesWithSymbols.size,
     importEdgeCount: state.edges.filter((entry) => importLikeEdgeKinds.has(String(entry.kind))).length,
@@ -1635,7 +1648,7 @@ function renderMarkdown(report: NativeCodeSubgraphExtractionReport): string {
     `- Supported JS/TS files: ${report.targetRepo.supportedFileCount}`,
     `- Nodes: ${report.outputCodeSubgraph.nodeCount}`,
     `- Edges: ${report.outputCodeSubgraph.edgeCount}`,
-    `- Files/classes/interfaces/types/functions/methods: ${report.extractionSummary.fileNodeCount}/${report.extractionSummary.classNodeCount}/${report.extractionSummary.interfaceNodeCount}/${report.extractionSummary.typeNodeCount}/${report.extractionSummary.functionNodeCount}/${report.extractionSummary.methodNodeCount}`,
+    `- Files/classes/interfaces/types/functions/methods/fields: ${report.extractionSummary.fileNodeCount}/${report.extractionSummary.classNodeCount}/${report.extractionSummary.interfaceNodeCount}/${report.extractionSummary.typeNodeCount}/${report.extractionSummary.functionNodeCount}/${report.extractionSummary.methodNodeCount}/${report.extractionSummary.fieldNodeCount}`,
     `- Files with symbols: ${report.extractionSummary.filesWithSymbolNodeCount}`,
     `- Imports/calls/constructs/references/contains: ${report.extractionSummary.importEdgeCount}/${report.extractionSummary.callEdgeCount}/${report.extractionSummary.constructEdgeCount}/${report.extractionSummary.referenceEdgeCount}/${report.extractionSummary.containsEdgeCount}`,
     `- Call-like edges: ${report.extractionSummary.callLikeEdgeCount}`,
@@ -1805,6 +1818,12 @@ function isExportedVariableDeclaration(node: ts.VariableDeclaration): boolean {
   const declarationList = node.parent
   const statement = declarationList?.parent
   return Boolean(statement && ts.isVariableStatement(statement) && hasExportModifier(statement))
+}
+
+function isTopLevelVariableDeclaration(node: ts.VariableDeclaration): boolean {
+  const declarationList = node.parent
+  const statement = declarationList?.parent
+  return Boolean(statement && ts.isVariableStatement(statement) && ts.isSourceFile(statement.parent))
 }
 
 function hasHeritageClauses(node: ts.Node): node is ts.ClassDeclaration | ts.InterfaceDeclaration {

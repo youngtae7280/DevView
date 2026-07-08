@@ -45,6 +45,7 @@ describe('graph extract-code-subgraph CLI', () => {
     expect(payload.extractionSummary.classNodeCount).toBe(1)
     expect(payload.extractionSummary.functionNodeCount).toBeGreaterThanOrEqual(2)
     expect(payload.extractionSummary.methodNodeCount).toBe(1)
+    expect(payload.extractionSummary.fieldNodeCount).toBeGreaterThanOrEqual(1)
     expect(payload.extractionSummary.importEdgeCount).toBeGreaterThanOrEqual(2)
     expect(payload.extractionSummary.callEdgeCount).toBeGreaterThanOrEqual(1)
     expectSafetyFalse(payload)
@@ -53,7 +54,7 @@ describe('graph extract-code-subgraph CLI', () => {
     expect(codeSubgraph.status).toBe('devview-code-subgraph-supplied')
     expect(codeSubgraph.scope).toBe('code-subgraph-source-fact-only')
     expect(codeSubgraph.nodes.map((entry: { kind: string }) => entry.kind)).toEqual(
-      expect.arrayContaining(['file', 'class', 'function', 'method', 'external_dependency']),
+      expect.arrayContaining(['file', 'class', 'function', 'method', 'field', 'external_dependency']),
     )
     expect(codeSubgraph.edges.map((entry: { kind: string }) => entry.kind)).toEqual(
       expect.arrayContaining(['contains', 'imports', 'calls']),
@@ -526,7 +527,14 @@ function writeFixtureProject(workspace: string): void {
   )
   writeText(
     join(workspace, 'target/src/todo-store.ts'),
-    ['export function saveTodo(label: string) {', '  return label', '}', ''].join('\n'),
+    [
+      'export const storeName = "todos"',
+      '',
+      'export function saveTodo(label: string) {',
+      '  return label',
+      '}',
+      '',
+    ].join('\n'),
   )
   writeText(join(workspace, 'target/src/unused.ts'), 'export const unused = () => { return true }\n')
 }
